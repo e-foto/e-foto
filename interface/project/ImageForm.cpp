@@ -141,20 +141,26 @@ void ImageForm:: setReadOnly(bool state)
 QString ImageForm::loadImageFile()
 {
 	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", ".", "*.tif *.png *.bmp *.jpg");
+        if (fileImage !="")
+            {
+               //***************************************************************************************************
+               // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+               int i=fileImage.lastIndexOf("/");
 
-	//***************************************************************************************************
-	// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-	int i=fileImage.lastIndexOf("/");
+               fileImageName = fileImage.right(fileImage.length()-i-1);
+               fileImagePath = fileImage.left(i);
 
-    fileImageName = fileImage.right(fileImage.length()-i-1);
-    fileImagePath = fileImage.left(i);
+               fileNameLine->setText(fileImageName);
 
-    fileNameLine->setText(fileImageName);
+               filePathLine->setText(fileImagePath+"/");
+               //***************************************************************************************************
+               QImage * imageData=new QImage(fileImage);
+               heightLine->setText(QString::number(imageData->height())+" px");
+               widthLine->setText(QString::number(imageData->width())+" px");
+               return fileImage;
 
-    filePathLine->setText(fileImagePath+"/");
-	//***************************************************************************************************
-
-    return fileImage;
+            }else
+               return fileNameLine->text();
 }
 
 string ImageForm :: getFileImageName()
