@@ -32,7 +32,8 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(actionInterior_Orientation, SIGNAL(triggered()), this, SLOT(executeIO()));
 	this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
 	this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
-	this->connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
+	this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
+    this->connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 	this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
 	this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
 	this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
@@ -1115,6 +1116,12 @@ void ProjectUserInterface_Qt::toggleDebug()
 		debuggerDockWidget->setVisible(false);
 	else
 		debuggerDockWidget->setVisible(true);
+}
+
+void ProjectUserInterface_Qt::showAbout()
+{
+	AboutForm* about = new AboutForm();
+	about->show();
 }
 
 // Códigos das classes extras.
