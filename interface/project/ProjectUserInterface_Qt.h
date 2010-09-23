@@ -15,6 +15,7 @@
 #include "ImageForm.h"
 #include "PointsForm.h"
 #include "PointForm.h"
+#include "AboutForm.h"
 #include "ControlButtons.h"
 
 #include <QList>
@@ -164,6 +165,7 @@ public slots:
 	virtual void deleteImage();
 	// Debug...
 	virtual void toggleDebug();
+	virtual void showAbout();
 };
 
 #endif // PROJECTUSERINTERFACE_QT_H
