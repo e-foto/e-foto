@@ -7,8 +7,6 @@ OBJECTS_DIR = ../temp/obj
 MOC_DIR = ../temp/moc
 UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
-
-
 DEPENDPATH += . \
     control \
     infrastructure \
@@ -22,7 +20,6 @@ DEPENDPATH += . \
     interface/io/translation \
     interface/project/resource \
     interface/view/mmv
-
 INCLUDEPATH += . \
     control \
     photogrammetry \
@@ -112,7 +109,8 @@ FORMS += interface/io/IOForm.ui \
     interface/project/PointLayout.ui \
     interface/project/TerrainLayout.ui \
     interface/sr/SRForm.ui \
-    interface/view/AboutLayout.ui
+    interface/view/AboutLayout.ui \
+    interface/project/SensorLayout.ui
 SOURCES += control/EFotoManager.cpp \
     control/IOManager.cpp \
     control/ProjectManager.cpp \
@@ -182,10 +180,8 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/mmv/sensorview.cpp \
     interface/view/mmv/terrainview.cpp \
     interface/view/AboutForm.cpp
-
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \
     interface/view/resource/view_resource.qrc
-
 TRANSLATIONS += interface/io/translation/IOForm_pt_br.ts
