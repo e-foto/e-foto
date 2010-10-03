@@ -1,27 +1,22 @@
 #ifndef FLIGHTFORM_H
 #define FLIGHTFORM_H
 
+#include "ui_FlightLayout.h"
 #include "AbstractForm.h"
-#include "flightview.h"
-#include <string>
+#include "EDom.h"
 
-class FlightForm : public AbstractForm
+class FlightForm : public AbstractForm, public Ui::FlightForm
 {
-    Q_OBJECT
+        Q_OBJECT
 
 public:
-   
-    FlightForm(QWidget *parent = 0, string XmlString="");
-    
-    ~FlightForm();
-    
-    void fillvalues(string values);
-    string getvalues();
-    void setReadOnly(bool state);
-	bool isForm(string formName);
-private:
+        FlightForm(QWidget *parent = 0);
 
-    FlightView* pflightview;
+        void fillvalues(string values);
+        string getvalues();
+        void setReadOnly(bool state);
+        bool isForm(string formName);
+
 };
 
-#endif // FLIGHTFORM_H
+#endif FLIGHTFORM_H
