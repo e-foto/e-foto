@@ -70,7 +70,6 @@ HEADERS += control/EFotoManager.h \
     interface/io/IOUserInterface_Qt.h \
     interface/project/AbstractForm.h \
     interface/project/ControlButtons.h \
-    interface/project/FlightForm.h \
     interface/project/HeaderForm.h \
     interface/project/ImageForm.h \
     interface/project/ImagesForm.h \
@@ -100,7 +99,8 @@ HEADERS += control/EFotoManager.h \
     interface/view/mmv/projectheaderview.h \
     interface/view/mmv/sensorview.h \
     interface/view/mmv/terrainview.h \
-    interface/view/AboutForm.h
+    interface/view/AboutForm.h \
+    interface/project/FlightForm.h
 FORMS += interface/io/IOForm.ui \
     interface/project/FormProject.ui \
     interface/project/HeaderLayout.ui \
@@ -110,7 +110,8 @@ FORMS += interface/io/IOForm.ui \
     interface/project/TerrainLayout.ui \
     interface/sr/SRForm.ui \
     interface/view/AboutLayout.ui \
-    interface/project/SensorLayout.ui
+    interface/project/SensorLayout.ui \
+    interface/project/FlightLayout.ui
 SOURCES += control/EFotoManager.cpp \
     control/IOManager.cpp \
     control/ProjectManager.cpp \
@@ -150,7 +151,6 @@ SOURCES += control/EFotoManager.cpp \
     interface/io/IOUserInterface.cpp \
     interface/io/IOUserInterface_Qt.cpp \
     interface/project/ControlButtons.cpp \
-    interface/project/FlightForm.cpp \
     interface/project/HeaderForm.cpp \
     interface/project/ImageForm.cpp \
     interface/project/ImagesForm.cpp \
@@ -179,7 +179,8 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/mmv/projectheaderview.cpp \
     interface/view/mmv/sensorview.cpp \
     interface/view/mmv/terrainview.cpp \
-    interface/view/AboutForm.cpp
+    interface/view/AboutForm.cpp \
+    interface/project/FlightForm.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \
