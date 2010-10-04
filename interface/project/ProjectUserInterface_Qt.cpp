@@ -40,6 +40,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 	this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 	this->connect(pointForm.lineEditDescription, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
+	this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT(validatingPoint()) );
 
 	// Bloqueia alguns dos  dipositivos
 	this->showMaximized();
@@ -1013,15 +1014,17 @@ void ProjectUserInterface_Qt::newPoint()
 	//updateView(new QLabel("Futuro view de point"));
 	string text = "";
 
-	text += "<point key=\"\" type=\"\">\n";
+	currentItemId = manager->getFreePointId();
+	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"\">\n";
 	text += "\t<gcp_id></gcp_id>\n";
 	text += "\t<description></description>\n";
 	text += "\t<spatialCoordinates uom=\"#m\">\n";
 	text += "\t\t<gml:pos></gml:pos>\n";
-	text += "\t\t<sigma></sigma>\n";
+	text += "\t\t<sigma>Not Available</sigma>\n";
 	text += "\t</spatialCoordinates>\n";
 	text += "</point>";
 
+	pointForm.setImageList(manager->listImageKeys(), manager->listImages());
 	pointForm.fillvalues(text);
 	centerArea.setCurrentIndex(7);
 	currentForm = &pointForm;
@@ -1337,9 +1340,8 @@ void ProjectUserInterface_Qt::validatingImage()
 
 void ProjectUserInterface_Qt::validatingPoint()
 {
-	if ((pointForm.lineEdit_gcp_id->text() == "") || (pointForm.lineEditDescription->text() == "")){
+	if ((pointForm.lineEdit_gcp_id->text() == "") || (pointForm.lineEditDescription->text() == "") || (!pointForm.sigmaController->getValidate()))
 		controlButtons.saveButton->setEnabled(false);
-	}
 	else
 		controlButtons.saveButton->setEnabled(true);
 }
