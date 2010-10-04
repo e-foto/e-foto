@@ -85,6 +85,7 @@ public:
     //
     bool isIdentity();
     bool isTriang();
+	bool isZeroes();
 
     //Overloaded operators
     //

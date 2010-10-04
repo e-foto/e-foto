@@ -3,7 +3,13 @@
 
 PointForm::PointForm(QWidget *parent) : AbstractForm(parent)
 {
-    setupUi(this);
+	setupUi(this);
+	sigmaController = new SigmaFormController("Not Available",3);
+	sigmaSelector->setSigmaFormController(sigmaController);
+	sigmaSelector->blockCovarianceMatrixOption();
+	sigmaContent->setSigmaFormController(sigmaController);
+	sigmaDialogButton->setSigmaFormController(sigmaController);
+	sigmaDialogButton->setVisible(false);
 	imageMeasurementsTable->setColumnWidth(1, 20);
 	imageMeasurementsTable->setColumnWidth(2, 170);
 	imageMeasurementsTable->setColumnWidth(3, 65);
@@ -36,7 +42,7 @@ void PointForm::fillvalues(string values)
 	eDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	nDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	hDoubleSpinBox->setSuffix(" "+suffix.right(1));
-    lineEditSigma->setText(QString::fromUtf8(ede.elementByTagName("sigma").toString().c_str()));
+	sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
 	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));
 
 	imageMeasurementsTable->setRowCount(imageKeyList.size());
@@ -76,10 +82,10 @@ string PointForm::getvalues()
 	auxStream << "<point key=\"" << key << "\" type=\"" << getType() <<"\">\n";
 	auxStream << "\t<gcp_id>" << lineEdit_gcp_id->text().toUtf8().data() << "</gcp_id>\n";
     auxStream << "\t<description>" << lineEditDescription->text().toUtf8().data() << "</description>\n";
-	auxStream << "\t<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().toStdString().c_str() << "\">\n";
+	auxStream << "\t<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().right(1).toStdString().c_str() << "\">\n";
 	auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox->value()) << " " << doubleToString(nDoubleSpinBox->value()) << " " << doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
-    auxStream << "\t<sigma>" << lineEditSigma->text().toUtf8().data() << "</sigma>\n";
-	auxStream << "\t</spatialCoordinates>";
+	auxStream << sigmaController->getValues();
+	auxStream << "\t</spatialCoordinates>\n";
 	auxStream << "\t<imagesMeasurements>\n";
 
 	for (unsigned int i = 0; i < imageKeyList.size(); i++)
@@ -115,7 +121,7 @@ void PointForm::setReadOnly (bool state)
 	eDoubleSpinBox->setReadOnly(state);
 	nDoubleSpinBox->setReadOnly(state);
 	hDoubleSpinBox->setReadOnly(state);
-    lineEditSigma->setReadOnly(state);
+	sigmaController->setReadOnly(state);
 	//lineEditImageCoordinates1->setReadOnly(state);
     //lineEditImageCoordinates2->setReadOnly(state);
 }
