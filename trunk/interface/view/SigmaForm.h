@@ -46,6 +46,7 @@ public:
 	string getMode();
 	void fillValues(string xml);
 	string getValues();
+	bool getValidate();
 
 public slots:
 	virtual void toMode(QString newMode);
@@ -54,11 +55,13 @@ public slots:
 	virtual void toMatrix();
 	virtual void showMatrixEditor();
 	virtual void setReadOnly(bool);
+	virtual void changeValidate(QString);
 
 signals:
 	void changeMatrixButtonVisibility(bool);
 	void changeToReadOnly(bool);
 	void changeToMode(QString);
+	void validateChanged();
 };
 
 class SigmaFormTypeSelector: public QComboBox

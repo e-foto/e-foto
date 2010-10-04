@@ -95,10 +95,9 @@ string SigmaFormController::getMode()
 
 void SigmaFormController::fillValues(string xml)
 {
-	qDebug("fill = %s",xml.c_str());
 	EDomElement root(xml);
 	values = Matrix();
-	if (root.toString() == "Not Available" || root.toString() == "Error")
+	if (root.elementByTagName("mml:matrix").getContent() == "")
 	{
 		changeToMode("Not Available");
 		return;
@@ -160,6 +159,27 @@ string SigmaFormController::getValues()
 	return "<sigma>Error</sigma>\n";
 }
 
+bool SigmaFormController::getValidate()
+{
+	if (mode == "Not Available")
+	{
+		return true;
+	}
+	else if (mode == "Standard Deviations")
+	{
+		for (unsigned int i = 0; i < dimension; i++)
+		{
+			if (edits.at(i)->text().isEmpty())
+				return false;
+		}
+	}
+	else if (mode == "Covariance Matrix")
+	{
+		return true;
+	}
+	return true;
+}
+
 void SigmaFormController::toMode(QString newMode)
 {
 	if (newMode == "Not Available")
@@ -205,6 +225,7 @@ void SigmaFormController::toNotAvailable()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
 			QLineEdit* newEdit = new QLineEdit("Not Available");
+			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			newEdit->setEnabled(false);
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -247,6 +268,7 @@ void SigmaFormController::toStDev()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
 			QLineEdit* newEdit = new QLineEdit();
+			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
@@ -289,6 +311,7 @@ void SigmaFormController::toMatrix()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("Var");
 			QLineEdit* newEdit = new QLineEdit();
+			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
@@ -318,6 +341,11 @@ void SigmaFormController::setReadOnly(bool b)
 		edits.at(i)->setReadOnly(b);
 	}
 	emit changeToReadOnly(b);
+}
+
+void SigmaFormController::changeValidate(QString)
+{
+	emit validateChanged();
 }
 
 SigmaFormTypeSelector::SigmaFormTypeSelector(QWidget * parent) : QComboBox(parent)
