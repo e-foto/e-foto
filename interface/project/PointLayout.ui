@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
@@ -77,94 +77,119 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Spatial Coordinates</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Spatial Coordinates</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SigmaFormTypeSelector" name="sigmaSelector"/>
+     </item>
+     <item>
+      <widget class="SigmaFormDialogButton" name="sigmaDialogButton">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>E</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>E</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="eDoubleSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
+           <property name="minimum">
+            <double>-999999000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>N</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>N</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="nDoubleSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
+           <property name="minimum">
+            <double>-999999999.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>999999999.990000009536743</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>H</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Sigma</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>H</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="hDoubleSpinBox">
+           <property name="accelerated">
+            <bool>true</bool>
+           </property>
+           <property name="minimum">
+            <double>-999999999.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>999999999.990000009536743</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QDoubleSpinBox" name="eDoubleSpinBox">
-         <property name="accelerated">
-          <bool>true</bool>
-         </property>
-         <property name="minimum">
-          <double>-999999000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>999999999.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="nDoubleSpinBox">
-         <property name="accelerated">
-          <bool>true</bool>
-         </property>
-         <property name="minimum">
-          <double>-999999999.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>999999999.990000009536743</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="hDoubleSpinBox">
-         <property name="accelerated">
-          <bool>true</bool>
-         </property>
-         <property name="minimum">
-          <double>-999999999.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>999999999.990000009536743</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEditSigma"/>
-       </item>
-      </layout>
+      <widget class="SigmaFormContent" name="sigmaContent">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -221,6 +246,24 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SigmaFormTypeSelector</class>
+   <extends>QComboBox</extends>
+   <header>SigmaForm.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SigmaFormDialogButton</class>
+   <extends>QPushButton</extends>
+   <header>SigmaForm.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SigmaFormContent</class>
+   <extends>QFrame</extends>
+   <header>SigmaForm.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -437,15 +437,30 @@ bool Matrix::isIdentity()
  */
 bool Matrix::isTriang()
 {
-    for (unsigned int j = 1; j <= ncols; j++)
-    {
-        if ((1-get((unsigned int)j,(unsigned int)j) > 0.000001 || 1-get((unsigned int)j,(unsigned int)j) < -0.000001))
-            return false;
-        for (unsigned int i = (j+1); i <= nrows; i++)
-            if (get((unsigned int)i,(unsigned int)j) > 0.000001 || get((unsigned int)i,(unsigned int)j) < -0.000001)
-                return false;
-    }
-    return true;
+	for (unsigned int j = 1; j <= ncols; j++)
+	{
+		if ((1-get((unsigned int)j,(unsigned int)j) > 0.000001 || 1-get((unsigned int)j,(unsigned int)j) < -0.000001))
+			return false;
+		for (unsigned int i = (j+1); i <= nrows; i++)
+			if (get((unsigned int)i,(unsigned int)j) > 0.000001 || get((unsigned int)i,(unsigned int)j) < -0.000001)
+				return false;
+	}
+	return true;
+}
+
+/**
+ * This member function checks if the matrix is zeroes composed.
+ * @return boolean flag: 1 for zeroes composed and 0 for non zeroes composed
+ */
+bool Matrix::isZeroes()
+{
+	for (unsigned int j = 1; j <= ncols; j++)
+	{
+		for (unsigned int i = 1; i <= nrows; i++)
+			if (get((unsigned int)i,(unsigned int)j) > 0.000001 || get((unsigned int)i,(unsigned int)j) < -0.000001)
+				return false;
+	}
+	return true;
 }
 
 
