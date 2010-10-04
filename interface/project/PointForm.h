@@ -3,6 +3,7 @@
 
 #include "ui_PointLayout.h"
 #include "AbstractForm.h"
+#include "SigmaForm.h"
 #include "EDom.h"
 
 class PointForm : public AbstractForm , public Ui::Ponto
@@ -24,6 +25,7 @@ private:
   deque<int> imageKeyList;
   void setType(string type);
   string getType();
+  SigmaFormController* sigmaController;
 };
 
 #endif // POINTFORM_H
