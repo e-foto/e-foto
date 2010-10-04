@@ -18,6 +18,7 @@ public:
     string getvalues();
     void setReadOnly(bool state);
 	bool isForm(string formName);
+	SigmaFormController* sigmaController;
 
 private:
   string key;
@@ -25,7 +26,6 @@ private:
   deque<int> imageKeyList;
   void setType(string type);
   string getType();
-  SigmaFormController* sigmaController;
 };
 
 #endif // POINTFORM_H

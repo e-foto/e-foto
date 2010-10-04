@@ -14,6 +14,7 @@ PointForm::PointForm(QWidget *parent) : AbstractForm(parent)
 	imageMeasurementsTable->setColumnWidth(2, 170);
 	imageMeasurementsTable->setColumnWidth(3, 65);
 	imageMeasurementsTable->setColumnWidth(4, 65);
+	imageMeasurementsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 void PointForm::setImageList(deque<int> myKeyList, deque<string> myNameList)
@@ -103,11 +104,6 @@ string PointForm::getvalues()
 			auxStream << "</imageCoordinates>\n";
 		}
 	}
-
-	// Aqui dever´a entrar um loop para alimentar cada uma das image coordinates
-	//auxStream << "\t<imageCoordinates>" << lineEditImageCoordinates1->text().toUtf8().data() << "</imageCoordinates>\n";
-    //auxStream << "\t<imageCoordinates>" << lineEditImageCoordinates2->text().toUtf8().data() << "</imageCoordinates>\n";
-
 	auxStream << "\t</imagesMeasurements>\n";
 	auxStream << "</point>";
 	return auxStream.str();
@@ -122,8 +118,7 @@ void PointForm::setReadOnly (bool state)
 	nDoubleSpinBox->setReadOnly(state);
 	hDoubleSpinBox->setReadOnly(state);
 	sigmaController->setReadOnly(state);
-	//lineEditImageCoordinates1->setReadOnly(state);
-    //lineEditImageCoordinates2->setReadOnly(state);
+	imageMeasurementsTable->setDisabled(state);
 }
 
 void PointForm::setType(string type)
