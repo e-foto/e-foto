@@ -36,7 +36,7 @@ ETreeElement::ETreeElement(string data)
     else if (xmlData.tagName() == "point")
     {
         id = stringToInt(xmlData.attribute("key"));
-        description = xmlData.elementByTagName("description").toString();
+		description = xmlData.elementByTagName("gcp_id").toString();
     }
 }
 

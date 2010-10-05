@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>405</height>
+    <width>411</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>gcp ID:</string>
+          <string>gcp ID</string>
          </property>
         </widget>
        </item>
@@ -35,7 +35,7 @@
        <item>
         <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>Type:</string>
+          <string>Type</string>
          </property>
         </widget>
        </item>
@@ -67,12 +67,19 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Description:</string>
+        <string>Description</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditDescription"/>
+      <widget class="QTextEdit" name="textEditDescription">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -98,11 +105,11 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
          <item>
           <widget class="QLabel" name="label_12">
            <property name="text">
@@ -112,14 +119,23 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="eDoubleSpinBox">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
            <property name="accelerated">
             <bool>true</bool>
            </property>
+           <property name="suffix">
+            <string/>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
            <property name="minimum">
-            <double>-999999000.000000000000000</double>
+            <double>-999999.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>999999999.000000000000000</double>
+            <double>999999.000000000000000</double>
            </property>
            <property name="value">
             <double>0.000000000000000</double>
@@ -129,9 +145,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1">
          <item>
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="label_4">
            <property name="text">
             <string>N</string>
            </property>
@@ -139,21 +155,30 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="nDoubleSpinBox">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
            <property name="accelerated">
             <bool>true</bool>
            </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
            <property name="minimum">
-            <double>-999999999.000000000000000</double>
+            <double>-9999999.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>999999999.990000009536743</double>
+            <double>9999999.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1">
          <item>
           <widget class="QLabel" name="label_10">
            <property name="text">
@@ -163,14 +188,20 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="hDoubleSpinBox">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
            <property name="accelerated">
             <bool>true</bool>
            </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
            <property name="minimum">
-            <double>-999999999.000000000000000</double>
+            <double>-9999.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>999999999.990000009536743</double>
+            <double>9999.000000000000000</double>
            </property>
           </widget>
          </item>

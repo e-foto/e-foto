@@ -162,8 +162,6 @@ PointsForm::PointsForm(QWidget *parent,string XmlString) : AbstractForm(parent)
 
 void PointsForm::fillvalues(string values)
 {
-
-    cout <<"***************  chamou PointsForm::fillvalues(string values)"<<endl;
     vector<string> StrVector;
     StrVector.push_back(values);
     StrVector.push_back("UTM");
@@ -171,8 +169,6 @@ void PointsForm::fillvalues(string values)
     // gambiarra!!! No teste ficava ok, mas como aqui primeiro é lincado e depois é criado o view, as colunas voltam a aparecer.
     ppointsview->hideColumns();
     MyProxyModel->setSourceModel( ppointsmodel);
-
-    //MyProxyModel->selectRow();//;,SLOT(selectRow(const QModelIndex &))
 }
 
 string PointsForm::getvalues()

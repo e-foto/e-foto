@@ -4,13 +4,27 @@
 ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 {
     setupUi(this);
+	gnssSigmaController = new SigmaFormController("Not Available",3);
+	gnssSigmaSelector->setSigmaFormController(gnssSigmaController);
+	gnssSigmaSelector->blockCovarianceMatrixOption();
+	gnssSigmaContent->setSigmaFormController(gnssSigmaController);
+	gnssSigmaDialogButton->setSigmaFormController(gnssSigmaController);
+	gnssSigmaDialogButton->setVisible(false);
+	insSigmaController = new SigmaFormController("Not Available",3);
+	insSigmaSelector->setSigmaFormController(insSigmaController);
+	insSigmaSelector->blockCovarianceMatrixOption();
+	insSigmaContent->setSigmaFormController(insSigmaController);
+	insSigmaDialogButton->setSigmaFormController(insSigmaController);
+	insSigmaDialogButton->setVisible(false);
+	metadataGroup->setVisible(false);
 
-    connect(fileImageButton , SIGNAL ( clicked()  ) ,
-			this    ,  SLOT  ( loadImageFile()  )
-            );
+	connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
+	connect(fileNameLine,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
+
+
 	//Aqui o campo de Flight_ID esta sendo escondido
 	label_6->setVisible(false);
-	flightIDSpin->setVisible(false);
+	flightIdComboBox->setVisible(false);
 }
 
 void ImageForm::fillvalues(string values)
@@ -58,11 +72,16 @@ void ImageForm::fillvalues(string values)
 
 	if (ede.elementByTagName("GNSS").getContent() == "")
 	{
-		gnssGroup->setChecked(false);
+		eDoubleSpinBox_2->setValue(0);
+		nDoubleSpinBox_2->setValue(0);
+		hDoubleSpinBox_2->setValue(0);
+		eDoubleSpinBox_2->setSuffix(" m");
+		nDoubleSpinBox_2->setSuffix(" m");
+		hDoubleSpinBox_2->setSuffix(" m");
+		activeGNSS = false;
 	}
 	else
 	{
-		gnssGroup->setChecked(true);
 		deque<double> aux = ede.elementByTagName("GNSS").elementByTagName("gml:pos").toGmlPos();
 		if (aux.size() == 3)
 		{
@@ -74,20 +93,31 @@ void ImageForm::fillvalues(string values)
 		eDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
 		nDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
 		hDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
-		lineEditSigma_2->setText( QString::fromUtf8(ede.elementByTagName("sigma").toString().c_str()));
+		gnssSigmaController->fillValues(ede.elementByTagName("GNSS").elementByTagName("sigma").getContent());
+		activeGNSS = true;
 	}
 
 	if (ede.elementByTagName("INS").getContent() == "")
 	{
-		insGroup->setChecked(false);
+		omegaDoubleSpinBox->setValue(0);
+		phiDoubleSpinBox->setValue(0);
+		kappaDoubleSpinBox->setValue(0);
+		omegaDoubleSpinBox->setSuffix(" rad");
+		phiDoubleSpinBox->setSuffix(" rad");
+		kappaDoubleSpinBox->setSuffix(" rad");
+		activeINS = false;
 	}
 	else
 	{
-		insGroup->setChecked(true);
-		omegaLineEdit->setText(QString::fromUtf8(ede.elementByTagName("INS").elementByTagName("omega").toString().c_str()) );
-		phiLineEdit->setText(QString::fromUtf8(ede.elementByTagName("INS").elementByTagName("phi").toString().c_str()) );
-		kappaLineEdit->setText(QString::fromUtf8(ede.elementByTagName("INS").elementByTagName("kappa").toString().c_str()) );
-		lineEditSigma_3->setText( QString::fromUtf8(ede.elementByTagName("INS").elementByTagName("sigma").toString().c_str()));
+		omegaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("omega").toDouble());
+		phiDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("phi").toDouble());
+		kappaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("kappa").toDouble());
+		QString suffix(ede.elementByTagName("INS").attribute("uom").c_str());
+		omegaDoubleSpinBox->setSuffix(" "+suffix.right(3));
+		phiDoubleSpinBox->setSuffix(" "+suffix.right(3));
+		kappaDoubleSpinBox->setSuffix(" "+suffix.right(3));
+		insSigmaController->fillValues(ede.elementByTagName("INS").elementByTagName("sigma").getContent());
+		activeINS = true;
 	}
 }
 
@@ -108,16 +138,16 @@ string ImageForm::getvalues()
 	{
 		auxStream << "\t<GNSS uom=\"#m\">\n";
 		auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
-		auxStream << "\t\t<sigma>" << lineEditSigma_2->text().toUtf8().data() <<"</sigma>\n";
+		auxStream << gnssSigmaController->getValues();
 		auxStream << "\t</GNSS>\n";
 	}
 	if (insGroup->isChecked())
 	{
-		auxStream << "\t<INS uom=\"#m\">\n";
-		auxStream << "\t\t<omega>" << omegaLineEdit->text().toUtf8().data() <<"</sigma>\n";
-		auxStream << "\t\t<phi>" << phiLineEdit->text().toUtf8().data() <<"</sigma>\n";
-		auxStream << "\t\t<kappa>" << kappaLineEdit->text().toUtf8().data() <<"</sigma>\n";
-		auxStream << "\t\t<sigma>" << lineEditSigma_3->text().toUtf8().data() <<"</sigma>\n";
+		auxStream << "\t<INS uom=\"#rad\">\n";
+		auxStream << "\t\t<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
+		auxStream << "\t\t<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
+		auxStream << "\t\t<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
+		auxStream << insSigmaController->getValues();
 		auxStream << "\t</INS>\n";
 	}
     auxStream << "</image>\n";
@@ -128,16 +158,28 @@ string ImageForm::getvalues()
 void ImageForm:: setReadOnly(bool state)
 {
     imageIDLine->setReadOnly(state);
-
-    flightIDSpin->setReadOnly(state);
+	flightIdComboBox->setDisabled(state);
     resolutionSpin->setReadOnly(state);
-
     fileImageButton->setDisabled(state);
-    gnssGroup->setDisabled(state);
-    insGroup->setDisabled(state);
-
-
+	gnssSigmaController->setReadOnly(state);
+	insSigmaController->setReadOnly(state);
+	gnssGroup->setCheckable(!state);
+	insGroup->setCheckable(!state);
+	gnssUseComboBox->setDisabled(state);
+	insUseComboBox->setDisabled(state);
+	eDoubleSpinBox_2->setReadOnly(state);
+	nDoubleSpinBox_2->setReadOnly(state);
+	hDoubleSpinBox_2->setReadOnly(state);
+	omegaDoubleSpinBox->setReadOnly(state);
+	phiDoubleSpinBox->setReadOnly(state);
+	kappaDoubleSpinBox->setReadOnly(state);
+	if (!state)
+	{
+		gnssGroup->setChecked(activeGNSS);
+		insGroup->setChecked(activeINS);
+	}
 }
+
 QString ImageForm::loadImageFile()
 {
 	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", ".", "*.tif *.png *.bmp *.jpg");
@@ -157,10 +199,18 @@ QString ImageForm::loadImageFile()
                QImage * imageData=new QImage(fileImage);
                heightLine->setText(QString::number(imageData->height())+" px");
                widthLine->setText(QString::number(imageData->width())+" px");
-               return fileImage;
+			   return fileImage;
 
             }else
                return fileNameLine->text();
+}
+
+void ImageForm::metadataVisibleChanged(QString newText)
+{
+	if (newText.isEmpty())
+		metadataGroup->setVisible(false);
+	else
+		metadataGroup->setVisible(true);
 }
 
 string ImageForm :: getFileImageName()
