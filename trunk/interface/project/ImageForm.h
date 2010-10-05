@@ -3,6 +3,7 @@
 
 #include "ui_ImageLayout.h"
 #include "AbstractForm.h"
+#include "SigmaForm.h"
 #include "EDom.h"
 
 class ImageForm : public AbstractForm, public Ui::ImageView
@@ -18,13 +19,17 @@ public:
     string getFileImagePath();
     string getFileImageName();
 	bool isForm(string formName);
+	SigmaFormController* gnssSigmaController;
+	SigmaFormController* insSigmaController;
 
 private slots:
     QString loadImageFile();
+	void metadataVisibleChanged(QString);
 
 private:
   string tagXml;
   QString fileImagePath, fileImageName;
+  bool activeGNSS, activeINS;
 
 };
 
