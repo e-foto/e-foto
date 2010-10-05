@@ -39,8 +39,9 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
 	this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 	this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
-	this->connect(pointForm.lineEditDescription, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 	this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT(validatingPoint()) );
+	this->connect(imageForm.gnssSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingImage()) );
+	this->connect(imageForm.insSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingImage()) );
 
 	// Bloqueia alguns dos  dipositivos
 	this->showMaximized();
@@ -1000,8 +1001,8 @@ void ProjectUserInterface_Qt::newImage()
 	imageForm.fillvalues(text);
 	centerArea.setCurrentIndex(5);
 	currentForm = &imageForm;
-	centerArea.setStyleSheet(this->styleSheet());
 	currentForm->setReadOnly(false);
+	centerArea.setStyleSheet(this->styleSheet());
 	validatingImage();
 
 	debuggerTextEdit->clear();
@@ -1028,8 +1029,8 @@ void ProjectUserInterface_Qt::newPoint()
 	pointForm.fillvalues(text);
 	centerArea.setCurrentIndex(7);
 	currentForm = &pointForm;
-	centerArea.setStyleSheet(this->styleSheet());
 	currentForm->setReadOnly(false);
+	centerArea.setStyleSheet(this->styleSheet());
 	validatingPoint();
 
 	debuggerTextEdit->clear();
@@ -1331,7 +1332,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 void ProjectUserInterface_Qt::validatingImage()
 {
-	if ((imageForm.imageIDLine->text() == "") || (imageForm.fileNameLine->text() == "")){
+	if ((imageForm.imageIDLine->text() == "") || (imageForm.fileNameLine->text() == "") || (!imageForm.gnssSigmaController->getValidate()) || (!imageForm.insSigmaController->getValidate())){
 		controlButtons.saveButton->setEnabled(false);
 	}
 	else
@@ -1340,7 +1341,7 @@ void ProjectUserInterface_Qt::validatingImage()
 
 void ProjectUserInterface_Qt::validatingPoint()
 {
-	if ((pointForm.lineEdit_gcp_id->text() == "") || (pointForm.lineEditDescription->text() == "") || (!pointForm.sigmaController->getValidate()))
+	if ((pointForm.lineEdit_gcp_id->text() == "") || (!pointForm.sigmaController->getValidate()))
 		controlButtons.saveButton->setEnabled(false);
 	else
 		controlButtons.saveButton->setEnabled(true);
