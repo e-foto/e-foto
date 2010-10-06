@@ -17,6 +17,9 @@ public:
 	void setReadOnly(bool state);
 	bool isForm(string formName);
 
+private slots:
+	void metadataVisibleChanged(QString);
+
 };
 
 #endif // HEADERFORM_H

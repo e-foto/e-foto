@@ -8,7 +8,9 @@ TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
             );
     connect(longDegreeSpin,SIGNAL(editingFinished() ),
                 this,       SLOT( validatorLong()   )
-            );
+			);
+	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 }
 
 void TerrainForm::fillvalues(string values)
@@ -137,6 +139,14 @@ void TerrainForm::validatorLong()
         longMinutesSpin->setMaximum(59);
         longSecondSpin->setMaximum(59.9999);
     }
+}
+
+void TerrainForm::validatorAlt(double)
+{
+	maxAltSpinBox->setMinimum(minAltSpinBox->value());
+	meanAltSpinBox->setMinimum(minAltSpinBox->value());
+	meanAltSpinBox->setMaximum(maxAltSpinBox->value());
+	minAltSpinBox->setMaximum(maxAltSpinBox->value());
 }
 
 bool TerrainForm::isForm(string formName)
