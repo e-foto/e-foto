@@ -4,6 +4,7 @@ SigmaFormController::SigmaFormController()
 {
 	init();
 	dimension = 1;
+	validator = new QDoubleValidator(this);
 	this->toNotAvailable();
 }
 
@@ -11,6 +12,7 @@ SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension
 {
 	init();
 	dimension = myDimension;
+	validator = new QDoubleValidator(this);
 	if (myMode == "Not Available")
 	{
 		this->toNotAvailable();
@@ -29,13 +31,16 @@ SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension
 SigmaFormController::SigmaFormController(Matrix myValues)
 {
 	init();
+	validator = new QDoubleValidator(this);
 	if (myValues.getCols() == 1) //Standard deviations
 	{
 		dimension = myValues.getRows();
+		this->toStDev();
 	}
 	else if (myValues.getCols() == myValues.getRows()) //Variance and covariance matrix
 	{
 		dimension = myValues.getRows();
+		this->toMatrix();
 	}
 }
 
@@ -133,7 +138,7 @@ string SigmaFormController::getValues()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			if (!edits.at(i)->text().isEmpty())
-				result.set(1+i,1,edits.at(i)->text().toDouble());
+				result.set(1+i,1,stringToDouble(edits.at(i)->text().toStdString()));
 			else
 				result.set(1+i,1,0);
 		}
@@ -208,8 +213,10 @@ void SigmaFormController::toNotAvailable()
 			myLayout->setDirection(QBoxLayout::TopToBottom);
 		for (unsigned int i = 0; i < dimension; i++)
 		{
+			QDoubleValidator *validator = new QDoubleValidator(this);
 			QLabel* newLabel = labels.at(i);
 			QLineEdit* newEdit = edits.at(i);
+			newEdit->setValidator(0);
 			newLabel->setText("StDev");
 			newEdit->setText("Not Available");
 			newEdit->setEnabled(false);
@@ -253,6 +260,7 @@ void SigmaFormController::toStDev()
 		{
 			QLabel* newLabel = labels.at(i);
 			QLineEdit* newEdit = edits.at(i);
+			newEdit->setValidator(validator);
 			newLabel->setText("StDev");
 			newEdit->setText("");
 			newEdit->setEnabled(true);
@@ -268,6 +276,7 @@ void SigmaFormController::toStDev()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
 			QLineEdit* newEdit = new QLineEdit();
+			newEdit->setValidator(validator);
 			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -293,10 +302,10 @@ void SigmaFormController::toMatrix()
 			myLayout->setDirection(QBoxLayout::TopToBottom);
 		for (unsigned int i = 0; i < dimension; i++)
 		{
-			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = labels.at(i);
 			QLineEdit* newEdit = edits.at(i);
 			newLabel->setText("Var");
+			newEdit->setValidator(validator);
 			newEdit->setText("");
 			newEdit->setEnabled(true);
 		}
@@ -311,6 +320,7 @@ void SigmaFormController::toMatrix()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("Var");
 			QLineEdit* newEdit = new QLineEdit();
+			newEdit->setValidator(validator);
 			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);

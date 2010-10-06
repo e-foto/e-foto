@@ -23,6 +23,7 @@ protected:
 	QWidget* contentWidget;
 	QList<QLabel*> labels;
 	QList<QLineEdit*> edits;
+	QDoubleValidator *validator;
 	unsigned int dimension;
 	string direction;
 	string mode;

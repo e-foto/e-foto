@@ -20,6 +20,7 @@ public:
     public slots:
         void validatorLat();
         void validatorLong();
+		void validatorAlt(double);
 };
 
 #endif // TERRAINFORM_H

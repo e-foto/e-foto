@@ -1,49 +1,10 @@
-/***************************************************************************
- *   E-Foto Project: Digital Photogrammetric Workstation                   *
- *   Rio de Janeiro State University                                       *
- *   Program of Post-Graduation in Geomatics                               *
- *                                                                         *
- *   Copyright (C) 2010 by E-Foto Project                                  *
- *                                                                         *
- *   Developers:           Guilherme Lucio Abelha Mota                     *
- *                         Bruno Cardozo Cotrim da Costa                   *
- *                                                                         *
- *   contact:  guimota at ime.uerj.br                                      *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
-
 #include "SensorForm.h"
 #include <QtGui>
 
-SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)// , string XmlString)
+SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 {
     setupUi(this);
 
-/*    QVBoxLayout* MyLayout = new QVBoxLayout(this);
-    psensorview = new SensorView(this);
-    psensorview->fillvalues(XmlString);
-    MyLayout->addWidget(psensorview);
-    setLayout(MyLayout);*/
-
-    /* se detector for film(index==0)   : fiductialMarksGroup visible(true) e XaGroup visible(false)
-       se detector for ccd(index==1)    : fiductialMarksGroup visible(false) e XaGroup visible(true)
-       se fiductialmarks for 4(index==0): fiductial0a3GroupBox visible(true) e fiductial4a7GroupBox visible(false)
-       se fiductialmarks for 8(index==1): fiductial0a3GroupBox visible(true) e fiductial4a7GroupBox visible(true)
-    */
     QDoubleValidator *validator = new QDoubleValidator(this);
 
     radialK0LineEdit->setValidator(validator);
@@ -140,46 +101,70 @@ void SensorForm::fillvalues(string values)
     showLast4Fiductial(false);
 
     EDomElement fid =  ede.elementByTagAtt("fiductialMark","key","1");
-    fiductialXi0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-    fiductialEta0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	if (fid.elementByTagName("gml:pos").toString() != "")
+	{
+		fiductialXi0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+		fiductialEta0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	}
     fiductialSigma0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
     fid =  ede.elementByTagAtt("fiductialMark","key","2");
-    fiductialXi1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-    fiductialEta1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-    fiductialSigma1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+	if (fid.elementByTagName("gml:pos").toString() != "")
+	{
+		fiductialXi1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+		fiductialEta1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	}
+	fiductialSigma1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
     fid =  ede.elementByTagAtt("fiductialMark","key","3");
-    fiductialXi2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-    fiductialEta2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-    fiductialSigma2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+	if (fid.elementByTagName("gml:pos").toString() != "")
+	{
+		fiductialXi2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+		fiductialEta2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	}
+	fiductialSigma2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
     fid =  ede.elementByTagAtt("fiductialMark","key","4");
-    fiductialXi3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-    fiductialEta3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-    fiductialSigma3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+	if (fid.elementByTagName("gml:pos").toString() != "")
+	{
+		fiductialXi3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+		fiductialEta3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	}
+	fiductialSigma3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
     if (fiductialMarksCombo->currentIndex()==1){
         fiductialGroup(fiductialMarksCombo->currentIndex());
         fid =  ede.elementByTagAtt("fiductialMark","key","5");
-        fiductialXi4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-        fiductialEta4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-        fiductialSigma4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+		if (fid.elementByTagName("gml:pos").toString() != "")
+		{
+			fiductialXi4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+		}
+		fiductialSigma4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
         fid =  ede.elementByTagAtt("fiductialMark","key","6");
-        fiductialXi5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-        fiductialEta5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-        fiductialSigma5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+		if (fid.elementByTagName("gml:pos").toString() != "")
+		{
+			fiductialXi5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+		}
+		fiductialSigma5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
         fid =  ede.elementByTagAtt("fiductialMark","key","7");
-        fiductialXi6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-        fiductialEta6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-        fiductialSigma6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+		if (fid.elementByTagName("gml:pos").toString() != "")
+		{
+			fiductialXi6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+		}
+		fiductialSigma6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
         fid =  ede.elementByTagAtt("fiductialMark","key","8");
-        fiductialXi7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-        fiductialEta7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
-        fiductialSigma7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
+		if (fid.elementByTagName("gml:pos").toString() != "")
+		{
+			fiductialXi7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+		}
+		fiductialSigma7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 
     }
 }

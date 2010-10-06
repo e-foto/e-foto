@@ -11,53 +11,50 @@ void FlightForm::fillvalues(string values)
         EDomElement ede(values);
         bool ok;
 
-        flightKeySpinBox->setValue(QString::fromUtf8(ede.attribute("key").c_str()).toDouble(&ok));
-        sensorKeySpinBox->setValue(QString::fromUtf8(ede.attribute("sensor_key").c_str()).toDouble(&ok));
+        string edefrac;
+        int index = (values.find("</mml:mn>")) + 9;
+        edefrac = values.substr(index);
+        EDomElement edomfrac(edefrac);
+
         flightIDLineEdit->setText(QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str()));
-        flightHeightSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
-        horizontalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").toString().c_str()).toDouble(&ok));
+		flightHeightSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
+		horizontalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").toString().c_str()).toDouble(&ok));
         verticalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("transversal","uom","#%").toString().c_str()).toDouble(&ok));
         descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
         producerNameLineEdit->setText(QString::fromUtf8(ede.elementByTagName("producerName").toString().c_str()));
         flightDateEdit->setDate(QDate::fromString(ede.elementByTagName("execution").toString().c_str(),Qt::ISODate));
-        //Descobrir como se pega o denominador com o EDom
-        nominalScaleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("nominalScale").elementByTagName("mml:frac").elementByTagName("mml:mn").toString().c_str()).toInt(&ok,10));
-
+        nominalScaleSpinBox->setValue(QString::fromUtf8(edomfrac.elementByTagName("mml:mn").toString().c_str()).toInt(&ok,10));
 }
 
 string FlightForm::getvalues()
 {
-    string xmlString;
     stringstream auxStream;
+    string xmlString;
 
-    auxStream << "<flights>\n";
-    auxStream << "\t<flight key=\"" << (flightKeySpinBox->value()) <<"\" sensor_key=\""<<(sensorKeySpinBox->value())<<"\">\n";
-    auxStream << "\t\t<flightId>"  << (flightIDLineEdit->text().toUtf8().data()) <<"</flightId>\n";
-    auxStream << "\t\t<description>"  << (descriptionTextEdit->toPlainText().toUtf8().data()) <<"</description>\n";
-    auxStream << "\t\t<execution>"  << (flightDateEdit->date().toString(Qt::ISODate).toUtf8().data()) <<"</execution>\n";
-    auxStream << "\t\t<producerName>"  << (producerNameLineEdit->text().toUtf8().data()) <<"</producerName>\n";
-    auxStream << "\t\t<nominalScale>\n";
-    auxStream << "\t\t\t<mml:frac>\n";
-    auxStream << "\t\t\t\t<mml:mn>1</mml:mn>\n";
-    auxStream << "\t\t\t\t<mml:mn>" << nominalScaleSpinBox->value()<<"</mml:mn>\n";
-    auxStream << "\t\t\t</mml:frac>\n";
-    auxStream << "\t\t</nominalScale>\n";
-    auxStream << "\t\t<flightHeight uom=\"#m\">" << flightHeightSpinBox->value()<<"</flightHeight>\n";
-    auxStream << "\t\t<overlap>\n";
-    auxStream << "\t\t\t<longitudinal uom=\"#%\">" << horizontalOverlapDoubleSpinBox->value()<<"</longitudinal>\n";
-    auxStream << "\t\t\t<transversal uom=\"#%\">" << verticalOverlapDoubleSpinBox->value()<<"</transversal>\n";
-    auxStream << "\t\t</overlap>\n";
+    auxStream << "<flight key=\"1\" sensor_key=\"1\">\n";
+    auxStream << "\t<flightId>"  << flightIDLineEdit->text().toUtf8().data() <<"</flightId>\n";
+    auxStream << "\t<description>"  << descriptionTextEdit->toPlainText().toUtf8().data() <<"</description>\n";
+    auxStream << "\t<execution>"  << flightDateEdit->date().toString(Qt::ISODate).toUtf8().data() <<"</execution>\n";
+    auxStream << "\t<producerName>"  << producerNameLineEdit->text().toUtf8().data() <<"</producerName>\n";
+    auxStream << "\t<nominalScale>\n";
+    auxStream << "\t\t<mml:mfrac>\n";
+    auxStream << "\t\t\t<mml:mn>1</mml:mn>\n";
+    auxStream << "\t\t\t<mml:mn>" << intToString(nominalScaleSpinBox->value()) <<"</mml:mn>\n";
+    auxStream << "\t\t</mml:mfrac>\n";
+    auxStream << "\t</nominalScale>\n";
+    auxStream << "\t<flightHeight uom=\"#m\">" << intToString(flightHeightSpinBox->value())<<"</flightHeight>\n";
+    auxStream << "\t<overlap>\n";
+    auxStream << "\t\t<longitudinal uom=\"#%\">" << doubleToString(horizontalOverlapDoubleSpinBox->value())<<"</longitudinal>\n";
+    auxStream << "\t\t<transversal uom=\"#%\">" << doubleToString(verticalOverlapDoubleSpinBox->value())<<"</transversal>\n";
+    auxStream << "\t</overlap>\n";
     auxStream << "\t</flight>\n";
-    auxStream << "</flights>";
 
     xmlString = auxStream.str();
-    return xmlString;
+    return xmlString.c_str();
 }
 
 void FlightForm::setReadOnly(bool state)
 {
-    flightKeySpinBox->setReadOnly(state);
-    sensorKeySpinBox->setReadOnly(state);
     flightIDLineEdit->setReadOnly(state);
     flightHeightSpinBox->setReadOnly(state);
     horizontalOverlapDoubleSpinBox->setReadOnly(state);
