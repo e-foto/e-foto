@@ -5,6 +5,8 @@ ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
     connect( imagesTable, SIGNAL( cellClicked(int,int)),
                  this   ,   SLOT(  emitSignal(int)    )
             );
+	imagesTable->setColumnHidden(0,true);
+	imagesTable->setHorizontalHeaderLabels(QString("key;Image ID;Arquivo").split(";"));
 }
 
 void ImagesForm::fillvalues(string values)
@@ -28,10 +30,6 @@ void ImagesForm::fillvalues(string values)
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (ima.attribute("key").c_str()) );
         QTableWidgetItem *idItem = new QTableWidgetItem(ima.elementByTagName("img_id").toString().c_str()) ;
         QTableWidgetItem *camItem = new QTableWidgetItem(tableParameter.c_str());
-
-        imagesTable->setColumnHidden(0,true);
-
-        imagesTable->setHorizontalHeaderLabels(QString("key;Image ID;Arquivo").split(";"));
 
         imagesTable->setItem(i,0,keyItem);
         imagesTable->setItem(i,1,idItem);
