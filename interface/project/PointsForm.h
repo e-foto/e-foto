@@ -1,45 +1,28 @@
 #ifndef POINTSFORM_H
 #define POINTSFORM_H
 
+#include "ui_PointsLayout.h"
 #include "AbstractForm.h"
-#include "pointsview.h"
-#include <string>
+#include "EDom.h"
 
-class PointsForm : public AbstractForm //, public Ui::Form
+class PointsForm : public AbstractForm, public Ui::PointsForm
 {
     Q_OBJECT
 
 public:
-   // PointsForm(QWidget *parent = 0);
-    PointsForm(QWidget *parent = 0, string XmlString="");
-
-    // o destrutor precisa ser melhorado para destruir também os layouts
-    ~PointsForm()
-        {
-     //   cout<< " ########## entrou no destrutor";
-                delete psinglepointview2;
-            delete MyProxyModel;
-            delete ppointsview;
-            delete ppointsmodel;}
+    PointsForm(QWidget *parent=0);
 
     void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
-    bool isForm(string formName);
-private:
+        bool isForm(string formName);
 
-    PointsModel* ppointsmodel;
-    PointsView* ppointsview;
-    SinglePointModel* MyProxyModel;
-    SinglePointView* psinglepointview2;
-
-public slots:
-    void emitSignal(QModelIndex myIndex);
+private slots:
+    void emitSignal(int i);
 
 signals:
-
+    //emite um sinal com o valor do atributo key da tag image
     void clicked(int pointKey);
 
 };
-
-#endif // POINTSFORM_H
+#endif //POINTSFORM_H

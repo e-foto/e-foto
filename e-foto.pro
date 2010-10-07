@@ -74,17 +74,16 @@ HEADERS += control/EFotoManager.h \
     interface/project/ImageForm.h \
     interface/project/ImagesForm.h \
     interface/project/PointForm.h \
-    interface/project/PointsForm.h \
     interface/project/ProjectUserInterface.h \
     interface/project/ProjectUserInterface_Qt.h \
     interface/project/SensorForm.h \
-	interface/project/FlightForm.h \
-	interface/project/TerrainForm.h \
+    interface/project/FlightForm.h \
+    interface/project/TerrainForm.h \
     interface/sr/SRUserInterface.h \
-	interface/sr/SRUserInterface_Qt.h \
-	interface/view/ImageView.h \
-	interface/view/SigmaForm.h \
-	interface/view/AboutForm.h \
+    interface/sr/SRUserInterface_Qt.h \
+    interface/view/ImageView.h \
+    interface/view/SigmaForm.h \
+    interface/view/AboutForm.h \
     interface/view/mmv/AbstractEModel.h \
     interface/view/mmv/blockview.h \
     interface/view/mmv/demview.h \
@@ -101,18 +100,20 @@ HEADERS += control/EFotoManager.h \
     interface/view/mmv/pointview.h \
     interface/view/mmv/projectheaderview.h \
     interface/view/mmv/sensorview.h \
-	interface/view/mmv/terrainview.h
+    interface/view/mmv/terrainview.h \
+    interface/project/PointsForm.h
 FORMS += interface/io/IOForm.ui \
-	interface/sr/SRForm.ui \
+    interface/sr/SRForm.ui \
     interface/project/FormProject.ui \
     interface/project/HeaderLayout.ui \
     interface/project/ImageLayout.ui \
     interface/project/ImagesLayout.ui \
     interface/project/PointLayout.ui \
-	interface/project/SensorLayout.ui \
-	interface/project/FlightLayout.ui \
-	interface/project/TerrainLayout.ui \
-	interface/view/AboutLayout.ui
+    interface/project/SensorLayout.ui \
+    interface/project/FlightLayout.ui \
+    interface/project/TerrainLayout.ui \
+    interface/view/AboutLayout.ui \
+    interface/project/PointsLayout.ui
 SOURCES += control/EFotoManager.cpp \
     control/IOManager.cpp \
     control/ProjectManager.cpp \
@@ -156,17 +157,16 @@ SOURCES += control/EFotoManager.cpp \
     interface/project/ImageForm.cpp \
     interface/project/ImagesForm.cpp \
     interface/project/PointForm.cpp \
-    interface/project/PointsForm.cpp \
     interface/project/ProjectUserInterface.cpp \
     interface/project/ProjectUserInterface_Qt.cpp \
     interface/project/SensorForm.cpp \
-	interface/project/FlightForm.cpp \
+    interface/project/FlightForm.cpp \
     interface/project/TerrainForm.cpp \
     interface/sr/SRUserInterface.cpp \
     interface/sr/SRUserInterface_Qt.cpp \
     interface/view/ImageView.cpp \
-	interface/view/SigmaForm.cpp \
-	interface/view/AboutForm.cpp \
+    interface/view/SigmaForm.cpp \
+    interface/view/AboutForm.cpp \
     interface/view/mmv/blockview.cpp \
     interface/view/mmv/demview.cpp \
     interface/view/mmv/digitalimageview.cpp \
@@ -182,7 +182,8 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/mmv/pointview.cpp \
     interface/view/mmv/projectheaderview.cpp \
     interface/view/mmv/sensorview.cpp \
-	interface/view/mmv/terrainview.cpp
+    interface/view/mmv/terrainview.cpp \
+    interface/project/PointsForm.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \
