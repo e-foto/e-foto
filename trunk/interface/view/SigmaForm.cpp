@@ -17,7 +17,7 @@ SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension
 	{
 		this->toNotAvailable();
 	}
-	else if (myMode == "Standard Deviations")
+	else if (myMode == "Standard Deviations" || myMode == "Available")
 	{
 		this->toStDev();
 	}
@@ -77,10 +77,17 @@ QWidget* SigmaFormController::getContent()
 
 void SigmaFormController::setDirection(string newDirection)
 {
+	QBoxLayout* myLayout = (QBoxLayout*)contentWidget->layout();
 	if (newDirection == "horizontal")
+	{
 		direction = newDirection;
+		myLayout->setDirection(QBoxLayout::LeftToRight);
+	}
 	else
+	{
 		direction = "vertical";
+		myLayout->setDirection(QBoxLayout::TopToBottom);
+	}
 }
 
 string SigmaFormController::getDirection()
@@ -132,7 +139,7 @@ string SigmaFormController::getValues()
 	{
 		return "<sigma>Not Available</sigma>\n";
 	}
-	else if (mode == "Standard Deviations")
+	else if (mode == "Standard Deviations"  || mode == "Available")
 	{
 		Matrix result(dimension,1);
 		for (unsigned int i = 0; i < dimension; i++)
@@ -170,7 +177,7 @@ bool SigmaFormController::getValidate()
 	{
 		return true;
 	}
-	else if (mode == "Standard Deviations")
+	else if (mode == "Standard Deviations" || mode == "Available")
 	{
 		for (unsigned int i = 0; i < dimension; i++)
 		{
@@ -191,7 +198,7 @@ void SigmaFormController::toMode(QString newMode)
 	{
 		this->toNotAvailable();
 	}
-	else if (newMode == "Standard Deviations")
+	else if (newMode == "Standard Deviations" || newMode == "Available")
 	{
 		this->toStDev();
 	}
@@ -206,14 +213,8 @@ void SigmaFormController::toNotAvailable()
 {
 	if (dimension == (unsigned int)edits.size())
 	{
-		QBoxLayout* myLayout = (QBoxLayout*)contentWidget->layout();
-		if (direction == "horizontal")
-			myLayout->setDirection(QBoxLayout::LeftToRight);
-		else
-			myLayout->setDirection(QBoxLayout::TopToBottom);
 		for (unsigned int i = 0; i < dimension; i++)
 		{
-			QDoubleValidator *validator = new QDoubleValidator(this);
 			QLabel* newLabel = labels.at(i);
 			QLineEdit* newEdit = edits.at(i);
 			newEdit->setValidator(0);
@@ -251,11 +252,6 @@ void SigmaFormController::toStDev()
 {
 	if (dimension == (unsigned int)edits.size())
 	{
-		QBoxLayout* myLayout = (QBoxLayout*)contentWidget->layout();
-		if (direction == "horizontal")
-			myLayout->setDirection(QBoxLayout::LeftToRight);
-		else
-			myLayout->setDirection(QBoxLayout::TopToBottom);
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QLabel* newLabel = labels.at(i);
@@ -295,11 +291,6 @@ void SigmaFormController::toMatrix()
 {
 	if (dimension == (unsigned int)edits.size())
 	{
-		QBoxLayout* myLayout = (QBoxLayout*)contentWidget->layout();
-		if (direction == "horizontal")
-			myLayout->setDirection(QBoxLayout::LeftToRight);
-		else
-			myLayout->setDirection(QBoxLayout::TopToBottom);
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QLabel* newLabel = labels.at(i);
@@ -377,7 +368,7 @@ void SigmaFormTypeSelector::toMode(QString newMode)
 	{
 		setCurrentIndex(0);
 	}
-	else if (newMode == "Standard Deviations")
+	else if (newMode == "Standard Deviations" || newMode == "Available")
 	{
 		setCurrentIndex(1);
 	}
@@ -389,7 +380,9 @@ void SigmaFormTypeSelector::toMode(QString newMode)
 
 void SigmaFormTypeSelector::blockCovarianceMatrixOption()
 {
-	removeItem(2);
+	this->clear();
+	addItems(QString("Not Available;Available").split(";"));
+	//removeItem(2);
 }
 
 SigmaFormContent::SigmaFormContent(QWidget * parent) : QFrame(parent)

@@ -11,20 +11,22 @@ TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 			);
 	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 }
 
 void TerrainForm::fillvalues(string values)
 {
     EDomElement ede(values);
 	bool ok;//variavel 'dummy' para a função QString::toDouble(*bool)
-	meanAltSpinBox->setValue( (QString::fromUtf8(ede.elementByTagAtt("meanAltitude","uom","#m").toString().c_str())).toDouble(&ok)
-                             );
 
 	minAltSpinBox->setValue( (QString::fromUtf8(ede.elementByTagAtt("minAltitude","uom","#m").toString().c_str())).toDouble(&ok)
                              );
 
 	maxAltSpinBox->setValue( (QString::fromUtf8(ede.elementByTagAtt("maxAltitude","uom","#m").toString().c_str())).toDouble(&ok)
                              );
+
+	meanAltSpinBox->setValue( (QString::fromUtf8(ede.elementByTagAtt("meanAltitude","uom","#m").toString().c_str())).toDouble(&ok)
+							 );
 
     grsComboBox->setCurrentIndex(0);
     grsComboBox->setCurrentIndex(grsComboBox->findText(QString::fromUtf8(ede.elementByTagName("GRS").toString().c_str())));

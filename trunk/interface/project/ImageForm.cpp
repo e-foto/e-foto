@@ -72,6 +72,7 @@ void ImageForm::fillvalues(string values)
 
 	if (ede.elementByTagName("GNSS").getContent() == "")
 	{
+		gnssTypeComboBox->setCurrentIndex(0);
 		eDoubleSpinBox_2->setValue(0);
 		nDoubleSpinBox_2->setValue(0);
 		hDoubleSpinBox_2->setValue(0);
@@ -89,6 +90,12 @@ void ImageForm::fillvalues(string values)
 			nDoubleSpinBox_2->setValue(aux.at(1));
 			hDoubleSpinBox_2->setValue(aux.at(2));
 		}
+		if (ede.elementByTagName("GNSS").attribute("type") == "Initial")
+			gnssTypeComboBox->setCurrentIndex(1);
+		else if (ede.elementByTagName("GNSS").attribute("type") == "Fixed")
+			gnssTypeComboBox->setCurrentIndex(2);
+		else
+			gnssTypeComboBox->setCurrentIndex(0);
 		QString suffix(ede.elementByTagName("GNSS").attribute("uom").c_str());
 		eDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
 		nDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
@@ -99,6 +106,7 @@ void ImageForm::fillvalues(string values)
 
 	if (ede.elementByTagName("INS").getContent() == "")
 	{
+		insTypeComboBox->setCurrentIndex(0);
 		omegaDoubleSpinBox->setValue(0);
 		phiDoubleSpinBox->setValue(0);
 		kappaDoubleSpinBox->setValue(0);
@@ -109,6 +117,12 @@ void ImageForm::fillvalues(string values)
 	}
 	else
 	{
+		if (ede.elementByTagName("INS").attribute("type") == "Initial")
+			insTypeComboBox->setCurrentIndex(1);
+		else if (ede.elementByTagName("INS").attribute("type") == "Fixed")
+			insTypeComboBox->setCurrentIndex(2);
+		else
+			insTypeComboBox->setCurrentIndex(0);
 		omegaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("omega").toDouble());
 		phiDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("phi").toDouble());
 		kappaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("kappa").toDouble());
@@ -136,14 +150,14 @@ string ImageForm::getvalues()
     auxStream << "\t<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
 	if (gnssGroup->isChecked())
 	{
-		auxStream << "\t<GNSS uom=\"#m\">\n";
+		auxStream << "\t<GNSS uom=\"#m\" type=\"" << gnssTypeComboBox->currentText().toUtf8().data() << "\">\n";
 		auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
 		auxStream << gnssSigmaController->getValues();
 		auxStream << "\t</GNSS>\n";
 	}
 	if (insGroup->isChecked())
 	{
-		auxStream << "\t<INS uom=\"#rad\">\n";
+		auxStream << "\t<INS uom=\"#rad\" type=\"" << insTypeComboBox->currentText().toUtf8().data() << "\">\n";
 		auxStream << "\t\t<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
 		auxStream << "\t\t<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
 		auxStream << "\t\t<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
@@ -165,8 +179,8 @@ void ImageForm:: setReadOnly(bool state)
 	insSigmaController->setReadOnly(state);
 	gnssGroup->setCheckable(!state);
 	insGroup->setCheckable(!state);
-	gnssUseComboBox->setDisabled(state);
-	insUseComboBox->setDisabled(state);
+	gnssTypeComboBox->setDisabled(state);
+	insTypeComboBox->setDisabled(state);
 	eDoubleSpinBox_2->setReadOnly(state);
 	nDoubleSpinBox_2->setReadOnly(state);
 	hDoubleSpinBox_2->setReadOnly(state);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>538</height>
+    <width>714</width>
+    <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,9 +137,32 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1">
              <item>
-              <widget class="QComboBox" name="gnssUseComboBox"/>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="gnssTypeComboBox">
+               <item>
+                <property name="text">
+                 <string>Unknown</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Initial</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Fixed</string>
+                </property>
+               </item>
+              </widget>
              </item>
             </layout>
            </item>
@@ -262,7 +285,14 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,0">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>Standard Deviations</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="SigmaFormTypeSelector" name="gnssSigmaSelector"/>
              </item>
@@ -314,9 +344,32 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1">
              <item>
-              <widget class="QComboBox" name="insUseComboBox"/>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="insTypeComboBox">
+               <item>
+                <property name="text">
+                 <string>Unknown</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Initial</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Fixed</string>
+                </property>
+               </item>
+              </widget>
              </item>
             </layout>
            </item>
@@ -427,7 +480,14 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1,0">
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>Standard Deviations</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="SigmaFormTypeSelector" name="insSigmaSelector"/>
              </item>
