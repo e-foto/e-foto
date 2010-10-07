@@ -135,6 +135,13 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Standard Deviations</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="SigmaFormTypeSelector" name="sigmaSelector"/>
            </item>
           </layout>

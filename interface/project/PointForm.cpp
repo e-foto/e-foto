@@ -15,6 +15,7 @@ PointForm::PointForm(QWidget *parent) : AbstractForm(parent)
 	imageMeasurementsTable->setColumnWidth(3, 65);
 	imageMeasurementsTable->setColumnWidth(4, 65);
 	imageMeasurementsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	imageMeasurementsTable->setColumnHidden(0,true);
 }
 
 void PointForm::setImageList(deque<int> myKeyList, deque<string> myNameList)
@@ -50,6 +51,7 @@ void PointForm::fillvalues(string values)
 	nDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	hDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
+	//sigmaController->fillValues(ede.elementByTagName("sigma").toString());
 	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));
 
 	imageMeasurementsTable->setRowCount(imageKeyList.size());
@@ -72,8 +74,6 @@ void PointForm::fillvalues(string values)
 				colItem->setText(linColStr.at(1));
 			}
 		}
-
-		imageMeasurementsTable->setColumnHidden(0,true);
 
 		imageMeasurementsTable->setItem(i,0,keyItem);
 		imageMeasurementsTable->setCellWidget(i,1,checkItem);

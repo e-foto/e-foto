@@ -3,11 +3,25 @@
 
 #include "ui_SensorLayout.h"
 #include "AbstractForm.h"
+#include "SigmaForm.h"
 #include "EDom.h"
 
 class SensorForm : public AbstractForm, public Ui::SensorView
 {
     Q_OBJECT
+
+	SigmaFormController* calibratedSigmaController;
+	SigmaFormController* fid0SigmaController;
+	SigmaFormController* fid1SigmaController;
+	SigmaFormController* fid2SigmaController;
+	SigmaFormController* fid3SigmaController;
+	SigmaFormController* fid4SigmaController;
+	SigmaFormController* fid5SigmaController;
+	SigmaFormController* fid6SigmaController;
+	SigmaFormController* fid7SigmaController;
+	SigmaFormController* radialSigmaController;
+	SigmaFormController* decenteredSigmaController;
+	SigmaFormController* principalSigmaController;
 
 public:
     EDomElement ede;
@@ -19,10 +33,10 @@ public:
     bool isForm(string formName);
     void showLast4Fiductial(bool state);
 
-    public slots:
-            void detectorGroup(int);
-            void fiductialGroup(int);
-            void setSigmasVisible(bool);
+public slots:
+	void detectorGroup(int);
+	void fiductialGroup(int);
+	//void setSigmasVisible(bool);
 
 };
 
