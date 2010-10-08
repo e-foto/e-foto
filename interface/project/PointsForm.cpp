@@ -7,7 +7,7 @@ PointsForm :: PointsForm(QWidget *parent) : AbstractForm(parent)
                  this   ,   SLOT(  emitSignal(int)    )
             );
         pointsTable->setColumnHidden(0,true);
-        pointsTable->setHorizontalHeaderLabels(QString("key;gcp_id;E;StDev;N;StDev;H;StDev").split(";"));
+        pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
 }
 
 void PointsForm::fillvalues(string values)
@@ -15,7 +15,7 @@ void PointsForm::fillvalues(string values)
    EDomElement ede(values);
     int rows=ede.children().size();
     pointsTable->setRowCount(rows);
-    pointsTable->setColumnCount(8);
+    pointsTable->setColumnCount(6);
 
     for (int i=0;i<rows;i++){
 
@@ -25,6 +25,7 @@ void PointsForm::fillvalues(string values)
 
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pnt.attribute("key").c_str()) );
         QTableWidgetItem *gcpItem = new QTableWidgetItem(pnt.elementByTagName("gcp_id").toString().c_str()) ;
+        QTableWidgetItem *typeItem = new QTableWidgetItem(pnt.attribute("type").c_str()) ;
         auxString = pnt.elementByTagName("gml:pos").toString();
         if(auxString != "")
         {
@@ -33,9 +34,10 @@ void PointsForm::fillvalues(string values)
             QTableWidgetItem *HItem = new QTableWidgetItem(QString::fromUtf8(auxString.c_str()).split(" ").at(2));
             pointsTable->setItem(i,0,keyItem);
             pointsTable->setItem(i,1,gcpItem);
-            pointsTable->setItem(i,2,EItem);
+            pointsTable->setItem(i,2,typeItem);
+            pointsTable->setItem(i,3,EItem);
             pointsTable->setItem(i,4,NItem);
-            pointsTable->setItem(i,6,HItem);
+            pointsTable->setItem(i,5,HItem);
         };
 
 
