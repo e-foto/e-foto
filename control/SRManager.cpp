@@ -159,7 +159,7 @@ deque<string> SRManager::listSelectedPoints()
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             string value = intToString(myPoint->getId());
             value += " ";
-            value += longToString(myPoint->getGcpId());
+			value += myPoint->getPointId();
             value += " ";
             value += myPoint->getDescription();
             result.push_back(value);
@@ -178,7 +178,7 @@ deque<string> SRManager::listImagePoints()
             Point* myPoint = myImage->getPointAt(i);
             string value = intToString(myPoint->getId());
             value += " ";
-            value += longToString(myPoint->getGcpId());
+			value += myPoint->getPointId();
             value += " ";
             value += myPoint->getDescription();
             result.push_back(value);
@@ -201,7 +201,7 @@ deque<string> SRManager::listAllPoints()
             {
                 string value = allPoints.at(i).attribute("key");
                 value += " ";
-                value += allPoints.at(i).elementByTagName("gcp_id").toString();
+				value += allPoints.at(i).elementByTagName("pointId").toString();
                 value += " ";
                 value += allPoints.at(i).elementByTagName("description").toString();
                 result.push_back(value);
@@ -218,7 +218,7 @@ deque<string> SRManager::pointData(int index)
     {
         Point* myPoint = myImage->getPointAt(index);
         result.push_back(intToString(myPoint->getId()));
-        result.push_back(longToString(myPoint->getGcpId()));
+		result.push_back(myPoint->getPointId());
         result.push_back(myPoint->getDescription());
         result.push_back(doubleToString(myPoint->getObjectCoordinate().getX()));
         result.push_back(doubleToString(myPoint->getObjectCoordinate().getY()));

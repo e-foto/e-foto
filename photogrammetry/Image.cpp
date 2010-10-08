@@ -431,7 +431,7 @@ void Image::xmlSetData(string xml)
     id = stringToInt(root.attribute("key"));
     sensorId = stringToInt(root.attribute("sensor_key"));
     flightId = stringToInt(root.attribute("flight_key"));
-    img_id = root.elementByTagName("img_id").toLong();
+	imageId = root.elementByTagName("imageId").toString();
     width = root.elementByTagName("width").toInt();
     height = root.elementByTagName("height").toInt();
     filename = root.elementByTagName("fileName").toString();
@@ -497,7 +497,7 @@ string Image::xmlGetData()
 {
     stringstream result;
     result << "<image key=\"" << intToString(id) << "\" sensor_key=\"" << intToString(sensorId) << "\" flight_key=\"" << intToString(flightId) << "\">\n";
-    result << "<img_id>" << longToString(img_id) << "</img_id>\n";
+	result << "<imageId>" << imageId << "</imageId>\n";
     result << "<width uom=\"#px\">" << intToString(width) << "</width>\n";
     result << "<height uom=\"#px\">" << intToString(height) << "</height>\n";
     result << "<fileName>" << filename << "</fileName>\n";
