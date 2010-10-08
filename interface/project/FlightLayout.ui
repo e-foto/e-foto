@@ -50,7 +50,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QLabel" name="label_10">
                <property name="text">
-                <string>Flight ID</string>
+                <string>Flight Id</string>
                </property>
               </widget>
              </item>
@@ -251,7 +251,7 @@ p, li { white-space: pre-wrap; }
                 <double>95.000000000000000</double>
                </property>
                <property name="value">
-                <double>20.000000000000000</double>
+                <double>30.000000000000000</double>
                </property>
               </widget>
              </item>

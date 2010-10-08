@@ -10,6 +10,16 @@ class SensorForm : public AbstractForm, public Ui::SensorView
 {
     Q_OBJECT
 
+public:
+    EDomElement ede;
+    SensorForm(QWidget *parent =0);
+
+    void fillvalues(string values);
+    string getvalues();
+    void setReadOnly(bool state);
+    bool isForm(string formName);
+    void showLast4Fiductial(bool state);
+
 	SigmaFormController* calibratedSigmaController;
 	SigmaFormController* fid0SigmaController;
 	SigmaFormController* fid1SigmaController;
@@ -22,16 +32,6 @@ class SensorForm : public AbstractForm, public Ui::SensorView
 	SigmaFormController* radialSigmaController;
 	SigmaFormController* decenteredSigmaController;
 	SigmaFormController* principalSigmaController;
-
-public:
-    EDomElement ede;
-    SensorForm(QWidget *parent =0);
-
-    void fillvalues(string values);
-    string getvalues();
-    void setReadOnly(bool state);
-    bool isForm(string formName);
-    void showLast4Fiductial(bool state);
 
 public slots:
 	void detectorGroup(int);

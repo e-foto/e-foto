@@ -41,7 +41,7 @@ void ImageForm::fillvalues(string values)
 	tagXml += ede.attribute("flight_key");
 	tagXml += "\">";
 
-    imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("img_id").toString().c_str()) )
+	imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )
 						  );
 
     widthLine->setText( (QString::fromUtf8(ede.elementByTagAtt("width","uom","#px").toString().c_str())+" px"  )
@@ -141,7 +141,7 @@ string ImageForm::getvalues()
     stringstream auxStream;
 
 	auxStream << tagXml << "\n";
-    auxStream << "\t<img_id>" << imageIDLine->text().toUtf8().data() << "</img_id>\n";
+	auxStream << "\t<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
     auxStream << "\t<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
     auxStream << "\t<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
     auxStream << "\t<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
