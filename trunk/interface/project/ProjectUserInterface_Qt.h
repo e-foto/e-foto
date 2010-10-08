@@ -96,6 +96,8 @@ protected:
 protected slots:
 	virtual void languageChange();
 	virtual void updateTree();
+	virtual void validatingSensor();
+	virtual void validatingFlight();
 	virtual void validatingImage();
 	virtual void validatingPoint();
 

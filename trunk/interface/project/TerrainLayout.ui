@@ -56,11 +56,6 @@ p, li { white-space: pre-wrap; }
          <widget class="QComboBox" name="grsComboBox">
           <item>
            <property name="text">
-            <string>SGB</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>SIRGAS2000</string>
            </property>
           </item>

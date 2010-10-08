@@ -31,7 +31,7 @@ void PointForm::fillvalues(string values)
 	key = ede.attribute("key");
 	setType(ede.attribute("type"));
 
-    lineEdit_gcp_id->setText(QString::fromUtf8(ede.elementByTagName("gcp_id").toString().c_str()));
+	lineEdit_gcp_id->setText(QString::fromUtf8(ede.elementByTagName("pointId").toString().c_str()));
 	textEditDescription->setText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
 	deque<double> aux = ede.elementByTagName("spatialCoordinates").elementByTagName("gml:pos").toGmlPos();
 	if (aux.size() == 3)
@@ -87,7 +87,7 @@ string PointForm::getvalues()
 {
     stringstream auxStream;
 	auxStream << "<point key=\"" << key << "\" type=\"" << getType() <<"\">\n";
-	auxStream << "\t<gcp_id>" << lineEdit_gcp_id->text().toUtf8().data() << "</gcp_id>\n";
+	auxStream << "\t<pointId>" << lineEdit_gcp_id->text().toUtf8().data() << "</pointId>\n";
 	auxStream << "\t<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
 	auxStream << "\t<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().right(1).toStdString().c_str() << "\">\n";
 	auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox->value()) << " " << doubleToString(nDoubleSpinBox->value()) << " " << doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
