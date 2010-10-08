@@ -28,7 +28,7 @@ void ImagesForm::fillvalues(string values)
         tableParameter = auxStream.str();
 
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (ima.attribute("key").c_str()) );
-        QTableWidgetItem *idItem = new QTableWidgetItem(ima.elementByTagName("img_id").toString().c_str()) ;
+		QTableWidgetItem *idItem = new QTableWidgetItem(ima.elementByTagName("imageId").toString().c_str()) ;
         QTableWidgetItem *camItem = new QTableWidgetItem(tableParameter.c_str());
 
         imagesTable->setItem(i,0,keyItem);

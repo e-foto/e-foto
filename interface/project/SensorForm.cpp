@@ -12,51 +12,61 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 
 	fid0SigmaController = new SigmaFormController("Not Available",2);
 	fid0SigmaController->setDirection("horizontal");
-	fid0SigmaSelector->setSigmaFormController(fid0SigmaController);
-	fid0SigmaSelector->blockCovarianceMatrixOption();
+	//fid0SigmaSelector->setSigmaFormController(fid0SigmaController);
+	//fid0SigmaSelector->blockCovarianceMatrixOption();
 	fid0SigmaContent->setSigmaFormController(fid0SigmaController);
 
 	fid1SigmaController = new SigmaFormController("Not Available",2);
 	fid1SigmaController->setDirection("horizontal");
-	fid1SigmaSelector->setSigmaFormController(fid1SigmaController);
-	fid1SigmaSelector->blockCovarianceMatrixOption();
+	//fid1SigmaSelector->setSigmaFormController(fid1SigmaController);
+	//fid1SigmaSelector->blockCovarianceMatrixOption();
 	fid1SigmaContent->setSigmaFormController(fid1SigmaController);
 
 	fid2SigmaController = new SigmaFormController("Not Available",2);
 	fid2SigmaController->setDirection("horizontal");
-	fid2SigmaSelector->setSigmaFormController(fid2SigmaController);
-	fid2SigmaSelector->blockCovarianceMatrixOption();
+	//fid2SigmaSelector->setSigmaFormController(fid2SigmaController);
+	//fid2SigmaSelector->blockCovarianceMatrixOption();
 	fid2SigmaContent->setSigmaFormController(fid2SigmaController);
 
 	fid3SigmaController = new SigmaFormController("Not Available",2);
 	fid3SigmaController->setDirection("horizontal");
-	fid3SigmaSelector->setSigmaFormController(fid3SigmaController);
-	fid3SigmaSelector->blockCovarianceMatrixOption();
+	//fid3SigmaSelector->setSigmaFormController(fid3SigmaController);
+	//fid3SigmaSelector->blockCovarianceMatrixOption();
 	fid3SigmaContent->setSigmaFormController(fid3SigmaController);
 
 	fid4SigmaController = new SigmaFormController("Not Available",2);
 	fid4SigmaController->setDirection("horizontal");
-	fid4SigmaSelector->setSigmaFormController(fid4SigmaController);
-	fid4SigmaSelector->blockCovarianceMatrixOption();
+	//fid4SigmaSelector->setSigmaFormController(fid4SigmaController);
+	//fid4SigmaSelector->blockCovarianceMatrixOption();
 	fid4SigmaContent->setSigmaFormController(fid4SigmaController);
 
 	fid5SigmaController = new SigmaFormController("Not Available",2);
 	fid5SigmaController->setDirection("horizontal");
-	fid5SigmaSelector->setSigmaFormController(fid5SigmaController);
-	fid5SigmaSelector->blockCovarianceMatrixOption();
+	//fid5SigmaSelector->setSigmaFormController(fid5SigmaController);
+	//fid5SigmaSelector->blockCovarianceMatrixOption();
 	fid5SigmaContent->setSigmaFormController(fid5SigmaController);
 
 	fid6SigmaController = new SigmaFormController("Not Available",2);
 	fid6SigmaController->setDirection("horizontal");
-	fid6SigmaSelector->setSigmaFormController(fid6SigmaController);
-	fid6SigmaSelector->blockCovarianceMatrixOption();
+	//fid6SigmaSelector->setSigmaFormController(fid6SigmaController);
+	//fid6SigmaSelector->blockCovarianceMatrixOption();
 	fid6SigmaContent->setSigmaFormController(fid6SigmaController);
 
 	fid7SigmaController = new SigmaFormController("Not Available",2);
 	fid7SigmaController->setDirection("horizontal");
-	fid7SigmaSelector->setSigmaFormController(fid7SigmaController);
-	fid7SigmaSelector->blockCovarianceMatrixOption();
+	//fid7SigmaSelector->setSigmaFormController(fid7SigmaController);
+	//fid7SigmaSelector->blockCovarianceMatrixOption();
 	fid7SigmaContent->setSigmaFormController(fid7SigmaController);
+
+	fidSigmaSelector->setSigmaFormController(fid0SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid1SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid2SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid3SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid4SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid5SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid6SigmaController);
+	fidSigmaSelector->setSigmaFormController(fid7SigmaController);
+	fidSigmaSelector->blockCovarianceMatrixOption();
 
 	radialSigmaController = new SigmaFormController("Not Available",4);
 	radialSigmaSelector->setSigmaFormController(radialSigmaController);
@@ -120,6 +130,8 @@ void SensorForm::fillvalues(string values)
     ede.setContent(values);
     bool ok;
 
+	sensorIdLineEdit->setText(QString::fromUtf8(ede.elementByTagName("sensorId").toString().c_str()));
+
     geometryCombo->setCurrentIndex(geometryCombo->findText(QString::fromUtf8(ede.elementByTagName("geometry").toString().c_str())));
     platformCombo->setCurrentIndex(platformCombo->findText(QString::fromUtf8(ede.elementByTagName("platform").toString().c_str())));
     detectorCombo->setCurrentIndex(detectorCombo->findText(QString::fromUtf8(ede.elementByTagName("detector").toString().c_str())));
@@ -170,11 +182,16 @@ void SensorForm::fillvalues(string values)
     //string minha = pri.getContent();
 */ //Feito a seguir:
 
-	EDomElement pri =  ede.elementByTagAtt("principalPointCoordinates","key","1");
+	EDomElement pri =  ede.elementByTagName("principalPointCoordinates");
 	if (pri.elementByTagName("gml:pos").toString() != "")
 	{
 		principalX0LineEdit->setText(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
 		principalY0LineEdit->setText(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+	}
+	else
+	{
+		principalX0LineEdit->setText("");
+		principalY0LineEdit->setText("");
 	}
 	//fiductialSigma0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 	principalSigmaController->fillValues(pri.elementByTagName("sigma").toString());
@@ -267,6 +284,7 @@ string SensorForm::getvalues()
     stringstream auxStream;
 
     auxStream << "<sensor key=\"" << ede.attribute("key").data() << "\">\n";
+	auxStream << "\t<sensorId>" << sensorIdLineEdit->text().toUtf8().data() <<"</sensorId>\n";
     auxStream << "\t<type>\n" ;
     auxStream << "\t\t<geometry>" << geometryCombo->currentText().toUtf8().data() <<"</geometry>\n";
     auxStream << "\t\t<platform>" << platformCombo->currentText().toUtf8().data() <<"</platform>\n";
@@ -407,6 +425,7 @@ string SensorForm::getvalues()
 
 void SensorForm::setReadOnly(bool state)
 {
+	sensorIdLineEdit->setReadOnly(state);
     geometryCombo->setEnabled(!state);
     platformCombo->setEnabled(!state);
     detectorCombo->setEnabled(!state);
@@ -545,25 +564,25 @@ void SensorForm::showLast4Fiductial(bool state)
     fiductialEta4LineEdit->setVisible(state);
     fiductialXi4LineEdit->setVisible(state);
 	fid4SigmaContent->setVisible(state);
-	fid4SigmaSelector->setVisible(state);
+	//fid4SigmaSelector->setVisible(state);
 	//fiductialSigma4LineEdit->setVisible(state);
 
     fiductialEta5LineEdit->setVisible(state);
     fiductialXi5LineEdit->setVisible(state);
 	fid5SigmaContent->setVisible(state);
-	fid5SigmaSelector->setVisible(state);
+	//fid5SigmaSelector->setVisible(state);
 	//fiductialSigma5LineEdit->setVisible(state);
 
     fiductialEta6LineEdit->setVisible(state);
     fiductialXi6LineEdit->setVisible(state);
 	fid6SigmaContent->setVisible(state);
-	fid6SigmaSelector->setVisible(state);
+	//fid6SigmaSelector->setVisible(state);
 	//fiductialSigma6LineEdit->setVisible(state);
 
     fiductialEta7LineEdit->setVisible(state);
     fiductialXi7LineEdit->setVisible(state);
 	fid7SigmaContent->setVisible(state);
-	fid7SigmaSelector->setVisible(state);
+	//fid7SigmaSelector->setVisible(state);
 	//fiductialSigma7LineEdit->setVisible(state);
 
     fiductialLabel_9->setVisible(state);

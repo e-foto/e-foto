@@ -42,6 +42,21 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT(validatingPoint()) );
 	this->connect(imageForm.gnssSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingImage()) );
 	this->connect(imageForm.insSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingImage()) );
+	this->connect(flightForm.flightIDLineEdit, SIGNAL(editingFinished()), this , SLOT( validatingFlight()) );
+	this->connect(sensorForm.sensorIdLineEdit, SIGNAL(editingFinished()), this , SLOT( validatingSensor()) );
+	this->connect(sensorForm.fid0SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid1SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid2SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid3SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid4SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid5SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid6SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.fid7SigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.calibratedSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.radialSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.decenteredSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+	this->connect(sensorForm.principalSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
+
 
 	// Bloqueia alguns dos  dipositivos
 	this->showMaximized();
@@ -121,6 +136,7 @@ void ProjectUserInterface_Qt::newProject()
 	string text = "";
 
 	text += "<sensor key=\"1\">\n";
+	text +=	"\t<sensorId></sensorId>\n";
 	text +=	"\t<type>\n";
 	text +=	"\t\t<geometry>frame</geometry>\n";
 	text +=	"\t\t<platform>aerial</platform>\n";
@@ -589,6 +605,7 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 	centerArea.setCurrentIndex(2);
 	currentForm = &sensorForm;
 	currentForm->setReadOnly(true);
+	validatingSensor();
 
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
@@ -642,6 +659,7 @@ void ProjectUserInterface_Qt::viewFlight(int id)
 	centerArea.setCurrentIndex(3);
 	currentForm = &flightForm;
 	currentForm->setReadOnly(true);
+	validatingFlight();
 
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
@@ -692,6 +710,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 	centerArea.setCurrentIndex(5);
 	currentForm = &imageForm;
 	currentForm->setReadOnly(true);
+	validatingImage();
 
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
@@ -699,7 +718,6 @@ void ProjectUserInterface_Qt::viewImage(int id)
 
 	menuProject->setEnabled(true);
 	menuExecute->setEnabled(true);
-	validatingImage();
 }
 
 void ProjectUserInterface_Qt::viewPoints()
@@ -868,6 +886,7 @@ void ProjectUserInterface_Qt::newSensor()
 string text = "";
 
 text += "<sensor key=\"\">\n";
+text +=	"\t<sensorId></sensorId>\n";
 text +=	"\t<type>\n";
 text +=	"\t\t<geometry></geometry>\n";
 text +=	"\t\t<platform></platform>\n";
@@ -989,7 +1008,7 @@ void ProjectUserInterface_Qt::newImage()
 
 	string text = "";
 	text += "<image key=\"" + intToString(currentItemId) + "\" sensor_key=\"1\" flight_key=\"1\">\n";
-	text += "\t<img_id></img_id>\n";
+	text += "\t<imageId></imageId>\n";
 	text += "\t<width uom=\"#px\"></width>\n";
 	text += "\t<height uom=\"#px\"></height>\n";
 	text += "\t<fileName></fileName>\n";
@@ -1017,7 +1036,7 @@ void ProjectUserInterface_Qt::newPoint()
 
 	currentItemId = manager->getFreePointId();
 	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"\">\n";
-	text += "\t<gcp_id></gcp_id>\n";
+	text += "\t<pointId></pointId>\n";
 	text += "\t<description></description>\n";
 	text += "\t<spatialCoordinates uom=\"#m\">\n";
 	text += "\t\t<gml:pos></gml:pos>\n";
@@ -1328,6 +1347,36 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 		number++;
 	}
+}
+
+void ProjectUserInterface_Qt::validatingSensor()
+{
+	if ((sensorForm.sensorIdLineEdit->text() == "") ||
+		(!sensorForm.fid0SigmaController->getValidate()) ||
+		(!sensorForm.fid1SigmaController->getValidate()) ||
+		(!sensorForm.fid2SigmaController->getValidate()) ||
+		(!sensorForm.fid3SigmaController->getValidate()) ||
+		((!sensorForm.fid4SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
+		((!sensorForm.fid5SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
+		((!sensorForm.fid6SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
+		((!sensorForm.fid7SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
+		(!sensorForm.principalSigmaController->getValidate()) ||
+		(!sensorForm.radialSigmaController->getValidate()) ||
+		(!sensorForm.decenteredSigmaController->getValidate()) ||
+		(!sensorForm.calibratedSigmaController->getValidate())){
+		controlButtons.saveButton->setEnabled(false);
+	}
+	else
+		controlButtons.saveButton->setEnabled(true);
+}
+
+void ProjectUserInterface_Qt::validatingFlight()
+{
+	if ((flightForm.flightIDLineEdit->text() == "")){
+		controlButtons.saveButton->setEnabled(false);
+	}
+	else
+		controlButtons.saveButton->setEnabled(true);
 }
 
 void ProjectUserInterface_Qt::validatingImage()

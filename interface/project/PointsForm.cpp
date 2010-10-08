@@ -24,7 +24,7 @@ void PointsForm::fillvalues(string values)
         string auxString;
 
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pnt.attribute("key").c_str()) );
-        QTableWidgetItem *gcpItem = new QTableWidgetItem(pnt.elementByTagName("gcp_id").toString().c_str()) ;
+		QTableWidgetItem *gcpItem = new QTableWidgetItem(pnt.elementByTagName("pointId").toString().c_str()) ;
         QTableWidgetItem *typeItem = new QTableWidgetItem(pnt.attribute("type").c_str()) ;
         auxString = pnt.elementByTagName("gml:pos").toString();
         if(auxString != "")

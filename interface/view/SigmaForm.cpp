@@ -329,6 +329,47 @@ void SigmaFormController::toMatrix()
 	}
 }
 
+void SigmaFormController::setTitles(QStringList newTitles)
+{
+	titles = newTitles;
+	updateTitles();
+}
+
+void SigmaFormController::updateTitles()
+{
+	if (dimension == (unsigned int)edits.size())
+	{
+		QString text;
+		if (mode == "Covariance Matrix")
+		{
+			for (unsigned int i = 0; i < dimension; i++)
+			{
+				//QLabel* newLabel = labels.at(i);
+				//newLabel->setText("Var");
+			}
+		}
+		else
+		{
+			for (unsigned int i = 0; i < dimension; i++)
+			{
+				//QLabel* newLabel = labels.at(i);
+				//text = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\"><table style=\"-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;\"><tr><td style=\"border: none;\"><p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2';\">";
+				//text += titles.at();
+				//newLabel->setText(text);
+			}
+		}
+	}
+}
+
+/*<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<table style="-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;">
+<tr>
+<td style="border: none;">
+<p align="right" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'MS Shell Dlg 2';">k</span><span style=" font-family:'MS Shell Dlg 2'; vertical-align:sub;">0</span></p></td></tr></table></body></html>*/
+
 void SigmaFormController::showMatrixEditor()
 {
 	//QMessageBox msg("e-foto","A classe MatrixEditor ainda n~ao est´a pronta");
@@ -356,10 +397,18 @@ SigmaFormTypeSelector::SigmaFormTypeSelector(QWidget * parent) : QComboBox(paren
 
 void SigmaFormTypeSelector::setSigmaFormController(SigmaFormController *newController)
 {
-	controller = newController;
-	connect(this, SIGNAL(currentIndexChanged(QString)), controller, SLOT(toMode(QString)));
-	connect(controller, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
-	connect(controller, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
+	//controller = newController;
+	connect(this, SIGNAL(currentIndexChanged(QString)), newController, SLOT(toMode(QString)));
+	connect(newController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
+	connect(newController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
+}
+
+void SigmaFormTypeSelector::disconnectSigmaFormController(SigmaFormController *oldController)
+{
+	//controller = newController;
+	connect(this, SIGNAL(currentIndexChanged(QString)), oldController, SLOT(toMode(QString)));
+	connect(oldController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
+	connect(oldController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
 }
 
 void SigmaFormTypeSelector::toMode(QString newMode)

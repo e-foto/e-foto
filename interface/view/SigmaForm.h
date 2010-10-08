@@ -11,6 +11,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QStringList>
 
 #include "Matrix.h"
 #include "EDom.h"
@@ -24,6 +25,7 @@ protected:
 	QList<QLabel*> labels;
 	QList<QLineEdit*> edits;
 	QDoubleValidator *validator;
+	QStringList titles;
 	unsigned int dimension;
 	string direction;
 	string mode;
@@ -38,6 +40,7 @@ protected:
 	void init();
 	Matrix stDevToMatrix(deque<double> stDev);
 	deque<double> matrixToStDev(Matrix mat);
+	void updateTitles();
 
 public:
 	QWidget* getContent();
@@ -57,6 +60,7 @@ public slots:
 	virtual void showMatrixEditor();
 	virtual void setReadOnly(bool);
 	virtual void changeValidate(QString);
+	virtual void setTitles(QStringList);
 
 signals:
 	void changeMatrixButtonVisibility(bool);
@@ -73,6 +77,7 @@ protected:
 public:
 	SigmaFormTypeSelector(QWidget * parent = 0);
 	void setSigmaFormController(SigmaFormController* newController);
+	void disconnectSigmaFormController(SigmaFormController* oldController);
 	void blockCovarianceMatrixOption();
 public slots:
 	virtual void toMode(QString);

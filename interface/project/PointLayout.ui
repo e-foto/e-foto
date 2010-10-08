@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>574</height>
+    <width>437</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>gcp ID</string>
+             <string>Point Id</string>
             </property>
            </widget>
           </item>
