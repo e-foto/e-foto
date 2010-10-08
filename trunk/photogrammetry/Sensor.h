@@ -75,6 +75,7 @@ protected:
     // Private attributes
     //
     int id;
+	string sensorId;
     double focalDistance;
     double focalDistanceSigma;
     AnalogImageSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.

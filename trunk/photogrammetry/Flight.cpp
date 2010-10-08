@@ -320,6 +320,7 @@ void Flight::xmlSetData(string xml)
     EDomElement root(xml);
     id = stringToInt(root.attribute("key"));
     sensorId = stringToInt(root.attribute("sensor_key"));
+	flightId = root.elementByTagName("flightId").toString();
     description = root.elementByTagName("description").toString();
     execution = root.elementByTagName("execution").toString();
     producerName = root.elementByTagName("producerName").toString();
@@ -339,6 +340,7 @@ string Flight::xmlGetData()
 {
     stringstream result;
     result << "<flight key=\"" << intToString(id) << "\" sensor_key=\"" << intToString(sensorId) << "\">\n";
+	result << "<flightId>" << flightId << "</flightId>\n";
     result << "<description>" << description << "</description>\n";
     result << "<execution>" << execution << "</execution>\n";
     result << "<producerName>" << producerName << "</producerName>\n";

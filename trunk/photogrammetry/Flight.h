@@ -31,6 +31,7 @@ private:
     //
     int id;
     int sensorId;
+	string flightId;
     string description;
     string execution;
     string producerName;
