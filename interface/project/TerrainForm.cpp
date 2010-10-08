@@ -14,6 +14,38 @@ TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 }
 
+void TerrainForm::fillLatDir(string str)
+{
+	if (str == "N")
+		latDirCombo->setCurrentIndex(0);
+	else
+		latDirCombo->setCurrentIndex(1);
+}
+
+void TerrainForm::fillLongDir(string str)
+{
+	if (str == "E")
+		longDirCombo->setCurrentIndex(1);
+	else
+		longDirCombo->setCurrentIndex(0);
+}
+
+string TerrainForm::getLatDir()
+{
+	if (latDirCombo->currentIndex() == 0)
+		return "N";
+	else
+		return "S";
+}
+
+string TerrainForm::getLongDir()
+{
+	if (longDirCombo->currentIndex() == 1)
+		return "E";
+	else
+		return "W";
+}
+
 void TerrainForm::fillvalues(string values)
 {
     EDomElement ede(values);
@@ -40,7 +72,8 @@ void TerrainForm::fillvalues(string values)
     //latitude
     EDomElement lat=ede.elementByTagName("Lat");
 
-    latDirCombo->setCurrentIndex(latDirCombo->findText(lat.attribute("direction").c_str() ) ) ;
+	//latDirCombo->setCurrentIndex(latDirCombo->findText(lat.attribute("direction").c_str() ) ) ;
+	fillLatDir(lat.attribute("direction"));
 	latDegreeSpin->setValue( (QString::fromUtf8(lat.elementByTagName("degrees").toString().c_str())).toInt(&ok)
                              );
 
@@ -53,7 +86,8 @@ void TerrainForm::fillvalues(string values)
     //longitude
     EDomElement lon=ede.elementByTagName("Long");
 
-    longDirCombo->setCurrentIndex(longDirCombo->findText(lon.attribute("direction").c_str()  ) ) ;
+	//longDirCombo->setCurrentIndex(longDirCombo->findText(lon.attribute("direction").c_str()  ) ) ;
+	fillLongDir(lon.attribute("direction"));
 	longDegreeSpin->setValue( (QString::fromUtf8(lon.elementByTagName("degrees").toString().c_str())).toInt(&ok)
             );
 	longMinutesSpin->setValue( (QString::fromUtf8(lon.elementByTagName("minutes").toString().c_str())).toInt(&ok)
@@ -76,13 +110,15 @@ string TerrainForm::getvalues()
     auxStream << "\t<CPS>" << cpsComboBox->currentText().toUtf8().data() << "</CPS>\n";
     auxStream << "\t<workAreaCenterCoordinates>\n";
 
-    auxStream << "\t\t<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
+	//auxStream << "\t\t<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "\t\t<Lat direction=\"" << getLatDir() <<"\">\n";
     auxStream << "\t\t\t<degrees>" << latDegreeSpin->value()<<"</degrees>\n";
     auxStream << "\t\t\t<minutes>" << latMinutesSpin->value()<<"</minutes>\n";
     auxStream << "\t\t\t<seconds>" << latSecondSpin->value()<<"</seconds>\n";
     auxStream << "\t\t</Lat>\n";
 
-    auxStream << "\t\t<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
+	//auxStream << "\t\t<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "\t\t<Long direction=\"" << getLongDir() <<"\">\n";
     auxStream << "\t\t\t<degrees>" << longDegreeSpin->value()<<"</degrees>\n";
     auxStream << "\t\t\t<minutes>" << longMinutesSpin->value()<<"</minutes>\n";
     auxStream << "\t\t\t<seconds>" << longSecondSpin->value()<<"</seconds>\n";

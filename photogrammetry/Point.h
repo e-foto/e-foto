@@ -36,7 +36,7 @@ protected:
     // Private attributes
     //
     int id;
-    long gcpId;
+	string pointId;
     string description;
 
     // Aggregated Objects
@@ -60,10 +60,10 @@ public:
     // Private attribute accessor methods
     //
     void setId(int newId);
-    void setGcpId(long newGcpId);
+	void setPointId(string newPointId);
     void setDescription(string newDescription);
     int getId();
-    long getGcpId();
+	string getPointId();
     string getDescription();
 
     // Composed Objects accessor methods

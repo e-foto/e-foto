@@ -248,6 +248,7 @@ void Aerial::xmlSetData(string xml)
 {
     EDomElement root(xml);
     id = stringToInt(root.attribute("key"));
+	sensorId = root.elementByTagName("sensorId").toString();
     geometry = root.elementByTagName("geometry").toString();
     detector = root.elementByTagName("detector").toString();
     energySource = root.elementByTagName("energySource").toString();
@@ -322,6 +323,7 @@ string Aerial::xmlGetData()
 {
     stringstream result;
     result << "<sensor key=\"" << intToString(id) << "\">\n";
+	result << "<sensorId>" << sensorId << "</sensorId>\n";
     result << "<type>\n";
     result << "<geometry>" << geometry << "</geometry>\n";
     result << "<platform>aerial</platform>\n";

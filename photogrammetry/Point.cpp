@@ -46,9 +46,9 @@ void Point::setId(int newId)
  * Set the value of gcpId
  * @param newId the new value of gcpId
  */
-void Point::setGcpId(long newGcpId)
+void Point::setPointId(string newPointId)
 {
-    gcpId = newGcpId;
+	pointId = newPointId;
 }
 
 /**
@@ -73,9 +73,9 @@ int Point::getId()
  * Get the value of gcpId
  * @return the value of gcpId
  */
-long Point::getGcpId()
+string Point::getPointId()
 {
-    return gcpId;
+	return pointId;
 }
 
 /**

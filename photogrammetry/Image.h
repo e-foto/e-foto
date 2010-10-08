@@ -41,7 +41,7 @@ class Image : public EObject
     string filename;
     string filepath;
 
-    long img_id;
+	string imageId;
     ObjectSpaceCoordinate spatialCoordinates;
 
     // IMPORTANTE: Gambiarra temporaria...

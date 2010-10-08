@@ -7,7 +7,11 @@
 
 class TerrainForm : public AbstractForm, public Ui::Terreno
 {
-        Q_OBJECT
+		Q_OBJECT
+		void fillLatDir(string);
+		void fillLongDir(string);
+		string getLatDir();
+		string getLongDir();
 
 public:
         TerrainForm(QWidget *parent = 0);

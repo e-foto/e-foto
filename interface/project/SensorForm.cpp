@@ -11,49 +11,49 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 	calibratedSigmaContent->setSigmaFormController(calibratedSigmaController);
 
 	fid0SigmaController = new SigmaFormController("Not Available",2);
-	fid0SigmaController->setDirection("horizontal");
+	//fid0SigmaController->setDirection("horizontal");
 	//fid0SigmaSelector->setSigmaFormController(fid0SigmaController);
 	//fid0SigmaSelector->blockCovarianceMatrixOption();
 	fid0SigmaContent->setSigmaFormController(fid0SigmaController);
 
 	fid1SigmaController = new SigmaFormController("Not Available",2);
-	fid1SigmaController->setDirection("horizontal");
+	//fid1SigmaController->setDirection("horizontal");
 	//fid1SigmaSelector->setSigmaFormController(fid1SigmaController);
 	//fid1SigmaSelector->blockCovarianceMatrixOption();
 	fid1SigmaContent->setSigmaFormController(fid1SigmaController);
 
 	fid2SigmaController = new SigmaFormController("Not Available",2);
-	fid2SigmaController->setDirection("horizontal");
+	//fid2SigmaController->setDirection("horizontal");
 	//fid2SigmaSelector->setSigmaFormController(fid2SigmaController);
 	//fid2SigmaSelector->blockCovarianceMatrixOption();
 	fid2SigmaContent->setSigmaFormController(fid2SigmaController);
 
 	fid3SigmaController = new SigmaFormController("Not Available",2);
-	fid3SigmaController->setDirection("horizontal");
+	//fid3SigmaController->setDirection("horizontal");
 	//fid3SigmaSelector->setSigmaFormController(fid3SigmaController);
 	//fid3SigmaSelector->blockCovarianceMatrixOption();
 	fid3SigmaContent->setSigmaFormController(fid3SigmaController);
 
 	fid4SigmaController = new SigmaFormController("Not Available",2);
-	fid4SigmaController->setDirection("horizontal");
+	//fid4SigmaController->setDirection("horizontal");
 	//fid4SigmaSelector->setSigmaFormController(fid4SigmaController);
 	//fid4SigmaSelector->blockCovarianceMatrixOption();
 	fid4SigmaContent->setSigmaFormController(fid4SigmaController);
 
 	fid5SigmaController = new SigmaFormController("Not Available",2);
-	fid5SigmaController->setDirection("horizontal");
+	//fid5SigmaController->setDirection("horizontal");
 	//fid5SigmaSelector->setSigmaFormController(fid5SigmaController);
 	//fid5SigmaSelector->blockCovarianceMatrixOption();
 	fid5SigmaContent->setSigmaFormController(fid5SigmaController);
 
 	fid6SigmaController = new SigmaFormController("Not Available",2);
-	fid6SigmaController->setDirection("horizontal");
+	//fid6SigmaController->setDirection("horizontal");
 	//fid6SigmaSelector->setSigmaFormController(fid6SigmaController);
 	//fid6SigmaSelector->blockCovarianceMatrixOption();
 	fid6SigmaContent->setSigmaFormController(fid6SigmaController);
 
 	fid7SigmaController = new SigmaFormController("Not Available",2);
-	fid7SigmaController->setDirection("horizontal");
+	//fid7SigmaController->setDirection("horizontal");
 	//fid7SigmaSelector->setSigmaFormController(fid7SigmaController);
 	//fid7SigmaSelector->blockCovarianceMatrixOption();
 	fid7SigmaContent->setSigmaFormController(fid7SigmaController);

@@ -61,7 +61,7 @@ void CheckingPoint::xmlSetData(string xml)
 {
     EDomElement root(xml);
     id = stringToInt(root.attribute("key"));
-    gcpId = root.elementByTagName("gcp_id").toLong();
+	pointId = root.elementByTagName("pointId").toString();
     description = root.elementByTagName("description").toString();
     objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
     deque<EDomElement> xmlDigitalCoordinates = root.elementsByTagName("imageCoordinates");
@@ -81,7 +81,7 @@ string CheckingPoint::xmlGetData()
 {
     stringstream result;
     result << "<point key=\"" << intToString(id) << "\" type=\"checking\">\n";
-    result << "<gcp_id>" << longToString(gcpId) << "</gcp_id>\n";
+	result << "<pointId>" << pointId << "</pointId>\n";
     result << "<description>" << description << "</description>\n";
     result << objectCoordinate.xmlGetData();
     result << "<imagesMeasurements>\n";
