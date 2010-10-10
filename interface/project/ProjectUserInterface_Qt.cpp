@@ -21,8 +21,9 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->manager = manager;
 	this->currentForm = NULL;
 	this->currentItemId = 0;
-	this->treeModel = NULL;
+	//this->treeModel = NULL;
 	this->savedIn = "";
+	this->treeItems.clear();
 
 	// Realiza as conexões necessárias
 	this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
@@ -33,7 +34,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
 	this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
 	this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
-    this->connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
+	this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 	this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
 	this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
 	this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
@@ -129,7 +130,7 @@ void ProjectUserInterface_Qt::newProject()
 	manager->newProject();
 	savedIn = "";
 	viewHeader();
-	updateTree();
+	newTree();
 
 	//Os comandos a seguir so serao uteis enquanto o projeto ficar restrito a apenas um sensor e um flight
 
@@ -287,7 +288,7 @@ void ProjectUserInterface_Qt::loadFile()
 		//***************************************************************************************************
 
 		viewHeader();
-		updateTree();
+		newTree();
 	}
 }
 
@@ -472,25 +473,115 @@ void ProjectUserInterface_Qt::languageChange()
 	//retranslateUi(this);
 }
 
-void ProjectUserInterface_Qt::updateTree()
+void ProjectUserInterface_Qt::newTree()
 {
+	treeWidget->clear();
+	treeItems.clear();
+	if (savedIn == "")
+	{
+		treeWidget->setHeaderLabel(tr("New Project"));
+	}
+	else
+	{
+		treeWidget->setHeaderLabel(savedIn.c_str());
+	}
 	ETreeModel* etm = manager->getTreeModel();
-	string stringTree = "";
+
 	for (unsigned int i = 0; i < etm->countChildren(); i++)
 	{
-		stringTree += etm->dataAt(i);
-		stringTree += "\n";
-		for (unsigned int j = 0; j < etm->countGrandchildren(i); j++)
+		QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
+		treeItems.push_back(rootItem);
+		if (etm->dataAt(i) == "projectHeader")
+			rootItem->setText(0, tr("Project Header"));
+		else if (etm->dataAt(i) == "terrain")
+			rootItem->setText(0, tr("Terrain"));
+		else if (etm->dataAt(i) == "flights")
+			rootItem->setText(0, tr("Flight"));
+		else if (etm->dataAt(i) == "sensors")
+			rootItem->setText(0, tr("Sensor"));
+		else if (etm->dataAt(i) == "images")
+			rootItem->setText(0, tr("Images"));
+		else if (etm->dataAt(i) == "points")
+			rootItem->setText(0, tr("Points"));
+		if (!(etm->dataAt(i) == "projectHeader" || etm->dataAt(i) == "terrain"))
 		{
-			stringTree += "    ";
-			stringTree += etm->dataAt(i, j);
-			stringTree += "\n";
+			for (unsigned int j = 0; j < etm->countGrandchildren(i); j++)
+			{
+				QTreeWidgetItem* leafItem = new QTreeWidgetItem(rootItem);
+				leafItem->setText(0, tr(etm->dataAt(i,j).c_str()));
+			}
 		}
-		stringTree += "\n";
 	}
-	if (treeModel != NULL) delete treeModel;
-	treeModel = new TreeModel(QString::fromUtf8(stringTree.c_str()));
-	treeView->setModel(treeModel);
+}
+
+void ProjectUserInterface_Qt::updateTree()
+{
+	if (savedIn == "")
+	{
+		treeWidget->setHeaderLabel("New Project");
+	}
+	else
+	{
+		treeWidget->setHeaderLabel(savedIn.c_str());
+	}
+	ETreeModel* etm = manager->getTreeModel();
+
+	for (unsigned int i = 0; i < etm->countChildren(); i++)
+	{
+		if (i < treeItems.size())
+		{
+			if (etm->dataAt(i) == "projectHeader")
+				treeItems.at(i)->setText(0, tr("Project Header"));
+			else if (etm->dataAt(i) == "terrain")
+				treeItems.at(i)->setText(0, tr("Terrain"));
+			else if (etm->dataAt(i) == "flights")
+				treeItems.at(i)->setText(0, tr("Flight"));
+			else if (etm->dataAt(i) == "sensors")
+				treeItems.at(i)->setText(0, tr("Sensor"));
+			else if (etm->dataAt(i) == "images")
+				treeItems.at(i)->setText(0, tr("Images"));
+			else if (etm->dataAt(i) == "points")
+				treeItems.at(i)->setText(0, tr("Points"));
+			if (!(etm->dataAt(i) == "projectHeader" || etm->dataAt(i) == "terrain"))
+			for (unsigned int j = 0; j < etm->countGrandchildren(i); j++)
+			{
+				if (j < treeItems.at(i)->childCount())
+				{
+					treeItems.at(i)->child(j)->setText(0, tr(etm->dataAt(i,j).c_str()));
+				}
+				else
+				{
+					QTreeWidgetItem* leafItem = new QTreeWidgetItem(treeItems.at(i));
+					leafItem->setText(0, tr(etm->dataAt(i,j).c_str()));
+				}
+			}
+		}
+		else
+		{
+			QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
+			treeItems.push_back(rootItem);
+			if (etm->dataAt(i) == "projectHeader")
+				rootItem->setText(0, tr("Project Header"));
+			else if (etm->dataAt(i) == "terrain")
+				rootItem->setText(0, tr("Terrain"));
+			else if (etm->dataAt(i) == "flights")
+				rootItem->setText(0, tr("Flight"));
+			else if (etm->dataAt(i) == "sensors")
+				rootItem->setText(0, tr("Sensor"));
+			else if (etm->dataAt(i) == "images")
+				rootItem->setText(0, tr("Images"));
+			else if (etm->dataAt(i) == "points")
+				rootItem->setText(0, tr("Points"));
+			if (!(etm->dataAt(i) == "projectHeader" || etm->dataAt(i) == "terrain"))
+			{
+				for (unsigned int j = 0; j < etm->countGrandchildren(i); j++)
+				{
+					QTreeWidgetItem* leafItem = new QTreeWidgetItem(rootItem);
+					leafItem->setText(0, tr(etm->dataAt(i,j).c_str()));
+				}
+			}
+		}
+	}
 }
 
 bool ProjectUserInterface_Qt::exec()
@@ -503,14 +594,14 @@ bool ProjectUserInterface_Qt::exec()
 
 void ProjectUserInterface_Qt::selectImage(int pos)
 {
-	treeView->setCurrentIndex(treeModel->index(4,0).child(pos,0));
-	processTreeClick(treeModel->index(4,0).child(pos,0));
+	treeWidget->setCurrentItem(treeItems.at(4)->child(pos));
+	processTreeClick(treeWidget->currentIndex());
 }
 
 void ProjectUserInterface_Qt::selectPoint(int pos)
 {
-	treeView->setCurrentIndex(treeModel->index(5,0).child(pos,0));
-	processTreeClick(treeModel->index(5,0).child(pos,0));
+	treeWidget->setCurrentItem(treeItems.at(5)->child(pos));
+	processTreeClick(treeWidget->currentIndex());
 }
 
 void ProjectUserInterface_Qt::viewHeader()
@@ -789,6 +880,7 @@ void ProjectUserInterface_Qt::saveHeader()
 	manager->editComponent("Header", headerForm.getvalues());
 	viewHeader();
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 void ProjectUserInterface_Qt::saveTerrain()
@@ -796,6 +888,7 @@ void ProjectUserInterface_Qt::saveTerrain()
 	manager->editComponent("Terrain", terrainForm.getvalues());
 	viewTerrain();
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 void ProjectUserInterface_Qt::saveSensor()
@@ -803,6 +896,7 @@ void ProjectUserInterface_Qt::saveSensor()
 	manager->editComponent("Sensor", currentItemId, sensorForm.getvalues());
 	viewSensor(currentItemId);
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 void ProjectUserInterface_Qt::saveFlight()
@@ -810,6 +904,7 @@ void ProjectUserInterface_Qt::saveFlight()
 	manager->editComponent("Flight", currentItemId, flightForm.getvalues());
 	viewFlight(currentItemId);
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 void ProjectUserInterface_Qt::saveImage()
@@ -817,6 +912,7 @@ void ProjectUserInterface_Qt::saveImage()
 	manager->editComponent("Image", currentItemId, imageForm.getvalues());
 	viewImage(currentItemId);
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 void ProjectUserInterface_Qt::savePoint()
@@ -824,6 +920,7 @@ void ProjectUserInterface_Qt::savePoint()
 	manager->editComponent("Point", currentItemId, pointForm.getvalues());
 	viewPoint(currentItemId);
 	actionSave_file->setEnabled(true);
+	updateTree();
 }
 
 // Cancelando cada view...
@@ -1066,7 +1163,7 @@ string currentData = debuggerTextEdit->toPlainText().toStdString();
 if (EDomValidator::validateSensor(currentData))
 {
 manager->addComponent(currentData, "sensors");
-updateTree();
+newTree();
 viewSensors();
 }
 else
@@ -1086,7 +1183,7 @@ string currentData = debuggerTextEdit->toPlainText().toStdString();
 if (EDomValidator::validateFlight(currentData))
 {
 manager->addComponent(currentData, "flights");
-updateTree();
+newTree();
 viewFlights();
 }
 else
@@ -1151,7 +1248,7 @@ void ProjectUserInterface_Qt::showAbout()
 
 #include <QStringList>
 
-TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
+/*TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
 	parentItem = parent;
 	itemData = data;
@@ -1347,7 +1444,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 		number++;
 	}
-}
+}*/
 
 void ProjectUserInterface_Qt::validatingSensor()
 {

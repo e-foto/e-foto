@@ -14,7 +14,7 @@
    <string>efoto: Project Manager</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource/project_resource.qrc">
+   <iconset>
     <normaloff>:/icons/images/WindowIcon.png</normaloff>:/icons/images/WindowIcon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -55,7 +55,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="resource/project_resource.qrc">:/icons/images/logo.png</pixmap>
+            <pixmap>:/icons/images/logo.png</pixmap>
            </property>
           </widget>
          </item>
@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -142,13 +142,24 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QHBoxLayout">
      <item>
-      <widget class="QTreeView" name="treeView">
+      <widget class="QTreeWidget" name="treeWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>New Project</string>
+        </property>
+       </column>
       </widget>
      </item>
     </layout>
@@ -330,8 +341,6 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="resource/project_resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
