@@ -23,7 +23,7 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 
-class TreeItem
+/*class TreeItem
 {
 public:
 	TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
@@ -66,7 +66,7 @@ private:
 	void setupModelData(const QStringList &lines, TreeItem *parent);
 
 	TreeItem *rootItem;
-};
+};*/
 
 class ProjectUserInterface_Qt : public QMainWindow, public Ui::ProjectMainWindow, public ProjectUserInterface
 {
@@ -77,7 +77,8 @@ public:
 	~ProjectUserInterface_Qt();
 
 protected:
-	TreeModel* treeModel;
+	//TreeModel* treeModel;
+	QList<QTreeWidgetItem*> treeItems;
 	int currentItemId;
 	QLabel offset;
 	QStackedWidget centerArea;
@@ -95,6 +96,7 @@ protected:
 
 protected slots:
 	virtual void languageChange();
+	virtual void newTree();
 	virtual void updateTree();
 	virtual void validatingSensor();
 	virtual void validatingFlight();
