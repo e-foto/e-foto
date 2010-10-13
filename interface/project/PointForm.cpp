@@ -70,8 +70,8 @@ void PointForm::fillvalues(string values)
 			QStringList linColStr = QString(imgMeasure.elementByTagName("gml:pos").toString().c_str()).split(" ");
 			if (linColStr.size() == 2)
 			{
-				linItem->setText(linColStr.at(0));
-				colItem->setText(linColStr.at(1));
+				linItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
+				colItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
 			}
 		}
 

@@ -21,17 +21,17 @@ void PointsForm::fillvalues(string values)
 
         EDomElement pnt=ede.children().at(i);
 
-        string auxString;
+		deque<double> values;
 
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pnt.attribute("key").c_str()) );
 		QTableWidgetItem *gcpItem = new QTableWidgetItem(pnt.elementByTagName("pointId").toString().c_str()) ;
         QTableWidgetItem *typeItem = new QTableWidgetItem(pnt.attribute("type").c_str()) ;
-        auxString = pnt.elementByTagName("gml:pos").toString();
-        if(auxString != "")
+		values = pnt.elementByTagName("gml:pos").toGmlPos();
+		if(values.size() == 3)
         {
-            QTableWidgetItem *EItem = new QTableWidgetItem(QString::fromUtf8(auxString.c_str()).split(" ").at(0));
-            QTableWidgetItem *NItem = new QTableWidgetItem(QString::fromUtf8(auxString.c_str()).split(" ").at(1));
-            QTableWidgetItem *HItem = new QTableWidgetItem(QString::fromUtf8(auxString.c_str()).split(" ").at(2));
+			QTableWidgetItem *EItem = new QTableWidgetItem(QString::number(values.at(0),'f',3));
+			QTableWidgetItem *NItem = new QTableWidgetItem(QString::number(values.at(1),'f',3));
+			QTableWidgetItem *HItem = new QTableWidgetItem(QString::number(values.at(2),'f',3));
             pointsTable->setItem(i,0,keyItem);
             pointsTable->setItem(i,1,gcpItem);
             pointsTable->setItem(i,2,typeItem);
