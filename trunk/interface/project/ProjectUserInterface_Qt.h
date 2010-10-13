@@ -92,9 +92,9 @@ protected:
 	PointsForm pointsForm;
 	PointForm pointForm;
 	ControlButtons controlButtons;
-        QModelIndex currentIndex;
-        string savedIn;
-        bool editState, addNewState;
+	QModelIndex currentIndex;
+	string savedIn;
+	bool editState, addNewState;
 
 protected slots:
 	virtual void languageChange();

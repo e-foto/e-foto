@@ -79,6 +79,7 @@ void ImageForm::fillvalues(string values)
 		eDoubleSpinBox_2->setSuffix(" m");
 		nDoubleSpinBox_2->setSuffix(" m");
 		hDoubleSpinBox_2->setSuffix(" m");
+		gnssSigmaController->fillValues("Not Available");
 		activeGNSS = false;
 	}
 	else
@@ -113,6 +114,7 @@ void ImageForm::fillvalues(string values)
 		omegaDoubleSpinBox->setSuffix(" rad");
 		phiDoubleSpinBox->setSuffix(" rad");
 		kappaDoubleSpinBox->setSuffix(" rad");
+		insSigmaController->fillValues("Not Available");
 		activeINS = false;
 	}
 	else
