@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="Icons" >
+    <file>resource/images/exit.png</file>
+    <file>resource/images/exit2.png</file>
+    <file>resource/images/export.png</file>
+    <file>resource/images/exterior.png</file>
+    <file>resource/images/fd.png</file>
+    <file>resource/images/mark.png</file>
+    <file>resource/images/move.png</file>
+    <file>resource/images/table.png</file>
+    <file>resource/images/unmark.png</file>
+    <file>resource/images/find.png</file>
+    <file>resource/images/fit.png</file>
+    <file>resource/images/grid.png</file>
+    <file>resource/images/interior.png</file>
+  </qresource>
+</RCC>
