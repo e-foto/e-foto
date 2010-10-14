@@ -122,6 +122,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="1">
          <widget class="QDoubleSpinBox" name="meanAltSpinBox">
+          <property name="toolTip">
+           <string>Mean Altitude Above Sea Level</string>
+          </property>
           <property name="buttonSymbols">
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>
@@ -173,6 +176,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="maxAltSpinBox">
+          <property name="toolTip">
+           <string>Max Altitude Above Sea Level</string>
+          </property>
           <property name="buttonSymbols">
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>
@@ -192,6 +198,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="minAltSpinBox">
+          <property name="toolTip">
+           <string>Min Altitude Above Sea Level</string>
+          </property>
           <property name="buttonSymbols">
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>

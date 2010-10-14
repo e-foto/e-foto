@@ -123,7 +123,7 @@ p, li { white-space: pre-wrap; }
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
-         <string>Flight Data</string>
+         <string>Flight Parameters</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>

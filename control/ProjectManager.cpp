@@ -57,7 +57,7 @@ bool ProjectManager::newProject()
         string xmlData = "";
         xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
-        xmlData += "<efotoPhotogrammetricProject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+        xmlData += "<efotoPhotogrammetricProject version=\"1.0.20\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
         xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
         xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
 		xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
@@ -182,7 +182,7 @@ bool ProjectManager::loadFile(string filename)
             myFile.close();
 
             string xmlData = myData.str();
-            // Aqui deve entrar um codigo para validar o XML.
+			// Aqui deve entrar um codigo para validar o XML.
             manager->xmlSetData(xmlData);
 
             if (treeModel != NULL)
@@ -213,6 +213,17 @@ bool ProjectManager::saveFile(string filename)
         return false;
     }
     return false;
+}
+
+bool ProjectManager::testFileVersion()
+{
+	if (manager != NULL)
+	{
+		EDomElement ede(manager->xmlGetData());
+		if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))
+			return true;
+	}
+	return false;
 }
 
 bool ProjectManager::addComponent(string data, string parent)

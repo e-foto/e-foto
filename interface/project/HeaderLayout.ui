@@ -74,7 +74,7 @@
          <item row="3" column="0">
           <widget class="QLabel" name="labelAims">
            <property name="text">
-            <string>Aims</string>
+            <string>Goals</string>
            </property>
            <property name="buddy">
             <cstring>lineEditAims</cstring>

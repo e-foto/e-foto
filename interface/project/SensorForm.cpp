@@ -84,14 +84,16 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 	principalSigmaSelector->blockCovarianceMatrixOption();
 	principalSigmaContent->setSigmaFormController(principalSigmaController);
 
-    QDoubleValidator *validator = new QDoubleValidator(this);
-
-	validator->setRange(-1000.0,1000.0,5);
+    QRegExp regExp("[-]?\\d{1,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2}$)?");
+    QRegExpValidator *validator= new QRegExpValidator(regExp,this);
 
     radialK0LineEdit->setValidator(validator);
     radialK1LineEdit->setValidator(validator);
     radialK2LineEdit->setValidator(validator);
     radialK3LineEdit->setValidator(validator);
+
+    principalX0LineEdit->setValidator(validator);
+    principalY0LineEdit->setValidator(validator);
 
     fiductialEta0LineEdit->setValidator(validator);
     fiductialEta1LineEdit->setValidator(validator);
@@ -108,8 +110,8 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
     fiductialXi3LineEdit->setValidator(validator);
     fiductialXi4LineEdit->setValidator(validator);
     fiductialXi5LineEdit->setValidator(validator);
-	fiductialXi6LineEdit->setValidator(validator);
-	fiductialXi7LineEdit->setValidator(validator);
+    fiductialXi6LineEdit->setValidator(validator);
+    fiductialXi7LineEdit->setValidator(validator);
 
 
 	xaA0LineEdit->setValidator(validator);

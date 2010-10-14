@@ -49,7 +49,8 @@ public:
     bool loadProject();
     bool saveProject();
     bool loadFile(string filename);
-    bool saveFile(string filename);
+	bool saveFile(string filename);
+	bool testFileVersion();
     bool addComponent(string data, string parent);
     bool removeComponent(string type, int id);
     bool editComponent(string type, string data);
