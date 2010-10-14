@@ -124,6 +124,7 @@ public:
 	//void updateView(AbstractForm& newView);
 
 public slots:
+	virtual void closeEvent(QCloseEvent *event);
 	virtual void newProject();
 	virtual void loadFile();
 	virtual void saveFile();

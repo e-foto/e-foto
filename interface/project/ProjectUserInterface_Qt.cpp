@@ -120,8 +120,120 @@ ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
 	// no need to delete child widgets, Qt does it all for us
 }
 
+void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
+{
+	if (editState || addNewState)
+	{
+		if (controlButtons.saveButton->isEnabled())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Do you want to keep all changes?",
+										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.saveButton->click();
+			}
+			else if (reply == QMessageBox::No)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				event->ignore();
+				return;
+			}
+		}
+		else
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Registration data is not complete and will be lost. Continue?",
+										  QMessageBox::Yes | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				event->ignore();
+				return;
+			}
+		}
+	}
+	if (actionSave_file->isEnabled())
+	{
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
+									  tr("Do you want to save all changes?"),
+									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes)
+		{
+			actionSave_file->trigger();
+		}
+		else if (reply == QMessageBox::Cancel)
+		{
+			event->ignore();
+			return;
+		}
+	}
+	event->accept();
+}
+
 void ProjectUserInterface_Qt::newProject()
 {
+	if (editState || addNewState)
+	{
+		if (controlButtons.saveButton->isEnabled())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Do you want to keep all changes?",
+										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.saveButton->click();
+			}
+			else if (reply == QMessageBox::No)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Registration data is not complete and will be lost. Continue?",
+										  QMessageBox::Yes | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+	if (actionSave_file->isEnabled())
+	{
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
+									  tr("Do you want to save all changes?"),
+									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes)
+		{
+			actionSave_file->trigger();
+		}
+		else if (reply == QMessageBox::Cancel)
+		{
+			return;
+		}
+	}
 	addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
 	addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
 	setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
@@ -259,44 +371,109 @@ void ProjectUserInterface_Qt::newProject()
 
 void ProjectUserInterface_Qt::loadFile()
 {
+	if (editState || addNewState)
+	{
+		if (controlButtons.saveButton->isEnabled())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Do you want to keep all changes?",
+										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.saveButton->click();
+			}
+			else if (reply == QMessageBox::No)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Registration data is not complete and will be lost. Continue?",
+										  QMessageBox::Yes | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+	if (actionSave_file->isEnabled())
+	{
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
+									  tr("Do you want to save all changes?"),
+									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes)
+		{
+			actionSave_file->trigger();
+		}
+		else if (reply == QMessageBox::Cancel)
+		{
+			return;
+		}
+	}
 	QString filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
 
 	if (filename == "")
 		return;
 	else
 	{
-		addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
-		addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
-		setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
-		setCorner(Qt::TopRightCorner,Qt::RightDockWidgetArea);
-		projectDockWidget->setVisible(true);
-		introWidget->setVisible(false);
-		centerArea.setVisible(true);
-		controlButtons.setVisible(true);
-		offset.setVisible(true);
+		if (manager->loadFile(filename.toStdString()))
+		{
+			if (!manager->testFileVersion())
+			{
+				QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
+				alert->show();
+				return;
+			}
+			addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
+			addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
+			setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
+			setCorner(Qt::TopRightCorner,Qt::RightDockWidgetArea);
+			projectDockWidget->setVisible(true);
+			introWidget->setVisible(false);
+			centerArea.setVisible(true);
+			controlButtons.setVisible(true);
+			offset.setVisible(true);
 
-		manager->loadFile(filename.toStdString());
-		savedIn = filename.toStdString();
-		actionSave_file->setEnabled(false);
-		actionSave_file_as->setEnabled(true);
+			savedIn = filename.toStdString();
+			actionSave_file->setEnabled(false);
+			actionSave_file_as->setEnabled(true);
 
-		//***************************************************************************************************
-		// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-		int i=filename.lastIndexOf("/");
+			//***************************************************************************************************
+			// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+			int i=filename.lastIndexOf("/");
 
-		QString fileName = "<fileName>"+filename.right(filename.length()-i-1)+"</fileName>";
-		QString filePath = "<filePath>"+filename.left(i)+"</filePath>";
+			QString fileName = "<fileName>"+filename.right(filename.length()-i-1)+"</fileName>";
+			QString filePath = "<filePath>"+filename.left(i)+"</filePath>";
 
-		EDomElement node(manager->getXml("projectHeader"));
+			EDomElement node(manager->getXml("projectHeader"));
 
-		node.replaceChildByTagName("fileName",fileName.toStdString());
-		node.replaceChildByTagName("filePath",filePath.toStdString());
+			node.replaceChildByTagName("fileName",fileName.toStdString());
+			node.replaceChildByTagName("filePath",filePath.toStdString());
 
-		manager->editComponent("Header", node.getContent());
-		//***************************************************************************************************
+			manager->editComponent("Header", node.getContent());
+			//***************************************************************************************************
 
-		viewHeader();
-		newTree();
+			viewHeader();
+			newTree();
+		}
+		else
+		{
+			QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - The file does not exist;\n - A bug in the program.\n\nTry changing the file's name or path and try again.");
+			alert->show();
+		}
 	}
 }
 
@@ -304,14 +481,23 @@ void ProjectUserInterface_Qt::saveFile()
 {
 	if (!savedIn.empty())
 	{
-		headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
+		QDateTime dateTimeBackup = headerForm.dateTimeEditModificationDate->dateTime();
+		//headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
 		headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
 		manager->editComponent("Header", headerForm.getvalues());
+		if (manager->saveFile(savedIn))
+		{
+			actionSave_file->setEnabled(false);
+		}
+		else
+		{
+			headerForm.dateTimeEditModificationDate->setDateTime(dateTimeBackup);
+			manager->editComponent("Header", headerForm.getvalues());
+			QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
+			alert->show();
+		}
 		if (centerArea.currentIndex() == 0)
 			viewHeader();
-
-		manager->saveFile(savedIn);
-		actionSave_file->setEnabled(false);
 		updateTree();
 	}
 	else
@@ -328,26 +514,45 @@ void ProjectUserInterface_Qt::saveFileAs()
 	{
 		//***************************************************************************************************
 		// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+		QString extension = filename.right(4);
+		if (extension != ".epp")
+			filename.append(".epp");
 		int i=filename.lastIndexOf("/");
 
 		QString fileName = filename.right(filename.length()-i-1);
 		QString filePath = filename.left(i);
 
+		QString fileNameBackup = headerForm.lineEditFileName->text();
+		QString filePathBackup = headerForm.lineEditFilePath->text();
+		QDateTime dateTimeCreatBackup = headerForm.dateTimeEditCreationDate->dateTime();
+		QDateTime dateTimeModifBackup = headerForm.dateTimeEditModificationDate->dateTime();
+
 		headerForm.lineEditFilePath->setText(filePath);
 		headerForm.lineEditFileName->setText(fileName);
-		headerForm.dateTimeEditCreationDate->setTime(QTime::currentTime());
 		headerForm.dateTimeEditCreationDate->setDateTime(QDateTime::currentDateTime());
-		headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
 		headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
 
 		manager->editComponent("Header", headerForm.getvalues());
-		if (centerArea.currentIndex() == 0)
-			viewHeader();
 		//***************************************************************************************************
 
-		manager->saveFile(filename.toStdString());
-		savedIn = filename.toStdString();
-		actionSave_file->setEnabled(false);
+		if (manager->saveFile(filename.toStdString()))
+		{
+			savedIn = filename.toStdString();
+			actionSave_file->setEnabled(false);
+		}
+		else
+		{
+			headerForm.lineEditFilePath->setText(filePathBackup);
+			headerForm.lineEditFileName->setText(fileNameBackup);
+			headerForm.dateTimeEditCreationDate->setDateTime(dateTimeCreatBackup);
+			headerForm.dateTimeEditModificationDate->setDateTime(dateTimeModifBackup);
+			manager->editComponent("Header", headerForm.getvalues());
+
+			QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - The file's name or path is invalid (maybe accented characters or whitespace);\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
+			alert->show();
+		}
+		if (centerArea.currentIndex() == 0)
+			viewHeader();
 		updateTree();
 	}
 }
@@ -700,6 +905,7 @@ void ProjectUserInterface_Qt::viewHeader()
 
 	menuProject->setEnabled(true);
 	menuExecute->setEnabled(true);
+	controlButtons.saveButton->setEnabled(true);
 }
 
 void ProjectUserInterface_Qt::viewTerrain()
@@ -724,6 +930,7 @@ void ProjectUserInterface_Qt::viewTerrain()
 
 	menuProject->setEnabled(true);
 	menuExecute->setEnabled(true);
+	controlButtons.saveButton->setEnabled(true);
 }
 
 void ProjectUserInterface_Qt::viewSensors()

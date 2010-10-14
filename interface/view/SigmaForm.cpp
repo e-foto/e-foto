@@ -4,15 +4,20 @@ SigmaFormController::SigmaFormController()
 {
 	init();
 	dimension = 1;
-	validator = new QDoubleValidator(this);
+
+        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
+        validator= new QRegExpValidator(regExp,this);
+
 	this->toNotAvailable();
 }
 
 SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension)
 {
 	init();
-	dimension = myDimension;
-	validator = new QDoubleValidator(this);
+        dimension = myDimension;
+        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
+        validator= new QRegExpValidator(regExp,this);
+
 	if (myMode == "Not Available")
 	{
 		this->toNotAvailable();
@@ -30,8 +35,9 @@ SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension
 
 SigmaFormController::SigmaFormController(Matrix myValues)
 {
-	init();
-	validator = new QDoubleValidator(this);
+        init();
+        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
+        validator= new QRegExpValidator(regExp,this);
 	if (myValues.getCols() == 1) //Standard deviations
 	{
 		dimension = myValues.getRows();
