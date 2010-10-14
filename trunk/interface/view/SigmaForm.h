@@ -24,7 +24,7 @@ protected:
 	QWidget* contentWidget;
 	QList<QLabel*> labels;
 	QList<QLineEdit*> edits;
-	QDoubleValidator *validator;
+        QRegExpValidator* validator;
 	QStringList titles;
 	unsigned int dimension;
 	string direction;
