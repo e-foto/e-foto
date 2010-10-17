@@ -54,8 +54,6 @@ void ImagesForm ::setReadOnly(bool state)
 //emite o sinal da linha(row) correspondente a image key
 void ImagesForm :: emitSignal(int i)
 {
-    //int key=stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
-    //emit clicked(key);
     // Provisóriamente nós enviamos a posição da linha clicada e não a key efetivamente.
     emit clicked(i);
 }

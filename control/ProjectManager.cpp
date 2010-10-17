@@ -113,26 +113,6 @@ bool ProjectManager::newProject()
 		xmlData += "\t<exteriorOrientation>\n";
 		xmlData += "\t</exteriorOrientation>\n";
 		xmlData += "\n";
-		/*
-		xmlData += "\t<photogrammetricBlock>\n";
-		xmlData += "\t</photogrammetricBlock>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPairs>\n";
-		xmlData += "\t</stereoPairs>\n";
-		xmlData += "\n";
-		xmlData += "\t<normalization>\n";
-		xmlData += "\t</normalization>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPloting>\n";
-		xmlData += "\t</stereoPloting>\n";
-		xmlData += "\n";
-		xmlData += "\t<dem>\n";
-		xmlData += "\t</dem>\n";
-		xmlData += "\n";
-		xmlData += "\t<orthorectification>\n";
-		xmlData += "\t</orthorectification>\n";
-		xmlData += "\n";
-		*/
         xmlData += "</efotoPhotogrammetricProject>";
 
         manager->xmlSetData(xmlData);
@@ -326,11 +306,7 @@ EObject* ProjectManager::viewComponent(string type, int id)
         else if (type == "Image")
             return (EObject*) manager->instanceImage(id);
         else if (type == "Point")
-            return (EObject*) manager->instancePoint(id);
-        else if (type == "IO")
-            return (EObject*) manager->instanceIO(id);
-        else if (type == "EO")
-            return (EObject*) manager->instanceEO(id);
+			return (EObject*) manager->instancePoint(id);
     }
     return NULL;
 }
@@ -398,22 +374,6 @@ int ProjectManager::getFreePointId()
 	return result;
 }
 
-bool ProjectManager::startModule(string module, int image)
-{
-    if (manager != NULL)
-    {
-        if (module.compare("InteriorOrientation") == 0)
-            manager->setNextModule(3);
-        else if (module.compare("SpatialRessection") == 0)
-            manager->setNextModule(4);
-
-        manager->setNextImage(image);
-
-        return true;
-    }
-    return false;
-}
-
 bool ProjectManager::exec()
 {
     if (manager != NULL)
@@ -452,101 +412,4 @@ string ProjectManager::getXml(string tagname)
 string ProjectManager::getXml(string tagname, string att, string value)
 {
     return manager->getXml(tagname, att, value);
-}
-
-bool ProjectManager::makeSPFile(string filename, int image1, int image2)
-{
-    if (manager != NULL)
-    {
-        if (image1 == image2 || filename == "")
-        {
-            return false;
-        }
-        if (image1 == 0 || image2 == 0)
-        {
-            return false;
-        }
-
-        InteriorOrientation* io1 = manager->instanceIO(image1);
-        InteriorOrientation* io2 = manager->instanceIO(image2);
-        SpatialRessection* sr1 = (SpatialRessection*)manager->instanceEO(image1);
-        SpatialRessection* sr2 = (SpatialRessection*)manager->instanceEO(image2);
-		Aerial* sensor = (Aerial*)manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
-		Flight* flight = manager->instanceFlight(manager->instanceImage(image1)->getFlightId());
-		Terrain* terrain = manager->instanceTerrain();
-
-		if (io1 == NULL || io2 == NULL || sr1 == NULL || sr2 == NULL || sensor == NULL || flight == NULL || terrain == NULL)
-        {
-            return false;
-        }
-
-        EDomElement xml(manager->xmlGetData());
-        string value = "";
-		// O texto aqui de baixo esta escrito errado de proposito para ficar compativel com o teste que o Marcelo
-		// programou no stereoplotter. La ele procura por "Mesure" quando o correto seria "Measure".
-		// Isto e compativel com a versao 1.6 do modulo e devera mudar logo que ele corrija a sua parte.
-		value += "Stereoscopic Visualization and Mesure Module Data\n";
-
-        value += doubleToString(io1->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(6, 1)); value += "\n";
-
-        value += doubleToString(io2->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(6, 1)); value += "\n";
-
-        value += doubleToString(sensor->getFocalDistance()); value += "\n";
-        value += doubleToString(flight->getHeight()); value += "\n";
-
-        string scale = flight->getScale();
-        value += scale.substr(scale.find(':') + 1); value += "\n";
-
-        double X01 = sr1->getXa().get(1,1);
-        double X02 = sr2->getXa().get(1,1);
-        double Y01 = sr1->getXa().get(2,1);
-        double Y02 = sr2->getXa().get(2,1);
-        double airbase = sqrt(pow(X01 - X02, 2) + pow(Y01 - Y02, 2));
-        double photobase = airbase * sensor->getFocalDistance() / flight->getHeight();
-
-        value += doubleToString(photobase); value += "\n";
-        value += doubleToString(airbase); value += "\n";
-
-        value += doubleToString(sr1->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(6, 1)); value += "\n";
-
-        value += doubleToString(sr2->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(6, 1)); value += "\n";
-
-		value += doubleToString(sensor->getPrincipalPointCoordinates().getXi()); value += "\n";
-		value += doubleToString(sensor->getPrincipalPointCoordinates().getEta()); value += "\n";
-
-		value += doubleToString(terrain->getMeanAltitude()); value += "\n";
-
-        value += "End of data";
-
-        ofstream myFile (filename.c_str());
-        if (myFile.is_open())
-        {
-            myFile << value;
-            myFile.close();
-            return true;
-        }
-        else cout << "Unable to open file";
-        return false;
-    }
-    return false;
 }

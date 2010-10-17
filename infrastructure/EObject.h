@@ -16,16 +16,6 @@ using namespace std;
 
 //class Mounter;
 
-/**
-* class EObject
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 06/05/2009
-* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
-*/
-
 class EObject : public EDom
 {
     //EOBJECT

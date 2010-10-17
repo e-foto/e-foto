@@ -64,9 +64,6 @@ void ImageForm::fillvalues(string values)
     filePathLine->setText( QString::fromUtf8(auxString.c_str() )
                        );
 
-	//flightIDSpin->setValue( (QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str())).toInt(&ok)
-						   //);
-
 	resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok)
 							  );
 
@@ -147,8 +144,7 @@ string ImageForm::getvalues()
     auxStream << "\t<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
     auxStream << "\t<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
     auxStream << "\t<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
-    auxStream << "\t<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
-	//auxStream << "\t<flightId>" << flightIDSpin->value() << "</flightId>\n";
+	auxStream << "\t<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
     auxStream << "\t<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
 	if (gnssGroup->isChecked())
 	{
