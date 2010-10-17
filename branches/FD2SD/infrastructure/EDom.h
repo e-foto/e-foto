@@ -14,16 +14,6 @@
 
 using namespace std;
 
-/**
-* class EDOM
-*
-* @author Rafael Alves de Aguiar
-*
-* * * * * * * * * * * *
-* @date 22/4/2010
-* @version 2.0 - Rafael Alves de Aguiar
-*/
-
 /*******************************************************************************
 
 Disclaimer: EDom and EDomElement are two classes made to solve all of E-Foto's

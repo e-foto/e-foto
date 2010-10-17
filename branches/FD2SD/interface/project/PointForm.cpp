@@ -51,8 +51,6 @@ void PointForm::fillvalues(string values)
 	nDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	hDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
-	//sigmaController->fillValues(ede.elementByTagName("sigma").toString());
-	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));
 
 	imageMeasurementsTable->setRowCount(imageKeyList.size());
 	for (unsigned int i = 0; i < imageKeyList.size(); i++)
