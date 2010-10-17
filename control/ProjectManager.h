@@ -14,17 +14,6 @@
 class ProjectUserInterface;
 class EFotoManager;
 
-/**
-  * class ProjectManager
-  *
-  * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 25/06/2009
-  * @version 1.0 - Rafael Alves de Aguiar & Irving da Silva Badolato
-  *
-  */
-
 class ProjectManager
 {
 
@@ -62,13 +51,11 @@ public:
 	int getImageId(string imageName);
 	int getFreeImageId();
 	int getFreePointId();
-    bool startModule(string module, int image);
     bool exec();
     bool reload();
 
     string getXml(string tagname);
-    string getXml(string tagname, string att, string value);
-    bool makeSPFile(string filename, int image1, int image2);
+	string getXml(string tagname, string att, string value);
 
 };
 

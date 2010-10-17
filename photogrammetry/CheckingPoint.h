@@ -8,16 +8,6 @@
 
 #include "Point.h"
 
-/**
-* class CheckingPoint
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 06/05/2009
-* @version 1.1 - Rafael Alves de Aguiar & Irving da Silva Badolato.
-*/
-
 class CheckingPoint : public Point
 {
     //EOBJECT

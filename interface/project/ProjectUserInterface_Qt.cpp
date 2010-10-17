@@ -35,9 +35,6 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(actionLoad_file, SIGNAL(triggered()), this, SLOT(loadFile()));
 	this->connect(actionSave_file, SIGNAL(triggered()), this, SLOT(saveFile()));
 	this->connect(actionSave_file_as, SIGNAL(triggered()), this, SLOT(saveFileAs()));
-	this->connect(actionInterior_Orientation, SIGNAL(triggered()), this, SLOT(executeIO()));
-	this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
-	this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
 	this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 	this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 	this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
@@ -263,10 +260,6 @@ void ProjectUserInterface_Qt::newProject()
 	text +=	"\t\t<detector>film</detector>\n";
 	text +=	"\t\t<energySource>natural</energySource>\n";
 	text +=	"\t\t<spectralRanges uom=\"#um\">\n";
-	//text +=	"\t\t\t<spectralRange band=\"\">\n";
-	//text +=	"\t\t\t\t<inferiorLimit></inferiorLimit>\n";
-	//text +=	"\t\t\t\t<superiorLimit></superiorLimit>\n";
-	//text +=	"\t\t\t</spectralRange>\n";
 	text +=	"\t\t</spectralRanges>\n";
 	text +=	"\t</type>\n";
 	text +=	"\t<description></description>\n";
@@ -312,16 +305,6 @@ void ProjectUserInterface_Qt::newProject()
 	text +=	"\t<principalPointCoordinates uom=\"#mm\">\n";
 	text +=	"\t\t<gml:pos></gml:pos>\n";
 	text +=	"\t\t<sigma>\n";
-	//text +=	"\t\t\t<mml:matrix>\n";
-	//text +=	"\t\t\t\t<mml:matrixrow>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t</mml:matrixrow>\n";
-	//text +=	"\t\t\t\t<mml:matrixrow>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t</mml:matrixrow>\n";
-	//text +=	"\t\t\t</mml:matrix>\n";
 	text +=	"\t\t</sigma>\n";
 	text +=	"\t</principalPointCoordinates>\n";
 	text +=	"\t<fiductialMarks uom=\"#mm\">\n";
@@ -482,7 +465,6 @@ void ProjectUserInterface_Qt::saveFile()
 	if (!savedIn.empty())
 	{
 		QDateTime dateTimeBackup = headerForm.dateTimeEditModificationDate->dateTime();
-		//headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
 		headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
 		manager->editComponent("Header", headerForm.getvalues());
 		if (manager->saveFile(savedIn))
@@ -557,44 +539,6 @@ void ProjectUserInterface_Qt::saveFileAs()
 	}
 }
 
-void ProjectUserInterface_Qt::executeIO()
-{
-	bool ok;
-	QStringList items;
-	deque<string> strItems = manager->listImages();
-	for (unsigned int i = 0; i < strItems.size(); i++)
-		items << strItems.at(i).c_str();
-	QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
-	if (ok)
-	{
-		int value = manager->getImageId(chosen.toStdString());
-		if (value != -1)
-		{
-			manager->startModule("InteriorOrientation", value);
-			this->close();
-		}
-	}
-}
-
-void ProjectUserInterface_Qt::executeSR()
-{
-	bool ok;
-	QStringList items;
-	deque<string> strItems = manager->listImages();
-	for (unsigned int i = 0; i < strItems.size(); i++)
-		items << strItems.at(i).c_str();
-	QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
-	if (ok)
-	{
-		int value = manager->getImageId(chosen.toStdString());
-		if (value != -1)
-		{
-			manager->startModule("SpatialRessection", value);
-			this->close();
-		}
-	}
-}
-
 void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 {
     if ((editState && index!=currentIndex)||addNewState)
@@ -630,10 +574,7 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
                 controlButtons.cancelButton->click();
             }
             else
-            {
-                //if (addNewState)
-				//  treeWidget->setCurrentIndex(0);
-                //else
+			{
 				treeWidget->setCurrentIndex(currentIndex);
                 return;
             }
@@ -653,12 +594,10 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 		}
 		else if (etm->dataAt(index.row()) == "sensors")
 		{
-			//viewSensors(); mudança temporaria
 			viewSensor(1);
 		}
 		else if (etm->dataAt(index.row()) == "flights")
 		{
-			//viewFlights(); mudança temporaria
 			viewFlight(1);
 		}
 		else if (etm->dataAt(index.row()) == "images")
@@ -674,12 +613,10 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 	{
 		if (etm->dataAt(index.parent().row()) == "sensors")
 		{
-			//viewSensor(etm->idAt(index.parent().row(), index.row())); mudança temporaria
 			viewSensor(1);
 		}
 		else if (etm->dataAt(index.parent().row()) == "flights")
 		{
-			//viewFlight(etm->idAt(index.parent().row(), index.row())); mudança temporaria
 			viewFlight(1);
 		}
 		else if (etm->dataAt(index.parent().row()) == "images")
@@ -689,38 +626,6 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 		else if (etm->dataAt(index.parent().row()) == "points")
 		{
 			viewPoint(etm->idAt(index.parent().row(), index.row()));
-		}
-	}
-}
-
-void ProjectUserInterface_Qt::exportSPFile()
-{
-	bool ok;
-	QStringList items;
-	deque<string> strItems = manager->listImages();
-	for (unsigned int i = 0; i < strItems.size(); i++)
-		items << strItems.at(i).c_str();
-
-	QString chosen1 = QInputDialog::getItem(this, tr("Select left image"), tr("Image name:"), items, 0, false, &ok);
-	if (!ok) return;
-
-	items.removeOne(chosen1);
-
-	QString chosen2 = QInputDialog::getItem(this, tr("Select right image!"), tr("Image name:"), items, 0, false, &ok);
-	if (!ok) return;
-
-	QString filename = QFileDialog::getSaveFileName(this, "Save File", ".", "*.txt");
-
-	int image1 = manager->getImageId(chosen1.toStdString());
-	int image2 = manager->getImageId(chosen2.toStdString());
-	if (image1 != -1 && image2 != -1)
-	{
-		bool result = manager->makeSPFile(filename.toStdString(), image1, image2);
-		if (result == false)
-		{
-			QMessageBox msgBox;
-			msgBox.setText("Error: invalid input parameters.");
-			msgBox.exec();
 		}
 	}
 }
@@ -735,15 +640,12 @@ void ProjectUserInterface_Qt::newTree()
 {
 	treeWidget->clear();
 	treeItems.clear();
-	//this->treeWidget->setHeaderHidden(false);
 	if (savedIn == "")
 	{
-		//treeWidget->setHeaderLabel(tr("New Project"));
 		projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
 	}
 	else
 	{
-		//treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
 		if (actionSave_file->isEnabled())
 			projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
 		else
@@ -786,13 +688,11 @@ void ProjectUserInterface_Qt::newTree()
 void ProjectUserInterface_Qt::updateTree()
 {
     if (savedIn == "")
-    {
-        //treeWidget->setHeaderLabel(tr("New Project"));
+	{
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
     }
     else
-    {
-        //treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
+	{
         if (actionSave_file->isEnabled())
             projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
         else
@@ -935,29 +835,6 @@ void ProjectUserInterface_Qt::viewTerrain()
 
 void ProjectUserInterface_Qt::viewSensors()
 {
-	// Por enquanto este metodo esta fora de uso.
-	/*
-controlButtons.disconnectAll();
-controlButtons.multiConnect();
-connect((&controlButtons)->newButton, SIGNAL(clicked()), this, SLOT(newSensor()));
-connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewSensor()));
-connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelSensors()));
-
-EDomElement node(manager->getXml("sensors"));
-
-sensorsForm.fillvalues(node.getContent());
-centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
-centerArea.setCurrentIndex(X); // falta definir este indice
-currentForm = &sensorsForm;
-currentForm->setReadOnly(true);
-
-debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
-debuggerTextEdit->setReadOnly(true);
-
-menuProject->setEnabled(true);
-menuExecute->setEnabled(true);
-*/
 }
 
 void ProjectUserInterface_Qt::viewSensor(int id)
@@ -989,29 +866,6 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 
 void ProjectUserInterface_Qt::viewFlights()
 {
-	// Por enquanto este metodo esta fora de uso.
-	/*
-controlButtons.disconnectAll();
-controlButtons.multiConnect();
-connect((&controlButtons)->newButton, SIGNAL(clicked()), this, SLOT(newFlight()));
-connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewFlight()));
-connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelFlights()));
-
-EDomElement node(manager->getXml("flights"));
-
-flightsForm.fillvalues(node.getContent());
-centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
-centerArea.setCurrentIndex(X); // falta definir este indice
-currentForm = &flightsForm;
-currentForm->setReadOnly(true);
-
-debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
-debuggerTextEdit->setReadOnly(true);
-
-menuProject->setEnabled(true);
-menuExecute->setEnabled(true);
-*/
 }
 
 void ProjectUserInterface_Qt::viewFlight(int id)
@@ -1276,125 +1130,10 @@ void ProjectUserInterface_Qt::cancelPoints()
 
 void ProjectUserInterface_Qt::newSensor()
 {
-	// Por enquanto este metodo esta fora de uso.
-	/*
-string text = "";
-
-text += "<sensor key=\"\">\n";
-text +=	"\t<sensorId></sensorId>\n";
-text +=	"\t<type>\n";
-text +=	"\t\t<geometry></geometry>\n";
-text +=	"\t\t<platform></platform>\n";
-text +=	"\t\t<detector></detector>\n";
-text +=	"\t\t<energySource></energySource>\n";
-text +=	"\t\t<spectralRanges uom=\"#um\">\n";
-text +=	"\t\t\t<spectralRange band=\"\">\n";
-text +=	"\t\t\t\t<inferiorLimit></inferiorLimit>\n";
-text +=	"\t\t\t\t<superiorLimit></superiorLimit>\n";
-text +=	"\t\t\t</spectralRange>\n";
-text +=	"\t\t</spectralRanges>\n";
-text +=	"\t</type>\n";
-text +=	"\t<description></description>\n";
-text +=	"\t<calibrationCertificate>\n";
-text +=	"\t\t<number></number>\n";
-text +=	"\t\t<dispatch></dispatch>\n";
-text +=	"\t\t<expiration></expiration>\n";
-text +=	"\t</calibrationCertificate>\n";
-text +=	"\t<focalDistance uom=\"#mm\">\n";
-text +=	"\t\t<value></value>\n";
-text +=	"\t\t<sigma></sigma>\n";
-text +=	"\t</focalDistance>\n";
-text +=	"\t<distortionCoefficients>\n";
-text +=	"\t\t<radialSymmetric>\n";
-text +=	"\t\t\t<k0>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k0>\n";
-text +=	"\t\t\t<k1>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k1>\n";
-text +=	"\t\t\t<k2>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k2>\n";
-text +=	"\t\t\t<k3>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k3>\n";
-text +=	"\t\t</radialSymmetric>\n";
-text +=	"\t\t<decentered>\n";
-text +=	"\t\t\t<P1>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</P1>\n";
-text +=	"\t\t\t<P2>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</P2>\n";
-text +=	"\t\t</decentered>\n";
-text +=	"\t</distortionCoefficients>\n";
-text +=	"\t<principalPointCoordinates uom=\"#mm\">\n";
-text +=	"\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t<sigma>\n";
-text +=	"\t\t\t<mml:matrix>\n";
-text +=	"\t\t\t\t<mml:matrixrow>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t</mml:matrixrow>\n";
-text +=	"\t\t\t\t<mml:matrixrow>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t</mml:matrixrow>\n";
-text +=	"\t\t\t</mml:matrix>\n";
-text +=	"\t\t</sigma>\n";
-text +=	"\t</principalPointCoordinates>\n";
-text +=	"\t<fiductialMarks uom=\"#mm\">\n";
-text +=	"\t\t<fiductialMark key=\"1\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"2\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"3\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"4\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t</fiductialMarks>\n";
-text += "</sensor>";
-*/
 }
 
 void ProjectUserInterface_Qt::newFlight()
 {
-	// Por enquanto este metodo esta fora de uso.
-	/*
-string text = "";
-
-text += "<flight key=\"\" sensor_key=\"\">\n";
-text += "\t<flightId></flightId>\n";
-text += "\t<description></description>\n";
-text += "\t<execution></execution>\n";
-text += "\t<producerName></producerName>\n";
-text += "\t<nominalScale>\n";
-text += "\t\t<mml:mfrac>\n";
-text += "\t\t\t<mml:mn></mml:mn>\n";
-text += "\t\t\t<mml:mn></mml:mn>\n";
-text += "\t\t</mml:mfrac>\n";
-text += "\t</nominalScale>\n";
-text += "\t<flightHeight uom=\"#m\"></flightHeight>\n";
-text += "\t<overlap>\n";
-text += "\t\t<longitudinal uom=\"#%\"></longitudinal>\n";
-text += "\t\t<transversal uom=\"#%\"></transversal>\n";
-text += "\t</overlap>\n";
-text += "</flight>";
-*/
 }
 
 void ProjectUserInterface_Qt::newImage()
@@ -1428,7 +1167,6 @@ void ProjectUserInterface_Qt::newImage()
 void ProjectUserInterface_Qt::newPoint()
 {
     addNewState = true;
-	//updateView(new QLabel("Futuro view de point"));
 	string text = "";
 
 	currentItemId = manager->getFreePointId();
@@ -1458,42 +1196,10 @@ void ProjectUserInterface_Qt::newPoint()
 
 void ProjectUserInterface_Qt::saveNewSensor()
 {
-	/*
-string currentData = debuggerTextEdit->toPlainText().toStdString();
-if (EDomValidator::validateSensor(currentData))
-{
-manager->addComponent(currentData, "sensors");
-newTree();
-viewSensors();
-}
-else
-{
-QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado é inválido.");
-msgBox.exec();
-emit viewButtons->editButton->click();
-}
-*/
 }
 
 void ProjectUserInterface_Qt::saveNewFlight()
 {
-	/*
-string currentData = debuggerTextEdit->toPlainText().toStdString();
-if (EDomValidator::validateFlight(currentData))
-{
-manager->addComponent(currentData, "flights");
-newTree();
-viewFlights();
-}
-else
-{
-QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado é inválido.");
-msgBox.exec();
-emit viewButtons->editButton->click();
-}
-*/
 }
 
 void ProjectUserInterface_Qt::saveNewImage()
@@ -1545,208 +1251,6 @@ void ProjectUserInterface_Qt::showAbout()
 	AboutForm* about = new AboutForm();
 	about->show();
 }
-
-// Códigos das classes extras.
-
-//#include <QStringList>
-
-/*TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
-{
-	parentItem = parent;
-	itemData = data;
-}
-
-TreeItem::~TreeItem()
-{
-	qDeleteAll(childItems);
-}
-
-void TreeItem::appendChild(TreeItem *item)
-{
-	childItems.append(item);
-}
-
-TreeItem *TreeItem::child(int row)
-{
-	return childItems.value(row);
-}
-
-int TreeItem::childCount() const
-{
-	return childItems.count();
-}
-
-int TreeItem::columnCount() const
-{
-	return itemData.count();
-}
-
-QVariant TreeItem::data(int column) const
-{
-	return itemData.value(column);
-}
-
-TreeItem *TreeItem::parent()
-{
-	return parentItem;
-}
-
-int TreeItem::row() const
-{
-	if (parentItem)
-		return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
-
-	return 0;
-}
-
-TreeModel::TreeModel(const QString &data, QObject *parent)
-	: QAbstractItemModel(parent)
-{
-	QList<QVariant> rootData;
-	rootData << "";
-	rootItem = new TreeItem(rootData);
-	setupModelData(data.split(QString("\n")), rootItem);
-}
-
-TreeModel::~TreeModel()
-{
-	delete rootItem;
-}
-
-int TreeModel::columnCount(const QModelIndex &parent) const
-{
-	if (parent.isValid())
-		return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
-	else
-		return rootItem->columnCount();
-}
-
-QVariant TreeModel::data(const QModelIndex &index, int role) const
-{
-	if (!index.isValid())
-		return QVariant();
-
-	if (role != Qt::DisplayRole)
-		return QVariant();
-
-	TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-
-	return item->data(index.column());
-}
-
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
-{
-	if (!index.isValid())
-		return 0;
-
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-}
-
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
-							   int role) const
-{
-	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return rootItem->data(section);
-
-	return QVariant();
-}
-
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
-		const
-{
-	if (!hasIndex(row, column, parent))
-		return QModelIndex();
-
-	TreeItem *parentItem;
-
-	if (!parent.isValid())
-		parentItem = rootItem;
-	else
-		parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
-	TreeItem *childItem = parentItem->child(row);
-	if (childItem)
-		return createIndex(row, column, childItem);
-	else
-		return QModelIndex();
-}
-
-QModelIndex TreeModel::parent(const QModelIndex &index) const
-{
-	if (!index.isValid())
-		return QModelIndex();
-
-	TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
-	TreeItem *parentItem = childItem->parent();
-
-	if (parentItem == rootItem)
-		return QModelIndex();
-
-	return createIndex(parentItem->row(), 0, parentItem);
-}
-
-int TreeModel::rowCount(const QModelIndex &parent) const
-{
-	TreeItem *parentItem;
-	if (parent.column() > 0)
-		return 0;
-
-	if (!parent.isValid())
-		parentItem = rootItem;
-	else
-		parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
-	return parentItem->childCount();
-}
-
-void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
-{
-	QList<TreeItem*> parents;
-	QList<int> indentations;
-	parents << parent;
-	indentations << 0;
-
-	int number = 0;
-
-	while (number < lines.count()) {
-		int position = 0;
-		while (position < lines[number].length()) {
-			if (lines[number].mid(position, 1) != " ")
-				break;
-			position++;
-		}
-
-		QString lineData = lines[number].mid(position).trimmed();
-
-		if (!lineData.isEmpty()) {
-			// Read the column data from the rest of the line.
-			QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
-			QList<QVariant> columnData;
-			for (int column = 0; column < columnStrings.count(); ++column)
-				columnData << columnStrings[column];
-
-			if (position > indentations.last()) {
-				// The last child of the current parent is now the new parent
-				// unless the current parent has no children.
-
-				if (parents.last()->childCount() > 0) {
-					parents << parents.last()->child(parents.last()->childCount()-1);
-					indentations << position;
-				}
-			} else {
-				while (position < indentations.last() && parents.count() > 0) {
-					parents.pop_back();
-					indentations.pop_back();
-				}
-			}
-
-			// Append a new item to the current parent's list of children.
-			parents.last()->appendChild(new TreeItem(columnData, parents.last()));
-		}
-
-		number++;
-	}
-}*/
 
 void ProjectUserInterface_Qt::validatingSensor()
 {

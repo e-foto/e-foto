@@ -7,23 +7,6 @@ bool EDomValidator::validateProject()
 
 bool EDomValidator::validateHeader(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<projectHeader>
-		<name/>!
-		<description/>?
-		<filePath/>!
-		<fileName/>!
-		<creation/>!
-		<modification/>!
-		<owner/>?
-		<aims/>?
-		<context/>?
-	</projectHeader>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
-
     EDomElement tester(xml);
 
     // Procurando elementos que devem existir:
@@ -50,32 +33,6 @@ bool EDomValidator::validateHeader(string xml)
 
 bool EDomValidator::validateTerrain(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<terrain>
-		<meanAltitude/>!
-		<minAltitude/>!
-		<maxAltitude/>!
-		<GRS/>!
-		<CPS/>!
-		<workAreaCenterCoordinates>?
-			<Lat>?
-				<degrees/>!
-				<minutes/>!
-				<seconds/>!
-			</Lat>
-			<Long>?
-				<degrees/>!
-				<minutes/>!
-				<seconds/>!
-			</Long>
-			<utmFuse/>!
-		</workAreaCenterCoordinates>
-	</terrain>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
-
     EDomElement tester(xml);
 
     // Procurando elementos que devem existir:
@@ -133,28 +90,6 @@ bool EDomValidator::validateTerrain(string xml)
 
 bool EDomValidator::validateFlight(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<flight>
-		<flightId/>!
-		<description/>?
-		<execution/>!
-		<producerName/>?
-		<nominalScale>?
-			<mml:mfrac>?
-				<mml:mn/>!
-				<mml:mn/>!
-			</mml:mfrac>
-		</nominalScale>
-		<flightHeight/>!
-		<overlap>?
-			<longitudinal/>!
-			<transversal/>!
-		</overlap>
-	</flight>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
 
     EDomElement tester(xml);
 
@@ -204,76 +139,6 @@ bool EDomValidator::validateFlight(string xml)
 
 bool EDomValidator::validateSensor(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<sensor>
-		<type>?
-			<geometry/>!
-			<platform/>!
-			<detector/>!
-			<energySource/>?
-			<spectralRanges>?
-				<spectralRange>?
-					<inferiorLimit/>?
-					<superiorLimit/>?
-				</spectralRange>
-			</spectralRanges>
-		</type>
-		<description/>?
-		<calibrationCertificate>?
-			<number/>!
-			<dispatch/>?
-			<expiration/>?
-		</calibrationCertificate>
-		<focalDistance>?
-			<value/>!
-			<sigma/>?
-		</focalDistance>
-		<distortionCoefficients>?
-			<radialSymmetric>?
-				<k0>?
-					<value/>?
-					<sigma/>?
-				</k0>
-				<k1>?
-					<value/>?
-					<sigma/>?
-				</k1>
-				<k2>?
-					<value/>?
-					<sigma/>?
-				</k2>
-				<k3>?
-					<value/>?
-					<sigma/>?
-				</k3>
-			</radialSymmetric>
-			<decentered>?
-				<P1>?
-					<value/>?
-					<sigma/>?
-				</P1>
-				<P2>?
-					<value/>?
-					<sigma/>?
-				</P2>
-			</decentered>
-		</distortionCoefficients>
-		<principalPointCoordinates>?
-			<gml:pos/>!
-			<sigma/>?
-		</principalPointCoordinates>
-		<fiductialMarks>X
-			<fiductialMark>
-				<gml:pos/>
-				<sigma/>
-			</fiductialMark>
-		</fiductialMarks>
-	</sensor>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
-
     EDomElement tester(xml);
 
     // Procurando elementos que devem existir:
@@ -390,25 +255,6 @@ bool EDomValidator::validateSensor(string xml)
 
 bool EDomValidator::validateImage(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<image>
-		<img_id/>?
-		<width/>!
-		<height/>!
-		<fileName/>!
-		<filePath/>!
-		<flightId/>?
-		<resolution/>!
-		<spatialCoordinates>?
-			<gml:pos/>?
-			<sigma/>?
-		</spatialCoordinates>
-	</image>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
-
     EDomElement tester(xml);
 
     // Procurando elementos que devem existir:
@@ -439,26 +285,6 @@ bool EDomValidator::validateImage(string xml)
 
 bool EDomValidator::validatePoint(string xml)
 {
-    /* A estrutura validada por este método é:
-
-	<point>
-		<gcp_id/>?
-		<description/>?
-		<spatialCoordinates>?
-			<gml:pos/>!
-			<sigma/>!
-		</spatialCoordinates>
-		<imagesMeasurements>X
-			<imageCoordinates>
-				<uom/>
-				<gml:pos/>
-			</imageCoordinates>
-		</imagesMeasurements>
-	</point>
-
-	Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
-	*/
-
     EDomElement tester(xml);
 
     // Procurando elementos que devem existir:

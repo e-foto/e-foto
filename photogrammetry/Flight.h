@@ -11,16 +11,6 @@ class Terrain;
 class Sensor;
 class Image;
 
-/**
-* class Flight
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 06/05/2009
-* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
-*/
-
 class Flight : public EObject
 {
     //EOBJECT

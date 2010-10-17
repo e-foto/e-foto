@@ -3,8 +3,6 @@
 *******************************************************************************/
 
 #include "EFotoManager.h"
-#include "IOManager.h"
-#include "SRManager.h"
 #include "ProjectManager.h"
 
 // Constructors and destructor
@@ -17,8 +15,6 @@ EFotoManager::EFotoManager()
 {
     xmlData = "";
     project = NULL;
-    interiorOrientation = NULL;
-    spatialRessection = NULL;
 	theTerrain = NULL;
     nextModule = 1;
 }
@@ -149,48 +145,6 @@ Point* EFotoManager::instancePoint(int id)
 /**
  *
  */
-InteriorOrientation* EFotoManager::instanceIO(int imageId)
-{
-    for (unsigned int i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == imageId)
-            return IOs.at(i);
-    EDomElement root(xmlData);
-    EDomElement xmlIO = root.elementByTagAtt("imageIO", "image_key", intToString(imageId));
-    if (xmlIO.getContent().compare("") == 0)
-        return NULL;
-    InteriorOrientation* newIO = new InteriorOrientation();
-    newIO->setImage(image(imageId));
-    newIO->xmlSetData(xmlIO.getContent());
-    newIO->setImage(NULL);
-    IOs.push_back(newIO);
-    return newIO;
-}
-
-/**
- *
- */
-ExteriorOrientation* EFotoManager::instanceEO(int imageId)
-{
-    for (unsigned int i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == imageId)
-            return EOs.at(i);
-    EDomElement root(xmlData);
-    EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", intToString(imageId));
-    if (xmlEO.getContent().compare("") == 0)
-        return NULL;
-    if (xmlEO.attribute("type").compare("spatialRessection") == 0)
-    {
-        SpatialRessection* newEO = new SpatialRessection();
-        newEO->xmlSetData(xmlEO.getContent());
-        EOs.push_back(newEO);
-        return (ExteriorOrientation*) newEO;
-    }
-    return NULL;
-}
-
-/**
- *
- */
 void EFotoManager::deleteTerrain()
 {
 	if (theTerrain != NULL)
@@ -305,52 +259,6 @@ void EFotoManager::deletePoint(int id)
 /**
  *
  */
-void EFotoManager::deleteIO(int id)
-{
-    unsigned int i;
-    InteriorOrientation* myIO = NULL;
-    for (i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == id)
-        {
-        myIO = IOs.at(i);
-        break;
-    }
-    if (myIO != NULL)
-    {
-    	delete(myIO);
-        IOs.erase(IOs.begin() + i);
-    }
-}
-
-/**
- *
- */
-void EFotoManager::deleteEO(int id)
-{
-    unsigned int i;
-    ExteriorOrientation* myEO = NULL;
-    for (i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == id)
-        {
-        myEO = EOs.at(i);
-        break;
-    }
-    if (myEO != NULL)
-    {
-		//EDomElement xmlEO(myEO->xmlGetData());
-		//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
-		if (myEO->is("SpatialRessection"))
-        {
-            SpatialRessection* mySR = (SpatialRessection*) myEO;
-            delete(mySR);
-        }
-        EOs.erase(EOs.begin() + i);
-    }
-}
-
-/**
- *
- */
 Terrain* EFotoManager::terrain()
 {
 	if (theTerrain != NULL)
@@ -398,28 +306,6 @@ Point* EFotoManager::point(int id)
     for (unsigned int i = 0; i < points.size(); i++)
         if (points.at(i)->getId() == id)
             return points.at(i);
-    return NULL;
-}
-
-/**
- *
- */
-InteriorOrientation* EFotoManager::IO(int id)
-{
-    for (unsigned int i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == id)
-            return IOs.at(i);
-    return NULL;
-}
-
-/**
- *
- */
-ExteriorOrientation* EFotoManager::EO(int id)
-{
-    for (unsigned int i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == id)
-            return EOs.at(i);
     return NULL;
 }
 
@@ -513,14 +399,6 @@ void EFotoManager::setNextModule(int newModule)
 /**
  *
  */
-void EFotoManager::setNextImage(int newImage)
-{
-    nextImage = newImage;
-}
-
-/**
- *
- */
 bool EFotoManager::execProject()
 {
     bool result;
@@ -552,79 +430,6 @@ bool EFotoManager::reloadProject()
 /**
  *
  */
-bool EFotoManager::execIO(int id)
-{
-    bool result;
-    nextModule = 2;
-    Image* ioImage = instanceImage(id);
-    if (ioImage == NULL)
-    {
-        return false;
-    }
-    Sensor* ioSensor = instanceSensor(ioImage->getSensorId());
-    InteriorOrientation* io = instanceIO(id);
-    if (io == NULL)
-    {
-        io = new InteriorOrientation(id);
-        IOs.push_back(io);
-    }
-    else
-    {
-
-    }
-    interiorOrientation = new IOManager(this, ioSensor, ioImage, io);
-    result = interiorOrientation->exec();
-    delete interiorOrientation;
-    deleteIO(id);
-    deleteSensor(ioImage->getSensorId());
-    deleteImage(id);
-    return result;
-}
-
-/**
- *
- */
-bool EFotoManager::execSR(int id)
-{
-    bool result;
-    nextModule = 2;
-    Image* srImage = instanceImage(id);
-    if (srImage == NULL)
-    {
-        return false;
-    }
-    Sensor* srSensor = instanceSensor(srImage->getSensorId());
-    Flight* srFlight = instanceFlight(srImage->getFlightId());
-    InteriorOrientation* srIO = instanceIO(id);
-    SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
-	Terrain* srTerrain = instanceTerrain();
-	srFlight->setTerrain(srTerrain);
-    if (sr == NULL)
-    {
-        sr = new SpatialRessection(id);
-        EOs.push_back(sr);
-    }
-    else
-    {
-
-    }
-	spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr);
-
-    result = spatialRessection->exec();
-
-    delete spatialRessection;
-    deleteEO(id);
-    deleteIO(id);
-	deleteFlight(srImage->getFlightId());
-    deleteSensor(srImage->getSensorId());
-	deleteTerrain();
-    deleteImage(id);
-    return result;
-}
-
-/**
- *
- */
 bool EFotoManager::exec()
 {
     while (nextModule != 0)
@@ -635,13 +440,7 @@ bool EFotoManager::exec()
             execProject();
             break;
         case 2:
-            reloadProject();
-            break;
-        case 3:
-            execIO(nextImage);
-            break;
-        case 4:
-            execSR(nextImage);
+			reloadProject();
             break;
         default:
             nextModule = 0;

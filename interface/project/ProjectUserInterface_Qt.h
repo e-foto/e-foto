@@ -23,51 +23,6 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 
-/*class TreeItem
-{
-public:
-	TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
-	~TreeItem();
-
-	void appendChild(TreeItem *child);
-
-	TreeItem *child(int row);
-	int childCount() const;
-	int columnCount() const;
-	QVariant data(int column) const;
-	int row() const;
-	TreeItem *parent();
-
-private:
-	QList<TreeItem*> childItems;
-	QList<QVariant> itemData;
-	TreeItem *parentItem;
-};
-
-class TreeModel : public QAbstractItemModel
-{
-	Q_OBJECT
-
-public:
-	TreeModel(const QString &data, QObject *parent = 0);
-	~TreeModel();
-
-	QVariant data(const QModelIndex &index, int role) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
-	QVariant headerData(int section, Qt::Orientation orientation,
-						int role = Qt::DisplayRole) const;
-	QModelIndex index(int row, int column,
-					  const QModelIndex &parent = QModelIndex()) const;
-	QModelIndex parent(const QModelIndex &index) const;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-
-private:
-	void setupModelData(const QStringList &lines, TreeItem *parent);
-
-	TreeItem *rootItem;
-};*/
-
 class ProjectUserInterface_Qt : public QMainWindow, public Ui::ProjectMainWindow, public ProjectUserInterface
 {
 	Q_OBJECT
@@ -77,7 +32,6 @@ public:
 	~ProjectUserInterface_Qt();
 
 protected:
-	//TreeModel* treeModel;
 	QList<QTreeWidgetItem*> treeItems;
 	int currentItemId;
 	QLabel offset;
@@ -121,7 +75,6 @@ public:
 	void viewPoint(int id);
 	void viewImages();
 	void viewImage(int id);
-	//void updateView(AbstractForm& newView);
 
 public slots:
 	virtual void closeEvent(QCloseEvent *event);
@@ -129,10 +82,7 @@ public slots:
 	virtual void loadFile();
 	virtual void saveFile();
 	virtual void saveFileAs();
-	virtual void executeIO();
-	virtual void executeSR();
 	virtual void processTreeClick(QModelIndex);
-	virtual void exportSPFile();
 
 	virtual void selectImage(int);
 	virtual void selectPoint(int);

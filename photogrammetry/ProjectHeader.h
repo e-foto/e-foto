@@ -8,17 +8,6 @@
 
 #include "EObject.h"
 
-/**
-  * class ProjectHeader
-  *
-  * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 06/05/2008
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
-  *
-  */
-
 class ProjectHeader : public EObject
 {
     //EOBJECT

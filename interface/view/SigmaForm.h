@@ -24,8 +24,7 @@ protected:
 	QWidget* contentWidget;
 	QList<QLabel*> labels;
 	QList<QLineEdit*> edits;
-        QRegExpValidator* validator;
-	QStringList titles;
+		QRegExpValidator* validator;
 	unsigned int dimension;
 	string direction;
 	string mode;
@@ -40,7 +39,6 @@ protected:
 	void init();
 	Matrix stDevToMatrix(deque<double> stDev);
 	deque<double> matrixToStDev(Matrix mat);
-	void updateTitles();
 
 public:
 	QWidget* getContent();
@@ -60,7 +58,6 @@ public slots:
 	virtual void showMatrixEditor();
 	virtual void setReadOnly(bool);
 	virtual void changeValidate(QString);
-	virtual void setTitles(QStringList);
 
 signals:
 	void changeMatrixButtonVisibility(bool);

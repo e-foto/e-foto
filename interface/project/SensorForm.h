@@ -36,7 +36,6 @@ public:
 public slots:
 	void detectorGroup(int);
 	void fiductialGroup(int);
-	//void setSigmasVisible(bool);
 
 };
 

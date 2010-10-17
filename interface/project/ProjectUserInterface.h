@@ -10,17 +10,6 @@
 
 class ProjectManager;
 
-/**
-  * class ProjectUserInterface
-  *
-  * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 30/06/2009
-  * @version 1.0 - Rafael Alves de Aguiar & Irving da Silva Badolato
-  *
-  */
-
 class ProjectUserInterface //: public EObject
 {
 

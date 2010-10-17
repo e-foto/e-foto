@@ -15,16 +15,6 @@ class Point;
 class InteriorOrientation;
 class SpatialRessection;
 
-/**
-* class Image
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 06/05/2009
-* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
-*/
-
 class Image : public EObject
 {
     //EOBJECT
