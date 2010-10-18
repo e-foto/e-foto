@@ -48,7 +48,7 @@ public:
     bool newProject();
     bool loadProject();
     bool saveProject();
-    bool loadFile(string filename);
+    bool loadFile(string filename = "");
 	bool saveFile(string filename);
 	bool testFileVersion();
     bool addComponent(string data, string parent);
@@ -63,7 +63,7 @@ public:
 	int getFreeImageId();
 	int getFreePointId();
     bool startModule(string module, int image);
-    bool exec();
+    bool exec(string filename);
     bool reload();
 
     string getXml(string tagname);
