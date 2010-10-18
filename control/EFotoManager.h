@@ -117,11 +117,11 @@ public:
     string getInterfaceType();
     void setNextModule(int newModule);
     void setNextImage(int newImage);
-    bool execProject();
+    bool execProject(string filename = "");
     bool reloadProject();
     bool execIO(int id);
     bool execSR(int id);
-    bool exec();
+    bool exec(string filename = "");
 
 };
 

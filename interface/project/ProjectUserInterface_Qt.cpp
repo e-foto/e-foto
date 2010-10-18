@@ -369,7 +369,7 @@ void ProjectUserInterface_Qt::newProject()
 	manager->addComponent(text, "flights");
 }
 
-void ProjectUserInterface_Qt::loadFile()
+void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 {
 	if (editState || addNewState)
 	{
@@ -423,7 +423,17 @@ void ProjectUserInterface_Qt::loadFile()
 			return;
 		}
 	}
-	QString filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
+
+        QString filename;
+        if (filenameAtStart == "")
+        {
+            filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
+        }
+        else
+        {
+            filename = QString(filenameAtStart.c_str());
+        }
+
 
 	if (filename == "")
 		return;

@@ -126,7 +126,7 @@ public:
 public slots:
 	virtual void closeEvent(QCloseEvent *event);
 	virtual void newProject();
-	virtual void loadFile();
+        virtual void loadFile(string filenameAtStart = "");
 	virtual void saveFile();
 	virtual void saveFileAs();
 	virtual void executeIO();
