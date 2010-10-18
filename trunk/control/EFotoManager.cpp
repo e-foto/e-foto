@@ -521,7 +521,7 @@ void EFotoManager::setNextImage(int newImage)
 /**
  *
  */
-bool EFotoManager::execProject()
+bool EFotoManager::execProject(string filename)
 {
     bool result;
     nextModule = 0;
@@ -529,7 +529,7 @@ bool EFotoManager::execProject()
     {
         project = new ProjectManager(this);
     }
-    result = project->exec();
+    result = project->exec(filename);
     return result;
 }
 
@@ -625,8 +625,12 @@ bool EFotoManager::execSR(int id)
 /**
  *
  */
-bool EFotoManager::exec()
+bool EFotoManager::exec(string filename)
 {
+    if (filename != "")
+    {
+        execProject(filename);
+    }
     while (nextModule != 0)
     {
         switch (nextModule)
@@ -647,5 +651,6 @@ bool EFotoManager::exec()
             nextModule = 0;
         }
     }
+
     return true;
 }

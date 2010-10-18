@@ -414,13 +414,16 @@ bool ProjectManager::startModule(string module, int image)
     return false;
 }
 
-bool ProjectManager::exec()
+bool ProjectManager::exec(string filename)
 {
     if (manager != NULL)
     {
         if (manager->getInterfaceType().compare("Qt") == 0)
         {
-            myInterface = new ProjectUserInterface_Qt(this);
+            ProjectUserInterface_Qt* newInterface = new ProjectUserInterface_Qt(this);
+            if (filename != "")
+                newInterface->loadFile(filename);
+            myInterface = newInterface;
         }
         if (myInterface != NULL)
         {
