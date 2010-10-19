@@ -25,37 +25,28 @@ class ProjectManager;
 /**
   * class EFotoManager
   *
-  * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 09/06/2009
-  * @version 1.0 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+  * This class manages the data flow within the application.
+  * @author The e-foto team
+  * @date 14/10/2010
+  * @version 1.0.21
   *
   */
 
 class EFotoManager
 {
-    // Execution controller
-    //
+
     int nextModule;
     int nextImage;
-    /* These objects must be changed into something more reliable in the future.
-	 * The current way they are treated won't suport phototriangulation. */
 
-    // Main data element
-    //
     string xmlData;
     string interfaceType;
     
-    // Associations
-    //
+
     ProjectManager* project;
     IOManager* interiorOrientation;
     SRManager* spatialRessection;
 
-    // Started objects
-    //
-	Terrain* theTerrain;
+    Terrain* theTerrain;
     deque<Sensor*> sensors;
     deque<Flight*> flights;
     deque<Image*> images;
@@ -65,63 +56,230 @@ class EFotoManager
 
 public:
 
-    // Constructors and destructor
-    //
+
+    /**
+     * Default constructor.
+     */
     EFotoManager();
+
+    /**
+     * Default destructor.
+     */
     ~EFotoManager();
 
-    // Startable objects accessor methods
-    //
-	Terrain* instanceTerrain();
+    /**
+     * This method creates an instance of the @e Terrain class.
+     */
+    Terrain* instanceTerrain();
+
+    /**
+     * This method creates an instance of the @e Sensor class.
+     * @param id The number of the @e Sensor identifier.
+     */
     Sensor* instanceSensor(int id);
+
+    /**
+     * This method creates an instance of the @e Flight class.
+     * @param id The number of the @e Flight identifier.
+     */
     Flight* instanceFlight(int id);
+
+    /**
+     * This method creates an instance of the @e Image class.
+     * @param id The number of the @e Image identifier.
+     */
     Image* instanceImage(int id);
+
+    /**
+     * This method creates an instance of the @e Point class.
+     * @param id The number of the @e Point identifier.
+     */
     Point* instancePoint(int id);
+
+    /**
+     * This method creates an instance of the @e InteriorOrientation class.
+     * @param imageId The number of the image identifier.
+     */
     InteriorOrientation* instanceIO(int imageId);
+
+    /**
+     * This method creates an instance of the @e ExteriorOrientation class.
+     * @param imageId The number of the image identifier.
+     */
     ExteriorOrientation* instanceEO(int imageId);
-    
-	void deleteTerrain();
+
+    /**
+     * This method deletes an instance of the @e Terrain class.
+     */
+    void deleteTerrain();
+
+    /**
+     * This method deletes an instance of the @e Sensor class.
+     * @param id Sensor identifier.
+     */
     void deleteSensor(int id);
+
+    /**
+     * This method deletes an instance of the @e Flight class.
+     * @param id Flight identifier.
+     */
     void deleteFlight(int id);
+
+    /**
+     * This method deletes an instance of the @e Image class.
+     * @param id Image identifier.
+     */
     void deleteImage(int id);
+
+    /**
+     * This method deletes an instance of the @e Point class.
+     * @param id Point identifier.
+     */
     void deletePoint(int id);
+
+    /**
+     * This method deletes an instance of the @e InteriorOrientation class.
+     * @param id InteriorOrientation identifier.
+     */
     void deleteIO(int id);
+
+    /**
+     * This method deletes an instance of the @e ExteriorOrientation class.
+     * @param id ExteriorOrientation identifier.
+     */
     void deleteEO(int id);
 
-	Terrain* terrain();
+    /**
+     * This method returns the pointer of an existing @e Terrain object.
+     */
+    Terrain* terrain();
+
+    /**
+     * This method returns the pointer of an existing @e Sensor object.
+     * @param id The number of the sensor identifier.
+     */
     Sensor* sensor(int id);
+
+    /**
+     * This method returns the pointer of an existing @e Flight object.
+     * @param id The number of the flight identifier.
+     */
     Flight* flight(int id);
+
+    /**
+     * This method returns the pointer of an existing @e Image object.
+     * @param id The number of the image identifier.
+     */
     Image* image(int id);
+
+    /**
+     * This method returns the pointer of an existing @e Point object.
+     * @param id The number of the point identifier.
+     */
     Point* point(int id);
+
+    /**
+     * This method returns the pointer of an existing @e InteriorOrientation object.
+     * @param id The number of an identifier.
+     */
     InteriorOrientation* IO(int id);
+
+    /**
+     * This method returns the pointer of an existing @e ExteriorOrientation object.
+     * @param id The number of an identifier.
+     */
     ExteriorOrientation* EO(int id);
 
+    /**
+     * This method returns data from a specific node in a XML string.
+     * @param tagname The name of the intended XML tag.
+     */
     string getXml(string tagname);
+
+    /**
+     * This method returns data from a specific node in a XML string.
+     * @param tagname The name of the intended XML tag.
+     * @param att The value of the attribute of the intended XML tag.
+     * @param value The value of the node of the intended XML tag.
+     */
     string getXml(string tagname, string att, string value);
 
-    // EObject methods
-    //
+    /**
+     * This method return a string containing the object type.
+     */
     string objectType(void);
+
+    /**
+     * This method return a string containing all the object associations.
+     */
     string objectAssociations(void);
+
+    /**
+     * This method checks if the current object @e is of a specific class.
+     * @param s Identifier of the intended instance.
+     */
     bool is(string s);
 
-    // XML methods
-    //
+    /**
+     * This method reads data from a XML string and sets the internal variables with them.
+     * @param xml A string containing the XML data.
+     */
     void xmlSetData(string xml);
+
+    /**
+     * This method returns the current data from the program to a XML string.
+     */
     string xmlGetData();
 
-
-    //Other methods
-    //    
+    /**
+     * This sets the type of user interface which the program will run under.
+     * @param newInterfaceType String from Interface Type.
+     */
     void setInterfaceType(string newInterfaceType);
+
+    /**
+     * This method gets the current interface type.
+     */
     string getInterfaceType();
+
+    /**
+     * This method sets the next module to be executed.
+     * @param newModule New Module identification.
+     */
     void setNextModule(int newModule);
+
+    /**
+     * This method sets the next image to be processed.
+     * @param newImage New Image identification.
+     */
     void setNextImage(int newImage);
-    bool execProject(string filename = "");
+
+    /**
+     * This method starts the Project Manager module.
+     */
+    bool execProject();
+
+    /**
+     * This method reloads the Project Manager module.
+     */
     bool reloadProject();
+
+    /**
+     * This method starts the IO module.
+     * @param id An image identifier.
+     */
     bool execIO(int id);
+
+    /**
+     * This method starts the SR module.
+     * @param id An image identifier.
+     */
     bool execSR(int id);
-    bool exec(string filename = "");
+
+    /**
+     * This method starts the main execution loop.
+     */
+    bool exec();
 
 };
 
