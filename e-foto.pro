@@ -101,7 +101,9 @@ HEADERS += control/EFotoManager.h \
     interface/view/mmv/projectheaderview.h \
     interface/view/mmv/sensorview.h \
     interface/view/mmv/terrainview.h \
-    interface/project/PointsForm.h
+    interface/project/PointsForm.h \
+    xml_definition/XMLProjectHeader.h \
+    xml_definition/XMLTerrain.h
 FORMS += interface/io/IOForm.ui \
     interface/sr/SRForm.ui \
     interface/project/FormProject.ui \
@@ -183,7 +185,9 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/mmv/projectheaderview.cpp \
     interface/view/mmv/sensorview.cpp \
     interface/view/mmv/terrainview.cpp \
-    interface/project/PointsForm.cpp
+    interface/project/PointsForm.cpp \
+    xml_definition/XMLProjectHeader.cpp \
+    xml_definition/XMLTerrain.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \

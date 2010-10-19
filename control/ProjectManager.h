@@ -174,7 +174,7 @@ public:
     /**
      * This method starts the main execution loop.
      */
-    bool exec();
+    bool exec(string filename = "");
 
     /**
      * This method reloads the module.
