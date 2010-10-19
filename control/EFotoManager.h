@@ -257,7 +257,7 @@ public:
     /**
      * This method starts the Project Manager module.
      */
-    bool execProject();
+    bool execProject(string filename = "");
 
     /**
      * This method reloads the Project Manager module.
@@ -279,7 +279,7 @@ public:
     /**
      * This method starts the main execution loop.
      */
-    bool exec();
+    bool exec(string filename= "");
 
 };
 
