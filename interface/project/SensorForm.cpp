@@ -87,11 +87,11 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
     QRegExp regExp("[-]?\\d{1,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2}$)?");
     QRegExpValidator *validator= new QRegExpValidator(regExp,this);
 
-    radialK0LineEdit->setValidator(validator);
-    radialK1LineEdit->setValidator(validator);
-    radialK2LineEdit->setValidator(validator);
-    radialK3LineEdit->setValidator(validator);
-
+	radialK0LineEdit->setTextValue("");
+	radialK1LineEdit->setTextValue("");
+	radialK2LineEdit->setTextValue("");
+//	radialK3LineEdit->setTextValue("");
+/*
     principalX0LineEdit->setValidator(validator);
     principalY0LineEdit->setValidator(validator);
 
@@ -113,28 +113,25 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
     fiductialXi6LineEdit->setValidator(validator);
     fiductialXi7LineEdit->setValidator(validator);
 
-
+*/
 	xaA0LineEdit->setValidator(validator);
 	xaA1LineEdit->setValidator(validator);
 	xaA2LineEdit->setValidator(validator);
 	xaB0LineEdit->setValidator(validator);
 	xaB1LineEdit->setValidator(validator);
 	xaB2LineEdit->setValidator(validator);
-
-	//principalSigmaX0LineEdit->setValidator(validator);
-	//principalSigmaY0LineEdit->setValidator(validator);
-    principalX0LineEdit->setValidator(validator);
+/*
+	principalX0LineEdit->setValidator(validator);
     principalY0LineEdit->setValidator(validator);
 
     decenteredP1LineEdit->setValidator(validator);
-	//decenteredP1SigmaLineEdit->setValidator(validator);
+
     decenteredP2LineEdit->setValidator(validator);
-	//decenteredP2SigmaLineEdit->setValidator(validator);
+*/
 
     connect(detectorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(detectorGroup(int)));
     connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
 	//connect(fiductialSigmaCheckBox,SIGNAL(toggled(bool) ), this, SLOT(setSigmasVisible(bool)));
-
 
 }
 
@@ -162,29 +159,29 @@ void SensorForm::fillvalues(string values)
 	calibratedSigmaController->fillValues(ede.elementByTagName("sigma").getContent());
 
     EDomElement k= ede.elementByTagName("k0");
-	radialK0LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	radialK0LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//radialSigmaK0LineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
     k=ede.elementByTagName("k1");
-    radialK1LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	radialK1LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//radialSigmaK1LineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
     k=ede.elementByTagName("k2");
-    radialK2LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	radialK2LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//radialSigmaK2LineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
     k=ede.elementByTagName("k3");
-    radialK3LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	radialK3LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//radialSigmaK3LineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
 	radialSigmaController->fillValues(ede.elementByTagName("radialSymmetric").elementByTagName("sigma").getContent());
 
     k=ede.elementByTagName("P1");
-    decenteredP1LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	decenteredP1LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//decenteredP1SigmaLineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
     k=ede.elementByTagName("P2");
-    decenteredP2LineEdit->setText(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
+	decenteredP2LineEdit->setTextValue(QString::fromUtf8(k.elementByTagName("value").toString().c_str()));
 	//decenteredP2SigmaLineEdit->setText(QString::fromUtf8(k.elementByTagName("sigma").toString().c_str()));
 
 	decenteredSigmaController->fillValues(ede.elementByTagName("decentered").elementByTagName("sigma").getContent());
@@ -199,13 +196,13 @@ void SensorForm::fillvalues(string values)
 	EDomElement pri =  ede.elementByTagName("principalPointCoordinates");
 	if (pri.elementByTagName("gml:pos").toString() != "")
 	{
-		principalX0LineEdit->setText(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-		principalY0LineEdit->setText(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+		principalX0LineEdit->setTextValue(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+		principalY0LineEdit->setTextValue(QString::fromUtf8(pri.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 	}
 	else
 	{
-		principalX0LineEdit->setText("");
-		principalY0LineEdit->setText("");
+		principalX0LineEdit->setTextValue("");
+		principalY0LineEdit->setTextValue("");
 	}
 	//fiductialSigma0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 	principalSigmaController->fillValues(pri.elementByTagName("sigma").getContent());
@@ -222,8 +219,8 @@ void SensorForm::fillvalues(string values)
 		EDomElement fid =  ede.elementByTagAtt("fiductialMark","key","1");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-			fiductialEta0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+			fiductialXi0LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta0LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 		}
 		//fiductialSigma0LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 		fid0SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -231,8 +228,8 @@ void SensorForm::fillvalues(string values)
 		fid =  ede.elementByTagAtt("fiductialMark","key","2");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-			fiductialEta1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+			fiductialXi1LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta1LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 		}
 		//fiductialSigma1LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 		fid1SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -240,8 +237,8 @@ void SensorForm::fillvalues(string values)
 		fid =  ede.elementByTagAtt("fiductialMark","key","3");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-			fiductialEta2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+			fiductialXi2LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta2LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 		}
 		//fiductialSigma2LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 		fid2SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -249,8 +246,8 @@ void SensorForm::fillvalues(string values)
 		fid =  ede.elementByTagAtt("fiductialMark","key","4");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-			fiductialEta3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+			fiductialXi3LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+			fiductialEta3LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 		}
 		//fiductialSigma3LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 		fid3SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -260,8 +257,8 @@ void SensorForm::fillvalues(string values)
 			fid =  ede.elementByTagAtt("fiductialMark","key","5");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-				fiductialEta4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+				fiductialXi4LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+				fiductialEta4LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 			}
 			//fiductialSigma4LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 			fid4SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -269,8 +266,8 @@ void SensorForm::fillvalues(string values)
 			fid =  ede.elementByTagAtt("fiductialMark","key","6");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-				fiductialEta5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+				fiductialXi5LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+				fiductialEta5LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 			}
 			//fiductialSigma5LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 			fid5SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -278,8 +275,8 @@ void SensorForm::fillvalues(string values)
 			fid =  ede.elementByTagAtt("fiductialMark","key","7");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-				fiductialEta6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+				fiductialXi6LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+				fiductialEta6LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 			}
 			//fiductialSigma6LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 			fid6SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -287,8 +284,8 @@ void SensorForm::fillvalues(string values)
 			fid =  ede.elementByTagAtt("fiductialMark","key","8");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
-				fiductialEta7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
+				fiductialXi7LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0));
+				fiductialEta7LineEdit->setTextValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1));
 			}
 			//fiductialSigma7LineEdit->setText(QString::fromUtf8(fid.elementByTagName("sigma").toString().c_str()));
 			fid7SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
@@ -312,29 +309,29 @@ void SensorForm::fillvalues(string values)
 		xaB1LineEdit->setText(QString::fromUtf8(xa.elementByTagName("b1").toString().c_str()));
 		xaB2LineEdit->setText(QString::fromUtf8(xa.elementByTagName("b2").toString().c_str()));
 
-		fiductialXi0LineEdit->setText("");
-		fiductialEta0LineEdit->setText("");
+		fiductialXi0LineEdit->setTextValue("");
+		fiductialEta0LineEdit->setTextValue("");
 		fid0SigmaController->fillValues("");
-		fiductialXi1LineEdit->setText("");
-		fiductialEta1LineEdit->setText("");
+		fiductialXi1LineEdit->setTextValue("");
+		fiductialEta1LineEdit->setTextValue("");
 		fid1SigmaController->fillValues("");
-		fiductialXi2LineEdit->setText("");
-		fiductialEta2LineEdit->setText("");
+		fiductialXi2LineEdit->setTextValue("");
+		fiductialEta2LineEdit->setTextValue("");
 		fid2SigmaController->fillValues("");
-		fiductialXi3LineEdit->setText("");
-		fiductialEta3LineEdit->setText("");
+		fiductialXi3LineEdit->setTextValue("");
+		fiductialEta3LineEdit->setTextValue("");
 		fid3SigmaController->fillValues("");
-		fiductialXi4LineEdit->setText("");
-		fiductialEta4LineEdit->setText("");
+		fiductialXi4LineEdit->setTextValue("");
+		fiductialEta4LineEdit->setTextValue("");
 		fid4SigmaController->fillValues("");
-		fiductialXi5LineEdit->setText("");
-		fiductialEta5LineEdit->setText("");
+		fiductialXi5LineEdit->setTextValue("");
+		fiductialEta5LineEdit->setTextValue("");
 		fid5SigmaController->fillValues("");
-		fiductialXi6LineEdit->setText("");
-		fiductialEta6LineEdit->setText("");
+		fiductialXi6LineEdit->setTextValue("");
+		fiductialEta6LineEdit->setTextValue("");
 		fid6SigmaController->fillValues("");
-		fiductialXi7LineEdit->setText("");
-		fiductialEta7LineEdit->setText("");
+		fiductialXi7LineEdit->setTextValue("");
+		fiductialEta7LineEdit->setTextValue("");
 		fid7SigmaController->fillValues("");
 	}
 }
@@ -372,30 +369,30 @@ string SensorForm::getvalues()
     auxStream << "\t<distortionCoefficients>\n";
     auxStream << "\t\t<radialSymmetric>\n";
     auxStream << "\t\t\t<k0>\n";
-    auxStream << "\t\t\t\t<value>" <<radialK0LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" <<radialK0LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK0LineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</k0>\n";
     auxStream << "\t\t\t<k1>\n";
-    auxStream << "\t\t\t\t<value>" <<radialK1LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" <<radialK1LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK1LineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</k1>\n";
     auxStream << "\t\t\t<k2>\n";
-    auxStream << "\t\t\t\t<value>" <<radialK2LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" <<radialK2LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK2LineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</k2>\n";
     auxStream << "\t\t\t<k3>\n";
-    auxStream << "\t\t\t\t<value>" <<radialK3LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" <<radialK3LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK3LineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</k3>\n";
 	auxStream << radialSigmaController->getValues();
     auxStream << "\t\t</radialSymmetric>\n";
     auxStream << "\t\t<decentered>\n";
     auxStream << "\t\t\t<P1>\n";
-    auxStream << "\t\t\t\t<value>" << decenteredP1LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" << decenteredP1LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" << decenteredP1SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</P1>\n";
     auxStream << "\t\t\t<P2>\n";
-    auxStream << "\t\t\t\t<value>" << decenteredP2LineEdit->text().toUtf8().data() << "</value>\n";
+	auxStream << "\t\t\t\t<value>" << decenteredP2LineEdit->textValue().toUtf8().data() << "</value>\n";
 	//auxStream << "\t\t\t\t<sigma>" << decenteredP2SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
     auxStream << "\t\t\t</P2>\n";
 	auxStream << decenteredSigmaController->getValues();
@@ -405,7 +402,7 @@ string SensorForm::getvalues()
 	//Codigo em aberto // J´a tratado:
     auxStream << "\t<principalPointCoordinates uom=\"#mm\">\n";
 
-	auxStream << "\t\t<gml:pos>"<<  principalX0LineEdit->text().toUtf8().data() << " " << principalY0LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+	auxStream << "\t\t<gml:pos>"<<  principalX0LineEdit->textValue().toUtf8().data() << " " << principalY0LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 	//auxStream << "\t\t<gml:pos>"<< "-0.0063 -0.037" << "</gml:pos>\n"; // aqui tem um valor travado
 	//auxStream << "\t\t<sigma>\n";
 	//auxStream << "\t\t\t<mml:matrix>\n";
@@ -430,50 +427,50 @@ string SensorForm::getvalues()
 	{
 		auxStream << "\t<fiductialMarks uom=\"#mm\">\n";
 		auxStream << "\t\t<fiductialMark key=\"1\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi0LineEdit->text().toUtf8().data() << " " << fiductialEta0LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+		auxStream << "\t\t\t<gml:pos>" << fiductialXi0LineEdit->textValue().toUtf8().data() << " " << fiductialEta0LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 		//auxStream << "\t\t\t<sigma>" << fiductialSigma0LineEdit->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid0SigmaController->getValues();
 		auxStream << "\t\t</fiductialMark>\n";
 
 		auxStream << "\t\t<fiductialMark key=\"2\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi1LineEdit->text().toUtf8().data() << " " << fiductialEta1LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+		auxStream << "\t\t\t<gml:pos>" << fiductialXi1LineEdit->textValue().toUtf8().data() << " " << fiductialEta1LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 		//auxStream << "\t\t\t<sigma>" << fiductialSigma1LineEdit->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
 		auxStream << "\t\t</fiductialMark>\n";
 
 		auxStream << "\t\t<fiductialMark key=\"3\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi2LineEdit->text().toUtf8().data() << " " << fiductialEta2LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+		auxStream << "\t\t\t<gml:pos>" << fiductialXi2LineEdit->textValue().toUtf8().data() << " " << fiductialEta2LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 		//auxStream << "\t\t\t<sigma>" << fiductialSigma2LineEdit->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
 		auxStream << "\t\t</fiductialMark>\n";
 
 		auxStream << "\t\t<fiductialMark key=\"4\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi3LineEdit->text().toUtf8().data() << " " << fiductialEta3LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+		auxStream << "\t\t\t<gml:pos>" << fiductialXi3LineEdit->textValue().toUtf8().data() << " " << fiductialEta3LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 		//auxStream << "\t\t\t<sigma>" << fiductialSigma3LineEdit->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid3SigmaController->getValues();
 		auxStream << "\t\t</fiductialMark>\n";
 
 		if (fiductialMarksCombo->currentIndex()==1){
 			auxStream << "\t\t<fiductialMark key=\"5\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi4LineEdit->text().toUtf8().data() << " " << fiductialEta4LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+			auxStream << "\t\t\t<gml:pos>" << fiductialXi4LineEdit->textValue().toUtf8().data() << " " << fiductialEta4LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 			//auxStream << "\t\t\t<sigma>" << fiductialSigma4LineEdit->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid4SigmaController->getValues();
 			auxStream << "\t\t</fiductialMark>\n";
 
 			auxStream << "\t\t<fiductialMark key=\"6\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi5LineEdit->text().toUtf8().data() << " " << fiductialEta5LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+			auxStream << "\t\t\t<gml:pos>" << fiductialXi5LineEdit->textValue().toUtf8().data() << " " << fiductialEta5LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 			//auxStream << "\t\t\t<sigma>" << fiductialSigma5LineEdit->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid5SigmaController->getValues();
 			auxStream << "\t\t</fiductialMark>\n";
 
 			auxStream << "\t\t<fiductialMark key=\"7\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi6LineEdit->text().toUtf8().data() << " " << fiductialEta6LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+			auxStream << "\t\t\t<gml:pos>" << fiductialXi6LineEdit->textValue().toUtf8().data() << " " << fiductialEta6LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 			//auxStream << "\t\t\t<sigma>" << fiductialSigma6LineEdit->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid6SigmaController->getValues();
 			auxStream << "\t\t</fiductialMark>\n";
 
 			auxStream << "\t\t<fiductialMark key=\"8\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi7LineEdit->text().toUtf8().data() << " " << fiductialEta7LineEdit->text().toUtf8().data() << "</gml:pos>\n";
+			auxStream << "\t\t\t<gml:pos>" << fiductialXi7LineEdit->textValue().toUtf8().data() << " " << fiductialEta7LineEdit->textValue().toUtf8().data() << "</gml:pos>\n";
 			//auxStream << "\t\t\t<sigma>" << fiductialSigma7LineEdit->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid7SigmaController->getValues();
 			auxStream << "\t\t</fiductialMark>\n";
