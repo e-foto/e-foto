@@ -84,6 +84,7 @@ HEADERS += control/EFotoManager.h \
     interface/view/ImageView.h \
     interface/view/SigmaForm.h \
     interface/view/AboutForm.h \
+	interface/view/ScienceSpinBox.h \
     interface/view/mmv/AbstractEModel.h \
     interface/view/mmv/blockview.h \
     interface/view/mmv/demview.h \
@@ -103,7 +104,10 @@ HEADERS += control/EFotoManager.h \
     interface/view/mmv/terrainview.h \
     interface/project/PointsForm.h \
     xml_definition/XMLProjectHeader.h \
-    xml_definition/XMLTerrain.h
+    xml_definition/XMLTerrain.h \
+    xml_definition/XMLFlight.h \
+    xml_definition/XMLSensor.h \
+	xml_definition/XMLAerial.h
 FORMS += interface/io/IOForm.ui \
     interface/sr/SRForm.ui \
     interface/project/FormProject.ui \
@@ -169,6 +173,7 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/ImageView.cpp \
     interface/view/SigmaForm.cpp \
     interface/view/AboutForm.cpp \
+	interface/view/ScienceSpinBox.cpp \
     interface/view/mmv/blockview.cpp \
     interface/view/mmv/demview.cpp \
     interface/view/mmv/digitalimageview.cpp \
@@ -187,7 +192,10 @@ SOURCES += control/EFotoManager.cpp \
     interface/view/mmv/terrainview.cpp \
     interface/project/PointsForm.cpp \
     xml_definition/XMLProjectHeader.cpp \
-    xml_definition/XMLTerrain.cpp
+    xml_definition/XMLTerrain.cpp \
+    xml_definition/XMLFlight.cpp \
+    xml_definition/XMLSensor.cpp \
+	xml_definition/XMLAerial.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \

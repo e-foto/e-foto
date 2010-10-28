@@ -49,6 +49,16 @@ SigmaFormController::SigmaFormController(Matrix myValues)
 		this->toMatrix();
 	}
 }
+//Implementação do Paulo
+void SigmaFormController::setNameLabels(QStringList newNames)
+{
+    int i=0;
+    if (labels.length()==newNames.length())
+        for (i=0;i<labels.length();i++)
+        {
+            labels.at(i)->setText(newNames.at(i));
+        }
+}
 
 void SigmaFormController::init()
 {

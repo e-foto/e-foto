@@ -644,7 +644,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="radialK0LineEdit">
+                      <widget class="ScienceSpinBox" name="radialK0LineEdit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -696,7 +696,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="radialK1LineEdit">
+                      <widget class="ScienceSpinBox" name="radialK1LineEdit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -748,7 +748,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="radialK2LineEdit">
+                      <widget class="ScienceSpinBox" name="radialK2LineEdit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -800,7 +800,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="radialK3LineEdit">
+                      <widget class="ScienceSpinBox" name="radialK3LineEdit">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -909,7 +909,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="decenteredP1LineEdit">
+                      <widget class="ScienceSpinBox" name="decenteredP1LineEdit">
                        <property name="alignment">
                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                        </property>
@@ -949,7 +949,7 @@ p, li { white-space: pre-wrap; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="decenteredP2LineEdit">
+                      <widget class="ScienceSpinBox" name="decenteredP2LineEdit">
                        <property name="alignment">
                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                        </property>
@@ -1070,7 +1070,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="principalX0LineEdit">
+                <widget class="ScienceSpinBox" name="principalX0LineEdit">
                  <property name="minimumSize">
                   <size>
                    <width>146</width>
@@ -1113,7 +1113,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="principalY0LineEdit">
+                <widget class="ScienceSpinBox" name="principalY0LineEdit">
                  <property name="minimumSize">
                   <size>
                    <width>146</width>
@@ -1248,7 +1248,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi0LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi0LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1312,7 +1312,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta0LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta0LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1391,7 +1391,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi1LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi1LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1455,7 +1455,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta1LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta1LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1534,7 +1534,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi2LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi2LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1598,7 +1598,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta2LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta2LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1677,7 +1677,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi3LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi3LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1741,7 +1741,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta3LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta3LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1820,7 +1820,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi4LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi4LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1884,7 +1884,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta4LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta4LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1963,7 +1963,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi5LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi5LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2027,7 +2027,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta5LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta5LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2106,7 +2106,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi6LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi6LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2170,7 +2170,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta6LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta6LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2249,7 +2249,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialXi7LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialXi7LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2313,7 +2313,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="fiductialEta7LineEdit">
+                <widget class="ScienceSpinBox" name="fiductialEta7LineEdit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2512,6 +2512,11 @@ p, li { white-space: pre-wrap; }
    <extends>QFrame</extends>
    <header>SigmaForm.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ScienceSpinBox</class>
+   <extends>QLineEdit</extends>
+   <header>ScienceSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
