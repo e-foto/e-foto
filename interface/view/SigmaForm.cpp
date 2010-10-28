@@ -1,4 +1,5 @@
 #include "SigmaForm.h"
+#include "ScienceSpinBox.h"
 
 SigmaFormController::SigmaFormController()
 {
@@ -136,7 +137,7 @@ void SigmaFormController::fillValues(string xml)
 		changeToMode("Standard Deviations");
 		for (unsigned int i = 0; i < dimension; i++)
 		{
-			edits.at(i)->setText(QString::number(values.get(i+1,1)));
+			edits.at(i)->setTextValue(QString::number(values.get(i+1,1)));
 		}
 	}
 	else if (values.getCols() == values.getRows()) //Variance and covariance matrix
@@ -144,7 +145,7 @@ void SigmaFormController::fillValues(string xml)
 		changeToMode("Covariance Matrix");
 		for (unsigned int i = 0; i < dimension; i++)
 		{
-			edits.at(i)->setText(QString::number(values.get(i+1,i+1)));
+			edits.at(i)->setTextValue(QString::number(values.get(i+1,i+1)));
 		}
 	}
 }
@@ -161,7 +162,7 @@ string SigmaFormController::getValues()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			if (!edits.at(i)->text().isEmpty())
-				result.set(1+i,1,stringToDouble(edits.at(i)->text().toStdString()));
+				result.set(1+i,1,stringToDouble(edits.at(i)->textValue().toStdString()));
 			else
 				result.set(1+i,1,0);
 		}
@@ -232,10 +233,10 @@ void SigmaFormController::toNotAvailable()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QLabel* newLabel = labels.at(i);
-			QLineEdit* newEdit = edits.at(i);
-			newEdit->setValidator(0);
+			ScienceSpinBox* newEdit = edits.at(i);
+//			newEdit->setValidator(0);
 			newLabel->setText("StDev");
-			newEdit->setText("Not Available");
+			newEdit->setTextValue("Not Available");
 			newEdit->setEnabled(false);
 		}
 	}
@@ -248,7 +249,8 @@ void SigmaFormController::toNotAvailable()
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
-			QLineEdit* newEdit = new QLineEdit("Not Available");
+			ScienceSpinBox* newEdit = new ScienceSpinBox();
+			newEdit->setSpecialValueText("Not Available");
 			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			newEdit->setEnabled(false);
 			subLayout->addWidget(newLabel);
@@ -271,10 +273,10 @@ void SigmaFormController::toStDev()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QLabel* newLabel = labels.at(i);
-			QLineEdit* newEdit = edits.at(i);
-			newEdit->setValidator(validator);
+			ScienceSpinBox* newEdit = edits.at(i);
+			//newEdit->setValidator(validator);
 			newLabel->setText("StDev");
-			newEdit->setText("");
+			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
 		}
 	}
@@ -287,8 +289,8 @@ void SigmaFormController::toStDev()
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
-			QLineEdit* newEdit = new QLineEdit();
-			newEdit->setValidator(validator);
+			ScienceSpinBox* newEdit = new ScienceSpinBox();
+//			newEdit->setValidator(validator);
 			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -310,10 +312,10 @@ void SigmaFormController::toMatrix()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QLabel* newLabel = labels.at(i);
-			QLineEdit* newEdit = edits.at(i);
+			ScienceSpinBox* newEdit = edits.at(i);
 			newLabel->setText("Var");
-			newEdit->setValidator(validator);
-			newEdit->setText("");
+			//newEdit->setValidator(validator);
+			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
 		}
 	}
@@ -326,8 +328,8 @@ void SigmaFormController::toMatrix()
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("Var");
-			QLineEdit* newEdit = new QLineEdit();
-			newEdit->setValidator(validator);
+			ScienceSpinBox* newEdit = new ScienceSpinBox();
+//			newEdit->setValidator(validator);
 			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -376,15 +378,6 @@ void SigmaFormController::updateTitles()
 		}
 	}
 }
-
-/*<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-<html><head><meta name="qrichtext" content="1" /><style type="text/css">
-p, li { white-space: pre-wrap; }
-</style></head><body style=" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;">
-<table style="-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;">
-<tr>
-<td style="border: none;">
-<p align="right" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'MS Shell Dlg 2';">k</span><span style=" font-family:'MS Shell Dlg 2'; vertical-align:sub;">0</span></p></td></tr></table></body></html>*/
 
 void SigmaFormController::showMatrixEditor()
 {
