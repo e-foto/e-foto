@@ -199,8 +199,9 @@ bool ScienceSpinBox::eventFilter(QObject *obj, QEvent *event)
 	}
 
 	// this serves to cancel whellEvents
-	if (event->type() == QEvent::Wheel)
+	if (event->type() == QEvent::Wheel || event->type() == QEvent::MouseTrackingChange)
 	{
+		parent()->eventFilter(obj,event);
 		return true;
 	}
 

@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
+//#include <ScienceSpinBox>
 #include <QTableWidget>
 #include <QComboBox>
 #include <QPushButton>
@@ -15,6 +15,7 @@
 
 #include "Matrix.h"
 #include "EDom.h"
+#include "ScienceSpinBox.h"
 
 class SigmaFormController: public QObject
 {
@@ -23,7 +24,7 @@ class SigmaFormController: public QObject
 protected:
 	QWidget* contentWidget;
 	QList<QLabel*> labels;
-	QList<QLineEdit*> edits;
+	QList<ScienceSpinBox*> edits;
         QRegExpValidator* validator;
 	QStringList titles;
 	unsigned int dimension;
