@@ -44,13 +44,15 @@ protected:
 
 public:
 	QWidget* getContent();
-	void setDirection(string newDirection);
+        void setDirection(string newDirection);
 	string getDirection();
 	void setMode(string newMode);
 	string getMode();
 	void fillValues(string xml);
 	string getValues();
 	bool getValidate();
+        //paulo
+        void setNameLabels(QStringList newNames);
 
 public slots:
 	virtual void toMode(QString newMode);
