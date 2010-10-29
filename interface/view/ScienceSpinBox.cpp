@@ -16,6 +16,8 @@ ScienceSpinBox::ScienceSpinBox(QWidget * parent): QDoubleSpinBox(parent)
 	lineEdit()->setValidator(v);
 	lineEdit()->installEventFilter(this);
 	installEventFilter(this);
+	//setValue(0);
+	connect(&adjustDelayer,SIGNAL(timeout()),this,SLOT(adjustDisplay()));
 }
 
 // total of decimals to displayed
@@ -33,7 +35,7 @@ void ScienceSpinBox::setDecimals(int value)
 // text to be displayed in spinbox
 QString ScienceSpinBox::textFromValue(double value) const
 {
-	qDebug("textFromValue");
+	//qDebug("textFromValue");
 	// convert to string -> Using exponetial display with internal decimals
 	QString str = locale().toString(value, 'e', dispDecimals);
 	// remove thousand sign
@@ -47,11 +49,24 @@ QString ScienceSpinBox::textFromValue(double value) const
 // validate text input and value computing
 double ScienceSpinBox::valueFromText(const QString &text) const
 {
-	qDebug("valueFromText");
+	//qDebug("valueFromText");
+	/*
 	QString copy = text;
 	int pos = this->lineEdit()->cursorPosition();
 	QValidator::State state = QValidator::Acceptable;
 	return validateAndInterpret(copy, pos, state).toDouble();
+	*/
+	QString copy = text;
+	int pos = this->lineEdit()->cursorPosition();
+	QValidator::State state = QValidator::Acceptable;
+	bool ok;
+	double directValue = stripped(text,0).toDouble(&ok);
+	if (ok && directValue<=minimum())
+		return minimum();
+	else if (ok && directValue>=maximum())
+		return maximum();
+	else
+		return validateAndInterpret(copy, pos, state).toDouble();
 }
 
 // set Range to maximum possible values
@@ -109,6 +124,9 @@ QString ScienceSpinBox::textValue() const
 //
 void ScienceSpinBox::setTextValue(QString value)
 {
+	setValue(1);
+	if (value.isEmpty())
+		return;
 	value.replace(".",delimiter);
 	lineEdit()->setText(value);
 	setValue(valueFromText(lineEdit()->text()));
@@ -140,12 +158,9 @@ void ScienceSpinBox::selectExponent()
 		return;
 	if (suffixtext.size() && text.endsWith(suffixtext))
 	{
-		//lineEdit()->setSelection(exponentialPosition()+1,text.size()-exponentialPosition()-1-suffixtext.size());
-		//lineEdit()->setSelection(exponentialPosition()+1,text.size()-exponentialPosition()-1-suffixtext.size());
 		lineEdit()->setSelection(text.size()-suffixtext.size(),-(text.size()-exponentialPosition()-1-suffixtext.size()));
 		return;
 	}
-	//lineEdit()->setSelection(exponentialPosition()+1,text.size()-exponentialPosition()-1);
 	lineEdit()->setSelection(text.size(),-(text.size()-exponentialPosition()-1));
 }
 
@@ -188,6 +203,28 @@ int ScienceSpinBox::exponentialPosition() const
 	return text.indexOf("e",0);
 }
 
+// returns the index of exponential symbol on display
+// this method no detect exponential to "special value text" (see QDoubleSpinBox documentation) and returns -1 with this case
+int ScienceSpinBox::decimalOffset() const
+{
+	QString text = lineEdit()->text();
+	QString prefixtext = prefix();
+	if (specialValueText().size() != 0 && text == specialValueText())
+		return -1;
+	int delimiterPos;
+	int cursorPos;
+	if (prefixtext.size() && text.startsWith(prefixtext))
+	{
+		delimiterPos = text.indexOf(delimiter,prefix().size());
+		cursorPos = lineEdit()->cursorPosition() - prefixtext.size();
+	}
+	delimiterPos = text.indexOf(delimiter,prefix().size());
+	cursorPos = lineEdit()->cursorPosition() - prefixtext.size();
+	if (cursorPos > delimiterPos)
+		return delimiterPos-cursorPos;
+	return 0;
+}
+
 // redirects some of the events to achieve the desired behavior with the widget
 bool ScienceSpinBox::eventFilter(QObject *obj, QEvent *event)
 {
@@ -199,9 +236,8 @@ bool ScienceSpinBox::eventFilter(QObject *obj, QEvent *event)
 	}
 
 	// this serves to cancel whellEvents
-	if (event->type() == QEvent::Wheel || event->type() == QEvent::MouseTrackingChange)
+	if (event->type() == QEvent::Wheel && obj == lineEdit())
 	{
-		parent()->eventFilter(obj,event);
 		return true;
 	}
 
@@ -295,20 +331,19 @@ void ScienceSpinBox::focusInEvent(QFocusEvent *event)
 	}
 }
 
-//
+/*
 void ScienceSpinBox::timerEvent(QTimerEvent *event)
 {
 	qDebug("EventTimer");
 	setValue(valueFromText(lineEdit()->text()));
-	//selectMantissa();
+	selectMantissa();
 	killTimer(event->timerId());
 }
+*/
 
 // this ensures that there are events "next child" and "previous child" between the mantissa and exponent.
 void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 {
-	qDebug()<< Qt::Key_Tab << " " << Qt::Key_Shift << " " << Qt::SHIFT << " " << Qt::ShiftModifier;
-	qDebug() << event->key()+event->modifiers();
 	if (event->key() == Qt::Key_Tab)
 	{
 		if (lineEdit()->cursorPosition()<=exponentialPosition())
@@ -317,7 +352,7 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 			return;
 		}
 	}
-	else if (event->key() == Qt::Key_Tab +1) // this is Shift+Tab Qt value 16777218
+	else if (event->key() == Qt::Key_Tab +1)//(event->key() == 16777218) // this is Shift+Tab Qt value
 	{
 		if (lineEdit()->cursorPosition()>exponentialPosition())
 		{
@@ -325,20 +360,32 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 			return;
 		}
 	}
+	else if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up || event->key() == Qt::Key_Right || event->key() == Qt::Key_Left)
+	{
+		if (adjustDelayer.isActive())
+		{
+			adjustDelayer.stop();
+			qDebug("adjustActive capted");
+		}
+		adjustDelayer.start(5000);
+	}
 	// pass the event on to the parent class
 	QDoubleSpinBox::keyPressEvent(event);
 }
 
 // this ensures that there are events "next child" and "previous child" between the mantissa and exponent.
+/*
 void ScienceSpinBox::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up)
 	{
-		startTimer(2000);
+		qDebug("key_Released");
+		//adjustDelayer.start(1000);
 	}
 	// pass the event on to the parent class
 	QDoubleSpinBox::keyPressEvent(event);
 }
+*/
 
 // reimplemented function, copied from QDoubleSpinBoxPrivate::isIntermediateValue
 bool ScienceSpinBox::isIntermediateValue(const QString &str) const
@@ -740,7 +787,7 @@ void ScienceSpinBox::stepBy(int steps)
 // overwritten virtual function of QAbstractSpinBox
 void ScienceSpinBox::stepDown()
 {
-	qDebug("stepDown");
+	//qDebug("stepDown");
 	if (lineEdit()->cursorPosition()>exponentialPosition())
 	{
 		setValue(value()/10.0);
@@ -748,7 +795,6 @@ void ScienceSpinBox::stepDown()
 	}
 	else
 	{
-		//setValue(value()/10.0);
 		stepDownMantissa();
 	}
 }
@@ -756,7 +802,7 @@ void ScienceSpinBox::stepDown()
 // overwritten virtual function of QAbstractSpinBox
 void ScienceSpinBox::stepUp()
 {
-	qDebug("stepUp");
+	//qDebug("stepUp");
 	if (lineEdit()->cursorPosition()>exponentialPosition())
 	{
 		setValue(value()*10.0);
@@ -764,8 +810,32 @@ void ScienceSpinBox::stepUp()
 	}
 	else
 	{
-		//setValue(value()*10.0);
 		stepUpMantissa();
+	}
+}
+
+void ScienceSpinBox::stepDownMantissa()
+{
+	//qDebug("stepDownMantissa");
+	QString text = lineEdit()->text();
+	QString dest = mantissa();
+	QString src = locale().toString(dest.toDouble()-pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
+	int cursorPos = lineEdit()->cursorPosition();
+	// remove thousand sign
+	if (qAbs(value()) >= 1000.0)
+	{
+		src.remove(thousand);
+	}
+	text.replace(dest,src);
+	qDebug() << text << " " << valueFromText(text);
+	if (valueFromText(text) > minimum())
+	{
+		lineEdit()->setText(text);
+		lineEdit()->setSelection(cursorPos+1,-1);
+	}
+	else
+	{
+		setValue(minimum());
 	}
 }
 
@@ -774,33 +844,32 @@ void ScienceSpinBox::stepUpMantissa()
 	//qDebug("stepUpMantissa");
 	QString text = lineEdit()->text();
 	QString dest = mantissa();
-	QString src = locale().toString(dest.toDouble()+pow(10,-dispDecimals), 'f', dispDecimals);
+	QString src = locale().toString(dest.toDouble()+pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
+	int cursorPos = lineEdit()->cursorPosition();
 	// remove thousand sign
 	if (qAbs(value()) >= 1000.0)
 	{
 		src.remove(thousand);
 	}
-	qDebug() << src;
 	text.replace(dest,src);
-	lineEdit()->setText(text);
-	selectMantissa();
+	qDebug() << text << " " << valueFromText(text);
+	if (valueFromText(text) < maximum())
+	{
+		lineEdit()->setText(text);
+		lineEdit()->setSelection(cursorPos+1,-1);
+	}
+	else
+	{
+		setValue(maximum());
+	}
 }
 
-void ScienceSpinBox::stepDownMantissa()
+void ScienceSpinBox::adjustDisplay()
 {
-	//qDebug("stepDownMantissa");
-	QString text = lineEdit()->text();
-	QString dest = mantissa();
-	QString src = locale().toString(dest.toDouble()-pow(10,-dispDecimals), 'f', dispDecimals);
-	// remove thousand sign
-	if (qAbs(value()) >= 1000.0)
-	{
-		src.remove(thousand);
-	}
-	qDebug() << src;
-	text.replace(dest,src);
-	lineEdit()->setText(text);
-	selectMantissa();
+	qDebug("AdjustDysplay");
+	adjustDelayer.stop();
+	setValue(valueFromText(lineEdit()->text()));
+	lineEdit()->setCursorPosition(delimiterPosition()-1);
 }
 
 // reimplemented function, copied from qspinbox.cpp

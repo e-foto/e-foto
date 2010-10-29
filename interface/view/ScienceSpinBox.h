@@ -8,6 +8,7 @@
 #include <QtCore/QVariant>
 #include <QtCore/QDebug>
 #include <QtCore/QString>
+#include <QtCore/QTimer>
 
 // This class contains code of Matthias Pospiech to reimplement some of the validation methods.
 
@@ -36,6 +37,7 @@ public:
 
 private:
 	int dispDecimals;
+	QTimer adjustDelayer, aux;
 	QChar delimiter, thousand;
 	QDoubleValidator * v;
 
@@ -44,12 +46,12 @@ private:
 	void initLocalValues(QWidget *parent);
 	int delimiterPosition() const;
 	int exponentialPosition() const;
+	int decimalOffset() const;
 	bool eventFilter(QObject *obj, QEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
+	//void keyReleaseEvent(QKeyEvent *event);
 	void focusInEvent(QFocusEvent *event);
-	void timerEvent(QTimerEvent *event);
 	bool isIntermediateValue(const QString &str) const;
 	QVariant validateAndInterpret(QString &input, int &pos, QValidator::State &state) const;
 	QValidator::State validate(QString &text, int &pos) const;
@@ -63,6 +65,9 @@ public slots:
 	void stepUp();
 	void stepDownMantissa();
 	void stepUpMantissa();
+
+private slots:
+	void adjustDisplay();
 
 };
 
