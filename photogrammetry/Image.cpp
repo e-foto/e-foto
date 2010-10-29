@@ -455,18 +455,18 @@ void Image::xmlSetData(string xml)
     {
 	gnssAvailable = false;
     }
-    if (gnss.elementByTagName("sigma").toString() == "Not Available")
+    if (gnss.getContent() == "" || gnss.elementByTagName("sigma").toString() == "Not Available")
     {
 	gnssSigmaAvailable = false;
     }
     else
     {
 	gnssSigmaAvailable = true;
-	gnssSigma.xmlSetData(gnss.elementByTagName("sigma").elementByTagName("mml:matrix").getContent());
+        gnssSigma.xmlSetData(gnss.elementByTagName("sigma").getContent());
     }
 
     EDomElement ins = root.elementByTagName("INS");
-    if (gnss.elementByTagName("omega").toString() == "Not Available")
+    if (ins.getContent() == "" || ins.elementByTagName("omega").toString() == "Not Available")
     {
 	insAvailable = false;
     }
@@ -484,7 +484,7 @@ void Image::xmlSetData(string xml)
     else
     {
 	insSigmaAvailable = true;
-	insSigma.xmlSetData(ins.elementByTagName("sigma").elementByTagName("mml:matrix").getContent());
+        insSigma.xmlSetData(ins.elementByTagName("sigma").getContent());
     }
 
     // Fim da gambiarra temporaria.

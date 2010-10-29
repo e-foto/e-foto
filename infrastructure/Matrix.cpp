@@ -890,6 +890,8 @@ void Matrix::xmlSetData(string xml)
     deque<EDomElement> matRows, matCols;
 
     matRows = root.children();
+    if (matRows.size() == 0)
+        return;
     matCols = matRows.at(0).children();
 
     resize(matRows.size(), matCols.size());
