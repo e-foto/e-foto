@@ -366,6 +366,7 @@ Sensor* EFotoManager::sensor(int id)
 		for (unsigned int i = 0; i < sensors.size(); i++)
 				if (sensors.at(i)->getId() == id)
 						return sensors.at(i);
+                return NULL;
 }
 
 /**

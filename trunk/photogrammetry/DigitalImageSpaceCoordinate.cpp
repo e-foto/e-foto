@@ -127,6 +127,8 @@ void DigitalImageSpaceCoordinate::xmlSetData(string xml)
     if (xmlPos.isAvailable())
     {
         deque<double> gmlPosValues = xmlPos.toGmlPos();
+        if (gmlPosValues.size() != 2)
+            return;
         col = (int) gmlPosValues.at(0);
         lin = (int) gmlPosValues.at(1);
         available = true;
