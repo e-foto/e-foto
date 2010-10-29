@@ -25,7 +25,6 @@ protected:
 	QWidget* contentWidget;
 	QList<QLabel*> labels;
 	QList<ScienceSpinBox*> edits;
-        QRegExpValidator* validator;
 	QStringList titles;
 	unsigned int dimension;
 	string direction;

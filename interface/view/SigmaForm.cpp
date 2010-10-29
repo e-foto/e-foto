@@ -6,18 +6,13 @@ SigmaFormController::SigmaFormController()
 	init();
 	dimension = 1;
 
-        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
-        validator= new QRegExpValidator(regExp,this);
-
 	this->toNotAvailable();
 }
 
 SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension)
 {
 	init();
-        dimension = myDimension;
-        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
-        validator= new QRegExpValidator(regExp,this);
+	dimension = myDimension;
 
 	if (myMode == "Not Available")
 	{
@@ -36,9 +31,7 @@ SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension
 
 SigmaFormController::SigmaFormController(Matrix myValues)
 {
-        init();
-        QRegExp regExp("[-]?\\d{0,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2})?");
-        validator= new QRegExpValidator(regExp,this);
+	init();
 	if (myValues.getCols() == 1) //Standard deviations
 	{
 		dimension = myValues.getRows();
@@ -50,15 +43,18 @@ SigmaFormController::SigmaFormController(Matrix myValues)
 		this->toMatrix();
 	}
 }
-//Implementação do Paulo
+
+// Método do Panda
 void SigmaFormController::setNameLabels(QStringList newNames)
 {
-    int i=0;
-    if (labels.length()==newNames.length())
-        for (i=0;i<labels.length();i++)
-        {
-            labels.at(i)->setText(newNames.at(i));
-        }
+	int i=0;
+	if (labels.length()==newNames.length())
+	{
+		for (i=0;i<labels.length();i++)
+		{
+			labels.at(i)->setText(newNames.at(i));
+		}
+	}
 }
 
 void SigmaFormController::init()
@@ -234,8 +230,8 @@ void SigmaFormController::toNotAvailable()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-//			newEdit->setValidator(0);
 			newLabel->setText("StDev");
+			newEdit->setSpecialValueText("Not Available");
 			newEdit->setTextValue("Not Available");
 			newEdit->setEnabled(false);
 		}
@@ -251,7 +247,10 @@ void SigmaFormController::toNotAvailable()
 			QLabel* newLabel = new QLabel("StDev");
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
 			newEdit->setSpecialValueText("Not Available");
-			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
+			newEdit->setTextValue("Not Available");
+			newEdit->setPrefix("bla ");
+			newEdit->setRange(-10,10); // No futuro a classe SigmaForm terá um método para setar o Range admissível de todos os seus campos.
+			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			newEdit->setEnabled(false);
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -274,8 +273,8 @@ void SigmaFormController::toStDev()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-			//newEdit->setValidator(validator);
 			newLabel->setText("StDev");
+			newEdit->setSpecialValueText("");
 			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
 		}
@@ -290,8 +289,8 @@ void SigmaFormController::toStDev()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("StDev");
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
-//			newEdit->setValidator(validator);
-			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
+			newEdit->setSpecialValueText("");
+			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
@@ -314,7 +313,7 @@ void SigmaFormController::toMatrix()
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
 			newLabel->setText("Var");
-			//newEdit->setValidator(validator);
+			newEdit->setSpecialValueText("");
 			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
 		}
@@ -329,8 +328,8 @@ void SigmaFormController::toMatrix()
 			QHBoxLayout* subLayout = new QHBoxLayout;
 			QLabel* newLabel = new QLabel("Var");
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
-//			newEdit->setValidator(validator);
-			connect(newEdit,SIGNAL(textChanged(QString)),this,SLOT(changeValidate(QString)));
+			newEdit->setSpecialValueText("");
+			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
@@ -406,7 +405,6 @@ SigmaFormTypeSelector::SigmaFormTypeSelector(QWidget * parent) : QComboBox(paren
 
 void SigmaFormTypeSelector::setSigmaFormController(SigmaFormController *newController)
 {
-	//controller = newController;
 	connect(this, SIGNAL(currentIndexChanged(QString)), newController, SLOT(toMode(QString)));
 	connect(newController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
 	connect(newController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
@@ -414,7 +412,6 @@ void SigmaFormTypeSelector::setSigmaFormController(SigmaFormController *newContr
 
 void SigmaFormTypeSelector::disconnectSigmaFormController(SigmaFormController *oldController)
 {
-	//controller = newController;
 	connect(this, SIGNAL(currentIndexChanged(QString)), oldController, SLOT(toMode(QString)));
 	connect(oldController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
 	connect(oldController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
@@ -440,7 +437,6 @@ void SigmaFormTypeSelector::blockCovarianceMatrixOption()
 {
 	this->clear();
 	addItems(QString("Not Available;Available").split(";"));
-	//removeItem(2);
 }
 
 SigmaFormContent::SigmaFormContent(QWidget * parent) : QFrame(parent)
