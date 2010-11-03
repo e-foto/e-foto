@@ -248,7 +248,6 @@ void SigmaFormController::toNotAvailable()
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
 			newEdit->setSpecialValueText("Not Available");
 			newEdit->setTextValue("Not Available");
-			newEdit->setPrefix("bla ");
 			newEdit->setRange(-10,10); // No futuro a classe SigmaForm terá um método para setar o Range admissível de todos os seus campos.
 			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			newEdit->setEnabled(false);
