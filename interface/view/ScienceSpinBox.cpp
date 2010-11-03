@@ -16,7 +16,7 @@ ScienceSpinBox::ScienceSpinBox(QWidget * parent): QDoubleSpinBox(parent)
 	lineEdit()->setValidator(v);
 	lineEdit()->installEventFilter(this);
 	installEventFilter(this);
-	connect(&adjustDelayer,SIGNAL(timeout()),this,SLOT(adjustDisplay()));
+	//connect(&adjustDelayer,SIGNAL(timeout()),this,SLOT(adjustDisplay()));
 	setValue(0);
 }
 
@@ -118,7 +118,7 @@ QString ScienceSpinBox::textValue() const
 //
 void ScienceSpinBox::setTextValue(QString value)
 {
-	setValue(1);
+	//setValue(0);
 	if (value.isEmpty())
 		return;
 	value.replace(".",delimiter);
@@ -205,6 +205,7 @@ int ScienceSpinBox::decimalOffset() const
 		return -1;
 	int delimiterPos;
 	int cursorPos;
+	/* Creio que isso gerava muitos erros
 	if (prefixtext.size() && text.startsWith(prefixtext))
 	{
 		delimiterPos = text.indexOf(delimiter,prefix().size());
@@ -212,6 +213,17 @@ int ScienceSpinBox::decimalOffset() const
 	}
 	delimiterPos = text.indexOf(delimiter,prefix().size());
 	cursorPos = lineEdit()->cursorPosition() - prefixtext.size();
+	*/
+	if (prefixtext.size() && text.startsWith(prefixtext))
+	{
+		delimiterPos = text.indexOf(delimiter,prefix().size())- prefixtext.size();
+		cursorPos = lineEdit()->cursorPosition() - prefixtext.size();
+	}
+	else
+	{
+		delimiterPos = text.indexOf(delimiter,prefix().size());
+		cursorPos = lineEdit()->cursorPosition();
+	}
 	if (cursorPos > delimiterPos)
 		return delimiterPos-cursorPos;
 	return abs(cursorPos-delimiterPos+1);
@@ -351,7 +363,7 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 			selectMantissa();
 			return;
 		}
-	}
+	}/*
 	else if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up || event->key() == Qt::Key_Right || event->key() == Qt::Key_Left)
 	{
 		if (adjustDelayer.isActive())
@@ -360,7 +372,7 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 			//qDebug("adjustActive capted");
 		}
 		adjustDelayer.start(5000);
-	}
+	}*/
 	// pass the event on to the parent class
 	QDoubleSpinBox::keyPressEvent(event);
 }
@@ -825,16 +837,26 @@ void ScienceSpinBox::stepDownMantissa()
 	if (valueFromText(text) > minimum())
 	{
 		lineEdit()->setText(text);
+		/*
 		if (dest.size()<src.size())
 			cursorPos++;
 		else if (dest.size()>src.size())
 			cursorPos--;
 		lineEdit()->setSelection(cursorPos+1,-1);
+		*/
 	}
 	else
 	{
 		setValue(minimum());
 	}
+	int oldExp = exponent().toInt();
+//	int cursorPos = lineEdit()->cursorPosition();
+	int aux = (delimiterPosition() > cursorPos);
+	setValue(valueFromText(lineEdit()->text()));
+	int offset = abs(cursorPos+(exponent().toInt()-oldExp))-aux;
+	offset += (offset == delimiterPosition());
+	offset -= (offset == exponentialPosition());
+	lineEdit()->setCursorPosition(offset);
 }
 
 void ScienceSpinBox::stepUpMantissa()
@@ -856,16 +878,26 @@ void ScienceSpinBox::stepUpMantissa()
 	if (valueFromText(text) < maximum())
 	{
 		lineEdit()->setText(text);
+		/*
 		if (dest.size()<src.size())
 			cursorPos++;
 		else if (dest.size()>src.size())
 			cursorPos--;
 		lineEdit()->setSelection(cursorPos+1,-1);
+		*/
 	}
 	else
 	{
 		setValue(maximum());
 	}
+	int oldExp = exponent().toInt();
+//	int cursorPos = lineEdit()->cursorPosition();
+	int aux = (delimiterPosition() > cursorPos);
+	setValue(valueFromText(lineEdit()->text()));
+	int offset = abs(cursorPos+(exponent().toInt()-oldExp))-aux;
+	offset -= (offset == delimiterPosition());
+	offset -= (offset == exponentialPosition());
+	lineEdit()->setCursorPosition(offset);
 }
 
 void ScienceSpinBox::adjustDisplay()
