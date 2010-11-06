@@ -17,7 +17,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 {
 	setupUi(this);
 
-	//  Inicia variáveis
+	//  Inicia variÃ¡veis
 	this->manager = manager;
 	this->currentForm = NULL;
 	this->currentItemId = 0;
@@ -30,7 +30,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	actionSave_file_as->setEnabled(false);
 	setWindowTitle(tr("efoto[Project Manager]"));
 
-	// Realiza as conexões necessárias
+	// Realiza as conexÃµes necessÃ¡rias
 	this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
 	this->connect(actionLoad_file, SIGNAL(triggered()), this, SLOT(loadFile()));
 	this->connect(actionSave_file, SIGNAL(triggered()), this, SLOT(saveFile()));
@@ -110,7 +110,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	centralWidget()->layout()->addWidget(&centerArea);
 	centralWidget()->layout()->addWidget(&controlButtons);
 
-	// Adiciona um atalho para os desenvolvedores observarem as mudanças no XML durante o runtime
+	// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
 	QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 }
@@ -122,6 +122,7 @@ ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
 
 void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
 {
+	/*
 	if (editState || addNewState)
 	{
 		if (controlButtons.saveButton->isEnabled())
@@ -177,63 +178,21 @@ void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
 			return;
 		}
 	}
-	event->accept();
+	*/
+	if (confirmToClose())
+		event->accept();
+	else
+		event->ignore();
 }
 
 void ProjectUserInterface_Qt::newProject()
 {
-	if (editState || addNewState)
-	{
-		if (controlButtons.saveButton->isEnabled())
-		{
-			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-										  "Do you want to keep all changes?",
-										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-			if (reply == QMessageBox::Yes)
-			{
-				controlButtons.saveButton->click();
-			}
-			else if (reply == QMessageBox::No)
-			{
-				controlButtons.cancelButton->click();
-			}
-			else
-			{
-				return;
-			}
-		}
-		else
-		{
-			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-										  "Registration data is not complete and will be lost. Continue?",
-										  QMessageBox::Yes | QMessageBox::Cancel);
-			if (reply == QMessageBox::Yes)
-			{
-				controlButtons.cancelButton->click();
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
-	if (actionSave_file->isEnabled())
-	{
-		QMessageBox::StandardButton reply;
-		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
-									  tr("Do you want to save all changes?"),
-									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes)
-		{
-			actionSave_file->trigger();
-		}
-		else if (reply == QMessageBox::Cancel)
-		{
-			return;
-		}
-	}
+	if (!confirmToClose())
+		return;
+
+	if (!saveFileAs(true))
+		return;
+
 	addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
 	addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
 	setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
@@ -244,11 +203,11 @@ void ProjectUserInterface_Qt::newProject()
 	controlButtons.setVisible(true);
 	offset.setVisible(true);
 
-	manager->newProject();
-	savedIn = "";
+	manager->newProject(savedIn);
+	//savedIn = "";
 	actionSave_file->setEnabled(true);
 	actionSave_file_as->setEnabled(true);
-	viewHeader();
+	//viewHeader();
 	newTree();
 
 	//Os comandos a seguir so serao uteis enquanto o projeto ficar restrito a apenas um sensor e um flight
@@ -367,10 +326,20 @@ void ProjectUserInterface_Qt::newProject()
 	text += "</flight>";
 
 	manager->addComponent(text, "flights");
+
+	// Estas linhas fazem parte realmente deste cÃ³digo e nÃ£o sÃ£o parte da gambiarra a cima
+	saveFile();
+	controlButtons.editButton->click();
+	//treeWidget->setCurrentItem(treeItems.at(0));
+	//processTreeClick(treeWidget->currentIndex());
 }
 
 void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 {
+	if (!confirmToClose())
+		return;
+
+	/*
 	if (editState || addNewState)
 	{
 		if (controlButtons.saveButton->isEnabled())
@@ -423,17 +392,17 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			return;
 		}
 	}
+	*/
 
-        QString filename;
-        if (filenameAtStart == "")
-        {
-            filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
-        }
-        else
-        {
-            filename = QString(filenameAtStart.c_str());
-        }
-
+	QString filename;
+	if (filenameAtStart == "")
+	{
+		filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
+	}
+	else
+	{
+		filename = QString(filenameAtStart.c_str());
+	}
 
 	if (filename == "")
 		return;
@@ -447,6 +416,28 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				alert->show();
 				return;
 			}
+			QString imagesMissing="";
+
+			for (int i=0 ;i < manager->getFreeImageId() ;i++)
+			{
+				EDomElement img(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
+
+				QString imagesName(img.elementByTagName("filePath").toString().append("/").c_str());
+				imagesName.append(img.elementByTagName("fileName").toString().c_str());
+				QFileInfo image(imagesName);
+				if (!image.exists())
+				{
+					imagesMissing.append(image.fileName());
+					imagesMissing.append("\n");
+				}
+			}
+			if(imagesMissing.compare("")!=0)
+			{
+
+				QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing);
+				alertImages->show();
+			}
+
 			addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
 			addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
 			setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
@@ -476,7 +467,7 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			manager->editComponent("Header", node.getContent());
 			//***************************************************************************************************
 
-			viewHeader();
+			//viewHeader();
 			newTree();
 		}
 		else
@@ -511,15 +502,20 @@ void ProjectUserInterface_Qt::saveFile()
 		updateTree();
 	}
 	else
-		saveFileAs();
+		saveFileAs(); // Isso jÃ¡ nÃ£o executa nunca mais. Eu acho!
 }
 
-void ProjectUserInterface_Qt::saveFileAs()
+bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
 {
-	QString filename = QFileDialog::getSaveFileName(this, "Save File", ".", "*.epp");
+	QString filename;
+
+	if (onNewProject)
+		filename = QFileDialog::getSaveFileName(this, tr("Save A New File"), ".", "*.epp");
+	else
+		filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".", "*.epp");
 
 	if (filename == "")
-		return;
+		return false;
 	else
 	{
 		//***************************************************************************************************
@@ -560,11 +556,13 @@ void ProjectUserInterface_Qt::saveFileAs()
 
 			QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - The file's name or path is invalid (maybe accented characters or whitespace);\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
 			alert->show();
+			return false;
 		}
 		if (centerArea.currentIndex() == 0)
 			viewHeader();
 		updateTree();
 	}
+	return true;
 }
 
 void ProjectUserInterface_Qt::executeIO()
@@ -663,12 +661,12 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 		}
 		else if (etm->dataAt(index.row()) == "sensors")
 		{
-			//viewSensors(); mudança temporaria
+			//viewSensors(); mudanÃ§a temporaria
 			viewSensor(1);
 		}
 		else if (etm->dataAt(index.row()) == "flights")
 		{
-			//viewFlights(); mudança temporaria
+			//viewFlights(); mudanÃ§a temporaria
 			viewFlight(1);
 		}
 		else if (etm->dataAt(index.row()) == "images")
@@ -684,12 +682,12 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 	{
 		if (etm->dataAt(index.parent().row()) == "sensors")
 		{
-			//viewSensor(etm->idAt(index.parent().row(), index.row())); mudança temporaria
+			//viewSensor(etm->idAt(index.parent().row(), index.row())); mudanÃ§a temporaria
 			viewSensor(1);
 		}
 		else if (etm->dataAt(index.parent().row()) == "flights")
 		{
-			//viewFlight(etm->idAt(index.parent().row(), index.row())); mudança temporaria
+			//viewFlight(etm->idAt(index.parent().row(), index.row())); mudanÃ§a temporaria
 			viewFlight(1);
 		}
 		else if (etm->dataAt(index.parent().row()) == "images")
@@ -791,6 +789,8 @@ void ProjectUserInterface_Qt::newTree()
 			}
 		}
 	}
+	treeWidget->setCurrentItem(treeItems.at(0));
+	processTreeClick(treeWidget->currentIndex());
 }
 
 void ProjectUserInterface_Qt::updateTree()
@@ -1164,6 +1164,7 @@ void ProjectUserInterface_Qt::enableForm()
 	menuProject->setEnabled(false);
 	menuExecute->setEnabled(false);
 	editState = true;
+	currentForm->setFocus();
 }
 
 // Salvando cada view...
@@ -1479,7 +1480,7 @@ viewSensors();
 else
 {
 QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado é inválido.");
+msgBox.setText("Erro: Xml passado Ã© invÃ¡lido.");
 msgBox.exec();
 emit viewButtons->editButton->click();
 }
@@ -1499,7 +1500,7 @@ viewFlights();
 else
 {
 QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado é inválido.");
+msgBox.setText("Erro: Xml passado Ã© invÃ¡lido.");
 msgBox.exec();
 emit viewButtons->editButton->click();
 }
@@ -1556,7 +1557,7 @@ void ProjectUserInterface_Qt::showAbout()
 	about->show();
 }
 
-// Códigos das classes extras.
+// CÃ³digos das classes extras.
 
 //#include <QStringList>
 
@@ -1803,4 +1804,66 @@ void ProjectUserInterface_Qt::validatingPoint()
 		controlButtons.saveButton->setEnabled(false);
 	else
 		controlButtons.saveButton->setEnabled(true);
+}
+
+bool ProjectUserInterface_Qt::confirmToClose()
+{
+	if (editState || addNewState)
+	{
+		if (controlButtons.saveButton->isEnabled())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Do you want to keep all changes?",
+										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.saveButton->click();
+			}
+			else if (reply == QMessageBox::No)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Registration data is not complete and will be lost. Continue?",
+										  QMessageBox::Yes | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	if (actionSave_file->isEnabled())
+	{
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
+									  tr("Do you want to save all changes?"),
+									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes)
+		{
+			actionSave_file->trigger();
+		}
+		else if (reply == QMessageBox::Cancel)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+QString ProjectUserInterface_Qt::getSavedIn()
+{
+	return QString(savedIn.c_str());
 }

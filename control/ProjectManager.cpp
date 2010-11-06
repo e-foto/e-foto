@@ -50,7 +50,7 @@ bool ProjectManager::disconnectDatabase()
     return false;
 }
 
-bool ProjectManager::newProject()
+bool ProjectManager::newProject(string filename)
 {
     if (manager != NULL)
     {
@@ -65,8 +65,15 @@ bool ProjectManager::newProject()
 		xmlData += "\t<projectHeader>\n";
 		xmlData += "\t\t<name></name>\n";
 		xmlData += "\t\t<description></description>\n";
-		xmlData += "\t\t<filePath></filePath>\n";
-		xmlData += "\t\t<fileName></fileName>\n";
+
+		int i = filename.rfind('/');
+
+		string filePath = "<filePath>"+filename.substr(0,i)+"</filePath>\n";
+		string fileName = "<fileName>"+filename.erase(0,i+1)+"</fileName>\n";
+
+		xmlData += fileName;
+		xmlData += filePath;
+
 		xmlData += "\t\t<creation></creation>\n";
 		xmlData += "\t\t<modification></modification>\n";
 		xmlData += "\t\t<owner></owner>\n";

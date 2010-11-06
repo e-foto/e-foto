@@ -62,7 +62,7 @@ public:
     /**
       * This method starts a new project.
       */
-    bool newProject();
+	bool newProject(string filename);
 
     /**
       * This method loads an existing project from the current database.
