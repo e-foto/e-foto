@@ -19,6 +19,7 @@ public:
 
 private slots:
 	void metadataVisibleChanged(QString);
+	void focusInEvent(QFocusEvent *);
 
 };
 

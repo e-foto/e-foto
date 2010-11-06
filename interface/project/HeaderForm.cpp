@@ -3,8 +3,8 @@
 HeaderForm::HeaderForm(QWidget *parent) : AbstractForm(parent)
 {
 	setupUi(this);
-	connect(lineEditFileName,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
-	metadataFrame->setVisible(false);
+	//connect(lineEditFileName,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
+	//metadataFrame->setVisible(false);
 }
 
 void HeaderForm::fillvalues(string values)
@@ -66,4 +66,9 @@ void HeaderForm::metadataVisibleChanged(QString newText)
 		metadataFrame->setVisible(false);
 	else
 		metadataFrame->setVisible(true);
+}
+
+void HeaderForm::focusInEvent(QFocusEvent *)
+{
+	lineEditName->setFocus();
 }
