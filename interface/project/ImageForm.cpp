@@ -1,5 +1,6 @@
 #include "ImageForm.h"
 #include <QFileDialog>
+#include "ProjectUserInterface_Qt.h"
 
 ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 {
@@ -201,6 +202,9 @@ QString ImageForm::loadImageFile()
 	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", ".", "*.tif *.png *.bmp *.jpg");
 	setIOAvailable(false);
 	setEOAvailable(false);
+	ProjectUserInterface_Qt* parent = (ProjectUserInterface_Qt*)this->parent();
+
+		QDir absolutePath (parent->getSavedIn());
         if (fileImage !="")
             {
                //***************************************************************************************************
@@ -212,7 +216,7 @@ QString ImageForm::loadImageFile()
 
                fileNameLine->setText(fileImageName);
 
-               filePathLine->setText(fileImagePath+"/");
+			   filePathLine->setText(absolutePath.relativeFilePath(fileImagePath));
                //***************************************************************************************************
                QImage * imageData=new QImage(fileImage);
                heightLine->setText(QString::number(imageData->height())+" px");
