@@ -21,6 +21,8 @@ public:
 	bool isForm(string formName);
 	SigmaFormController* gnssSigmaController;
 	SigmaFormController* insSigmaController;
+	void setIOAvailable(bool state);
+	void setEOAvailable(bool state);
 
 private slots:
     QString loadImageFile();
