@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>585</height>
+    <width>716</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -614,6 +614,24 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="readOnly">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="labelIO">
+               <property name="text">
+                <string>IO</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelEO">
+               <property name="text">
+                <string>EO</string>
                </property>
               </widget>
              </item>
