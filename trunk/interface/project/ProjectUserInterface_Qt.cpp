@@ -1094,6 +1094,26 @@ void ProjectUserInterface_Qt::viewImage(int id)
 	currentForm->setReadOnly(true);
 	validatingImage();
 
+	EDomElement node2(manager->getXml("imageIO", "image_key", intToString(id)));
+	if (node2.getContent()!="")
+	{
+		imageForm.setIOAvailable(true);
+	}
+	else
+	{
+		imageForm.setIOAvailable(false);
+	}
+
+	EDomElement node3(manager->getXml("imageEO", "image_key", intToString(id)));
+	if (node3.getContent()!="")
+	{
+		imageForm.setEOAvailable(true);
+	}
+	else
+	{
+		imageForm.setEOAvailable(false);
+	}
+
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
 	debuggerTextEdit->setReadOnly(true);
