@@ -6,14 +6,16 @@
 #include "SigmaForm.h"
 #include "EDom.h"
 
+class ProjectUserInterface_Qt;
+
 class ImageForm : public AbstractForm, public Ui::ImageView
 {
     Q_OBJECT
 
 public:
-    ImageForm(QWidget *parent=0);
-    
-    void fillvalues(string values);
+	ProjectUserInterface_Qt* proj;
+	ImageForm(QWidget *parent=0);
+	void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
     string getFileImagePath();
@@ -23,6 +25,7 @@ public:
 	SigmaFormController* insSigmaController;
 	void setIOAvailable(bool state);
 	void setEOAvailable(bool state);
+
 
 private slots:
     QString loadImageFile();

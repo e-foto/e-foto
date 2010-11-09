@@ -1,5 +1,6 @@
 #include "ImageForm.h"
 #include <QFileDialog>
+#include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
 
 ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
@@ -21,7 +22,6 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 
 	connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
 	connect(fileNameLine,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
-
 
 	//Aqui o campo de Flight_ID esta sendo escondido
 	label_6->setVisible(false);
@@ -202,21 +202,24 @@ QString ImageForm::loadImageFile()
 	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", ".", "*.tif *.png *.bmp *.jpg");
 	setIOAvailable(false);
 	setEOAvailable(false);
-	ProjectUserInterface_Qt* parent = (ProjectUserInterface_Qt*)this->parent();
 
-		QDir absolutePath (parent->getSavedIn());
+	QDir absolutePath (proj->getSavedIn());
+		//qDebug()<<parent->getSavedIn();
+		qDebug()<<proj->getSavedIn();
         if (fileImage !="")
             {
                //***************************************************************************************************
                // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
                int i=fileImage.lastIndexOf("/");
-
-               fileImageName = fileImage.right(fileImage.length()-i-1);
+			   int j=absolutePath.relativeFilePath(fileImage).lastIndexOf(('/'));
+			   fileImageName = fileImage.right(fileImage.length()-i-1);
                fileImagePath = fileImage.left(i);
 
                fileNameLine->setText(fileImageName);
-
-			   filePathLine->setText(absolutePath.relativeFilePath(fileImagePath));
+			   if (j<0)
+				   filePathLine->setText(".");
+			   else
+				   filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
                //***************************************************************************************************
                QImage * imageData=new QImage(fileImage);
                heightLine->setText(QString::number(imageData->height())+" px");
@@ -255,7 +258,7 @@ void ImageForm::setIOAvailable(bool state)
 	if (state)
 		labelIO->setText("Interior orientation is available");
 	else
-		labelIO->setText("Interior orientation not is available");
+		labelIO->setText("Interior orientation is not available");
 }
 
 void ImageForm::setEOAvailable(bool state)
@@ -263,5 +266,5 @@ void ImageForm::setEOAvailable(bool state)
 	if (state)
 		labelEO->setText("Spatial resection is available");
 	else
-		labelEO->setText("Spatial resection not is available");
+		labelEO->setText("Spatial resection is not available");
 }

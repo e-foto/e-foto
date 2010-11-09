@@ -10,8 +10,6 @@
 
 #include "EDomValidator.h"
 
-
-
 ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidget* parent, Qt::WindowFlags fl)
 	: QMainWindow(parent, fl)
 {
@@ -29,6 +27,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	actionSave_file->setEnabled(false);
 	actionSave_file_as->setEnabled(false);
 	setWindowTitle(tr("efoto[Project Manager]"));
+	imageForm.proj = this;
 
 	// Realiza as conexões necessárias
 	this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
@@ -422,13 +421,14 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			{
 				EDomElement img(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
 
+				QDir dir(filename.left(filename.lastIndexOf('/')));
 				QString imagesName(img.elementByTagName("filePath").toString().append("/").c_str());
 				imagesName.append(img.elementByTagName("fileName").toString().c_str());
-				QFileInfo image(imagesName);
+				QFileInfo image(dir.absoluteFilePath(imagesName));
 				if (!image.exists())
 				{
+					imagesMissing.append("Those images are missing:\n");
 					imagesMissing.append(image.fileName());
-					imagesMissing.append("\n");
 				}
 			}
 			if(imagesMissing.compare("")!=0)
@@ -449,6 +449,8 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			offset.setVisible(true);
 
 			savedIn = filename.toStdString();
+			//qDebug("load savedIn: %s",savedIn.c_str());
+
 			actionSave_file->setEnabled(false);
 			actionSave_file_as->setEnabled(true);
 
@@ -466,6 +468,9 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 
 			manager->editComponent("Header", node.getContent());
 			//***************************************************************************************************
+
+			QDir dir(filename.left(i));
+			dir.setCurrent(dir.absolutePath());
 
 			//viewHeader();
 			newTree();
@@ -1885,5 +1890,13 @@ bool ProjectUserInterface_Qt::confirmToClose()
 
 QString ProjectUserInterface_Qt::getSavedIn()
 {
-	return QString(savedIn.c_str());
+	//HeaderForm* parent =(HeaderForm*)&(this->headerForm);
+	//qDebug("saved in %s",savedIn.c_str());
+
+	//cout<< "cout "<<savedIn.c_str()<<"\n"<<endl;
+	//qDebug()<<headerForm.lineEditFilePath->text();
+
+	return  QString(savedIn.c_str()).left(savedIn.find_last_of('/'));
+
+	//return parent->lineEditFilePath->text();
 }
