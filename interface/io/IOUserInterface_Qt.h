@@ -20,7 +20,8 @@ public:
     ~IOUserInterface_Qt();
 
 public slots:
-    virtual void receiveMark(QPoint p);
+	virtual void informState();
+	virtual void receiveMark(QPoint p);
     virtual void makeRepaint();
     virtual void activeSetMode();
     virtual void activePanMode();
@@ -29,7 +30,7 @@ public slots:
     virtual bool calculateIO();
     virtual bool viewReport();
     virtual void testActivateIO();
-    virtual void acceptIO();
+	virtual void acceptIO();
     
 protected:
     ImageView *myImageView;
@@ -42,13 +43,13 @@ protected slots:
     virtual void languageChange();
 
 private:
-    void init();
+	void init();
     bool measureMark(int id, int col, int lin);
     
 public:
 
     // Other Methods
-    //
+	//
     bool exec();
 
 };
