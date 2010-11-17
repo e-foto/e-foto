@@ -24,59 +24,46 @@
 #include <QGraphicsItem>
 #include <QStandardItemModel>
 
+#include "SWidgetQt.h"
+
 #include <iostream>
 using namespace std;
 
 
-class ImageView : public QGraphicsView
+class ImageView : public SWidgetQt
 {
     Q_OBJECT
-
-    QCursor* handUp;
-    QCursor* handDown;
-    QCursor* zoomCur;
-    QRect rubberBandRect;
-    
-    //QRect viewportArea;
-    QGraphicsScene* graphicsScene;
-    QList<QGraphicsItem*> points;
-    QGraphicsItem* flightDirection;
-    QImage* image;
-    QPixmap* view;
-    QPainter* painter;
 
 public:
     ImageView(QWidget* parent = 0);
     ImageView(QString file, QWidget* parent = 0);
+	~ImageView();
 
 public slots:
     void setViewMode(int m);
-    void fitView();
-    void clearGraphicsScene();
-    void drawPoints(QStandardItemModel* points, int mode);
-    void drawPoint(int x, int y, int mode);
+	int getViewMode();
+	void fitView();
+	void createPoints(QStandardItemModel* points, int mode);
+	void drawPoints(QStandardItemModel* points, int mode);
+	void clearPoints();
     void drawFlightDirection(int x, int y);
     bool loadImage(QString file);
 
 signals:
-    void sendCoord(QPoint);
+	void sendCoord(QPoint);
     void markClicked(QPoint);
-    void flightDirectionClicked(QPoint);
-    void mouseReleased();
-    void screenRefreshed();
+	void flightDirectionClicked(QPoint);
+	void mousePressed();
+	void changed();
 
 protected:
-    void createCursors();
-    void mousePressEvent(QMouseEvent *e);
-    //void mouseMoveEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
-    void wheelEvent(QWheelEvent *e);
-    void scaleView(qreal scaleFactor);
-    //void paintEvent(QPaintEvent *event );
+	void mousePressEvent(QMouseEvent* e);
+	void mouseReleaseEvent(QMouseEvent* e);
+	QPoint getPointCoords();
 
-    int mode, dx, dy, adjustX, adjustY;
-    bool windowChanged;
-    QPoint currentPos;
+	int mode, dx, dy, adjustX, adjustY, modeBackup;
+	bool windowChanged;
+	QPoint currentPos;
 
 };
 

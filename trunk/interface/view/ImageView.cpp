@@ -1,200 +1,182 @@
 #include "ImageView.h"
 #include <math.h>
 
-ImageView::ImageView(QWidget* parent) : QGraphicsView( parent )
+ImageView::ImageView(QWidget* parent) : SWidgetQt( parent )
 {
-	image = new QImage;
-	loadImage("");
-	flightDirection = NULL;
-	
-    graphicsScene = new QGraphicsScene(this);
-	view = new QPixmap();
-	*view = graphicsScene->addPixmap(QPixmap::fromImage(*image))->pixmap();
-	setScene(graphicsScene);
-	
-	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	setAlignment(Qt::AlignCenter);
-	
-	
-	createCursors();
 }
 
-ImageView::ImageView(QString file, QWidget* parent) : QGraphicsView( parent )
+ImageView::ImageView(QString file, QWidget* parent) : SWidgetQt( parent )
 {
-	image = new QImage;
-	loadImage(file);
-	flightDirection = NULL;
+	this->createViewport("myViewport");
+	this->createImage("myImage",file.toStdString());
+	this->createPin("myIOPin","X16x16.png");
+	this->createPin("mySRPin1","T16x16.png");
+	this->createPin("mySRPin2","T16x16red.png");
+	this->createPin("mySRPin3","ARROW32x32.png");
 
-	graphicsScene = new QGraphicsScene(this);
-	view = new QPixmap();
-	*view = graphicsScene->addPixmap(QPixmap::fromImage(*image))->pixmap();
-	setScene(graphicsScene);
-
-	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	setAlignment(Qt::AlignCenter);
-
-
-	createCursors();
+	this->selectViewport("myViewport");
+	this->getSelectedViewport()->addImage("myImage");
+	this->selectImage("myImage");
+	this->paintGL();
 }
 
-/**
- * Create cursors
- * @bug cursor runtime directory! Solution: create common dir for cursors.
- */
-void ImageView::createCursors()
+ImageView::~ImageView()
 {
-	QImage bitmap;
-	QImage mask;
-	QBitmap bmp;
-	QBitmap xbm;
-	// Zoom
-	bitmap.load("resource/cursors/zoom.bmp");
-	mask.load("resource/cursors/zoom.xbm");
-	bmp = bmp.fromImage(bitmap);
-	xbm = xbm.fromImage(mask);
-	zoomCur = new QCursor(bmp,xbm,14,13);
+	this->clearPoints();
+	this->destroyPin("myIOPin");
+	this->destroyPin("mySRPin1");
+	this->destroyPin("mySRPin2");
+	this->destroyPin("mySRPin3");
+	this->destroyImage("myImage");
+	this->destroyViewport("myViewport");
 }
 
 void ImageView::setViewMode(int m)
 {
 	switch (m)
 	{
-	case 1 : setCursor(Qt::CrossCursor); mode=1; setDragMode(QGraphicsView::NoDrag); break;
-	case 2 : setCursor(Qt::OpenHandCursor); mode=2; setDragMode(QGraphicsView::ScrollHandDrag); break;
-	case 3 : setCursor(*zoomCur); mode=3; setDragMode(QGraphicsView::RubberBandDrag); break;
-	case 4 : setCursor(Qt::CrossCursor); mode=4; setDragMode(QGraphicsView::NoDrag); break;
-	default : unsetCursor(); mode=0; setDragMode(QGraphicsView::NoDrag); break;
+	case 1 : setCursor(Qt::CrossCursor); mode=1; setMarkingCursor(); break;
+	case 2 : setCursor(Qt::OpenHandCursor); mode=2; setMoveCursor(); break;
+	case 3 : setCursor(Qt::PointingHandCursor); mode=3; setZoomCursor(); break;
+	case 4 : setCursor(Qt::CrossCursor); modeBackup = mode; mode=4; setDirectionCursor(); break;
+	default : unsetCursor(); mode=0; setMoveCursor(); break;
 	}
+}
+
+int ImageView::getViewMode()
+{
+	return mode;
 }
 
 void ImageView::fitView()
 {
-	fitInView(0,0,image->width(),image->height(),Qt::KeepAspectRatio/*ByExpanding*/);
+	if (selectedViewport != NULL && selectedImage != NULL)
+		selectedViewport->fitView(selectedImage->getNickname());
 }
 
-void ImageView::clearGraphicsScene()
+void ImageView::createPoints(QStandardItemModel* points, int mode)
 {
-	for (int i = 0; i < points.size(); i++)
+	if (mode == 1) //IO use
 	{
-		graphicsScene->removeItem(points.at(i));
+		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		{
+			string pointName = QString::number(row).toStdString();
+			createPoint(pointName,"myIOPin");
+		}
 	}
-	points.clear();
+	else if (mode == 2) //SR use
+	{
+		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		{
+			string pointName = QString::number(row).toStdString();
+			createPoint(pointName,"mySRPin1");
+		}
+	}
+	createPoint("-1","mySRPin3");
 }
 
 void ImageView::drawPoints(QStandardItemModel* points, int mode)
 {
-	if (mode == 1)
+	int x;
+	int y;
+	if (mode == 1) //IO use
 	{
-		clearGraphicsScene();
 		for (unsigned int row = 0; row < points->rowCount() ;++row)
 		{
 			if (points->data(points->index(row,4)).toBool())
 			{
-				int x = points->data(points->index(row,2)).toInt();
-				int y = points->data(points->index(row,3)).toInt();
-				drawPoint(x,y,1);
+				string pointName = QString::number(row).toStdString();
+				selectPoint(pointName);
+				x = points->data(points->index(row,2)).toInt();
+				y = points->data(points->index(row,3)).toInt();
+				selectedImage->addMark(selectedPoint, x, y, selectedViewport, true);
 			}
 		}
 	}
-	else if (mode == 2)
+	else if (mode == 2) //SR use
 	{
-		clearGraphicsScene();
 		for (unsigned int row = 0; row < points->rowCount() ;++row)
 		{
 			if (points->data(points->index(row,10)).toBool())
 			{
-				int x = points->data(points->index(row,6)).toInt();
-				int y = points->data(points->index(row,7)).toInt();
+				string pointName = QString::number(row).toStdString();
+				selectPoint(pointName);
+				x = points->data(points->index(row,6)).toInt();
+				y = points->data(points->index(row,7)).toInt();
 				if(points->item(row,1)->checkState() == Qt::Checked)
 				{
-					drawPoint(x,y,2);
+					selectedPoint->setNewMarker(getPin("mySRPin1"));
 				}
 				else
 				{
-					drawPoint(x,y,3);
+					selectedPoint->setNewMarker(getPin("mySRPin2"));
 				}
+				selectedImage->addMark(selectedPoint, x, y, selectedViewport, true);
 			}
 		}
 	}
 }
 
-void ImageView::drawPoint(int x, int y, int mode)
+void ImageView::clearPoints()
 {
-	if (mode == 1)
+	for (unsigned int i = -1; i < countPoints(); ++i)
 	{
-		QGraphicsItem* part;
-		part = graphicsScene->addLine(x-1.5,y-1.5,x,y,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y+1,x+2.5,y+2.5,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x-1.5,y+2.5,x,y+1,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y,x+2.5,y-1.5,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addEllipse(x-1.5,y-1.5,4,4,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-	}
-	else if (mode == 2)
-	{
-		QGraphicsItem* part;
-		part = graphicsScene->addLine(x-1.5,y-1.5,x,y,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y+1,x+2.5,y+2.5,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x-1.5,y+2.5,x,y+1,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y,x+2.5,y-1.5,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addEllipse(x-1.5,y-1.5,4,4,QPen(QColor(0,255,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-	}
-	else if (mode == 3)
-	{
-		QGraphicsItem* part;
-		part = graphicsScene->addLine(x-1.5,y-1.5,x,y,QPen(QColor(255,0,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y+1,x+2.5,y+2.5,QPen(QColor(255,0,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x-1.5,y+2.5,x,y+1,QPen(QColor(255,0,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addLine(x+1,y,x+2.5,y-1.5,QPen(QColor(255,0,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
-		part = graphicsScene->addEllipse(x-1.5,y-1.5,4,4,QPen(QColor(255,0,0,255)));
-		part->setZValue(2);
-		points.push_back(part);
+		destroyPoint(QString::number(i).toStdString());
 	}
 }
 
 void ImageView::drawFlightDirection(int x, int y)
 {
-	if (flightDirection != NULL)
-		graphicsScene->removeItem(flightDirection);
-	flightDirection = graphicsScene->addLine(x,y,view->width()/2,view->height()/2,QPen(QColor(0,255,0,255)));
-	flightDirection->setZValue(2);
-
+	// Em breve os valores width/2 e height/2 usados neste claculo serão substituidos pelas coordenadas do centro ótico
+	// do sensor corrigido na Orientação Interior. Isto tornará mais fiel o cálculo do ângulo aqui realizado.
+	double halfW = selectedImage->getWidth()/2.0;
+	double halfH = selectedImage->getHeight()/2.0;
+	double cx = (x - halfW);//halfW;
+	double cy = -(y - halfH);//halfH;
+	double ang;
+	if (cx != 0 && cy != 0)
+		ang = atan(cy/cx);
+	else if (cx == 0 && cy > 0)
+		ang = 1.570796327;
+	else if (cx == 0 && cy < 0)
+		ang = -1.570796327;
+	else if (cy == 0 && cx > 0)
+		ang = 0.0;
+	else if (cy == 0 && cx < 0)
+		ang = 3.141592654;
+	if (cx < 0)
+	{
+		if (cy > 0)
+		{
+			ang = 3.141592654+ang;
+		}
+		else
+		{
+			ang = -3.141592654+ang;
+		}
+	}
+	double dx = (halfW-16)*cx/sqrt(pow(cx,2)) - cx;//*halfW;
+	double dy = (halfH-16)*cy/sqrt(pow(cy,2)) - cy;//*halfH;
+	dy *= sin(ang)*cy/sqrt(pow(cy,2));
+	dx *= cos(ang)*cx/sqrt(pow(cx,2));
+	ang *= 57.2957795; //rad2Degree
+	getPin("mySRPin3")->rotate(ang);
+	getPoint("-1")->panInImage(selectedImage->getNickname(),dx,dy);
+	repaint();
+	setViewMode(modeBackup);
+	//qDebug("w = %f; h = %f; cx = %f; cy = %f; dx = %f; dy = %f",halfW,halfH,cx,cy,dx,dy);
 }
 
-void ImageView::scaleView(qreal scaleFactor)
+QPoint ImageView::getPointCoords()
 {
-	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
-	if (factor < 0.07 || factor > 100)
-		return;
-
-	scale(scaleFactor, scaleFactor);
+	int x = 0;
+	int y = 0;
+	if (selectedPoint != NULL && selectedImage != NULL)
+	{
+		x = selectedPoint->getXInImage(selectedImage->getNickname())+selectedImage->getWidth()/2;
+		y = -(selectedPoint->getYInImage(selectedImage->getNickname())-selectedImage->getHeight()/2);
+	}
+	return QPoint(x,y);
 }
 
 /****************************
@@ -203,82 +185,62 @@ void ImageView::scaleView(qreal scaleFactor)
 
 bool ImageView::loadImage(QString file)
 {
-	bool load = image->load(file);
-	if (!load)
-		QMessageBox::information( this, tr("Image drawing"),tr("Could not open file %1").arg(file));
-	windowChanged=true;
-	return load;
+	this->createViewport("myViewport");
+	if (!this->createImage("myImage",file.toStdString()))
+	{
+		QMessageBox* msg = new QMessageBox(QMessageBox::Warning,"Unable to open file","The openGL failed to texture image.\n");
+		msg->show();
+		return false;
+	}
+	this->createPin("myIOPin","X16x16.png");
+	this->createPin("mySRPin1","T16x16.png");
+	this->createPin("mySRPin2","T16x16red.png");
+	this->createPin("mySRPin3","ARROW32x32.png");
+
+	this->selectViewport("myViewport");
+	this->getSelectedViewport()->addImage("myImage");
+	this->selectImage("myImage");
+	this->paintGL();
+	return true;
 }
 
-
-/****************************
-   MOUSE EVENTS
-*****************************/
-void ImageView::mousePressEvent(QMouseEvent *e)
+void ImageView::mousePressEvent(QMouseEvent* e)
 {
-	if (e->button() == Qt::LeftButton) 
+	emit mousePressed();
+	SWidgetQt::mousePressEvent(e);
+	if (e->button() == Qt::LeftButton)
 	{
+		GLdouble mousePosX = (double)e->x();
+		GLdouble mousePosY = height() - (double)e->y();
+		double mousePos[2];
+		getMousePos(mousePosX, mousePosY, mousePos);
+		if (!selectedImage->isInsideImage(mousePos[0], mousePos[1],selectedViewport->getNickname()))
+			return;
 		switch (mode)
 		{
 		case 1 :
-			currentPos = mapToScene(e->pos()).toPoint();
-			emit markClicked(currentPos);
+			emit markClicked(getPointCoords());
 			break;
-		case 3 : 
-			rubberBandRect.setTopLeft(e->pos());
-			setCursor(Qt::CrossCursor);			
+		case 2 :
+			setCursor(Qt::ClosedHandCursor);
 			break;
 		case 4 :
-			currentPos = mapToScene(e->pos()).toPoint();
-			emit flightDirectionClicked(currentPos);
+			emit flightDirectionClicked(getPointCoords());
 			break;
 		}
 	}
-	else
+	emit changed();
+}
+void ImageView::mouseReleaseEvent(QMouseEvent* e)
+{
+	if (e->button() == Qt::LeftButton)
 	{
 		switch (mode)
 		{
-                case 3 :
-			scaleView(0.5);
+		case 2 :
+			setCursor(Qt::OpenHandCursor);
 			break;
 		}
 	}
-	QGraphicsView::mousePressEvent(e);
-	update();
-}
-
-void ImageView::mouseReleaseEvent(QMouseEvent *e)
-{
-	if (e->button() == Qt::LeftButton) 
-	{
-		switch (mode)
-		{
-		case 1 :
-			{
-				emit mouseReleased();
-				break;
-			}
-		case 3 :
-			{
-				rubberBandRect.setBottomRight(e->pos());
-				if (rubberBandRect.topLeft() == rubberBandRect.bottomRight())
-					scaleView(2.0);
-				else
-					fitInView(mapToScene(rubberBandRect).boundingRect(),Qt::KeepAspectRatio/*ByExpanding*/);
-				setCursor(*zoomCur);
-				break;
-			}
-		case 4 :
-			{
-				emit mouseReleased();
-				break;
-			}
-		}
-	}
-	QGraphicsView::mouseReleaseEvent(e);
-}
-
-void ImageView::wheelEvent(QWheelEvent *e)
-{
-	scaleView(pow((double)2, e->delta() / 240.0));
+	SWidgetQt::mouseReleaseEvent(e);
 }

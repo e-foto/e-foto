@@ -38,8 +38,7 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 
     this->manager = manager;
 
-    resize(1024,768);//isso sairá em breve.
-    init();
+	init();
 }
 
 IOUserInterface_Qt::~IOUserInterface_Qt()
@@ -52,37 +51,19 @@ void IOUserInterface_Qt::languageChange()
     retranslateUi(this);
 }
 
-void IOUserInterface_Qt::init()
+void IOUserInterface_Qt::informState()
 {
-    // Insert image into layout
-    QWidget* centralwidget = new QWidget(this);
-
-    QGridLayout* gridLayout = new QGridLayout(centralwidget);
-
-    myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
-    myImageView->setFocusPolicy(Qt::NoFocus);
-
-    gridLayout->addWidget(myImageView, 0, 0, 1, 1);
-
-    setCentralWidget(centralwidget);
-
-    // Make some connections
-    connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
-    connect (myImageView, SIGNAL(mouseReleased()), this, SLOT(makeRepaint()));
-
-    this->showNormal();
-    myImageView->fitView();
+	myImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
 }
 
 void IOUserInterface_Qt::receiveMark(QPoint p)
 {
-    points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
-    points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
-    points->setData(points->index(table1->currentIndex().row(), 4), QVariant(true));
-    measureMark(table1->currentIndex().row()+1,p.x(),p.y());
-    myImageView->drawPoints(points,1);
-    table1->selectRow(table1->currentIndex().row() + 1);
-    testActivateIO();
+	points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
+	points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
+	points->setData(points->index(table1->currentIndex().row(), 4), QVariant(true));
+	measureMark(table1->currentIndex().row()+1,p.x(),p.y());
+	table1->selectRow(table1->currentIndex().row() + 1);
+	testActivateIO();
 }
 
 void IOUserInterface_Qt::makeRepaint()
@@ -109,6 +90,32 @@ void IOUserInterface_Qt::activeZoomMode()
 void IOUserInterface_Qt::fitView()
 {
     myImageView->fitView();
+}
+
+void IOUserInterface_Qt::init()
+{
+	// Insert image into layout
+	QWidget* centralwidget = new QWidget(this);
+
+	QGridLayout* gridLayout = new QGridLayout(centralwidget);
+
+	//myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
+	//myImageView->setFocusPolicy(Qt::NoFocus);
+	myImageView = new ImageView(centralwidget);
+
+	gridLayout->addWidget(myImageView, 0, 0, 1, 1);
+
+	setCentralWidget(centralwidget);
+
+	resize(1024,800);
+
+	// Make some connections
+	connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
+	connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
+	connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
+
+	//this->showNormal();
+	//myImageView->fitView();
 }
 
 bool IOUserInterface_Qt::measureMark(int id, int col, int lin)
@@ -227,12 +234,20 @@ bool IOUserInterface_Qt::exec()
     table1->selectRow(0);
     table1->setFocus();
 
-    testActivateIO();
-    myImageView->drawPoints(points,1);
-    makeRepaint();
+	testActivateIO();
 
     this->show();
+	if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+	{
+		myImageView->createPoints(points,1);
+		myImageView->drawPoints(points,1);
+		myImageView->fitView();
+	}
+	makeRepaint();
+	actionMove->trigger();
+
     if (qApp->exec())
         return false;
+	delete(myImageView);
     return true;
 }
