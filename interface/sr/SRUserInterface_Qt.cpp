@@ -34,7 +34,6 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 
     this->manager = manager;
 
-    resize(1024,768);
     flightAvailable = false;
     init();
 }
@@ -57,20 +56,31 @@ void SRUserInterface_Qt::init()
 
     QGridLayout* gridLayout = new QGridLayout(centralwidget);
 
-    myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
-    myImageView->setFocusPolicy(Qt::NoFocus);
+	//myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
+	//myImageView->setFocusPolicy(Qt::NoFocus);
+	myImageView = new ImageView(centralwidget);
 
     gridLayout->addWidget(myImageView, 0, 0, 1, 1);
 
     setCentralWidget(centralwidget);
+	resize(1024,768);
 
-    // Make some connections
-    connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receivePoint(QPoint)));
-    connect (myImageView, SIGNAL(flightDirectionClicked(QPoint)), this, SLOT(receiveFlightDirection(QPoint)));
-    connect (myImageView, SIGNAL(mouseReleased()), this, SLOT(makeRepaint()));
+	// Make some connections
+	connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
+	connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receivePoint(QPoint)));
+	connect (myImageView, SIGNAL(flightDirectionClicked(QPoint)), this, SLOT(receiveFlightDirection(QPoint)));
+	connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
 
-    this->showNormal();
-    myImageView->fitView();
+	//this->showNormal();
+	//myImageView->fitView();
+}
+
+void SRUserInterface_Qt::informState()
+{
+	if (myImageView->getViewMode() != 4)
+		myImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
+	else
+		myImageView->selectPoint("-1");
 }
 
 void SRUserInterface_Qt::receivePoint(QPoint p)
@@ -81,8 +91,7 @@ void SRUserInterface_Qt::receivePoint(QPoint p)
     points->setData(points->index(table1->currentIndex().row(), 9), QVariant(manager->pointToAnalog(p.x(), p.y()).at(1)));
     points->setData(points->index(table1->currentIndex().row(), 10), QVariant(true));
     points->item(table1->currentIndex().row(),1)->setCheckState(Qt::Checked);
-    measurePoint(points->data(points->index(table1->currentIndex().row(), 0)).toInt(),p.x(),p.y());
-    myImageView->drawPoints(points,2);
+	measurePoint(points->data(points->index(table1->currentIndex().row(), 0)).toInt(),p.x(),p.y());
     table1->selectRow(table1->currentIndex().row() + 1);
     testActivateSR();
 }
@@ -95,8 +104,7 @@ void SRUserInterface_Qt::receiveFlightDirection(QPoint p)
 
     actionSpatialRessection->setEnabled(true);
     toolBar->setEnabled(true);
-    dockWidget->setEnabled(true);
-    myImageView->setViewMode(0);
+	dockWidget->setEnabled(true);
 }
 
 void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
@@ -259,7 +267,7 @@ void SRUserInterface_Qt::setFlight()
     toolBar->setDisabled(true);
     dockWidget->setDisabled(true);
     myImageView->setViewMode(4);
-    fitView();
+	fitView();
 
     QMessageBox msgBox;
     msgBox.setText("Click in image to indicate the direction of flight");
@@ -323,11 +331,18 @@ bool SRUserInterface_Qt::exec()
 
     connect (points, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(actualizeSelection(QStandardItem*)));
 
-    myImageView->drawPoints(points,2);
-    makeRepaint();
-
     this->show();
+	if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+	{
+		myImageView->createPoints(points,2);
+		myImageView->drawPoints(points,2);
+		myImageView->fitView();
+	}
+	makeRepaint();
+	actionMove->trigger();
+
     if (qApp->exec())
         return false;
+	delete(myImageView);
     return true;
 }

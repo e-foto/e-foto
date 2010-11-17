@@ -19,6 +19,7 @@ class SRUserInterface_Qt : public QMainWindow, public Ui::SRMainWindow, public S
     virtual void languageChange();
 
 public slots:
+	virtual void informState();
     virtual void receivePoint(QPoint p);
     virtual void receiveFlightDirection(QPoint p);
     virtual void actualizeSelection(QStandardItem* item);
@@ -42,7 +43,7 @@ protected:
     ImageView *myImageView;
     QGridLayout *imageLayout;
     QStandardItemModel *points;
-    bool flightAvailable;
+	bool flightAvailable;
 
 public:
     SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
