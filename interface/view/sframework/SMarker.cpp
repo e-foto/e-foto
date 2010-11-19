@@ -1,6 +1,5 @@
 #include "SMarker.h"
 #include "AbstractSWidget.h"
-#include "CommonMethods.h"
 
 sclass::SPin::SPin()
 {
@@ -27,9 +26,20 @@ sclass::SPin::SPin(SWidget* parent, string nickname, string filename)
 	}
 	ang = 0.0;
 }
+sclass::SPin::SPin(SWidget *parent, string nickname, void *loadedPin, CM::ImplementationType libType)
+{
+	this->parent = parent;
+	this->nickname = nickname;
+	this->filePath = "";
+	// Ate o momento o pin que não consegue fazer o load não entra na estrutura da SWidget e não é texturizado.
+	if (this->load(loadedPin,libType))
+	{
+		this->texturize();
+	}
+	ang = 0.0;
+}
 sclass::SPin::~SPin()
 {
-
 }
 
 string sclass::SPin::getNickname()
@@ -49,15 +59,26 @@ void sclass::SPin::unload()
 	}
 }
 
-void sclass::SPin::rotate(double ang)
+void sclass::SPin::rotate(double ang, void *obj, CM::ImplementationType libType)
 {
 	if (this->ang != ang)
 	{
 		unload();
-		if (this->load(filePath))
+		if (filePath == "")
 		{
-			CommonMethods::instance(CM::QtMethods)->rotateImage(ang);
-			this->texturize();
+			if (this->load(obj, libType))
+			{
+				CommonMethods::instance(libType)->rotateImage(ang);
+				this->texturize();
+			}
+		}
+		else
+		{
+			if (this->load(filePath))
+			{
+				CommonMethods::instance(CM::QtMethods)->rotateImage(ang);
+				this->texturize();
+			}
 		}
 		this->ang = ang;
 	}
@@ -75,6 +96,10 @@ void sclass::SPin::draw(double centerCoordX, double centerCoordY, double zoomFac
 bool sclass::SPin::load(string filePath)
 {
 	return canLoaded = CommonMethods::instance(CM::QtMethods)->loadImage(width,height,format,filePath);
+}
+bool sclass::SPin::load(void *loadedPin, CM::ImplementationType libType)
+{
+	return canLoaded = CommonMethods::instance(libType)->putImage(width,height,format,loadedPin);
 }
 bool sclass::SPin::texturize()
 {

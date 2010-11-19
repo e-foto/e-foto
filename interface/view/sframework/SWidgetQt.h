@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 #include <QMouseEvent>
+#include <QImage>
 
 #include "AbstractSWidget.h"
 
@@ -19,6 +20,7 @@ public:
 	void	resize(int w, int h);
 	void	paintGL();
 	void	repaint();
+	bool	createPin(string nickname, QImage loadedPin);
 
 	// Event methods
 	void mouseMoveEvent(QMouseEvent* event );

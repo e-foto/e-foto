@@ -1,5 +1,11 @@
 #include "CommonSDLMethods.h"
 
+bool CommonSDLMethods::putImage(int &width, int &height, int &format, void *image)
+{
+	//por fazer
+	return false;
+}
+
 bool CommonSDLMethods::loadImage(int &width, int &height, int &format, string filePath)
 {
 	SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_VIDEO);

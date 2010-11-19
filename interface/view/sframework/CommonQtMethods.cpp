@@ -2,9 +2,46 @@
 #include <QLabel>
 #include <QPixmap>
 
+bool CommonQtMethods::putImage(int &width, int &height, int &format, void *image)
+{
+	if (currentImage != NULL)
+	{
+		freeImage();
+	}
+	QImage* temp = (QImage*)image;
+	if (temp == NULL)
+	{
+		cerr << "Error: sorry, can't load image.\n";
+		width = 0;
+		height = 0;
+		format = 0;
+		return false;
+	}
+	if (!temp->isGrayscale())
+	{
+		currentImage = new QImage(temp->rgbSwapped());
+		if (currentImage->hasAlphaChannel())
+		{
+			format = 4;
+		}
+		else
+		{
+			format = 3;
+		}
+		delete(temp);
+	}
+	else
+	{
+		currentImage = temp;
+		format = 1;
+	}
+	width = currentImage->width();
+	height = currentImage->height();
+	return true;
+}
+
 bool CommonQtMethods::loadImage(int &width, int &height, int &format, string filePath)
 {
-
 	if (currentImage != NULL)
 	{
 		freeImage();
@@ -45,7 +82,7 @@ void CommonQtMethods::rotateImage(double ang)
 {
 	if (currentImage == NULL)
 	{
-		//return;
+		return;
 	}
 	QTransform transf;
 	QImage* temp = new QImage(currentImage->transformed(transf.rotate(-ang),Qt::SmoothTransformation));

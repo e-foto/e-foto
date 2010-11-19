@@ -9,6 +9,7 @@ class CommonSDLMethods : public CommonMethods
 {
 public:
 	friend class CommonMethods;
+	bool putImage(int& width, int& height, int& format, void* image);
 	bool loadImage(int& width, int& height, int& format, string filePath);
 	void rotateImage(double ang);
 	bool cutImage(int x, int y, int w, int h);

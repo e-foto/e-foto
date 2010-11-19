@@ -10,6 +10,7 @@
 
 #include <QPainter>
 #include <QImage>
+#include <QPixmap>
 #include <QPoint>
 #include <QString>
 #include <QCursor>

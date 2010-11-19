@@ -1,6 +1,8 @@
 #include "ImageView.h"
 #include <math.h>
 
+#include <QLabel>
+
 ImageView::ImageView(QWidget* parent) : SWidgetQt( parent )
 {
 }
@@ -8,11 +10,16 @@ ImageView::ImageView(QWidget* parent) : SWidgetQt( parent )
 ImageView::ImageView(QString file, QWidget* parent) : SWidgetQt( parent )
 {
 	this->createViewport("myViewport");
-	this->createImage("myImage",file.toStdString());
-	this->createPin("myIOPin","X16x16.png");
-	this->createPin("mySRPin1","T16x16.png");
-	this->createPin("mySRPin2","T16x16red.png");
-	this->createPin("mySRPin3","ARROW32x32.png");
+	if (!this->createImage("myImage",file.toStdString()))
+	{
+		QMessageBox* msg = new QMessageBox(QMessageBox::Warning,"Unable to open file","The openGL failed to texture image.\n");
+		msg->show();
+		return;
+	}
+	this->createPin("myIOPin",QIcon(":/pins/X16x16.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin1",QIcon(":/pins/T16x16.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin2",QIcon(":/pins/T16x16red.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin3",QIcon(":/pins/ARROW32x32.png").pixmap(32,32).toImage());
 
 	this->selectViewport("myViewport");
 	this->getSelectedViewport()->addImage("myImage");
@@ -160,7 +167,8 @@ void ImageView::drawFlightDirection(int x, int y)
 	dy *= sin(ang)*cy/sqrt(pow(cy,2));
 	dx *= cos(ang)*cx/sqrt(pow(cx,2));
 	ang *= 57.2957795; //rad2Degree
-	getPin("mySRPin3")->rotate(ang);
+	QImage* aux = new QImage(QIcon(":/pins/ARROW32x32.png").pixmap(32,32).toImage());
+	getPin("mySRPin3")->rotate(ang,(void*)aux, CM::QtMethods);
 	getPoint("-1")->panInImage(selectedImage->getNickname(),dx,dy);
 	repaint();
 	setViewMode(modeBackup);
@@ -192,10 +200,10 @@ bool ImageView::loadImage(QString file)
 		msg->show();
 		return false;
 	}
-	this->createPin("myIOPin","X16x16.png");
-	this->createPin("mySRPin1","T16x16.png");
-	this->createPin("mySRPin2","T16x16red.png");
-	this->createPin("mySRPin3","ARROW32x32.png");
+	this->createPin("myIOPin",QIcon(":/pins/X16x16.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin1",QIcon(":/pins/T16x16.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin2",QIcon(":/pins/T16x16red.png").pixmap(16,16).toImage());
+	this->createPin("mySRPin3",QIcon(":/pins/ARROW32x32.png").pixmap(32,32).toImage());
 
 	this->selectViewport("myViewport");
 	this->getSelectedViewport()->addImage("myImage");

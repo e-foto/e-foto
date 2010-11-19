@@ -6,4 +6,10 @@
         <file>images/WindowIcon.png</file>
         <file>images/efotux-about.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>pins/ARROW32x32.png</file>
+        <file>pins/T16x16red.png</file>
+        <file>pins/T16x16.png</file>
+        <file>pins/X16x16.png</file>
+    </qresource>
 </RCC>

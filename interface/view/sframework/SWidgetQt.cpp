@@ -40,6 +40,22 @@ void SWidgetQt::resize(int w, int h)
 	QGLWidget::resize(w, h);
 	repaint();
 }
+bool SWidgetQt::createPin(string nickname, QImage loadedPin)
+{
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsPin(nickname))
+		return false;
+	QImage* img = new QImage(loadedPin);
+	sclass::SPin p(this, nickname, (void*)img, CM::QtMethods);
+	// E o pin que não consegue fazer o load não entra na estrutura da SWidget.
+	if (p.loaded())
+	{
+		pin.push_back(p);
+		return true;
+	}
+	else
+		return false;
+}
 
 void SWidgetQt::paintGL()
 {
