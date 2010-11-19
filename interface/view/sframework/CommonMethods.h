@@ -14,6 +14,7 @@ class CommonMethods
 {
 public:
 	static CommonMethods* instance(CM::ImplementationType type = CM::CVMethods);
+	virtual bool putImage(int& width, int& height, int& format, void* image) = 0;
 	virtual bool loadImage(int& width, int& height, int& format, string filePath) = 0;
 	virtual void rotateImage(double ang) = 0;
 	virtual bool cutImage(int x, int y, int w, int h) = 0;
