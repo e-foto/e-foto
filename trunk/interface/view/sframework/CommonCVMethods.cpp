@@ -1,5 +1,11 @@
 #include "CommonCVMethods.h"
 
+bool CommonCVMethods::putImage(int &width, int &height, int &format, void *image)
+{
+	//por fazer
+	return false;
+}
+
 bool CommonCVMethods::loadImage(int &width, int &height, int &format, string filePath)
 {
 	if (currentImage != NULL)
