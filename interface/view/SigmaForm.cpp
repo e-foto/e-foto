@@ -162,17 +162,19 @@ string SigmaFormController::getValues()
 			else
 				result.set(1+i,1,0);
 		}
-		if (!result.isZeroes())
+		//if (!result.isZeroes())--> O metodo isZeroes() não é muito util para o caso de
+		//sigma, pois qualquer valor abaixo de 0.000001 é considerado zero
 			return  "<sigma>\n" + result.xmlGetData() + "</sigma>\n";
-		else
+		/*else
 		{
 			toMode("Not Available");
 			return "<sigma>Not Available</sigma>\n";
-		}
+		}*/
 	}
 	else if (mode == "Covariance Matrix")
 	{
 		if (!values.isZeroes())
+
 			return  "<sigma>\n" + values.xmlGetData() + "</sigma>\n";
 		else
 		{

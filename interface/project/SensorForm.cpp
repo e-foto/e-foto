@@ -4,6 +4,7 @@
 SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 {
     setupUi(this);
+	cameraDispatchDateEdit->setDate(QDate().currentDate());
 
 	calibratedSigmaController = new SigmaFormController("Not Available",1);
 	calibratedSigmaSelector->setSigmaFormController(calibratedSigmaController);
@@ -152,8 +153,12 @@ void SensorForm::fillvalues(string values)
     descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
     cameraNumberLineEdit->setText(QString::fromUtf8(ede.elementByTagName("number").toString().c_str()));
 
-    cameraDispatchDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("dispatch").toString().c_str())));
-    cameraExpirationDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("expiration").toString().c_str())));
+	//QString dataString(QString::fromUtf8(ede.elementByTagName("dispatch").toString().c_str()));
+	//qDebug("data: %s",dataString);
+	//QDate data;
+	//data.fromString()
+	cameraDispatchDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("dispatch").toString().c_str()),Qt::ISODate));
+	cameraExpirationDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("expiration").toString().c_str()),Qt::ISODate));
     calibratedFocalDistanceDoubleSpin->setValue(QString::fromUtf8(ede.elementByTagName("value").toString().c_str()).toDouble(&ok));
 	//calibratedSigmaDoubleSpin->setValue(QString::fromUtf8(ede.elementByTagName("sigma").toString().c_str()).toDouble(&ok));
 	calibratedSigmaController->fillValues(ede.elementByTagName("sigma").getContent());
@@ -358,8 +363,8 @@ string SensorForm::getvalues()
     auxStream << "\t<description>" << descriptionTextEdit->toPlainText().toUtf8().data() << "</description>\n";
     auxStream << "\t<calibrationCertificate>\n" ;
     auxStream << "\t\t<number>" << cameraNumberLineEdit->text().toUtf8().data() << "</number>\n";
-    auxStream << "\t\t<dispatch>"<<cameraDispatchDateEdit->text().toUtf8().data() << "</dispatch>\n";
-    auxStream << "\t\t<expiration>"<<cameraExpirationDateEdit->text().toUtf8().data() << "</expiration>\n";
+	auxStream << "\t\t<dispatch>"<<cameraDispatchDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</dispatch>\n";
+	auxStream << "\t\t<expiration>"<<cameraExpirationDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</expiration>\n";
     auxStream << "\t</calibrationCertificate>\n";
     auxStream << "\t<focalDistance uom=\"#mm\">\n";
     auxStream << "\t\t<value>" << calibratedFocalDistanceDoubleSpin->value() << "</value>\n";
