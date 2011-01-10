@@ -256,7 +256,7 @@ bool ImageForm::isForm(string formName)
 void ImageForm::setIOAvailable(bool state)
 {
 	if (state)
-		labelIO->setText("Interior orientation is available");
+        labelIO->setText("Interior orientation is available");
 	else
 		labelIO->setText("Interior orientation is not available");
 }
