@@ -286,9 +286,6 @@ p, li { white-space: pre-wrap; }
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
            <column>
             <property name="text">
              <string>Key</string>
@@ -345,6 +342,17 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEdit_gcp_id</tabstop>
+  <tabstop>typeComboBox</tabstop>
+  <tabstop>textEditDescription</tabstop>
+  <tabstop>sigmaDialogButton</tabstop>
+  <tabstop>sigmaSelector</tabstop>
+  <tabstop>eDoubleSpinBox</tabstop>
+  <tabstop>nDoubleSpinBox</tabstop>
+  <tabstop>hDoubleSpinBox</tabstop>
+  <tabstop>imageMeasurementsTable</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

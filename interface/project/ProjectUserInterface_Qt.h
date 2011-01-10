@@ -77,6 +77,12 @@ public:
 	void viewImages();
 	void viewImage(int id);
 	QString getSavedIn();
+    EDomElement pointTxtToXml(QString point, int key, int line, string typePoint="control");
+    string edomPointToTxt(EDomElement points);
+
+    EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
+    string edomImageToTxt(EDomElement images);
+
 
 public slots:
 	virtual void closeEvent(QCloseEvent *event);
@@ -102,7 +108,7 @@ public slots:
 	// Cancelando cada view...
 	virtual void cancelHeader();
 	virtual void cancelTerrain();
-	virtual void cancelFlight();
+    virtual void cancelFlight();
 	virtual void cancelSensor();
 	virtual void cancelPoint();
 	virtual void cancelImage();
@@ -128,6 +134,12 @@ public slots:
 	// Debug...
 	virtual void toggleDebug();
 	virtual void showAbout();
+
+    void importPointsFromTxt();
+    void exportPointsToTxt();
+    void importImagesFromTxt();
+    //void exportImagesToTxt();
+
 };
 
 #endif // PROJECTUSERINTERFACE_QT_H

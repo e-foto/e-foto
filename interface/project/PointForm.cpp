@@ -71,7 +71,7 @@ void PointForm::fillvalues(string values)
 			if (linColStr.size() == 2)
 			{
 				linItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
-				colItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
+                colItem->setText(QString::number(linColStr.at(1).toDouble(),'f',3));
 			}
 		}
 
