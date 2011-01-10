@@ -1,13 +1,16 @@
 #include "PointsForm.h"
+#include <QFileDialog>
+#include <QFile>
+#include <QString>
 
 PointsForm :: PointsForm(QWidget *parent) : AbstractForm(parent)
 {
     setupUi(this);
-    connect( pointsTable, SIGNAL( cellClicked(int,int)),
-                 this   ,   SLOT(  emitSignal(int)    )
-            );
-        pointsTable->setColumnHidden(0,true);
-        pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
+	connect( pointsTable, SIGNAL( cellClicked(int,int)), this , SLOT( emitSignal(int) ) );
+	pointsTable->setColumnHidden(0,true);
+	pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
+
+	//connect(importButton, SIGNAL(clicked()), this ,SLOT(importFromTxt()));
 }
 
 void PointsForm::fillvalues(string values)
@@ -69,3 +72,4 @@ bool PointsForm::isForm(string formName)
 {
         return !formName.compare("PointsForm");
 }
+

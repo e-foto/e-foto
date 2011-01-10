@@ -4,6 +4,7 @@
 #include "ui_PointsLayout.h"
 #include "AbstractForm.h"
 #include "EDom.h"
+#include <QStringList>
 
 class PointsForm : public AbstractForm, public Ui::PointsForm
 {
@@ -15,10 +16,10 @@ public:
     void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
-        bool isForm(string formName);
+	bool isForm(string formName);
 
 private slots:
-    void emitSignal(int i);
+	void emitSignal(int i);
 
 signals:
     //emite um sinal com o valor do atributo key da tag image

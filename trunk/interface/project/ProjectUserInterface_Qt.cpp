@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QShortcut>
+#include <QMessageBox>
 
 #include "EDomValidator.h"
 
@@ -62,6 +63,10 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(sensorForm.decenteredSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
 	this->connect(sensorForm.principalSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
 
+    connect(pointsForm.importButton, SIGNAL(clicked()), this, SLOT( importPointsFromTxt() ) );
+    connect(pointsForm.exportToTxtButton, SIGNAL(clicked()), this, SLOT(exportPointsToTxt()) );
+    connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesFromTxt() ) );
+    imagesForm.importButton->setEnabled(false);
 
 	// Bloqueia alguns dos  dipositivos
 	this->showMaximized();
@@ -415,7 +420,7 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				alert->show();
 				return;
 			}
-			QString imagesMissing="";
+            QString imagesMissing="";
 
 			for (int i=0 ;i < manager->getFreeImageId() ;i++)
 			{
@@ -427,14 +432,13 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				QFileInfo image(dir.absoluteFilePath(imagesName));
 				if (!image.exists())
 				{
-					imagesMissing.append("Those images are missing:\n");
-					imagesMissing.append(image.fileName());
+                    imagesMissing.append(image.fileName()).append("\n");
 				}
 			}
 			if(imagesMissing.compare("")!=0)
 			{
 
-				QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing);
+                QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n"));
 				alertImages->show();
 			}
 
@@ -1135,7 +1139,7 @@ void ProjectUserInterface_Qt::viewPoints()
 	connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewPoint()));
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelPoints()));
 
-	EDomElement node(manager->getXml("points"));
+    EDomElement node(manager->getXml("points"));
 
 	pointsForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea, QTableWidget {border: 0px}");
@@ -1899,4 +1903,218 @@ QString ProjectUserInterface_Qt::getSavedIn()
 	return  QString(savedIn.c_str()).left(savedIn.find_last_of('/'));
 
 	//return parent->lineEditFilePath->text();
+}
+
+/** This function import points from a *.txt file with a one point in each line
+*  in pattern GCPID\tE\tN\tH\tdE\tdN\tdH or GCPID\tE\tN\tH
+*/
+void ProjectUserInterface_Qt::importPointsFromTxt()
+{
+	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	QFile *importFile = new QFile(importFileName);
+	QStringList pointsList;
+
+	importFile->open(QIODevice::ReadOnly);
+
+	while(!importFile->atEnd())
+	{
+		QByteArray line = importFile->readLine();
+        QString aux(line);
+        //pointsList << aux.left(aux.lastIndexOf('\n'));
+        pointsList << aux.remove('\n');
+	}
+
+    importFile->close();
+
+    for (int i=0; i<pointsList.length();i++)
+    {
+        EDomElement newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId(),i+1);
+        if ( newPointXML.hasTagName("pointId") )
+        {
+            manager->addComponent(newPointXML.getContent().data(),"points");
+        }
+    }
+    updateTree();
+    viewPoints();
+}
+
+/** This function convert a point data from a *.txt line in a children point XML valid
+*/
+EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
+{
+    stringstream aux;
+    string gcpIdField, eField, nField, hField, dEField, dNField, dHField, newXml;
+
+    if (point.split("\t").length() == 7)
+    {
+        gcpIdField = point.split("\t").at(0).toStdString().c_str();
+        eField = point.split("\t").at(1).toStdString().c_str();
+        nField = point.split("\t").at(2).toStdString().c_str();
+        hField = point.split("\t").at(3).toStdString().c_str();
+        dEField = point.split("\t").at(4).toStdString().c_str();
+        dNField = point.split("\t").at(5).toStdString().c_str();
+        dHField = point.split("\t").at(6).toStdString().c_str();
+
+        aux << "\t<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+        aux << "\t<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+        aux << "\t<description>" << "Put point description here" << "</description>\n";
+        aux << "\t<spatialCoordinates uom=\"#" << "m" << "\">\n";
+        aux << "\t\t<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+        aux << "<sigma>\n";
+        aux << "<mml:matrix>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dEField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dNField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dHField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "</mml:matrix>\n";
+        aux << "</sigma>\n";
+        aux << "\t</spatialCoordinates>\n";
+        aux << "\t<imagesMeasurements>\n";
+        aux << "\t</imagesMeasurements>\n";
+        aux << "\t</point>";
+    }
+    else if (point.split("\t").length() == 4)
+    {
+        gcpIdField = point.split("\t").at(0).toStdString().c_str();
+        eField = point.split("\t").at(1).toStdString().c_str();
+        nField = point.split("\t").at(2).toStdString().c_str();
+        hField = point.split("\t").at(3).toStdString().c_str();
+
+        aux << "\t<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+        aux << "\t<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+        aux << "\t<description>" << "Put point description here" << "</description>\n";
+        aux << "\t<spatialCoordinates uom=\"#" << "m" << "\">\n";
+        aux << "\t\t<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+        aux << "<sigma>Not Available</sigma>\n";
+        aux << "\t</spatialCoordinates>\n";
+        aux << "\t<imagesMeasurements>\n";
+        aux << "\t</imagesMeasurements>\n";
+        aux << "\t</point>";
+    }else{
+        QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+    }
+
+    newXml=aux.str();
+    EDomElement newPointXml(newXml.c_str());
+    return newPointXml;
+}
+
+/** This function exports all points in current XML to *.txt file with a one point in
+*   each line in pattern GCPID\tE\tN\tH\tdE\tdN\tdH or GCPID\tE\tN\tH
+*/
+void ProjectUserInterface_Qt::exportPointsToTxt()
+{
+    QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
+    QFile *exportFileName= new QFile(fileSaveName);
+    exportFileName->setFileName(fileSaveName);
+    exportFileName->open(QIODevice::WriteOnly);
+
+    EDomElement points(manager->getXml("points").c_str());
+
+    for (int i=1; i<=points.children().size(); i++)
+    {
+        exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+    }
+    exportFileName->close();
+}
+
+/** This function convert a EDomElement children Point in a line *.txt point format
+*/
+string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
+{
+    stringstream aux;
+    stringstream stdev;
+    QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
+    aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
+    aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
+
+    if (points.hasTagName("mml:matrix"))
+    {
+       aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
+       aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
+       aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
+    }
+
+    aux <<"\n";
+    string result=aux.str();
+    qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
+
+    qDebug("stdev:%s",stdev.str().c_str());
+    qDebug("result:%s",result.c_str());
+
+    return result.c_str();
+}
+
+/** This function import images from a *.txt file with a one image in each line
+*   in pattern ...
+*/
+void ProjectUserInterface_Qt::importImagesFromTxt()
+{
+    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+    QFile *importFile = new QFile(importFileName);
+    QStringList imagesList;
+
+    importFile->open(QIODevice::ReadOnly);
+
+    while(!importFile->atEnd())
+    {
+        QByteArray line = importFile->readLine();
+        QString aux(line);
+        imagesList << aux.remove('\n');
+    }
+
+    importFile->close();
+
+    for (int i=0; i<imagesList.length();i++)
+    {
+        EDomElement newImageXML=imageTxtToXml(imagesList.at(i),manager->getFreeImageId(),i+1);
+        if ( newImageXML.hasTagName("imageId") )
+        {
+            manager->addComponent(newImageXML.getContent().data(),"images");
+        }
+    }
+    updateTree();
+    viewImages();
+}
+
+/** This function convert image data from a *.txt line in a children image XML valid
+*
+*/
+EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int line, int sensorKey, int flightKey)
+{
+    stringstream aux;
+
+    // implementar o xml de images aqui
+    /*
+    aux << "\t<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
+    aux << "\t<imageId>" << "" << "</imageId>\n";
+    aux << "\t<width uom=\"#px\"" << "" << "</width>\n";
+    aux << "\t<height uom=\"#px\"" << ""  << "</height>\n";
+    aux << "\t<fileName>" << "" << "</fileName>\n";
+    aux << "\t<filePath>" << "" << "</filePath>\n";
+    aux << "\t<resolution uom=\"#dpi\">" << "" << "</resolution>\n";
+    aux << "\t<GNSS uom=\"#m\" type=\"Unknown\">\n";
+    aux << "\t\t<gml:pos>" << "E" << " " << "N" << " " << "H" << "</gml:pos>\n";
+    aux << "\t\t<sigma>Not Available</sigma>\n";
+    aux << "\t</GNSS>\n";
+    aux << "\t<INS uom=\"#rad\" type=\"Unknown\">\n";
+    aux << "\t\t<omega>" << "" << "</omega>\n";
+    aux << "\t\t<phi>" << "" << "</phi>\n";
+    aux << "\t\t<kappa>" << "" << "</kappa>\n";
+    aux << "\t\t<sigma>Not Available</sigma>\n";
+    aux << "\t</INS>\n";
+    aux << "\t</image>";
+
+    QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+
+    */
+    string newXml=aux.str();
+    EDomElement newImageXml(newXml.c_str());
+
+    return newImageXml;
 }

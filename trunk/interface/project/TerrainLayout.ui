@@ -561,12 +561,20 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <tabstops>
+  <tabstop>maxAltSpinBox</tabstop>
+  <tabstop>minAltSpinBox</tabstop>
+  <tabstop>meanAltSpinBox</tabstop>
+  <tabstop>grsComboBox</tabstop>
+  <tabstop>cpsComboBox</tabstop>
+  <tabstop>utmFuseSpin</tabstop>
   <tabstop>latDegreeSpin</tabstop>
   <tabstop>latMinutesSpin</tabstop>
   <tabstop>latSecondSpin</tabstop>
+  <tabstop>latDirCombo</tabstop>
   <tabstop>longDegreeSpin</tabstop>
   <tabstop>longMinutesSpin</tabstop>
   <tabstop>longSecondSpin</tabstop>
+  <tabstop>longDirCombo</tabstop>
  </tabstops>
  <resources/>
  <connections/>

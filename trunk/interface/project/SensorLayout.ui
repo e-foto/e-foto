@@ -2519,6 +2519,54 @@ p, li { white-space: pre-wrap; }
    <header>ScienceSpinBox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>sensorIdLineEdit</tabstop>
+  <tabstop>descriptionTextEdit</tabstop>
+  <tabstop>platformCombo</tabstop>
+  <tabstop>geometryCombo</tabstop>
+  <tabstop>detectorCombo</tabstop>
+  <tabstop>energyCombo</tabstop>
+  <tabstop>cameraNumberLineEdit</tabstop>
+  <tabstop>cameraDispatchDateEdit</tabstop>
+  <tabstop>cameraExpirationDateEdit</tabstop>
+  <tabstop>calibratedSigmaSelector</tabstop>
+  <tabstop>calibratedFocalDistanceDoubleSpin</tabstop>
+  <tabstop>radialSigmaSelector</tabstop>
+  <tabstop>radialK0LineEdit</tabstop>
+  <tabstop>radialK1LineEdit</tabstop>
+  <tabstop>radialK2LineEdit</tabstop>
+  <tabstop>radialK3LineEdit</tabstop>
+  <tabstop>decenteredSigmaSelector</tabstop>
+  <tabstop>decenteredP1LineEdit</tabstop>
+  <tabstop>decenteredP2LineEdit</tabstop>
+  <tabstop>principalSigmaSelector</tabstop>
+  <tabstop>principalX0LineEdit</tabstop>
+  <tabstop>principalY0LineEdit</tabstop>
+  <tabstop>fiductialMarksCombo</tabstop>
+  <tabstop>fidSigmaSelector</tabstop>
+  <tabstop>fiductialXi0LineEdit</tabstop>
+  <tabstop>fiductialEta0LineEdit</tabstop>
+  <tabstop>fiductialXi1LineEdit</tabstop>
+  <tabstop>fiductialEta1LineEdit</tabstop>
+  <tabstop>fiductialXi2LineEdit</tabstop>
+  <tabstop>fiductialEta2LineEdit</tabstop>
+  <tabstop>fiductialXi3LineEdit</tabstop>
+  <tabstop>fiductialEta3LineEdit</tabstop>
+  <tabstop>fiductialXi4LineEdit</tabstop>
+  <tabstop>fiductialEta4LineEdit</tabstop>
+  <tabstop>fiductialXi5LineEdit</tabstop>
+  <tabstop>fiductialEta5LineEdit</tabstop>
+  <tabstop>fiductialXi6LineEdit</tabstop>
+  <tabstop>fiductialEta6LineEdit</tabstop>
+  <tabstop>fiductialXi7LineEdit</tabstop>
+  <tabstop>fiductialEta7LineEdit</tabstop>
+  <tabstop>xaA0LineEdit</tabstop>
+  <tabstop>xaA1LineEdit</tabstop>
+  <tabstop>xaA2LineEdit</tabstop>
+  <tabstop>xaB0LineEdit</tabstop>
+  <tabstop>xaB1LineEdit</tabstop>
+  <tabstop>xaB2LineEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
