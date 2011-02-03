@@ -15,6 +15,8 @@ public:
         void fillvalues(string values);
         string getvalues();
         void setReadOnly(bool state);
+        void setFormLocale(QLocale locale);
+        void cleanForm();
         bool isForm(string formName);
 
 };

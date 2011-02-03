@@ -990,7 +990,8 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSensor()));
 
 	EDomElement node(manager->getXml("sensor", "key", intToString(id)));
-
+        sensorForm.clearForm();
+        sensorForm.setFormLocale(QLocale(QLocale::system()));
 	sensorForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
 	centerArea.setCurrentIndex(2);

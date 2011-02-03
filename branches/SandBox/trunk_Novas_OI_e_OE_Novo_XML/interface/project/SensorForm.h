@@ -20,6 +20,8 @@ public:
     void setReadOnly(bool state);
     bool isForm(string formName);
     void showLast4Fiductial(bool state);
+    void clearForm();
+    void setFormLocale(QLocale locale);
 
 	SigmaFormController* calibratedSigmaController;
 	SigmaFormController* fid0SigmaController;

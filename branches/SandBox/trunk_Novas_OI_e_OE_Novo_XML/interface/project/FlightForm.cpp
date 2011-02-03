@@ -8,6 +8,7 @@ FlightForm::FlightForm(QWidget *parent) : AbstractForm(parent)
 
 void FlightForm::fillvalues(string values)
 {
+        cleanForm();
         EDomElement ede(values);
         bool ok;
 
@@ -63,6 +64,30 @@ void FlightForm::setReadOnly(bool state)
     producerNameLineEdit->setReadOnly(state);
     nominalScaleSpinBox->setReadOnly(state);
     flightDateEdit->setReadOnly(state);
+}
+
+void FlightForm::cleanForm()
+{
+    flightIDLineEdit->clear();
+    producerNameLineEdit->clear();
+    descriptionTextEdit->clear();
+    flightDateEdit->clear();
+    flightHeightSpinBox->clear();
+    nominalScaleSpinBox->clear();
+    horizontalOverlapDoubleSpinBox->clear();
+    verticalOverlapDoubleSpinBox->clear();
+}
+
+void FlightForm::setFormLocale(QLocale locale)
+{
+    flightIDLineEdit->setLocale(locale);
+    producerNameLineEdit->setLocale(locale);
+    descriptionTextEdit->setLocale(locale);
+    flightDateEdit->setLocale(locale);
+    flightHeightSpinBox->setLocale(locale);
+    nominalScaleSpinBox->setLocale(locale);
+    horizontalOverlapDoubleSpinBox->setLocale(locale);
+    verticalOverlapDoubleSpinBox->setLocale(locale);
 }
 
 bool FlightForm::isForm(string formName)

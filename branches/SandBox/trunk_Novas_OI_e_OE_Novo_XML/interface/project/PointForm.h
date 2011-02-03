@@ -13,12 +13,15 @@ class PointForm : public AbstractForm , public Ui::Ponto
 public:
     PointForm(QWidget *parent = 0);
 
-	void setImageList(deque<int> myKeyList, deque<string> myNameList);
+void setImageList(deque<int> myKeyList, deque<string> myNameList);
     void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
-	bool isForm(string formName);
-	SigmaFormController* sigmaController;
+    bool isForm(string formName);
+    SigmaFormController* sigmaController;
+    void setFormLocale(QLocale locale);
+    void cleanForm();
+
 
 private:
   string key;

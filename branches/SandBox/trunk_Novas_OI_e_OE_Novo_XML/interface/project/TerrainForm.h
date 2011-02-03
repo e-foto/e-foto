@@ -7,11 +7,14 @@
 
 class TerrainForm : public AbstractForm, public Ui::Terreno
 {
-		Q_OBJECT
-		void fillLatDir(string);
-		void fillLongDir(string);
-		string getLatDir();
-		string getLongDir();
+    Q_OBJECT
+    void fillLatDir(string);
+    void fillLongDir(string);
+    string getLatDir();
+    string getLongDir();
+    void setFormLocale(QLocale locale);
+    void cleanForm();
+
 
 public:
         TerrainForm(QWidget *parent = 0);
@@ -24,7 +27,7 @@ public:
     public slots:
         void validatorLat();
         void validatorLong();
-		void validatorAlt(double);
+        void validatorAlt(double);
 };
 
 #endif // TERRAINFORM_H
