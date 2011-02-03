@@ -13,18 +13,21 @@ class ImageForm : public AbstractForm, public Ui::ImageView
     Q_OBJECT
 
 public:
-	ProjectUserInterface_Qt* proj;
-	ImageForm(QWidget *parent=0);
-	void fillvalues(string values);
+    ProjectUserInterface_Qt* proj;
+    ImageForm(QWidget *parent=0);
+    void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
+    void setFormLocale(QLocale locale);
+    void cleanForm();
+
     string getFileImagePath();
     string getFileImageName();
-	bool isForm(string formName);
-	SigmaFormController* gnssSigmaController;
-	SigmaFormController* insSigmaController;
-	void setIOAvailable(bool state);
-	void setEOAvailable(bool state);
+    bool isForm(string formName);
+    SigmaFormController* gnssSigmaController;
+    SigmaFormController* insSigmaController;
+    void setIOAvailable(bool state);
+    void setEOAvailable(bool state);
 
 
 private slots:

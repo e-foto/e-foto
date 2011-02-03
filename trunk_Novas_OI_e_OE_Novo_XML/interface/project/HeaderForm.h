@@ -15,6 +15,8 @@ public:
 	void fillvalues(string values);
 	string getvalues();
 	void setReadOnly(bool state);
+        void cleanForm();
+        void setFormLocale(QLocale locale);
 	bool isForm(string formName);
 
 private slots:

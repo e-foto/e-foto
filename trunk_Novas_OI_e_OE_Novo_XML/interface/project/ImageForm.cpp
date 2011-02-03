@@ -30,7 +30,7 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 
 void ImageForm::fillvalues(string values)
 {
-
+    cleanForm();
     EDomElement ede(values);
 	bool ok;
 
@@ -42,8 +42,7 @@ void ImageForm::fillvalues(string values)
 	tagXml += ede.attribute("flight_key");
 	tagXml += "\">";
 
-	imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )
-						  );
+        imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )	  );
 
     widthLine->setText( (QString::fromUtf8(ede.elementByTagAtt("width","uom","#px").toString().c_str())+" px"  )
 						);
@@ -269,4 +268,49 @@ void ImageForm::setEOAvailable(bool state)
 		labelEO->setText("Spatial resection is available");
 	else
 		labelEO->setText("Spatial resection is not available");
+}
+
+void ImageForm::cleanForm()
+{
+    imageIDLine->clear();
+    resolutionSpin->clear();
+    flightIdComboBox->setCurrentIndex(0);
+    //ground coordinates
+    eDoubleSpinBox_2->clear();
+    nDoubleSpinBox_2->clear();
+    hDoubleSpinBox_2->clear();
+    gnssSigmaController->fillValues("Not Available");
+    //inertial navigation
+    insSigmaController->fillValues("Not Available");
+    omegaDoubleSpinBox->clear();
+    kappaDoubleSpinBox->clear();
+    phiDoubleSpinBox->clear();
+    //metadata
+    fileNameLine->clear();
+    filePathLine->clear();
+    heightLine->clear();
+    widthLine->clear();
+}
+
+void ImageForm::setFormLocale(QLocale locale)
+{
+    imageIDLine->setLocale(locale);
+    resolutionSpin->setLocale(locale);
+
+    //ground coordinates
+    eDoubleSpinBox_2->setLocale(locale);
+    nDoubleSpinBox_2->setLocale(locale);
+    hDoubleSpinBox_2->setLocale(locale);
+
+    //inertial navigation
+
+    omegaDoubleSpinBox->setLocale(locale);
+    kappaDoubleSpinBox->setLocale(locale);
+    phiDoubleSpinBox->setLocale(locale);
+    //metadata
+    fileNameLine->setLocale(locale);
+    filePathLine->setLocale(locale);
+    heightLine->setLocale(locale);
+    widthLine->setLocale(locale);
+
 }

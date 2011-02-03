@@ -3,7 +3,8 @@
 
 SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 {
-    setupUi(this);
+        setupUi(this);
+        setFormLocale(QLocale(QLocale::system()));
 	cameraDispatchDateEdit->setDate(QDate().currentDate());
 
 	calibratedSigmaController = new SigmaFormController("Not Available",1);
@@ -60,23 +61,16 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 	principalSigmaSelector->blockCovarianceMatrixOption();
 	principalSigmaContent->setSigmaFormController(principalSigmaController);
 
-    QRegExp regExp("[-]?\\d{1,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2}$)?");
-    QRegExpValidator *validator= new QRegExpValidator(regExp,this);
+//    QRegExp regExp("[-]?\\d{1,4}([.]\\d{1,5})?([(e|E)][-]\\d{1,2}$)?");
+//    QRegExpValidator *validator= new QRegExpValidator(regExp,this);
 
 	radialK0LineEdit->setTextValue("");
 	radialK1LineEdit->setTextValue("");
 	radialK2LineEdit->setTextValue("");
 
-	xaA0LineEdit->setValidator(validator);
-	xaA1LineEdit->setValidator(validator);
-	xaA2LineEdit->setValidator(validator);
-	xaB0LineEdit->setValidator(validator);
-	xaB1LineEdit->setValidator(validator);
-	xaB2LineEdit->setValidator(validator);
-
 	//oldSensor
 	//connect(detectorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(detectorGroup(int)));
-    connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
+        connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
 
 	//newSensor
 	connect(calcModelComboBox, SIGNAL (currentIndexChanged(int)), this, SLOT(calculationMode(int)));
@@ -90,6 +84,7 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 void SensorForm::fillvalues(string values)
 {
 
+    clearForm();
     ede.setContent(values);
     bool ok;
 
@@ -276,12 +271,12 @@ void SensorForm::fillvalues(string values)
 			fid7SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 		}
 
-		xaA0LineEdit->setText("");
-		xaA1LineEdit->setText("");
-		xaA2LineEdit->setText("");
-		xaB0LineEdit->setText("");
-		xaB1LineEdit->setText("");
-		xaB2LineEdit->setText("");
+                xaA0SpinBox->setValue(0);
+                xaA1SpinBox->setValue(0);
+                xaA2SpinBox->setValue(0);
+                xaB0SpinBox->setValue(0);
+                xaB1SpinBox->setValue(0);
+                xaB2SpinBox->setValue(0);
 		pixelSizeDoubleSpinBox->setValue(0);
 		sensorRowsSpinBox->setValue(0);
 		sensorColsSpinBox->setValue(0);
@@ -295,12 +290,12 @@ void SensorForm::fillvalues(string values)
 		sensorRowsSpinBox->setValue(QString::fromUtf8(sensorDimensions.elementByTagName("rows").toString().c_str()).toDouble());
 		sensorColsSpinBox->setValue(QString::fromUtf8(sensorDimensions.elementByTagName("columns").toString().c_str()).toDouble());
 
-		xaA0LineEdit->setText("");
-		xaA1LineEdit->setText("");
-		xaA2LineEdit->setText("");
-		xaB0LineEdit->setText("");
-		xaB1LineEdit->setText("");
-		xaB2LineEdit->setText("");
+                xaA0SpinBox->setValue(0);
+                xaA1SpinBox->setValue(0);
+                xaA2SpinBox->setValue(0);
+                xaB0SpinBox->setValue(0);
+                xaB1SpinBox->setValue(0);
+                xaB2SpinBox->setValue(0);
 		fiductialXi0doubleSpin->setValue(0);
 		fiductialEta0doubleSpin->setValue(0);
 		fid0SigmaController->fillValues("");
@@ -329,12 +324,12 @@ void SensorForm::fillvalues(string values)
 	else if (calcModelComboBox->currentIndex() == 2)
 	{
 		EDomElement xa =  ede.elementByTagName("Xa");
-		xaA0LineEdit->setText(QString::fromUtf8(xa.elementByTagName("a0").toString().c_str()));
-		xaA1LineEdit->setText(QString::fromUtf8(xa.elementByTagName("a1").toString().c_str()));
-		xaA2LineEdit->setText(QString::fromUtf8(xa.elementByTagName("a2").toString().c_str()));
-		xaB0LineEdit->setText(QString::fromUtf8(xa.elementByTagName("b0").toString().c_str()));
-		xaB1LineEdit->setText(QString::fromUtf8(xa.elementByTagName("b1").toString().c_str()));
-		xaB2LineEdit->setText(QString::fromUtf8(xa.elementByTagName("b2").toString().c_str()));
+                xaA0SpinBox->setValue(xa.elementByTagName("a0").toDouble());
+                xaA1SpinBox->setValue(xa.elementByTagName("a1").toDouble());
+                xaA2SpinBox->setValue(xa.elementByTagName("a2").toDouble());
+                xaB0SpinBox->setValue(xa.elementByTagName("b0").toDouble());
+                xaB1SpinBox->setValue(xa.elementByTagName("b1").toDouble());
+                xaB2SpinBox->setValue(xa.elementByTagName("b2").toDouble());
 
 		pixelSizeDoubleSpinBox->setValue(0);
 		sensorRowsSpinBox->setValue(0);
@@ -365,6 +360,7 @@ void SensorForm::fillvalues(string values)
 		fiductialEta7doubleSpin->setValue(0);
 		fid7SigmaController->fillValues("");
 	}
+
 }
 
 string SensorForm::getvalues()
@@ -538,12 +534,12 @@ string SensorForm::getvalues()
 	else if (calcModelComboBox->currentIndex() == 2)
 	{
 		auxStream << "<Xa>\n";
-		auxStream << "<a0>" << xaA0LineEdit->text().toUtf8().data() << "</a0>\n";
-		auxStream << "<a1>" << xaA1LineEdit->text().toUtf8().data() << "</a1>\n";
-		auxStream << "<a2>" << xaA2LineEdit->text().toUtf8().data() << "</a2>\n";
-		auxStream << "<b0>" << xaB0LineEdit->text().toUtf8().data() << "</b0>\n";
-		auxStream << "<b1>" << xaB1LineEdit->text().toUtf8().data() << "</b1>\n";
-		auxStream << "<b2>" << xaB2LineEdit->text().toUtf8().data() << "</b2>\n";
+                auxStream << "<a0>" << xaA0SpinBox->value() << "</a0>\n";
+                auxStream << "<a1>" << xaA1SpinBox->value() << "</a1>\n";
+                auxStream << "<a2>" << xaA2SpinBox->value() << "</a2>\n";
+                auxStream << "<b0>" << xaB0SpinBox->value() << "</b0>\n";
+                auxStream << "<b1>" << xaB1SpinBox->value() << "</b1>\n";
+                auxStream << "<b2>" << xaB2SpinBox->value() << "</b2>\n";
 		auxStream << "</Xa>\n";
 	}
 
@@ -626,12 +622,12 @@ void SensorForm::setReadOnly(bool state)
 	fiductialEta7doubleSpin->setReadOnly(state);
 	fid7SigmaController->setReadOnly(state);
 
-    xaA0LineEdit->setReadOnly(state);
-    xaA1LineEdit->setReadOnly(state);
-    xaA2LineEdit->setReadOnly(state);
-    xaB0LineEdit->setReadOnly(state);
-    xaB1LineEdit->setReadOnly(state);
-    xaB2LineEdit->setReadOnly(state);
+        xaA0SpinBox->setReadOnly(state);
+        xaA1SpinBox->setReadOnly(state);
+        xaA2SpinBox->setReadOnly(state);
+        xaB0SpinBox->setReadOnly(state);
+        xaB1SpinBox->setReadOnly(state);
+        xaB2SpinBox->setReadOnly(state);
 
 	//new Sensor
 	calcModelComboBox->setEnabled(!state);
@@ -729,4 +725,150 @@ void SensorForm::updateSensorDiagonal()
 	sensorDimensionsLabel->setText(res);
 
 	//sensorSizeDiagonaldoubleSpin->setText(QString::number(result));
+}
+
+void SensorForm::clearForm()
+{
+    sensorIdLineEdit->clear();
+    descriptionTextEdit->clear();
+    //type
+    platformCombo->setCurrentIndex(0);
+    calcModelComboBox->setCurrentIndex(0);
+    calculationMode(calcModelComboBox->currentIndex());
+    geometryCombo->setCurrentIndex(1);
+    detectorCombo->setCurrentIndex(0);
+    energyCombo->setCurrentIndex(0);
+
+    //camera calibration certificate
+    cameraDispatchDateEdit->clear();
+    cameraExpirationDateEdit->clear();
+    cameraNumberLineEdit->clear();
+
+    //sensor parameters
+    calibratedFocalDistanceDoubleSpin->clear();
+    calibratedSigmaController->fillValues("Not Available");
+
+    //radial Symmetric
+    radialSigmaController->fillValues("Not Available");
+    radialK0LineEdit->clear();
+    radialK1LineEdit->clear();
+    radialK2LineEdit->clear();
+    radialK3LineEdit->clear();
+
+    //decentered
+    decenteredSigmaController->fillValues("Not Available");
+    decenteredP1LineEdit->clear();
+    decenteredP2LineEdit->clear();
+
+    //coordinates of principal Point
+    principalSigmaController->fillValues("Not Available");
+    principalX0doubleSpin->clear();
+    principalY0doubleSpin->clear();
+
+    //fiductialMarks
+    fid0SigmaController->fillValues("Not Available");
+    fid1SigmaController->fillValues("Not Available");
+    fid2SigmaController->fillValues("Not Available");
+    fid3SigmaController->fillValues("Not Available");
+    fid4SigmaController->fillValues("Not Available");
+    fid5SigmaController->fillValues("Not Available");
+    fid6SigmaController->fillValues("Not Available");
+
+    fiductialXi0doubleSpin->clear();
+    fiductialXi1doubleSpin->clear();
+    fiductialXi2doubleSpin->clear();
+    fiductialXi3doubleSpin->clear();
+    fiductialXi4doubleSpin->clear();
+    fiductialXi5doubleSpin->clear();
+    fiductialXi6doubleSpin->clear();
+    fiductialXi7doubleSpin->clear();
+    fiductialEta0doubleSpin->clear();
+    fiductialEta1doubleSpin->clear();
+    fiductialEta2doubleSpin->clear();
+    fiductialEta3doubleSpin->clear();
+    fiductialEta4doubleSpin->clear();
+    fiductialEta5doubleSpin->clear();
+    fiductialEta6doubleSpin->clear();
+    fiductialEta7doubleSpin->clear();
+
+    fiductialMarksCombo->setCurrentIndex(0);
+    fiductialGroup(fiductialMarksCombo->currentIndex());
+
+    // xa
+    xaA0SpinBox->clear();
+    xaA1SpinBox->clear();
+    xaA2SpinBox->clear();
+    xaB0SpinBox->clear();
+    xaB1SpinBox->clear();
+    xaB2SpinBox->clear();
+
+    //sensor dimensions
+
+    pixelSizeDoubleSpinBox->clear();
+    sensorRowsSpinBox->clear();
+    sensorColsSpinBox->clear();
+    sensorDimensionsLabel->clear();
+    updateSensorDiagonal();
+}
+
+void SensorForm::setFormLocale(QLocale locale)
+{
+    sensorIdLineEdit->setLocale(locale);
+    descriptionTextEdit->setLocale(locale);
+
+    //camera calibration certificate
+    cameraDispatchDateEdit->setLocale(locale);
+    cameraExpirationDateEdit->setLocale(locale);
+    cameraNumberLineEdit->setLocale(locale);
+
+    //sensor parameters
+    calibratedFocalDistanceDoubleSpin->setLocale(locale);
+
+    //radial Symmetric
+    radialK0LineEdit->setLocale(locale);
+    radialK1LineEdit->setLocale(locale);
+    radialK2LineEdit->setLocale(locale);
+    radialK3LineEdit->setLocale(locale);
+
+    //decentered
+    decenteredP1LineEdit->setLocale(locale);
+    decenteredP2LineEdit->setLocale(locale);
+
+    //coordinates of principal Point
+    principalX0doubleSpin->setLocale(locale);
+    principalY0doubleSpin->setLocale(locale);
+
+    //fiductialMarks
+    fiductialXi0doubleSpin->setLocale(locale);
+    fiductialXi1doubleSpin->setLocale(locale);
+    fiductialXi2doubleSpin->setLocale(locale);
+    fiductialXi3doubleSpin->setLocale(locale);
+    fiductialXi4doubleSpin->setLocale(locale);
+    fiductialXi5doubleSpin->setLocale(locale);
+    fiductialXi6doubleSpin->setLocale(locale);
+    fiductialXi7doubleSpin->setLocale(locale);
+    fiductialEta0doubleSpin->setLocale(locale);
+    fiductialEta1doubleSpin->setLocale(locale);
+    fiductialEta2doubleSpin->setLocale(locale);
+    fiductialEta3doubleSpin->setLocale(locale);
+    fiductialEta4doubleSpin->setLocale(locale);
+    fiductialEta5doubleSpin->setLocale(locale);
+    fiductialEta6doubleSpin->setLocale(locale);
+    fiductialEta7doubleSpin->setLocale(locale);
+
+    // xa
+    xaA0SpinBox->setLocale(locale);
+    xaA1SpinBox->setLocale(locale);
+    xaA2SpinBox->setLocale(locale);
+    xaB0SpinBox->setLocale(locale);
+    xaB1SpinBox->setLocale(locale);
+    xaB2SpinBox->setLocale(locale);
+
+    //sensor dimensions
+
+    pixelSizeDoubleSpinBox->setLocale(locale);
+    sensorRowsSpinBox->setLocale(locale);
+    sensorColsSpinBox->setLocale(locale);
+    sensorDimensionsLabel->setLocale(locale);
+
 }

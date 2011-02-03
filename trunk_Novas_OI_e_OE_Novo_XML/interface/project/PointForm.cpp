@@ -26,6 +26,8 @@ void PointForm::setImageList(deque<int> myKeyList, deque<string> myNameList)
 
 void PointForm::fillvalues(string values)
 {
+        cleanForm();
+
 	EDomElement ede(values);
 
 	key = ede.attribute("key");
@@ -150,4 +152,26 @@ string PointForm::getType()
 bool PointForm::isForm(string formName)
 {
 	return !formName.compare("PointForm");
+}
+
+void PointForm::cleanForm()
+{
+       lineEdit_gcp_id->clear();
+       typeComboBox->setCurrentIndex(0);
+       textEditDescription->clear();
+       sigmaController->fillValues("Not Available");
+       eDoubleSpinBox->clear();
+       nDoubleSpinBox->clear();
+       hDoubleSpinBox->clear();
+       imageMeasurementsTable->clearContents();
+}
+
+void PointForm::setFormLocale(QLocale locale)
+{
+    lineEdit_gcp_id->setLocale(locale);
+    textEditDescription->setLocale(locale);
+    eDoubleSpinBox->setLocale(locale);
+    nDoubleSpinBox->setLocale(locale);
+    hDoubleSpinBox->setLocale(locale);
+    imageMeasurementsTable->setLocale(locale);
 }

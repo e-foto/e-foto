@@ -8,12 +8,11 @@ int main(int argc, char **argv)
 
 	//DegreeLineEdit *box= new DegreeLineEdit();
 
-/*
+
 	Dms *teste1myType= new Dms(40,50,30.20);
 	Dms *teste2myType= new Dms(100,30,50.50);
 	Dms *teste3myType= new Dms(100,30,50.50,true);
-*/
-	/*
+
 	Dms *testeUtmGeoPhi= new Dms(47,48,15);
 	Dms *testeUtmGeoLambda= new Dms(13,42,02);
 	qDebug("phi, lambda, h to XYZ");
@@ -28,22 +27,25 @@ int main(int argc, char **argv)
 	qDebug("XYZ to phi, lambda , h");
 	TransformationsCoordinates::GeocentricCartesianToGeoelip(geotocart2.get(1,1),geotocart2.get(1,2),geotocart2.get(1,3));
 
-	*/
 
+/*
     Dms *testePhi= new Dms(47,0,0);
     Dms *testeLambda= new Dms(16,0,0);
     Dms *testeLambda0= new Dms(15,0,0);
     qDebug("phi, lambda, h to XYZ");
     //Matrix geotocart2(TransformationsCoordinates::GeoelipToGeocentricCartesian(testePhi->dmsToRadiano(),testeLambda->dmsToRadiano(),0));
     //qDebug("XYZ to phi, lambda , h");
-    TransformationsCoordinates::GeoelipToUtm(testePhi->dmsToRadiano(),testeLambda->dmsToRadiano(),testeLambda0->dmsToRadiano(),0);
+    //TransformationsCoordinates::GeoelipToUtm(testePhi->dmsToRadiano(),testeLambda->dmsToRadiano(),testeLambda0->dmsToRadiano(),0);
+
+    */
 /*
     qDebug()<<(new Dms())->radianoToDms(0.000001)->toString();
 
 	qDebug()<<(new Dms(0,0,0.1))->dmsToRadiano();
 
 	qDebug()<<(new Dms())->radianoToDms(4.84814e-7)->toString();
-	/*
+        */
+
     qDebug("%s comparando com %s :%d",teste1myType->toString().toStdString().c_str(),teste3myType->toString().toStdString().c_str(),teste1myType->compareDegMinSecs(teste3myType));
     qDebug("%s comparando com %s :%d",teste3myType->toString().toStdString().c_str(),teste1myType->toString().toStdString().c_str(),teste3myType->compareDegMinSecs(teste1myType));
 	//teste1myType->compareDegMinSecs(new Dms(40,50,30.21))
@@ -58,8 +60,8 @@ int main(int argc, char **argv)
 	qDebug("%s comparando com %s :%d",teste1myType->toString().toStdString().c_str(),(new Dms(38,50,30.21))->toString().toStdString().c_str(),teste1myType->compareDegMinSecs(new Dms(38,50,30.21)));
 	qDebug("%s comparando com %s :%d",teste1myType->toString().toStdString().c_str(),(new Dms(38,52,0.21))->toString().toStdString().c_str(),teste1myType->compareDegMinSecs(new Dms(38,52,0.21)));
 	qDebug("%s comparando com %s :%d\n\n",teste1myType->toString().toStdString().c_str(),(new Dms(40,50,30.20))->toString().toStdString().c_str(),teste1myType->compareDegMinSecs(new Dms(40,50,30.20)));
-*/
-/*
+
+
 	Dms *somaTest1Test2= Dms::addDegMinSecs(teste1myType,teste2myType);
     qDebug("soma de teste1 e teste2:\t%s ",somaTest1Test2->toString().toStdString().c_str());
 
@@ -72,7 +74,7 @@ int main(int argc, char **argv)
 	Dms *mulTest2= Dms::mulDegMinSecs(3,teste1myType);
     qDebug("multiplicacao de teste1 *3:\t%s ",mulTest2->toString().toStdString().c_str());
 
-/*
+
     qDebug("\n\nteste 1\n");
 	double teste1dec = teste1myType->dmsToDegreeDecimal(); //myType to degree decimal
 	double teste1rad = teste1myType->dmsToRadiano(); // myType to radiano
@@ -113,7 +115,7 @@ int main(int argc, char **argv)
 
 
     qDebug("\n\nteste 4\n");
-	double teste4dec = teste4myType->dmsToDegreeDecimal(); //myType to degree decimal
+/*	double teste4dec = teste4myType->dmsToDegreeDecimal(); //myType to degree decimal
 	double teste4rad =teste4myType->dmsToRadiano(); // myType to radiano
 
     qDebug("%s to degree decimal: %f",teste4myType->toString().toStdString().c_str(),teste4dec);
