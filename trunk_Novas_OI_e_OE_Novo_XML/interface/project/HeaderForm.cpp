@@ -9,6 +9,7 @@ HeaderForm::HeaderForm(QWidget *parent) : AbstractForm(parent)
 
 void HeaderForm::fillvalues(string values)
 {
+        cleanForm();
 	EDomElement ede(values);
 	lineEditName->setText(QString::fromUtf8(ede.elementByTagName("name").toString().c_str()));
 	textEditDescription->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
@@ -26,7 +27,7 @@ void HeaderForm::fillvalues(string values)
 
 string HeaderForm::getvalues()
 {
-	string xmlString;
+        string xmlString;
 	stringstream auxStream;
 		auxStream << "<projectHeader>\n";
 		auxStream << "\t\t<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
@@ -71,4 +72,30 @@ void HeaderForm::metadataVisibleChanged(QString newText)
 void HeaderForm::focusInEvent(QFocusEvent *)
 {
 	lineEditName->setFocus();
+}
+
+void HeaderForm::cleanForm()
+{
+       lineEditName->clear();
+       lineEditContext->clear();
+       lineEditAims->clear();
+       textEditDescription->clear();
+       lineEditOwner->clear();
+       lineEditFilePath->clear();
+       lineEditFileName->clear();
+       dateTimeEditCreationDate->clear();
+       dateTimeEditModificationDate->clear();
+}
+
+void HeaderForm::setFormLocale(QLocale locale)
+{
+    lineEditName->setLocale(locale);
+    lineEditContext->setLocale(locale);
+    lineEditAims->setLocale(locale);
+    textEditDescription->setLocale(locale);
+    lineEditOwner->setLocale(locale);
+    lineEditFilePath->setLocale(locale);
+    lineEditFileName->setLocale(locale);
+    dateTimeEditCreationDate->setLocale(locale);
+    dateTimeEditModificationDate->setLocale(locale);
 }

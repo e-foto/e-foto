@@ -3,15 +3,11 @@
 TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 {
     setupUi(this);
-    connect(latDegreeSpin,SIGNAL(editingFinished() ),
-                this,       SLOT( validatorLat()   )
-            );
-    connect(longDegreeSpin,SIGNAL(editingFinished() ),
-                this,       SLOT( validatorLong()   )
-			);
-	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(latDegreeSpin,SIGNAL(editingFinished() ),this,SLOT( validatorLat()));
+    connect(longDegreeSpin,SIGNAL(editingFinished() ),this,SLOT( validatorLong()));
+    connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 }
 
 void TerrainForm::fillLatDir(string str)
@@ -48,6 +44,7 @@ string TerrainForm::getLongDir()
 
 void TerrainForm::fillvalues(string values)
 {
+    cleanForm();
     EDomElement ede(values);
 	bool ok;//variavel 'dummy' para a função QString::toDouble(*bool)
 
@@ -185,6 +182,38 @@ void TerrainForm::validatorAlt(double)
 	meanAltSpinBox->setMinimum(minAltSpinBox->value());
 	meanAltSpinBox->setMaximum(maxAltSpinBox->value());
 	minAltSpinBox->setMaximum(maxAltSpinBox->value());
+}
+
+void TerrainForm::cleanForm()
+{
+    maxAltSpinBox->clear();
+    minAltSpinBox->clear();
+    meanAltSpinBox->clear();
+    grsComboBox->setCurrentIndex(0);
+    cpsComboBox->setCurrentIndex(0);
+    utmFuseSpin->clear();
+    latDegreeSpin->clear();
+    latMinutesSpin->clear();
+    latSecondSpin->clear();
+    latDirCombo->setCurrentIndex(0);
+    longDegreeSpin->clear();
+    longMinutesSpin->clear();
+    longSecondSpin->clear();
+    longDirCombo->setCurrentIndex(0);
+}
+
+void TerrainForm::setFormLocale(QLocale locale)
+{
+    maxAltSpinBox->setLocale(locale);
+    minAltSpinBox->setLocale(locale);
+    meanAltSpinBox->setLocale(locale);
+    utmFuseSpin->setLocale(locale);
+    latDegreeSpin->setLocale(locale);
+    latMinutesSpin->setLocale(locale);
+    latSecondSpin->setLocale(locale);
+    longDegreeSpin->setLocale(locale);
+    longMinutesSpin->setLocale(locale);
+    longSecondSpin->setLocale(locale);
 }
 
 bool TerrainForm::isForm(string formName)
