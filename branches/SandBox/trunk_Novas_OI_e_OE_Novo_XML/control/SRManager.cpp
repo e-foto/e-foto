@@ -6,7 +6,7 @@
 #include "EFotoManager.h"
 #include "EDom.h"
 #include "Terrain.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Image.h"
 #include "Point.h"
 #include "InteriorOrientation.h"

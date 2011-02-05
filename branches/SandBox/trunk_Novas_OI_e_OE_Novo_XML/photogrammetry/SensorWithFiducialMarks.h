@@ -1,26 +1,25 @@
 /**************************************************************************
-                        Aerial.h
+						SensorWithFiducialMarks.h
 **************************************************************************/
 
 
-#ifndef AERIAL_H
-#define AERIAL_H
-
+#ifndef SENSORWITHFIDUCIALMARKS_H
+#define SENSORWITHFIDUCIALMARKS_H
 #include "Sensor.h"
 #include "Matrix.h"
 #include "AnalogFiductialMark.h"
 
 /**
-  * class Aerial
+  * class SensorWithFiducialMarks
   *
   * @author E-Foto group
   *
   * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
+  * @date 04/02/2011
+  * @version 1.3 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
-class Aerial : public Sensor
+class SensorWithFiducialMarks : public Sensor
 {
 
     //EOBJECT
@@ -40,11 +39,11 @@ public:
 
     //Constructors
     //
-    Aerial();
-    Aerial(const Sensor& sensor);
-    Aerial(int myId);
-    Aerial(int myId, const Matrix& myLb);
-    Aerial(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
+	SensorWithFiducialMarks();
+	SensorWithFiducialMarks(const Sensor& sensor);
+	SensorWithFiducialMarks(int myId);
+	SensorWithFiducialMarks(int myId, const Matrix& myLb);
+	SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
 
     //Private attribute accessor methods
     //
@@ -84,4 +83,4 @@ public:
 
 };
 
-#endif // AERIAL_H
+#endif // SENSORWITHFIDUCIALMARKS_H

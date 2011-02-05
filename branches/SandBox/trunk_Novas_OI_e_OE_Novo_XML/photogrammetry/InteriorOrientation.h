@@ -11,7 +11,7 @@
 #include "DigitalImageSpaceCoordinate.h"
 #include "AnalogImageSpaceCoordinate.h"
 
-class Aerial;
+class SensorWithFiducialMarks;
 class Image;
 
 /**
