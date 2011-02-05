@@ -8,7 +8,7 @@
 #include "EObject.h"
 #include "AnalogImageSpaceCoordinate.h"
 
-class Aerial;
+class SensorWithFiducialMarks;
 class Image;
 class Flight;
 class AnalogImageSpaceCoordinate;
@@ -25,7 +25,7 @@ class SpectralRange
 public:
 
     friend class Sensor;
-    friend class Aerial;
+	friend class SensorWithFiducialMarks;
 };
 
 class RadialSymmetricDistortionCoefficient
@@ -36,7 +36,7 @@ class RadialSymmetricDistortionCoefficient
 public:
 
     friend class Sensor;
-    friend class Aerial;
+	friend class SensorWithFiducialMarks;
 };
 
 class DecenteredDistortionCoefficient
@@ -47,7 +47,7 @@ class DecenteredDistortionCoefficient
 public:
 
     friend class Sensor;
-    friend class Aerial;
+	friend class SensorWithFiducialMarks;
 };
 
 

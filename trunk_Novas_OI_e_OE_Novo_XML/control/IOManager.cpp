@@ -4,7 +4,7 @@
 
 #include "IOManager.h"
 #include "EFotoManager.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Image.h"
 #include "InteriorOrientation.h"
 #include "IOUserInterface.h"
@@ -58,10 +58,10 @@ PositionMatrix IOManager::getAnalogMarks()
 {
     if (mySensor != NULL)
     {
-        if (mySensor->is("Aerial"))
+		if (mySensor->is("SensorWithFiducialMarks"))
         {
-            Aerial* myAerial = (Aerial*) mySensor;
-            return PositionMatrix(myAerial->getLb());
+			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+			return PositionMatrix(mySensorWithFiducialMarks->getLb());
         }
     }
     return PositionMatrix();
@@ -112,10 +112,10 @@ bool IOManager::calculateIO()
 {
     if (started)
     {
-        if (mySensor->is("Aerial"))
+		if (mySensor->is("SensorWithFiducialMarks"))
         {
-            Aerial* myAerial = (Aerial*) mySensor;
-            if ((unsigned int) myImage->countDigFidMarks() == (unsigned int) myAerial->getLb().getRows() / 2) // Comparação entre o número de marcas digitais e analógicas. "myAerial->getLb()->getCols() / 2" dá o número de marcas analógicas validadas, tendo Lb sido carregado direto ou através das marcas.
+			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+			if ((unsigned int) myImage->countDigFidMarks() == (unsigned int) mySensorWithFiducialMarks->getLb().getRows() / 2) // Comparação entre o número de marcas digitais e analógicas. "mySensorWithFiducialMarks->getLb()->getCols() / 2" dá o número de marcas analógicas validadas, tendo Lb sido carregado direto ou através das marcas.
             {
                 myIO->calculate();
                 status = true;

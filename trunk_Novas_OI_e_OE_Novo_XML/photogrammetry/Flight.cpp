@@ -4,7 +4,7 @@
 
 #include "Flight.h"
 #include "Image.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 
 // Constructors and destructors
 //

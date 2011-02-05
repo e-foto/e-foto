@@ -9,7 +9,7 @@
 #include "EObject.h"
 #include "Terrain.h"
 #include "ProjectHeader.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Flight.h"
 #include "Image.h"
 #include "CheckingPoint.h"

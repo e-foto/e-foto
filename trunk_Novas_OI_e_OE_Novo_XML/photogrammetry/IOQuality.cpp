@@ -3,7 +3,7 @@
 **************************************************************************/
 
 #include "IOQuality.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "InteriorOrientation.h"
 
 // Constructors and Destructor
@@ -161,15 +161,15 @@ string IOQuality::xmlGetData()
  * \F$ \SigmaLa = \sigma_{0}^{2} * A (A^{T} * P * A)^{-1} * A^{T} \F$
  * 
  * Reference: Coelho & Brito, Fotogrametria Digital. Rio de Janeiro, 2007. 
- * @param *myIO, *myAerial
+ * @param *myIO, *mySensorWithFiducialMarks
  */
 void IOQuality::calculate(InteriorOrientation* myIO, Sensor* mySensor)
 {
-    if (mySensor->is("Aerial"))
+	if (mySensor->is("SensorWithFiducialMarks"))
     {
-        Aerial* myAerial = (Aerial*) mySensor;
-        V = (myIO->getA() * myIO->getXa()) - myAerial->getLb();
-        sigma0Squared = (((V.transpose() * myIO->getP()) * V) / (myAerial->getLb().getRows() - myIO->getXa().getRows())).get(1,1);
+		SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+		V = (myIO->getA() * myIO->getXa()) - mySensorWithFiducialMarks->getLb();
+		sigma0Squared = (((V.transpose() * myIO->getP()) * V) / (mySensorWithFiducialMarks->getLb().getRows() - myIO->getXa().getRows())).get(1,1);
         SigmaXa = ((myIO->getA().transpose() * myIO->getP()) * myIO->getA()).inverse() * sigma0Squared;
         SigmaLa = ((myIO->getA() * ((myIO->getA().transpose() * myIO->getP()) * myIO->getA()).inverse()) * myIO->getA().transpose()) * sigma0Squared;
     }

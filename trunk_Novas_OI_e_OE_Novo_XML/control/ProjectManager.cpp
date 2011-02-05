@@ -481,7 +481,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
         InteriorOrientation* io2 = manager->instanceIO(image2);
         SpatialRessection* sr1 = (SpatialRessection*)manager->instanceEO(image1);
         SpatialRessection* sr2 = (SpatialRessection*)manager->instanceEO(image2);
-		Aerial* sensor = (Aerial*)manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
+		SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
 		Flight* flight = manager->instanceFlight(manager->instanceImage(image1)->getFlightId());
 		Terrain* terrain = manager->instanceTerrain();
 

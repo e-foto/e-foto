@@ -58,7 +58,7 @@ HEADERS += control/EFotoManager.h \
     infrastructure/Matrix.h \
     infrastructure/PositionMatrix.h \
     infrastructure/RectSupport.h \
-    photogrammetry/Aerial.h \
+	photogrammetry/SensorWithFiducialMarks.h \
     photogrammetry/AnalogFiductialMark.h \
     photogrammetry/AnalogImageSpaceCoordinate.h \
     photogrammetry/CheckingPoint.h \
@@ -132,8 +132,8 @@ HEADERS += control/EFotoManager.h \
     xml_definition/XMLTerrain.h \
     xml_definition/XMLFlight.h \
     xml_definition/XMLSensor.h \
-    xml_definition/XMLAerial.h \
-    control/XmlUpdater.h
+	xml_definition/XMLSensorWithFiducialMarks.h# \
+#    control/XmlUpdater.h
 FORMS += interface/io/IOForm.ui \
     interface/sr/SRForm.ui \
     interface/project/FormProject.ui \
@@ -161,7 +161,7 @@ SOURCES += control/EFotoManager.cpp \
     infrastructure/Matrix.cpp \
     infrastructure/PositionMatrix.cpp \
     infrastructure/RectSupport.cpp \
-    photogrammetry/Aerial.cpp \
+	photogrammetry/SensorWithFiducialMarks.cpp \
     photogrammetry/AnalogFiductialMark.cpp \
     photogrammetry/AnalogImageSpaceCoordinate.cpp \
     photogrammetry/CheckingPoint.cpp \
@@ -234,8 +234,8 @@ SOURCES += control/EFotoManager.cpp \
     xml_definition/XMLTerrain.cpp \
     xml_definition/XMLFlight.cpp \
     xml_definition/XMLSensor.cpp \
-    xml_definition/XMLAerial.cpp \
-    control/XmlUpdater.cpp
+	xml_definition/XMLSensorWithFiducialMarks.cpp# \
+#    control/XmlUpdater.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \
