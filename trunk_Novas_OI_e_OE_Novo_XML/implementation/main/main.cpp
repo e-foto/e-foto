@@ -10,7 +10,7 @@ using namespace std;
 #include "../../control/EFotoManager.h"
 
 //for tests
-#include "../../control/XmlUpdater.h"
+//#include "../../control/XmlUpdater.h"
 
 int main( int argc, char ** argv )
 {

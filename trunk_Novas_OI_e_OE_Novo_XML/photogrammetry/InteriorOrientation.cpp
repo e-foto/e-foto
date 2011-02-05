@@ -3,7 +3,7 @@
 **************************************************************************/
 
 #include "InteriorOrientation.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Image.h"
 
 // Constructors and destructors
@@ -212,23 +212,23 @@ string InteriorOrientation::xmlGetData()
 
 /**
  * This method calculates the values of the InteriorOrientation's attributes
- * @param myAerial
+ * @param mySensorWithFiducialMarks
  */
 void InteriorOrientation::calculate()
 {
-    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("Aerial"))
+	if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithFiducialMarks"))
     {
-        Aerial* aerial = (Aerial*) myImage->getSensor();
-        if (aerial!=NULL && myImage->getDigFidMarks().size() >= 4 && myImage->getDigFidMarks().size() <= 8)
+		SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*) myImage->getSensor();
+		if (sensor!=NULL && myImage->getDigFidMarks().size() >= 4 && myImage->getDigFidMarks().size() <= 8)
         {
             //Generate A from digMarks.
             generateA();
 
-            //Find Lb in Aerial.
-            Matrix Lb = aerial->getLb();
+			//Find Lb in SensorWithFiducialMarks.
+			Matrix Lb = sensor->getLb();
 
             //Calculate P.
-            Matrix SigmaLb = aerial->getSigmaLb();
+			Matrix SigmaLb = sensor->getSigmaLb();
             double variance = SigmaLb.highestValue();
             if (abs((long)variance) > 0.000001)
                 if (SigmaLb.getCols() == 1)

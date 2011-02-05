@@ -63,13 +63,13 @@ Sensor* EFotoManager::instanceSensor(int id)
     if (xmlSensor.getContent().compare("") == 0)
         return NULL;
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-        xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
+		xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
         xmlSensor.elementByTagName("detector").toString().compare("film") == 0)
     {
-        Aerial* newAerial = new Aerial();
-        newAerial->xmlSetData(xmlSensor.getContent());
-        sensors.push_back(newAerial);
-        return (Sensor*) newAerial;
+		SensorWithFiducialMarks* newSensorWithFiducialMarks = new SensorWithFiducialMarks();
+		newSensorWithFiducialMarks->xmlSetData(xmlSensor.getContent());
+		sensors.push_back(newSensorWithFiducialMarks);
+		return (Sensor*) newSensorWithFiducialMarks;
     }
     return NULL;
 }
@@ -220,8 +220,8 @@ void EFotoManager::deleteSensor(int id)
             xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
             xmlSensor.elementByTagName("detector").toString().compare("film") == 0)
         {
-            Aerial* myAerial = (Aerial*) mySensor;
-            delete(myAerial);
+			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+			delete(mySensorWithFiducialMarks);
         }
         sensors.erase(sensors.begin() + i);
     }

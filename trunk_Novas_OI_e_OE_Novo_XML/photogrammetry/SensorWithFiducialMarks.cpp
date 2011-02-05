@@ -1,33 +1,33 @@
 /**************************************************************************
-                        Aerial.cpp
+						SensorWithFiducialMarks.cpp
 **************************************************************************/
 
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 
 // Constructors
 //
 
 
 /**
- * Aerial's default empty constructor.
+ * SensorWithFiducialMarks's default empty constructor.
  */
-Aerial::Aerial():Sensor()
+SensorWithFiducialMarks::SensorWithFiducialMarks():Sensor()
 {
 
 }
 
 /**
- * Aerial's default empty constructor.
+ * SensorWithFiducialMarks's default empty constructor.
  */
-Aerial::Aerial(const Sensor& sensor):Sensor(sensor)
+SensorWithFiducialMarks::SensorWithFiducialMarks(const Sensor& sensor):Sensor(sensor)
 {
 
 }
 
 /**
- * Aerial's default empty constructor.
+ * SensorWithFiducialMarks's default empty constructor.
  */
-Aerial::Aerial(int myId):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId):Sensor(myId)
 {
 
 }
@@ -36,7 +36,7 @@ Aerial::Aerial(int myId):Sensor(myId)
  * This constructor fills Lb but leaves SigmaLb as a matrix containing ones, so P will be an identity.
  * @param myLb
  */
-Aerial::Aerial(int myId, const Matrix& myLb):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb):Sensor(myId)
 {
     setLb(myLb);
 }
@@ -46,7 +46,7 @@ Aerial::Aerial(int myId, const Matrix& myLb):Sensor(myId)
  * If mySigmaLb has a different number of rows and columns than Lb, its values will be set as ones, like in the previous constructor.
  * @param myLb, mySigmaLb
  */
-Aerial::Aerial(int myId, const Matrix& myLb, const Matrix& mySigmaLb):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb):Sensor(myId)
 {
     setLb(myLb, mySigmaLb);
 }
@@ -60,7 +60,7 @@ Aerial::Aerial(int myId, const Matrix& myLb, const Matrix& mySigmaLb):Sensor(myI
  * Set the value of Lb.
  * @param newLb the new value of Lb
  */
-void Aerial::setLb(const Matrix& newLb)
+void SensorWithFiducialMarks::setLb(const Matrix& newLb)
 {
     if (newLb.getRows() >= 8 && newLb.getCols() == 1)
     {
@@ -75,7 +75,7 @@ void Aerial::setLb(const Matrix& newLb)
  * Set the value of SigmaLb.
  * @param newSigmaLb the new value of SigmaLb
  */
-void Aerial::setLb(const Matrix& newLb, const Matrix& newSigmaLb)
+void SensorWithFiducialMarks::setLb(const Matrix& newLb, const Matrix& newSigmaLb)
 {
     if (newLb.getRows() >= 8 && newLb.getCols() == 1)
     {
@@ -98,7 +98,7 @@ void Aerial::setLb(const Matrix& newLb, const Matrix& newSigmaLb)
  * Get the value of Lb.
  * @return the value of Lb
  */
-Matrix Aerial::getLb()
+Matrix SensorWithFiducialMarks::getLb()
 {
     if (Lb.getCols() == 0)
   	marksToLb();
@@ -109,7 +109,7 @@ Matrix Aerial::getLb()
  * Get the value of Lb.
  * @return the value of Lb
  */
-Matrix Aerial::getSigmaLb()
+Matrix SensorWithFiducialMarks::getSigmaLb()
 {
     return SigmaLb;
 }
@@ -123,7 +123,7 @@ Matrix Aerial::getSigmaLb()
  * Set all the values of anaFidMarks deque at once
  * @param newAnaFidMarks a deque with the new values
  */
-void Aerial::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks)
+void SensorWithFiducialMarks::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks)
 {
     anaFidMarks = newAnaFidMarks;
 }
@@ -132,7 +132,7 @@ void Aerial::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks)
  * Get all the values of anaFidMarks deque at once
  * @return a deque the values of anaFidMarks
  */
-deque<AnalogFiductialMark> Aerial::getAnaFidMarks()
+deque<AnalogFiductialMark> SensorWithFiducialMarks::getAnaFidMarks()
 {
     return anaFidMarks;
 }
@@ -141,7 +141,7 @@ deque<AnalogFiductialMark> Aerial::getAnaFidMarks()
  * Add one value to anaFidMarks deque
  * @param newAnaFidMark the value to be added
  */
-void Aerial::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
+void SensorWithFiducialMarks::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
 {
     anaFidMarks.push_back(newAnaFidMark);
 }
@@ -151,7 +151,7 @@ void Aerial::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
  * @param id the id of the value
  * @return the value of the AnalogFiductialMark
  */
-AnalogFiductialMark Aerial::getAnaFidMark(int id)
+AnalogFiductialMark SensorWithFiducialMarks::getAnaFidMark(int id)
 {
     for (unsigned int i = 0; i < anaFidMarks.size(); i++)
 	if (anaFidMarks.at(i).getId() == id)
@@ -164,7 +164,7 @@ AnalogFiductialMark Aerial::getAnaFidMark(int id)
  * @param index the position of the value
  * @return the value of the AnalogFiductialMark
  */
-AnalogFiductialMark Aerial::getAnaFidMarkAt(unsigned int index)
+AnalogFiductialMark SensorWithFiducialMarks::getAnaFidMarkAt(unsigned int index)
 {
     if (index < anaFidMarks.size())
         return anaFidMarks.at(index);
@@ -175,7 +175,7 @@ AnalogFiductialMark Aerial::getAnaFidMarkAt(unsigned int index)
  * Count the number of value in anaFidMarks deque
  * @return the number of values
  */
-int Aerial::countAnaFidMarks()
+int SensorWithFiducialMarks::countAnaFidMarks()
 {
     return anaFidMarks.size();
 }
@@ -184,7 +184,7 @@ int Aerial::countAnaFidMarks()
  * Remove one value from anaFidMarks deque
  * @param id the id of the value
  */
-void Aerial::deleteAnaFidMark(int id)
+void SensorWithFiducialMarks::deleteAnaFidMark(int id)
 {
     for (unsigned int i = 0; i < anaFidMarks.size(); i++)
         if (anaFidMarks.at(i).getId() == id)
@@ -195,7 +195,7 @@ void Aerial::deleteAnaFidMark(int id)
  * Remove one value from anaFidMarks deque
  * @param index the position of the value
  */
-void Aerial::deleteAnaFidMarkAt(unsigned int index)
+void SensorWithFiducialMarks::deleteAnaFidMarkAt(unsigned int index)
 {
     if (index < anaFidMarks.size())
         anaFidMarks.erase(anaFidMarks.begin()+index);
@@ -204,7 +204,7 @@ void Aerial::deleteAnaFidMarkAt(unsigned int index)
 /**
  * Clear all the values of the anaFidMarks deque
  */
-void Aerial::clearAnaFidMarks()
+void SensorWithFiducialMarks::clearAnaFidMarks()
 {
     anaFidMarks.clear();
 }
@@ -215,17 +215,17 @@ void Aerial::clearAnaFidMarks()
 /**
  *
  */
-string Aerial::objectType(void)
+string SensorWithFiducialMarks::objectType(void)
 {
     stringstream result;
-    result << "Aerial " << id;
+	result << "SensorWithFiducialMarks " << id;
     return result.str();
 }
 
 /**
  *
  */
-string Aerial::objectAssociations(void)
+string SensorWithFiducialMarks::objectAssociations(void)
 {
     return "";
 }
@@ -233,9 +233,9 @@ string Aerial::objectAssociations(void)
 /**
  *
  */
-bool Aerial::is(string s)
+bool SensorWithFiducialMarks::is(string s)
 {
-    return (s == "Aerial" ? true : false);
+	return (s == "SensorWithFiducialMarks" ? true : false);
 }
 
 // XML methods
@@ -244,7 +244,7 @@ bool Aerial::is(string s)
 /**
  * 
  */
-void Aerial::xmlSetData(string xml)
+void SensorWithFiducialMarks::xmlSetData(string xml)
 {
     EDomElement root(xml);
     id = stringToInt(root.attribute("key"));
@@ -319,7 +319,7 @@ void Aerial::xmlSetData(string xml)
 /**
  * 
  */
-string Aerial::xmlGetData()
+string SensorWithFiducialMarks::xmlGetData()
 {
     stringstream result;
     result << "<sensor key=\"" << intToString(id) << "\">\n";
@@ -396,7 +396,7 @@ string Aerial::xmlGetData()
 /**
  * Generate Lb from anaFidMarks
  */
-void Aerial::marksToLb()
+void SensorWithFiducialMarks::marksToLb()
 {
     Lb.resize(anaFidMarks.size() * 2,1);
     SigmaLb.resize(anaFidMarks.size() * 2,anaFidMarks.size() * 2).zero();
