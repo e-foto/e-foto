@@ -100,29 +100,29 @@ string TerrainForm::getvalues()
     stringstream auxStream;
 
     auxStream << "<terrain>\n";
-    auxStream << "\t<meanAltitude uom=\"#m\">" << (meanAltSpinBox->value()) <<"</meanAltitude>\n";
-    auxStream << "\t<minAltitude uom=\"#m\">"  << (minAltSpinBox->value()) <<"</minAltitude>\n";
-    auxStream << "\t<maxAltitude uom=\"#m\">" << (maxAltSpinBox->value()) <<"</maxAltitude>\n";
-    auxStream << "\t<GRS>" << grsComboBox->currentText().toUtf8().data() << "</GRS>\n";
-    auxStream << "\t<CPS>" << cpsComboBox->currentText().toUtf8().data() << "</CPS>\n";
-    auxStream << "\t<workAreaCenterCoordinates>\n";
+	auxStream << "<meanAltitude uom=\"#m\">" << (meanAltSpinBox->value()) <<"</meanAltitude>\n";
+	auxStream << "<minAltitude uom=\"#m\">"  << (minAltSpinBox->value()) <<"</minAltitude>\n";
+	auxStream << "<maxAltitude uom=\"#m\">" << (maxAltSpinBox->value()) <<"</maxAltitude>\n";
+	auxStream << "<GRS>" << grsComboBox->currentText().toUtf8().data() << "</GRS>\n";
+	auxStream << "<CPS>" << cpsComboBox->currentText().toUtf8().data() << "</CPS>\n";
+	auxStream << "<workAreaCenterCoordinates>\n";
 
-	//auxStream << "\t\t<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
-	auxStream << "\t\t<Lat direction=\"" << getLatDir() <<"\">\n";
-    auxStream << "\t\t\t<degrees>" << latDegreeSpin->value()<<"</degrees>\n";
-    auxStream << "\t\t\t<minutes>" << latMinutesSpin->value()<<"</minutes>\n";
-    auxStream << "\t\t\t<seconds>" << latSecondSpin->value()<<"</seconds>\n";
-    auxStream << "\t\t</Lat>\n";
+	//auxStream << "<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "<Lat direction=\"" << getLatDir() <<"\">\n";
+	auxStream << "<degrees>" << latDegreeSpin->value()<<"</degrees>\n";
+	auxStream << "<minutes>" << latMinutesSpin->value()<<"</minutes>\n";
+	auxStream << "<seconds>" << latSecondSpin->value()<<"</seconds>\n";
+	auxStream << "</Lat>\n";
 
-	//auxStream << "\t\t<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
-	auxStream << "\t\t<Long direction=\"" << getLongDir() <<"\">\n";
-    auxStream << "\t\t\t<degrees>" << longDegreeSpin->value()<<"</degrees>\n";
-    auxStream << "\t\t\t<minutes>" << longMinutesSpin->value()<<"</minutes>\n";
-    auxStream << "\t\t\t<seconds>" << longSecondSpin->value()<<"</seconds>\n";
-    auxStream << "\t\t</Long>\n";
+	//auxStream << "<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "<Long direction=\"" << getLongDir() <<"\">\n";
+	auxStream << "<degrees>" << longDegreeSpin->value()<<"</degrees>\n";
+	auxStream << "<minutes>" << longMinutesSpin->value()<<"</minutes>\n";
+	auxStream << "<seconds>" << longSecondSpin->value()<<"</seconds>\n";
+	auxStream << "</Long>\n";
 
-    auxStream << "\t\t<utmFuse>"<< utmFuseSpin->value()<<"</utmFuse>\n";
-    auxStream << "\t</workAreaCenterCoordinates>\n";
+	auxStream << "<utmFuse>"<< utmFuseSpin->value()<<"</utmFuse>\n";
+	auxStream << "</workAreaCenterCoordinates>\n";
     auxStream << "</terrain>";
 
     xmlString = auxStream.str();

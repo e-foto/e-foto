@@ -219,92 +219,92 @@ void ProjectUserInterface_Qt::newProject()
 	string text = "";
 
 	text += "<sensor key=\"1\">\n";
-	text +=	"\t<sensorId></sensorId>\n";
-	text +=	"\t<type>\n";
-	text +=	"\t\t<geometry>frame</geometry>\n";
-	text +=	"\t\t<platform>aerial</platform>\n";
-	text +=	"\t\t<detector>film</detector>\n";
-	text +=	"\t\t<energySource>natural</energySource>\n";
-	text +=	"\t\t<spectralRanges uom=\"#um\">\n";
-	//text +=	"\t\t\t<spectralRange band=\"\">\n";
-	//text +=	"\t\t\t\t<inferiorLimit></inferiorLimit>\n";
-	//text +=	"\t\t\t\t<superiorLimit></superiorLimit>\n";
-	//text +=	"\t\t\t</spectralRange>\n";
-	text +=	"\t\t</spectralRanges>\n";
-	text +=	"\t</type>\n";
-	text +=	"\t<description></description>\n";
-	text +=	"\t<calibrationCertificate>\n";
-	text +=	"\t\t<number></number>\n";
-	text +=	"\t\t<dispatch></dispatch>\n";
-	text +=	"\t\t<expiration></expiration>\n";
-	text +=	"\t</calibrationCertificate>\n";
-	text +=	"\t<focalDistance uom=\"#mm\">\n";
-	text +=	"\t\t<value></value>\n";
-	text +=	"\t\t<sigma></sigma>\n";
-	text +=	"\t</focalDistance>\n";
-	text +=	"\t<distortionCoefficients>\n";
-	text +=	"\t\t<radialSymmetric>\n";
-	text +=	"\t\t\t<k0>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</k0>\n";
-	text +=	"\t\t\t<k1>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</k1>\n";
-	text +=	"\t\t\t<k2>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</k2>\n";
-	text +=	"\t\t\t<k3>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</k3>\n";
-	text +=	"\t\t</radialSymmetric>\n";
-	text +=	"\t\t<decentered>\n";
-	text +=	"\t\t\t<P1>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</P1>\n";
-	text +=	"\t\t\t<P2>\n";
-	text +=	"\t\t\t\t<value></value>\n";
-	text += "\t\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t\t</P2>\n";
-	text +=	"\t\t</decentered>\n";
-	text +=	"\t</distortionCoefficients>\n";
-	text +=	"\t<principalPointCoordinates uom=\"#mm\">\n";
-	text +=	"\t\t<gml:pos></gml:pos>\n";
-	text +=	"\t\t<sigma>\n";
-	//text +=	"\t\t\t<mml:matrix>\n";
-	//text +=	"\t\t\t\t<mml:matrixrow>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t</mml:matrixrow>\n";
-	//text +=	"\t\t\t\t<mml:matrixrow>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-	//text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
+	text +=	"<sensorId></sensorId>\n";
+	text +=	"<type>\n";
+	text +=	"<geometry>frame</geometry>\n";
+	text +=	"<platform>aerial</platform>\n";
+	text +=	"<detector>film</detector>\n";
+	text +=	"<energySource>natural</energySource>\n";
+	text +=	"<spectralRanges uom=\"#um\">\n";
+	//text +=	"<spectralRange band=\"\">\n";
+	//text +=	"<inferiorLimit></inferiorLimit>\n";
+	//text +=	"<superiorLimit></superiorLimit>\n";
+	//text +=	"</spectralRange>\n";
+	text +=	"</spectralRanges>\n";
+	text +=	"</type>\n";
+	text +=	"<description></description>\n";
+	text +=	"<calibrationCertificate>\n";
+	text +=	"<number></number>\n";
+	text +=	"<dispatch></dispatch>\n";
+	text +=	"<expiration></expiration>\n";
+	text +=	"</calibrationCertificate>\n";
+	text +=	"<focalDistance uom=\"#mm\">\n";
+	text +=	"<value></value>\n";
+	text +=	"<sigma></sigma>\n";
+	text +=	"</focalDistance>\n";
+	text +=	"<distortionCoefficients>\n";
+	text +=	"<radialSymmetric>\n";
+	text +=	"<k0>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</k0>\n";
+	text +=	"<k1>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</k1>\n";
+	text +=	"<k2>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</k2>\n";
+	text +=	"<k3>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</k3>\n";
+	text +=	"</radialSymmetric>\n";
+	text +=	"<decentered>\n";
+	text +=	"<P1>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</P1>\n";
+	text +=	"<P2>\n";
+	text +=	"<value></value>\n";
+	text += "<sigma></sigma>\n";
+	text +=	"</P2>\n";
+	text +=	"</decentered>\n";
+	text +=	"</distortionCoefficients>\n";
+	text +=	"<principalPointCoordinates uom=\"#mm\">\n";
+	text +=	"<gml:pos></gml:pos>\n";
+	text +=	"<sigma>\n";
+	//text +=	"<mml:matrix>\n";
+	//text +=	"<mml:matrixrow>\n";
+	//text +=	"<mml:cn></mml:cn>\n";
+	//text +=	"<mml:cn></mml:cn>\n";
+	//text +=	"</mml:matrixrow>\n";
+	//text +=	"<mml:matrixrow>\n";
+	//text +=	"<mml:cn></mml:cn>\n";
+	//text +=	"<mml:cn></mml:cn>\n";
 	//text +=	"\t\t\t\t</mml:matrixrow>\n";
 	//text +=	"\t\t\t</mml:matrix>\n";
-	text +=	"\t\t</sigma>\n";
-	text +=	"\t</principalPointCoordinates>\n";
-	text +=	"\t<fiductialMarks uom=\"#mm\">\n";
-	text +=	"\t\t<fiductialMark key=\"1\">\n";
-	text +=	"\t\t\t<gml:pos></gml:pos>\n";
-	text +=	"\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t</fiductialMark>\n";
-	text +=	"\t\t<fiductialMark key=\"2\">\n";
-	text +=	"\t\t\t<gml:pos></gml:pos>\n";
-	text +=	"\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t</fiductialMark>\n";
-	text +=	"\t\t<fiductialMark key=\"3\">\n";
-	text +=	"\t\t\t<gml:pos></gml:pos>\n";
-	text +=	"\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t</fiductialMark>\n";
-	text +=	"\t\t<fiductialMark key=\"4\">\n";
-	text +=	"\t\t\t<gml:pos></gml:pos>\n";
-	text +=	"\t\t\t<sigma></sigma>\n";
-	text +=	"\t\t</fiductialMark>\n";
-	text +=	"\t</fiductialMarks>\n";
+	text +=	"</sigma>\n";
+	text +=	"</principalPointCoordinates>\n";
+	text +=	"<fiductialMarks uom=\"#mm\">\n";
+	text +=	"<fiductialMark key=\"1\">\n";
+	text +=	"<gml:pos></gml:pos>\n";
+	text +=	"<sigma></sigma>\n";
+	text +=	"</fiductialMark>\n";
+	text +=	"<fiductialMark key=\"2\">\n";
+	text +=	"<gml:pos></gml:pos>\n";
+	text +=	"<sigma></sigma>\n";
+	text +=	"</fiductialMark>\n";
+	text +=	"<fiductialMark key=\"3\">\n";
+	text +=	"<gml:pos></gml:pos>\n";
+	text +=	"<sigma></sigma>\n";
+	text +=	"</fiductialMark>\n";
+	text +=	"<fiductialMark key=\"4\">\n";
+	text +=	"<gml:pos></gml:pos>\n";
+	text +=	"<sigma></sigma>\n";
+	text +=	"</fiductialMark>\n";
+	text +=	"</fiductialMarks>\n";
 	text += "</sensor>";
 
 	manager->addComponent(text, "sensors");
@@ -312,21 +312,21 @@ void ProjectUserInterface_Qt::newProject()
 	text = "";
 
 	text += "<flight key=\"1\" sensor_key=\"1\">\n";
-	text += "\t<flightId></flightId>\n";
-	text += "\t<description></description>\n";
-	text += "\t<execution></execution>\n";
-	text += "\t<producerName></producerName>\n";
-	text += "\t<nominalScale>\n";
-	text += "\t\t<mml:mfrac>\n";
-	text += "\t\t\t<mml:mn>1</mml:mn>\n";
-	text += "\t\t\t<mml:mn>10000</mml:mn>\n";
-	text += "\t\t</mml:mfrac>\n";
-	text += "\t</nominalScale>\n";
-	text += "\t<flightHeight uom=\"#m\"></flightHeight>\n";
-	text += "\t<overlap>\n";
-	text += "\t\t<longitudinal uom=\"#%\">60</longitudinal>\n";
-	text += "\t\t<transversal uom=\"#%\">20</transversal>\n";
-	text += "\t</overlap>\n";
+	text += "<flightId></flightId>\n";
+	text += "<description></description>\n";
+	text += "<execution></execution>\n";
+	text += "<producerName></producerName>\n";
+	text += "<nominalScale>\n";
+	text += "<mml:mfrac>\n";
+	text += "<mml:mn>1</mml:mn>\n";
+	text += "<mml:mn>10000</mml:mn>\n";
+	text += "</mml:mfrac>\n";
+	text += "</nominalScale>\n";
+	text += "<flightHeight uom=\"#m\"></flightHeight>\n";
+	text += "<overlap>\n";
+	text += "<longitudinal uom=\"#%\">60</longitudinal>\n";
+	text += "<transversal uom=\"#%\">20</transversal>\n";
+	text += "</overlap>\n";
 	text += "</flight>";
 
 	manager->addComponent(text, "flights");
@@ -919,7 +919,7 @@ void ProjectUserInterface_Qt::viewHeader()
 	currentForm->setReadOnly(true);
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -944,7 +944,7 @@ void ProjectUserInterface_Qt::viewTerrain()
 	currentForm->setReadOnly(true);
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -971,7 +971,7 @@ currentForm = &sensorsForm;
 currentForm->setReadOnly(true);
 
 debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 debuggerTextEdit->setReadOnly(true);
 
 menuProject->setEnabled(true);
@@ -1000,7 +1000,7 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 	validatingSensor();
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1026,7 +1026,7 @@ currentForm = &flightsForm;
 currentForm->setReadOnly(true);
 
 debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 debuggerTextEdit->setReadOnly(true);
 
 menuProject->setEnabled(true);
@@ -1054,7 +1054,7 @@ void ProjectUserInterface_Qt::viewFlight(int id)
 	validatingFlight();
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1090,7 +1090,7 @@ void ProjectUserInterface_Qt::viewImages()
 	}
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1137,7 +1137,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 	}
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1161,7 +1161,7 @@ void ProjectUserInterface_Qt::viewPoints()
 	currentForm->setReadOnly(true);
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1189,7 +1189,7 @@ void ProjectUserInterface_Qt::viewPoint(int id)
 	validatingPoint();
 
 	debuggerTextEdit->clear();
-	debuggerTextEdit->setText(QString::fromUtf8(node.indent("\t").c_str()));
+	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
 
 	menuProject->setEnabled(true);
@@ -1334,92 +1334,92 @@ void ProjectUserInterface_Qt::newSensor()
 string text = "";
 
 text += "<sensor key=\"\">\n";
-text +=	"\t<sensorId></sensorId>\n";
-text +=	"\t<type>\n";
-text +=	"\t\t<geometry></geometry>\n";
-text +=	"\t\t<platform></platform>\n";
-text +=	"\t\t<detector></detector>\n";
-text +=	"\t\t<energySource></energySource>\n";
-text +=	"\t\t<spectralRanges uom=\"#um\">\n";
-text +=	"\t\t\t<spectralRange band=\"\">\n";
-text +=	"\t\t\t\t<inferiorLimit></inferiorLimit>\n";
-text +=	"\t\t\t\t<superiorLimit></superiorLimit>\n";
-text +=	"\t\t\t</spectralRange>\n";
-text +=	"\t\t</spectralRanges>\n";
-text +=	"\t</type>\n";
-text +=	"\t<description></description>\n";
-text +=	"\t<calibrationCertificate>\n";
-text +=	"\t\t<number></number>\n";
-text +=	"\t\t<dispatch></dispatch>\n";
-text +=	"\t\t<expiration></expiration>\n";
-text +=	"\t</calibrationCertificate>\n";
-text +=	"\t<focalDistance uom=\"#mm\">\n";
-text +=	"\t\t<value></value>\n";
-text +=	"\t\t<sigma></sigma>\n";
-text +=	"\t</focalDistance>\n";
-text +=	"\t<distortionCoefficients>\n";
-text +=	"\t\t<radialSymmetric>\n";
-text +=	"\t\t\t<k0>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k0>\n";
-text +=	"\t\t\t<k1>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k1>\n";
-text +=	"\t\t\t<k2>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k2>\n";
-text +=	"\t\t\t<k3>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</k3>\n";
-text +=	"\t\t</radialSymmetric>\n";
-text +=	"\t\t<decentered>\n";
-text +=	"\t\t\t<P1>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</P1>\n";
-text +=	"\t\t\t<P2>\n";
-text +=	"\t\t\t\t<value></value>\n";
-text += "\t\t\t\t<sigma></sigma>\n";
-text +=	"\t\t\t</P2>\n";
-text +=	"\t\t</decentered>\n";
-text +=	"\t</distortionCoefficients>\n";
-text +=	"\t<principalPointCoordinates uom=\"#mm\">\n";
-text +=	"\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t<sigma>\n";
-text +=	"\t\t\t<mml:matrix>\n";
-text +=	"\t\t\t\t<mml:matrixrow>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t</mml:matrixrow>\n";
-text +=	"\t\t\t\t<mml:matrixrow>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t\t<mml:cn></mml:cn>\n";
-text +=	"\t\t\t\t</mml:matrixrow>\n";
-text +=	"\t\t\t</mml:matrix>\n";
-text +=	"\t\t</sigma>\n";
-text +=	"\t</principalPointCoordinates>\n";
-text +=	"\t<fiductialMarks uom=\"#mm\">\n";
-text +=	"\t\t<fiductialMark key=\"1\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"2\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"3\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t\t<fiductialMark key=\"4\">\n";
-text +=	"\t\t\t<gml:pos></gml:pos>\n";
-text +=	"\t\t\t<sigma></sigma>\n";
-text +=	"\t\t</fiductialMark>\n";
-text +=	"\t</fiductialMarks>\n";
+text +=	"<sensorId></sensorId>\n";
+text +=	"<type>\n";
+text +=	"<geometry></geometry>\n";
+text +=	"<platform></platform>\n";
+text +=	"<detector></detector>\n";
+text +=	"<energySource></energySource>\n";
+text +=	"<spectralRanges uom=\"#um\">\n";
+text +=	"<spectralRange band=\"\">\n";
+text +=	"<inferiorLimit></inferiorLimit>\n";
+text +=	"<superiorLimit></superiorLimit>\n";
+text +=	"</spectralRange>\n";
+text +=	"</spectralRanges>\n";
+text +=	"</type>\n";
+text +=	"<description></description>\n";
+text +=	"<calibrationCertificate>\n";
+text +=	"<number></number>\n";
+text +=	"<dispatch></dispatch>\n";
+text +=	"<expiration></expiration>\n";
+text +=	"</calibrationCertificate>\n";
+text +=	"<focalDistance uom=\"#mm\">\n";
+text +=	"<value></value>\n";
+text +=	"<sigma></sigma>\n";
+text +=	"</focalDistance>\n";
+text +=	"<distortionCoefficients>\n";
+text +=	"<radialSymmetric>\n";
+text +=	"<k0>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</k0>\n";
+text +=	"<k1>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</k1>\n";
+text +=	"<k2>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</k2>\n";
+text +=	"<k3>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</k3>\n";
+text +=	"</radialSymmetric>\n";
+text +=	"<decentered>\n";
+text +=	"<P1>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</P1>\n";
+text +=	"<P2>\n";
+text +=	"<value></value>\n";
+text += "<sigma></sigma>\n";
+text +=	"</P2>\n";
+text +=	"</decentered>\n";
+text +=	"</distortionCoefficients>\n";
+text +=	"<principalPointCoordinates uom=\"#mm\">\n";
+text +=	"<gml:pos></gml:pos>\n";
+text +=	"<sigma>\n";
+text +=	"<mml:matrix>\n";
+text +=	"<mml:matrixrow>\n";
+text +=	"<mml:cn></mml:cn>\n";
+text +=	"<mml:cn></mml:cn>\n";
+text +=	"</mml:matrixrow>\n";
+text +=	"<mml:matrixrow>\n";
+text +=	"<mml:cn></mml:cn>\n";
+text +=	"<mml:cn></mml:cn>\n";
+text +=	"</mml:matrixrow>\n";
+text +=	"</mml:matrix>\n";
+text +=	"</sigma>\n";
+text +=	"</principalPointCoordinates>\n";
+text +=	"<fiductialMarks uom=\"#mm\">\n";
+text +=	"<fiductialMark key=\"1\">\n";
+text +=	"<gml:pos></gml:pos>\n";
+text +=	"<sigma></sigma>\n";
+text +=	"</fiductialMark>\n";
+text +=	"<fiductialMark key=\"2\">\n";
+text +=	"<gml:pos></gml:pos>\n";
+text +=	"<sigma></sigma>\n";
+text +=	"</fiductialMark>\n";
+text +=	"<fiductialMark key=\"3\">\n";
+text +=	"<gml:pos></gml:pos>\n";
+text +=	"<sigma></sigma>\n";
+text +=	"</fiductialMark>\n";
+text +=	"<fiductialMark key=\"4\">\n";
+text +=	"<gml:pos></gml:pos>\n";
+text +=	"<sigma></sigma>\n";
+text +=	"</fiductialMark>\n";
+text +=	"</fiductialMarks>\n";
 text += "</sensor>";
 */
 }
@@ -1431,21 +1431,21 @@ void ProjectUserInterface_Qt::newFlight()
 string text = "";
 
 text += "<flight key=\"\" sensor_key=\"\">\n";
-text += "\t<flightId></flightId>\n";
-text += "\t<description></description>\n";
-text += "\t<execution></execution>\n";
-text += "\t<producerName></producerName>\n";
-text += "\t<nominalScale>\n";
-text += "\t\t<mml:mfrac>\n";
-text += "\t\t\t<mml:mn></mml:mn>\n";
-text += "\t\t\t<mml:mn></mml:mn>\n";
-text += "\t\t</mml:mfrac>\n";
-text += "\t</nominalScale>\n";
-text += "\t<flightHeight uom=\"#m\"></flightHeight>\n";
-text += "\t<overlap>\n";
-text += "\t\t<longitudinal uom=\"#%\"></longitudinal>\n";
-text += "\t\t<transversal uom=\"#%\"></transversal>\n";
-text += "\t</overlap>\n";
+text += "<flightId></flightId>\n";
+text += "<description></description>\n";
+text += "<execution></execution>\n";
+text += "<producerName></producerName>\n";
+text += "<nominalScale>\n";
+text += "<mml:mfrac>\n";
+text += "<mml:mn></mml:mn>\n";
+text += "<mml:mn></mml:mn>\n";
+text += "</mml:mfrac>\n";
+text += "</nominalScale>\n";
+text += "<flightHeight uom=\"#m\"></flightHeight>\n";
+text += "<overlap>\n";
+text += "<longitudinal uom=\"#%\"></longitudinal>\n";
+text += "<transversal uom=\"#%\"></transversal>\n";
+text += "</overlap>\n";
 text += "</flight>";
 */
 }
@@ -1457,13 +1457,13 @@ void ProjectUserInterface_Qt::newImage()
 
 	string text = "";
 	text += "<image key=\"" + intToString(currentItemId) + "\" sensor_key=\"1\" flight_key=\"1\">\n";
-	text += "\t<imageId></imageId>\n";
-	text += "\t<width uom=\"#px\"></width>\n";
-	text += "\t<height uom=\"#px\"></height>\n";
-	text += "\t<fileName></fileName>\n";
-	text += "\t<filePath>.</filePath>\n";
-	text += "\t<flightId></flightId>\n";
-	text += "\t<resolution uom=\"#dpi\">600</resolution>\n";
+	text += "<imageId></imageId>\n";
+	text += "<width uom=\"#px\"></width>\n";
+	text += "<height uom=\"#px\"></height>\n";
+	text += "<fileName></fileName>\n";
+	text += "<filePath>.</filePath>\n";
+	text += "<flightId></flightId>\n";
+	text += "<resolution uom=\"#dpi\">600</resolution>\n";
 	text += "</image>";
 
 	imageForm.fillvalues(text);
@@ -1486,12 +1486,12 @@ void ProjectUserInterface_Qt::newPoint()
 
 	currentItemId = manager->getFreePointId();
 	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"\">\n";
-	text += "\t<pointId></pointId>\n";
-	text += "\t<description></description>\n";
-	text += "\t<spatialCoordinates uom=\"#m\">\n";
-	text += "\t\t<gml:pos></gml:pos>\n";
-	text += "\t\t<sigma>Not Available</sigma>\n";
-	text += "\t</spatialCoordinates>\n";
+	text += "<pointId></pointId>\n";
+	text += "<description></description>\n";
+	text += "<spatialCoordinates uom=\"#m\">\n";
+	text += "<gml:pos></gml:pos>\n";
+	text += "<sigma>Not Available</sigma>\n";
+	text += "</spatialCoordinates>\n";
 	text += "</point>";
 
 	pointForm.setImageList(manager->listImageKeys(), manager->listImages());
@@ -1968,11 +1968,11 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
         dNField = point.split("\t").at(5).toStdString().c_str();
         dHField = point.split("\t").at(6).toStdString().c_str();
 
-        aux << "\t<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-        aux << "\t<pointId>" << gcpIdField.c_str() << "</pointId>\n";
-        aux << "\t<description>" << "Put point description here" << "</description>\n";
-        aux << "\t<spatialCoordinates uom=\"#" << "m" << "\">\n";
-        aux << "\t\t<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+		aux << "<description>" << "Put point description here" << "</description>\n";
+		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
+		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
         aux << "<sigma>\n";
         aux << "<mml:matrix>\n";
         aux << "<mml:matrixrow>\n";
@@ -1986,10 +1986,10 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
         aux << "</mml:matrixrow>\n";
         aux << "</mml:matrix>\n";
         aux << "</sigma>\n";
-        aux << "\t</spatialCoordinates>\n";
-        aux << "\t<imagesMeasurements>\n";
-        aux << "\t</imagesMeasurements>\n";
-        aux << "\t</point>";
+		aux << "</spatialCoordinates>\n";
+		aux << "<imagesMeasurements>\n";
+		aux << "</imagesMeasurements>\n";
+		aux << "</point>";
     }
     else if (point.split("\t").length() == 4)
     {
@@ -1998,16 +1998,16 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
         nField = point.split("\t").at(2).toStdString().c_str();
         hField = point.split("\t").at(3).toStdString().c_str();
 
-        aux << "\t<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-        aux << "\t<pointId>" << gcpIdField.c_str() << "</pointId>\n";
-        aux << "\t<description>" << "Put point description here" << "</description>\n";
-        aux << "\t<spatialCoordinates uom=\"#" << "m" << "\">\n";
-        aux << "\t\t<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+		aux << "<description>" << "Put point description here" << "</description>\n";
+		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
+		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
         aux << "<sigma>Not Available</sigma>\n";
-        aux << "\t</spatialCoordinates>\n";
-        aux << "\t<imagesMeasurements>\n";
-        aux << "\t</imagesMeasurements>\n";
-        aux << "\t</point>";
+		aux << "</spatialCoordinates>\n";
+		aux << "<imagesMeasurements>\n";
+		aux << "</imagesMeasurements>\n";
+		aux << "</point>";
     }else{
         QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
     }
@@ -2104,24 +2104,24 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 
     // implementar o xml de images aqui
     /*
-    aux << "\t<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
-    aux << "\t<imageId>" << "" << "</imageId>\n";
-    aux << "\t<width uom=\"#px\"" << "" << "</width>\n";
-    aux << "\t<height uom=\"#px\"" << ""  << "</height>\n";
-    aux << "\t<fileName>" << "" << "</fileName>\n";
-    aux << "\t<filePath>" << "" << "</filePath>\n";
-    aux << "\t<resolution uom=\"#dpi\">" << "" << "</resolution>\n";
-    aux << "\t<GNSS uom=\"#m\" type=\"Unknown\">\n";
-    aux << "\t\t<gml:pos>" << "E" << " " << "N" << " " << "H" << "</gml:pos>\n";
-    aux << "\t\t<sigma>Not Available</sigma>\n";
-    aux << "\t</GNSS>\n";
-    aux << "\t<INS uom=\"#rad\" type=\"Unknown\">\n";
-    aux << "\t\t<omega>" << "" << "</omega>\n";
-    aux << "\t\t<phi>" << "" << "</phi>\n";
-    aux << "\t\t<kappa>" << "" << "</kappa>\n";
-    aux << "\t\t<sigma>Not Available</sigma>\n";
-    aux << "\t</INS>\n";
-    aux << "\t</image>";
+	aux << "<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
+	aux << "<imageId>" << "" << "</imageId>\n";
+	aux << "<width uom=\"#px\"" << "" << "</width>\n";
+	aux << "<height uom=\"#px\"" << ""  << "</height>\n";
+	aux << "<fileName>" << "" << "</fileName>\n";
+	aux << "<filePath>" << "" << "</filePath>\n";
+	aux << "<resolution uom=\"#dpi\">" << "" << "</resolution>\n";
+	aux << "<GNSS uom=\"#m\" type=\"Unknown\">\n";
+	aux << "<gml:pos>" << "E" << " " << "N" << " " << "H" << "</gml:pos>\n";
+	aux << "<sigma>Not Available</sigma>\n";
+	aux << "</GNSS>\n";
+	aux << "<INS uom=\"#rad\" type=\"Unknown\">\n";
+	aux << "<omega>" << "" << "</omega>\n";
+	aux << "<phi>" << "" << "</phi>\n";
+	aux << "<kappa>" << "" << "</kappa>\n";
+	aux << "<sigma>Not Available</sigma>\n";
+	aux << "</INS>\n";
+	aux << "</image>";
 
     QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
 

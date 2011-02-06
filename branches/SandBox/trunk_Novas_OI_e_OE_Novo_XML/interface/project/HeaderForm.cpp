@@ -30,19 +30,19 @@ string HeaderForm::getvalues()
         string xmlString;
 	stringstream auxStream;
 		auxStream << "<projectHeader>\n";
-		auxStream << "\t\t<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
-		auxStream << "\t\t<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
+		auxStream << "<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
+		auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
 		if (lineEditFilePath->text().isEmpty())
-			auxStream << "\t\t<filePath>.</filePath>\n";
+			auxStream << "<filePath>.</filePath>\n";
 		else
-			auxStream << "\t\t<filePath>" << lineEditFilePath->text().toUtf8().data() << "</filePath>\n";
-		auxStream << "\t\t<fileName>" << lineEditFileName->text().toUtf8().data() << "</fileName>\n";
-		auxStream << "\t\t<creation>" << dateTimeEditCreationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</creation>\n";
-		auxStream << "\t\t<modification>" << dateTimeEditModificationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</modification>\n";
-		auxStream << "\t\t<owner>" << lineEditOwner->text().toUtf8().data() << "</owner>\n";
-		auxStream << "\t\t<aims>" << lineEditAims->text().toUtf8().data() << "</aims>\n";
-		auxStream << "\t\t<context>" << lineEditContext->text().toUtf8().data() << "</context>\n";
-		auxStream << "\t</projectHeader>";
+			auxStream << "<filePath>" << lineEditFilePath->text().toUtf8().data() << "</filePath>\n";
+		auxStream << "<fileName>" << lineEditFileName->text().toUtf8().data() << "</fileName>\n";
+		auxStream << "<creation>" << dateTimeEditCreationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</creation>\n";
+		auxStream << "<modification>" << dateTimeEditModificationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</modification>\n";
+		auxStream << "<owner>" << lineEditOwner->text().toUtf8().data() << "</owner>\n";
+		auxStream << "<aims>" << lineEditAims->text().toUtf8().data() << "</aims>\n";
+		auxStream << "<context>" << lineEditContext->text().toUtf8().data() << "</context>\n";
+		auxStream << "</projectHeader>";
 	xmlString = auxStream.str();
 	return xmlString;
 }
