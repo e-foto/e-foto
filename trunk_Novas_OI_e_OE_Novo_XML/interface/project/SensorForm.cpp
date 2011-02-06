@@ -369,166 +369,166 @@ string SensorForm::getvalues()
     stringstream auxStream;
 
     auxStream << "<sensor key=\"" << ede.attribute("key").data() << "\">\n";
-	auxStream << "\t<sensorId>" << sensorIdLineEdit->text().toUtf8().data() <<"</sensorId>\n";
-    auxStream << "\t<type>\n" ;
-    auxStream << "\t\t<geometry>" << geometryCombo->currentText().toUtf8().data() <<"</geometry>\n";
-    auxStream << "\t\t<platform>" << platformCombo->currentText().toUtf8().data() <<"</platform>\n";
-    auxStream << "\t\t<detector>" << detectorCombo->currentText().toUtf8().data() <<"</detector>\n";
-    auxStream << "\t\t<energySource>"<< energyCombo->currentText().toUtf8().data() <<"</energySource>\n";
-	auxStream << "\t\t<calculationModel>"<< calcModelComboBox->currentText().toUtf8().data() <<"</calculationModel>\n"; //new form sensor
-	auxStream << "\t\t<spectralRanges uom=\"#um\"><!--#um equivale a dez elevado a menos seis metros-->\n";
-    auxStream << "\t\t\t<spectralRange band=\"1\">\n"; // aqui tem um valor travado
-    auxStream << "\t\t\t\t<inferiorLimit>0.4</inferiorLimit>\n"; // aqui tem um valor travado
-    auxStream << "\t\t\t\t<superiorLimit>0.7</superiorLimit>\n"; // aqui tem um valor travado
-    auxStream << "\t\t\t</spectralRange>\n";
-    auxStream << "\t\t</spectralRanges>\n";
-    auxStream << "\t</type>\n";
-    auxStream << "\t<description>" << descriptionTextEdit->toPlainText().toUtf8().data() << "</description>\n";
-    auxStream << "\t<calibrationCertificate>\n" ;
-	auxStream << "\t\t<number>" << cameraNumberLineEdit->text().toUtf8().data() << "</number>\n";
-	auxStream << "\t\t<dispatch>"<<cameraDispatchDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</dispatch>\n";
-	auxStream << "\t\t<expiration>"<<cameraExpirationDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</expiration>\n";
-    auxStream << "\t</calibrationCertificate>\n";
-    auxStream << "\t<focalDistance uom=\"#mm\">\n";
-    auxStream << "\t\t<value>" << calibratedFocalDistanceDoubleSpin->value() << "</value>\n";
-	//auxStream << "\t\t<sigma>" << calibratedSigmaDoubleSpin->value() << "</sigma>\n";
+	auxStream << "<sensorId>" << sensorIdLineEdit->text().toUtf8().data() <<"</sensorId>\n";
+	auxStream << "<type>\n" ;
+	auxStream << "<geometry>" << geometryCombo->currentText().toUtf8().data() <<"</geometry>\n";
+	auxStream << "<platform>" << platformCombo->currentText().toUtf8().data() <<"</platform>\n";
+	auxStream << "<detector>" << detectorCombo->currentText().toUtf8().data() <<"</detector>\n";
+	auxStream << "<energySource>"<< energyCombo->currentText().toUtf8().data() <<"</energySource>\n";
+	auxStream << "<calculationModel>"<< calcModelComboBox->currentText().toUtf8().data() <<"</calculationModel>\n"; //new form sensor
+	auxStream << "<spectralRanges uom=\"#um\"><!--#um equivale a dez elevado a menos seis metros-->\n";
+	auxStream << "<spectralRange band=\"1\">\n"; // aqui tem um valor travado
+	auxStream << "<inferiorLimit>0.4</inferiorLimit>\n"; // aqui tem um valor travado
+	auxStream << "<superiorLimit>0.7</superiorLimit>\n"; // aqui tem um valor travado
+	auxStream << "</spectralRange>\n";
+	auxStream << "</spectralRanges>\n";
+	auxStream << "</type>\n";
+	auxStream << "<description>" << descriptionTextEdit->toPlainText().toUtf8().data() << "</description>\n";
+	auxStream << "<calibrationCertificate>\n" ;
+	auxStream << "<number>" << cameraNumberLineEdit->text().toUtf8().data() << "</number>\n";
+	auxStream << "<dispatch>"<<cameraDispatchDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</dispatch>\n";
+	auxStream << "<expiration>"<<cameraExpirationDateEdit->dateTime().toString(Qt::ISODate).toUtf8().data() << "</expiration>\n";
+	auxStream << "</calibrationCertificate>\n";
+	auxStream << "<focalDistance uom=\"#mm\">\n";
+	auxStream << "<value>" << calibratedFocalDistanceDoubleSpin->value() << "</value>\n";
+	//auxStream << "<sigma>" << calibratedSigmaDoubleSpin->value() << "</sigma>\n";
 	auxStream << calibratedSigmaController->getValues();
-    auxStream << "\t</focalDistance>\n";
-	auxStream << "\t<distortionCoefficients>\n";
+	auxStream << "</focalDistance>\n";
+	auxStream << "<distortionCoefficients>\n";
 		 //new form sensor
 	if (radSymmetricGroupBox->isChecked())
 	{
 		if (radSymmetricModeComboBox->currentIndex()==0)
-			auxStream << "\t\t<radialSymmetric considered=\"true\">\n";
+			auxStream << "<radialSymmetric considered=\"true\">\n";
 		else
-			auxStream << "\t\t<radialSymmetric considered=\"false\">\n";
+			auxStream << "<radialSymmetric considered=\"false\">\n";
 
-		auxStream << "\t\t\t<k0>\n";
-		auxStream << "\t\t\t\t<value>" <<radialK0LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK0LineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</k0>\n";
-		auxStream << "\t\t\t<k1>\n";
-		auxStream << "\t\t\t\t<value>" <<radialK1LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK1LineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</k1>\n";
-		auxStream << "\t\t\t<k2>\n";
-		auxStream << "\t\t\t\t<value>" <<radialK2LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK2LineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</k2>\n";
-		auxStream << "\t\t\t<k3>\n";
-		auxStream << "\t\t\t\t<value>" <<radialK3LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" <<radialSigmaK3LineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</k3>\n";
+		auxStream << "<k0>\n";
+		auxStream << "<value>" <<radialK0LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" <<radialSigmaK0LineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</k0>\n";
+		auxStream << "<k1>\n";
+		auxStream << "<value>" <<radialK1LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" <<radialSigmaK1LineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</k1>\n";
+		auxStream << "<k2>\n";
+		auxStream << "<value>" <<radialK2LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" <<radialSigmaK2LineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</k2>\n";
+		auxStream << "<k3>\n";
+		auxStream << "<value>" <<radialK3LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" <<radialSigmaK3LineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</k3>\n";
 		auxStream << radialSigmaController->getValues();
-		auxStream << "\t\t</radialSymmetric>\n";
+		auxStream << "</radialSymmetric>\n";
 	}
 	 //new form sensor
 	if (decenteredGroupBox->isChecked())
 	{
 		if (decenteredModeComboBox->currentIndex()==0)
-			auxStream << "\t\t<decentered considered=\"true\">\n";
+			auxStream << "<decentered considered=\"true\">\n";
 		else
-			auxStream << "\t\t<decentered considered=\"false\">\n";
+			auxStream << "<decentered considered=\"false\">\n";
 
-		auxStream << "\t\t\t<P1>\n";
-		auxStream << "\t\t\t\t<value>" << decenteredP1LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" << decenteredP1SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</P1>\n";
-		auxStream << "\t\t\t<P2>\n";
-		auxStream << "\t\t\t\t<value>" << decenteredP2LineEdit->textValue().toUtf8().data() << "</value>\n";
-		//auxStream << "\t\t\t\t<sigma>" << decenteredP2SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
-		auxStream << "\t\t\t</P2>\n";
+		auxStream << "<P1>\n";
+		auxStream << "<value>" << decenteredP1LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" << decenteredP1SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</P1>\n";
+		auxStream << "<P2>\n";
+		auxStream << "<value>" << decenteredP2LineEdit->textValue().toUtf8().data() << "</value>\n";
+		//auxStream << "<sigma>" << decenteredP2SigmaLineEdit->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "</P2>\n";
 		auxStream << decenteredSigmaController->getValues();
-		auxStream << "\t\t</decentered>\n";
+		auxStream << "</decentered>\n";
 	}
-	auxStream << "\t</distortionCoefficients>\n";
+	auxStream << "</distortionCoefficients>\n";
 
 	//Codigo em aberto // J´a tratado:
     auxStream << "\t<principalPointCoordinates uom=\"#mm\">\n";
 
-	auxStream << "\t\t<gml:pos>"<<  principalX0doubleSpin->value() << " " << principalY0doubleSpin->value() << "</gml:pos>\n";
-	//auxStream << "\t\t<gml:pos>"<< "-0.0063 -0.037" << "</gml:pos>\n"; // aqui tem um valor travado
-	//auxStream << "\t\t<sigma>\n";
-	//auxStream << "\t\t\t<mml:matrix>\n";
+	auxStream << "<gml:pos>"<<  principalX0doubleSpin->value() << " " << principalY0doubleSpin->value() << "</gml:pos>\n";
+	//auxStream << "<gml:pos>"<< "-0.0063 -0.037" << "</gml:pos>\n"; // aqui tem um valor travado
+	//auxStream << "<sigma>\n";
+	//auxStream << "<mml:matrix>\n";
 
-	//auxStream << "\t\t\t\t<mml:matrixrow>\n";
-	//auxStream << "\t\t\t\t\t<mml:cn>" << "0.016" << "</mml:cn>\n";// aqui tem um valor travado
-	//auxStream << "\t\t\t\t\t<mml:cn>" << "0" << "</mml:cn>\n";// aqui tem um valor travado
-	//auxStream << "\t\t\t\t</mml:matrixrow>\n";
+	//auxStream << "<mml:matrixrow>\n";
+	//auxStream << "<mml:cn>" << "0.016" << "</mml:cn>\n";// aqui tem um valor travado
+	//auxStream << "<mml:cn>" << "0" << "</mml:cn>\n";// aqui tem um valor travado
+	//auxStream << "</mml:matrixrow>\n";
 
-	//auxStream << "\t\t\t\t<mml:matrixrow>\n";
-	//auxStream << "\t\t\t\t\t<mml:cn>" << "0" << "</mml:cn>\n"; // aqui tem um valor travado
-	//auxStream << "\t\t\t\t\t<mml:cn>" << "0.017" << "</mml:cn>\n";// aqui tem um valor travado
-	//auxStream << "\t\t\t\t</mml:matrixrow>\n";
+	//auxStream << "<mml:matrixrow>\n";
+	//auxStream << "<mml:cn>" << "0" << "</mml:cn>\n"; // aqui tem um valor travado
+	//auxStream << "<mml:cn>" << "0.017" << "</mml:cn>\n";// aqui tem um valor travado
+	//auxStream << "</mml:matrixrow>\n";
 
-	//auxStream << "\t\t\t</mml:matrix>\n";
-	//auxStream << "\t\t</sigma>\n";
+	//auxStream << "</mml:matrix>\n";
+	//auxStream << "</sigma>\n";
 	auxStream << principalSigmaController->getValues();
-    auxStream << "\t</principalPointCoordinates>\n";
+	auxStream << "</principalPointCoordinates>\n";
 
 
 	if (calcModelComboBox->currentIndex() == 0)
 	{
-		auxStream << "\t<fiductialMarks uom=\"#mm\">\n";
-		auxStream << "\t\t<fiductialMark key=\"1\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi0doubleSpin->value() << " " << fiductialEta0doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "\t\t\t<sigma>" << fiductialSigma0doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiductialMarks uom=\"#mm\">\n";
+		auxStream << "<fiductialMark key=\"1\">\n";
+		auxStream << "<gml:pos>" << fiductialXi0doubleSpin->value() << " " << fiductialEta0doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiductialSigma0doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid0SigmaController->getValues();
-		auxStream << "\t\t</fiductialMark>\n";
+		auxStream << "</fiductialMark>\n";
 
-		auxStream << "\t\t<fiductialMark key=\"2\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi1doubleSpin->value() << " " << fiductialEta1doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "\t\t\t<sigma>" << fiductialSigma1doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiductialMark key=\"2\">\n";
+		auxStream << "<gml:pos>" << fiductialXi1doubleSpin->value() << " " << fiductialEta1doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiductialSigma1doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
-		auxStream << "\t\t</fiductialMark>\n";
+		auxStream << "</fiductialMark>\n";
 
-		auxStream << "\t\t<fiductialMark key=\"3\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi2doubleSpin->value() << " " << fiductialEta2doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "\t\t\t<sigma>" << fiductialSigma2doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiductialMark key=\"3\">\n";
+		auxStream << "<gml:pos>" << fiductialXi2doubleSpin->value() << " " << fiductialEta2doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiductialSigma2doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
-		auxStream << "\t\t</fiductialMark>\n";
+		auxStream << "</fiductialMark>\n";
 
-		auxStream << "\t\t<fiductialMark key=\"4\">\n";
-		auxStream << "\t\t\t<gml:pos>" << fiductialXi3doubleSpin->value() << " " << fiductialEta3doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "\t\t\t<sigma>" << fiductialSigma3doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiductialMark key=\"4\">\n";
+		auxStream << "<gml:pos>" << fiductialXi3doubleSpin->value() << " " << fiductialEta3doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiductialSigma3doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid3SigmaController->getValues();
-		auxStream << "\t\t</fiductialMark>\n";
+		auxStream << "</fiductialMark>\n";
 
 		if (fiductialMarksCombo->currentIndex()==1){
-			auxStream << "\t\t<fiductialMark key=\"5\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi4doubleSpin->value() << " " << fiductialEta4doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "\t\t\t<sigma>" << fiductialSigma4doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiductialMark key=\"5\">\n";
+			auxStream << "<gml:pos>" << fiductialXi4doubleSpin->value() << " " << fiductialEta4doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiductialSigma4doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid4SigmaController->getValues();
-			auxStream << "\t\t</fiductialMark>\n";
+			auxStream << "</fiductialMark>\n";
 
-			auxStream << "\t\t<fiductialMark key=\"6\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi5doubleSpin->value() << " " << fiductialEta5doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "\t\t\t<sigma>" << fiductialSigma5doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiductialMark key=\"6\">\n";
+			auxStream << "<gml:pos>" << fiductialXi5doubleSpin->value() << " " << fiductialEta5doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiductialSigma5doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid5SigmaController->getValues();
-			auxStream << "\t\t</fiductialMark>\n";
+			auxStream << "</fiductialMark>\n";
 
-			auxStream << "\t\t<fiductialMark key=\"7\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi6doubleSpin->value() << " " << fiductialEta6doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "\t\t\t<sigma>" << fiductialSigma6doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiductialMark key=\"7\">\n";
+			auxStream << "<gml:pos>" << fiductialXi6doubleSpin->value() << " " << fiductialEta6doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiductialSigma6doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid6SigmaController->getValues();
-			auxStream << "\t\t</fiductialMark>\n";
+			auxStream << "</fiductialMark>\n";
 
-			auxStream << "\t\t<fiductialMark key=\"8\">\n";
-			auxStream << "\t\t\t<gml:pos>" << fiductialXi7doubleSpin->value() << " " << fiductialEta7doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "\t\t\t<sigma>" << fiductialSigma7doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiductialMark key=\"8\">\n";
+			auxStream << "<gml:pos>" << fiductialXi7doubleSpin->value() << " " << fiductialEta7doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiductialSigma7doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid7SigmaController->getValues();
-			auxStream << "\t\t</fiductialMark>\n";
+			auxStream << "</fiductialMark>\n";
 		}
-		auxStream << "\t</fiductialMarks>\n";
+		auxStream << "</fiductialMarks>\n";
 	}
 	else if (calcModelComboBox->currentIndex() == 1)
 	{
 		auxStream << "<sensorDimensions>\n";
-		auxStream << "\t<pixelSize uom=\"#um\">"<< pixelSizeDoubleSpinBox->value()<< "</pixelSize>\n";
-		auxStream << "\t<sensorSize>\n";
-		auxStream << "\t\t<rows>"<< sensorRowsSpinBox->value()<<"</rows>\n";
-		auxStream << "\t\t<columns>"<< sensorColsSpinBox->value()<<"</columns>\n";
-		auxStream << "\t</sensorSize>\n";
+		auxStream << "<pixelSize uom=\"#um\">"<< pixelSizeDoubleSpinBox->value()<< "</pixelSize>\n";
+		auxStream << "<sensorSize>\n";
+		auxStream << "<rows>"<< sensorRowsSpinBox->value()<<"</rows>\n";
+		auxStream << "<columns>"<< sensorColsSpinBox->value()<<"</columns>\n";
+		auxStream << "</sensorSize>\n";
 		auxStream << "</sensorDimensions>\n";
 	}
 	else if (calcModelComboBox->currentIndex() == 2)

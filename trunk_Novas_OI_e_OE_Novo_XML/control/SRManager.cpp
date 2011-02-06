@@ -374,7 +374,7 @@ bool SRManager::save(string path)
         }
 
         EDomElement e(output);
-        output = e.indent("\t");
+		output = e.indent('\t').getContent();
 
         const char* buffer = output.c_str();
         pFile = fopen (path.c_str(), "wb");

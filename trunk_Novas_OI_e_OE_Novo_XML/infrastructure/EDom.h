@@ -99,7 +99,9 @@ public:
 
     // Test method
     //
-    string indent(string indentation);
+	EDomElement indent(char indentation);
+	EDomElement trim(char charToTrim);
+	EDomElement removeBlankLines(bool removeIndentation = false);
 };
 
 class EDom

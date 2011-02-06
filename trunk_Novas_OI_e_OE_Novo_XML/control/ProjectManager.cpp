@@ -62,9 +62,9 @@ bool ProjectManager::newProject(string filename)
         xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
 		xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
 		xmlData += "\n";
-		xmlData += "\t<projectHeader>\n";
-		xmlData += "\t\t<name></name>\n";
-		xmlData += "\t\t<description></description>\n";
+		xmlData += "<projectHeader>\n";
+		xmlData += "<name></name>\n";
+		xmlData += "<description></description>\n";
 
 		int i = filename.rfind('/');
 
@@ -74,71 +74,57 @@ bool ProjectManager::newProject(string filename)
 		xmlData += fileName;
 		xmlData += filePath;
 
-		xmlData += "\t\t<creation></creation>\n";
-		xmlData += "\t\t<modification></modification>\n";
-		xmlData += "\t\t<owner></owner>\n";
-		xmlData += "\t\t<aims></aims>\n";
-		xmlData += "\t\t<context></context>\n";
-		xmlData += "\t</projectHeader>\n";
-		xmlData += "\n";
-		xmlData += "\t<terrain>\n";
-		xmlData += "\t\t<meanAltitude uom=\"#m\"></meanAltitude>\n";
-		xmlData += "\t\t<minAltitude uom=\"#m\"></minAltitude>\n";
-		xmlData += "\t\t<maxAltitude uom=\"#m\"></maxAltitude>\n";
-		xmlData += "\t\t<GRS>WGS84</GRS>\n";
-		xmlData += "\t\t<CPS>UTM</CPS>\n";
-		xmlData += "\t\t<workAreaCenterCoordinates>\n";
-		xmlData += "\t\t\t<Lat direction=\"S\">\n";
-		xmlData += "\t\t\t\t<degrees></degrees>\n";
-		xmlData += "\t\t\t\t<minutes></minutes>\n";
-		xmlData += "\t\t\t\t<seconds></seconds>\n";
-		xmlData += "\t\t\t</Lat>\n";
-		xmlData += "\t\t\t<Long direction=\"W\">\n";
-		xmlData += "\t\t\t\t<degrees></degrees>\n";
-		xmlData += "\t\t\t\t<minutes></minutes>\n";
-		xmlData += "\t\t\t\t<seconds></seconds>\n";
-		xmlData += "\t\t\t</Long>\n";
-		xmlData += "\t\t\t<utmFuse></utmFuse>\n";
-		xmlData += "\t\t</workAreaCenterCoordinates>\n";
-		xmlData += "\t</terrain>\n";
-		xmlData += "\n";
-		xmlData += "\t<sensors>\n";
-		xmlData += "\t</sensors>\n";
-		xmlData += "\n";
-		xmlData += "\t<flights>\n";
-		xmlData += "\t</flights>\n";
-		xmlData += "\n";
-		xmlData += "\t<points>\n";
-		xmlData += "\t</points>\n";
-		xmlData += "\n";
-		xmlData += "\t<images>\n";
-		xmlData += "\t</images>\n";
-		xmlData += "\n";
-		xmlData += "\t<interiorOrientation>\n";
-		xmlData += "\t</interiorOrientation>\n";
-		xmlData += "\n";
-		xmlData += "\t<exteriorOrientation>\n";
-		xmlData += "\t</exteriorOrientation>\n";
-		xmlData += "\n";
+		xmlData += "<creation></creation>\n";
+		xmlData += "<modification></modification>\n";
+		xmlData += "<owner></owner>\n";
+		xmlData += "<aims></aims>\n";
+		xmlData += "<context></context>\n";
+		xmlData += "</projectHeader>\n";
+		xmlData += "<terrain>\n";
+		xmlData += "<meanAltitude uom=\"#m\"></meanAltitude>\n";
+		xmlData += "<minAltitude uom=\"#m\"></minAltitude>\n";
+		xmlData += "<maxAltitude uom=\"#m\"></maxAltitude>\n";
+		xmlData += "<GRS>WGS84</GRS>\n";
+		xmlData += "<CPS>UTM</CPS>\n";
+		xmlData += "<workAreaCenterCoordinates>\n";
+		xmlData += "<Lat direction=\"S\">\n";
+		xmlData += "<degrees></degrees>\n";
+		xmlData += "<minutes></minutes>\n";
+		xmlData += "<seconds></seconds>\n";
+		xmlData += "</Lat>\n";
+		xmlData += "<Long direction=\"W\">\n";
+		xmlData += "<degrees></degrees>\n";
+		xmlData += "<minutes></minutes>\n";
+		xmlData += "<seconds></seconds>\n";
+		xmlData += "</Long>\n";
+		xmlData += "<utmFuse></utmFuse>\n";
+		xmlData += "</workAreaCenterCoordinates>\n";
+		xmlData += "</terrain>\n";
+		xmlData += "<sensors>\n";
+		xmlData += "</sensors>\n";
+		xmlData += "<flights>\n";
+		xmlData += "</flights>\n";
+		xmlData += "<points>\n";
+		xmlData += "</points>\n";
+		xmlData += "<images>\n";
+		xmlData += "</images>\n";
+		xmlData += "<interiorOrientation>\n";
+		xmlData += "</interiorOrientation>\n";
+		xmlData += "<exteriorOrientation>\n";
+		xmlData += "</exteriorOrientation>\n";
 		/*
-		xmlData += "\t<photogrammetricBlock>\n";
-		xmlData += "\t</photogrammetricBlock>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPairs>\n";
-		xmlData += "\t</stereoPairs>\n";
-		xmlData += "\n";
-		xmlData += "\t<normalization>\n";
-		xmlData += "\t</normalization>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPloting>\n";
-		xmlData += "\t</stereoPloting>\n";
-		xmlData += "\n";
-		xmlData += "\t<dem>\n";
-		xmlData += "\t</dem>\n";
-		xmlData += "\n";
-		xmlData += "\t<orthorectification>\n";
-		xmlData += "\t</orthorectification>\n";
-		xmlData += "\n";
+		xmlData += "<photogrammetricBlock>\n";
+		xmlData += "</photogrammetricBlock>\n";
+		xmlData += "<stereoPairs>\n";
+		xmlData += "</stereoPairs>\n";
+		xmlData += "<normalization>\n";
+		xmlData += "</normalization>\n";
+		xmlData += "<stereoPloting>\n";
+		xmlData += "</stereoPloting>\n";
+		xmlData += "<dem>\n";
+		xmlData += "</dem>\n";
+		xmlData += "<orthorectification>\n";
+		xmlData += "</orthorectification>\n";
 		*/
         xmlData += "</efotoPhotogrammetricProject>";
 
@@ -188,7 +174,7 @@ bool ProjectManager::loadFile(string filename)
             }
             myFile.close();
 
-            string xmlData = myData.str();
+			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
 			// Aqui deve entrar um codigo para validar o XML.
             manager->xmlSetData(xmlData);
 
@@ -212,7 +198,9 @@ bool ProjectManager::saveFile(string filename)
         ofstream myFile (filename.c_str());
         if (myFile.is_open())
 		{
-            myFile << manager->xmlGetData();
+			EDomElement xml(manager->xmlGetData());
+			//myFile << xml.indent('\t').getContent(); // O adequado é que em breve a linha a baixo possa ser substituida por esta aqui.
+			myFile << xml.removeBlankLines(true).indent('\t').getContent();
             myFile.close();
 			return true;
         }
