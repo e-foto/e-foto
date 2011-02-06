@@ -725,7 +725,7 @@ bool EDomElement::hasTagName(string tagname)
 
 // Test method
 //
-string EDomElement::indent(string indentation)
+EDomElement EDomElement::indent(char indentation)
 {
     stringstream result;
     long nesting = 0;
@@ -760,11 +760,88 @@ string EDomElement::indent(string indentation)
                 for (long indents = 0; indents < nesting - 1; indents++)
                     result << indentation;
         }
-        return result.str();
+		return EDomElement(result.str());
     }
     catch (std::out_of_range& e)
     {
-
-        return "";
+		return EDomElement();
     }
+}
+
+EDomElement EDomElement::trim(char charToTrim)
+{
+	stringstream result;
+	bool checkIndentation = true;
+	try
+	{
+		for (unsigned long pos = 0; pos < content.length(); pos++)
+		{
+			if (checkIndentation == true)
+			{
+				if (content.at(pos) != charToTrim)
+				{
+					checkIndentation = false;
+					result << content.at(pos);
+				}
+				//else ; //Indentation is removed
+			}
+			else
+			{
+				if (content.at(pos) == '\n')
+					checkIndentation = true;
+				result << content.at(pos);
+			}
+		}
+		return EDomElement(result.str());
+	}
+	catch (std::out_of_range& e)
+	{
+		return EDomElement();
+	}
+}
+
+EDomElement EDomElement::removeBlankLines(bool removeIndentation)
+{
+	stringstream result;
+	bool isBlank = true;
+	unsigned long lineBegin = 0;
+	try
+	{
+		for (unsigned long pos = 0; pos < content.length(); pos++)
+		{
+			if (isBlank == true)
+			{
+				if (content.at(pos) != ' ' && content.at(pos) != '\t' && content.at(pos) != '\r' && content.at(pos) != '\n')
+				{
+					isBlank = false;
+					if (!removeIndentation)
+					{
+						for (lineBegin; lineBegin < pos; lineBegin++)
+						{
+							result << content.at(lineBegin);
+						}
+					}
+					result << content.at(pos);
+				}
+				else if (content.at(pos) == '\n')
+				{
+					lineBegin = pos + 1;
+				}
+			}
+			else
+			{
+				if (content.at(pos) == '\n')
+				{
+					isBlank = true;
+					lineBegin = pos + 1;
+				}
+				result << content.at(pos);
+			}
+		}
+		return EDomElement(result.str());
+	}
+	catch (std::out_of_range& e)
+	{
+		return EDomElement();
+	}
 }

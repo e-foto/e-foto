@@ -143,30 +143,30 @@ string ImageForm::getvalues()
     stringstream auxStream;
 
 	auxStream << tagXml << "\n";
-	auxStream << "\t<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
-    auxStream << "\t<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
-    auxStream << "\t<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
-    auxStream << "\t<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
-    auxStream << "\t<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
-	//auxStream << "\t<flightId>" << flightIDSpin->value() << "</flightId>\n";
-    auxStream << "\t<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
+	auxStream << "<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
+	auxStream << "<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
+	auxStream << "<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
+	auxStream << "<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
+	auxStream << "<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
+	//auxStream << "<flightId>" << flightIDSpin->value() << "</flightId>\n";
+	auxStream << "<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
 	if (gnssGroup->isChecked())
 	{
 		string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
-		auxStream << "\t<GNSS uom=\"#m\" type=\"" << type << "\">\n";
-		auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
+		auxStream << "<GNSS uom=\"#m\" type=\"" << type << "\">\n";
+		auxStream << "<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
 		auxStream << gnssSigmaController->getValues();
-		auxStream << "\t</GNSS>\n";
+		auxStream << "</GNSS>\n";
 	}
 	if (insGroup->isChecked())
 	{
 		string type = insTypeComboBox->currentIndex() == 0 ? "Initial": insTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
-		auxStream << "\t<INS uom=\"#rad\" type=\"" << type << "\">\n";
-		auxStream << "\t\t<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
-		auxStream << "\t\t<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
-		auxStream << "\t\t<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
+		auxStream << "<INS uom=\"#rad\" type=\"" << type << "\">\n";
+		auxStream << "<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
+		auxStream << "<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
+		auxStream << "<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
 		auxStream << insSigmaController->getValues();
-		auxStream << "\t</INS>\n";
+		auxStream << "</INS>\n";
 	}
     auxStream << "</image>\n";
     xmlString = auxStream.str();
