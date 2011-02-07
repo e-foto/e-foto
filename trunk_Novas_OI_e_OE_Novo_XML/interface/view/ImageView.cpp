@@ -96,7 +96,7 @@ void ImageView::drawPoints(QStandardItemModel* points, int mode)
 				selectPoint(pointName);
 				x = points->data(points->index(row,2)).toInt();
 				y = points->data(points->index(row,3)).toInt();
-				selectedImage->addMark(selectedPoint, x, y, selectedViewport, true);
+				selectedImage->addMark(selectedPoint, x+0.5, y+0.5, selectedViewport, true);
 			}
 		}
 	}

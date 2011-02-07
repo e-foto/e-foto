@@ -1,5 +1,5 @@
 /**************************************************************************
-                             IOUserInterface.h
+							 IOUserInterface.h
 **************************************************************************/
 
 
@@ -27,21 +27,21 @@ class IOUserInterface //: public EObject
 
 protected:
 
-    // Associated Objects
-    //
-    IOManager* manager;
+	// Associated Objects
+	//
+	IOManager* manager;
 
 public:
 
-    // Association Methods
-    //
-    IOManager* getManager();
+	// Association Methods
+	//
+	IOManager* getManager();
 
-    // Other Methods
-    //
-    virtual bool measureMark(int id, int col, int lin) = 0;
-    virtual bool calculateIO() = 0;
-    virtual bool exec() = 0;
+	// Other Methods
+	//
+	virtual bool measureMark(int id, int col, int lin) = 0;
+	virtual bool calculateIO() = 0;
+	virtual bool exec() = 0;
 
 };
 

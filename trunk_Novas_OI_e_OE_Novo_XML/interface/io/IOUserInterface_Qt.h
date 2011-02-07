@@ -13,45 +13,45 @@
 
 class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public IOUserInterface
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
-    ~IOUserInterface_Qt();
+	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+	~IOUserInterface_Qt();
 
 public slots:
 	virtual void informState();
 	virtual void receiveMark(QPoint p);
-    virtual void makeRepaint();
-    virtual void activeSetMode();
-    virtual void activePanMode();
-    virtual void activeZoomMode();
-    virtual void fitView();
-    virtual bool calculateIO();
-    virtual bool viewReport();
-    virtual void testActivateIO();
+	virtual void makeRepaint();
+	virtual void activeSetMode();
+	virtual void activePanMode();
+	virtual void activeZoomMode();
+	virtual void fitView();
+	virtual bool calculateIO();
+	virtual bool viewReport();
+	virtual void testActivateIO();
 	virtual void acceptIO();
-    
+
 protected:
-    ImageView *myImageView;
-    QGridLayout *imageLayout;
-    QStandardItemModel *points;
-    int selectedPoint;
+	ImageView *myImageView;
+	QGridLayout *imageLayout;
+	QStandardItemModel *points;
+	int selectedPoint;
 	int calculationMode;
-    IOManager *manager;
+	IOManager *manager;
 
 protected slots:
-    virtual void languageChange();
+	virtual void languageChange();
 
 private:
 	void init();
-    bool measureMark(int id, int col, int lin);
-    
+	bool measureMark(int id, int col, int lin);
+
 public:
 
-    // Other Methods
+	// Other Methods
 	//
-    bool exec();
+	bool exec();
 
 };
 

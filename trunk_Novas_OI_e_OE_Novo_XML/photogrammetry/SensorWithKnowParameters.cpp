@@ -172,11 +172,12 @@ void SensorWithKnowParameters::xmlSetData(string xml)
 	EDomElement xa =  root.elementByTagName("Xa");
 	Matrix newXa(6,1);
 	newXa.set(1,1,xa.elementByTagName("a0").toDouble());
-	newXa.set(1,2,xa.elementByTagName("a1").toDouble());
-	newXa.set(1,3,xa.elementByTagName("a2").toDouble());
-	newXa.set(1,4,xa.elementByTagName("b0").toDouble());
-	newXa.set(1,5,xa.elementByTagName("b1").toDouble());
-	newXa.set(1,6,xa.elementByTagName("b2").toDouble());
+	newXa.set(2,1,xa.elementByTagName("a1").toDouble());
+	newXa.set(3,1,xa.elementByTagName("a2").toDouble());
+	newXa.set(4,1,xa.elementByTagName("b0").toDouble());
+	newXa.set(5,1,xa.elementByTagName("b1").toDouble());
+	newXa.set(6,1,xa.elementByTagName("b2").toDouble());
+	setXa(newXa);
 }
 
 string SensorWithKnowParameters::xmlGetData()
