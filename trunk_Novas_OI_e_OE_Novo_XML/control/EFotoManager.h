@@ -10,6 +10,8 @@
 #include "Terrain.h"
 #include "ProjectHeader.h"
 #include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
 #include "Flight.h"
 #include "Image.h"
 #include "CheckingPoint.h"
