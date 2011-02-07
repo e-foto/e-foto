@@ -1,5 +1,5 @@
 /************************************************************************
-                        IOQuality.h
+						IOQuality.h
 **************************************************************************/
 
 #ifndef IOQUALITY_H
@@ -26,42 +26,42 @@ class IOQuality : public EObject
 {
 private:
 
-    //EOBJECT
+	//EOBJECT
 
-    // Private attributes
-    //
-    Matrix V;
-    double sigma0Squared;
-    Matrix SigmaXa;
-    Matrix SigmaLa;
+	// Private attributes
+	//
+	Matrix V;
+	double sigma0Squared;
+	Matrix SigmaXa;
+	Matrix SigmaLa;
 
 public:
 
-    // Constructors and Destructor
-    //
-    virtual ~IOQuality();
+	// Constructors and Destructor
+	//
+	virtual ~IOQuality();
 
-    // Private attribute accessors
-    //
-    Matrix getV();
-    double getsigma0Squared();
-    Matrix getSigmaXa();
-    Matrix getSigmaLa();
+	// Private attribute accessors
+	//
+	Matrix getV();
+	double getsigma0Squared();
+	Matrix getSigmaXa();
+	Matrix getSigmaLa();
 
-    // EObject methods
-    //
-    string objectType(void);
-    string objectAssociations(void);
-    bool is(string s);
+	// EObject methods
+	//
+	string objectType(void);
+	string objectAssociations(void);
+	bool is(string s);
 
-    // XML methods
-    //
-    void xmlSetData(string xml);
-    string xmlGetData();
+	// XML methods
+	//
+	void xmlSetData(string xml);
+	string xmlGetData();
 
-    // Other method
-    //
-    void calculate(InteriorOrientation* myIO, Sensor* mySensor);
+	// Other method
+	//
+	void calculate(InteriorOrientation* myIO, Sensor* mySensor);
 
 };
 

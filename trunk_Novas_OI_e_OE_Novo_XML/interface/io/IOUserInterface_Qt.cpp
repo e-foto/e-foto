@@ -12,29 +12,29 @@
 
 
 IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::WindowFlags fl)
-    : QMainWindow(parent, fl)
+	: QMainWindow(parent, fl)
 {	
-    setupUi(this);
+	setupUi(this);
 
-    actionSet_mark->setCheckable(true);
-    actionMove->setCheckable(true);
-    actionZoom->setCheckable(true);
-    QActionGroup *group = new QActionGroup(this);
-    group->addAction(actionSet_mark);
-    group->addAction(actionMove);
-    group->addAction(actionZoom);
-    group->setExclusive(true);
-    actionActive_grid->setCheckable(true);
-    actionView_report->setEnabled(false);
-    actionInterior_orientation->setEnabled(false);
-    table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	actionSet_mark->setCheckable(true);
+	actionMove->setCheckable(true);
+	actionZoom->setCheckable(true);
+	QActionGroup *group = new QActionGroup(this);
+	group->addAction(actionSet_mark);
+	group->addAction(actionMove);
+	group->addAction(actionZoom);
+	group->setExclusive(true);
+	actionActive_grid->setCheckable(true);
+	actionView_report->setEnabled(false);
+	actionInterior_orientation->setEnabled(false);
+	table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
-    QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
-    QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-    QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-    QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-    QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
+	QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
+	QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
+	QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
+	QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
+	QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
+	QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
 
 	this->manager = manager;
 
@@ -43,12 +43,12 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 
 IOUserInterface_Qt::~IOUserInterface_Qt()
 {
-    // no need to delete child widgets, Qt does it all for us
+	// no need to delete child widgets, Qt does it all for us
 }
 
 void IOUserInterface_Qt::languageChange()
 {
-    retranslateUi(this);
+	retranslateUi(this);
 }
 
 void IOUserInterface_Qt::informState()
@@ -68,28 +68,28 @@ void IOUserInterface_Qt::receiveMark(QPoint p)
 
 void IOUserInterface_Qt::makeRepaint()
 {
-    myImageView->repaint();
-    table1->repaint();
+	myImageView->repaint();
+	table1->repaint();
 }
 
 void IOUserInterface_Qt::activeSetMode()
 {
-    myImageView->setViewMode(1);
+	myImageView->setViewMode(1);
 }
 
 void IOUserInterface_Qt::activePanMode()
 {
-    myImageView->setViewMode(2);
+	myImageView->setViewMode(2);
 }
 
 void IOUserInterface_Qt::activeZoomMode()
 {
-    myImageView->setViewMode(3);
+	myImageView->setViewMode(3);
 }
 
 void IOUserInterface_Qt::fitView()
 {
-    myImageView->fitView();
+	myImageView->fitView();
 }
 
 void IOUserInterface_Qt::init()
@@ -122,65 +122,65 @@ void IOUserInterface_Qt::init()
 
 bool IOUserInterface_Qt::measureMark(int id, int col, int lin)
 {
-    return manager->measureMark(id, col, lin);
+	return manager->measureMark(id, col, lin);
 }
 
 bool IOUserInterface_Qt::calculateIO()
 {
-    bool result = manager->calculateIO();
-    viewReport();
-    actionView_report->setEnabled(true);
-    return result;
+	bool result = manager->calculateIO();
+	viewReport();
+	actionView_report->setEnabled(true);
+	return result;
 }
 
 bool IOUserInterface_Qt::viewReport()
 {
-    deque<string> myValues = manager->makeReport();
+	deque<string> myValues = manager->makeReport();
 
-    QWidget *window = new QWidget();
-    QVBoxLayout *myLayout = new QVBoxLayout();
-    QTabWidget *myTab = new QTabWidget();
+	QWidget *window = new QWidget();
+	QVBoxLayout *myLayout = new QVBoxLayout();
+	QTabWidget *myTab = new QTabWidget();
 
-    vector<string> myXa;
-    myXa.push_back(myValues.at(0));
-    MatrixModel* myXaModel = new MatrixModel(myXa);
-    MatrixView* myXaView = new MatrixView(window, myXaModel);
-    myTab->addTab(myXaView, QString::fromUtf8("Xa"));
-    vector<string> myLa;
-    myLa.push_back(myValues.at(1));
-    MatrixModel* myLaModel = new MatrixModel(myLa);
-    MatrixView* myLaView = new MatrixView(window, myLaModel);
-    myTab->addTab(myLaView, QString::fromUtf8("La"));
-    QLabel* myLabel = new QLabel(myValues.at(2).c_str());
-    myTab->addTab(myLabel, QString::fromUtf8("sigma0^2"));
-    vector<string> myV;
-    myV.push_back(myValues.at(3));
-    MatrixModel* myVModel = new MatrixModel(myV);
-    MatrixView* myVView = new MatrixView(window, myVModel);
-    myTab->addTab(myVView, QString::fromUtf8("V"));
-    vector<string> mySXa;
-    mySXa.push_back(myValues.at(4));
-    MatrixModel* mySXaModel = new MatrixModel(mySXa);
-    MatrixView* mySXaView = new MatrixView(window, mySXaModel);
-    myTab->addTab(mySXaView, QString::fromUtf8("SigmaXa"));
-    vector<string> mySLa;
-    mySLa.push_back(myValues.at(5));
-    MatrixModel* mySLaModel = new MatrixModel(mySLa);
-    MatrixView* mySLaView = new MatrixView(window, mySLaModel);
-    myTab->addTab(mySLaView, QString::fromUtf8("SigmaLa"));
+	vector<string> myXa;
+	myXa.push_back(myValues.at(0));
+	MatrixModel* myXaModel = new MatrixModel(myXa);
+	MatrixView* myXaView = new MatrixView(window, myXaModel);
+	myTab->addTab(myXaView, QString::fromUtf8("Xa"));
+	vector<string> myLa;
+	myLa.push_back(myValues.at(1));
+	MatrixModel* myLaModel = new MatrixModel(myLa);
+	MatrixView* myLaView = new MatrixView(window, myLaModel);
+	myTab->addTab(myLaView, QString::fromUtf8("La"));
+	QLabel* myLabel = new QLabel(myValues.at(2).c_str());
+	myTab->addTab(myLabel, QString::fromUtf8("sigma0^2"));
+	vector<string> myV;
+	myV.push_back(myValues.at(3));
+	MatrixModel* myVModel = new MatrixModel(myV);
+	MatrixView* myVView = new MatrixView(window, myVModel);
+	myTab->addTab(myVView, QString::fromUtf8("V"));
+	vector<string> mySXa;
+	mySXa.push_back(myValues.at(4));
+	MatrixModel* mySXaModel = new MatrixModel(mySXa);
+	MatrixView* mySXaView = new MatrixView(window, mySXaModel);
+	myTab->addTab(mySXaView, QString::fromUtf8("SigmaXa"));
+	vector<string> mySLa;
+	mySLa.push_back(myValues.at(5));
+	MatrixModel* mySLaModel = new MatrixModel(mySLa);
+	MatrixView* mySLaView = new MatrixView(window, mySLaModel);
+	myTab->addTab(mySLaView, QString::fromUtf8("SigmaLa"));
 
-    QPushButton *acceptButton = new QPushButton("&Accept", this);
-    QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptIO()));
+	QPushButton *acceptButton = new QPushButton("&Accept", this);
+	QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptIO()));
 
-    myLayout->addWidget(myTab);
-    myLayout->addWidget(acceptButton);
+	myLayout->addWidget(myTab);
+	myLayout->addWidget(acceptButton);
 
-    window->setLayout(myLayout);
-    window->setWindowModality(Qt::ApplicationModal);
-    window->setWindowTitle("Interior Orientation Report");
-    window->show();
+	window->setLayout(myLayout);
+	window->setWindowModality(Qt::ApplicationModal);
+	window->setWindowTitle("Interior Orientation Report");
+	window->show();
 
-    return true;
+	return true;
 }
 
 void IOUserInterface_Qt::testActivateIO()
@@ -196,7 +196,7 @@ void IOUserInterface_Qt::testActivateIO()
 
 void IOUserInterface_Qt::acceptIO()
 {
-    manager->acceptIO();
+	manager->acceptIO();
 }
 
 bool IOUserInterface_Qt::exec()
@@ -296,6 +296,11 @@ bool IOUserInterface_Qt::exec()
 
 		testActivateIO();
 
+		receiveMark(QPoint(0,0));
+		receiveMark(QPoint(0,manager->getFrameColumns()));
+		receiveMark(QPoint(manager->getFrameRows(),manager->getFrameColumns()));
+		receiveMark(QPoint(manager->getFrameRows(),0));
+
 		this->show();
 		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
 		{
@@ -303,10 +308,7 @@ bool IOUserInterface_Qt::exec()
 			myImageView->drawPoints(points,1);
 			myImageView->fitView();
 		}
-		receiveMark(QPoint(0,0));
-		receiveMark(QPoint(0,manager->getFrameColumns()));
-		receiveMark(QPoint(manager->getFrameRows(),manager->getFrameColumns()));
-		receiveMark(QPoint(manager->getFrameRows(),0));
+
 		table1->selectRow(0);
 		table1->setFocus();
 		testActivateIO();
@@ -369,8 +371,8 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 
-    if (qApp->exec())
-        return false;
+	if (qApp->exec())
+		return false;
 	delete(myImageView);
-    return true;
+	return true;
 }

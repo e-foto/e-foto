@@ -1,5 +1,5 @@
 /**************************************************************************
-                        InteriorOrientation.h
+						InteriorOrientation.h
 **************************************************************************/
 
 
@@ -28,78 +28,78 @@ class Image;
 class InteriorOrientation : public EObject
 {
 
-    //EOBJECT
+	//EOBJECT
 
-    // Private attributes
-    //
-    int imageId;
-    Matrix Xa;
-    Matrix La;
-    Matrix A;
-    Matrix P;
+	// Private attributes
+	//
+	int imageId;
+	Matrix Xa;
+	Matrix La;
+	Matrix A;
+	Matrix P;
 
-    // Composed objects
-    //
-    IOQuality myQuality;
+	// Composed objects
+	//
+	IOQuality myQuality;
 
-    // Associated objects
-    //
-    Image* myImage;
+	// Associated objects
+	//
+	Image* myImage;
 
-    // Private method
-    //
-    void generateA();
+	// Private method
+	//
+	void generateA();
 
 public:
 
-    // Constructors and destructors
-    //
-    InteriorOrientation();
-    InteriorOrientation(int myImageId); // Constructor with ids only, needed in project use.
-    virtual ~InteriorOrientation();
+	// Constructors and destructors
+	//
+	InteriorOrientation();
+	InteriorOrientation(int myImageId); // Constructor with ids only, needed in project use.
+	virtual ~InteriorOrientation();
 
-    // Private attribute accessors
-    //
+	// Private attribute accessors
+	//
 
-    int getImageId();
-    Matrix getXa();
-    Matrix getLa();
-    Matrix getA();
-    Matrix getP();
+	int getImageId();
+	Matrix getXa();
+	Matrix getLa();
+	Matrix getA();
+	Matrix getP();
 
 
-    // Composed objects accessors
-    //
+	// Composed objects accessors
+	//
 
-    IOQuality getQuality();
+	IOQuality getQuality();
 
-    // Associated objects accessors
-    //
+	// Associated objects accessors
+	//
 
-    void setImage(Image *myNewImage);
-    Image* getImage();
+	void setImage(Image *myNewImage);
+	Image* getImage();
 
-    // EObject methods
-    //
-    string objectType(void);
-    string objectAssociations(void);
-    bool is(string s);
+	// EObject methods
+	//
+	string objectType(void);
+	string objectAssociations(void);
+	bool is(string s);
 
-    // XML methods
-    //
-    void xmlSetData(string xml);
-    string xmlGetData();
+	// XML methods
+	//
+	void xmlSetData(string xml);
+	string xmlGetData();
 
-    // Other methods
-    //
+	// Other methods
+	//
 
-    void calculate();
-    AnalogImageSpaceCoordinate digitalToAnalog(unsigned int col, unsigned int lin);
-    AnalogImageSpaceCoordinate digitalToAnalog(DigitalImageSpaceCoordinate myDigitalCoordinate);
-    PositionMatrix digitalToAnalog(const PositionMatrix& myDigitalPositions);
-    DigitalImageSpaceCoordinate analogToDigital(double x, double y);
-    DigitalImageSpaceCoordinate analogToDigital(AnalogImageSpaceCoordinate myAnalogCoordinate);
-    PositionMatrix analogToDigital(const PositionMatrix& myAnalogPositions);
+	void calculate();
+	AnalogImageSpaceCoordinate digitalToAnalog(unsigned int col, unsigned int lin);
+	AnalogImageSpaceCoordinate digitalToAnalog(DigitalImageSpaceCoordinate myDigitalCoordinate);
+	PositionMatrix digitalToAnalog(const PositionMatrix& myDigitalPositions);
+	DigitalImageSpaceCoordinate analogToDigital(double x, double y);
+	DigitalImageSpaceCoordinate analogToDigital(AnalogImageSpaceCoordinate myAnalogCoordinate);
+	PositionMatrix analogToDigital(const PositionMatrix& myAnalogPositions);
 
 };
 

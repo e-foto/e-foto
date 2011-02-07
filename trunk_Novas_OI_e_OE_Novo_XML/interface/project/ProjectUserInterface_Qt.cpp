@@ -63,10 +63,10 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(sensorForm.decenteredSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
 	this->connect(sensorForm.principalSigmaController, SIGNAL(validateChanged()), this, SLOT(validatingSensor()) );
 
-    connect(pointsForm.importButton, SIGNAL(clicked()), this, SLOT( importPointsFromTxt() ) );
-    connect(pointsForm.exportToTxtButton, SIGNAL(clicked()), this, SLOT(exportPointsToTxt()) );
-    connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesFromTxt() ) );
-    imagesForm.importButton->setEnabled(false);
+	connect(pointsForm.importButton, SIGNAL(clicked()), this, SLOT( importPointsFromTxt() ) );
+	connect(pointsForm.exportToTxtButton, SIGNAL(clicked()), this, SLOT(exportPointsToTxt()) );
+	connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesFromTxt() ) );
+	imagesForm.importButton->setEnabled(false);
 
 	// Bloqueia alguns dos  dipositivos
 	this->showMaximized();
@@ -420,7 +420,7 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				alert->show();
 				return;
 			}
-            QString imagesMissing="";
+			QString imagesMissing="";
 
 			for (int i=0 ;i < manager->getFreeImageId() ;i++)
 			{
@@ -432,13 +432,13 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				QFileInfo image(dir.absoluteFilePath(imagesName));
 				if (!image.exists())
 				{
-                    imagesMissing.append(image.fileName()).append("\n");
+					imagesMissing.append(image.fileName()).append("\n");
 				}
 			}
 			if(imagesMissing.compare("")!=0)
 			{
 
-                QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n"));
+				QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n"));
 				alertImages->show();
 			}
 
@@ -614,49 +614,49 @@ void ProjectUserInterface_Qt::executeSR()
 
 void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
 {
-    if ((editState && index!=currentIndex)||addNewState)
-    {
-        if (controlButtons.saveButton->isEnabled())
-        {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-                                          "Do you want to keep all changes?",
-                                          QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-            if (reply == QMessageBox::Yes)
-            {
-                controlButtons.saveButton->click();
-            }
-            else if (reply == QMessageBox::No)
-            {
-                controlButtons.cancelButton->click();
-            }
-            else
-            {
-                treeWidget->setCurrentIndex(currentIndex);
-                return;
-            }
-        }
-        else
-        {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-                                          "Registration data is not complete and will be lost. Continue?",
-                                          QMessageBox::Yes | QMessageBox::Cancel);
-            if (reply == QMessageBox::Yes)
-            {
-                controlButtons.cancelButton->click();
-            }
-            else
-            {
-                //if (addNewState)
-				//  treeWidget->setCurrentIndex(0);
-                //else
+	if ((editState && index!=currentIndex)||addNewState)
+	{
+		if (controlButtons.saveButton->isEnabled())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Do you want to keep all changes?",
+										  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.saveButton->click();
+			}
+			else if (reply == QMessageBox::No)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
 				treeWidget->setCurrentIndex(currentIndex);
-                return;
-            }
-        }
-    }
-    currentIndex = index;
+				return;
+			}
+		}
+		else
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
+										  "Registration data is not complete and will be lost. Continue?",
+										  QMessageBox::Yes | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes)
+			{
+				controlButtons.cancelButton->click();
+			}
+			else
+			{
+				//if (addNewState)
+				//  treeWidget->setCurrentIndex(0);
+				//else
+				treeWidget->setCurrentIndex(currentIndex);
+				return;
+			}
+		}
+	}
+	currentIndex = index;
 	ETreeModel* etm = manager->getTreeModel();
 	if (index.parent() == QModelIndex())
 	{
@@ -804,23 +804,23 @@ void ProjectUserInterface_Qt::newTree()
 
 void ProjectUserInterface_Qt::updateTree()
 {
-    if (savedIn == "")
-    {
-        //treeWidget->setHeaderLabel(tr("New Project"));
-        projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
-    }
-    else
-    {
-        //treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
-        if (actionSave_file->isEnabled())
-            projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
-        else
-            projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
-    }
-    if (headerForm.lineEditName->text() != "")
-        setWindowTitle(headerForm.lineEditName->text() + tr(" - efoto[Project Manager]"));
-    else
-        setWindowTitle(tr("efoto[Project Manager]"));
+	if (savedIn == "")
+	{
+		//treeWidget->setHeaderLabel(tr("New Project"));
+		projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
+	}
+	else
+	{
+		//treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
+		if (actionSave_file->isEnabled())
+			projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
+		else
+			projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
+	}
+	if (headerForm.lineEditName->text() != "")
+		setWindowTitle(headerForm.lineEditName->text() + tr(" - efoto[Project Manager]"));
+	else
+		setWindowTitle(tr("efoto[Project Manager]"));
 
 	ETreeModel* etm = manager->getTreeModel();
 
@@ -990,8 +990,8 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSensor()));
 
 	EDomElement node(manager->getXml("sensor", "key", intToString(id)));
-        sensorForm.clearForm();
-        sensorForm.setFormLocale(QLocale(QLocale::system()));
+		sensorForm.clearForm();
+		sensorForm.setFormLocale(QLocale(QLocale::system()));
 	sensorForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
 	centerArea.setCurrentIndex(2);
@@ -1152,7 +1152,7 @@ void ProjectUserInterface_Qt::viewPoints()
 	connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewPoint()));
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelPoints()));
 
-    EDomElement node(manager->getXml("points"));
+	EDomElement node(manager->getXml("points"));
 
 	pointsForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea, QTableWidget {border: 0px}");
@@ -1212,7 +1212,7 @@ void ProjectUserInterface_Qt::enableForm()
 // Salvando cada view...
 void ProjectUserInterface_Qt::saveHeader()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Header", headerForm.getvalues());
 	viewHeader();
 	actionSave_file->setEnabled(true);
@@ -1221,7 +1221,7 @@ void ProjectUserInterface_Qt::saveHeader()
 
 void ProjectUserInterface_Qt::saveTerrain()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Terrain", terrainForm.getvalues());
 	viewTerrain();
 	actionSave_file->setEnabled(true);
@@ -1230,7 +1230,7 @@ void ProjectUserInterface_Qt::saveTerrain()
 
 void ProjectUserInterface_Qt::saveSensor()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Sensor", currentItemId, sensorForm.getvalues());
 	viewSensor(currentItemId);
 	actionSave_file->setEnabled(true);
@@ -1239,7 +1239,7 @@ void ProjectUserInterface_Qt::saveSensor()
 
 void ProjectUserInterface_Qt::saveFlight()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Flight", currentItemId, flightForm.getvalues());
 	viewFlight(currentItemId);
 	actionSave_file->setEnabled(true);
@@ -1248,7 +1248,7 @@ void ProjectUserInterface_Qt::saveFlight()
 
 void ProjectUserInterface_Qt::saveImage()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Image", currentItemId, imageForm.getvalues());
 	viewImage(currentItemId);
 	actionSave_file->setEnabled(true);
@@ -1257,7 +1257,7 @@ void ProjectUserInterface_Qt::saveImage()
 
 void ProjectUserInterface_Qt::savePoint()
 {
-    editState = false;
+	editState = false;
 	manager->editComponent("Point", currentItemId, pointForm.getvalues());
 	viewPoint(currentItemId);
 	actionSave_file->setEnabled(true);
@@ -1267,61 +1267,61 @@ void ProjectUserInterface_Qt::savePoint()
 // Cancelando cada view...
 void ProjectUserInterface_Qt::cancelHeader()
 {
-    editState = false;
+	editState = false;
 	viewHeader();
 }
 
 void ProjectUserInterface_Qt::cancelTerrain()
 {
-    editState = false;
+	editState = false;
 	viewTerrain();
 }
 
 void ProjectUserInterface_Qt::cancelSensor()
 {
-    editState = false;
+	editState = false;
 	viewSensor(currentItemId);
 }
 
 void ProjectUserInterface_Qt::cancelFlight()
 {
-    editState = false;
+	editState = false;
 	viewFlight(currentItemId);
 }
 
 void ProjectUserInterface_Qt::cancelImage()
 {
-    editState = false;
+	editState = false;
 	viewImage(currentItemId);
 }
 
 void ProjectUserInterface_Qt::cancelPoint()
 {
-    editState = false;
+	editState = false;
 	viewPoint(currentItemId);
 }
 
 void ProjectUserInterface_Qt::cancelSensors()
 {
-    addNewState = false;
+	addNewState = false;
 	viewSensors();
 }
 
 void ProjectUserInterface_Qt::cancelFlights()
 {
-    addNewState = false;
+	addNewState = false;
 	viewFlights();
 }
 
 void ProjectUserInterface_Qt::cancelImages()
 {
-    addNewState = false;
+	addNewState = false;
 	viewImages();
 }
 
 void ProjectUserInterface_Qt::cancelPoints()
 {
-    addNewState = false;
+	addNewState = false;
 	viewPoints();
 }
 
@@ -1452,7 +1452,7 @@ text += "</flight>";
 
 void ProjectUserInterface_Qt::newImage()
 {
-    addNewState = true;
+	addNewState = true;
 	currentItemId = manager->getFreeImageId();
 
 	string text = "";
@@ -1480,7 +1480,7 @@ void ProjectUserInterface_Qt::newImage()
 
 void ProjectUserInterface_Qt::newPoint()
 {
-    addNewState = true;
+	addNewState = true;
 	//updateView(new QLabel("Futuro view de point"));
 	string text = "";
 
@@ -1551,7 +1551,7 @@ emit viewButtons->editButton->click();
 
 void ProjectUserInterface_Qt::saveNewImage()
 {
-    addNewState = false;
+	addNewState = false;
 	manager->addComponent(imageForm.getvalues(),"images");
 	viewImages();
 	actionSave_file->setEnabled(true);
@@ -1932,89 +1932,89 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 	while(!importFile->atEnd())
 	{
 		QByteArray line = importFile->readLine();
-        QString aux(line);
-        //pointsList << aux.left(aux.lastIndexOf('\n'));
-        pointsList << aux.remove('\n');
+		QString aux(line);
+		//pointsList << aux.left(aux.lastIndexOf('\n'));
+		pointsList << aux.remove('\n');
 	}
 
-    importFile->close();
+	importFile->close();
 
-    for (int i=0; i<pointsList.length();i++)
-    {
-        EDomElement newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId(),i+1);
-        if ( newPointXML.hasTagName("pointId") )
-        {
-            manager->addComponent(newPointXML.getContent().data(),"points");
-        }
-    }
-    updateTree();
-    viewPoints();
+	for (int i=0; i<pointsList.length();i++)
+	{
+		EDomElement newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId(),i+1);
+		if ( newPointXML.hasTagName("pointId") )
+		{
+			manager->addComponent(newPointXML.getContent().data(),"points");
+		}
+	}
+	updateTree();
+	viewPoints();
 }
 
 /** This function convert a point data from a *.txt line in a children point XML valid
 */
 EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
 {
-    stringstream aux;
-    string gcpIdField, eField, nField, hField, dEField, dNField, dHField, newXml;
+	stringstream aux;
+	string gcpIdField, eField, nField, hField, dEField, dNField, dHField, newXml;
 
-    if (point.split("\t").length() == 7)
-    {
-        gcpIdField = point.split("\t").at(0).toStdString().c_str();
-        eField = point.split("\t").at(1).toStdString().c_str();
-        nField = point.split("\t").at(2).toStdString().c_str();
-        hField = point.split("\t").at(3).toStdString().c_str();
-        dEField = point.split("\t").at(4).toStdString().c_str();
-        dNField = point.split("\t").at(5).toStdString().c_str();
-        dHField = point.split("\t").at(6).toStdString().c_str();
-
-		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
-		aux << "<description>" << "Put point description here" << "</description>\n";
-		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
-		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
-        aux << "<sigma>\n";
-        aux << "<mml:matrix>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dEField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dNField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dHField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "</mml:matrix>\n";
-        aux << "</sigma>\n";
-		aux << "</spatialCoordinates>\n";
-		aux << "<imagesMeasurements>\n";
-		aux << "</imagesMeasurements>\n";
-		aux << "</point>";
-    }
-    else if (point.split("\t").length() == 4)
-    {
-        gcpIdField = point.split("\t").at(0).toStdString().c_str();
-        eField = point.split("\t").at(1).toStdString().c_str();
-        nField = point.split("\t").at(2).toStdString().c_str();
-        hField = point.split("\t").at(3).toStdString().c_str();
+	if (point.split("\t").length() == 7)
+	{
+		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		eField = point.split("\t").at(1).toStdString().c_str();
+		nField = point.split("\t").at(2).toStdString().c_str();
+		hField = point.split("\t").at(3).toStdString().c_str();
+		dEField = point.split("\t").at(4).toStdString().c_str();
+		dNField = point.split("\t").at(5).toStdString().c_str();
+		dHField = point.split("\t").at(6).toStdString().c_str();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
 		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
-        aux << "<sigma>Not Available</sigma>\n";
+		aux << "<sigma>\n";
+		aux << "<mml:matrix>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dEField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dNField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dHField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "</mml:matrix>\n";
+		aux << "</sigma>\n";
 		aux << "</spatialCoordinates>\n";
 		aux << "<imagesMeasurements>\n";
 		aux << "</imagesMeasurements>\n";
 		aux << "</point>";
-    }else{
-        QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
-    }
+	}
+	else if (point.split("\t").length() == 4)
+	{
+		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		eField = point.split("\t").at(1).toStdString().c_str();
+		nField = point.split("\t").at(2).toStdString().c_str();
+		hField = point.split("\t").at(3).toStdString().c_str();
 
-    newXml=aux.str();
-    EDomElement newPointXml(newXml.c_str());
-    return newPointXml;
+		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+		aux << "<description>" << "Put point description here" << "</description>\n";
+		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
+		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+		aux << "<sigma>Not Available</sigma>\n";
+		aux << "</spatialCoordinates>\n";
+		aux << "<imagesMeasurements>\n";
+		aux << "</imagesMeasurements>\n";
+		aux << "</point>";
+	}else{
+		QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+	}
+
+	newXml=aux.str();
+	EDomElement newPointXml(newXml.c_str());
+	return newPointXml;
 }
 
 /** This function exports all points in current XML to *.txt file with a one point in
@@ -2022,45 +2022,45 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 */
 void ProjectUserInterface_Qt::exportPointsToTxt()
 {
-    QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
-    QFile *exportFileName= new QFile(fileSaveName);
-    exportFileName->setFileName(fileSaveName);
-    exportFileName->open(QIODevice::WriteOnly);
+	QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
+	QFile *exportFileName= new QFile(fileSaveName);
+	exportFileName->setFileName(fileSaveName);
+	exportFileName->open(QIODevice::WriteOnly);
 
-    EDomElement points(manager->getXml("points").c_str());
+	EDomElement points(manager->getXml("points").c_str());
 
-    for (int i=1; i<=points.children().size(); i++)
-    {
-        exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
-    }
-    exportFileName->close();
+	for (int i=1; i<=points.children().size(); i++)
+	{
+		exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+	}
+	exportFileName->close();
 }
 
 /** This function convert a EDomElement children Point in a line *.txt point format
 */
 string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 {
-    stringstream aux;
-    stringstream stdev;
-    QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
-    aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
-    aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
+	stringstream aux;
+	stringstream stdev;
+	QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
+	aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
+	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
 
-    if (points.hasTagName("mml:matrix"))
-    {
-       aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
-       aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
-       aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
-    }
+	if (points.hasTagName("mml:matrix"))
+	{
+	   aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
+	   aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
+	   aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
+	}
 
-    aux <<"\n";
-    string result=aux.str();
-    qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
+	aux <<"\n";
+	string result=aux.str();
+	qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
 
-    qDebug("stdev:%s",stdev.str().c_str());
-    qDebug("result:%s",result.c_str());
+	qDebug("stdev:%s",stdev.str().c_str());
+	qDebug("result:%s",result.c_str());
 
-    return result.c_str();
+	return result.c_str();
 }
 
 /** This function import images from a *.txt file with a one image in each line
@@ -2068,31 +2068,31 @@ string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 */
 void ProjectUserInterface_Qt::importImagesFromTxt()
 {
-    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
-    QFile *importFile = new QFile(importFileName);
-    QStringList imagesList;
+	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	QFile *importFile = new QFile(importFileName);
+	QStringList imagesList;
 
-    importFile->open(QIODevice::ReadOnly);
+	importFile->open(QIODevice::ReadOnly);
 
-    while(!importFile->atEnd())
-    {
-        QByteArray line = importFile->readLine();
-        QString aux(line);
-        imagesList << aux.remove('\n');
-    }
+	while(!importFile->atEnd())
+	{
+		QByteArray line = importFile->readLine();
+		QString aux(line);
+		imagesList << aux.remove('\n');
+	}
 
-    importFile->close();
+	importFile->close();
 
-    for (int i=0; i<imagesList.length();i++)
-    {
-        EDomElement newImageXML=imageTxtToXml(imagesList.at(i),manager->getFreeImageId(),i+1);
-        if ( newImageXML.hasTagName("imageId") )
-        {
-            manager->addComponent(newImageXML.getContent().data(),"images");
-        }
-    }
-    updateTree();
-    viewImages();
+	for (int i=0; i<imagesList.length();i++)
+	{
+		EDomElement newImageXML=imageTxtToXml(imagesList.at(i),manager->getFreeImageId(),i+1);
+		if ( newImageXML.hasTagName("imageId") )
+		{
+			manager->addComponent(newImageXML.getContent().data(),"images");
+		}
+	}
+	updateTree();
+	viewImages();
 }
 
 /** This function convert image data from a *.txt line in a children image XML valid
@@ -2100,10 +2100,10 @@ void ProjectUserInterface_Qt::importImagesFromTxt()
 */
 EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int line, int sensorKey, int flightKey)
 {
-    stringstream aux;
+	stringstream aux;
 
-    // implementar o xml de images aqui
-    /*
+	// implementar o xml de images aqui
+	/*
 	aux << "<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
 	aux << "<imageId>" << "" << "</imageId>\n";
 	aux << "<width uom=\"#px\"" << "" << "</width>\n";
@@ -2123,11 +2123,11 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 	aux << "</INS>\n";
 	aux << "</image>";
 
-    QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+	QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
 
-    */
-    string newXml=aux.str();
-    EDomElement newImageXml(newXml.c_str());
+	*/
+	string newXml=aux.str();
+	EDomElement newImageXml(newXml.c_str());
 
-    return newImageXml;
+	return newImageXml;
 }

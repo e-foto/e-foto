@@ -1,5 +1,5 @@
 /*******************************************************************************
-                        		Sensor.h
+								Sensor.h
 *******************************************************************************/
 
 #ifndef SENSOR_H
@@ -21,13 +21,13 @@ class AnalogImageSpaceCoordinate;
 
 class SpectralRange
 {
-    int band;
-    double inferiorLimit;
-    double superiorLimit;
+	int band;
+	double inferiorLimit;
+	double superiorLimit;
 
 public:
 
-    friend class Sensor;
+	friend class Sensor;
 	friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
 	friend class SensorWithKnowDimensions;
@@ -52,73 +52,73 @@ public:
 
 class Sensor : public EObject
 {
-    //EOBJECT
+	//EOBJECT
 
 protected:
 
-    // Private attributes
-    //
-    int id;
+	// Private attributes
+	//
+	int id;
 	string sensorId;
 	//double focalDistance;
 	//double focalDistanceSigma;
 	//AnalogImageSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
-    string description;
-    string geometry;
-    string detector;
-    string energySource;
+	string description;
+	string geometry;
+	string detector;
+	string energySource;
 	string calculationMode;
-    string calibrationCertificateNumber;
-    string calibrationCertificateDispatch;
-    string calibrationCertificateExpiration;
+	string calibrationCertificateNumber;
+	string calibrationCertificateDispatch;
+	string calibrationCertificateExpiration;
 	//string focalDistanceUnit;
-    string spectralRangesUnit;
-    deque<SpectralRange> spectralRanges;
+	string spectralRangesUnit;
+	deque<SpectralRange> spectralRanges;
 	//deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
 	//deque<DecenteredDistortionCoefficient> dCoefficients;
 
-    // Associated Objects
-    //
-    deque<Image*> myImages;
-    deque<Flight*> myFlights;
+	// Associated Objects
+	//
+	deque<Image*> myImages;
+	deque<Flight*> myFlights;
 
 public:
 
-    // Constructors and destructors
-    //
-    Sensor();
-    Sensor(const Sensor& sensor);
-    Sensor(int myId);
-    virtual ~Sensor();
+	// Constructors and destructors
+	//
+	Sensor();
+	Sensor(const Sensor& sensor);
+	Sensor(int myId);
+	virtual ~Sensor();
 
-    // Private attributes accessor methods
-    //
-    void setId(int newId);
+	// Private attributes accessor methods
+	//
+	void setId(int newId);
 	//void setFocalDistance(double newFocalDistance);
 	//void setFocalDistanceSigma(double newFocalDistanceSigma);
 	//void setPrincipalPointCoordinates(AnalogImageSpaceCoordinate newCoordinates);
-    void setDescription(string newDescription);
+	void setDescription(string newDescription);
 	void setCalculationMode(string newCalculationMode);
-    int getId();
+	int getId();
 	virtual double getFocalDistance() = 0;
 	virtual double getFocalDistanceSigma() = 0;
 	virtual AnalogImageSpaceCoordinate getPrincipalPointCoordinates() = 0;
-    string getDescription();
+	string getDescription();
 	string getCalculationMode();
 
-    // Associated object accessor methods
-    //
-    void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
-    void putFlight(Flight* newFligthAssociation);
-    Image* getImage(int imageId); // Get associated image or flight at sensor by id.
-    Flight* getFlight(int flightId);
-    int countImages(); // Inform the number of images or flights associated the sensor.
-    int countFlights();
-    Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
-    Flight* getFlightAt(unsigned int index);
+	// Associated object accessor methods
+	//
+	void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
+	void putFlight(Flight* newFligthAssociation);
+	Image* getImage(int imageId); // Get associated image or flight at sensor by id.
+	Flight* getFlight(int flightId);
+	int countImages(); // Inform the number of images or flights associated the sensor.
+	int countFlights();
+	Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
+	Flight* getFlightAt(unsigned int index);
 
-    // EObject methods
-    //
+	// EObject methods
+	//
 	virtual string objectType(void);
 
 };
