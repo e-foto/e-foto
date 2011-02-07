@@ -61,16 +61,31 @@ Sensor* EFotoManager::instanceSensor(int id)
     EDomElement root(xmlData);
     EDomElement xmlSensor = root.elementByTagAtt("sensor", "key", intToString(id));
     if (xmlSensor.getContent().compare("") == 0)
-        return NULL;
-    if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-		xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
-        xmlSensor.elementByTagName("detector").toString().compare("film") == 0)
-    {
+		return NULL;
+	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
+		xmlSensor.elementByTagName("calculationMode").toString().compare("With Fiducial Marks") == 0)
+	{
 		SensorWithFiducialMarks* newSensorWithFiducialMarks = new SensorWithFiducialMarks();
 		newSensorWithFiducialMarks->xmlSetData(xmlSensor.getContent());
 		sensors.push_back(newSensorWithFiducialMarks);
 		return (Sensor*) newSensorWithFiducialMarks;
-    }
+	}
+	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
+		xmlSensor.elementByTagName("calculationMode").toString().compare("With Sensor Dimensions") == 0)
+	{
+		SensorWithKnowDimensions* newSensorWithKnowDimensions = new SensorWithKnowDimensions();
+		newSensorWithKnowDimensions->xmlSetData(xmlSensor.getContent());
+		sensors.push_back(newSensorWithKnowDimensions);
+		return (Sensor*) newSensorWithKnowDimensions;
+	}
+	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
+		xmlSensor.elementByTagName("calculationMode").toString().compare("Fixed Parameters") == 0)
+	{
+		SensorWithKnowParameters* newSensorWithKnowParameters = new SensorWithKnowParameters();
+		newSensorWithKnowParameters->xmlSetData(xmlSensor.getContent());
+		sensors.push_back(newSensorWithKnowParameters);
+		return (Sensor*) newSensorWithKnowParameters;
+	}
     return NULL;
 }
 

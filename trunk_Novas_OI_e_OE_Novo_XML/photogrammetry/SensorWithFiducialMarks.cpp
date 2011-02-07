@@ -11,7 +11,7 @@
 /**
  * SensorWithFiducialMarks's default empty constructor.
  */
-SensorWithFiducialMarks::SensorWithFiducialMarks():Sensor()
+SensorWithFiducialMarks::SensorWithFiducialMarks():FrameSensor()
 {
 
 }
@@ -19,7 +19,7 @@ SensorWithFiducialMarks::SensorWithFiducialMarks():Sensor()
 /**
  * SensorWithFiducialMarks's default empty constructor.
  */
-SensorWithFiducialMarks::SensorWithFiducialMarks(const Sensor& sensor):Sensor(sensor)
+SensorWithFiducialMarks::SensorWithFiducialMarks(const Sensor& sensor):FrameSensor(sensor)
 {
 
 }
@@ -27,7 +27,7 @@ SensorWithFiducialMarks::SensorWithFiducialMarks(const Sensor& sensor):Sensor(se
 /**
  * SensorWithFiducialMarks's default empty constructor.
  */
-SensorWithFiducialMarks::SensorWithFiducialMarks(int myId):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId):FrameSensor(myId)
 {
 
 }
@@ -36,7 +36,7 @@ SensorWithFiducialMarks::SensorWithFiducialMarks(int myId):Sensor(myId)
  * This constructor fills Lb but leaves SigmaLb as a matrix containing ones, so P will be an identity.
  * @param myLb
  */
-SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb):FrameSensor(myId)
 {
     setLb(myLb);
 }
@@ -46,7 +46,7 @@ SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb):S
  * If mySigmaLb has a different number of rows and columns than Lb, its values will be set as ones, like in the previous constructor.
  * @param myLb, mySigmaLb
  */
-SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb):Sensor(myId)
+SensorWithFiducialMarks::SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb):FrameSensor(myId)
 {
     setLb(myLb, mySigmaLb);
 }
@@ -252,6 +252,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
     geometry = root.elementByTagName("geometry").toString();
     detector = root.elementByTagName("detector").toString();
     energySource = root.elementByTagName("energySource").toString();
+	calculationMode = root.elementByTagName("calculationMode").toString();
 
     spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
     deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
@@ -327,8 +328,9 @@ string SensorWithFiducialMarks::xmlGetData()
     result << "<type>\n";
     result << "<geometry>" << geometry << "</geometry>\n";
     result << "<platform>aerial</platform>\n";
-    result << "<detector>" << detector << "</detector>\n";
-    result << "<energySource>" << energySource << "</energySource>\n";
+	result << "<detector>" << detector << "</detector>\n";
+	result << "<energySource>" << energySource << "</energySource>\n";
+	result << "<calculationMode>" << calculationMode << "</calculationMode>\n";
     result << "<spectralRanges uom=\"" << spectralRangesUnit << "\">\n";
     for (unsigned int i = 0; i < spectralRanges.size(); i++)
     {

@@ -57,8 +57,7 @@ HEADERS += control/EFotoManager.h \
     infrastructure/ETreeModel.h \
     infrastructure/Matrix.h \
     infrastructure/PositionMatrix.h \
-    infrastructure/RectSupport.h \
-	photogrammetry/SensorWithFiducialMarks.h \
+	infrastructure/RectSupport.h \
     photogrammetry/AnalogFiductialMark.h \
     photogrammetry/AnalogImageSpaceCoordinate.h \
     photogrammetry/CheckingPoint.h \
@@ -75,7 +74,11 @@ HEADERS += control/EFotoManager.h \
     photogrammetry/PhotogrammetricPoint.h \
     photogrammetry/Point.h \
     photogrammetry/ProjectHeader.h \
-    photogrammetry/Sensor.h \
+	photogrammetry/Sensor.h \
+	photogrammetry/FrameSensor.h \
+	photogrammetry/SensorWithFiducialMarks.h \
+	photogrammetry/SensorWithKnowDimensions.h \
+	photogrammetry/SensorWithKnowParameters.h \
     photogrammetry/SpatialRessection.h \
     photogrammetry/Terrain.h \
     interface/project/AbstractForm.h \
@@ -160,8 +163,7 @@ SOURCES += control/EFotoManager.cpp \
     infrastructure/ETreeModel.cpp \
     infrastructure/Matrix.cpp \
     infrastructure/PositionMatrix.cpp \
-    infrastructure/RectSupport.cpp \
-	photogrammetry/SensorWithFiducialMarks.cpp \
+	infrastructure/RectSupport.cpp \
     photogrammetry/AnalogFiductialMark.cpp \
     photogrammetry/AnalogImageSpaceCoordinate.cpp \
     photogrammetry/CheckingPoint.cpp \
@@ -179,6 +181,10 @@ SOURCES += control/EFotoManager.cpp \
     photogrammetry/Point.cpp \
     photogrammetry/ProjectHeader.cpp \
     photogrammetry/Sensor.cpp \
+	photogrammetry/FrameSensor.cpp \
+	photogrammetry/SensorWithFiducialMarks.cpp \
+	photogrammetry/SensorWithKnowDimensions.cpp \
+	photogrammetry/SensorWithKnowParameters.cpp \
     photogrammetry/SpatialRessection.cpp \
     photogrammetry/Terrain.cpp \
     implementation/main/main.cpp \

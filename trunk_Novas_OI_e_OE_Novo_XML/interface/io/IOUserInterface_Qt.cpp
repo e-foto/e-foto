@@ -36,7 +36,7 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
     QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
     QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
 
-    this->manager = manager;
+	this->manager = manager;
 
 	init();
 }
@@ -114,6 +114,8 @@ void IOUserInterface_Qt::init()
 	connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
 	connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
 
+	calculationMode = 0;
+
 	//this->showNormal();
 	//myImageView->fitView();
 }
@@ -183,10 +185,13 @@ bool IOUserInterface_Qt::viewReport()
 
 void IOUserInterface_Qt::testActivateIO()
 {
-    if(manager->countMarks() == manager->getTotalMarks())
-        actionInterior_orientation->setEnabled(true);
-    else
-        actionInterior_orientation->setEnabled(false);
+	if (calculationMode == 1 || calculationMode == 2)
+	{
+		if(manager->countMarks() == manager->getTotalMarks())
+			actionInterior_orientation->setEnabled(true);
+		else
+			actionInterior_orientation->setEnabled(false);
+	}
 }
 
 void IOUserInterface_Qt::acceptIO()
@@ -195,56 +200,174 @@ void IOUserInterface_Qt::acceptIO()
 }
 
 bool IOUserInterface_Qt::exec()
-{	
-    PositionMatrix analogMarks = manager->getAnalogMarks();
-    int numberOfMarks = analogMarks.getRows() / 2;
-
-    points = new QStandardItemModel(numberOfMarks, 5);
-    for (int row = 0; row < numberOfMarks; row++)
-    {
-        deque<string> markData = manager->markData(row);
-        for (unsigned int col = 0; col < markData.size(); col++)
-        {
-            QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
-            points->setItem(row, col, item);
-        }
-        for (int col = markData.size(); col < 4; col++)
-        {
-            QStandardItem* item = new QStandardItem(QString(""));
-            points->setItem(row, col, item);
-        }
-        QStandardItem* item = new QStandardItem();
-        points->setItem(row, 4, item);
-        if (points->data(points->index(row,2)).toString() != "")
-        {
-            points->setData(points->index(row, 4), QVariant(true));
-        }
-        else
-        {
-            points->setData(points->index(row, 4), QVariant(false));
-        }
-    }
-    points->setHeaderData(0, Qt::Horizontal, QVariant("X"));
-    points->setHeaderData(1, Qt::Horizontal, QVariant("Y"));
-    points->setHeaderData(2, Qt::Horizontal, QVariant("Col"));
-    points->setHeaderData(3, Qt::Horizontal, QVariant("Row"));
-    points->setHeaderData(4, Qt::Horizontal, QVariant("Used"));
-    table1->setModel(points);
-    table1->setColumnHidden(4,true);
-    table1->selectRow(0);
-    table1->setFocus();
-
-	testActivateIO();
-
-    this->show();
-	if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+{
+	calculationMode = manager->getCalculationMode();
+	if (calculationMode == 1)
 	{
-		myImageView->createPoints(points,1);
-		myImageView->drawPoints(points,1);
-		myImageView->fitView();
+		PositionMatrix analogMarks = manager->getAnalogMarks();
+		int numberOfMarks = analogMarks.getRows() / 2;
+
+		points = new QStandardItemModel(numberOfMarks, 5);
+		for (int row = 0; row < numberOfMarks; row++)
+		{
+			deque<string> markData = manager->markData(row);
+			for (unsigned int col = 0; col < markData.size(); col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
+				points->setItem(row, col, item);
+			}
+			for (int col = markData.size(); col < 4; col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(""));
+				points->setItem(row, col, item);
+			}
+			QStandardItem* item = new QStandardItem();
+			points->setItem(row, 4, item);
+			if (points->data(points->index(row,2)).toString() != "")
+			{
+				points->setData(points->index(row, 4), QVariant(true));
+			}
+			else
+			{
+				points->setData(points->index(row, 4), QVariant(false));
+			}
+		}
+		points->setHeaderData(0, Qt::Horizontal, QVariant("X"));
+		points->setHeaderData(1, Qt::Horizontal, QVariant("Y"));
+		points->setHeaderData(2, Qt::Horizontal, QVariant("Col"));
+		points->setHeaderData(3, Qt::Horizontal, QVariant("Row"));
+		points->setHeaderData(4, Qt::Horizontal, QVariant("Used"));
+		table1->setModel(points);
+		table1->setColumnHidden(4,true);
+		table1->selectRow(0);
+		table1->setFocus();
+
+		testActivateIO();
+
+		this->show();
+		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+		{
+			myImageView->createPoints(points,1);
+			myImageView->drawPoints(points,1);
+			myImageView->fitView();
+		}
+		makeRepaint();
+		actionMove->trigger();
 	}
-	makeRepaint();
-	actionMove->trigger();
+	if (calculationMode == 2)
+	{
+		PositionMatrix analogMarks = manager->getAnalogMarks();
+		int numberOfMarks = analogMarks.getRows() / 2;
+
+		points = new QStandardItemModel(numberOfMarks, 5);
+		for (int row = 0; row < numberOfMarks; row++)
+		{
+			deque<string> markData = manager->markData(row);
+			for (unsigned int col = 0; col < markData.size(); col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
+				points->setItem(row, col, item);
+			}
+			for (int col = markData.size(); col < 4; col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(""));
+				points->setItem(row, col, item);
+			}
+			QStandardItem* item = new QStandardItem();
+			points->setItem(row, 4, item);
+			if (points->data(points->index(row,2)).toString() != "")
+			{
+				points->setData(points->index(row, 4), QVariant(true));
+			}
+			else
+			{
+				points->setData(points->index(row, 4), QVariant(false));
+			}
+		}
+		points->setHeaderData(0, Qt::Horizontal, QVariant("X"));
+		points->setHeaderData(1, Qt::Horizontal, QVariant("Y"));
+		points->setHeaderData(2, Qt::Horizontal, QVariant("Col"));
+		points->setHeaderData(3, Qt::Horizontal, QVariant("Row"));
+		points->setHeaderData(4, Qt::Horizontal, QVariant("Used"));
+		table1->setModel(points);
+		table1->setColumnHidden(4,true);
+		table1->selectRow(0);
+		table1->setFocus();
+
+		testActivateIO();
+
+		this->show();
+		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+		{
+			myImageView->createPoints(points,1);
+			myImageView->drawPoints(points,1);
+			myImageView->fitView();
+		}
+		receiveMark(QPoint(0,0));
+		receiveMark(QPoint(0,manager->getFrameColumns()));
+		receiveMark(QPoint(manager->getFrameRows(),manager->getFrameColumns()));
+		receiveMark(QPoint(manager->getFrameRows(),0));
+		table1->selectRow(0);
+		table1->setFocus();
+		testActivateIO();
+		makeRepaint();
+		actionMove->trigger();
+	}
+	if (calculationMode == 3)
+	{
+		/*
+		PositionMatrix analogMarks = manager->getAnalogMarks();
+		int numberOfMarks = analogMarks.getRows() / 2;
+
+		points = new QStandardItemModel(numberOfMarks, 5);
+		for (int row = 0; row < numberOfMarks; row++)
+		{
+			deque<string> markData = manager->markData(row);
+			for (unsigned int col = 0; col < markData.size(); col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
+				points->setItem(row, col, item);
+			}
+			for (int col = markData.size(); col < 4; col++)
+			{
+				QStandardItem* item = new QStandardItem(QString(""));
+				points->setItem(row, col, item);
+			}
+			QStandardItem* item = new QStandardItem();
+			points->setItem(row, 4, item);
+			if (points->data(points->index(row,2)).toString() != "")
+			{
+				points->setData(points->index(row, 4), QVariant(true));
+			}
+			else
+			{
+				points->setData(points->index(row, 4), QVariant(false));
+			}
+		}
+		points->setHeaderData(0, Qt::Horizontal, QVariant("X"));
+		points->setHeaderData(1, Qt::Horizontal, QVariant("Y"));
+		points->setHeaderData(2, Qt::Horizontal, QVariant("Col"));
+		points->setHeaderData(3, Qt::Horizontal, QVariant("Row"));
+		points->setHeaderData(4, Qt::Horizontal, QVariant("Used"));
+		table1->setModel(points);
+		table1->setColumnHidden(4,true);
+		table1->selectRow(0);
+		table1->setFocus();
+		*/
+		actionSet_mark->setDisabled(true);
+		removeDockWidget(dockWidget);
+		actionInterior_orientation->setEnabled(true);
+
+		this->show();
+		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
+		{
+			//myImageView->createPoints(points,1);
+			//myImageView->drawPoints(points,1);
+			myImageView->fitView();
+		}
+		makeRepaint();
+		actionMove->trigger();
+	}
 
     if (qApp->exec())
         return false;

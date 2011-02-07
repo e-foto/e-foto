@@ -4,6 +4,8 @@
 
 #include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
 #include "Image.h"
 
 // Constructors and destructors
@@ -247,7 +249,60 @@ void InteriorOrientation::calculate()
             //Calculate La.
             La = Lb + (myQuality.getV());
         }
-    }
+	}
+	else if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithKnowDimensions"))
+	{
+		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*) myImage->getSensor();
+		if (sensor!=NULL && myImage->getDigFidMarks().size() >= 4 && myImage->getDigFidMarks().size() <= 8)
+		{
+			//Generate A from digMarks.
+			generateA();
+
+			//Forge Lb.
+			Matrix Lb = sensor->forgeLb();
+
+			//Calculate P.
+			P.identity(Lb.getRows());
+
+			//Calculate Xa.
+			Xa = ((A.transpose() * P) * A).inverse() * ((A.transpose() * P) * Lb);
+
+			//Compose myQuality.
+			myQuality.calculate(this, myImage->getSensor()); // calculate is not implementade for KnowDimensions.
+
+			//Calculate La.
+			La = Lb + (myQuality.getV());
+		}
+	}
+	else if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithKnowParameters"))
+	{
+		SensorWithKnowParameters* sensor = (SensorWithKnowParameters*) myImage->getSensor();
+		if (sensor!=NULL && myImage->getDigFidMarks().size() >= 4 && myImage->getDigFidMarks().size() <= 8)
+		{
+			//Generate A from digMarks is unnecessary.
+			//generateA();
+
+			//Calculate P is unnecessary.
+			//Matrix SigmaLb = sensor->getSigmaLb();
+			//double variance = SigmaLb.highestValue();
+			//if (abs((long)variance) > 0.000001)
+			//    if (SigmaLb.getCols() == 1)
+			//        P = SigmaLb.toDiagonal() * (1/variance);
+			//else
+			//    P = SigmaLb * (1/variance); // Isto só é válido se a covariancia é sempre menor do que as variancias em sigmaLb.
+			//else
+			//    P.identity(Lb.getRows());
+
+			//Calculate Xa.
+			Xa = sensor->getXa();
+
+			//Compose myQuality.
+			myQuality.calculate(this, myImage->getSensor()); // calculate is not implementade for KnowParameters.
+
+			//Calculate La is unnecessary.
+			//La = Lb + (myQuality.getV());
+		}
+	}
 }
 
 /**

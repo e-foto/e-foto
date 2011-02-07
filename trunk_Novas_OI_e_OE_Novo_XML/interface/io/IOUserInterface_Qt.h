@@ -37,6 +37,7 @@ protected:
     QGridLayout *imageLayout;
     QStandardItemModel *points;
     int selectedPoint;
+	int calculationMode;
     IOManager *manager;
 
 protected slots:
