@@ -5,7 +5,7 @@
 
 #ifndef SENSORWITHFIDUCIALMARKS_H
 #define SENSORWITHFIDUCIALMARKS_H
-#include "Sensor.h"
+#include "FrameSensor.h"
 #include "Matrix.h"
 #include "AnalogFiductialMark.h"
 
@@ -19,7 +19,7 @@
   * @version 1.3 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
-class SensorWithFiducialMarks : public Sensor
+class SensorWithFiducialMarks : public FrameSensor
 {
 
     //EOBJECT

@@ -6,14 +6,17 @@
 #define SENSOR_H
 
 #include "EObject.h"
-#include "AnalogImageSpaceCoordinate.h"
+//#include "AnalogImageSpaceCoordinate.h"
 
+class FrameSensor;
 class SensorWithFiducialMarks;
+class SensorWithKnowDimensions;
+class SensorWithKnowParameters;
 class Image;
 class Flight;
 class AnalogImageSpaceCoordinate;
 
-// Classes/Structs used in sensor only.
+// Classes/Structs used in Sensor only.
 //
 
 class SpectralRange
@@ -25,29 +28,10 @@ class SpectralRange
 public:
 
     friend class Sensor;
+	friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
-};
-
-class RadialSymmetricDistortionCoefficient
-{
-    double value;
-    double sigma;
-
-public:
-
-    friend class Sensor;
-	friend class SensorWithFiducialMarks;
-};
-
-class DecenteredDistortionCoefficient
-{
-    double value;
-    double sigma;
-
-public:
-
-    friend class Sensor;
-	friend class SensorWithFiducialMarks;
+	friend class SensorWithKnowDimensions;
+	friend class SensorWithKnowParameters;
 };
 
 
@@ -61,8 +45,8 @@ public:
   * @author E-Foto group
   *
   * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+  * @date 07/02/2011
+  * @version 1.4 - Rafael Alves de Aguiar & Irving da Silva Badolato.
   *
   */
 
@@ -76,21 +60,22 @@ protected:
     //
     int id;
 	string sensorId;
-    double focalDistance;
-    double focalDistanceSigma;
-    AnalogImageSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
+	//double focalDistance;
+	//double focalDistanceSigma;
+	//AnalogImageSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
     string description;
     string geometry;
     string detector;
     string energySource;
+	string calculationMode;
     string calibrationCertificateNumber;
     string calibrationCertificateDispatch;
     string calibrationCertificateExpiration;
-    string focalDistanceUnit;
+	//string focalDistanceUnit;
     string spectralRangesUnit;
     deque<SpectralRange> spectralRanges;
-    deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
-    deque<DecenteredDistortionCoefficient> dCoefficients;
+	//deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
+	//deque<DecenteredDistortionCoefficient> dCoefficients;
 
     // Associated Objects
     //
@@ -109,15 +94,17 @@ public:
     // Private attributes accessor methods
     //
     void setId(int newId);
-    void setFocalDistance(double newFocalDistance);
-    void setFocalDistanceSigma(double newFocalDistanceSigma);
-    void setPrincipalPointCoordinates(AnalogImageSpaceCoordinate newCoordinates);
+	//void setFocalDistance(double newFocalDistance);
+	//void setFocalDistanceSigma(double newFocalDistanceSigma);
+	//void setPrincipalPointCoordinates(AnalogImageSpaceCoordinate newCoordinates);
     void setDescription(string newDescription);
+	void setCalculationMode(string newCalculationMode);
     int getId();
-    double getFocalDistance();
-    double getFocalDistanceSigma();
-    AnalogImageSpaceCoordinate getPrincipalPointCoordinates();
+	virtual double getFocalDistance() = 0;
+	virtual double getFocalDistanceSigma() = 0;
+	virtual AnalogImageSpaceCoordinate getPrincipalPointCoordinates() = 0;
     string getDescription();
+	string getCalculationMode();
 
     // Associated object accessor methods
     //
@@ -132,7 +119,7 @@ public:
 
     // EObject methods
     //
-    string objectType(void);
+	virtual string objectType(void);
 
 };
 

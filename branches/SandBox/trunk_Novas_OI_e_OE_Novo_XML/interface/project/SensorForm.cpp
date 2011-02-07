@@ -95,9 +95,9 @@ void SensorForm::fillvalues(string values)
     detectorCombo->setCurrentIndex(detectorCombo->findText(QString::fromUtf8(ede.elementByTagName("detector").toString().c_str())));
     energyCombo->setCurrentIndex(energyCombo->findText(QString::fromUtf8(ede.elementByTagName("energySource").toString().c_str())));
 
-    if (ede.hasTagName("calculationModel"))
+	if (ede.hasTagName("calculationMode"))
     {
-        calcModelComboBox->setCurrentIndex(calcModelComboBox->findText(QString::fromUtf8(ede.elementByTagName("calculationModel").toString().c_str()))); //newSensor
+		calcModelComboBox->setCurrentIndex(calcModelComboBox->findText(QString::fromUtf8(ede.elementByTagName("calculationMode").toString().c_str()))); //newSensor
         calculationMode(calcModelComboBox->currentIndex());
     }else
     {
@@ -375,7 +375,7 @@ string SensorForm::getvalues()
 	auxStream << "<platform>" << platformCombo->currentText().toUtf8().data() <<"</platform>\n";
 	auxStream << "<detector>" << detectorCombo->currentText().toUtf8().data() <<"</detector>\n";
 	auxStream << "<energySource>"<< energyCombo->currentText().toUtf8().data() <<"</energySource>\n";
-	auxStream << "<calculationModel>"<< calcModelComboBox->currentText().toUtf8().data() <<"</calculationModel>\n"; //new form sensor
+	auxStream << "<calculationMode>"<< calcModelComboBox->currentText().toUtf8().data() <<"</calculationMode>\n"; //new form sensor
 	auxStream << "<spectralRanges uom=\"#um\"><!--#um equivale a dez elevado a menos seis metros-->\n";
 	auxStream << "<spectralRange band=\"1\">\n"; // aqui tem um valor travado
 	auxStream << "<inferiorLimit>0.4</inferiorLimit>\n"; // aqui tem um valor travado

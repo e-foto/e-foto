@@ -5,6 +5,8 @@
 #include "IOManager.h"
 #include "EFotoManager.h"
 #include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
 #include "Image.h"
 #include "InteriorOrientation.h"
 #include "IOUserInterface.h"
@@ -57,12 +59,17 @@ IOUserInterface* IOManager::getInterface()
 PositionMatrix IOManager::getAnalogMarks()
 {
     if (mySensor != NULL)
-    {
+	{
 		if (mySensor->is("SensorWithFiducialMarks"))
-        {
+		{
 			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
 			return PositionMatrix(mySensorWithFiducialMarks->getLb());
-        }
+		}
+		if (mySensor->is("SensorWithKnowDimensions"))
+		{
+			SensorWithKnowDimensions* mySensorWithKnowDimensions = (SensorWithKnowDimensions*) mySensor;
+			return PositionMatrix(mySensorWithKnowDimensions->forgeLb());
+		}
     }
     return PositionMatrix();
 }
@@ -108,6 +115,13 @@ unsigned int IOManager::getTotalMarks()
     return getAnalogMarks().getRows() / 2;
 }
 
+int IOManager::getCalculationMode()
+{
+	string mode = mySensor->getCalculationMode();
+	cout << mode << endl;
+	return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
+}
+
 bool IOManager::calculateIO()
 {
     if (started)
@@ -121,6 +135,18 @@ bool IOManager::calculateIO()
                 status = true;
             }
         }
+		else if (mySensor->is("SensorWithKnowDimensions"))
+		{
+			SensorWithKnowDimensions* mySensorWithKnowDimensions = (SensorWithKnowDimensions*) mySensor;
+			myIO->calculate();
+			status = true;
+		}
+		else if (mySensor->is("SensorWithKnowParameters"))
+		{
+			SensorWithKnowParameters* mySensorWithKnowParameters = (SensorWithKnowParameters*) mySensor;
+			myIO->calculate();
+			status = true;
+		}
     }
     return status;
 }
@@ -221,16 +247,38 @@ bool IOManager::load(string path)
 
 string IOManager::getImageFile()
 {
-    if (myImage->getFilepath() == ".")
-        return myImage->getFilename();
-    else
-    {
-        string result = "";
-        result += myImage->getFilepath();
-        result += "/";
-        result += myImage->getFilename();
-        return result;
-    }
+	if (myImage->getFilepath() == ".")
+		return myImage->getFilename();
+	else
+	{
+		string result = "";
+		result += myImage->getFilepath();
+		result += "/";
+		result += myImage->getFilename();
+		return result;
+	}
+}
+
+int IOManager::getFrameRows()
+{
+	int rows = 0;
+	if (mySensor->is("SensorWithKnowDimensions"))
+	{
+		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+		rows = sensor->getFrameRows();
+	}
+	return rows;
+}
+
+int IOManager::getFrameColumns()
+{
+	int cols = 0;
+	if (mySensor->is("SensorWithKnowDimensions"))
+	{
+		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+		cols = sensor->getFrameColumns();
+	}
+	return cols;
 }
 
 void IOManager::acceptIO()

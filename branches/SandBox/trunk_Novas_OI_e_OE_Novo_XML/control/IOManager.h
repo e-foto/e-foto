@@ -56,14 +56,17 @@ public:
     PositionMatrix getAnalogMarks();
     bool measureMark(int id, int col, int lin);
     unsigned int countMarks();
-    deque<string> markData(int index);
-    unsigned int getTotalMarks();
+	deque<string> markData(int index);
+	unsigned int getTotalMarks();
+	int getCalculationMode();
     bool calculateIO();
     deque<string> makeReport();
     bool exec();
     bool save(string path);
     bool load(string path);
-    string getImageFile();
+	string getImageFile();
+	int getFrameRows();
+	int getFrameColumns();
     void acceptIO();
 
 };
