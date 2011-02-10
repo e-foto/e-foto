@@ -47,6 +47,7 @@ HEADERS += control/EFotoManager.h \
 	control/IOManager.h \
 	control/ProjectManager.h \
 	control/SRManager.h \
+	control/XmlUpdater.h \
 	infrastructure/AbstractAnalogCoordinate.h \
 	infrastructure/AbstractDigitalCoordinate.h \
 	infrastructure/Coordinate.h \
@@ -135,8 +136,7 @@ HEADERS += control/EFotoManager.h \
 	xml_definition/XMLTerrain.h \
 	xml_definition/XMLFlight.h \
 	xml_definition/XMLSensor.h \
-	xml_definition/XMLSensorWithFiducialMarks.h# \
-#	control/XmlUpdater.h
+	xml_definition/XMLSensorWithFiducialMarks.h
 FORMS += interface/io/IOForm.ui \
 	interface/sr/SRForm.ui \
 	interface/project/FormProject.ui \
@@ -153,6 +153,7 @@ SOURCES += control/EFotoManager.cpp \
 	control/IOManager.cpp \
 	control/ProjectManager.cpp \
 	control/SRManager.cpp \
+	control/XmlUpdater.cpp \
 	infrastructure/AbstractAnalogCoordinate.cpp \
 	infrastructure/AbstractDigitalCoordinate.cpp \
 	infrastructure/Coordinate.cpp \
@@ -240,8 +241,7 @@ SOURCES += control/EFotoManager.cpp \
 	xml_definition/XMLTerrain.cpp \
 	xml_definition/XMLFlight.cpp \
 	xml_definition/XMLSensor.cpp \
-	xml_definition/XMLSensorWithFiducialMarks.cpp# \
-#	control/XmlUpdater.cpp
+	xml_definition/XMLSensorWithFiducialMarks.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
 	interface/io/resource/io_icons.qrc \
 	interface/project/resource/project_resource.qrc \

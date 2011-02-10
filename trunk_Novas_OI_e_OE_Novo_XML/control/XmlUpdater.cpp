@@ -16,7 +16,7 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 
     if(xml=="")
     {
-        cerr << "erro";
+		error = -4;
         return;
     }
     else
@@ -29,6 +29,7 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
         images.setContent(allXml.elementByTagName("images").getContent());
         points.setContent(allXml.elementByTagName("points").getContent());
     }
+	updateBuild(&error);
 }
 
 EDomElement XmlUpdater::getAllXml()
@@ -66,6 +67,16 @@ EDomElement XmlUpdater::getPointsXml()
     return points;
 }
 
+int XmlUpdater::getError()
+{
+	return error;
+}
+
+bool XmlUpdater::isUpdated()
+{
+	return updated;
+}
+
 string XmlUpdater::getReferenceBuild()
 {
     return referenceBuild;
@@ -73,18 +84,18 @@ string XmlUpdater::getReferenceBuild()
 
 string XmlUpdater::getXmlBuild()
 {
-    return xmlBuild=getAllXml().elementByTagName("efotoPhotogrammetricProject").attribute("version");
+	return xmlBuild = getAllXml().elementByTagName("efotoPhotogrammetricProject").attribute("version");
 }
 
 int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
 {
     if (!buildIsValid(buildOne))
     {
-        return -2;
+		return -2; //buildOne (referenceBuil) is invalid
     }
     if (!buildIsValid(buildTwo))
     {
-        return -3;
+		return -3; //buildTwo (thisXmlBuild) is invalid
     }
     int iniOne=stringToInt(buildOne.substr(0,buildOne.find_first_of('.')).c_str());
     int meioOne=stringToInt(buildOne.substr(buildOne.find_first_of('.')+1,(buildOne.find_last_of('.')-buildOne.find_first_of('.')-1)).c_str());
@@ -100,7 +111,7 @@ int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
     }
     else if (iniOne < iniTwo)
     {
-        return -1;
+		return -1; // (referenceBuild < thisXmlBuid) is not supported
     }
     else
     {
@@ -110,7 +121,7 @@ int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
         }
         else if(meioOne<meioTwo)
         {
-            return -1;
+			return -1; // (referenceBuild < thisXmlBuid) is not supported
         }
         else
         {
@@ -120,7 +131,7 @@ int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
             }
             else if (ultOne<ultTwo)
             {
-                return -1;
+				return -1; // (referenceBuild < thisXmlBuid) is not supported
             }
             else
                 return 0;
@@ -135,17 +146,17 @@ bool XmlUpdater::updateBuild(int* error)
     *error = 0;
     if (op ==  0 )
     {
-        return true;
+		return updated = true;
     }
     else if (op > 0)
     {
         executeUpdate();
-        return true;
+		return updated = true;
     }
     else
     {
         *error = op;
-        return false;
+		return updated = false;
     }
 }
 
