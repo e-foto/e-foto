@@ -5,6 +5,7 @@
 #include "ProjectManager.h"
 #include "EFotoManager.h"
 #include "ProjectUserInterface_Qt.h"
+#include "XmlUpdater.h"
 
 // Constructors and Destructor
 //
@@ -175,6 +176,32 @@ bool ProjectManager::loadFile(string filename)
             myFile.close();
 
 			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
+			XmlUpdater updater(xmlData);
+			if (updater.isUpdated())
+			{
+				xmlData = updater.getAllXml().getContent();
+			}
+			else
+			{
+				int error = updater.getError();
+				if (error == -1)
+				{
+					cout << "(referenceBuild < thisXmlBuid) is not supported";
+				}
+				if (error == -2)
+				{
+					cout << "buildOne (referenceBuild) is invalid";
+				}
+				if (error == -3)
+				{
+					cout << "buildTwo (thisXmlBuild) is invalid";
+				}
+				if (error == -4)
+				{
+					cout << "xml string passed is empty";
+				}
+				return false;
+			}
 			// Aqui deve entrar um codigo para validar o XML.
             manager->xmlSetData(xmlData);
 
