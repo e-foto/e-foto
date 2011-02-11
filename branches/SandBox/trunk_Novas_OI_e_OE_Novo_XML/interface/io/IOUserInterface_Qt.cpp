@@ -297,9 +297,9 @@ bool IOUserInterface_Qt::exec()
 		testActivateIO();
 
 		receiveMark(QPoint(0,0));
-		receiveMark(QPoint(0,manager->getFrameColumns()));
-		receiveMark(QPoint(manager->getFrameRows(),manager->getFrameColumns()));
-		receiveMark(QPoint(manager->getFrameRows(),0));
+		receiveMark(QPoint(manager->getFrameColumns(),0));
+		receiveMark(QPoint(manager->getFrameColumns(),manager->getFrameRows()));
+		receiveMark(QPoint(0,manager->getFrameRows()));
 
 		this->show();
 		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
