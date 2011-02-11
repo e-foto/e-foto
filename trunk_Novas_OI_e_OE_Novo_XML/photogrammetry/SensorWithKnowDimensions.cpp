@@ -66,6 +66,7 @@ Matrix SensorWithKnowDimensions::forgeLb()
 	double rowsSize = frameRows * pixelSize / 1000.0;
 	double columnsSize = frameColumns * pixelSize / 1000.0;
 	Matrix Lb(8,1);
+	/* This is wrong, I think... - Rafael on 11/02/2011
 	Lb.set(1,1,-rowsSize/2);
 	Lb.set(2,1,columnsSize/2);
 	Lb.set(3,1,rowsSize/2);
@@ -73,7 +74,15 @@ Matrix SensorWithKnowDimensions::forgeLb()
 	Lb.set(5,1,rowsSize/2);
 	Lb.set(6,1,-columnsSize/2);
 	Lb.set(7,1,-rowsSize/2);
-	Lb.set(8,1,-columnsSize/2);
+	Lb.set(8,1,-columnsSize/2);*/
+	Lb.set(1,1,-columnsSize/2);
+	Lb.set(2,1,rowsSize/2);
+	Lb.set(3,1,columnsSize/2);
+	Lb.set(4,1,rowsSize/2);
+	Lb.set(5,1,columnsSize/2);
+	Lb.set(6,1,-rowsSize/2);
+	Lb.set(7,1,-columnsSize/2);
+	Lb.set(8,1,-rowsSize/2);
 	return Lb;
 }
 

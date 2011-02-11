@@ -711,8 +711,8 @@ bool SensorForm::isForm(string formName)
 
 void SensorForm::updateSensorDiagonal()
 {
-	double x=pixelSizeDoubleSpinBox->value()*sensorRowsSpinBox->value();
-	double y=pixelSizeDoubleSpinBox->value()*sensorColsSpinBox->value();
+	double x=pixelSizeDoubleSpinBox->value()*sensorColsSpinBox->value();
+	double y=pixelSizeDoubleSpinBox->value()*sensorRowsSpinBox->value();
 	double result=sqrt(x*x+y*y);
 
 	QString res;
