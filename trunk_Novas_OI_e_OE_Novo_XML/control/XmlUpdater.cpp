@@ -1,4 +1,5 @@
 #include "XmlUpdater.h"
+#include <QApplication>
 
 XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 {
@@ -22,49 +23,13 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
     else
     {
         allXml.setContent(xml);
-        header.setContent(allXml.elementByTagName("projectHeader").getContent());
-        terrain.setContent(allXml.elementByTagName("terrain").getContent());
-        sensor.setContent(allXml.elementByTagAtt("sensor","key","1").getContent());
-        flight.setContent(allXml.elementByTagAtt("flight","key","1").getContent());
-        images.setContent(allXml.elementByTagName("images").getContent());
-        points.setContent(allXml.elementByTagName("points").getContent());
-    }
+	}
 	updateBuild(&error);
 }
 
 EDomElement XmlUpdater::getAllXml()
 {
     return allXml;
-}
-
-EDomElement XmlUpdater::getHeaderXml()
-{
-    return header;
-}
-
-EDomElement XmlUpdater::getTerrainXml()
-{
-    return terrain;
-}
-
-EDomElement XmlUpdater::getSensorXml()
-{
-    return sensor;
-}
-
-EDomElement XmlUpdater::getFlightXml()
-{
-    return flight;
-}
-
-EDomElement XmlUpdater::getImagesXml()
-{
-    return images;
-}
-
-EDomElement XmlUpdater::getPointsXml()
-{
-    return points;
 }
 
 int XmlUpdater::getError()
@@ -162,13 +127,10 @@ bool XmlUpdater::updateBuild(int* error)
 
 void XmlUpdater::executeUpdate()
 {
-
-  /*  switch ()
-    {
-        case :
-
-    }
-*/
+	if (getXmlBuild().compare("1.0.20") == 0)
+	{
+		updateToBuild1_0_42();
+	}
 }
 
 bool XmlUpdater::buildIsValid(string build)
@@ -183,7 +145,35 @@ bool XmlUpdater::buildIsValid(string build)
 
 void XmlUpdater::updateToBuild1_0_42()
 {
-	//implementação do update aqui	
-	getSensorXml();
+	EDomElement sensor = allXml.elementByTagAtt("sensor","key","1");
+	EDomElement edeType = sensor.elementByTagName("type");
+	string type = edeType.elementByTagName("detector").getContent();
+	if(type=="ccd")
+	{
+		edeType.addChildAtTagName("type","<calculationMode>Fixed Parameters</calculationMode>");
+	}
+	else //if (type=="film")
+	{
+		edeType.addChildAtTagName("type","<calculationMode>With Fiducial Marks</calculationMode>");
+	}
+	sensor.replaceChildByTagName("type", edeType.getContent());
+
+	deque<EDomElement> temp=sensor.elementByTagName("radialSymmetric").children();
+	EDomElement newRadial("<radialSymmetric considered=\"false\">\n</radialSymmetric>\n");
+	for (int i=0; i<temp.size();i++)
+	{
+		newRadial.addChildAtTagName("radialSymmetric",temp.at(i).getContent());
+	}
+	sensor.replaceChildByTagName("radialSymmetric",newRadial.getContent());
+
+	deque<EDomElement> temp1=sensor.elementByTagName("decentered").children();
+	EDomElement newDecentered("<decentered considered=\"false\">\n</decentered>\n");
+	for (int i=0; i<temp1.size();i++)
+	{
+		newDecentered.addChildAtTagName("decentered",temp1.at(i).getContent());
+	}
+	sensor.replaceChildByTagName("decentered",newDecentered.getContent());
+
+	allXml.replaceChildByTagAtt("sensor","key","1",sensor.getContent());
 }
 
