@@ -147,7 +147,7 @@ void XmlUpdater::updateToBuild1_0_42()
 {
 	EDomElement sensor = allXml.elementByTagAtt("sensor","key","1");
 	EDomElement edeType = sensor.elementByTagName("type");
-	string type = edeType.elementByTagName("detector").getContent();
+	string type = edeType.elementByTagName("detector").toString();
 	if(type=="ccd")
 	{
 		edeType.addChildAtTagName("type","<calculationMode>Fixed Parameters</calculationMode>");
