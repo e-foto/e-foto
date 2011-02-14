@@ -12,13 +12,7 @@ private:
     deque <string> builds;
     string xmlBuild; // this is a version descriptor of loaded xml
     string referenceBuild; // this is a version descriptor of reference
-    EDomElement allXml; // this is a xml loaded under constructor
-    EDomElement header;
-    EDomElement terrain;
-    EDomElement sensor;
-    EDomElement flight;
-    EDomElement images;
-    EDomElement points;
+	EDomElement allXml; // this is a xml loaded under constructor
 
 	int error;
 	bool updated;
@@ -29,12 +23,6 @@ public:
 	XmlUpdater(string allXml, string referenceBuild = "");
 
 	EDomElement getAllXml();
-    EDomElement getFlightXml();
-    EDomElement getSensorXml();
-    EDomElement getTerrainXml();
-    EDomElement getHeaderXml();
-    EDomElement getImagesXml();
-    EDomElement getPointsXml();
 	int getError();
 	bool isUpdated();
 
