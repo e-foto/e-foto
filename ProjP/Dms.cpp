@@ -17,12 +17,12 @@ Dms::Dms(int degree, int minute, double second, bool signal)
     setDegree(degree);
     setMinute(minute);
     setSeconds(second);
-    setSignal(signal);
+	setSignal(signal);
 }
 
 Dms::Dms(QString degree)
 {
-    Dms *newDegree = stringToDms(degree);
+	Dms *newDegree = stringToDms(degree);
 
     this->setDegree(newDegree->getDegree());
     this->setMinute(newDegree->getMinute());
@@ -32,7 +32,7 @@ Dms::Dms(QString degree)
 
 void Dms ::setDegree(int newDegrees)
 {
-    degree = (newDegrees<0||newDegrees>359)? 0 : newDegrees ;
+    degree = (0>newDegrees||newDegrees>359)? 0 : newDegrees ;
 }
 
 void Dms ::setMinute(int newMinutes)
@@ -99,10 +99,10 @@ void Dms::setDms(int degree, int minute, double seconds,bool signal)
     this->setDegree(degree);
     this->setMinute(minute);
     this->setSeconds(seconds);
-    this->setSignal(signal);
+	this->setSignal(signal);
 }
 
-QString Dms::toString(int decimals)
+QString Dms::toString()
 {
     QString text;
 
@@ -110,10 +110,10 @@ QString Dms::toString(int decimals)
 		text+="-";
 
     text+=QString::number(this->getDegree());
-    text+=QString::fromUtf8("°");
+	text+="°";
     text+=QString::number(this->getMinute());
     text+="'";
-    text.append(QString::number(this->getSeconds(),'f',decimals));
+    text.append(QString::number(this->getSeconds(),'f',5));
     text+="\"";
 
     return text;
@@ -121,26 +121,20 @@ QString Dms::toString(int decimals)
 
 Dms* Dms::stringToDms(QString dms)
 {
-        dms.replace(QString::fromUtf8("°")," ");
-        dms.replace("'"," ");
-        dms.replace("\""," ");
-
 	int degree=(dms.section(" ",0,0)).toInt();
 	int minute=(dms.section(" ",1,1)).toInt();
 	double second=(dms.section(" ",2,2)).toDouble();
 
-        Dms *converted;
 	if(dms.startsWith('-'))
 	{
-                degree=-degree;
-                converted= new Dms(degree,minute,second,true);
-        }
+		Dms *converted= new Dms(degree,minute,second,true);
+		return converted;
+	}
 	else
 	{
-                converted= new Dms(degree,minute,second,false);
-        }
-        //qDebug()<<converted->toString(3);
+		Dms *converted= new Dms(degree,minute,second,false);
         return converted;
+	}
 }
 
 /**
