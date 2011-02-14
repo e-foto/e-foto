@@ -30,17 +30,28 @@ INCLUDEPATH += . \
 	interface/sr \
 	interface/view \
 	interface/view/mmv \
-	interface/view/sframework \
-	/usr/include/opencv \
-	/usr/include/SDL
-LIBS += -lGL \
-	-lGLU \
-	-lcv \
-	-lhighgui \
-	-lcvaux \
-	-lSDL \
-	-lSDL_image
+        interface/view/sframework
 QT += opengl
+
+unix{
+INCLUDEPATH += /usr/include/opencv \
+        /usr/include/SDL
+LIBS += -lGL \
+        -lGLU \
+        -lcv \
+        -lhighgui \
+        -lcvaux \
+        -lSDL \
+        -lSDL_image
+}
+win32{
+INCLUDEPATH += C:/OpenCV2.0/include/opencv
+LIBS += "C:\OpenCV2.0\bin\libcv200.dll" \
+        "C:\OpenCV2.0\bin\libcvaux200.dll" \
+        "C:\OpenCV2.0\bin\libcxcore200.dll" \
+        "C:\OpenCV2.0\bin\libcxts200.dll" \
+        "C:\OpenCV2.0\bin\libhighgui200.dll"
+}
 
 # Input
 HEADERS += control/EFotoManager.h \
@@ -124,7 +135,7 @@ HEADERS += control/EFotoManager.h \
 	interface/view/sframework/GLMethods.h \
 	interface/view/sframework/CommonCVMethods.h \
 	interface/view/sframework/CommonQtMethods.h \
-	interface/view/sframework/CommonSDLMethods.h \
+        #interface/view/sframework/CommonSDLMethods.h \
 	interface/view/sframework/CommonMethods.h \
 	interface/view/sframework/SViewport.h \
 	interface/view/sframework/SImage.h \
@@ -229,7 +240,7 @@ SOURCES += control/EFotoManager.cpp \
 	interface/view/sframework/GLMethods.cpp \
 	interface/view/sframework/CommonCVMethods.cpp \
 	interface/view/sframework/CommonQtMethods.cpp \
-	interface/view/sframework/CommonSDLMethods.cpp \
+        #interface/view/sframework/CommonSDLMethods.cpp \
 	interface/view/sframework/CommonMethods.cpp \
 	interface/view/sframework/SViewport.cpp \
 	interface/view/sframework/SImage.cpp \
