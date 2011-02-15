@@ -160,34 +160,37 @@ void XmlUpdater::updateToBuild1_0_42()
 	sensor.replaceChildByTagName("type", edeType.getContent());
 
 	/* G1 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de adicionar um parametro num tag */
-	deque<EDomElement> temp=sensor.elementByTagName("radialSymmetric").children();
-	EDomElement newRadial("<radialSymmetric considered=\"false\">\n</radialSymmetric>\n");
-	for (int i=0; i<temp.size();i++)
-	{
-		newRadial.addChildAtTagName("radialSymmetric",temp.at(i).getContent());
-	}
-	sensor.replaceChildByTagName("radialSymmetric",newRadial.getContent());
+	//deque<EDomElement> temp=sensor.elementByTagName("radialSymmetric").children();
+	//EDomElement newRadial("<radialSymmetric considered=\"false\">\n</radialSymmetric>\n");
+	//for (int i=0; i<temp.size();i++)
+	//{
+	//	newRadial.addChildAtTagName("radialSymmetric",temp.at(i).getContent());
+	//}
+	//sensor.replaceChildByTagName("radialSymmetric",newRadial.getContent());
 	/* fim da G1 */
+	sensor.elementByTagName("radialSymmetric").addAttribute("considered", "false");
 
 	/* G2 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de adicionar um parametro num tag */
-	deque<EDomElement> temp1=sensor.elementByTagName("decentered").children();
-	EDomElement newDecentered("<decentered considered=\"false\">\n</decentered>\n");
-	for (int i=0; i<temp1.size();i++)
-	{
-		newDecentered.addChildAtTagName("decentered",temp1.at(i).getContent());
-	}
-	sensor.replaceChildByTagName("decentered",newDecentered.getContent());
+	//deque<EDomElement> temp1=sensor.elementByTagName("decentered").children();
+	//EDomElement newDecentered("<decentered considered=\"false\">\n</decentered>\n");
+	//for (int i=0; i<temp1.size();i++)
+	//{
+	//	newDecentered.addChildAtTagName("decentered",temp1.at(i).getContent());
+	//}
+	//sensor.replaceChildByTagName("decentered",newDecentered.getContent());
 	/* fim da G2 */
+	sensor.elementByTagName("decentered").addAttribute("considered", "false");
 
 	allXml.replaceChildByTagAtt("sensor","key","1",sensor.getContent());
 
 	/*  G3 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de trocar o valor de um parametro num tag*/
-	deque<EDomElement> epp = allXml.elementByTagName("efotoPhotogrammetricProject").children();
-	allXml.replaceChildByTagName("efotoPhotogrammetricProject","<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\nxsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\nxmlns:gml=\"http://www.opengis.net/gml\"\nxmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n</efotoPhotogrammetricProject>\n");
-	for (int i = 0; i < epp.size(); i++)
-	{
-		allXml.addChildAtTagName("efotoPhotogrammetricProject",epp.at(i).getContent());
-	}
+	//deque<EDomElement> epp = allXml.elementByTagName("efotoPhotogrammetricProject").children();
+	//allXml.replaceChildByTagName("efotoPhotogrammetricProject","<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\nxsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\nxmlns:gml=\"http://www.opengis.net/gml\"\nxmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n</efotoPhotogrammetricProject>\n");
+	//for (int i = 0; i < epp.size(); i++)
+	//{
+	//	allXml.addChildAtTagName("efotoPhotogrammetricProject",epp.at(i).getContent());
+	//}
 	/* fim da  G3 */
+	allXml.elementByTagName("efotoPhotogrammetricProject").setAttribute("version", "1.0.42");
 }
 
