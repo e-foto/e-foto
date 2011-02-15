@@ -17,7 +17,8 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 
     if(xml=="")
     {
-		error = -4;
+		error = 4;
+		updated = false;
         return;
     }
     else
@@ -120,7 +121,7 @@ bool XmlUpdater::updateBuild(int* error)
     }
     else
     {
-        *error = op;
+		*error = -op;
 		return updated = false;
     }
 }
@@ -158,6 +159,7 @@ void XmlUpdater::updateToBuild1_0_42()
 	}
 	sensor.replaceChildByTagName("type", edeType.getContent());
 
+	/* G1 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de adicionar um parametro num tag */
 	deque<EDomElement> temp=sensor.elementByTagName("radialSymmetric").children();
 	EDomElement newRadial("<radialSymmetric considered=\"false\">\n</radialSymmetric>\n");
 	for (int i=0; i<temp.size();i++)
@@ -165,7 +167,9 @@ void XmlUpdater::updateToBuild1_0_42()
 		newRadial.addChildAtTagName("radialSymmetric",temp.at(i).getContent());
 	}
 	sensor.replaceChildByTagName("radialSymmetric",newRadial.getContent());
+	/* fim da G1 */
 
+	/* G2 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de adicionar um parametro num tag */
 	deque<EDomElement> temp1=sensor.elementByTagName("decentered").children();
 	EDomElement newDecentered("<decentered considered=\"false\">\n</decentered>\n");
 	for (int i=0; i<temp1.size();i++)
@@ -173,7 +177,17 @@ void XmlUpdater::updateToBuild1_0_42()
 		newDecentered.addChildAtTagName("decentered",temp1.at(i).getContent());
 	}
 	sensor.replaceChildByTagName("decentered",newDecentered.getContent());
+	/* fim da G2 */
 
 	allXml.replaceChildByTagAtt("sensor","key","1",sensor.getContent());
+
+	/*  G3 - isso aqui ´e uma volta por n~ao termos m´etodo capaz de trocar o valor de um parametro num tag*/
+	deque<EDomElement> epp = allXml.elementByTagName("efotoPhotogrammetricProject").children();
+	allXml.replaceChildByTagName("efotoPhotogrammetricProject","<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\nxsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\nxmlns:gml=\"http://www.opengis.net/gml\"\nxmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n</efotoPhotogrammetricProject>\n");
+	for (int i = 0; i < epp.size(); i++)
+	{
+		allXml.addChildAtTagName("efotoPhotogrammetricProject",epp.at(i).getContent());
+	}
+	/* fim da  G3 */
 }
 
