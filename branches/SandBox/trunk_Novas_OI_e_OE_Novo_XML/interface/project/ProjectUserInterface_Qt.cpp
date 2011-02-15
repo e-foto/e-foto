@@ -225,6 +225,7 @@ void ProjectUserInterface_Qt::newProject()
 	text +=	"<platform>aerial</platform>\n";
 	text +=	"<detector>film</detector>\n";
 	text +=	"<energySource>natural</energySource>\n";
+	text +=	"<calculationMode>With Fiducial Marks</calculationMode>";
 	text +=	"<spectralRanges uom=\"#um\">\n";
 	//text +=	"<spectralRange band=\"\">\n";
 	//text +=	"<inferiorLimit></inferiorLimit>\n";
@@ -243,7 +244,7 @@ void ProjectUserInterface_Qt::newProject()
 	text +=	"<sigma></sigma>\n";
 	text +=	"</focalDistance>\n";
 	text +=	"<distortionCoefficients>\n";
-	text +=	"<radialSymmetric>\n";
+	text +=	"<radialSymmetric considered=\"false\">\n";
 	text +=	"<k0>\n";
 	text +=	"<value></value>\n";
 	text += "<sigma></sigma>\n";
@@ -261,7 +262,7 @@ void ProjectUserInterface_Qt::newProject()
 	text += "<sigma></sigma>\n";
 	text +=	"</k3>\n";
 	text +=	"</radialSymmetric>\n";
-	text +=	"<decentered>\n";
+	text +=	"<decentered considered=\"false\">\n";
 	text +=	"<P1>\n";
 	text +=	"<value></value>\n";
 	text += "<sigma></sigma>\n";
@@ -414,12 +415,14 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 	{
 		if (manager->loadFile(filename.toStdString()))
 		{
+			/*//deprecated
 			if (!manager->testFileVersion())
 			{
 				QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
 				alert->show();
 				return;
 			}
+			*/
 			QString imagesMissing="";
 
 			for (int i=0 ;i < manager->getFreeImageId() ;i++)
@@ -481,8 +484,24 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 		}
 		else
 		{
-			QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - The file does not exist;\n - A bug in the program.\n\nTry changing the file's name or path and try again.");
+			QMessageBox* alert = NULL;
+			switch (manager->informFileVersionError())
+			{
+			case 0:
+				alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - The file does not exist;\n - A bug in the program.\n\nTry changing the file's name or path and try again.");
+				break;
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				alert = new QMessageBox(QMessageBox::Warning,"Unable to load file","The e-foto software was unable to load the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
+				break;
+			default:
+				alert = new QMessageBox(QMessageBox::Warning,"Unable to open or load file","The e-foto software was unable to open or load the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file's name or path or changing the file or version of the software and try again.");
+				break;
+			}
 			alert->show();
+			//delete alert;
 		}
 	}
 }
