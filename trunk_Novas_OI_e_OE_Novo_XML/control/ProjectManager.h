@@ -10,6 +10,7 @@
 #include "ETreeModel.h"
 #include "PositionMatrix.h"
 #include "ProjectUserInterface.h"
+#include "XmlUpdater.h"
 
 class ProjectUserInterface;
 class EFotoManager;
@@ -29,7 +30,8 @@ class ProjectManager
 
     EFotoManager* manager;
     ProjectUserInterface* myInterface;
-    FILE* xmlFile;
+	//FILE* xmlFile; // attribute banned for lack of use
+	XmlUpdater* updater;
     ETreeModel* treeModel;
 
 public:
@@ -87,9 +89,9 @@ public:
     bool saveFile(string filename);
 
     /**
-      * This method tests the file version.
+	  * This method inform errors of the file version. Zero is no error.
       */
-    bool testFileVersion();
+	int informFileVersionError();
 
     /**
       * This method adds a new component to the XML project.

@@ -5,7 +5,6 @@
 #include "ProjectManager.h"
 #include "EFotoManager.h"
 #include "ProjectUserInterface_Qt.h"
-#include "XmlUpdater.h"
 
 // Constructors and Destructor
 //
@@ -13,21 +12,27 @@
 ProjectManager::ProjectManager()
 {
     this->manager = NULL;
-    this->xmlFile = NULL;
+	//this->xmlFile = NULL;
     this->treeModel = NULL;
+	this->updater = NULL;
 }
 
 ProjectManager::ProjectManager(EFotoManager* manager)
 {
     this->manager = manager;
-    this->xmlFile = NULL;
+	//this->xmlFile = NULL;
     this->treeModel = NULL;
+	this->updater = NULL;
 }
 
 ProjectManager::~ProjectManager()
 {
     if (treeModel != NULL)
         delete treeModel;
+	if (updater != NULL)
+		delete updater;
+	//if (xmlFile != NULL)
+		//delete xmlFile;
 }
 
 // Other Methods
@@ -58,11 +63,10 @@ bool ProjectManager::newProject(string filename)
         string xmlData = "";
         xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
-        xmlData += "<efotoPhotogrammetricProject version=\"1.0.20\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+		xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
         xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
         xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
 		xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
-		xmlData += "\n";
 		xmlData += "<projectHeader>\n";
 		xmlData += "<name></name>\n";
 		xmlData += "<description></description>\n";
@@ -165,6 +169,11 @@ bool ProjectManager::loadFile(string filename)
     {
         stringstream myData;
         ifstream myFile(filename.c_str());
+		if (updater != NULL)
+		{
+			delete updater;
+			updater = NULL;
+		}
         if (myFile.is_open())
         {
             string line;
@@ -176,30 +185,32 @@ bool ProjectManager::loadFile(string filename)
             myFile.close();
 
 			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
-			XmlUpdater updater(xmlData);
-			if (updater.isUpdated())
+			updater = new XmlUpdater(xmlData);
+			if (updater->isUpdated())
 			{
-				xmlData = updater.getAllXml().getContent();
+				xmlData = updater->getAllXml().getContent();
 			}
 			else
 			{
+			/* for debugs
 				int error = updater.getError();
-				if (error == -1)
+				if (error == 1)
 				{
 					cout << "(referenceBuild < thisXmlBuid) is not supported";
 				}
-				if (error == -2)
+				if (error == 2)
 				{
 					cout << "buildOne (referenceBuild) is invalid";
 				}
-				if (error == -3)
+				if (error == 3)
 				{
 					cout << "buildTwo (thisXmlBuild) is invalid";
 				}
-				if (error == -4)
+				if (error == 4)
 				{
 					cout << "xml string passed is empty";
 				}
+			*/
 				return false;
 			}
 			// Aqui deve entrar um codigo para validar o XML.
@@ -211,7 +222,7 @@ bool ProjectManager::loadFile(string filename)
             treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
             return true;
         }
-        else cout << "Unable to open file";
+		//else cout << "Unable to open file"; // for debugs
         return false;
     }
 
@@ -237,15 +248,16 @@ bool ProjectManager::saveFile(string filename)
     return false;
 }
 
-bool ProjectManager::testFileVersion()
+int ProjectManager::informFileVersionError()
 {
-	if (manager != NULL)
+	if (manager != NULL && updater != NULL)
 	{
-		EDomElement ede(manager->xmlGetData());
-		if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))
-			return true;
+		//EDomElement ede(manager->xmlGetData()); //deprecated
+		//if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))//deprecated
+			//return true;//deprecated
+		return updater->getError();
 	}
-	return false;
+	return 0;
 }
 
 bool ProjectManager::addComponent(string data, string parent)
