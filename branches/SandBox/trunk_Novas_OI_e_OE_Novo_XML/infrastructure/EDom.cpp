@@ -596,6 +596,64 @@ string EDomElement::attribute(string att)
     }
 }
 
+bool setAttribute(string att, string newAttValue)
+{
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos1 = content.find(att);
+	unsigned long pos2 = content.find('\"', pos1);
+	unsigned long pos3 = content.find('\"', pos2 + 1);
+	string value = "\"";
+	value += newAttValue;
+	value += "\"";
+	content.replace(pos2, pos3-pos2+1, value);
+
+	return false;
+}
+
+bool addAttribute(string newAttName, string newAttValue)
+{
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos = content.find('>');
+	string value = " ";
+	value += newAttName;
+	value += "=\"";
+	value += newAttValue;
+	value += "\"";
+	content.insert(pos, value);
+
+	return true;
+}
+
 string EDomElement::toString()
 {
     string result = "";
