@@ -173,10 +173,11 @@ bool SRUserInterface_Qt::measurePoint(int id, int col, int lin)
 
 bool SRUserInterface_Qt::calculateSR()
 {
-    int iterations; double precision;
-    iterations = QInputDialog::getInt(this,"Number of iterations","Set the number of iteration",10,1,50,1);
-    precision = QInputDialog::getDouble(this,"Precision","Set the precision",0.00001,0.000000001,1,9);
-    bool result = manager->calculateSR(iterations, precision);
+	int iterations; double gnssPrecision, insPrecision;
+	iterations = QInputDialog::getInt(this,"Number of iterations","Set the number of iteration",10,1,50,1);
+	gnssPrecision = QInputDialog::getDouble(this,"Precision","Set the center point precision",0.001,0.000001,10,6);
+	insPrecision = QInputDialog::getDouble(this,"Precision","Set the atitude precision",0.001,0.000001,1,6);
+	bool result = manager->calculateSR(iterations, gnssPrecision, insPrecision);
     viewReport();
     actionTable->setEnabled(true);
     return result;

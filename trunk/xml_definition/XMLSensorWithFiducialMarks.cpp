@@ -1,254 +1,16 @@
-/**************************************************************************
-                        Aerial.cpp
-**************************************************************************/
-
-#include "Aerial.h"
-
-// Constructors
-//
-
-
-/**
- * Aerial's default empty constructor.
- */
-Aerial::Aerial():Sensor()
+#include "XMLSensorWithFiducialMarks.h"
+/*
+XMLSensorWithFiducialMarks::XMLSensorWithFiducialMarks()
 {
-
 }
 
-/**
- * Aerial's default empty constructor.
- */
-Aerial::Aerial(const Sensor& sensor):Sensor(sensor)
-{
-
-}
-
-/**
- * Aerial's default empty constructor.
- */
-Aerial::Aerial(int myId):Sensor(myId)
-{
-
-}
-
-/**
- * This constructor fills Lb but leaves SigmaLb as a matrix containing ones, so P will be an identity.
- * @param myLb
- */
-Aerial::Aerial(int myId, const Matrix& myLb):Sensor(myId)
-{
-    setLb(myLb);
-}
-
-/**
- * This constructor fills both Lb and SigmaLb on creation.
- * If mySigmaLb has a different number of rows and columns than Lb, its values will be set as ones, like in the previous constructor.
- * @param myLb, mySigmaLb
- */
-Aerial::Aerial(int myId, const Matrix& myLb, const Matrix& mySigmaLb):Sensor(myId)
-{
-    setLb(myLb, mySigmaLb);
-}
-
-
-
-// Private attribute accessor methods
-//
-
-/**
- * Set the value of Lb.
- * @param newLb the new value of Lb
- */
-void Aerial::setLb(const Matrix& newLb)
-{
-    if (newLb.getRows() >= 8 && newLb.getCols() == 1)
-    {
-        Lb = newLb;
-        SigmaLb.resize(newLb.getRows(), newLb.getCols()).ones();
-    }
-    else
-        cerr << "Lb is not in the expected format.";
-}
-
-/**
- * Set the value of SigmaLb.
- * @param newSigmaLb the new value of SigmaLb
- */
-void Aerial::setLb(const Matrix& newLb, const Matrix& newSigmaLb)
-{
-    if (newLb.getRows() >= 8 && newLb.getCols() == 1)
-    {
-        Lb = newLb;
-        if (newSigmaLb.getRows() == newLb.getRows() && newSigmaLb.getCols() == newLb.getCols())
-            SigmaLb = newSigmaLb;
-        else if (newSigmaLb.getRows() == newLb.getRows() && newSigmaLb.getCols() == newLb.getRows())
-            SigmaLb = newSigmaLb;
-        else
-        {
-            SigmaLb.resize(newLb.getRows(), newLb.getCols()).ones();
-            cerr << "SigmaLb is not in the expected format.";
-        }
-    }
-    else
-        cerr << "Lb is not in the expected format.";
-}
-
-/**
- * Get the value of Lb.
- * @return the value of Lb
- */
-Matrix Aerial::getLb()
-{
-    if (Lb.getCols() == 0)
-  	marksToLb();
-    return Lb;
-}
-
-/**
- * Get the value of Lb.
- * @return the value of Lb
- */
-Matrix Aerial::getSigmaLb()
-{
-    return SigmaLb;
-}
-
-
-
-// Composed objects accessor methods
-//
-
-/**
- * Set all the values of anaFidMarks deque at once
- * @param newAnaFidMarks a deque with the new values
- */
-void Aerial::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks)
-{
-    anaFidMarks = newAnaFidMarks;
-}
-
-/**
- * Get all the values of anaFidMarks deque at once
- * @return a deque the values of anaFidMarks
- */
-deque<AnalogFiductialMark> Aerial::getAnaFidMarks()
-{
-    return anaFidMarks;
-}
-
-/**
- * Add one value to anaFidMarks deque
- * @param newAnaFidMark the value to be added
- */
-void Aerial::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
-{
-    anaFidMarks.push_back(newAnaFidMark);
-}
-
-/**
- * Get one value from anaFidMarks deque
- * @param id the id of the value
- * @return the value of the AnalogFiductialMark
- */
-AnalogFiductialMark Aerial::getAnaFidMark(int id)
-{
-    for (unsigned int i = 0; i < anaFidMarks.size(); i++)
-	if (anaFidMarks.at(i).getId() == id)
-            return anaFidMarks.at(i);
-    return AnalogFiductialMark();
-}
-
-/**
- * Get one value from anaFidMarks deque
- * @param index the position of the value
- * @return the value of the AnalogFiductialMark
- */
-AnalogFiductialMark Aerial::getAnaFidMarkAt(unsigned int index)
-{
-    if (index < anaFidMarks.size())
-        return anaFidMarks.at(index);
-    return AnalogFiductialMark();
-}
-
-/**
- * Count the number of value in anaFidMarks deque
- * @return the number of values
- */
-int Aerial::countAnaFidMarks()
-{
-    return anaFidMarks.size();
-}
-
-/**
- * Remove one value from anaFidMarks deque
- * @param id the id of the value
- */
-void Aerial::deleteAnaFidMark(int id)
-{
-    for (unsigned int i = 0; i < anaFidMarks.size(); i++)
-        if (anaFidMarks.at(i).getId() == id)
-            anaFidMarks.erase(anaFidMarks.begin()+i);
-}
-
-/**
- * Remove one value from anaFidMarks deque
- * @param index the position of the value
- */
-void Aerial::deleteAnaFidMarkAt(unsigned int index)
-{
-    if (index < anaFidMarks.size())
-        anaFidMarks.erase(anaFidMarks.begin()+index);
-}
-
-/**
- * Clear all the values of the anaFidMarks deque
- */
-void Aerial::clearAnaFidMarks()
-{
-    anaFidMarks.clear();
-}
-
-// EObject methods
-//
-
-/**
- *
- */
-string Aerial::objectType(void)
-{
-    stringstream result;
-    result << "Aerial " << id;
-    return result.str();
-}
-
-/**
- *
- */
-string Aerial::objectAssociations(void)
-{
-    return "";
-}
-
-/**
- *
- */
-bool Aerial::is(string s)
-{
-    return (s == "Aerial" ? true : false);
-}
-
-// XML methods
-//
-
-/**
- * 
- */
-void Aerial::xmlSetData(string xml)
+void XMLSensorWithFiducialMarks::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
-	sensorId = root.elementByTagName("sensorId").toString();
+    setId(stringToInt(root.attribute("key")));
+*/
+    /*Sem methodos ainda para preencher
+        sensorId = root.elementByTagName("sensorId").toString();
     geometry = root.elementByTagName("geometry").toString();
     detector = root.elementByTagName("detector").toString();
     energySource = root.elementByTagName("energySource").toString();
@@ -264,19 +26,20 @@ void Aerial::xmlSetData(string xml)
         spec->superiorLimit = xmlSpectralRanges.at(i).elementByTagName("superiorLimit").toDouble();
         spectralRanges.push_back(*spec);
     }
-
-    description = root.elementByTagName("description").toString();
+	*/	/*
+    setDescription(root.elementByTagName("description").toString());
     calibrationCertificateNumber = root.elementByTagName("number").toString();
     calibrationCertificateNumber = root.elementByTagName("dispatch").toString();
     calibrationCertificateExpiration = root.elementByTagName("expiration").toString();
 
     EDomElement xmlFocalDistance = root.elementByTagName("focalDistance");
     focalDistanceUnit = xmlFocalDistance.attribute("uom");
-    focalDistance = xmlFocalDistance.elementByTagName("value").toDouble();
+
+    setFocalDistance(xmlFocalDistance.elementByTagName("value").toDouble());
     if (xmlFocalDistance.elementByTagName("sigma").isAvailable())
-        focalDistanceSigma = xmlFocalDistance.elementByTagName("sigma").toDouble();
+        setFocalDistanceSigma(xmlFocalDistance.elementByTagName("sigma").toDouble());
     else
-        focalDistanceSigma = 1.0;
+        setFocalDistanceSigma(1.0);
 
     deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
     rsCoefficients.clear();
@@ -316,14 +79,11 @@ void Aerial::xmlSetData(string xml)
     }
 }
 
-/**
- * 
- */
-string Aerial::xmlGetData()
+string SensorWithFiducialMarks::xmlGetData()
 {
     stringstream result;
     result << "<sensor key=\"" << intToString(id) << "\">\n";
-	result << "<sensorId>" << sensorId << "</sensorId>\n";
+        result << "<sensorId>" << sensorId << "</sensorId>\n";
     result << "<type>\n";
     result << "<geometry>" << geometry << "</geometry>\n";
     result << "<platform>aerial</platform>\n";
@@ -389,14 +149,14 @@ string Aerial::xmlGetData()
     result << "</sensor>\n";
     return result.str();
 }
-
+*/
 // Other methods
 //
 
 /**
  * Generate Lb from anaFidMarks
- */
-void Aerial::marksToLb()
+ */	/*
+virtual voidmarksToLb()
 {
     Lb.resize(anaFidMarks.size() * 2,1);
     SigmaLb.resize(anaFidMarks.size() * 2,anaFidMarks.size() * 2).zero();
@@ -410,3 +170,4 @@ void Aerial::marksToLb()
         SigmaLb.set(i*2+2,i*2+1,anaFidMarks.at(i).getSigmaXiEta());
     }
 }
+*/

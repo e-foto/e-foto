@@ -4,7 +4,7 @@
 
 #include "Image.h"
 #include "Point.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Flight.h"
 
 // Constructors and destructors
@@ -199,6 +199,55 @@ string Image::getFilepath()
     return filepath;
 }
 
+bool Image::isGnssAvailable()
+{
+	return gnssAvailable;
+}
+
+bool Image::isInsAvailable()
+{
+	return insAvailable;
+}
+
+double Image::getGnssX0()
+{
+	return gnssX0;
+}
+
+double Image::getGnssY0()
+{
+	return gnssY0;
+}
+
+double Image::getGnssZ0()
+{
+	return gnssZ0;
+}
+
+string Image::getGnssType()
+{
+	return gnssType;
+}
+
+double Image::getInsOmega()
+{
+	return insOmega;
+}
+
+double Image::getInsPhi()
+{
+	return insPhi;
+}
+
+double Image::getInsKappa()
+{
+	return insKappa;
+}
+
+string Image::getInsType()
+{
+	return insType;
+}
 
 
 // Composed objects accessor methods
@@ -447,6 +496,7 @@ void Image::xmlSetData(string xml)
     if (gnssPos.size() == 3)
     {
 	gnssAvailable = true;
+	gnssType = gnss.attribute("type");
 	gnssX0 = gnssPos.at(0);
 	gnssY0 = gnssPos.at(1);
 	gnssZ0 = gnssPos.at(2);
@@ -473,6 +523,7 @@ void Image::xmlSetData(string xml)
     else
     {
 	insAvailable = true;
+	insType = ins.attribute("type");
 	insOmega = ins.elementByTagName("omega").toDouble();
 	insPhi = ins.elementByTagName("phi").toDouble();
 	insKappa = ins.elementByTagName("kappa").toDouble();
@@ -507,7 +558,7 @@ string Image::xmlGetData()
     //Isso deve ser corrigido...
     //result << spatialCoordinates.xmlGetData();
 
-    result << "<GNSS uom=\"#m\">\n";
+	result << "<GNSS uom=\"#m\" type=\"" << gnssType << "\">\n";
     if (gnssAvailable)
     {
 	result << "<gml:pos>" << doubleToString(gnssX0) << " " << doubleToString(gnssY0) << " " << doubleToString(gnssZ0) << "</gml:pos>\n";
@@ -526,7 +577,7 @@ string Image::xmlGetData()
     }
     result << "</GNSS>\n";
 
-    result << "<INS uom=\"#rad\">\n";
+	result << "<INS uom=\"#rad\" type=\"" << insType << "\">\n";
     if (insAvailable)
     {
 	result << "<omega>" << doubleToString(insOmega) <<"</sigma>\n";

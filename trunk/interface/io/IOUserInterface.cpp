@@ -5,5 +5,5 @@
 
 IOManager* IOUserInterface::getManager()
 {
-    return manager;
+	return manager;
 }

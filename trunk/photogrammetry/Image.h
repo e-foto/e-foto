@@ -45,7 +45,8 @@ class Image : public EObject
     ObjectSpaceCoordinate spatialCoordinates;
 
     // IMPORTANTE: Gambiarra temporaria...
-    bool gnssAvailable, gnssSigmaAvailable, insAvailable, insSigmaAvailable;
+	bool gnssAvailable, gnssSigmaAvailable, insAvailable, insSigmaAvailable;
+	string gnssType, insType;
     double gnssX0, gnssY0, gnssZ0;
     Matrix gnssSigma;
     double insOmega, insPhi, insKappa;
@@ -91,6 +92,16 @@ public:
     unsigned int getHeight();
     string getFilename();
     string getFilepath();
+	bool isGnssAvailable();
+	bool isInsAvailable();
+	double getGnssX0();
+	double getGnssY0();
+	double getGnssZ0();
+	string getGnssType();
+	double getInsOmega();
+	double getInsPhi();
+	double getInsKappa();
+	string getInsType();
 
     // Composed objects accessor methods
     //

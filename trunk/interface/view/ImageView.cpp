@@ -65,7 +65,7 @@ void ImageView::createPoints(QStandardItemModel* points, int mode)
 {
 	if (mode == 1) //IO use
 	{
-		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		for (int row = 0; row < points->rowCount() ;++row)
 		{
 			string pointName = QString::number(row).toStdString();
 			createPoint(pointName,"myIOPin");
@@ -73,7 +73,7 @@ void ImageView::createPoints(QStandardItemModel* points, int mode)
 	}
 	else if (mode == 2) //SR use
 	{
-		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		for (int row = 0; row < points->rowCount() ;++row)
 		{
 			string pointName = QString::number(row).toStdString();
 			createPoint(pointName,"mySRPin1");
@@ -88,7 +88,7 @@ void ImageView::drawPoints(QStandardItemModel* points, int mode)
 	int y;
 	if (mode == 1) //IO use
 	{
-		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		for (int row = 0; row < points->rowCount() ;++row)
 		{
 			if (points->data(points->index(row,4)).toBool())
 			{
@@ -96,13 +96,13 @@ void ImageView::drawPoints(QStandardItemModel* points, int mode)
 				selectPoint(pointName);
 				x = points->data(points->index(row,2)).toInt();
 				y = points->data(points->index(row,3)).toInt();
-				selectedImage->addMark(selectedPoint, x, y, selectedViewport, true);
+				selectedImage->addMark(selectedPoint, x+0.5, y+0.5, selectedViewport, true);
 			}
 		}
 	}
 	else if (mode == 2) //SR use
 	{
-		for (unsigned int row = 0; row < points->rowCount() ;++row)
+		for (int row = 0; row < points->rowCount() ;++row)
 		{
 			if (points->data(points->index(row,10)).toBool())
 			{
@@ -126,7 +126,7 @@ void ImageView::drawPoints(QStandardItemModel* points, int mode)
 
 void ImageView::clearPoints()
 {
-	for (unsigned int i = -1; i < countPoints(); ++i)
+	for (int i = -1; i < countPoints(); ++i)
 	{
 		destroyPoint(QString::number(i).toStdString());
 	}

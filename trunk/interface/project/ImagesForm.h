@@ -17,6 +17,8 @@ public:
     string getvalues();
     void setReadOnly(bool state);
 	bool isForm(string formName);
+	void setIOsAvailable(string xmlIOs);
+	void setEOsAvailable(string xmlEOs);
 
 private slots:
     void emitSignal(int i);

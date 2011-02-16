@@ -30,7 +30,7 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 
 void ImageForm::fillvalues(string values)
 {
-
+    cleanForm();
     EDomElement ede(values);
 	bool ok;
 
@@ -42,8 +42,7 @@ void ImageForm::fillvalues(string values)
 	tagXml += ede.attribute("flight_key");
 	tagXml += "\">";
 
-	imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )
-						  );
+        imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )	  );
 
     widthLine->setText( (QString::fromUtf8(ede.elementByTagAtt("width","uom","#px").toString().c_str())+" px"  )
 						);
@@ -93,11 +92,11 @@ void ImageForm::fillvalues(string values)
 			hDoubleSpinBox_2->setValue(aux.at(2));
 		}
 		if (ede.elementByTagName("GNSS").attribute("type") == "Initial")
-			gnssTypeComboBox->setCurrentIndex(1);
-		else if (ede.elementByTagName("GNSS").attribute("type") == "Fixed")
-			gnssTypeComboBox->setCurrentIndex(2);
-		else
 			gnssTypeComboBox->setCurrentIndex(0);
+		else if (ede.elementByTagName("GNSS").attribute("type") == "Fixed")
+			gnssTypeComboBox->setCurrentIndex(1);
+		else
+			gnssTypeComboBox->setCurrentIndex(2);
 		QString suffix(ede.elementByTagName("GNSS").attribute("uom").c_str());
 		eDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
 		nDoubleSpinBox_2->setSuffix(" "+suffix.right(1));
@@ -121,11 +120,11 @@ void ImageForm::fillvalues(string values)
 	else
 	{
 		if (ede.elementByTagName("INS").attribute("type") == "Initial")
-			insTypeComboBox->setCurrentIndex(1);
-		else if (ede.elementByTagName("INS").attribute("type") == "Fixed")
-			insTypeComboBox->setCurrentIndex(2);
-		else
 			insTypeComboBox->setCurrentIndex(0);
+		else if (ede.elementByTagName("INS").attribute("type") == "Fixed")
+			insTypeComboBox->setCurrentIndex(1);
+		else
+			insTypeComboBox->setCurrentIndex(2);
 		omegaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("omega").toDouble());
 		phiDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("phi").toDouble());
 		kappaDoubleSpinBox->setValue(ede.elementByTagName("INS").elementByTagName("kappa").toDouble());
@@ -144,28 +143,30 @@ string ImageForm::getvalues()
     stringstream auxStream;
 
 	auxStream << tagXml << "\n";
-	auxStream << "\t<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
-    auxStream << "\t<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
-    auxStream << "\t<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
-    auxStream << "\t<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
-    auxStream << "\t<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
-	//auxStream << "\t<flightId>" << flightIDSpin->value() << "</flightId>\n";
-    auxStream << "\t<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
+	auxStream << "<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
+	auxStream << "<width uom=\"#px\">" << widthLine->text().left((widthLine->text().lastIndexOf(" "))).toUtf8().data() << "</width>\n" ;
+	auxStream << "<height uom=\"#px\">" << heightLine->text().left((heightLine->text().lastIndexOf(" "))).toUtf8().data() << "</height>\n";
+	auxStream << "<fileName>" << fileNameLine->text().toUtf8().data()<< "</fileName>\n";
+	auxStream << "<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
+	//auxStream << "<flightId>" << flightIDSpin->value() << "</flightId>\n";
+	auxStream << "<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
 	if (gnssGroup->isChecked())
 	{
-		auxStream << "\t<GNSS uom=\"#m\" type=\"" << gnssTypeComboBox->currentText().toUtf8().data() << "\">\n";
-		auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
+		string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
+		auxStream << "<GNSS uom=\"#m\" type=\"" << type << "\">\n";
+		auxStream << "<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
 		auxStream << gnssSigmaController->getValues();
-		auxStream << "\t</GNSS>\n";
+		auxStream << "</GNSS>\n";
 	}
 	if (insGroup->isChecked())
 	{
-		auxStream << "\t<INS uom=\"#rad\" type=\"" << insTypeComboBox->currentText().toUtf8().data() << "\">\n";
-		auxStream << "\t\t<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
-		auxStream << "\t\t<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
-		auxStream << "\t\t<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
+		string type = insTypeComboBox->currentIndex() == 0 ? "Initial": insTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
+		auxStream << "<INS uom=\"#rad\" type=\"" << type << "\">\n";
+		auxStream << "<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
+		auxStream << "<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
+		auxStream << "<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
 		auxStream << insSigmaController->getValues();
-		auxStream << "\t</INS>\n";
+		auxStream << "</INS>\n";
 	}
     auxStream << "</image>\n";
     xmlString = auxStream.str();
@@ -267,4 +268,49 @@ void ImageForm::setEOAvailable(bool state)
 		labelEO->setText("Spatial resection is available");
 	else
 		labelEO->setText("Spatial resection is not available");
+}
+
+void ImageForm::cleanForm()
+{
+    imageIDLine->clear();
+    resolutionSpin->clear();
+    flightIdComboBox->setCurrentIndex(0);
+    //ground coordinates
+    eDoubleSpinBox_2->clear();
+    nDoubleSpinBox_2->clear();
+    hDoubleSpinBox_2->clear();
+    gnssSigmaController->fillValues("Not Available");
+    //inertial navigation
+    insSigmaController->fillValues("Not Available");
+    omegaDoubleSpinBox->clear();
+    kappaDoubleSpinBox->clear();
+    phiDoubleSpinBox->clear();
+    //metadata
+    fileNameLine->clear();
+    filePathLine->clear();
+    heightLine->clear();
+    widthLine->clear();
+}
+
+void ImageForm::setFormLocale(QLocale locale)
+{
+    imageIDLine->setLocale(locale);
+    resolutionSpin->setLocale(locale);
+
+    //ground coordinates
+    eDoubleSpinBox_2->setLocale(locale);
+    nDoubleSpinBox_2->setLocale(locale);
+    hDoubleSpinBox_2->setLocale(locale);
+
+    //inertial navigation
+
+    omegaDoubleSpinBox->setLocale(locale);
+    kappaDoubleSpinBox->setLocale(locale);
+    phiDoubleSpinBox->setLocale(locale);
+    //metadata
+    fileNameLine->setLocale(locale);
+    filePathLine->setLocale(locale);
+    heightLine->setLocale(locale);
+    widthLine->setLocale(locale);
+
 }

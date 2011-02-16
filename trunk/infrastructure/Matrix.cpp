@@ -624,7 +624,7 @@ Matrix Matrix::operator *(const Matrix& Par_Matrix)
     if (ncols!=Par_Matrix.nrows)
     {
         cerr << "Matrices dimensions are imcompatible." << endl;
-        system("PAUSE");
+		//system("PAUSE");
         exit (-1);
     }
     else

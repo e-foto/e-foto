@@ -36,6 +36,7 @@ CommonMethods* CommonMethods::instance(CM::ImplementationType type)
 		impType = CM::SDLMethods;
 		return commonInst;
 	}*/
+	return NULL;
 }
 
 CommonMethods::~CommonMethods()

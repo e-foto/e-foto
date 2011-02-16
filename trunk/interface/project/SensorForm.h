@@ -12,13 +12,16 @@ class SensorForm : public AbstractForm, public Ui::SensorView
 
 public:
     EDomElement ede;
-    SensorForm(QWidget *parent =0);
+	SensorForm(QWidget *parent =0);
+	bool radialAvailable,decenteredAvailable;
 
     void fillvalues(string values);
     string getvalues();
     void setReadOnly(bool state);
     bool isForm(string formName);
     void showLast4Fiductial(bool state);
+    void clearForm();
+    void setFormLocale(QLocale locale);
 
 	SigmaFormController* calibratedSigmaController;
 	SigmaFormController* fid0SigmaController;
@@ -34,10 +37,11 @@ public:
 	SigmaFormController* principalSigmaController;
 
 public slots:
-	void detectorGroup(int);
+	//void detectorGroup(int); oldSensor
 	void fiductialGroup(int);
+	void calculationMode(int); //newSensor
 	//void setSigmasVisible(bool);
-
+	void updateSensorDiagonal();
 };
 
 #endif // SENSORFORM_H

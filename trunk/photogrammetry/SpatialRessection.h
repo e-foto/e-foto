@@ -42,7 +42,7 @@ class SpatialRessection : public ExteriorOrientation
     DigitalImageSpaceCoordinate pointForFlightDirection;
 
     int totalIterations;
-    bool converged;
+	bool gnssConverged, insConverged;
 
     // Composed objects
     //
@@ -80,8 +80,10 @@ public:
     deque<int> getSelectedPoints();
     DigitalImageSpaceCoordinate* getPointForFlightDirection();
 
-    int getTotalIterations();
-    bool getConverged();
+	int getTotalIterations();
+	bool getConverged();
+	bool getGnssConverged();
+	bool getInsConverged();
 
     // Composed object accessors
     //
@@ -124,7 +126,7 @@ public:
     void generateP();
     void generateX0();
     void initialize();
-    bool calculate(int maxIterations, double precision);
+	bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
 
 };
 

@@ -9,6 +9,7 @@ HeaderForm::HeaderForm(QWidget *parent) : AbstractForm(parent)
 
 void HeaderForm::fillvalues(string values)
 {
+        cleanForm();
 	EDomElement ede(values);
 	lineEditName->setText(QString::fromUtf8(ede.elementByTagName("name").toString().c_str()));
 	textEditDescription->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
@@ -26,22 +27,22 @@ void HeaderForm::fillvalues(string values)
 
 string HeaderForm::getvalues()
 {
-	string xmlString;
+        string xmlString;
 	stringstream auxStream;
 		auxStream << "<projectHeader>\n";
-		auxStream << "\t\t<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
-		auxStream << "\t\t<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
+		auxStream << "<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
+		auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
 		if (lineEditFilePath->text().isEmpty())
-			auxStream << "\t\t<filePath>.</filePath>\n";
+			auxStream << "<filePath>.</filePath>\n";
 		else
-			auxStream << "\t\t<filePath>" << lineEditFilePath->text().toUtf8().data() << "</filePath>\n";
-		auxStream << "\t\t<fileName>" << lineEditFileName->text().toUtf8().data() << "</fileName>\n";
-		auxStream << "\t\t<creation>" << dateTimeEditCreationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</creation>\n";
-		auxStream << "\t\t<modification>" << dateTimeEditModificationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</modification>\n";
-		auxStream << "\t\t<owner>" << lineEditOwner->text().toUtf8().data() << "</owner>\n";
-		auxStream << "\t\t<aims>" << lineEditAims->text().toUtf8().data() << "</aims>\n";
-		auxStream << "\t\t<context>" << lineEditContext->text().toUtf8().data() << "</context>\n";
-		auxStream << "\t</projectHeader>";
+			auxStream << "<filePath>" << lineEditFilePath->text().toUtf8().data() << "</filePath>\n";
+		auxStream << "<fileName>" << lineEditFileName->text().toUtf8().data() << "</fileName>\n";
+		auxStream << "<creation>" << dateTimeEditCreationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</creation>\n";
+		auxStream << "<modification>" << dateTimeEditModificationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</modification>\n";
+		auxStream << "<owner>" << lineEditOwner->text().toUtf8().data() << "</owner>\n";
+		auxStream << "<aims>" << lineEditAims->text().toUtf8().data() << "</aims>\n";
+		auxStream << "<context>" << lineEditContext->text().toUtf8().data() << "</context>\n";
+		auxStream << "</projectHeader>";
 	xmlString = auxStream.str();
 	return xmlString;
 }
@@ -71,4 +72,30 @@ void HeaderForm::metadataVisibleChanged(QString newText)
 void HeaderForm::focusInEvent(QFocusEvent *)
 {
 	lineEditName->setFocus();
+}
+
+void HeaderForm::cleanForm()
+{
+       lineEditName->clear();
+       lineEditContext->clear();
+       lineEditAims->clear();
+       textEditDescription->clear();
+       lineEditOwner->clear();
+       lineEditFilePath->clear();
+       lineEditFileName->clear();
+       dateTimeEditCreationDate->clear();
+       dateTimeEditModificationDate->clear();
+}
+
+void HeaderForm::setFormLocale(QLocale locale)
+{
+    lineEditName->setLocale(locale);
+    lineEditContext->setLocale(locale);
+    lineEditAims->setLocale(locale);
+    textEditDescription->setLocale(locale);
+    lineEditOwner->setLocale(locale);
+    lineEditFilePath->setLocale(locale);
+    lineEditFileName->setLocale(locale);
+    dateTimeEditCreationDate->setLocale(locale);
+    dateTimeEditModificationDate->setLocale(locale);
 }

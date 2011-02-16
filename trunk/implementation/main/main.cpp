@@ -9,8 +9,12 @@ using namespace std;
 #include "../../control/ProjectManager.h"
 #include "../../control/EFotoManager.h"
 
+//for tests
+//#include "../../control/XmlUpdater.h"
+
 int main( int argc, char ** argv )
 {
+
     QApplication efoto(argc, argv);
     QApplication::setStyle("plastique");
 
@@ -33,4 +37,5 @@ int main( int argc, char ** argv )
         manager.exec();
     }
     return 0;
+
 }

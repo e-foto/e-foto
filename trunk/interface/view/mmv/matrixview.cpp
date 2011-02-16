@@ -122,7 +122,10 @@ void MatrixModel::fillvalues(vector <string> StrVector)
 	{
 		QString countvalues = (QString::fromUtf8(xmlMatrixValues.c_str()));
     	rows = countvalues.count("<mml:matrixrow>",Qt::CaseInsensitive);
-    	columns = (countvalues.count("<mml:cn>",Qt::CaseInsensitive))/rows;
+		if (rows != 0)
+			columns = (countvalues.count("<mml:cn>",Qt::CaseInsensitive))/rows;
+		else
+			columns = 0;
 	}
 	else
 	{

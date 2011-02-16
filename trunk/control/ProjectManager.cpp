@@ -12,21 +12,27 @@
 ProjectManager::ProjectManager()
 {
     this->manager = NULL;
-    this->xmlFile = NULL;
+	//this->xmlFile = NULL;
     this->treeModel = NULL;
+	this->updater = NULL;
 }
 
 ProjectManager::ProjectManager(EFotoManager* manager)
 {
     this->manager = manager;
-    this->xmlFile = NULL;
+	//this->xmlFile = NULL;
     this->treeModel = NULL;
+	this->updater = NULL;
 }
 
 ProjectManager::~ProjectManager()
 {
     if (treeModel != NULL)
         delete treeModel;
+	if (updater != NULL)
+		delete updater;
+	//if (xmlFile != NULL)
+		//delete xmlFile;
 }
 
 // Other Methods
@@ -57,14 +63,13 @@ bool ProjectManager::newProject(string filename)
         string xmlData = "";
         xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
-        xmlData += "<efotoPhotogrammetricProject version=\"1.0.20\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+		xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
         xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
         xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
 		xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
-		xmlData += "\n";
-		xmlData += "\t<projectHeader>\n";
-		xmlData += "\t\t<name></name>\n";
-		xmlData += "\t\t<description></description>\n";
+		xmlData += "<projectHeader>\n";
+		xmlData += "<name></name>\n";
+		xmlData += "<description></description>\n";
 
 		int i = filename.rfind('/');
 
@@ -74,71 +79,57 @@ bool ProjectManager::newProject(string filename)
 		xmlData += fileName;
 		xmlData += filePath;
 
-		xmlData += "\t\t<creation></creation>\n";
-		xmlData += "\t\t<modification></modification>\n";
-		xmlData += "\t\t<owner></owner>\n";
-		xmlData += "\t\t<aims></aims>\n";
-		xmlData += "\t\t<context></context>\n";
-		xmlData += "\t</projectHeader>\n";
-		xmlData += "\n";
-		xmlData += "\t<terrain>\n";
-		xmlData += "\t\t<meanAltitude uom=\"#m\"></meanAltitude>\n";
-		xmlData += "\t\t<minAltitude uom=\"#m\"></minAltitude>\n";
-		xmlData += "\t\t<maxAltitude uom=\"#m\"></maxAltitude>\n";
-		xmlData += "\t\t<GRS>WGS84</GRS>\n";
-		xmlData += "\t\t<CPS>UTM</CPS>\n";
-		xmlData += "\t\t<workAreaCenterCoordinates>\n";
-		xmlData += "\t\t\t<Lat direction=\"S\">\n";
-		xmlData += "\t\t\t\t<degrees></degrees>\n";
-		xmlData += "\t\t\t\t<minutes></minutes>\n";
-		xmlData += "\t\t\t\t<seconds></seconds>\n";
-		xmlData += "\t\t\t</Lat>\n";
-		xmlData += "\t\t\t<Long direction=\"W\">\n";
-		xmlData += "\t\t\t\t<degrees></degrees>\n";
-		xmlData += "\t\t\t\t<minutes></minutes>\n";
-		xmlData += "\t\t\t\t<seconds></seconds>\n";
-		xmlData += "\t\t\t</Long>\n";
-		xmlData += "\t\t\t<utmFuse></utmFuse>\n";
-		xmlData += "\t\t</workAreaCenterCoordinates>\n";
-		xmlData += "\t</terrain>\n";
-		xmlData += "\n";
-		xmlData += "\t<sensors>\n";
-		xmlData += "\t</sensors>\n";
-		xmlData += "\n";
-		xmlData += "\t<flights>\n";
-		xmlData += "\t</flights>\n";
-		xmlData += "\n";
-		xmlData += "\t<points>\n";
-		xmlData += "\t</points>\n";
-		xmlData += "\n";
-		xmlData += "\t<images>\n";
-		xmlData += "\t</images>\n";
-		xmlData += "\n";
-		xmlData += "\t<interiorOrientation>\n";
-		xmlData += "\t</interiorOrientation>\n";
-		xmlData += "\n";
-		xmlData += "\t<exteriorOrientation>\n";
-		xmlData += "\t</exteriorOrientation>\n";
-		xmlData += "\n";
+		xmlData += "<creation></creation>\n";
+		xmlData += "<modification></modification>\n";
+		xmlData += "<owner></owner>\n";
+		xmlData += "<aims></aims>\n";
+		xmlData += "<context></context>\n";
+		xmlData += "</projectHeader>\n";
+		xmlData += "<terrain>\n";
+		xmlData += "<meanAltitude uom=\"#m\"></meanAltitude>\n";
+		xmlData += "<minAltitude uom=\"#m\"></minAltitude>\n";
+		xmlData += "<maxAltitude uom=\"#m\"></maxAltitude>\n";
+		xmlData += "<GRS>WGS84</GRS>\n";
+		xmlData += "<CPS>UTM</CPS>\n";
+		xmlData += "<workAreaCenterCoordinates>\n";
+		xmlData += "<Lat direction=\"S\">\n";
+		xmlData += "<degrees></degrees>\n";
+		xmlData += "<minutes></minutes>\n";
+		xmlData += "<seconds></seconds>\n";
+		xmlData += "</Lat>\n";
+		xmlData += "<Long direction=\"W\">\n";
+		xmlData += "<degrees></degrees>\n";
+		xmlData += "<minutes></minutes>\n";
+		xmlData += "<seconds></seconds>\n";
+		xmlData += "</Long>\n";
+		xmlData += "<utmFuse></utmFuse>\n";
+		xmlData += "</workAreaCenterCoordinates>\n";
+		xmlData += "</terrain>\n";
+		xmlData += "<sensors>\n";
+		xmlData += "</sensors>\n";
+		xmlData += "<flights>\n";
+		xmlData += "</flights>\n";
+		xmlData += "<points>\n";
+		xmlData += "</points>\n";
+		xmlData += "<images>\n";
+		xmlData += "</images>\n";
+		xmlData += "<interiorOrientation>\n";
+		xmlData += "</interiorOrientation>\n";
+		xmlData += "<exteriorOrientation>\n";
+		xmlData += "</exteriorOrientation>\n";
 		/*
-		xmlData += "\t<photogrammetricBlock>\n";
-		xmlData += "\t</photogrammetricBlock>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPairs>\n";
-		xmlData += "\t</stereoPairs>\n";
-		xmlData += "\n";
-		xmlData += "\t<normalization>\n";
-		xmlData += "\t</normalization>\n";
-		xmlData += "\n";
-		xmlData += "\t<stereoPloting>\n";
-		xmlData += "\t</stereoPloting>\n";
-		xmlData += "\n";
-		xmlData += "\t<dem>\n";
-		xmlData += "\t</dem>\n";
-		xmlData += "\n";
-		xmlData += "\t<orthorectification>\n";
-		xmlData += "\t</orthorectification>\n";
-		xmlData += "\n";
+		xmlData += "<photogrammetricBlock>\n";
+		xmlData += "</photogrammetricBlock>\n";
+		xmlData += "<stereoPairs>\n";
+		xmlData += "</stereoPairs>\n";
+		xmlData += "<normalization>\n";
+		xmlData += "</normalization>\n";
+		xmlData += "<stereoPloting>\n";
+		xmlData += "</stereoPloting>\n";
+		xmlData += "<dem>\n";
+		xmlData += "</dem>\n";
+		xmlData += "<orthorectification>\n";
+		xmlData += "</orthorectification>\n";
 		*/
         xmlData += "</efotoPhotogrammetricProject>";
 
@@ -178,6 +169,11 @@ bool ProjectManager::loadFile(string filename)
     {
         stringstream myData;
         ifstream myFile(filename.c_str());
+		if (updater != NULL)
+		{
+			delete updater;
+			updater = NULL;
+		}
         if (myFile.is_open())
         {
             string line;
@@ -188,7 +184,35 @@ bool ProjectManager::loadFile(string filename)
             }
             myFile.close();
 
-            string xmlData = myData.str();
+			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
+			updater = new XmlUpdater(xmlData);
+			if (updater->isUpdated())
+			{
+				xmlData = updater->getAllXml().getContent();
+			}
+			else
+			{
+			/* for debugs
+				int error = updater.getError();
+				if (error == 1)
+				{
+					cout << "(referenceBuild < thisXmlBuid) is not supported";
+				}
+				if (error == 2)
+				{
+					cout << "buildOne (referenceBuild) is invalid";
+				}
+				if (error == 3)
+				{
+					cout << "buildTwo (thisXmlBuild) is invalid";
+				}
+				if (error == 4)
+				{
+					cout << "xml string passed is empty";
+				}
+			*/
+				return false;
+			}
 			// Aqui deve entrar um codigo para validar o XML.
             manager->xmlSetData(xmlData);
 
@@ -198,7 +222,7 @@ bool ProjectManager::loadFile(string filename)
             treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
             return true;
         }
-        else cout << "Unable to open file";
+		//else cout << "Unable to open file"; // for debugs
         return false;
     }
 
@@ -212,7 +236,9 @@ bool ProjectManager::saveFile(string filename)
         ofstream myFile (filename.c_str());
         if (myFile.is_open())
 		{
-            myFile << manager->xmlGetData();
+			EDomElement xml(manager->xmlGetData());
+			//myFile << xml.indent('\t').getContent(); // O adequado é que em breve a linha a baixo possa ser substituida por esta aqui.
+			myFile << xml.removeBlankLines(true).indent('\t').getContent();
             myFile.close();
 			return true;
         }
@@ -222,15 +248,16 @@ bool ProjectManager::saveFile(string filename)
     return false;
 }
 
-bool ProjectManager::testFileVersion()
+int ProjectManager::informFileVersionError()
 {
-	if (manager != NULL)
+	if (manager != NULL && updater != NULL)
 	{
-		EDomElement ede(manager->xmlGetData());
-		if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))
-			return true;
+		//EDomElement ede(manager->xmlGetData()); //deprecated
+		//if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))//deprecated
+			//return true;//deprecated
+		return updater->getError();
 	}
-	return false;
+	return 0;
 }
 
 bool ProjectManager::addComponent(string data, string parent)
@@ -481,7 +508,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
         InteriorOrientation* io2 = manager->instanceIO(image2);
         SpatialRessection* sr1 = (SpatialRessection*)manager->instanceEO(image1);
         SpatialRessection* sr2 = (SpatialRessection*)manager->instanceEO(image2);
-		Aerial* sensor = (Aerial*)manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
+		SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
 		Flight* flight = manager->instanceFlight(manager->instanceImage(image1)->getFlightId());
 		Terrain* terrain = manager->instanceTerrain();
 

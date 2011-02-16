@@ -76,7 +76,7 @@ public:
     bool updatePointsTable();
     bool flightDirection(int markId);
     bool flightDirection(int col, int lin);
-    bool calculateSR(int iterations, double precision);
+	bool calculateSR(int iterations, double gnssPrecision, double insPrecision);
     deque<string> makeReport();
     bool exec();
     bool save(string path);

@@ -30,23 +30,35 @@ INCLUDEPATH += . \
 	interface/sr \
 	interface/view \
 	interface/view/mmv \
-	interface/view/sframework \
-	/usr/include/opencv \
-	/usr/include/SDL
-LIBS += -lGL \
-	-lGLU \
-	-lcv \
-	-lhighgui \
-	-lcvaux \
-	-lSDL \
-	-lSDL_image
+        interface/view/sframework
 QT += opengl
+
+unix{
+INCLUDEPATH += /usr/include/opencv \
+        /usr/include/SDL
+LIBS += -lGL \
+        -lGLU \
+        -lcv \
+        -lhighgui \
+        -lcvaux \
+        -lSDL \
+        -lSDL_image
+}
+win32{
+INCLUDEPATH += C:/OpenCV2.0/include/opencv
+LIBS += "C:\OpenCV2.0\bin\libcv200.dll" \
+        "C:\OpenCV2.0\bin\libcvaux200.dll" \
+        "C:\OpenCV2.0\bin\libcxcore200.dll" \
+        "C:\OpenCV2.0\bin\libcxts200.dll" \
+        "C:\OpenCV2.0\bin\libhighgui200.dll"
+}
 
 # Input
 HEADERS += control/EFotoManager.h \
 	control/IOManager.h \
 	control/ProjectManager.h \
 	control/SRManager.h \
+	control/XmlUpdater.h \
 	infrastructure/AbstractAnalogCoordinate.h \
 	infrastructure/AbstractDigitalCoordinate.h \
 	infrastructure/Coordinate.h \
@@ -58,7 +70,6 @@ HEADERS += control/EFotoManager.h \
 	infrastructure/Matrix.h \
 	infrastructure/PositionMatrix.h \
 	infrastructure/RectSupport.h \
-	photogrammetry/Aerial.h \
 	photogrammetry/AnalogFiductialMark.h \
 	photogrammetry/AnalogImageSpaceCoordinate.h \
 	photogrammetry/CheckingPoint.h \
@@ -76,6 +87,10 @@ HEADERS += control/EFotoManager.h \
 	photogrammetry/Point.h \
 	photogrammetry/ProjectHeader.h \
 	photogrammetry/Sensor.h \
+	photogrammetry/FrameSensor.h \
+	photogrammetry/SensorWithFiducialMarks.h \
+	photogrammetry/SensorWithKnowDimensions.h \
+	photogrammetry/SensorWithKnowParameters.h \
 	photogrammetry/SpatialRessection.h \
 	photogrammetry/Terrain.h \
 	interface/project/AbstractForm.h \
@@ -120,7 +135,7 @@ HEADERS += control/EFotoManager.h \
 	interface/view/sframework/GLMethods.h \
 	interface/view/sframework/CommonCVMethods.h \
 	interface/view/sframework/CommonQtMethods.h \
-	interface/view/sframework/CommonSDLMethods.h \
+        #interface/view/sframework/CommonSDLMethods.h \
 	interface/view/sframework/CommonMethods.h \
 	interface/view/sframework/SViewport.h \
 	interface/view/sframework/SImage.h \
@@ -132,7 +147,7 @@ HEADERS += control/EFotoManager.h \
 	xml_definition/XMLTerrain.h \
 	xml_definition/XMLFlight.h \
 	xml_definition/XMLSensor.h \
-	xml_definition/XMLAerial.h
+	xml_definition/XMLSensorWithFiducialMarks.h
 FORMS += interface/io/IOForm.ui \
 	interface/sr/SRForm.ui \
 	interface/project/FormProject.ui \
@@ -149,6 +164,7 @@ SOURCES += control/EFotoManager.cpp \
 	control/IOManager.cpp \
 	control/ProjectManager.cpp \
 	control/SRManager.cpp \
+	control/XmlUpdater.cpp \
 	infrastructure/AbstractAnalogCoordinate.cpp \
 	infrastructure/AbstractDigitalCoordinate.cpp \
 	infrastructure/Coordinate.cpp \
@@ -160,7 +176,6 @@ SOURCES += control/EFotoManager.cpp \
 	infrastructure/Matrix.cpp \
 	infrastructure/PositionMatrix.cpp \
 	infrastructure/RectSupport.cpp \
-	photogrammetry/Aerial.cpp \
 	photogrammetry/AnalogFiductialMark.cpp \
 	photogrammetry/AnalogImageSpaceCoordinate.cpp \
 	photogrammetry/CheckingPoint.cpp \
@@ -178,6 +193,10 @@ SOURCES += control/EFotoManager.cpp \
 	photogrammetry/Point.cpp \
 	photogrammetry/ProjectHeader.cpp \
 	photogrammetry/Sensor.cpp \
+	photogrammetry/FrameSensor.cpp \
+	photogrammetry/SensorWithFiducialMarks.cpp \
+	photogrammetry/SensorWithKnowDimensions.cpp \
+	photogrammetry/SensorWithKnowParameters.cpp \
 	photogrammetry/SpatialRessection.cpp \
 	photogrammetry/Terrain.cpp \
 	implementation/main/main.cpp \
@@ -221,7 +240,7 @@ SOURCES += control/EFotoManager.cpp \
 	interface/view/sframework/GLMethods.cpp \
 	interface/view/sframework/CommonCVMethods.cpp \
 	interface/view/sframework/CommonQtMethods.cpp \
-	interface/view/sframework/CommonSDLMethods.cpp \
+        #interface/view/sframework/CommonSDLMethods.cpp \
 	interface/view/sframework/CommonMethods.cpp \
 	interface/view/sframework/SViewport.cpp \
 	interface/view/sframework/SImage.cpp \
@@ -233,7 +252,7 @@ SOURCES += control/EFotoManager.cpp \
 	xml_definition/XMLTerrain.cpp \
 	xml_definition/XMLFlight.cpp \
 	xml_definition/XMLSensor.cpp \
-	xml_definition/XMLAerial.cpp
+	xml_definition/XMLSensorWithFiducialMarks.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
 	interface/io/resource/io_icons.qrc \
 	interface/project/resource/project_resource.qrc \

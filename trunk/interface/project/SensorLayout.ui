@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>738</width>
-    <height>1702</height>
+    <height>1893</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,9 +52,6 @@ p, li { white-space: pre-wrap; }
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_12">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
-      </property>
       <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
@@ -64,6 +61,9 @@ p, li { white-space: pre-wrap; }
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
          <property name="labelAlignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
@@ -77,6 +77,16 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="sensorIdLineEdit">
+           <property name="maximumSize">
+            <size>
+             <width>180</width>
+             <height>16777215</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -100,21 +110,11 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPlainTextEdit" name="descriptionTextEdit">
+          <widget class="QTextEdit" name="descriptionTextEdit">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
              <height>50</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="sensorIdLineEdit">
-           <property name="maximumSize">
-            <size>
-             <width>180</width>
-             <height>16777215</height>
             </size>
            </property>
           </widget>
@@ -127,98 +127,8 @@ p, li { white-space: pre-wrap; }
         <property name="title">
          <string>Type</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_40">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
-&lt;tr&gt;
-&lt;td style=&quot;border: none;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Platform&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="platformCombo">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>aerial</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
-&lt;tr&gt;
-&lt;td style=&quot;border: none;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Geometry&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="geometryCombo">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>frame</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="4">
           <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
            <item>
             <widget class="QLabel" name="label_3">
@@ -271,7 +181,37 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </item>
-         <item>
+         <item row="1" column="2" colspan="3">
+          <layout class="QHBoxLayout" name="horizontalLayout_40">
+           <item>
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>Calculation Model</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="calcModelComboBox">
+             <item>
+              <property name="text">
+               <string>With Fiducial Marks</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>With Sensor Dimensions</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Fixed Parameters</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="5">
           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
            <item>
             <widget class="QLabel" name="label_26">
@@ -307,7 +247,98 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </item>
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Platform&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="platformCombo">
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>aerial</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Geometry&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="geometryCombo">
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>frame</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
+        <zorder></zorder>
        </widget>
       </item>
       <item>
@@ -574,15 +605,35 @@ p, li { white-space: pre-wrap; }
            <property name="title">
             <string>Distorcion Coefficients</string>
            </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
-             <widget class="QGroupBox" name="groupBox_5">
+             <widget class="QGroupBox" name="radSymmetricGroupBox">
               <property name="title">
                <string>Radial Symmetric</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_37">
+                 <item>
+                  <widget class="QComboBox" name="radSymmetricModeComboBox">
+                   <item>
+                    <property name="text">
+                     <string>Considered</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Not Considered</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
                  <item>
                   <spacer name="horizontalSpacer">
                    <property name="orientation">
@@ -841,13 +892,30 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_6">
+             <widget class="QGroupBox" name="decenteredGroupBox">
               <property name="title">
                <string>Decentered</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_41">
+                 <item>
+                  <widget class="QComboBox" name="decenteredModeComboBox">
+                   <item>
+                    <property name="text">
+                     <string>Considered</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Not Considered</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
                  <item>
                   <spacer name="horizontalSpacer_2">
                    <property name="orientation">
@@ -910,8 +978,11 @@ p, li { white-space: pre-wrap; }
                      </item>
                      <item>
                       <widget class="ScienceSpinBox" name="decenteredP1LineEdit">
-                       <property name="alignment">
-                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
                        </property>
                       </widget>
                      </item>
@@ -950,8 +1021,11 @@ p, li { white-space: pre-wrap; }
                      </item>
                      <item>
                       <widget class="ScienceSpinBox" name="decenteredP2LineEdit">
-                       <property name="alignment">
-                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
                        </property>
                       </widget>
                      </item>
@@ -1033,7 +1107,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0">
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
@@ -1070,28 +1144,43 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="principalX0LineEdit">
+                <widget class="QDoubleSpinBox" name="principalX0doubleSpin">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
-                   <width>146</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="accelerated">
+                  <bool>true</bool>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0">
                <item>
                 <widget class="QLabel" name="label_24">
                  <property name="minimumSize">
@@ -1113,21 +1202,36 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="principalY0LineEdit">
+                <widget class="QDoubleSpinBox" name="principalY0doubleSpin">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
-                   <width>146</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="accelerated">
+                  <bool>true</bool>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1211,7 +1315,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_13" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_1">
                  <property name="sizePolicy">
@@ -1248,7 +1352,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi0LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1257,25 +1361,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_2">
                  <property name="sizePolicy">
@@ -1312,21 +1422,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta0LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1354,7 +1476,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_3">
                  <property name="sizePolicy">
@@ -1391,7 +1513,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi1LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1400,25 +1522,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_4">
                  <property name="sizePolicy">
@@ -1455,21 +1583,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta1LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1497,7 +1637,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_15" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_5">
                  <property name="sizePolicy">
@@ -1534,7 +1674,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi2LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1543,25 +1683,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_6">
                  <property name="sizePolicy">
@@ -1598,21 +1744,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta2LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1640,7 +1798,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_16" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_7">
                  <property name="sizePolicy">
@@ -1677,7 +1835,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi3LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1686,25 +1844,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_8">
                  <property name="sizePolicy">
@@ -1741,21 +1905,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta3LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1783,7 +1959,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_17" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_29" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_29" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_9">
                  <property name="sizePolicy">
@@ -1820,7 +1996,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi4LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1829,25 +2005,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_10">
                  <property name="sizePolicy">
@@ -1884,21 +2066,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta4LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -1926,7 +2120,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_18" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_47" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_47" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_11">
                  <property name="sizePolicy">
@@ -1963,7 +2157,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi5LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1972,25 +2166,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_12">
                  <property name="sizePolicy">
@@ -2027,21 +2227,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta5LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -2069,7 +2281,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_19" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_49" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_49" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_13">
                  <property name="sizePolicy">
@@ -2106,7 +2318,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi6LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2115,25 +2327,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_48" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_48" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_14">
                  <property name="sizePolicy">
@@ -2170,21 +2388,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta6LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -2212,7 +2442,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_20" stretch="0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_51" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_51" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_15">
                  <property name="sizePolicy">
@@ -2249,7 +2479,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialXi7LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialXi7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2258,25 +2488,31 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>300</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>9999999</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="0,0">
                <item>
                 <widget class="QLabel" name="fiductialLabel_16">
                  <property name="sizePolicy">
@@ -2313,21 +2549,33 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="ScienceSpinBox" name="fiductialEta7LineEdit">
+                <widget class="QDoubleSpinBox" name="fiductialEta7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize">
+                 <property name="minimumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
+                   <width>300</width>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::NoButtons</enum>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -2376,9 +2624,27 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaA0LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaA0SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2397,9 +2663,27 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaA1LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaA1SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2418,9 +2702,27 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaA2LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaA2SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2443,9 +2745,27 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaB0LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaB0SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2464,9 +2784,27 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaB1LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaB1SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2485,11 +2823,198 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="xaB2LineEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QDoubleSpinBox" name="xaB2SpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-1000000000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000000000.000000000000000</double>
              </property>
             </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="sensorDimensionsGroupBox">
+        <property name="title">
+         <string>Sensor Dimensions</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_21">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_52">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <property name="sizeConstraint">
+            <enum>QLayout::SetMinimumSize</enum>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_61">
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pixel Size&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="pixelSizeDoubleSpinBox">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_28">
+             <property name="text">
+              <string>μm</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_53">
+           <item>
+            <widget class="QLabel" name="label_64">
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sensor Size (pixel): Columns&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sensorColsSpinBox">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <number>999999999</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Rows&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sensorRowsSpinBox">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <number>999999999</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_54">
+           <item>
+            <widget class="QLabel" name="label_65">
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sensor Size (mm)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="sensorDimensionsLabel">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -2519,54 +3044,6 @@ p, li { white-space: pre-wrap; }
    <header>ScienceSpinBox.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>sensorIdLineEdit</tabstop>
-  <tabstop>descriptionTextEdit</tabstop>
-  <tabstop>platformCombo</tabstop>
-  <tabstop>geometryCombo</tabstop>
-  <tabstop>detectorCombo</tabstop>
-  <tabstop>energyCombo</tabstop>
-  <tabstop>cameraNumberLineEdit</tabstop>
-  <tabstop>cameraDispatchDateEdit</tabstop>
-  <tabstop>cameraExpirationDateEdit</tabstop>
-  <tabstop>calibratedSigmaSelector</tabstop>
-  <tabstop>calibratedFocalDistanceDoubleSpin</tabstop>
-  <tabstop>radialSigmaSelector</tabstop>
-  <tabstop>radialK0LineEdit</tabstop>
-  <tabstop>radialK1LineEdit</tabstop>
-  <tabstop>radialK2LineEdit</tabstop>
-  <tabstop>radialK3LineEdit</tabstop>
-  <tabstop>decenteredSigmaSelector</tabstop>
-  <tabstop>decenteredP1LineEdit</tabstop>
-  <tabstop>decenteredP2LineEdit</tabstop>
-  <tabstop>principalSigmaSelector</tabstop>
-  <tabstop>principalX0LineEdit</tabstop>
-  <tabstop>principalY0LineEdit</tabstop>
-  <tabstop>fiductialMarksCombo</tabstop>
-  <tabstop>fidSigmaSelector</tabstop>
-  <tabstop>fiductialXi0LineEdit</tabstop>
-  <tabstop>fiductialEta0LineEdit</tabstop>
-  <tabstop>fiductialXi1LineEdit</tabstop>
-  <tabstop>fiductialEta1LineEdit</tabstop>
-  <tabstop>fiductialXi2LineEdit</tabstop>
-  <tabstop>fiductialEta2LineEdit</tabstop>
-  <tabstop>fiductialXi3LineEdit</tabstop>
-  <tabstop>fiductialEta3LineEdit</tabstop>
-  <tabstop>fiductialXi4LineEdit</tabstop>
-  <tabstop>fiductialEta4LineEdit</tabstop>
-  <tabstop>fiductialXi5LineEdit</tabstop>
-  <tabstop>fiductialEta5LineEdit</tabstop>
-  <tabstop>fiductialXi6LineEdit</tabstop>
-  <tabstop>fiductialEta6LineEdit</tabstop>
-  <tabstop>fiductialXi7LineEdit</tabstop>
-  <tabstop>fiductialEta7LineEdit</tabstop>
-  <tabstop>xaA0LineEdit</tabstop>
-  <tabstop>xaA1LineEdit</tabstop>
-  <tabstop>xaA2LineEdit</tabstop>
-  <tabstop>xaB0LineEdit</tabstop>
-  <tabstop>xaB1LineEdit</tabstop>
-  <tabstop>xaB2LineEdit</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

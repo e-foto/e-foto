@@ -26,6 +26,8 @@ void PointForm::setImageList(deque<int> myKeyList, deque<string> myNameList)
 
 void PointForm::fillvalues(string values)
 {
+        cleanForm();
+
 	EDomElement ede(values);
 
 	key = ede.attribute("key");
@@ -87,20 +89,20 @@ string PointForm::getvalues()
 {
     stringstream auxStream;
 	auxStream << "<point key=\"" << key << "\" type=\"" << getType() <<"\">\n";
-	auxStream << "\t<pointId>" << lineEdit_gcp_id->text().toUtf8().data() << "</pointId>\n";
-	auxStream << "\t<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
-	auxStream << "\t<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().right(1).toStdString().c_str() << "\">\n";
-	auxStream << "\t\t<gml:pos>" << doubleToString(eDoubleSpinBox->value()) << " " << doubleToString(nDoubleSpinBox->value()) << " " << doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
+	auxStream << "<pointId>" << lineEdit_gcp_id->text().toUtf8().data() << "</pointId>\n";
+	auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
+	auxStream << "<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().right(1).toStdString().c_str() << "\">\n";
+	auxStream << "<gml:pos>" << doubleToString(eDoubleSpinBox->value()) << " " << doubleToString(nDoubleSpinBox->value()) << " " << doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
 	auxStream << sigmaController->getValues();
-	auxStream << "\t</spatialCoordinates>\n";
-	auxStream << "\t<imagesMeasurements>\n";
+	auxStream << "</spatialCoordinates>\n";
+	auxStream << "<imagesMeasurements>\n";
 
 	for (unsigned int i = 0; i < imageKeyList.size(); i++)
 	{
 		QCheckBox* myCheck = (QCheckBox*) imageMeasurementsTable->cellWidget(i,1);
 		if (myCheck != NULL && myCheck->checkState())
 		{
-			auxStream << "\t\t<imageCoordinates uom=\"#px\" image_key=\"";
+			auxStream << "<imageCoordinates uom=\"#px\" image_key=\"";
 			auxStream << imageMeasurementsTable->item(i,0)->text().toStdString();
 			auxStream << "\"><gml:pos>";
 			auxStream << imageMeasurementsTable->item(i,3)->text().toStdString();
@@ -110,7 +112,7 @@ string PointForm::getvalues()
 			auxStream << "</imageCoordinates>\n";
 		}
 	}
-	auxStream << "\t</imagesMeasurements>\n";
+	auxStream << "</imagesMeasurements>\n";
 	auxStream << "</point>";
 	return auxStream.str();
 }
@@ -145,9 +147,32 @@ string PointForm::getType()
 		return "verification";
 	if (typeComboBox->currentIndex() == 2)
 		return "photogrammetric";
+	return "";
 }
 
 bool PointForm::isForm(string formName)
 {
 	return !formName.compare("PointForm");
+}
+
+void PointForm::cleanForm()
+{
+       lineEdit_gcp_id->clear();
+       typeComboBox->setCurrentIndex(0);
+       textEditDescription->clear();
+       sigmaController->fillValues("Not Available");
+       eDoubleSpinBox->clear();
+       nDoubleSpinBox->clear();
+       hDoubleSpinBox->clear();
+       imageMeasurementsTable->clearContents();
+}
+
+void PointForm::setFormLocale(QLocale locale)
+{
+    lineEdit_gcp_id->setLocale(locale);
+    textEditDescription->setLocale(locale);
+    eDoubleSpinBox->setLocale(locale);
+    nDoubleSpinBox->setLocale(locale);
+    hDoubleSpinBox->setLocale(locale);
+    imageMeasurementsTable->setLocale(locale);
 }

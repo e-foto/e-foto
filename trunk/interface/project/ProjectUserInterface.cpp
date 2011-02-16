@@ -6,6 +6,6 @@
 
 ProjectManager* ProjectUserInterface::getManager()
 {
-    return manager;
+	return manager;
 }
 

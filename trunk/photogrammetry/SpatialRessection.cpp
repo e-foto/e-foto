@@ -19,8 +19,9 @@
 SpatialRessection::SpatialRessection()
 {
     pointForFlightDirectionAvailable = false;
-    totalIterations = 0;
-    converged = false;
+	totalIterations = 0;
+	gnssConverged = false;
+	insConverged = false;
 }
 
 /**
@@ -30,8 +31,9 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
 {
     imageId = myImageId;
     pointForFlightDirectionAvailable = false;
-    totalIterations = 0;
-    converged = false;
+	totalIterations = 0;
+	gnssConverged = false;
+	insConverged = false;
 }
 
 /**
@@ -214,7 +216,17 @@ int SpatialRessection::getTotalIterations()
 
 bool SpatialRessection::getConverged()
 {
-    return converged;
+	return gnssConverged && insConverged;
+}
+
+bool SpatialRessection::getGnssConverged()
+{
+	return gnssConverged;
+}
+
+bool SpatialRessection::getInsConverged()
+{
+	return insConverged;
 }
 
 // Composed object accessors
@@ -325,9 +337,9 @@ void SpatialRessection::xmlSetData(string xml)
     imageId = stringToInt(root.attribute("image_key"));
     totalIterations = root.elementByTagName("iterations").toInt();
     if (root.elementByTagName("converged").toString() == "true")
-        converged = true;
+		gnssConverged = insConverged = true;
     else
-        converged = false;
+		gnssConverged = insConverged = false;
     Lb.xmlSetData(root.elementByTagName("Lb").elementByTagName("mml:matrix").getContent());
 
     Xa.resize(6,1);
@@ -367,7 +379,7 @@ string SpatialRessection::xmlGetData()
     stringstream result;
     result << "<imageEO type=\"spatialRessection\" image_key=\"" << intToString(imageId) << "\">\n";
     result << "<iterations>" << intToString(totalIterations) << "</iterations>\n";
-    if (converged)
+	if (gnssConverged && insConverged)
         result << "<converged>true</converged>\n";
     else
         result << "<converged>false</converged>\n";
@@ -555,7 +567,7 @@ void SpatialRessection::generateX0()
 void SpatialRessection::initialize()
 {
     if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && pointForFlightDirectionAvailable)
-    {
+	{
         generateInitialA();
         generateInitialL0();
         generateInitialP();
@@ -615,20 +627,40 @@ void SpatialRessection::initialize()
 
         // Setting the values to X0 and reseting Xa.
         X0.resize(6, 1);
-        X0.set(1, 1, X00);
-        X0.set(2, 1, Y00);
-        X0.set(3, 1, Z00);
-        X0.set(4, 1, phi0);
-        X0.set(5, 1, omega0);
-        X0.set(6, 1, kappa0);
+
+		if (!myImage->isGnssAvailable() || (myImage->isGnssAvailable() && myImage->getGnssType() != "Unused"))
+		{
+			X0.set(1, 1, X00);
+			X0.set(2, 1, Y00);
+			X0.set(3, 1, Z00);
+		}
+		else
+		{
+			X0.set(1, 1, myImage->getGnssX0());
+			X0.set(2, 1, myImage->getGnssY0());
+			X0.set(3, 1, myImage->getGnssZ0());
+		}
+		if (!myImage->isInsAvailable() || (myImage->isInsAvailable() && myImage->getInsType() != "Unused"))
+		{
+			X0.set(4, 1, phi0);
+			X0.set(5, 1, omega0);
+			X0.set(6, 1, kappa0);
+		}
+		else
+		{
+			X0.set(4, 1, myImage->getInsPhi());
+			X0.set(5, 1, myImage->getInsOmega());
+			X0.set(6, 1, myImage->getInsKappa());
+		}
 
         generateL0();
     }
 }
 
-bool SpatialRessection::calculate(int maxIterations, double precision)
+bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, double insPrecision)
 {
-    converged = false;
+	gnssConverged = false;
+	insConverged = false;
     if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && pointForFlightDirectionAvailable)
     {
         int iterations = 0;
@@ -637,28 +669,71 @@ bool SpatialRessection::calculate(int maxIterations, double precision)
         X0temp = X0;
         L0temp = L0;
 
-        while ((!converged) && (iterations < maxIterations))
-        {
+		if (!(myImage->isGnssAvailable() && myImage->getGnssType() == "Fixed" &&
+			  myImage->isInsAvailable() && myImage->getInsType() == "Fixed"))
+		{
+			while (!(gnssConverged && insConverged) && (iterations < maxIterations))
+			{
 
-            generateLb();
-            generateA();
-            generateP();
+				generateLb();
+				generateA();
+				generateP();
 
-            Xa = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
+				Xa = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
 
-            converged = true;
-            for (int i = 1; i <= 6; i++)
-            {
-                if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>precision)
-                    converged=false;
-            }
+				gnssConverged = true;
+				if (myImage->isGnssAvailable() && myImage->getGnssType() == "Fixed")
+				{
+					Xa.set(1, 1, myImage->getGnssX0());
+					Xa.set(2, 1, myImage->getGnssY0());
+					Xa.set(3, 1, myImage->getGnssZ0());
+				}
+				else
+				{
+					for (int i = 1; i <= 3; i++)
+					{
+						if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>gnssPrecision)
+							gnssConverged=false;
+					}
+				}
 
-            generateX0();
-            generateL0();
-            iterations++;
-        }
+				insConverged = true;
+				if (myImage->isInsAvailable() && myImage->getInsType() == "Fixed")
+				{
+					Xa.set(4, 1, myImage->getInsPhi());
+					Xa.set(5, 1, myImage->getInsOmega());
+					Xa.set(6, 1, myImage->getInsKappa());
+				}
+				else
+				{
+					for (int i = 4; i <= 6; i++)
+					{
+						if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>insPrecision)
+							insConverged=false;
+					}
+				}
 
-        totalIterations = iterations;
+				generateX0();
+				generateL0();
+				iterations++;
+			}
+		}
+		else
+		{
+			generateLb();
+			generateA();
+			generateP();
+			Xa.resize(6,1);
+			Xa.set(1, 1, myImage->getGnssX0());
+			Xa.set(2, 1, myImage->getGnssY0());
+			Xa.set(3, 1, myImage->getGnssZ0());
+			Xa.set(4, 1, myImage->getInsPhi());
+			Xa.set(5, 1, myImage->getInsOmega());
+			Xa.set(6, 1, myImage->getInsKappa());
+			gnssConverged = insConverged = true;
+		}
+
+		totalIterations = iterations;
 
         lastL0 = L0;
 
@@ -667,5 +742,5 @@ bool SpatialRessection::calculate(int maxIterations, double precision)
 
         myQuality.calculate(this);
     }
-    return converged;
+	return gnssConverged && insConverged;
 }

@@ -266,7 +266,7 @@ void sclass::SViewport::redefineZoomLimits()
 		double minZoomInW, minZoomInH;
 		int thisW, thisH, dummie;
 		informDimensions(dummie,dummie,thisW, thisH);
-		for (int i = 0; i<exposeImage.size(); i++)
+		for (unsigned int i = 0; i<exposeImage.size(); i++)
 		{
 			if (exposeImage.at(i)->getImageWidth() > maxImgW)
 				maxImgW = exposeImage.at(i)->getImageWidth();

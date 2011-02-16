@@ -152,17 +152,17 @@ p, li { white-space: pre-wrap; }
               <widget class="QComboBox" name="gnssTypeComboBox">
                <item>
                 <property name="text">
-                 <string>Unknown</string>
+                 <string>Initial Value</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Initial</string>
+                 <string>Fixed Value</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Fixed</string>
+                 <string>Not Considered</string>
                 </property>
                </item>
               </widget>
@@ -359,17 +359,17 @@ p, li { white-space: pre-wrap; }
               <widget class="QComboBox" name="insTypeComboBox">
                <item>
                 <property name="text">
-                 <string>Unknown</string>
+                 <string>Initial Value</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Initial</string>
+                 <string>Fixed Value</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Fixed</string>
+                 <string>Not Considered</string>
                 </property>
                </item>
               </widget>

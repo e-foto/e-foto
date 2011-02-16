@@ -6,7 +6,7 @@
 #include "EFotoManager.h"
 #include "EDom.h"
 #include "Terrain.h"
-#include "Aerial.h"
+#include "SensorWithFiducialMarks.h"
 #include "Image.h"
 #include "Point.h"
 #include "InteriorOrientation.h"
@@ -220,16 +220,16 @@ deque<string> SRManager::pointData(int index)
         result.push_back(intToString(myPoint->getId()));
 		result.push_back(myPoint->getPointId());
         result.push_back(myPoint->getDescription());
-        result.push_back(doubleToString(myPoint->getObjectCoordinate().getX()));
-        result.push_back(doubleToString(myPoint->getObjectCoordinate().getY()));
-        result.push_back(doubleToString(myPoint->getObjectCoordinate().getZ()));
+		result.push_back(doubleToString(myPoint->getObjectCoordinate().getX(),3));
+		result.push_back(doubleToString(myPoint->getObjectCoordinate().getY(),3));
+		result.push_back(doubleToString(myPoint->getObjectCoordinate().getZ(),3));
         if (myPoint->hasDigitalCoordinate(myImage->getId()) && myPoint->getDigitalCoordinate(myImage->getId()).isAvailable())
         {
             result.push_back(intToString(myPoint->getDigitalCoordinate(myImage->getId()).getCol()));
             result.push_back(intToString(myPoint->getDigitalCoordinate(myImage->getId()).getLin()));
             AnalogImageSpaceCoordinate aisc = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
-            result.push_back(doubleToString(aisc.getXi()));
-            result.push_back(doubleToString(aisc.getEta()));
+			result.push_back(doubleToString(aisc.getXi(),3));
+			result.push_back(doubleToString(aisc.getEta(),3));
         }
     }
     return result;
@@ -292,14 +292,14 @@ bool SRManager::flightDirection(int col, int lin)
     return false;
 }
 
-bool SRManager::calculateSR(int iterations, double precision)
+bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrecision)
 {
     if (started)
     {
         if (mySR->countSelectedPoints() > 3)
         {
             mySR->initialize();
-            mySR->calculate(iterations, precision);
+			mySR->calculate(iterations, gnssPrecision, insPrecision);
         }
         return true;
     }
@@ -374,7 +374,7 @@ bool SRManager::save(string path)
         }
 
         EDomElement e(output);
-        output = e.indent("\t");
+		output = e.indent('\t').getContent();
 
         const char* buffer = output.c_str();
         pFile = fopen (path.c_str(), "wb");
@@ -451,7 +451,7 @@ void SRManager::acceptSR()
     else
         newXml.addChildAtTagName("exteriorOrientation", mySR->xmlGetData());
     int currentPointId;
-    for (unsigned int i = 0; i < myImage->countPoints(); i++)
+	for (int i = 0; i < myImage->countPoints(); i++)
     {
         currentPointId = myImage->getPointAt(i)->getId();
         newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());

@@ -3,15 +3,11 @@
 TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 {
     setupUi(this);
-    connect(latDegreeSpin,SIGNAL(editingFinished() ),
-                this,       SLOT( validatorLat()   )
-            );
-    connect(longDegreeSpin,SIGNAL(editingFinished() ),
-                this,       SLOT( validatorLong()   )
-			);
-	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(latDegreeSpin,SIGNAL(editingFinished() ),this,SLOT( validatorLat()));
+    connect(longDegreeSpin,SIGNAL(editingFinished() ),this,SLOT( validatorLong()));
+    connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+    connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
 }
 
 void TerrainForm::fillLatDir(string str)
@@ -48,6 +44,7 @@ string TerrainForm::getLongDir()
 
 void TerrainForm::fillvalues(string values)
 {
+    cleanForm();
     EDomElement ede(values);
 	bool ok;//variavel 'dummy' para a função QString::toDouble(*bool)
 
@@ -103,29 +100,29 @@ string TerrainForm::getvalues()
     stringstream auxStream;
 
     auxStream << "<terrain>\n";
-    auxStream << "\t<meanAltitude uom=\"#m\">" << (meanAltSpinBox->value()) <<"</meanAltitude>\n";
-    auxStream << "\t<minAltitude uom=\"#m\">"  << (minAltSpinBox->value()) <<"</minAltitude>\n";
-    auxStream << "\t<maxAltitude uom=\"#m\">" << (maxAltSpinBox->value()) <<"</maxAltitude>\n";
-    auxStream << "\t<GRS>" << grsComboBox->currentText().toUtf8().data() << "</GRS>\n";
-    auxStream << "\t<CPS>" << cpsComboBox->currentText().toUtf8().data() << "</CPS>\n";
-    auxStream << "\t<workAreaCenterCoordinates>\n";
+	auxStream << "<meanAltitude uom=\"#m\">" << (meanAltSpinBox->value()) <<"</meanAltitude>\n";
+	auxStream << "<minAltitude uom=\"#m\">"  << (minAltSpinBox->value()) <<"</minAltitude>\n";
+	auxStream << "<maxAltitude uom=\"#m\">" << (maxAltSpinBox->value()) <<"</maxAltitude>\n";
+	auxStream << "<GRS>" << grsComboBox->currentText().toUtf8().data() << "</GRS>\n";
+	auxStream << "<CPS>" << cpsComboBox->currentText().toUtf8().data() << "</CPS>\n";
+	auxStream << "<workAreaCenterCoordinates>\n";
 
-	//auxStream << "\t\t<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
-	auxStream << "\t\t<Lat direction=\"" << getLatDir() <<"\">\n";
-    auxStream << "\t\t\t<degrees>" << latDegreeSpin->value()<<"</degrees>\n";
-    auxStream << "\t\t\t<minutes>" << latMinutesSpin->value()<<"</minutes>\n";
-    auxStream << "\t\t\t<seconds>" << latSecondSpin->value()<<"</seconds>\n";
-    auxStream << "\t\t</Lat>\n";
+	//auxStream << "<Lat direction=\"" << latDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "<Lat direction=\"" << getLatDir() <<"\">\n";
+	auxStream << "<degrees>" << latDegreeSpin->value()<<"</degrees>\n";
+	auxStream << "<minutes>" << latMinutesSpin->value()<<"</minutes>\n";
+	auxStream << "<seconds>" << latSecondSpin->value()<<"</seconds>\n";
+	auxStream << "</Lat>\n";
 
-	//auxStream << "\t\t<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
-	auxStream << "\t\t<Long direction=\"" << getLongDir() <<"\">\n";
-    auxStream << "\t\t\t<degrees>" << longDegreeSpin->value()<<"</degrees>\n";
-    auxStream << "\t\t\t<minutes>" << longMinutesSpin->value()<<"</minutes>\n";
-    auxStream << "\t\t\t<seconds>" << longSecondSpin->value()<<"</seconds>\n";
-    auxStream << "\t\t</Long>\n";
+	//auxStream << "<Long direction=\"" << longDirCombo->currentText().toUtf8().data() <<"\">\n";
+	auxStream << "<Long direction=\"" << getLongDir() <<"\">\n";
+	auxStream << "<degrees>" << longDegreeSpin->value()<<"</degrees>\n";
+	auxStream << "<minutes>" << longMinutesSpin->value()<<"</minutes>\n";
+	auxStream << "<seconds>" << longSecondSpin->value()<<"</seconds>\n";
+	auxStream << "</Long>\n";
 
-    auxStream << "\t\t<utmFuse>"<< utmFuseSpin->value()<<"</utmFuse>\n";
-    auxStream << "\t</workAreaCenterCoordinates>\n";
+	auxStream << "<utmFuse>"<< utmFuseSpin->value()<<"</utmFuse>\n";
+	auxStream << "</workAreaCenterCoordinates>\n";
     auxStream << "</terrain>";
 
     xmlString = auxStream.str();
@@ -185,6 +182,38 @@ void TerrainForm::validatorAlt(double)
 	meanAltSpinBox->setMinimum(minAltSpinBox->value());
 	meanAltSpinBox->setMaximum(maxAltSpinBox->value());
 	minAltSpinBox->setMaximum(maxAltSpinBox->value());
+}
+
+void TerrainForm::cleanForm()
+{
+    maxAltSpinBox->clear();
+    minAltSpinBox->clear();
+    meanAltSpinBox->clear();
+    grsComboBox->setCurrentIndex(0);
+    cpsComboBox->setCurrentIndex(0);
+    utmFuseSpin->clear();
+    latDegreeSpin->clear();
+    latMinutesSpin->clear();
+    latSecondSpin->clear();
+    latDirCombo->setCurrentIndex(0);
+    longDegreeSpin->clear();
+    longMinutesSpin->clear();
+    longSecondSpin->clear();
+    longDirCombo->setCurrentIndex(0);
+}
+
+void TerrainForm::setFormLocale(QLocale locale)
+{
+    maxAltSpinBox->setLocale(locale);
+    minAltSpinBox->setLocale(locale);
+    meanAltSpinBox->setLocale(locale);
+    utmFuseSpin->setLocale(locale);
+    latDegreeSpin->setLocale(locale);
+    latMinutesSpin->setLocale(locale);
+    latSecondSpin->setLocale(locale);
+    longDegreeSpin->setLocale(locale);
+    longMinutesSpin->setLocale(locale);
+    longSecondSpin->setLocale(locale);
 }
 
 bool TerrainForm::isForm(string formName)

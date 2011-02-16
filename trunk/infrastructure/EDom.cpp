@@ -14,6 +14,15 @@ string doubleToString(double value)
     return converter.str();
 }
 
+string doubleToString(double value, int precision)
+{
+	stringstream converter;
+	converter << setprecision(precision);
+	converter << fixed;
+	converter << value;
+	return converter.str();
+}
+
 double stringToDouble(string value)
 {
     double result;
@@ -127,6 +136,69 @@ string EDomElement::tagName(string tag)
 
         return "";
     }
+}
+
+bool EDomElement::setAttribute(string att, string newAttValue)
+{
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos1 = content.find(att);
+	if (pos1 == string::npos)
+		return false;
+	unsigned long pos2 = content.find('\"', pos1);
+	unsigned long pos3 = content.find('\"', pos2 + 1);
+	string value = "\"";
+	value += newAttValue;
+	value += "\"";
+	content.replace(pos2, pos3-pos2+1, value);
+
+	return true;
+}
+
+bool EDomElement::addAttribute(string newAttName, string newAttValue)
+{
+	if (attribute(newAttName) != "")
+		return false;
+
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos = content.find('>');
+	string value = " ";
+	value += newAttName;
+	value += "=\"";
+	value += newAttValue;
+	value += "\"";
+	content.insert(pos, value);
+
+	return true;
 }
 
 // Constructors and Destructors
@@ -587,6 +659,42 @@ string EDomElement::attribute(string att)
     }
 }
 
+bool EDomElement::addAttributeByTagName(string tagname, string newAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagName(tagname);
+	if (!ede.addAttribute(newAtt,newAttValue))
+		return false;
+	replaceChildByTagName(tagname,ede.getContent());
+	return true;
+}
+
+bool EDomElement::addAttributeByTagAtt(string tagname, string att, string value, string newAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagAtt(tagname,att,value);
+	if (!ede.addAttribute(newAtt,newAttValue))
+		return false;
+	replaceChildByTagAtt(tagname,att,value,ede.getContent());
+	return true;
+}
+
+bool EDomElement::replaceAttributeByTagName(string tagname, string replaceAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagName(tagname);
+	if (!ede.setAttribute(replaceAtt,newAttValue))
+		return false;
+	replaceChildByTagName(tagname,ede.getContent());
+	return true;
+}
+
+bool EDomElement::replaceAttributeByTagAtt(string tagname, string att, string value, string replaceAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagAtt(tagname,att,value);
+	if (!ede.setAttribute(replaceAtt,newAttValue))
+		return false;
+	replaceChildByTagAtt(tagname,att,value,ede.getContent());
+	return true;
+}
+
 string EDomElement::toString()
 {
     string result = "";
@@ -716,7 +824,7 @@ bool EDomElement::hasTagName(string tagname)
 
 // Test method
 //
-string EDomElement::indent(string indentation)
+EDomElement EDomElement::indent(char indentation)
 {
     stringstream result;
     long nesting = 0;
@@ -751,11 +859,88 @@ string EDomElement::indent(string indentation)
                 for (long indents = 0; indents < nesting - 1; indents++)
                     result << indentation;
         }
-        return result.str();
+		return EDomElement(result.str());
     }
     catch (std::out_of_range& e)
     {
-
-        return "";
+		return EDomElement();
     }
+}
+
+EDomElement EDomElement::trim(char charToTrim)
+{
+	stringstream result;
+	bool checkIndentation = true;
+	try
+	{
+		for (unsigned long pos = 0; pos < content.length(); pos++)
+		{
+			if (checkIndentation == true)
+			{
+				if (content.at(pos) != charToTrim)
+				{
+					checkIndentation = false;
+					result << content.at(pos);
+				}
+				//else ; //Indentation is removed
+			}
+			else
+			{
+				if (content.at(pos) == '\n')
+					checkIndentation = true;
+				result << content.at(pos);
+			}
+		}
+		return EDomElement(result.str());
+	}
+	catch (std::out_of_range& e)
+	{
+		return EDomElement();
+	}
+}
+
+EDomElement EDomElement::removeBlankLines(bool removeIndentation)
+{
+	stringstream result;
+	bool isBlank = true;
+	unsigned long lineBegin = 0;
+	try
+	{
+		for (unsigned long pos = 0; pos < content.length(); pos++)
+		{
+			if (isBlank == true)
+			{
+				if (content.at(pos) != ' ' && content.at(pos) != '\t' && content.at(pos) != '\r' && content.at(pos) != '\n')
+				{
+					isBlank = false;
+					if (!removeIndentation)
+					{
+						for (lineBegin; lineBegin < pos; lineBegin++)
+						{
+							result << content.at(lineBegin);
+						}
+					}
+					result << content.at(pos);
+				}
+				else if (content.at(pos) == '\n')
+				{
+					lineBegin = pos + 1;
+				}
+			}
+			else
+			{
+				if (content.at(pos) == '\n')
+				{
+					isBlank = true;
+					lineBegin = pos + 1;
+				}
+				result << content.at(pos);
+			}
+		}
+		return EDomElement(result.str());
+	}
+	catch (std::out_of_range& e)
+	{
+		return EDomElement();
+	}
 }

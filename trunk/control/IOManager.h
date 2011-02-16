@@ -1,5 +1,5 @@
 /**************************************************************************
-                               IOManager.h
+							   IOManager.h
 **************************************************************************/
 
 
@@ -28,43 +28,46 @@ class EFotoManager;
 
 class IOManager
 {
-    // Private Attributes
-    //
-    bool started;
-    bool status;
-    EFotoManager* manager;
-    Sensor* mySensor;
-    Image* myImage;
-    InteriorOrientation* myIO;
-    IOUserInterface* myInterface;
+	// Private Attributes
+	//
+	bool started;
+	bool status;
+	EFotoManager* manager;
+	Sensor* mySensor;
+	Image* myImage;
+	InteriorOrientation* myIO;
+	IOUserInterface* myInterface;
 
 public:
 
-    // Constructors and Destructors
-    //
-    IOManager();
-    IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
-    ~IOManager();
+	// Constructors and Destructors
+	//
+	IOManager();
+	IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
+	~IOManager();
 
-    // Association Methods
-    //
-    void setInterface(IOUserInterface* newInterface);
-    IOUserInterface* getInterface();
+	// Association Methods
+	//
+	void setInterface(IOUserInterface* newInterface);
+	IOUserInterface* getInterface();
 
-    // Other Methods
-    //
-    PositionMatrix getAnalogMarks();
-    bool measureMark(int id, int col, int lin);
-    unsigned int countMarks();
-    deque<string> markData(int index);
-    unsigned int getTotalMarks();
-    bool calculateIO();
-    deque<string> makeReport();
-    bool exec();
-    bool save(string path);
-    bool load(string path);
-    string getImageFile();
-    void acceptIO();
+	// Other Methods
+	//
+	PositionMatrix getAnalogMarks();
+	bool measureMark(int id, int col, int lin);
+	unsigned int countMarks();
+	deque<string> markData(int index);
+	unsigned int getTotalMarks();
+	int getCalculationMode();
+	bool calculateIO();
+	deque<string> makeReport();
+	bool exec();
+	bool save(string path);
+	bool load(string path);
+	string getImageFile();
+	int getFrameRows();
+	int getFrameColumns();
+	void acceptIO();
 
 };
 
