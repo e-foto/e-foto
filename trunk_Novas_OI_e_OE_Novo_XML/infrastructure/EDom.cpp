@@ -138,6 +138,69 @@ string EDomElement::tagName(string tag)
     }
 }
 
+bool EDomElement::setAttribute(string att, string newAttValue)
+{
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos1 = content.find(att);
+	if (pos1 == string::npos)
+		return false;
+	unsigned long pos2 = content.find('\"', pos1);
+	unsigned long pos3 = content.find('\"', pos2 + 1);
+	string value = "\"";
+	value += newAttValue;
+	value += "\"";
+	content.replace(pos2, pos3-pos2+1, value);
+
+	return true;
+}
+
+bool EDomElement::addAttribute(string newAttName, string newAttValue)
+{
+	if (attribute(newAttName) != "")
+		return false;
+
+	string tag = "";
+	try
+	{
+		if (content.at(0) == '<')
+		{
+			tag = content.substr(0, content.find('>') + 1);
+		}
+	}
+	catch (std::out_of_range& e)
+	{
+		return false;
+	}
+
+	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+		return false;
+
+	unsigned long pos = content.find('>');
+	string value = " ";
+	value += newAttName;
+	value += "=\"";
+	value += newAttValue;
+	value += "\"";
+	content.insert(pos, value);
+
+	return true;
+}
+
 // Constructors and Destructors
 //
 EDomElement::EDomElement()
@@ -596,61 +659,39 @@ string EDomElement::attribute(string att)
     }
 }
 
-bool setAttribute(string att, string newAttValue)
+bool EDomElement::addAttributeByTagName(string tagname, string newAtt, string newAttValue)
 {
-	string tag = "";
-	try
-	{
-		if (content.at(0) == '<')
-		{
-			tag = content.substr(0, content.find('>') + 1);
-		}
-	}
-	catch (std::out_of_range& e)
-	{
+	EDomElement ede = elementByTagName(tagname);
+	if (!ede.addAttribute(newAtt,newAttValue))
 		return false;
-	}
-
-	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
-		return false;
-
-	unsigned long pos1 = content.find(att);
-	unsigned long pos2 = content.find('\"', pos1);
-	unsigned long pos3 = content.find('\"', pos2 + 1);
-	string value = "\"";
-	value += newAttValue;
-	value += "\"";
-	content.replace(pos2, pos3-pos2+1, value);
-
-	return false;
+	replaceChildByTagName(tagname,ede.getContent());
+	return true;
 }
 
-bool addAttribute(string newAttName, string newAttValue)
+bool EDomElement::addAttributeByTagAtt(string tagname, string att, string value, string newAtt, string newAttValue)
 {
-	string tag = "";
-	try
-	{
-		if (content.at(0) == '<')
-		{
-			tag = content.substr(0, content.find('>') + 1);
-		}
-	}
-	catch (std::out_of_range& e)
-	{
+	EDomElement ede = elementByTagAtt(tagname,att,value);
+	if (!ede.addAttribute(newAtt,newAttValue))
 		return false;
-	}
+	replaceChildByTagAtt(tagname,att,value,ede.getContent());
+	return true;
+}
 
-	if (tagType(tag) == INVALID_TAG || tagType(tag) == CLOSE_TAG)
+bool EDomElement::replaceAttributeByTagName(string tagname, string replaceAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagName(tagname);
+	if (!ede.setAttribute(replaceAtt,newAttValue))
 		return false;
+	replaceChildByTagName(tagname,ede.getContent());
+	return true;
+}
 
-	unsigned long pos = content.find('>');
-	string value = " ";
-	value += newAttName;
-	value += "=\"";
-	value += newAttValue;
-	value += "\"";
-	content.insert(pos, value);
-
+bool EDomElement::replaceAttributeByTagAtt(string tagname, string att, string value, string replaceAtt, string newAttValue)
+{
+	EDomElement ede = elementByTagAtt(tagname,att,value);
+	if (!ede.setAttribute(replaceAtt,newAttValue))
+		return false;
+	replaceChildByTagAtt(tagname,att,value,ede.getContent());
 	return true;
 }
 
