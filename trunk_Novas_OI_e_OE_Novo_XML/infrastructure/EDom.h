@@ -63,6 +63,8 @@ class EDomElement
 	//
 	int tagType(string myTag);
 	string tagName(string myTag);
+	bool setAttribute(string att, string newAttValue);
+	bool addAttribute(string newAttName, string newAttValue);
 
 public:
 
@@ -90,8 +92,10 @@ public:
 	bool replaceChildByTagAtt(string tagname, string att, string value, string newChild);
 	string tagName();
 	string attribute(string att);
-	bool setAttribute(string att, string newAttValue);
-	bool addAttribute(string newAttName, string newAttValue);
+	bool addAttributeByTagName(string tagname, string newAtt, string newAttValue);
+	bool addAttributeByTagAtt(string tagname, string att, string value, string newAtt, string newAttValue);
+	bool replaceAttributeByTagName(string tagname, string replaceAtt, string newAttValue);
+	bool replaceAttributeByTagAtt(string tagname, string att, string value, string replaceAtt, string newAttValue);
 	string toString();
 	int toInt();
 	long toLong();
