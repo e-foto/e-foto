@@ -60,6 +60,7 @@ public:
 	unsigned int getTotalMarks();
 	int getCalculationMode();
 	bool calculateIO();
+	bool interiorDone();
 	deque<string> makeReport();
 	bool exec();
 	bool save(string path);

@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>820</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuView">
@@ -146,10 +146,10 @@
      <normaloff>:/images/table.png</normaloff>:/images/table.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;View report</string>
+    <string>View &amp;report</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+V</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionFit_view">
@@ -158,10 +158,10 @@
      <normaloff>:/images/fit.png</normaloff>:/images/fit.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Fit view</string>
+    <string>Fit &amp;view</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+F</string>
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionSet_mark">
@@ -188,10 +188,10 @@
      <normaloff>:/images/interior.png</normaloff>:/images/interior.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Interior orientation</string>
+    <string>Interior &amp;orientation</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionMove">
@@ -223,10 +223,12 @@
    <property name="shortcut">
     <string>Ctrl+A</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
  </widget>
  <resources>
-  <include location="resource/io_icons.qrc"/>
   <include location="resource/io_icons.qrc"/>
  </resources>
  <connections/>

@@ -256,6 +256,8 @@ void SigmaFormController::toNotAvailable()
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
+			subLayout->setStretch(0,0);
+			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);
@@ -295,6 +297,8 @@ void SigmaFormController::toStDev()
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
+			subLayout->setStretch(0,0);
+			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);
@@ -334,6 +338,8 @@ void SigmaFormController::toMatrix()
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
 			subLayout->setMargin(0);
+			subLayout->setStretch(0,0);
+			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);

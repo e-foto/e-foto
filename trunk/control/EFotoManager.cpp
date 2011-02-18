@@ -16,6 +16,7 @@
 EFotoManager::EFotoManager()
 {
 	xmlData = "";
+	savedState = true;
 	project = NULL;
 	interiorOrientation = NULL;
 	spatialRessection = NULL;
@@ -502,6 +503,16 @@ string EFotoManager::xmlGetData()
 //Other methods
 //
 
+void EFotoManager::setSavedState(bool state)
+{
+	savedState = state;
+}
+
+bool EFotoManager::getSavedState()
+{
+	return savedState; // O uso desta variável precisar ser revisto!
+}
+
 /**
  *
  */
@@ -658,9 +669,11 @@ bool EFotoManager::exec(string filename)
 			reloadProject();
 			break;
 		case 3:
+			savedState = true;
 			execIO(nextImage);
 			break;
 		case 4:
+			savedState = true;
 			execSR(nextImage);
 			break;
 		default:

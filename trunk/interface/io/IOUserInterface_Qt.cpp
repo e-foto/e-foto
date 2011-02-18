@@ -37,6 +37,8 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 	QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
 
 	this->manager = manager;
+	if (manager->interiorDone())
+		actionView_report->setEnabled(true);
 
 	init();
 }
@@ -137,36 +139,36 @@ bool IOUserInterface_Qt::viewReport()
 {
 	deque<string> myValues = manager->makeReport();
 
-	QWidget *window = new QWidget();
+	windowReport = new QWidget();
 	QVBoxLayout *myLayout = new QVBoxLayout();
 	QTabWidget *myTab = new QTabWidget();
 
 	vector<string> myXa;
 	myXa.push_back(myValues.at(0));
 	MatrixModel* myXaModel = new MatrixModel(myXa);
-	MatrixView* myXaView = new MatrixView(window, myXaModel);
+	MatrixView* myXaView = new MatrixView(windowReport, myXaModel);
 	myTab->addTab(myXaView, QString::fromUtf8("Xa"));
 	vector<string> myLa;
 	myLa.push_back(myValues.at(1));
 	MatrixModel* myLaModel = new MatrixModel(myLa);
-	MatrixView* myLaView = new MatrixView(window, myLaModel);
+	MatrixView* myLaView = new MatrixView(windowReport, myLaModel);
 	myTab->addTab(myLaView, QString::fromUtf8("La"));
 	QLabel* myLabel = new QLabel(myValues.at(2).c_str());
 	myTab->addTab(myLabel, QString::fromUtf8("sigma0^2"));
 	vector<string> myV;
 	myV.push_back(myValues.at(3));
 	MatrixModel* myVModel = new MatrixModel(myV);
-	MatrixView* myVView = new MatrixView(window, myVModel);
+	MatrixView* myVView = new MatrixView(windowReport, myVModel);
 	myTab->addTab(myVView, QString::fromUtf8("V"));
 	vector<string> mySXa;
 	mySXa.push_back(myValues.at(4));
 	MatrixModel* mySXaModel = new MatrixModel(mySXa);
-	MatrixView* mySXaView = new MatrixView(window, mySXaModel);
+	MatrixView* mySXaView = new MatrixView(windowReport, mySXaModel);
 	myTab->addTab(mySXaView, QString::fromUtf8("SigmaXa"));
 	vector<string> mySLa;
 	mySLa.push_back(myValues.at(5));
 	MatrixModel* mySLaModel = new MatrixModel(mySLa);
-	MatrixView* mySLaView = new MatrixView(window, mySLaModel);
+	MatrixView* mySLaView = new MatrixView(windowReport, mySLaModel);
 	myTab->addTab(mySLaView, QString::fromUtf8("SigmaLa"));
 
 	QPushButton *acceptButton = new QPushButton("&Accept", this);
@@ -175,10 +177,10 @@ bool IOUserInterface_Qt::viewReport()
 	myLayout->addWidget(myTab);
 	myLayout->addWidget(acceptButton);
 
-	window->setLayout(myLayout);
-	window->setWindowModality(Qt::ApplicationModal);
-	window->setWindowTitle("Interior Orientation Report");
-	window->show();
+	windowReport->setLayout(myLayout);
+	windowReport->setWindowModality(Qt::ApplicationModal);
+	windowReport->setWindowTitle("Interior Orientation Report");
+	windowReport->show();
 
 	return true;
 }
@@ -197,6 +199,7 @@ void IOUserInterface_Qt::testActivateIO()
 void IOUserInterface_Qt::acceptIO()
 {
 	manager->acceptIO();
+	windowReport->close();
 }
 
 bool IOUserInterface_Qt::exec()

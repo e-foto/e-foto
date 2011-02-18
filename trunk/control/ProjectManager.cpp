@@ -474,6 +474,7 @@ bool ProjectManager::reload()
     {
         if (myInterface != NULL)
         {
+			manager->getSavedState();
             return myInterface->exec();
         }
         return false;
@@ -489,6 +490,15 @@ string ProjectManager::getXml(string tagname)
 string ProjectManager::getXml(string tagname, string att, string value)
 {
     return manager->getXml(tagname, att, value);
+}
+
+bool ProjectManager::getSavedState()
+{
+	if (manager != NULL)
+	{
+		return manager->getSavedState();
+	}
+	return true;
 }
 
 bool ProjectManager::makeSPFile(string filename, int image1, int image2)

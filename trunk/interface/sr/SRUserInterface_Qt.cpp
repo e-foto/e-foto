@@ -33,6 +33,8 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
     QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
 
     this->manager = manager;
+	if (manager->exteriorDone())
+		actionTable->setEnabled(true);
 
     flightAvailable = false;
     init();
@@ -188,7 +190,7 @@ bool SRUserInterface_Qt::viewReport()
 {
     deque<string> myValues = manager->makeReport();
 
-    QWidget *window = new QWidget();
+	QWidget *windowReport = new QWidget();
     QVBoxLayout *myLayout = new QVBoxLayout();
     QHBoxLayout* upperLayout = new QHBoxLayout();
     QTabWidget *myTab = new QTabWidget();
@@ -196,29 +198,29 @@ bool SRUserInterface_Qt::viewReport()
     vector<string> myXa;
     myXa.push_back(myValues.at(0));
     MatrixModel* myXaModel = new MatrixModel(myXa);
-    MatrixView* myXaView = new MatrixView(window, myXaModel);
+	MatrixView* myXaView = new MatrixView(windowReport, myXaModel);
     myTab->addTab(myXaView, QString::fromUtf8("Xa"));
     vector<string> myLb;
     myLb.push_back(myValues.at(1));
     MatrixModel* myLbModel = new MatrixModel(myLb);
-    MatrixView* myLbView = new MatrixView(window, myLbModel);
+	MatrixView* myLbView = new MatrixView(windowReport, myLbModel);
     myTab->addTab(myLbView, QString::fromUtf8("Lb"));
     QLabel* myLabel = new QLabel(myValues.at(2).c_str());
     myTab->addTab(myLabel, QString::fromUtf8("sigma0^2"));
     vector<string> myV;
     myV.push_back(myValues.at(3));
     MatrixModel* myVModel = new MatrixModel(myV);
-    MatrixView* myVView = new MatrixView(window, myVModel);
+	MatrixView* myVView = new MatrixView(windowReport, myVModel);
     myTab->addTab(myVView, QString::fromUtf8("V"));
     vector<string> mySXa;
     mySXa.push_back(myValues.at(4));
     MatrixModel* mySXaModel = new MatrixModel(mySXa);
-    MatrixView* mySXaView = new MatrixView(window, mySXaModel);
+	MatrixView* mySXaView = new MatrixView(windowReport, mySXaModel);
     myTab->addTab(mySXaView, QString::fromUtf8("SigmaXa"));
     vector<string> mySLa;
     mySLa.push_back(myValues.at(5));
     MatrixModel* mySLaModel = new MatrixModel(mySLa);
-    MatrixView* mySLaView = new MatrixView(window, mySLaModel);
+	MatrixView* mySLaView = new MatrixView(windowReport, mySLaModel);
     myTab->addTab(mySLaView, QString::fromUtf8("SigmaLa"));
 
     QString itString("Iterations: ");
@@ -238,10 +240,10 @@ bool SRUserInterface_Qt::viewReport()
     myLayout->addWidget(myTab);
     myLayout->addWidget(acceptButton);
 
-    window->setLayout(myLayout);
-    window->setWindowModality(Qt::ApplicationModal);
-    window->setWindowTitle("Exterior Orientation Report");
-    window->show();
+	windowReport->setLayout(myLayout);
+	windowReport->setWindowModality(Qt::ApplicationModal);
+	windowReport->setWindowTitle("Exterior Orientation Report");
+	windowReport->show();
 
     return true;
 }
@@ -278,6 +280,7 @@ void SRUserInterface_Qt::setFlight()
 void SRUserInterface_Qt::acceptSR()
 {
     manager->acceptSR();
+	windowReport->close();
 }
 
 bool SRUserInterface_Qt::exec()

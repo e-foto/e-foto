@@ -549,7 +549,7 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
 		//***************************************************************************************************
 		// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
 		QString extension = filename.right(4);
-		if (extension != ".epp")
+		if (extension.toLower() != ".epp")
 			filename.append(".epp");
 		int i=filename.lastIndexOf("/");
 
@@ -903,6 +903,7 @@ void ProjectUserInterface_Qt::updateTree()
 
 bool ProjectUserInterface_Qt::exec()
 {
+	actionSave_file->setEnabled(!manager->getSavedState());
 	this->show();
 	if (qApp->exec())
 		return false;

@@ -77,6 +77,7 @@ public:
     bool flightDirection(int markId);
     bool flightDirection(int col, int lin);
 	bool calculateSR(int iterations, double gnssPrecision, double insPrecision);
+	bool exteriorDone();
     deque<string> makeReport();
     bool exec();
     bool save(string path);

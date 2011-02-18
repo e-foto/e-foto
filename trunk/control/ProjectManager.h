@@ -197,6 +197,8 @@ public:
      */
     string getXml(string tagname, string att, string value);
 
+	bool getSavedState();
+
     /**
       * This method makes a file to be used with the Stereoplotter module.
       * @param filename Name of the file to be saved on disk.

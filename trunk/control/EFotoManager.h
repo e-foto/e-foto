@@ -40,6 +40,7 @@ class EFotoManager
 	int nextModule;
 	int nextImage;
 
+	bool savedState;
 	string xmlData;
 	string interfaceType;
 
@@ -232,6 +233,9 @@ public:
 	 * This method returns the current data from the program to a XML string.
 	 */
 	string xmlGetData();
+
+	void setSavedState(bool state);
+	bool getSavedState();
 
 	/**
 	 * This sets the type of user interface which the program will run under.

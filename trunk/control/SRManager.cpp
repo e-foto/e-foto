@@ -306,6 +306,13 @@ bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrec
     return false;
 }
 
+bool SRManager::exteriorDone()
+{
+	if (mySR->getXa().getRows() != 6)
+		return false;
+	return true;
+}
+
 deque<string> SRManager::makeReport()
 {
     deque<string> result;
@@ -457,4 +464,5 @@ void SRManager::acceptSR()
         newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());
     }
     manager->xmlSetData(newXml.getContent());
+	manager->setSavedState(false);
 }

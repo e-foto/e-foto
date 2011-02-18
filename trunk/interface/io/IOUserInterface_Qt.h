@@ -33,6 +33,8 @@ public slots:
 	virtual void acceptIO();
 
 protected:
+
+	QWidget *windowReport;
 	ImageView *myImageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;

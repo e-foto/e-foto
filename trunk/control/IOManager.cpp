@@ -151,6 +151,13 @@ bool IOManager::calculateIO()
 	return status;
 }
 
+bool IOManager::interiorDone()
+{
+	if (myIO->getXa().getRows() != 6)
+		return false;
+	return true;
+}
+
 deque<string> IOManager::makeReport()
 {
 	deque<string> result;
@@ -289,4 +296,5 @@ void IOManager::acceptIO()
 	else
 		newXml.addChildAtTagName("interiorOrientation", myIO->xmlGetData());
 	manager->xmlSetData(newXml.getContent());
+	manager->setSavedState(false);
 }

@@ -40,6 +40,7 @@ private:
     bool measurePoint(int id, int col, int lin);
 
 protected:
+	QWidget *windowReport;
     ImageView *myImageView;
     QGridLayout *imageLayout;
     QStandardItemModel *points;

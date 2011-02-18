@@ -19,6 +19,7 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 	insSigmaDialogButton->setSigmaFormController(insSigmaController);
 	insSigmaDialogButton->setVisible(false);
 	metadataGroup->setVisible(false);
+	lastPath = ".";
 
 	connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
 	connect(fileNameLine,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
@@ -200,13 +201,12 @@ void ImageForm:: setReadOnly(bool state)
 
 QString ImageForm::loadImageFile()
 {
-	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", ".", "*.tif *.png *.bmp *.jpg");
+	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", lastPath, "*.tif *.png *.bmp *.jpg");
 	setIOAvailable(false);
 	setEOAvailable(false);
 
 	QDir absolutePath (proj->getSavedIn());
-		//qDebug()<<parent->getSavedIn();
-		qDebug()<<proj->getSavedIn();
+		//qDebug()<<proj->getSavedIn();
         if (fileImage !="")
             {
                //***************************************************************************************************
@@ -221,6 +221,7 @@ QString ImageForm::loadImageFile()
 				   filePathLine->setText(".");
 			   else
 				   filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
+			   lastPath = filePathLine->text();
                //***************************************************************************************************
                QImage * imageData=new QImage(fileImage);
                heightLine->setText(QString::number(imageData->height())+" px");
