@@ -21,6 +21,9 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
     actionFlight->setEnabled(false);
     actionSpatialRessection->setEnabled(false);
     table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	points = NULL;
+	pointsOccurrenceList = NULL;
+	table2PointsOccurrence = NULL;
 
     //Tem que rever esse primeiro connect... o calculate da SR não é direto, tem que abrir a tela pra escolher iterações e precisão.
     QObject::connect(actionSpatialRessection, SIGNAL(triggered()), this, SLOT(calculateSR()));
@@ -29,8 +32,9 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
     QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
     QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
     QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
-    QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
-    QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
+	QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
+	QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
+	QObject::connect(actionInsert_Points, SIGNAL(triggered()), this, SLOT(activeInsertPoint()));
 
     this->manager = manager;
 	if (manager->exteriorDone())
@@ -75,6 +79,58 @@ void SRUserInterface_Qt::init()
 
 	//this->showNormal();
 	//myImageView->fitView();
+}
+
+void SRUserInterface_Qt::loadPointsTable()
+{
+	int numberOfPoints = manager->listImagePoints().size();
+	if (points != NULL)
+		delete points;
+	points = new QStandardItemModel(numberOfPoints, 11);
+	for (int row = 0; row < numberOfPoints; row++)
+	{
+		deque<string> pointData = manager->pointData(row);
+		for (unsigned int col = 0; col < pointData.size(); col++)
+		{
+			QStandardItem* item = new QStandardItem(QString(pointData.at(col).c_str()));
+			if (col == 1)
+			{
+				item->setCheckable(true);
+			}
+			points->setItem(row, col, item);
+		}
+		for (int col = pointData.size(); col < 10; col++)
+		{
+			QStandardItem* item = new QStandardItem(QString(""));
+			points->setItem(row, col, item);
+		}
+		QStandardItem* item = new QStandardItem();
+		points->setItem(row, 10, item);
+		if (points->data(points->index(row,6)).toString() != "")
+		{
+			points->setData(points->index(row, 10), QVariant(true));
+		}
+		else
+		{
+			points->setData(points->index(row, 10), QVariant(false));
+		}
+	}
+	points->setHeaderData(0, Qt::Horizontal, QVariant("Number"));
+	points->setHeaderData(1, Qt::Horizontal, QVariant("Id"));
+	points->setHeaderData(2, Qt::Horizontal, QVariant("Description"));
+	points->setHeaderData(3, Qt::Horizontal, QVariant("E"));
+	points->setHeaderData(4, Qt::Horizontal, QVariant("N"));
+	points->setHeaderData(5, Qt::Horizontal, QVariant("H"));
+	points->setHeaderData(6, Qt::Horizontal, QVariant("col"));
+	points->setHeaderData(7, Qt::Horizontal, QVariant("lin"));
+	points->setHeaderData(8, Qt::Horizontal, QVariant(QChar(0x03BE)));
+	points->setHeaderData(9, Qt::Horizontal, QVariant(QChar(0x03B7)));
+	points->setHeaderData(10, Qt::Horizontal, QVariant("Used"));
+	table1->setModel(points);
+	table1->setColumnHidden(0,true);
+	table1->setColumnHidden(10,true);
+	table1->selectRow(0);
+	table1->setFocus();
 }
 
 void SRUserInterface_Qt::informState()
@@ -160,12 +216,124 @@ void SRUserInterface_Qt::activePanMode()
 
 void SRUserInterface_Qt::activeZoomMode()
 {
-    myImageView->setViewMode(3);
+	myImageView->setViewMode(3);
+}
+
+void SRUserInterface_Qt::activeInsertPoint()
+{
+	if (imagePoints.size() == 0)
+	{
+		allPoints = manager->listAllPoints();
+		imagePoints = manager->listImagePoints();
+	}
+	QPushButton* confirmButton = new QPushButton(tr("confirm"));
+	QPushButton* cancelButton = new QPushButton(tr("cancel"));
+	QLabel* message = new QLabel(tr("Please check or uncheck points to insert or delete the occurrence of the same about this image"));
+	if (table2PointsOccurrence != NULL)
+		delete table2PointsOccurrence;
+	table2PointsOccurrence = new QTableWidget;
+	QVBoxLayout* layout = new QVBoxLayout;
+	QHBoxLayout* hlayout = new QHBoxLayout;
+	if (pointsOccurrenceList != NULL)
+		delete pointsOccurrenceList;
+	pointsOccurrenceList = new QWidget;
+
+	table2PointsOccurrence->setRowCount(manager->listAllPoints().size());
+	table2PointsOccurrence->setColumnCount(3);
+	table2PointsOccurrence->setHorizontalHeaderLabels(QString("Key.Point Id.Description").split("."));
+	table2PointsOccurrence->setColumnHidden(0,true);
+	table2PointsOccurrence->horizontalHeader()->setStretchLastSection(true);
+	int totalOfPoints = manager->listAllPoints().size();
+	for (int i=0;i<totalOfPoints;i++)
+	{
+		QStringList point;
+		bool inserted = false;
+		if (i<imagePoints.size())
+		{
+			point = QString(imagePoints.at(i).c_str()).split(" ");
+			inserted = true;
+			for (int j=0;j<allPoints.size();j++)
+			{
+				if (point.at(0) == QString(allPoints.at(j).c_str()).split(" ").at(0))
+				{
+					allPoints.erase(allPoints.begin()+j);
+					break;
+				}
+			}
+		}
+		else
+		{
+			point = QString(allPoints.at(i-imagePoints.size()).c_str()).split(" ");
+		}
+		QTableWidgetItem *temp0= new QTableWidgetItem(point.at(0));
+		temp0->setTextAlignment(Qt::AlignCenter);
+		temp0->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		table2PointsOccurrence->setItem(i,0,temp0);
+		QTableWidgetItem *temp1= new QTableWidgetItem(point.at(1));
+		temp1->setTextAlignment(Qt::AlignCenter);
+		temp1->setCheckState(inserted ? Qt::Checked : Qt::Unchecked);
+		temp1->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+		table2PointsOccurrence->setItem(i,1,temp1);
+		point.removeFirst();
+		point.removeFirst();
+		QTableWidgetItem *temp2 = new QTableWidgetItem(point.join(" "));
+		temp2->setTextAlignment(Qt::AlignCenter);
+		temp2->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		table2PointsOccurrence->setItem(i,2,temp2);
+	}
+	hlayout->addWidget(message);
+	hlayout->addWidget(confirmButton);
+	hlayout->addWidget(cancelButton);
+	layout->addWidget(table2PointsOccurrence);
+	layout->addLayout(hlayout);
+	pointsOccurrenceList->setLayout(layout);
+	pointsOccurrenceList->setWindowModality(Qt::ApplicationModal);
+	connect(cancelButton,SIGNAL(clicked()),pointsOccurrenceList,SLOT(close()));
+	connect(confirmButton,SIGNAL(clicked()),this,SLOT(insertPoint()));
+	pointsOccurrenceList->show();
 }
 
 void SRUserInterface_Qt::fitView()
 {
     myImageView->fitView();
+}
+
+void SRUserInterface_Qt::insertPoint()
+{
+	int otherPointsCount = allPoints.size();
+	int imagePointsCount = imagePoints.size();
+	imagePoints.clear();
+	allPoints.clear();
+	for (int i = 0; i<imagePointsCount; i++)
+	{
+		if (table2PointsOccurrence->item(i,1)->checkState() == Qt::Unchecked)
+		{
+			bool ok;
+			int key = table2PointsOccurrence->item(i,0)->text().toInt(&ok);
+			if (ok)
+			{
+				manager->removePoint(key);
+				manager->removePointFromImage(key);
+			}
+		}
+	}
+	for (int i = imagePointsCount; i<imagePointsCount+otherPointsCount; i++)
+	{
+		if (table2PointsOccurrence->item(i,1)->checkState() == Qt::Checked)
+		{
+			bool ok;
+			int key = table2PointsOccurrence->item(i,0)->text().toInt(&ok);
+			if (ok)
+			{
+				manager->insertPointOnImage(key);
+			}
+		}
+	}
+	loadPointsTable();
+	myImageView->clearPoints();
+	myImageView->createPoints(points,2);
+	myImageView->drawPoints(points,2);
+	pointsOccurrenceList->close();
 }
 
 bool SRUserInterface_Qt::measurePoint(int id, int col, int lin)
@@ -285,54 +453,7 @@ void SRUserInterface_Qt::acceptSR()
 
 bool SRUserInterface_Qt::exec()
 {
-    int numberOfPoints = manager->listImagePoints().size();
-
-    points = new QStandardItemModel(numberOfPoints, 11);
-    for (int row = 0; row < numberOfPoints; row++)
-    {
-        deque<string> pointData = manager->pointData(row);
-        for (unsigned int col = 0; col < pointData.size(); col++)
-        {
-            QStandardItem* item = new QStandardItem(QString(pointData.at(col).c_str()));
-            if (col == 1)
-            {
-                item->setCheckable(true);
-            }
-            points->setItem(row, col, item);
-        }
-        for (int col = pointData.size(); col < 10; col++)
-        {
-            QStandardItem* item = new QStandardItem(QString(""));
-            points->setItem(row, col, item);
-        }
-        QStandardItem* item = new QStandardItem();
-        points->setItem(row, 10, item);
-        if (points->data(points->index(row,6)).toString() != "")
-        {
-            points->setData(points->index(row, 10), QVariant(true));
-        }
-        else
-        {
-            points->setData(points->index(row, 10), QVariant(false));
-        }
-    }
-    points->setHeaderData(0, Qt::Horizontal, QVariant("Number"));
-    points->setHeaderData(1, Qt::Horizontal, QVariant("Id"));
-    points->setHeaderData(2, Qt::Horizontal, QVariant("Description"));
-    points->setHeaderData(3, Qt::Horizontal, QVariant("E"));
-    points->setHeaderData(4, Qt::Horizontal, QVariant("N"));
-    points->setHeaderData(5, Qt::Horizontal, QVariant("H"));
-    points->setHeaderData(6, Qt::Horizontal, QVariant("col"));
-    points->setHeaderData(7, Qt::Horizontal, QVariant("lin"));
-    points->setHeaderData(8, Qt::Horizontal, QVariant(QChar(0x03BE)));
-    points->setHeaderData(9, Qt::Horizontal, QVariant(QChar(0x03B7)));
-    points->setHeaderData(10, Qt::Horizontal, QVariant("Used"));
-    table1->setModel(points);
-    table1->setColumnHidden(0,true);
-    table1->setColumnHidden(10,true);
-    table1->selectRow(0);
-    table1->setFocus();
-
+	loadPointsTable();
     connect (points, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(actualizeSelection(QStandardItem*)));
 
     this->show();
