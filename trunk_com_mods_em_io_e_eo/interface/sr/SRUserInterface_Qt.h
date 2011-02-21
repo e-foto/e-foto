@@ -5,6 +5,7 @@
 #include "SRUserInterface.h"
 #include "ImageView.h"
 #include "matrixview.h"
+#include "TableIOEOWidget.h"
 
 #include <QPoint>
 #include <QGridLayout>

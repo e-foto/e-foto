@@ -24,7 +24,7 @@ public:
     void setDms(Dms newDms);
     void setDms(int degree, int minute , double seconds, bool signal=false);
     QString toString(int decimals = 3);
-    static Dms* stringToDms(QString dms);
+    Dms* stringToDms(QString dms);
     void setDegree(int newDegrees);
     void setMinute(int newMinutes);
     void setSeconds(double newSeconds);
@@ -44,10 +44,10 @@ public:
     static double radianoToDegreeDecimal(double radiano);
 
 private:
-	int degree;
-	int min;
+    int degree;
+    int min;
     double sec;
-	bool signal;
+    bool signal;
 };
 
 /*

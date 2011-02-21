@@ -1,5 +1,7 @@
 HEADERS += Dms.h \
-    DmsEdit.h
+    DmsEdit.h \
+    tester.h
 SOURCES += Dms.cpp \
     DmsEdit.cpp \
-    mainDmsEdit.cpp
+    mainDmsEdit.cpp \
+    tester.cpp

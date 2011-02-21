@@ -6,8 +6,12 @@
 #include "Dms.h"
 #include <QKeyEvent>
 #include <QEvent>
+#include <QValidator>
+#include <QDoubleValidator>
+
 
 enum PositionValue{ NONE = -1 ,DEGREES, MINUTES, SECONDS};
+enum DmsEditMode { DMS, DEG, RAD };
 
 class DmsEdit : public QLineEdit
 {
@@ -16,6 +20,7 @@ public:
     DmsEdit(QWidget *parent=0);
     void setDecimals(int newDecimals);
     int getDecimals();
+    DmsEditMode getDmsEditMode();
 
 protected:
     bool eventFilter(QObject* objeto, QEvent* evento);
@@ -23,23 +28,29 @@ protected:
     void focusInEvent(QFocusEvent *);
 
 private:
-    bool direction;//True =esquerda pra direita //False ==direita pra esquerda
+    DmsEditMode mode;
     PositionValue positionValue();
     PositionValue positionValue(int pos);
     Dms *degMinSecLine;
+    double radValue;
+    double degValue;
     int decimals;
     QString previousValue;
-    QRegExpValidator *validatorDegree;
+    //QRegExpValidator *validatorDegree;
+    QDoubleValidator *degValidator;
+    QDoubleValidator *radValidator;
 
 signals:
 
 public slots:
-    void validate(QString);
+    void validate();
     void stepDown();
     void stepUp();
     void stepBy(int steps);
     void selectField(PositionValue pos);
     void changedField(int oldPos, int newPos);
+    void setDmsEditMode(DmsEditMode newMode);
+    void updateValue(QString newValue);
 
 };
 
