@@ -42,14 +42,16 @@ int main(int argc, char **argv)
     plh.set(1,1,testePhi->dmsToRadiano());
     plh.set(1,2,testeLambda->dmsToRadiano());
     plh.set(1,3,testeLambda0->dmsToRadiano());
-    for (int i=0;i<200;i++)
+   // for (int i=0;i<200;i++)
     {
         qDebug("phi, lambda, h to XYZ");
         xyz = trans.geoElipToUtm(plh.get(1,1),plh.get(1,2),testeLambda0->dmsToRadiano(),0.0);
         qDebug("XYZ to phi, lambda, h");
         plh = trans.uTmToGeo(xyz.get(1,1),xyz.get(1,2),xyz.get(1,3),testeLambda0->dmsToRadiano());
     }
-
+    qDebug("Manual");
+    trans.uTmToGeo(76025.312,5205649.348,0.0,testeLambda0->dmsToRadiano());
+    qDebug("");
 /*
     qDebug()<<(new Dms())->radianoToDms(0.000001)->toString();
 

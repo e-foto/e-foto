@@ -143,35 +143,60 @@ bool IOUserInterface_Qt::viewReport()
 	QVBoxLayout *myLayout = new QVBoxLayout();
 	QTabWidget *myTab = new QTabWidget();
 
-	vector<string> myXa;
-	myXa.push_back(myValues.at(0));
-	MatrixModel* myXaModel = new MatrixModel(myXa);
-	MatrixView* myXaView = new MatrixView(windowReport, myXaModel);
-	myTab->addTab(myXaView, QString::fromUtf8("Xa"));
-	vector<string> myLa;
-	myLa.push_back(myValues.at(1));
-	MatrixModel* myLaModel = new MatrixModel(myLa);
-	MatrixView* myLaView = new MatrixView(windowReport, myLaModel);
-	myTab->addTab(myLaView, QString::fromUtf8("La"));
-	QLabel* myLabel = new QLabel(myValues.at(2).c_str());
-	myTab->addTab(myLabel, QString::fromUtf8("sigma0^2"));
-	vector<string> myV;
-	myV.push_back(myValues.at(3));
-	MatrixModel* myVModel = new MatrixModel(myV);
-	MatrixView* myVView = new MatrixView(windowReport, myVModel);
-	myTab->addTab(myVView, QString::fromUtf8("V"));
-	vector<string> mySXa;
-	mySXa.push_back(myValues.at(4));
-	MatrixModel* mySXaModel = new MatrixModel(mySXa);
-	MatrixView* mySXaView = new MatrixView(windowReport, mySXaModel);
-	myTab->addTab(mySXaView, QString::fromUtf8("SigmaXa"));
-	vector<string> mySLa;
-	mySLa.push_back(myValues.at(5));
-	MatrixModel* mySLaModel = new MatrixModel(mySLa);
-	MatrixView* mySLaView = new MatrixView(windowReport, mySLaModel);
-	myTab->addTab(mySLaView, QString::fromUtf8("SigmaLa"));
+        QWidget *XaView= new QWidget();
+        QHBoxLayout *XaLayout= new QHBoxLayout();
+        TableIOEOWidget *myXaView = new TableIOEOWidget();
+        myXaView->setTableData(myValues.at(0));
+        TableIOEOWidget *mySXaView = new TableIOEOWidget();
+        mySXaView->setTableData(myValues.at(4));
+        XaLayout->addWidget(myXaView);
+        XaLayout->addWidget(mySXaView);
+        XaView->setLayout(XaLayout);
+        myTab->addTab(XaView, QString::fromUtf8("Xa"));
+        connect(myXaView,SIGNAL(focusReceived()),mySXaView,SLOT(clearSelection()));
+        connect(mySXaView,SIGNAL(focusReceived()),myXaView,SLOT(clearSelection()));
 
-	QPushButton *acceptButton = new QPushButton("&Accept", this);
+        QWidget *LaView = new QWidget();
+        QHBoxLayout *LaLayout= new QHBoxLayout();
+        TableIOEOWidget *myLaView = new TableIOEOWidget();
+        myLaView->setTableData(myValues.at(1));
+        TableIOEOWidget *mySLaView = new TableIOEOWidget();
+        mySLaView->setTableData(myValues.at(5));
+        LaLayout->addWidget(myLaView);
+        LaLayout->addWidget(mySLaView);
+        LaView->setLayout(LaLayout);
+        myTab->addTab(LaView, QString::fromUtf8("La"));
+
+
+        QWidget *sigmaView = new QWidget();
+        QHBoxLayout *sigmaLayout= new QHBoxLayout();
+
+        QString aux=QString::fromUtf8("<font size=12>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
+      /*QString aux2=QString::fromUtf8("<font size=12>n-m</font>");
+
+        QLabel *auxLabel = new QLabel(aux);
+        QLabel *aux2Label= new QLabel(aux2);
+        QLine *linha= QLine();
+        linha->setLine();
+        */
+        aux+="=";
+        aux+=QString::fromStdString(myValues.at(2));
+        aux+="</font>";
+
+        QLabel* myValueLabel = new QLabel(aux);
+        myValueLabel->setTextFormat(Qt::RichText);
+
+        TableIOEOWidget *myVView = new TableIOEOWidget();
+        myVView->setTableData(myValues.at(3));
+
+        sigmaLayout->addWidget(myVView);
+        //sigmaLayout->addWidget(sigma2);
+        sigmaLayout->addWidget(myValueLabel);
+        sigmaLayout->setSpacing(QHBoxLayout::SetMinimumSize);
+        sigmaView->setLayout(sigmaLayout);
+        myTab->addTab(sigmaView, QString::fromUtf8("V"));
+
+        QPushButton *acceptButton = new QPushButton("&Accept", this);
 	QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptIO()));
 
 	myLayout->addWidget(myTab);
@@ -181,6 +206,9 @@ bool IOUserInterface_Qt::viewReport()
 	windowReport->setWindowModality(Qt::ApplicationModal);
 	windowReport->setWindowTitle("Interior Orientation Report");
 	windowReport->show();
+
+        connect(myLaView,SIGNAL(focusReceived()),mySLaView,SLOT(clearSelection()));
+        connect(mySLaView,SIGNAL(focusReceived()),myLaView,SLOT(clearSelection()));
 
 	return true;
 }
