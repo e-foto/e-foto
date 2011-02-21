@@ -121,7 +121,7 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double lambda
     double f=3.35281066474e-3;
     double b=a*(1-f);
 
-    double n=(a-b)/(a+b);
+ /*   double n=(a-b)/(a+b);
     double alpha=(a+b)*(1+pow(n,2)/4+pow(n,4)/64)/2;
     double beta=-3*n/2+9*pow(n,3)/16-3*pow(n,5)/32;
     double gama=15*pow(n,2)/16-15*pow(n,4)/32;
@@ -135,14 +135,13 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double lambda
     qDebug("xsi: %g",xsi);
 */
  //wgs 84 ellipsoid
-    /*
-    double n=(a-b)/(a+b);
+
     double alpha=6367449.1458;
     double beta=-2.51882792e-3;
     double gama=2.64354e-6;
     double delta=-3.45e-9;
     double xsi=5e-12;
-*/
+
     double el2=(a*a-b*b)/(b*b);
     double t=tan(phi);
 
@@ -174,30 +173,22 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double lambda
     xyh.set(1,1,x*0.9996);
     xyh.set(1,2,y*0.9996);
     xyh.set(1,3,haltura);
-    qDebug("phi: %f\tlambda: %f\thaltura: %f",phi,lambda,haltura);
-    qDebug("x: %f\ty: %f\th: %f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3));
+    qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
+    qDebug("x: %.9f\ty: %.9f\th: %f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3));
 
     return xyh;
 }
 
 Matrix ConvertionsSystems::uTmToGeo(double x, double y, double haltura, double lambda0)
 {
+    qDebug("x: %.9f\ty: %.9f\th: %f\n",x,y,haltura);
     //wgs-84
 
         double a=6378137;
         double f=3.35281066474e-3;
         double b=a*(1-f);
 
-    // wgs 84 ellipsoid
-/*
-        double alphab=6367449.1458;
-        double betab=2.51882658e-3;
-        double gamab=3.70095e-6;
-        double deltab=7.45e-9;
-        double xsib=17e-12;
-        double yb=y/alphab;
-*/
-        //bessel ellipsoid
+         //bessel ellipsoid
 /*
         double alphab=6366742.5203;
         double betab=2.51127324e-3;
@@ -205,7 +196,8 @@ Matrix ConvertionsSystems::uTmToGeo(double x, double y, double haltura, double l
         double deltab=7.38e-9;
         double xsib=17e-12;
         double yb=y/alphab;
-*/
+        */
+/*
         double n=(a-b)/(a+b);
         double alphab=(a+b)*(1+n*n/4+pow(n,4)/64)/2;
         double betab=3*n/2-27*pow(n,3)/32+269*(pow(n,5))/512;
@@ -213,22 +205,36 @@ Matrix ConvertionsSystems::uTmToGeo(double x, double y, double haltura, double l
         double deltab=151*pow(n,3)/96-417*pow(n,5)/128;
         double xsib=1097*pow(n,4)/512;
         double yb=y/alphab;
+*/
+        //Bessel ellipsoid
+/*
+        double alphab=6366742.5203;
+        double betab=2.51127324e-3;
+        double gamab=3.67879e-6;
+        double deltab=7.38e-9;
+        double xsib=17e-12;
+*/
 
+        // wgs 84 ellipsoid
+        double alphab=6367449.1458;
+        double betab=2.51882658e-3;
+        double gamab=3.70095e-6;
+        double deltab=7.45e-9;
+        double xsib=17e-12;
+
+        double yb=y/alphab;
         double phif=yb+betab*sin(2*yb)+gamab*sin(4*yb)+deltab*sin(6*yb)+xsib*sin(8*yb);
+
+        Dms phifdms;//47,0,0.0);
+
+        qDebug("phif %s",(phifdms.radianoToDms(phif))->toString().toStdString().c_str());
+        //double phif=phifdms.dmsToRadiano();
 
         double elf2=(a*a-b*b)/(b*b);
         double tf=tan(phif);
-       // qDebug("phif bessel: %f",phif);
-        //Bessel ellipsoid
-        /*
-        double alpha=6366742.5203;
-        double beta=2.51127324e-3;
-        double gama=3.678279e-6;
-        double delta=7.38e-9;
-        double xsi=17e-12;
-        */
         double etaf2=elf2*pow(cos(phif),2);
         double Nf=(a*a)/(b*sqrt(1+etaf2));
+
 
         double phi= phif+(tf*(-1-etaf2)*x*x)/(2*Nf*Nf)+
                     (tf*(5+3*tf*tf+6*etaf2-6*tf*tf*etaf2-3*etaf2*etaf2-9*tf*tf*etaf2*etaf2)*pow(x,4))/(24*pow(Nf,4))+
@@ -245,8 +251,8 @@ Matrix ConvertionsSystems::uTmToGeo(double x, double y, double haltura, double l
         plh.set(1,2,lambda);
         plh.set(1,3,haltura);
 
-        qDebug("x: %f\ty: %f\th: %f\n",x,y,haltura);
-        qDebug("phi: %f\tlambda: %f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
+
+        qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
 
         return plh;
 }

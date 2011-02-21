@@ -5,6 +5,8 @@
 #include "IOUserInterface.h"
 #include "ImageView.h"
 #include "matrixview.h"
+#include "TableIOEOWidget.h"
+
 
 #include <QPoint>
 #include <QGridLayout>
@@ -50,7 +52,6 @@ private:
 	bool measureMark(int id, int col, int lin);
 
 public:
-
 	// Other Methods
 	//
 	bool exec();
