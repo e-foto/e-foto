@@ -8,16 +8,21 @@ TableIOEOWidget::TableIOEOWidget(QWidget *parent):QTableWidget(parent)
     setRowCount(io->getRows());
     setColumnCount(io->getCols());
     installEventFilter(this);
+    enableAutoCopy();
 
 }
 TableIOEOWidget::TableIOEOWidget(Matrix values, QWidget *parent):QTableWidget(parent)
 {
     setTableData(values);
-    //connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    enableAutoCopy();
 }
 
 void TableIOEOWidget::setTableData(Matrix values,char mode,int precision)
 {
+    horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
+
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     io= new Matrix(values);
     setRowCount(io->getRows());
@@ -32,7 +37,8 @@ void TableIOEOWidget::setTableData(Matrix values,char mode,int precision)
             this->setItem(i,j,temp);
         }
     }
-    this->resizeColumnsToContents();
+    //resizeColumnsToContents();
+    //resizeRowsToContents();
     resizeTable();
 }
 
@@ -40,22 +46,32 @@ void TableIOEOWidget::setTableData(EDomElement xml, char mode, int precision)
 {
     io= new Matrix();
     io->xmlSetData(xml.getContent());
-    setTableData(*io);
+    setTableData(*io, mode, precision);
 }
 
 void TableIOEOWidget::setTableData(string xmlString, char mode, int precision)
 {
     io= new Matrix();
     io->xmlSetData(xmlString);
-    setTableData(*io);
+    setTableData(*io, mode, precision);
 }
 
 void TableIOEOWidget::resizeTable()
 {
     int widlinhas=lineWidth()*(columnCount()-1);
     int heilinhas=lineWidth()*(rowCount()-1);
-
-    setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+/*
+    for (int i=0;i<columnCount();i++)
+        setColumnWidth(i,(this->width()-this->verticalHeader()->width()-widlinhas)/columnCount());
+    for (int j=0;j<rowCount();j++)
+        setRowHeight(j,(this->height()-this->horizontalHeader()->height()-heilinhas)/rowCount());
+*/
+    resizeColumnsToContents();//novo
+    resizeRowsToContents();   //novo
+    if (columnCount()==1)
+        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width()+10,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+    else
+        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
 }
 
 void TableIOEOWidget::autoCopy()
@@ -80,21 +96,6 @@ void TableIOEOWidget::autoCopy()
     }
 }
 
-void TableIOEOWidget::keyPressEvent(QKeyEvent *event)
-{
-    if (event->modifiers()==Qt::ControlModifier)
-    {
-        if (event->key()==Qt::Key_C)
-        {
-            autoCopy();
-        }
-        else
-        {
-            QTableWidget::keyPressEvent(event);
-        }
-    }
-}
-
 bool TableIOEOWidget::eventFilter(QObject *obj, QEvent *evento)
 {
     if (evento->type()==QEvent::KeyPress)
@@ -110,12 +111,37 @@ bool TableIOEOWidget::eventFilter(QObject *obj, QEvent *evento)
         //emit focusReceived();
         return true;
     }
-    if (evento->type()==QEvent::DragMove)
+    /*
+    if (evento->type()==QEvent::MouseButtonRelease)
     {
-        QDragMoveEvent *dragEvent = static_cast<QDragMoveEvent *>(evento);
-        dragMoveEvent(dragEvent);
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evento);
+        mouseReleaseEvent(mouseEvent);
         return true;
     }
+    if (evento->type()==QEvent::Resize)
+    {
+        QResizeEvent *resEvent= static_cast<QResizeEvent*>(evento);
+        resizeEvent(resEvent);
+        return true;
+    }*/
+
+}
+
+void TableIOEOWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->modifiers()==Qt::ControlModifier)
+    {
+        if (event->key()==Qt::Key_C)
+        {
+            autoCopy();
+        }
+        else
+        {
+            QTableWidget::keyPressEvent(event);
+        }
+    }
+    else
+        QTableWidget::keyPressEvent(event);
 }
 
 void TableIOEOWidget::focusInEvent(QFocusEvent *evento)
@@ -125,9 +151,37 @@ void TableIOEOWidget::focusInEvent(QFocusEvent *evento)
     QTableWidget::focusInEvent(evento);
 
 }
-
-void TableIOEOWidget::dragMoveEvent(QDragMoveEvent *event)
+/*
+void TableIOEOWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     autoCopy();
-    QTableWidget::dragMoveEvent(event);
+    //qDebug("Dragmoveevent");
+    QTableWidget::mouseReleaseEvent(event);
+}
+
+
+void TableIOEOWidget::resizeEvent(QResizeEvent *event)
+{
+    if(event->type()==QResizeEvent::Resize)
+    {
+        qDebug("Evento de resize");
+        resizeTable();
+    }else
+    {
+        qDebug("Não evento de resize ");
+        QTableWidget::resizeEvent(event);
+    }
+}
+*/
+void TableIOEOWidget::enableAutoCopy(bool enable)
+{
+    //em teste
+    if(enable)
+    {
+        connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
+    else
+    {
+        disconnect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
 }
