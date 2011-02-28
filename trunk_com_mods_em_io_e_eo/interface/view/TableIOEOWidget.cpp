@@ -60,18 +60,29 @@ void TableIOEOWidget::resizeTable()
 {
     int widlinhas=lineWidth()*(columnCount()-1);
     int heilinhas=lineWidth()*(rowCount()-1);
-/*
-    for (int i=0;i<columnCount();i++)
-        setColumnWidth(i,(this->width()-this->verticalHeader()->width()-widlinhas)/columnCount());
-    for (int j=0;j<rowCount();j++)
-        setRowHeight(j,(this->height()-this->horizontalHeader()->height()-heilinhas)/rowCount());
-*/
+
+	resizeRowsToContents();   //novo
     resizeColumnsToContents();//novo
-    resizeRowsToContents();   //novo
-    if (columnCount()==1)
-        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width()+10,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+
+	if (columnCount()==1)
+		setFixedSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
     else
         setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+}
+
+void TableIOEOWidget::setVerticalHeadersLabelsHtml(QStringList list)
+{
+	verticalHeader()->setVisible(false);
+	setColumnCount(columnCount()+1);
+
+	for (int i=0; i<list.size(); i++)
+	{
+		QLabel *lab=new QLabel(list.at(i));
+		lab->setAlignment(Qt::AlignCenter);
+		setCellWidget(i,1,lab);
+
+	}
+	resizeTable();
 }
 
 void TableIOEOWidget::autoCopy()

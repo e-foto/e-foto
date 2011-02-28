@@ -4,8 +4,11 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QResizeEvent>
-
+#include <QLabel>
+#include "EDom.h"
 #include "Matrix.h"
+
+
 class TableIOEOWidget: public QTableWidget
 {
     Q_OBJECT
@@ -18,7 +21,8 @@ public:
     void setTableData(Matrix values,char mode='e',int precision=6);
     void setTableData(EDomElement xml,char mode='e',int precision=6);
     void setTableData(string xmlString,char mode='e',int precision=6);
-    void resizeTable();
+	void setVerticalHeadersLabelsHtml(QStringList list);
+	void resizeTable();
     void enableAutoCopy(bool enable=true);
 
 public slots:
