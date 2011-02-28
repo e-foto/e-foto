@@ -366,7 +366,14 @@ bool SRUserInterface_Qt::viewReport()
     QWidget *XaView= new QWidget();
     QHBoxLayout *XaLayout= new QHBoxLayout();
     TableIOEOWidget *myXaView = new TableIOEOWidget();
-    myXaView->setTableData(myValues.at(0));
+
+	QStringList listaXa;
+	listaXa<<"X0"<<"Y0"<<"Z0"<<QString::fromUtf8("φ")<<QString::fromUtf8("ω")<<QString::fromUtf8("κ");
+	myXaView->setRowCount(listaXa.size());
+	myXaView->setVerticalHeaderLabels(listaXa);
+	myXaView->setTableData(myValues.at(0));
+
+
     TableIOEOWidget *mySXaView = new TableIOEOWidget();
     mySXaView->setTableData(myValues.at(4));
     XaLayout->addWidget(myXaView);
@@ -390,28 +397,31 @@ bool SRUserInterface_Qt::viewReport()
 
     QWidget *sigmaView = new QWidget();
     QHBoxLayout *sigmaLayout= new QHBoxLayout();
+	QVBoxLayout *formulasLayout= new QVBoxLayout();
 
-    QString aux=QString::fromUtf8("<font size=12>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
-  /*QString aux2=QString::fromUtf8("<font size=12>n-m</font>");
+	QString aux1=QString::fromUtf8("<font size=12>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV/(n-m)");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
+	aux1+="=";
+	aux1+=QString::number(stringToDouble(myValues.at(2)),'f',6);
+	aux1+="</font>";
+	QLabel* myValueLabel1 = new QLabel(aux1);
+	myValueLabel1->setTextFormat(Qt::RichText);
 
-    QLabel *auxLabel = new QLabel(aux);
-    QLabel *aux2Label= new QLabel(aux2);
-    QLine *linha= QLine();
-    linha->setLine();
-    */
-    aux+="=";
-    aux+=QString::fromStdString(myValues.at(2));
-    aux+="</font>";
+	QString aux2=QString::fromUtf8("<font size=12>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
+	aux2+="=";
+	aux2+=QString::number(sqrt(stringToDouble(myValues.at(2))),'f',6);
+	aux2+="</font>";
+	QLabel* myValueLabel2 = new QLabel(aux2);
+	myValueLabel2->setTextFormat(Qt::RichText);
 
-    QLabel* myValueLabel = new QLabel(aux);
-    myValueLabel->setTextFormat(Qt::RichText);
+	formulasLayout->addWidget(myValueLabel1);
+	formulasLayout->addWidget(myValueLabel2);
 
-    TableIOEOWidget *myVView = new TableIOEOWidget();
+	TableIOEOWidget *myVView = new TableIOEOWidget();
     myVView->setTableData(myValues.at(3));
 
-    sigmaLayout->addWidget(myVView);
-    //sigmaLayout->addWidget(sigma2);
-    sigmaLayout->addWidget(myValueLabel);
+	sigmaLayout->addWidget(myVView);
+	sigmaLayout->addLayout(formulasLayout);
+
     sigmaLayout->setSpacing(QHBoxLayout::SetMinimumSize);
     sigmaView->setLayout(sigmaLayout);
     myTab->addTab(sigmaView, QString::fromUtf8("V"));

@@ -18,8 +18,10 @@ public :
         static Matrix GeoelipToGeocentricCartesian(double phi, double lambda, double haltura, GeoSystem system=SIRGAS2000);
         static Matrix GeocentricCartesianToGeoelip(double Xi, double Yi, double Zi, GeoSystem system=SIRGAS2000);
 
-        Matrix geoElipToUtm(double phi, double lambda, double lambda0, double haltura);
-        Matrix uTmToGeo(double x, double y, double haltura,double lambda0);
+        Matrix geoElipToUtm(double phi, double lambda, double haltura, char hemi);//, char side);
+
+        Matrix uTmToGeo(double x, double y, double haltura,double MC, char hemi);
+
         Matrix getMatrixR(double phi, double lambda);
 
 };
