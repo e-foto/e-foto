@@ -275,12 +275,14 @@ public:
 	 * @param id An image identifier.
 	 */
 	bool execIO(int id);
+	void stopIO(int id);
 
 	/**
 	 * This method starts the SR module.
 	 * @param id An image identifier.
 	 */
 	bool execSR(int id);
+	void stopSR(int id);
 
 	/**
 	 * This method starts the main execution loop.

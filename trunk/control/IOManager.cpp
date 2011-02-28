@@ -177,7 +177,8 @@ bool IOManager::exec()
 		{
 		if (manager->getInterfaceType().compare("Qt") == 0)
 		{
-			myInterface = new IOUserInterface_Qt(this);
+			//myInterface = new IOUserInterface_Qt(this);
+			myInterface = IOUserInterface_Qt::instance(this);
 		}
 		myImage->setSensor(mySensor);
 		myIO->setImage(myImage);
@@ -186,8 +187,26 @@ bool IOManager::exec()
 		{
 			myInterface->exec();
 		}
+		//if (manager->getInterfaceType().compare("Qt") == 0)
+		//{
+			//IOUserInterface_Qt::createInstance(this)->exec();
+		//}
 	}
 	return status;
+}
+
+int IOManager::getId()
+{
+	if (myImage != NULL)
+	{
+		return myImage->getId();
+	}
+	return 0;
+}
+
+void IOManager::returnProject()
+{
+	manager->reloadProject();
 }
 
 bool IOManager::save(string path)

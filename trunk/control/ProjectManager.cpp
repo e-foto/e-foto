@@ -442,7 +442,7 @@ bool ProjectManager::startModule(string module, int image)
             manager->setNextModule(4);
 
         manager->setNextImage(image);
-
+		manager->exec();
         return true;
     }
     return false;

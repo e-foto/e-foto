@@ -1,6 +1,24 @@
 #include "SRUserInterface_Qt.h"
 #include <QPushButton>
 
+SRUserInterface_Qt* SRUserInterface_Qt::srInst = NULL;
+
+SRUserInterface_Qt* SRUserInterface_Qt::instance(SRManager* manager)
+{
+
+	if (srInst != NULL)
+	{
+		delete(srInst);
+		srInst = NULL;
+	}
+	if (srInst == NULL)
+	{
+		delete(srInst);
+		srInst = new SRUserInterface_Qt(manager);
+	}
+	return srInst;
+}
+
 SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::WindowFlags fl)
     : QMainWindow(parent, fl)
 {
@@ -173,6 +191,15 @@ bool SRUserInterface_Qt::measurePoint(int id, int col, int lin)
     return manager->measurePoint(id, col, lin);
 }
 
+void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
+{
+	LoadingScreen::instance().show();
+	qApp->processEvents();
+	delete(myImageView);
+	manager->returnProject();
+	QMainWindow::closeEvent(e);
+}
+
 bool SRUserInterface_Qt::calculateSR()
 {
 	int iterations; double gnssPrecision, insPrecision;
@@ -336,6 +363,9 @@ bool SRUserInterface_Qt::exec()
     connect (points, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(actualizeSelection(QStandardItem*)));
 
     this->show();
+	LoadingScreen::instance().close();
+	qApp->processEvents();
+	//myImageView = new ImageView(centralwidget);
 	if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
 	{
 		myImageView->createPoints(points,2);
@@ -345,8 +375,9 @@ bool SRUserInterface_Qt::exec()
 	makeRepaint();
 	actionMove->trigger();
 
-    if (qApp->exec())
-        return false;
-	delete(myImageView);
+	//LoadingScreen::instance().close();
+	//if (qApp->exec())
+		//return false;
+	//delete(myImageView);
     return true;
 }

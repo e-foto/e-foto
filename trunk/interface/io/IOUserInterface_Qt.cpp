@@ -9,7 +9,21 @@
 
 //#include <iostream>
 
+IOUserInterface_Qt* IOUserInterface_Qt::ioInst = NULL;
 
+IOUserInterface_Qt* IOUserInterface_Qt::instance(IOManager* manager)
+{
+	if (ioInst = NULL)
+	{
+		delete ioInst;
+		ioInst = NULL;
+	}
+	if (ioInst == NULL)
+	{
+		ioInst = new IOUserInterface_Qt(manager);
+	}
+	return ioInst;
+}
 
 IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::WindowFlags fl)
 	: QMainWindow(parent, fl)
@@ -202,6 +216,15 @@ void IOUserInterface_Qt::acceptIO()
 	windowReport->close();
 }
 
+void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
+{
+	LoadingScreen::instance().show();
+	qApp->processEvents();
+	delete(myImageView);
+	manager->returnProject();
+	QMainWindow::closeEvent(e);
+}
+
 bool IOUserInterface_Qt::exec()
 {
 	calculationMode = manager->getCalculationMode();
@@ -248,6 +271,9 @@ bool IOUserInterface_Qt::exec()
 		testActivateIO();
 
 		this->show();
+		LoadingScreen::instance().close();
+		qApp->processEvents();
+		//myImageView = new ImageView(centralwidget);
 		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
 		{
 			myImageView->createPoints(points,1);
@@ -305,6 +331,9 @@ bool IOUserInterface_Qt::exec()
 		receiveMark(QPoint(0,manager->getFrameRows()));
 
 		this->show();
+		LoadingScreen::instance().close();
+		qApp->processEvents();
+		//myImageView = new ImageView(centralwidget);
 		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
 		{
 			myImageView->createPoints(points,1);
@@ -364,6 +393,9 @@ bool IOUserInterface_Qt::exec()
 		actionInterior_orientation->setEnabled(true);
 
 		this->show();
+		LoadingScreen::instance().close();
+		qApp->processEvents();
+		//myImageView = new ImageView(centralwidget);
 		if (myImageView->loadImage(QString(manager->getImageFile().c_str())))
 		{
 			//myImageView->createPoints(points,1);
@@ -374,8 +406,10 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 
-	if (qApp->exec())
-		return false;
-	delete(myImageView);
+	//LoadingScreen::instance().close();
+
+	//if (qApp->exec())
+		//return false;
+	//delete(myImageView); precisa de um stop
 	return true;
 }

@@ -5,6 +5,7 @@
 #include "IOUserInterface.h"
 #include "ImageView.h"
 #include "matrixview.h"
+#include "LoadingScreen.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -16,8 +17,6 @@ class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public I
 	Q_OBJECT
 
 public:
-	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
-	~IOUserInterface_Qt();
 
 public slots:
 	virtual void informState();
@@ -33,7 +32,9 @@ public slots:
 	virtual void acceptIO();
 
 protected:
-
+	static IOUserInterface_Qt* ioInst;
+	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+	~IOUserInterface_Qt();
 	QWidget *windowReport;
 	ImageView *myImageView;
 	QGridLayout *imageLayout;
@@ -41,6 +42,7 @@ protected:
 	int selectedPoint;
 	int calculationMode;
 	IOManager *manager;
+	void closeEvent(QCloseEvent *e);
 
 protected slots:
 	virtual void languageChange();
@@ -50,7 +52,7 @@ private:
 	bool measureMark(int id, int col, int lin);
 
 public:
-
+	static IOUserInterface_Qt* instance(IOManager* manager);
 	// Other Methods
 	//
 	bool exec();

@@ -4,10 +4,8 @@ using namespace std;
 
 #include <QApplication>
 #include <QTranslator>
-#include "../../interface/io/IOUserInterface_Qt.h"
-#include "../../control/IOManager.h"
-#include "../../control/ProjectManager.h"
-#include "../../control/EFotoManager.h"
+#include "LoadingScreen.h"
+#include "EFotoManager.h"
 
 //for tests
 //#include "../../control/XmlUpdater.h"
@@ -16,8 +14,9 @@ int main( int argc, char ** argv )
 {
 
     QApplication efoto(argc, argv);
-    QApplication::setStyle("plastique");
-
+	efoto.setStyle("plastique");
+	efoto.quitOnLastWindowClosed();
+/*
     //Code for translations
     QString locale = QLocale::system().name();
     QTranslator translator;
@@ -25,7 +24,9 @@ int main( int argc, char ** argv )
     efoto.installTranslator(&translator);
 
     efoto.connect(&efoto, SIGNAL(lastWindowClosed()), &efoto, SLOT(quit()));
-
+*/
+	LoadingScreen::instance().show();
+	qApp->processEvents();
     EFotoManager manager;
     manager.setInterfaceType("Qt");
     if (argc==2){
@@ -36,6 +37,6 @@ int main( int argc, char ** argv )
     {
         manager.exec();
     }
-    return 0;
+	return efoto.exec();
 
 }

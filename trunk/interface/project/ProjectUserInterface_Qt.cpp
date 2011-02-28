@@ -606,8 +606,10 @@ void ProjectUserInterface_Qt::executeIO()
 		int value = manager->getImageId(chosen.toStdString());
 		if (value != -1)
 		{
-			manager->startModule("InteriorOrientation", value);
+			LoadingScreen::instance().show();
+			qApp->processEvents();
 			this->close();
+			manager->startModule("InteriorOrientation", value);
 		}
 	}
 }
@@ -625,8 +627,10 @@ void ProjectUserInterface_Qt::executeSR()
 		int value = manager->getImageId(chosen.toStdString());
 		if (value != -1)
 		{
-			manager->startModule("SpatialRessection", value);
+			LoadingScreen::instance().show();
+			qApp->processEvents();
 			this->close();
+			manager->startModule("SpatialRessection", value);
 		}
 	}
 }
@@ -905,8 +909,10 @@ bool ProjectUserInterface_Qt::exec()
 {
 	actionSave_file->setEnabled(!manager->getSavedState());
 	this->show();
-	if (qApp->exec())
-		return false;
+	LoadingScreen::instance().close();
+	qApp->processEvents();
+	//if (qApp->exec())
+		//return false;
 	return true;
 }
 

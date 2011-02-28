@@ -7,6 +7,8 @@
 #include "SRManager.h"
 #include "ProjectManager.h"
 
+#include <QApplication>
+
 // Constructors and destructor
 //
 
@@ -568,6 +570,14 @@ bool EFotoManager::reloadProject()
 	nextModule = 0;
 	if (project != NULL)
 	{
+		if (interiorOrientation != NULL)
+		{
+			stopIO(interiorOrientation->getId());
+		}
+		if (spatialRessection != NULL)
+		{
+			stopSR(spatialRessection->getId());
+		}
 		return project->reload();
 	}
 	else
@@ -601,11 +611,23 @@ bool EFotoManager::execIO(int id)
 	}
 	interiorOrientation = new IOManager(this, ioSensor, ioImage, io);
 	result = interiorOrientation->exec();
+	/* precisa de um stop
 	delete interiorOrientation;
 	deleteIO(id);
 	deleteSensor(ioImage->getSensorId());
 	deleteImage(id);
+	*/
 	return result;
+}
+
+void EFotoManager::stopIO(int id)
+{
+	Image* ioImage = instanceImage(id);
+	delete interiorOrientation;
+	interiorOrientation = NULL;
+	deleteIO(id);
+	deleteSensor(ioImage->getSensorId());
+	deleteImage(id);
 }
 
 /**
@@ -638,7 +660,7 @@ bool EFotoManager::execSR(int id)
 	spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr);
 
 	result = spatialRessection->exec();
-
+/* precisa de um stop
 	delete spatialRessection;
 	deleteEO(id);
 	deleteIO(id);
@@ -646,7 +668,21 @@ bool EFotoManager::execSR(int id)
 	deleteSensor(srImage->getSensorId());
 	deleteTerrain();
 	deleteImage(id);
+	*/
 	return result;
+}
+
+void EFotoManager::stopSR(int id)
+{
+	Image* srImage = instanceImage(id);
+	delete spatialRessection;
+	spatialRessection = NULL;
+	deleteEO(id);
+	deleteIO(id);
+	deleteFlight(srImage->getFlightId());
+	deleteSensor(srImage->getSensorId());
+	deleteTerrain();
+	deleteImage(id);
 }
 
 /**
@@ -658,8 +694,8 @@ bool EFotoManager::exec(string filename)
 	{
 		execProject(filename);
 	}
-	while (nextModule != 0)
-	{
+	//while (nextModule != 0)
+	//{
 		switch (nextModule)
 		{
 		case 1:
@@ -679,7 +715,7 @@ bool EFotoManager::exec(string filename)
 		default:
 			nextModule = 0;
 		}
-	}
+	//}
 
 	return true;
 }

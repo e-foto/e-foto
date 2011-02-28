@@ -17,6 +17,7 @@
 #include "PointForm.h"
 #include "AboutForm.h"
 #include "ControlButtons.h"
+#include "LoadingScreen.h"
 
 #include <QList>
 #include <QModelIndex>

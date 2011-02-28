@@ -80,6 +80,8 @@ public:
 	bool exteriorDone();
     deque<string> makeReport();
     bool exec();
+	int getId();
+	void returnProject();
     bool save(string path);
     bool load(string path);
     string getImageFile();

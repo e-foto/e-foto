@@ -337,10 +337,11 @@ bool SRManager::exec()
             myFlight->getSensorId() == mySensor->getId() && myIO->getImageId() == myImage->getId() &&
             mySR->getImageId() == myImage->getId())
         {
-        if (manager->getInterfaceType().compare("Qt") == 0)
-        {
-            myInterface = new SRUserInterface_Qt(this);
-        }
+		if (manager->getInterfaceType().compare("Qt") == 0)
+		{
+			//myInterface = new SRUserInterface_Qt(this);
+			myInterface = SRUserInterface_Qt::instance(this);
+		}
         myImage->setSensor(mySensor);
         myImage->setFlight(myFlight);
         myImage->setIO(myIO);
@@ -349,12 +350,26 @@ bool SRManager::exec()
         mySR->setImage(myImage);
         connectImagePoints();
         started = true;
-        if (myInterface != NULL)
-        {
-            myInterface->exec();
-        }
+		if (myInterface != NULL)
+		{
+			myInterface->exec();
+		}
     }
     return status;
+}
+
+int SRManager::getId()
+{
+	if (myImage != NULL)
+	{
+		return myImage->getId();
+	}
+	return 0;
+}
+
+void SRManager::returnProject()
+{
+	manager->reloadProject();
 }
 
 bool SRManager::save(string path)

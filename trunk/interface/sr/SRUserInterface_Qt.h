@@ -5,6 +5,7 @@
 #include "SRUserInterface.h"
 #include "ImageView.h"
 #include "matrixview.h"
+#include "LoadingScreen.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -40,15 +41,18 @@ private:
     bool measurePoint(int id, int col, int lin);
 
 protected:
+	static SRUserInterface_Qt* srInst;
+	SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+	~SRUserInterface_Qt();
 	QWidget *windowReport;
     ImageView *myImageView;
     QGridLayout *imageLayout;
     QStandardItemModel *points;
 	bool flightAvailable;
+	void closeEvent(QCloseEvent *e);
 
 public:
-    SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
-    ~SRUserInterface_Qt();
+	static SRUserInterface_Qt* instance(SRManager* manager);
     bool exec();
 };
 
