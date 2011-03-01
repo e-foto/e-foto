@@ -13,6 +13,7 @@ class Dms
 public:
     Dms();
     Dms(int degree, int minute, double second,bool signal=false);
+	Dms(double seconds);
     Dms(QString degree);
     int getDegree();
     int getMinute();
@@ -31,9 +32,10 @@ public:
     void setSignal(bool newSignal);
     int compareDegMinSecs(Dms *degMinSec);
 
+
     //Operations
-    static Dms* addDegMinSecs(Dms* degMinSec1,Dms* degMinSec2);
-    static Dms* mulDegMinSecs(int factor, Dms* degMinSec1);
+	void addDegMinSecs(Dms* degMinSec1);
+	void mulDegMinSecs(int factor);
 
     //Converters
     double dmsToDegreeDecimal();
@@ -42,6 +44,7 @@ public:
     static double degreeDecimalToRadiano(double degree);
     Dms* radianoToDms(double radiano);
     static double radianoToDegreeDecimal(double radiano);
+	static Dms * secondsToDms(double seconds);
 
 private:
     int degree;

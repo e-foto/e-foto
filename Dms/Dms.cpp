@@ -29,10 +29,24 @@ Dms::Dms(QString degree)
     this->setSeconds(newDegree->getSeconds());
     this->setSignal(newDegree->hasSignal());
 }
+Dms::Dms(double seconds)
+{
+	double value=fabs(seconds);
+
+	int deg=(int)value/3600;
+	double resto1=fmod(value,3600);
+	int min=(int)resto1/60;
+	double sec=fmod(resto1,60);
+
+	if (seconds<0)
+		setDms(deg,min,sec,true);
+	else
+		setDms(deg,min,sec);
+}
 
 void Dms::setDegree(int newDegrees)
 {
-    degree = (newDegrees<0||newDegrees>359)? degree : newDegrees ;
+	degree = (newDegrees<0||newDegrees>359)? abs(degree) : abs(newDegrees) ;
 }
 
 void Dms::setMinute(int newMinutes)
@@ -107,7 +121,7 @@ QString Dms::toString(int decimals)
     QString text;
 
     if(this->hasSignal())
-		text+="-";
+        text+="-";
 
     text+=QString::number(this->getDegree());
     text+=QString::fromUtf8("°");
@@ -149,10 +163,28 @@ Dms* Dms::stringToDms(QString dms)
 /**
 * Convertions
 */
+Dms * Dms::secondsToDms(double seconds)
+{
+	double value=fabs(seconds);
+
+	int deg=(int)value/3600;
+	double resto1=fmod(value,3600);
+	int min=(int)resto1/60;
+	double sec=fmod(resto1,60);
+
+	Dms *result;
+	if(seconds<0)
+		result= new Dms(deg,min,sec,true);
+	else
+		result= new Dms(deg,min,sec);
+
+	return result;
+}
+
 double Dms::dmsToDegreeDecimal()
 {
-    double minPartial=this->getMinute()+this->getSeconds()/60;
-    double result=this->getDegree()+minPartial/60;
+    double minPartial=this->getMinute()+this->getSeconds()/60.0;
+    double result=this->getDegree()+minPartial/60.0;
     return (this->hasSignal() ? -result:result );
 }
 
@@ -208,7 +240,7 @@ double Dms::radianoToDegreeDecimal(double radiano)
     return (radiano/M_PI)*180;
 }
 
-Dms* Dms::addDegMinSecs(Dms *degMinSec1, Dms *degMinSec2)
+void Dms::addDegMinSecs(Dms *degMinSec1)
 {
     /*int newDegree= degMinSec1->getDegree()+degMinSec2->getDegree();
     int newMinute= degMinSec1->getMinute()+degMinSec2->getMinute();
@@ -227,20 +259,19 @@ Dms* Dms::addDegMinSecs(Dms *degMinSec1, Dms *degMinSec2)
     if(newDegree>=360)
         newDegree-=360;
     */
-	double sum=degMinSec1->dmsToDegreeDecimal()+degMinSec2->dmsToDegreeDecimal();
+	double sum=this->dmsToDegreeDecimal()+degMinSec1->dmsToDegreeDecimal();
 
-	return (new Dms())->degreeDecimalToDms(sum);
+	Dms *temp=degreeDecimalToDms(sum);
+	this->setDms(*temp);
+
 }
 
-Dms* Dms::mulDegMinSecs(int factor, Dms *degMinSec1)
+void Dms::mulDegMinSecs(int factor)
 {
-	Dms *result=degMinSec1;
-
-    for (int i=1; i<factor;i++)
+	for (int i=1; i<factor;i++)
     {
-		result=Dms::addDegMinSecs(result,degMinSec1);
+		addDegMinSecs(this);
     }
-    return result;
 }
 
 /** If calling object is bigger than degMinSec then function returns 1
