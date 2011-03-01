@@ -121,53 +121,6 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
     double a=6378137;
     double f=3.35281066474e-3;
     double b=a*(1-f);
-/*
- /*   double n=(a-b)/(a+b);
-    double alpha=(a+b)*(1+pow(n,2)/4+pow(n,4)/64)/2;
-    double beta=-3*n/2+9*pow(n,3)/16-3*pow(n,5)/32;
-    double gama=15*pow(n,2)/16-15*pow(n,4)/32;
-    double delta=-35*pow(n,3)/48+105*pow(n,5)/256;
-    double xsi=315*pow(n,4)/512;
-/*
-    qDebug("alpha: %f",alpha);
-    qDebug("beta: %g",beta);
-    qDebug("gama: %g",gama);
-    qDebug("delta: %g",delta);
-    qDebug("xsi: %g",xsi);
-
- //wgs 84 ellipsoid
-
-    double alpha=6367449.1458;
-    double beta=-2.51882792e-3;
-    double gama=2.64354e-6;
-    double delta=-3.45e-9;
-    double xsi=5e-12;
-
-    double el2=(a*a-b*b)/(b*b);
-    double t=tan(phi);
-
-    //Bessel ellipsoid
-
-    double alpha=6366742.5203;
-    double beta=-2.51127456e-3;
-    double gama=2.62771e-6;
-    double delta=-3.42e-9;
-    double xsi=5e-12;
-
-    double eta2=el2*pow(cos(phi),2);
-    double N=(a*a)/(b*sqrt(1+eta2));
-    double l=lambda-lambda0;
-    double B=alpha*(phi+beta*sin(2*phi)+gama*sin(4*phi)+delta*sin(6*phi)+xsi*sin(8*phi));
-  //  qDebug("B: %f\n",B);
-
-    double y= B+t*N*pow(cos(phi),2)*l*l/2+
-             (t*N*pow(cos(phi),4)*(5-t*t+9*eta2+4*eta2*eta2)            *    pow(l,4)) / 24+
-             (t*N*pow(cos(phi),6)*(61-58*t*t+pow(t,4)+270*eta2-330*t*t*eta2)*pow(l,6)) / 720+
-             (t*N*pow(cos(phi),8)*(1385-3111*t*t+543*pow(t,4)-pow(t,6)) *    pow(l,8)) / 40320;
-
-    double x= N*l*cos(phi) +N*pow(cos(phi),3)*(1-t*t+eta2)              *    pow(l,3)  / 6+
-             (N*pow(cos(phi),5)*(5-18*t*t+pow(t,4)+14*eta2-58*t*t*eta2) *    pow(l,5)) / 120+
-             (N*pow(cos(phi),7)*(61-479*t*t+179*pow(t,4)-pow(t,6))      *    pow(l,7)) / 5040;
 */
 
 //sad-69
@@ -189,16 +142,15 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 
     double el2=e2/(1-e2);
     double v=a/(sqrt(1-e2*pow(sin(phi),2)));
-    qDebug("v= %.12f",v);
 
     double A=1 + 3*e2/4 + 45*pow(e2,2)/64 + 175*pow(e2,3)/256 + 11025*pow(e2,4)/16384 + 43659*pow(e2,5)/65536;
     double B=   (3*e2/4 + 15*pow(e2,2)/16 + 525*pow(e2,3)/512 + 2205*pow(e2,4)/2048 + 72765*pow(e2,5)/65536)/2;
     double C=            (15*pow(e2,2)/64 + 105*pow(e2,3)/256 + 2205*pow(e2,4)/4096 + 10395*pow(e2,5)/16384)/4;
     double D=                               (35*pow(e2,3)/512 + 315*pow(e2,4)/2048 + 31185*pow(e2,5)/131072)/6;
-    double E=                                                  (315*pow(e2,4)/16384 + 3465*pow(e2,5)/65536)/8;
+	double E2=                                                  (315*pow(e2,4)/16384 + 3465*pow(e2,5)/65536)/8;
     double F=                                                                         (693*pow(e2,5)/131072)/10;
 
-    double S=a*(1-e2)*(A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E*sin(8*phi) - F*sin(10*phi) );
+	double S=a*(1-e2)*(A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E2*sin(8*phi) - F*sin(10*phi) );
 
     double I=S*k0;// Ko=0.9996
     double II  = (v*sin(phi)*pow(sin1,2)*cos(phi)*k0*1e8)/2;
@@ -208,26 +160,10 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
     double dlambda=(lambda-Dms::degreeDecimalToRadiano(lambda0));
     double p=0.0001*fabs(dlambda)*3600*180/(M_PI);
 
-    //qDebug(" lambda0dms = %s",lambda0dms.toString(6).toStdString().c_str());
-    //qDebug(" lambdadms = %s",lambdaDms.toString(6).toStdString().c_str());
-   // qDebug(" dlambda = %s",oneSecond.radianoToDms(dlambda)->toString().toStdString().c_str());
-
- //   qDebug("p= %.12f",p);
-
     double A6=pow(sin1,6)*pow(p,6)*(v*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
     double B5=pow(sin1,5)*pow(p,5)*(v*pow(cos(phi),5))*(5 - 18*pow(tan(phi),2) + pow(tan(phi),4) + 14*el2*pow(cos(phi),2) - 58*el2*pow(sin(phi),2) )*k0*1e20/120;
-/*
-    qDebug("\nlambda0= %d",lambda0);
-    qDebug("S= %.12f",S);
-    qDebug("\nI= %.12f",I);
-    qDebug("II= %.12f",II);
-    qDebug("III= %.12f",III);
-    qDebug("IV= %.12f",IV);
-    qDebug("V= %.12f",V);
-    qDebug("A6= %.12f",A6);
-    qDebug("B5= %.12f",B5);
-*/
-    double Nl=I+II*pow(p,2)+III*pow(p,4)+A6;
+
+	double Nl=I+II*pow(p,2)+III*pow(p,4)+A6;
     double El=IV*p+V*pow(p,3)+B5;
 
     double N;
@@ -250,11 +186,17 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
     }
 
     Matrix xyh(1,4);
+
+	E=round(E*1e3)/1e3;
+	N=round(N*1e3)/1e3;
+	haltura=round(haltura*1e3)/1e3;
+
     xyh.set(1,1,E);
     xyh.set(1,2,N);
     xyh.set(1,3,haltura);
     xyh.set(1,4,lambda0);
-    qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
+	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
+	qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
     qDebug("E: %.9f\tN: %.9f\tH: %f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3));
 
     return xyh;
@@ -262,25 +204,8 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 
 Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double MC, char hemi)
 {
-    qDebug("x: %.9f\ty: %.9f\th: %f\n",E,N,haltura);
-    //wgs-84
-    /*
-        double a=6378137;
-        double f=3.35281066474e-3;
-        */
-         //bessel ellipsoid
-/*
-        double alphab=6366742.5203;
-        double betab=2.51127324e-3;
-        double gamab=3.67879e-6;
-        double deltab=7.38e-9;
-        double xsib=17e-12;
-        double yb=y/alphab;
-        */
-/*
 
-
-*/  double Nl;
+	double Nl;
     if (hemi=='s' || hemi =='S')
     {
         Nl=10000000 - N;
@@ -289,8 +214,13 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
     {
         Nl=N;
     }
-
     double El=E-500000;
+
+	//wgs-84
+	/*
+		double a=6378137;
+		double f=3.35281066474e-3;
+	*/
 
     double k0=0.9996;
     double a=6378206.4;
@@ -304,68 +234,76 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
     double sin1=sin(oneSecond.dmsToRadiano());
     double el2=e2/(1-e2);
 
-    double q=1e-6*(El);//q=0,272075812415666
+	double q=1e-6*El;
 
     double A=1 + 3*e2/4 + 45*pow(e2,2)/64 + 175*pow(e2,3)/256 + 11025*pow(e2,4)/16384 + 43659*pow(e2,5)/65536;
+	double B=   (3*e2/4 + 15*pow(e2,2)/16 + 525*pow(e2,3)/512 + 2205*pow(e2,4)/2048 + 72765*pow(e2,5)/65536)/2;
+	double C=            (15*pow(e2,2)/64 + 105*pow(e2,3)/256 + 2205*pow(e2,4)/4096 + 10395*pow(e2,5)/16384)/4;
+	double D=                               (35*pow(e2,3)/512 + 315*pow(e2,4)/2048 + 31185*pow(e2,5)/131072)/6;
+	double E2=                                                  (315*pow(e2,4)/16384 + 3465*pow(e2,5)/65536)/8;
+	double F=                                                                         (693*pow(e2,5)/131072)/10;
 
     double phil=Nl/(a*(1-e2)*A);
 
-    qDebug("phil=%.12f",phil);
+	double S=0;
+	double oldPhil=0;
+	double N1=Nl;
 
+	//processo iterativo para aproximação de phil
+	while( (phil-oldPhil)>1e-20)
+	{
+		oldPhil=phil;
+		S=a*(1-e2)*(A*oldPhil - B*sin(2*oldPhil) + C*sin(4*oldPhil) - D*sin(6*oldPhil) + E2*sin(8*oldPhil) - F*sin(10*oldPhil) );
+		double N2=N1-(S*k0);
+		phil=N2/N1*oldPhil+oldPhil;
+		//N1=N2;
+	}
 
-    double v=a/(sqrt(1-e2*pow(sin(phil),2)));
-    qDebug("v= %.12f",v);
+	Dms phiDm;
 
+	double v=a/(sqrt(1-e2*pow(sin(phil),2)));
 
+	//qDebug()<<"n-esima aproximacao phil: "<< phiDm.radianoToDms(phil)->toString();
 
-    double VII=(tan(phil)*(1 + el2*pow(cos(phil),2))*1e12)/(2*pow(v,2)*sin1*pow(k0,2));
-    double VIII=(tan(phil)*(5 + 3*pow(tan(phil),2) +6*el2*pow(cos(phil),2) - 6*el2*pow(sin(phil),2) - 3*pow(el2,2)*pow(cos(phil),4) - 9*pow(el2,2)*pow(cos(phil),2)*pow(sin(phil),2))*1e24)/(24*pow(v,4)*sin1*pow(k0,4));
-    double IX=(1/cos(phil)*1e6)/(v*sin1*k0);
-    double X=(1/cos(phil)*(1 + 2*pow(tan(phil),2) + el2*pow(cos(phil),2))*1e18)/(6*pow(v,3)*sin1*pow(k0,3));
+	//calculo das parcelas
+	double VII=(tan(phil)*(1 + el2*pow(cos(phil),2))*1e12)/(2*pow(v,2)*sin1*pow(k0,2));
+	double VIII=(tan(phil)*(5 + 3*pow(tan(phil),2) + 6*el2*pow(cos(phil),2) - 6*el2*pow(sin(phil),2) - 3*pow(el2,2)*pow(cos(phil),4) - 9*pow(el2,2)*pow(cos(phil)*sin(phil),2))*1e24)/(24*pow(v,4)*sin1*pow(k0,4));
+	double IX=(1e6)/(v*sin1*k0*cos(phil));
+	double X=((1 + 2*pow(tan(phil),2) + el2*pow(cos(phil),2))*1e18)/(6*pow(v,3)*sin1*pow(k0,3)*cos(phil));
 
-    double E5=pow(q,5)*(1/cos(phi))*(5 + 28*pow(tan(phil),2) + 24*pow(tan(phil),4) + 6*el2*pow(cos(phil),2) + 8*el2*pow(sin(phil),2))*1e30/(120*pow(v,5)*sin1*pow(k0,5));
+	double E5=pow(q,5)*(5 + 28*pow(tan(phil),2) + 24*pow(tan(phil),4) + 6*el2*pow(cos(phil),2) + 8*el2*pow(sin(phil),2))*1e30/(120*pow(v,5)*sin1*pow(k0,5)*cos(phil));
     double D6=(pow(q,6)*tan(phil)*(61 + 90*pow(tan(phil),2) + 45*pow(tan(phil),4) + 107*el2*pow(cos(phil),2) - 162*el2*pow(sin(phil),2) - 45*el2*pow(tan(phil)*sin(phil),2))*1e36)/(720*pow(v,6)*sin1*pow(k0,6));
 
-    double phi= phil - VII*pow(q,2) + VIII*pow(q,4) - D6;
-    double dlambda = IX*q - X*pow(q,3) + E5;
+	//calculos finais
 
+	double phi= phil + (-VII*pow(q,2) + VIII*pow(q,4) - D6)*M_PI/(180*3600);
 
-    double lambda;
-    //if (El<0)
-	lambda=MC+dlambda;
+	double dlambda = IX*q - X*pow(q,3) + E5;
+
+	//Dms lambdaDms;
+	//Dms phiDms;
+
+	if (El>0)
+		dlambda=-dlambda;
+
+	double lambda=MC*M_PI/180+dlambda*M_PI/(180*3600);
+
+//	qDebug()<<"\naproximação final phi: "<< phiDms.radianoToDms(phi)->toString();
+//	qDebug()<<"lambdaDms: "<< lambdaDms.radianoToDms(lambda)->toString();
 
     Matrix plh(1,3);
-    plh.set(1,1,phi);
-    plh.set(1,2,lambda);
+
+	phi=round(phi*1e15)/1e15;
+	lambda=round(lambda*1e15)/1e15;
+	haltura=round(haltura*1e15)/1e15;
+
+
+	plh.set(1,1,phi);
+	plh.set(1,2,lambda);
     plh.set(1,3,haltura);
 
-	double value=10636.842;
-
-	int degPhi=(int)value/3600;
-
-	double resto1=fmod(value,3600);
-
-	int minPhi=(int)resto1/60;
-
-	double secPhi=fmod(resto1,60);
-
-	//qDebug("temp %d\ndegPhi= %d\nresto1= %f",temp,degPhi,resto1);
-
-
-    double resto2=0;
-    double secLamb=0;
-    double degLamb=modf(lambda/3600,&resto2);
-    double minLamb=modf(resto2/60,&secLamb);
-
-	qDebug("phi: %d %d %f \tlambda: %d %d %f",degPhi,minPhi,secPhi,degLamb,minLamb,secLamb);
-
-
-
-   // Dms phiDms((int)degPhi,(int)minPhi,secPhi);
-    //Dms lambDms((int)degLamb,(int) minLamb, secLamb);
-
-    //qDebug("phi %s\tlamb %s",phiDms.toString(),lambDms.toString());
-
-//  qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
+	qDebug("x: %.9f\ty: %.9f\th: %f\n",E,N,haltura);
+	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
+	qDebug("phi: %s\tlambda: %s\thaltura: %f\n",oneSecond.radianoToDms( plh.get(1,1) )->toString().toStdString().c_str(),oneSecond.radianoToDms( plh.get(1,2) )->toString().toStdString().c_str(),plh.get(1,3));
     return plh;
 }
