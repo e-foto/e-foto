@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QShortcut>
 #include <QMessageBox>
+#include <QDesktopWidget>
 
 #include "EDomValidator.h"
 
@@ -23,6 +24,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->savedIn = "";
 	this->editState = false;
 	this->addNewState = false;
+	this->changeModule = false;
 	this->treeItems.clear();
 	menuExecute->setEnabled(false);
 	actionSave_file->setEnabled(false);
@@ -68,10 +70,14 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesFromTxt() ) );
 	imagesForm.importButton->setEnabled(false);
 
+	//setGeometry(qApp->desktop()->availableGeometry());
+	setWindowState(this->windowState() | Qt::WindowMaximized);
+	qApp->processEvents();
 	// Bloqueia alguns dos  dipositivos
-	this->showMaximized();
 	this->removeDockWidget(debuggerDockWidget);
 	this->removeDockWidget(projectDockWidget);
+
+	this->show();
 
 	// Coloca s forms na QStackedWidget
 	QScrollArea *headerArea = new QScrollArea;
@@ -183,7 +189,8 @@ void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
 		}
 	}
 	*/
-	if (confirmToClose())
+	//qDebug() << changeModule;
+	if (changeModule || confirmToClose())
 		event->accept();
 	else
 		event->ignore();
@@ -606,10 +613,13 @@ void ProjectUserInterface_Qt::executeIO()
 		int value = manager->getImageId(chosen.toStdString());
 		if (value != -1)
 		{
+			changeModule = true;
+			confirmToClose();
 			LoadingScreen::instance().show();
 			qApp->processEvents();
 			this->close();
 			manager->startModule("InteriorOrientation", value);
+			changeModule = false;
 		}
 	}
 }
@@ -627,10 +637,13 @@ void ProjectUserInterface_Qt::executeSR()
 		int value = manager->getImageId(chosen.toStdString());
 		if (value != -1)
 		{
+			changeModule = true;
+			confirmToClose();
 			LoadingScreen::instance().show();
 			qApp->processEvents();
 			this->close();
 			manager->startModule("SpatialRessection", value);
+			changeModule = false;
 		}
 	}
 }
@@ -911,6 +924,7 @@ bool ProjectUserInterface_Qt::exec()
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
+	changeModule = false;
 	//if (qApp->exec())
 		//return false;
 	return true;
@@ -1913,12 +1927,13 @@ bool ProjectUserInterface_Qt::confirmToClose()
 			}
 		}
 	}
+	//qDebug() << actionSave_file->isEnabled();
 	if (actionSave_file->isEnabled())
 	{
 		QMessageBox::StandardButton reply;
 		reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
 									  tr("Do you want to save all changes?"),
-									  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+									  (changeModule ? QMessageBox::Yes | QMessageBox::No : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel));
 		if (reply == QMessageBox::Yes)
 		{
 			actionSave_file->trigger();

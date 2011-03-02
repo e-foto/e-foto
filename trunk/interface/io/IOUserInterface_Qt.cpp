@@ -54,6 +54,8 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 	if (manager->interiorDone())
 		actionView_report->setEnabled(true);
 
+	setWindowState(this->windowState() | Qt::WindowMaximized);
+	qApp->processEvents();
 	init();
 }
 
@@ -123,7 +125,7 @@ void IOUserInterface_Qt::init()
 
 	setCentralWidget(centralwidget);
 
-	resize(1024,800);
+	//resize(1024,800);
 
 	// Make some connections
 	connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));

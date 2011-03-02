@@ -49,7 +49,7 @@ protected:
 	ControlButtons controlButtons;
 	QModelIndex currentIndex;
 	string savedIn;
-	bool editState, addNewState;
+	bool editState, addNewState, changeModule;
 
 protected slots:
 	virtual void languageChange();

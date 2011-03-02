@@ -55,6 +55,8 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 		actionTable->setEnabled(true);
 
     flightAvailable = false;
+	setWindowState(this->windowState() | Qt::WindowMaximized);
+	qApp->processEvents();
     init();
 }
 

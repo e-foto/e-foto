@@ -25,7 +25,7 @@ int main( int argc, char ** argv )
 
     efoto.connect(&efoto, SIGNAL(lastWindowClosed()), &efoto, SLOT(quit()));
 */
-	LoadingScreen::instance().show();
+	//LoadingScreen::instance().show();
 	qApp->processEvents();
     EFotoManager manager;
     manager.setInterfaceType("Qt");

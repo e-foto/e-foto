@@ -4,21 +4,21 @@
 #include <QWidget>
 
 namespace Ui {
-    class LoadingScreen;
+	class LoadingScreen;
 }
 
 class LoadingScreen : public QWidget {
-    Q_OBJECT
+	Q_OBJECT
 public:
 	static LoadingScreen& instance();
 
 protected:
 	LoadingScreen(QWidget *parent = 0);
 	~LoadingScreen();
-    void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e);
 
 private:
-    Ui::LoadingScreen *ui;
+	Ui::LoadingScreen *ui;
 	static LoadingScreen* loadingScreenInstance;
 };
 
