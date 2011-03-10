@@ -5,26 +5,28 @@
 DmsEdit::DmsEdit(QWidget *parent):
     QLineEdit(parent)
 {
-    setDecimals(5);
-
-    //radValidator=new QDoubleValidator(-2*M_PI,2*M_PI,getDecimals(),this);
+	//radValidator=new QDoubleValidator(-2*M_PI,2*M_PI,getDecimals(),this);
     //degValidator=new QDoubleValidator(-359.9999999,359.9999999,getDecimals(),this);
 
     installEventFilter(this);
-
     degMinSecLine= new Dms("180 0'0\"");
+	setDecimals(5);
     setText(degMinSecLine->toString());
 
     setDmsEditMode(DMS);
 
     connect(this,SIGNAL(cursorPositionChanged(int,int)), this,SLOT(changedField(int,int)));
     connect(this,SIGNAL(editingFinished()),this,SLOT(validate()));
+    connect(this,SIGNAL(returnPressed()),this,SLOT(validate())); //Novo 11.3.08
     connect(this,SIGNAL(textChanged(QString)),this,SLOT(updateValue(QString)));
 }
 
 void DmsEdit::setDecimals(int newDecimals)
 {
     decimals=( newDecimals >=0 ? newDecimals : 0);
+    //Em teste //Novo 11.3.08
+    validate();
+
 }
 
 int DmsEdit::getDecimals()
@@ -40,7 +42,7 @@ void DmsEdit::validate()
 
         if(degMinSecLine->isValid())
         {
-           setText(degMinSecLine->toString());
+           setText(degMinSecLine->toString(getDecimals()));
         }
         else
         {
@@ -53,11 +55,14 @@ void DmsEdit::validate()
         radVal.append(QString::number(getDecimals()));
         radVal.append("}");
 
-        qDebug()<<radVal;
+	   // qDebug()<<radVal;
         QRegExpValidator *radValidator1=new QRegExpValidator(QRegExp(radVal),this);
+		radValidator1->setLocale(QLocale::system());
+		qDebug()<<radValidator1->locale();
+
         this->setValidator(radValidator1);
-        //this->setValidator(radValidator);
-        //radValue=text().toDouble(&ok);
+        //em teste //Novo 11.3.08
+        setText(QString::number(radValue,'f',getDecimals()));
     }
     else if (getDmsEditMode()==DEG)
     {
@@ -66,10 +71,13 @@ void DmsEdit::validate()
         degVal.append(QString::number(getDecimals()));
         degVal.append("}");
 
-        qDebug()<<degVal;
+//        qDebug()<<degVal;
         QRegExpValidator *degValidator1=new QRegExpValidator(QRegExp(degVal),this);
         this->setValidator(degValidator1);
-        //degValue=text().toDouble(&ok);
+
+        //em teste //Novo 11.3.08
+        setText(QString::number(degValue,'f',getDecimals()));
+
     }
 }
 
@@ -101,22 +109,22 @@ void DmsEdit::stepDown()
         if (positionValue()==DEGREES)
         {
             degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==MINUTES)
         {
             degMinSecLine->setMinute(degMinSecLine->getMinute()-1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
             degMinSecLine->setSeconds(degMinSecLine->getSeconds()-1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
     }
     else
     {
-        setText(QString::number(text().toDouble(&ok)-1));
+		setText(QString::number(text().toDouble(&ok)-1));
     }
 }
 
@@ -129,22 +137,22 @@ void DmsEdit::stepUp()
         if (positionValue()==DEGREES)
         {
             degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==MINUTES)
         {
             degMinSecLine->setMinute(degMinSecLine->getMinute()+1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
             degMinSecLine->setSeconds(degMinSecLine->getSeconds()+1);
-            setText(degMinSecLine->toString());
+			setText(degMinSecLine->toString(getDecimals()));
         }
     }
     else
     {
-        setText(QString::number(text().toDouble(&ok)+1));
+		setText(QString::number(text().toDouble(&ok)+1));
     }
 }
 

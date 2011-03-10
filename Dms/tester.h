@@ -16,6 +16,7 @@ public :
 
 public slots:
     void changeMode(int mode);
+    void decimalsChanged(int decimals);
 
 };
 
