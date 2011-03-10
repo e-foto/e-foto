@@ -32,8 +32,8 @@ int main(int argc, char **argv)
     Dms *testeLambda0= new Dms(57,0,0);
   */
 
-    Dms *testePhi= new Dms(34,15,34.742);
-    Dms *testeLambda= new Dms(96,2,43.158);
+	Dms *testePhi= new Dms(60,0,0.0);
+	Dms *testeLambda= new Dms(50,0,0.0);
 	//Dms *testeLambda0= new Dms(57,0,0);
 
     ConvertionsSystems trans;
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		qDebug("phi, lambda, h to E N H");
 		xyz = trans.geoElipToUtm(plh.get(1,1),plh.get(1,2),plh.get(1,3),'n');//,'e');
 		qDebug("E N H to phi, lambda, h");
-        plh = trans.uTmToGeo(xyz.get(1,1),xyz.get(1,2),xyz.get(1,3),xyz.get(1,4),'n');
+		plh = trans.uTmToGeo(xyz.get(1,1),xyz.get(1,2),xyz.get(1,3),xyz.get(1,4),'n');
     }
  /*   qDebug("Manual");
     trans.uTmToGeo(76025.312,5205649.348,0.0,testeLambda0->dmsToRadiano());

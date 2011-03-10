@@ -123,10 +123,10 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
     double b=a*(1-f);
 */
 
-//sad-69
+//clarke 1866
     double k0=0.9996;
-    double a=6378206.4;
-    double f=1/294.978698;
+	double a=6378206.4;
+	double f=1/294.978698;
     //double a=6378388;
     //double f=1/297;
 
@@ -187,9 +187,9 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 
     Matrix xyh(1,4);
 
-	E=round(E*1e3)/1e3;
-	N=round(N*1e3)/1e3;
-	haltura=round(haltura*1e3)/1e3;
+	E=round(E*1e4)/1e4;
+	N=round(N*1e4)/1e4;
+	haltura=round(haltura*1e6)/1e6;
 
     xyh.set(1,1,E);
     xyh.set(1,2,N);
@@ -197,7 +197,7 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
     xyh.set(1,4,lambda0);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
 	qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
-    qDebug("E: %.9f\tN: %.9f\tH: %f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3));
+	qDebug("E: %.9f\tN: %.9f\tH: %f MC=%f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
 
     return xyh;
 }
@@ -256,14 +256,10 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
 		S=a*(1-e2)*(A*oldPhil - B*sin(2*oldPhil) + C*sin(4*oldPhil) - D*sin(6*oldPhil) + E2*sin(8*oldPhil) - F*sin(10*oldPhil) );
 		double N2=N1-(S*k0);
 		phil=N2/N1*oldPhil+oldPhil;
-		//N1=N2;
+
 	}
 
-	Dms phiDm;
-
 	double v=a/(sqrt(1-e2*pow(sin(phil),2)));
-
-	//qDebug()<<"n-esima aproximacao phil: "<< phiDm.radianoToDms(phil)->toString();
 
 	//calculo das parcelas
 	double VII=(tan(phil)*(1 + el2*pow(cos(phil),2))*1e12)/(2*pow(v,2)*sin1*pow(k0,2));
@@ -280,16 +276,10 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
 
 	double dlambda = IX*q - X*pow(q,3) + E5;
 
-	//Dms lambdaDms;
-	//Dms phiDms;
-
 	if (El>0)
 		dlambda=-dlambda;
 
 	double lambda=MC*M_PI/180+dlambda*M_PI/(180*3600);
-
-//	qDebug()<<"\naproximação final phi: "<< phiDms.radianoToDms(phi)->toString();
-//	qDebug()<<"lambdaDms: "<< lambdaDms.radianoToDms(lambda)->toString();
 
     Matrix plh(1,3);
 
@@ -302,7 +292,7 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
 	plh.set(1,2,lambda);
     plh.set(1,3,haltura);
 
-	qDebug("x: %.9f\ty: %.9f\th: %f\n",E,N,haltura);
+	qDebug("x: %.9f\ty: %.9f\th: %f",E,N,haltura);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
 	qDebug("phi: %s\tlambda: %s\thaltura: %f\n",oneSecond.radianoToDms( plh.get(1,1) )->toString().toStdString().c_str(),oneSecond.radianoToDms( plh.get(1,2) )->toString().toStdString().c_str(),plh.get(1,3));
     return plh;

@@ -12,7 +12,6 @@ TableIOEOWidget::TableIOEOWidget(QWidget *parent):QTableWidget(parent)
     io= new Matrix(1,1);
     setRowCount(io->getRows());
     setColumnCount(io->getCols());
-    installEventFilter(this);
     enableAutoCopy();
     setMode('f');
     setDecimals(6);
@@ -21,8 +20,6 @@ TableIOEOWidget::TableIOEOWidget(QWidget *parent):QTableWidget(parent)
 }
 TableIOEOWidget::TableIOEOWidget(Matrix values, QWidget *parent):QTableWidget(parent)
 {
-    setTableData(values);
-    connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     enableAutoCopy();
     setMode('e');
     setDecimals(6);
@@ -56,9 +53,6 @@ TableIOEOWidget::TableIOEOWidget(Matrix values, QWidget *parent):QTableWidget(pa
 
 void TableIOEOWidget::setTableData(Matrix values,char mode,int precision)
 {
-    horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
-    verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
-
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     //falta tratamento para destruir antiga matrix se ela existir antes
     io= new Matrix(values);
@@ -78,8 +72,7 @@ void TableIOEOWidget::setTableData(Matrix values,char mode,int precision)
             this->setItem(i,j,temp);
         }
     }
-    //resizeColumnsToContents();
-    //resizeRowsToContents();
+    //this->resizeColumnsToContents();
     resizeTable();
 }
 
@@ -87,43 +80,14 @@ void TableIOEOWidget::setTableData(EDomElement xml, char mode, int precision)
 {
     io= new Matrix();
     io->xmlSetData(xml.getContent());
-    setTableData(*io, mode, precision);
+    setTableData(*io);
 }
 
 void TableIOEOWidget::setTableData(string xmlString, char mode, int precision)
 {
     io= new Matrix();
     io->xmlSetData(xmlString);
-    setTableData(*io, mode, precision);
-}
-
-void TableIOEOWidget::resizeTable()
-{
-    int widlinhas=lineWidth()*(columnCount()-1);
-    int heilinhas=lineWidth()*(rowCount()-1);
-
-	resizeRowsToContents();   //novo
-    resizeColumnsToContents();//novo
-
-	if (columnCount()==1)
-		setFixedSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
-    else
-        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
-}
-
-void TableIOEOWidget::setVerticalHeadersLabelsHtml(QStringList list)
-{
-	verticalHeader()->setVisible(false);
-	setColumnCount(columnCount()+1);
-
-	for (int i=0; i<list.size(); i++)
-	{
-		QLabel *lab=new QLabel(list.at(i));
-		lab->setAlignment(Qt::AlignCenter);
-		setCellWidget(i,1,lab);
-
-	}
-	resizeTable();
+    setTableData(*io);
 }
 
 void TableIOEOWidget::autoCopy()
@@ -148,37 +112,6 @@ void TableIOEOWidget::autoCopy()
     }
 }
 
-bool TableIOEOWidget::eventFilter(QObject *obj, QEvent *evento)
-{
-    if (evento->type()==QEvent::KeyPress)
-    {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evento);
-        keyPressEvent(keyEvent);
-        return true;
-    }
-    if (evento->type()==QEvent::FocusIn)
-    {
-        QFocusEvent *focusInEvento = static_cast<QFocusEvent *>(evento);
-        focusInEvent(focusInEvento);
-        //emit focusReceived();
-        return true;
-    }
-    /*
-    if (evento->type()==QEvent::MouseButtonRelease)
-    {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evento);
-        mouseReleaseEvent(mouseEvent);
-        return true;
-    }
-    if (evento->type()==QEvent::Resize)
-    {
-        QResizeEvent *resEvent= static_cast<QResizeEvent*>(evento);
-        resizeEvent(resEvent);
-        return true;
-    }*/
-
-}
-
 void TableIOEOWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->modifiers()==Qt::ControlModifier)
@@ -196,38 +129,32 @@ void TableIOEOWidget::keyPressEvent(QKeyEvent *event)
         QTableWidget::keyPressEvent(event);
 }
 
-void TableIOEOWidget::focusInEvent(QFocusEvent *evento)
-{
-    emit focusReceived();
-
-    QTableWidget::focusInEvent(evento);
-
-}
-/*
-void TableIOEOWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-    autoCopy();
-    //qDebug("Dragmoveevent");
-    QTableWidget::mouseReleaseEvent(event);
-}
-
-
 void TableIOEOWidget::resizeEvent(QResizeEvent *event)
 {
-    if(event->type()==QResizeEvent::Resize)
+    if (event->type()==QResizeEvent::Resize)
     {
-        qDebug("Evento de resize");
         resizeTable();
     }else
     {
-        qDebug("NÃ£o evento de resize ");
-        QTableWidget::resizeEvent(event);
+        //QTableWidget::resizeEvent(event);
     }
 }
-*/
+
+void TableIOEOWidget::resizeTable()
+{
+    int widlinhas=lineWidth()*columnCount();
+    int heilinhas=lineWidth()*rowCount();
+
+    horizontalHeader()->stretchLastSection();
+    verticalHeader()->stretchLastSection();
+    resizeColumnsToContents();//novo
+    resizeRowsToContents();   //novo
+    setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+}
+
 void TableIOEOWidget::enableAutoCopy(bool enable)
 {
-    //testado e atÃ© agora sem problemas
+    //testado e até agora sem problemas
     if(enable)
     {
         connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
@@ -237,6 +164,7 @@ void TableIOEOWidget::enableAutoCopy(bool enable)
         disconnect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     }
 }
+
 //Novo 11.03.08
 //Override para connect com o signal da QCheckBox, a saber, "stateChanged(int)"
 void TableIOEOWidget::enableAutoCopy(int enable)
@@ -283,7 +211,7 @@ void TableIOEOWidget::updateModoValues(int modo)
     {
         setMode('f');
     }
-    else                    // caso em que um valor invalido Ã© passado
+    else                    // caso em que um valor invalido é passado
         setMode('f');
 
     updateTableValues(getMode(),getDecimals());
