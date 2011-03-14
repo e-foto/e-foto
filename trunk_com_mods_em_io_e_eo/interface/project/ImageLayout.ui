@@ -220,7 +220,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <item>
-                <widget class="QDoubleSpinBox" name="eDoubleSpinBox_2">
+                <widget class="EfotoDoubleSpinBox" name="eDoubleSpinBox_2">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -242,7 +242,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="nDoubleSpinBox_2">
+                <widget class="EfotoDoubleSpinBox" name="nDoubleSpinBox_2">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -261,7 +261,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="hDoubleSpinBox_2">
+                <widget class="EfotoDoubleSpinBox" name="hDoubleSpinBox_2">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -406,7 +406,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
-                <widget class="QDoubleSpinBox" name="omegaDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="omegaDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -431,7 +431,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="phiDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="phiDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -453,7 +453,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="kappaDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="kappaDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -654,15 +654,20 @@ p, li { white-space: pre-wrap; }
    <header>SigmaForm.h</header>
   </customwidget>
   <customwidget>
-   <class>SigmaFormDialogButton</class>
-   <extends>QPushButton</extends>
-   <header>SigmaForm.h</header>
-  </customwidget>
-  <customwidget>
    <class>SigmaFormContent</class>
    <extends>QFrame</extends>
    <header>SigmaForm.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SigmaFormDialogButton</class>
+   <extends>QPushButton</extends>
+   <header>SigmaForm.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

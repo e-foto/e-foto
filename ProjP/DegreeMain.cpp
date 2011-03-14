@@ -32,28 +32,29 @@ int main(int argc, char **argv)
     Dms *testeLambda0= new Dms(57,0,0);
   */
 
-	Dms *testePhi= new Dms(60,0,0.0);
-	Dms *testeLambda= new Dms(50,0,0.0);
-	//Dms *testeLambda0= new Dms(57,0,0);
+    Dms *testeLambda= new Dms(80,0,30.5); // testar esses valores 60.0 59.0
+    Dms *testePhi= new Dms(30,30,12.13);
 
     ConvertionsSystems trans;
-    Matrix xyz(1,3);
-    Matrix plh(1,3);
+	Matrix xyz(1,4);
+	Matrix plh(1,3);
 
     plh.set(1,1,testePhi->dmsToRadiano());
     plh.set(1,2,testeLambda->dmsToRadiano());
-	plh.set(1,3,0.0);
-	for (int i=0;i<200;i++)
+    plh.set(1,3,0.0);
+	for (int i=0;i<2000;i++)//N=2214295,199  E=186073,7205
     {
-		qDebug("phi, lambda, h to E N H");
-		xyz = trans.geoElipToUtm(plh.get(1,1),plh.get(1,2),plh.get(1,3),'n');//,'e');
-		qDebug("E N H to phi, lambda, h");
-		plh = trans.uTmToGeo(xyz.get(1,1),xyz.get(1,2),xyz.get(1,3),xyz.get(1,4),'n');
-    }
- /*   qDebug("Manual");
-    trans.uTmToGeo(76025.312,5205649.348,0.0,testeLambda0->dmsToRadiano());
-    qDebug("");
+        qDebug("phi, lambda, h to E N H");
+        xyz = trans.geoElipToUtm(plh.get(1,1),plh.get(1,2),plh.get(1,3),'n');//,'e');
+        qDebug()<< "Valores esperados:\n E= 404853.431417, N= 3374982.887511, H= 0.0, MC= 81";
 
+        qDebug("E N H to phi, lambda, h");
+        plh = trans.uTmToGeo(xyz.get(1,1),xyz.get(1,2),xyz.get(1,3),xyz.get(1,4),'n');
+
+	   qDebug()<< "Valores esperados:\n phi= 30°30'12.12922\", lambda= 80°0'30.49991\" , H= 0.0, MC= 81";
+
+    }
+ /*  
 	//box->setFixedSize(300,50);
 	//box->show();*/
 

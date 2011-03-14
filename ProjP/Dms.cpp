@@ -14,16 +14,18 @@ Dms::Dms()
 
 Dms::Dms(int degree, int minute, double second, bool signal)
 {
-    setDegree(degree);
+	setSecondsPrecision();
+	setDegree(degree);
     setMinute(minute);
     setSeconds(second);
     setSignal(signal);
+
 }
 
 Dms::Dms(QString degree)
 {
     Dms *newDegree = stringToDms(degree);
-
+	setSecondsPrecision();
     this->setDegree(newDegree->getDegree());
     this->setMinute(newDegree->getMinute());
     this->setSeconds(newDegree->getSeconds());
@@ -31,6 +33,7 @@ Dms::Dms(QString degree)
 }
 Dms::Dms(double seconds)
 {
+	setSecondsPrecision();
 	double value=fabs(seconds);
 
 	int deg=(int)value/3600;
@@ -51,12 +54,15 @@ void Dms::setDegree(int newDegrees)
 
 void Dms::setMinute(int newMinutes)
 {
-    min = (newMinutes<0||newMinutes>59)? min : newMinutes ;
+	min = (newMinutes<0||newMinutes>59)? min : newMinutes ;
 }
 
 void Dms::setSeconds(double newSeconds)
 {
-     sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
+	sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
+	double temp=sec;
+	temp= round(temp*pow(10,getSecondsPrecision()))/pow(10,getSecondsPrecision());
+	sec=temp;
 }
 
 void Dms::setSignal(bool newSignal)
@@ -152,12 +158,23 @@ Dms* Dms::stringToDms(QString dms)
 	{
                 setSignal(false);
         }
-        setDegree(degree);
-        setMinute(minute);
-        setSeconds(second);
-
+	setDegree(degree);
+	setMinute(minute);
+	setSeconds(second);
+	//setSecondsPrecision(getSecondsPrecision());
        // qDebug()<<this->toString();
         return this;
+}
+
+
+void Dms::setSecondsPrecision(int precision)
+{
+	secondsPrecision = (precision>=1 ? precision : 2);
+}
+
+int  Dms::getSecondsPrecision()
+{
+	return secondsPrecision;
 }
 
 /**
@@ -178,6 +195,7 @@ Dms * Dms::secondsToDms(double seconds)
 	else
 		result= new Dms(deg,min,sec);
 
+//	result->setSecondsPrecision(getSecondsPrecision());
 	return result;
 }
 
@@ -215,9 +233,10 @@ Dms* Dms::degreeDecimalToDms(double degreeDecimal)
         setSignal(true);
         //	return (new Dms(degrees,minutes,seconds,true));
     }
-    setDegree(degrees);
+	setDegree(degrees);
     setMinute(minutes);
     setSeconds(seconds);
+
     //qDebug("degree: %f dms: %s",degreeDecimal,this->toString().toStdString().c_str());
 
     return this;

@@ -8,13 +8,15 @@ DmsEdit::DmsEdit(QWidget *parent):
 	//radValidator=new QDoubleValidator(-2*M_PI,2*M_PI,getDecimals(),this);
     //degValidator=new QDoubleValidator(-359.9999999,359.9999999,getDecimals(),this);
 
-    installEventFilter(this);
+	qDebug()<< "language:"<<locale().name();
+	qDebug()<<"simbolo decimal: "<<locale().decimalPoint();
+
+
+	installEventFilter(this);
     degMinSecLine= new Dms("180 0'0\"");
 	setDecimals(5);
     setText(degMinSecLine->toString());
-
     setDmsEditMode(DMS);
-
     connect(this,SIGNAL(cursorPositionChanged(int,int)), this,SLOT(changedField(int,int)));
     connect(this,SIGNAL(editingFinished()),this,SLOT(validate()));
     connect(this,SIGNAL(returnPressed()),this,SLOT(validate())); //Novo 11.3.08
@@ -51,18 +53,23 @@ void DmsEdit::validate()
     }
     else if (getDmsEditMode()==RAD)
     {
-        QString radVal="(-)?[0-6]{1}(\\.|,)\\d{";
-        radVal.append(QString::number(getDecimals()));
+//		QString decimalPnt=QLocale::decimalPoint();
+		QString radVal="(-)?[0-6]{1}(\\.|,)\\d{";
+
+	//	radVal.append();
+		radVal.append(QString::number(getDecimals()));
         radVal.append("}");
 
 	   // qDebug()<<radVal;
         QRegExpValidator *radValidator1=new QRegExpValidator(QRegExp(radVal),this);
 		radValidator1->setLocale(QLocale::system());
-		qDebug()<<radValidator1->locale();
+		//radValidator1->locale().setNumberOptions(QLocale::O);
+		//qDebug()<<radValidator1->locale().name()<<"simbolo decimal: "<<radValidator1->locale().decimalPoint();
 
         this->setValidator(radValidator1);
         //em teste //Novo 11.3.08
-        setText(QString::number(radValue,'f',getDecimals()));
+		setText(locale().toString(radValue,'f',getDecimals()));
+
     }
     else if (getDmsEditMode()==DEG)
     {
@@ -76,7 +83,7 @@ void DmsEdit::validate()
         this->setValidator(degValidator1);
 
         //em teste //Novo 11.3.08
-        setText(QString::number(degValue,'f',getDecimals()));
+		setText(locale().toString(degValue,'f',getDecimals()));
 
     }
 }
@@ -124,7 +131,7 @@ void DmsEdit::stepDown()
     }
     else
     {
-		setText(QString::number(text().toDouble(&ok)-1));
+		setText(locale().toString(text().toDouble(&ok)-1));
     }
 }
 
@@ -152,7 +159,7 @@ void DmsEdit::stepUp()
     }
     else
     {
-		setText(QString::number(text().toDouble(&ok)+1));
+		setText(locale().toString(text().toDouble(&ok)+1));
     }
 }
 
@@ -307,7 +314,7 @@ void DmsEdit::keyPressEvent(QKeyEvent *evento)
             stepBy(-1);
             break;
         default:
-                QLineEdit::keyPressEvent(evento);
+			QLineEdit::keyPressEvent(evento);
         }
     }
 }
@@ -342,14 +349,14 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     if (getDmsEditMode()==DMS && newMode==RAD)
     {
         radValue=degMinSecLine->dmsToRadiano();
-        setText(QString::number(radValue,'f',getDecimals()));
+		setText(locale().toString(radValue,'f',getDecimals()));
         //setText(QString::number(degMinSecLine->dmsToRadiano(),'f',getDecimals()));
         //qDebug()<<"dms to rad";
     }
     else if(getDmsEditMode()==DMS && newMode==DEG)
     {
         degValue=degMinSecLine->dmsToDegreeDecimal();
-        setText(QString::number(degValue,'f',getDecimals()));
+		setText(locale().toString(degValue,'f',getDecimals()));
         //setText(QString::number(degMinSecLine->dmsToDegreeDecimal(),'f',getDecimals()));
         //qDebug()<<"dms to deg";
     }
@@ -364,7 +371,7 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     {
 
         radValue=Dms::degreeDecimalToRadiano(degValue);
-        setText(QString::number(radValue,'f',getDecimals()));
+		setText(locale().toString(radValue,'f',getDecimals()));
         //setText(QString::number(Dms::degreeDecimalToRadiano(text().toDouble),'f',getDecimals()));
         //qDebug()<<"deg to rad";
     }
@@ -378,7 +385,7 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     else if(getDmsEditMode()==RAD && newMode==DEG)
     {
         degValue=Dms::radianoToDegreeDecimal(radValue);
-        setText(QString::number(degValue,'f',getDecimals()));
+		setText(locale().toString(degValue,'f',getDecimals()));
         //setText(QString::number(Dms::radianoToDegreeDecimal(text().toDouble(&ok)),'f',getDecimals()));
         //qDebug()<<"rad to dms";
     }

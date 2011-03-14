@@ -3,8 +3,8 @@
 
 SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 {
-        setupUi(this);
-        setFormLocale(QLocale(QLocale::system()));
+	setupUi(this);
+	setFormLocale(QLocale(QLocale::system()));
 	cameraDispatchDateEdit->setDate(QDate().currentDate());
 
 	calibratedSigmaController = new SigmaFormController("Not Available",1);
@@ -70,15 +70,14 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 
 	//oldSensor
 	//connect(detectorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(detectorGroup(int)));
-        connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
+	connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
 
 	//newSensor
 	connect(calcModelComboBox, SIGNAL (currentIndexChanged(int)), this, SLOT(calculationMode(int)));
-
 	connect(sensorColsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSensorDiagonal()));
 	connect(sensorRowsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSensorDiagonal()));
 	connect(pixelSizeDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateSensorDiagonal()));
-	//calculationMode(0);//set inicial temporario
+
 }
 
 void SensorForm::fillvalues(string values)

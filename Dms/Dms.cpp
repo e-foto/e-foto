@@ -56,7 +56,7 @@ void Dms::setMinute(int newMinutes)
 
 void Dms::setSeconds(double newSeconds)
 {
-     sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
+	sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
 }
 
 void Dms::setSignal(bool newSignal)
@@ -119,15 +119,14 @@ void Dms::setDms(int degree, int minute, double seconds,bool signal)
 QString Dms::toString(int decimals)
 {
     QString text;
-
-    if(this->hasSignal())
+	if(this->hasSignal())
         text+="-";
 
     text+=QString::number(this->getDegree());
     text+=QString::fromUtf8("°");
     text+=QString::number(this->getMinute());
     text+="'";
-    text.append(QString::number(this->getSeconds(),'f',decimals));
+	text.append(QLocale::system().toString(this->getSeconds(),'f',decimals));
     text+="\"";
 
     return text;

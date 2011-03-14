@@ -160,7 +160,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="eDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="eDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -196,7 +196,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="nDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="nDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -229,7 +229,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="hDoubleSpinBox">
+                <widget class="EfotoDoubleSpinBox" name="hDoubleSpinBox">
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::NoButtons</enum>
                  </property>
@@ -286,6 +286,9 @@ p, li { white-space: pre-wrap; }
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
            <column>
             <property name="text">
              <string>Key</string>
@@ -331,15 +334,20 @@ p, li { white-space: pre-wrap; }
    <header>SigmaForm.h</header>
   </customwidget>
   <customwidget>
-   <class>SigmaFormDialogButton</class>
-   <extends>QPushButton</extends>
-   <header>SigmaForm.h</header>
-  </customwidget>
-  <customwidget>
    <class>SigmaFormContent</class>
    <extends>QFrame</extends>
    <header>SigmaForm.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SigmaFormDialogButton</class>
+   <extends>QPushButton</extends>
+   <header>SigmaForm.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
