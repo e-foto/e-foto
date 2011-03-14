@@ -20,7 +20,7 @@ public :
 
         Matrix geoElipToUtm(double phi, double lambda, double haltura, char hemi);//, char side);
 
-        Matrix uTmToGeo(double x, double y, double haltura,double MC, char hemi);
+        Matrix uTmToGeo(double E, double N, double haltura,double MC, char hemi);
 
         Matrix getMatrixR(double phi, double lambda);
 

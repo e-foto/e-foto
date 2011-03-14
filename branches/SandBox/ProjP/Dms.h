@@ -31,7 +31,8 @@ public:
     void setSeconds(double newSeconds);
     void setSignal(bool newSignal);
     int compareDegMinSecs(Dms *degMinSec);
-
+	void setSecondsPrecision(int precision=2);
+	int getSecondsPrecision();
 
     //Operations
 	void addDegMinSecs(Dms* degMinSec1);
@@ -51,6 +52,7 @@ private:
     int min;
     double sec;
     bool signal;
+	int secondsPrecision;
 };
 
 /*

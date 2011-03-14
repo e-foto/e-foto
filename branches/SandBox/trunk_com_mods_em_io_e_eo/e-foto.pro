@@ -146,7 +146,8 @@ HEADERS += control/EFotoManager.h \
     xml_definition/XMLFlight.h \
     xml_definition/XMLSensor.h \
     xml_definition/XMLSensorWithFiducialMarks.h \
-    interface/view/TableIOEOWidget.h
+    interface/view/TableIOEOWidget.h \
+    interface/view/EfotoDoubleSpinBox.h
 FORMS += interface/io/IOForm.ui \
     interface/sr/SRForm.ui \
     interface/project/FormProject.ui \
@@ -251,7 +252,8 @@ SOURCES += control/EFotoManager.cpp \
     xml_definition/XMLFlight.cpp \
     xml_definition/XMLSensor.cpp \
     xml_definition/XMLSensorWithFiducialMarks.cpp \
-    interface/view/TableIOEOWidget.cpp
+    interface/view/TableIOEOWidget.cpp \
+    interface/view/EfotoDoubleSpinBox.cpp
 RESOURCES += interface/sr/sr_resource.qrc \
     interface/io/resource/io_icons.qrc \
     interface/project/resource/project_resource.qrc \
