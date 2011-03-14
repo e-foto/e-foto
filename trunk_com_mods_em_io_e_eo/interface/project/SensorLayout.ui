@@ -128,72 +128,6 @@ p, li { white-space: pre-wrap; }
          <string>Type</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="2" colspan="3">
-          <layout class="QHBoxLayout" name="horizontalLayout_40">
-           <item>
-            <widget class="QLabel" name="label_20">
-             <property name="text">
-              <string>Calculation Model</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="calcModelComboBox">
-             <item>
-              <property name="text">
-               <string>With Fiducial Marks</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>With Sensor Dimensions</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Fixed Parameters</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="5">
-          <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
-           <item>
-            <widget class="QLabel" name="label_26">
-             <property name="text">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
-&lt;tr&gt;
-&lt;td style=&quot;border: none;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Energy Source&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="energyCombo">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>natural</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
@@ -331,6 +265,72 @@ p, li { white-space: pre-wrap; }
              <item>
               <property name="text">
                <string>ccd</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="2" colspan="3">
+          <layout class="QHBoxLayout" name="horizontalLayout_40">
+           <item>
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>Calculation Model</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="calcModelComboBox">
+             <item>
+              <property name="text">
+               <string>With Fiducial Marks</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>With Sensor Dimensions</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Fixed Parameters</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="5">
+          <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
+           <item>
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Energy Source&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="energyCombo">
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>natural</string>
               </property>
              </item>
             </widget>
@@ -546,7 +546,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="calibratedFocalDistanceDoubleSpin">
+              <widget class="EfotoDoubleSpinBox" name="calibratedFocalDistanceDoubleSpin">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -687,7 +687,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QDoubleSpinBox" name="principalX0doubleSpin">
+                   <widget class="EfotoDoubleSpinBox" name="principalX0doubleSpin">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -745,7 +745,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QDoubleSpinBox" name="principalY0doubleSpin">
+                   <widget class="EfotoDoubleSpinBox" name="principalY0doubleSpin">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1352,7 +1352,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi0doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1422,7 +1422,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta0doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1513,7 +1513,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi1doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1583,7 +1583,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta1doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1674,7 +1674,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi2doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1744,7 +1744,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta2doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1835,7 +1835,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi3doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1905,7 +1905,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta3doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1996,7 +1996,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi4doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2066,7 +2066,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta4doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2157,7 +2157,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi5doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2227,7 +2227,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta5doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2318,7 +2318,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi6doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2388,7 +2388,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta6doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2479,7 +2479,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialXi7doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialXi7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2549,7 +2549,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="fiductialEta7doubleSpin">
+                <widget class="EfotoDoubleSpinBox" name="fiductialEta7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2624,7 +2624,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaA0SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaA0SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2663,7 +2663,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaA1SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaA1SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2702,7 +2702,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaA2SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaA2SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2745,7 +2745,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaB0SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaB0SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2784,7 +2784,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaB1SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaB1SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2823,7 +2823,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="xaB2SpinBox">
+            <widget class="EfotoDoubleSpinBox" name="xaB2SpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2881,7 +2881,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="pixelSizeDoubleSpinBox">
+            <widget class="EfotoDoubleSpinBox" name="pixelSizeDoubleSpinBox">
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
@@ -3042,6 +3042,11 @@ p, li { white-space: pre-wrap; }
    <class>ScienceSpinBox</class>
    <extends>QLineEdit</extends>
    <header>ScienceSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

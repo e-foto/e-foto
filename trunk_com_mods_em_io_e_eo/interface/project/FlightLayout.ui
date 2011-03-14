@@ -207,7 +207,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="horizontalOverlapDoubleSpinBox">
+              <widget class="EfotoDoubleSpinBox" name="horizontalOverlapDoubleSpinBox">
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
@@ -237,7 +237,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="verticalOverlapDoubleSpinBox">
+              <widget class="EfotoDoubleSpinBox" name="verticalOverlapDoubleSpinBox">
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
@@ -267,6 +267,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

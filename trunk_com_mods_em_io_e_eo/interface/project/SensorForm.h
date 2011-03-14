@@ -41,6 +41,7 @@ public slots:
 	void fiductialGroup(int);
 	void calculationMode(int); //newSensor
 	//void setSigmasVisible(bool);
+
 	void updateSensorDiagonal();
 };
 

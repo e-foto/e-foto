@@ -121,7 +121,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QDoubleSpinBox" name="meanAltSpinBox">
+         <widget class="EfotoDoubleSpinBox" name="meanAltSpinBox">
           <property name="toolTip">
            <string>Mean Altitude Above Sea Level</string>
           </property>
@@ -175,7 +175,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="maxAltSpinBox">
+         <widget class="EfotoDoubleSpinBox" name="maxAltSpinBox">
           <property name="toolTip">
            <string>Max Altitude Above Sea Level</string>
           </property>
@@ -197,7 +197,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="minAltSpinBox">
+         <widget class="EfotoDoubleSpinBox" name="minAltSpinBox">
           <property name="toolTip">
            <string>Min Altitude Above Sea Level</string>
           </property>
@@ -327,7 +327,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="latSecondSpin">
+               <widget class="EfotoDoubleSpinBox" name="latSecondSpin">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -474,7 +474,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="longSecondSpin">
+               <widget class="EfotoDoubleSpinBox" name="longSecondSpin">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -560,6 +560,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>maxAltSpinBox</tabstop>
   <tabstop>minAltSpinBox</tabstop>
