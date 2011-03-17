@@ -258,16 +258,21 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 	N=round(N*1e4)/1e4;
 	//haltura=round(haltura*1e6)/1e6;
 
-    Dms oneSecond;
-    xyh.set(1,1,E);
+	Dms phiDms;
+	phiDms.setSecondsPrecision(2);
+	Dms lambdaDms;
+	lambdaDms.setSecondsPrecision(2);
+
+	xyh.set(1,1,E);
     xyh.set(1,2,N);
     xyh.set(1,3,haltura);
     xyh.set(1,4,lambda0);
 
-	oneSecond.setSecondsPrecision(2);
+	phiDms.radianoToDms(phi);
+	lambdaDms.radianoToDms(lambda);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
-	qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
-    qDebug("E: %.9f\tN: %.9f\tH: %f MC=%f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
+	qDebug("phi: %s\tlambda: %s\thaltura: %f",phiDms.toString().toStdString().c_str(),lambdaDms.toString().toStdString().c_str(),haltura);
+	qDebug("E: %.9f\tN: %.9f\tH: %f MC=%f\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
 
     return xyh;
 }
@@ -422,9 +427,12 @@ Matrix ConvertionsSystems::uTmToGeo(double E, double N, double haltura, double M
 	phiDms.setSecondsPrecision(2);
 	lambdaDms.setSecondsPrecision(2);
 
+	phiDms.radianoToDms( phi );
+	lambdaDms.radianoToDms(lambda);
+
 	qDebug("E: %.9f\tN: %.9f\tH: %f",E,N,haltura);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
-	qDebug("phi: %s\tlambda: %s\thaltura: %f\n",phiDms.radianoToDms( phi )->toString(3).toStdString().c_str(),lambdaDms.radianoToDms( lambda )->toString(3).toStdString().c_str(),haltura);
+	qDebug("phi: %s\tlambda: %s\thaltura: %f\n",phiDms.toString(3).toStdString().c_str(),lambdaDms.toString(3).toStdString().c_str(),haltura);
 
 	plh.set(1,1,phiDms.dmsToRadiano());
 	plh.set(1,2,lambdaDms.dmsToRadiano());
