@@ -4,7 +4,9 @@ HEADERS += Dms.h \
     PositionMatrix.h \
     EObject.h \
     EDom.h \
-    ConvertionsSystems.h
+    ConvertionsSystems.h \
+    DmsEdit.h \
+    ConversionsLayout.h
 SOURCES += Dms.cpp \
     DegreeMain.cpp \
     Matrix.cpp \
@@ -12,4 +14,7 @@ SOURCES += Dms.cpp \
     PositionMatrix.cpp \
     EObject.cpp \
     EDom.cpp \
-    ConvertionsSystems.cpp
+    ConvertionsSystems.cpp \
+    DmsEdit.cpp \
+    ConversionsLayout.cpp
+FORMS += ConvertionsForm.ui

@@ -2,7 +2,7 @@
 #define CONVERTIONSSYSTEMS_H
 
 #include "Matrix.h"
-
+#include "Dms.h"
 enum GeoSystem { CORREGOALEGRE, SAD69, SIRGAS2000, WGS84};
 
 class ConvertionsSystems
