@@ -4,6 +4,7 @@
 #include <QSpinBox>
 #include <QRegExpValidator>
 #include <QString>
+#include <QLocale>
 
 class QRegExpValidator;
 
@@ -25,29 +26,32 @@ public:
     void setDms(Dms newDms);
     void setDms(int degree, int minute , double seconds, bool signal=false);
     QString toString(int decimals=3);
-    Dms* stringToDms(QString dms);
+	static Dms* stringToDms(QString dms);
     void setDegree(int newDegrees);
     void setMinute(int newMinutes);
     void setSeconds(double newSeconds);
     void setSignal(bool newSignal);
+	void setLocale(QLocale locale);
+	QLocale getLocale();
     int compareDegMinSecs(Dms *degMinSec);
 	void setSecondsPrecision(int precision=2);
 	int getSecondsPrecision();
 
     //Operations
-	void addDegMinSecs(Dms* degMinSec1);
-	void mulDegMinSecs(int factor);
+	//void addDegMinSecs(Dms* degMinSec1);
+	//void mulDegMinSecs(int factor);
 
     //Converters
     double dmsToDegreeDecimal();
     double dmsToRadiano();
-    Dms* degreeDecimalToDms(double degreeDecimal);
+	void degreeDecimalToDms(double degreeDecimal);
     static double degreeDecimalToRadiano(double degree);
-    Dms* radianoToDms(double radiano);
+	void radianoToDms(double radiano);
     static double radianoToDegreeDecimal(double radiano);
 	static Dms * secondsToDms(double seconds);
 
 private:
+	QLocale localeDms;
     int degree;
     int min;
     double sec;
@@ -55,35 +59,4 @@ private:
 	int secondsPrecision;
 };
 
-/*
-class DegreeRadSpin:public QSpinBox
-{
-    Q_OBJECT
-public:
-    DegreeRadSpin(QWidget *parent=0);
-    void stepUp();
-    void stepDown();
-    void stepBy(int steps);
-    void setMinimum(int min);
-    void setMaximum(int max);
-    int minimum();
-    int maximum();
-
-
-    QString textFromValue(int val) const;
-    int valueFromText(const QString &text) const;
-    QValidator::State validate(QString &input, int &pos) const;
-    PositionValue positionValue();
-    void validateAndInterprete();
-    void correctCursorPosition(int oldPosition, int oldLength);
-
-private:
-	Dms *DmsThis;
-    QRegExpValidator *validator;
-    QLineEdit *texto;
-
-public slots:
-    void showTexto();
-};
-*/
 #endif // DMS_H
