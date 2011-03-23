@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>efotoMdiForm</class>
+ <widget class="QWidget" name="efotoMdiForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>547</width>
+    <height>608</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="headerButton">
+       <property name="text">
+        <string>Header Form</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="terrainButton">
+       <property name="text">
+        <string>TerrainForm</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="flightButton">
+       <property name="text">
+        <string>FlightForm</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="sensorButton">
+       <property name="text">
+        <string>SensorForm</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QMdiArea" name="eFotoMdiArea"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
