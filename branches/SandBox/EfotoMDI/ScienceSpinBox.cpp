@@ -385,7 +385,7 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 			else
 				QDoubleSpinBox::keyPressEvent(event);
 		}
-	else // pass the event on to the parent class
+	else
 		QDoubleSpinBox::keyPressEvent(event);
 
 	/*
@@ -398,7 +398,7 @@ void ScienceSpinBox::keyPressEvent(QKeyEvent *event)
 		}
 		adjustDelayer.start(5000);
 	}*/
-
+	// pass the event on to the parent class
 	//QDoubleSpinBox::keyPressEvent(event);
 }
 
