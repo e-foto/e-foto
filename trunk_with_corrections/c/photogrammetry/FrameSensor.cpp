@@ -4,6 +4,29 @@
 
 #include "FrameSensor.h"
 
+// Subclass methods
+//
+
+double RadialSymmetricDistortionCoefficient::getValue()
+{
+	return value;
+}
+
+double RadialSymmetricDistortionCoefficient::getSigma()
+{
+	return sigma;
+}
+
+double DecenteredDistortionCoefficient::getValue()
+{
+	return value;
+}
+
+double DecenteredDistortionCoefficient::getSigma()
+{
+	return sigma;
+}
+
 // Constructors and destructors
 //
 
@@ -69,6 +92,16 @@ AnalogImageSpaceCoordinate FrameSensor::getPrincipalPointCoordinates()
 
 // Associated object accessor methods
 //
+
+deque<RadialSymmetricDistortionCoefficient> FrameSensor::getRadialSymmetricCoefficients()
+{
+	return rsCoefficients;
+}
+
+deque<DecenteredDistortionCoefficient> FrameSensor::getDecenteredCoefficients()
+{
+	return dCoefficients;
+}
 
 // EObject methods
 //

@@ -111,6 +111,7 @@ HEADERS +=	\
 			PhotogrammetricPoint.h \
 			Point.h \
 			ProjectHeader.h \
+			ProjectiveRay.h \
 			Sensor.h \
 			SensorWithFiducialMarks.h \
 			SensorWithKnowDimensions.h \
@@ -225,6 +226,7 @@ SOURCES += \
 			PhotogrammetricPoint.cpp \
 			Point.cpp \
 			ProjectHeader.cpp \
+			ProjectiveRay.cpp \
 			Sensor.cpp \
 			SensorWithFiducialMarks.cpp \
 			SensorWithKnowDimensions.cpp \
