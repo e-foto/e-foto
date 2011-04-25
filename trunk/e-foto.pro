@@ -48,6 +48,9 @@ LIBS += \
 			-lcvaux \
 			-lSDL \
 			-lSDL_image
+
+HEADERS += CommonSDLMethods.h
+SOURCES += CommonSDLMethods.cpp
 }
 win32 {
 INCLUDEPATH += \
@@ -152,9 +155,7 @@ HEADERS +=	\
 		\#	qt/interface/
 			IOUserInterface_Qt.h \
 			ProjectUserInterface_Qt.h \
-			SRUserInterface_Qt.h \
-		\#	sdl/infrastructure/
-			sdl/infrastructure/CommonSDLMethods.h
+			SRUserInterface_Qt.h
 
 FORMS +=	\
 		\#	qt/formDisplay/
@@ -266,9 +267,7 @@ SOURCES += \
 			IOUserInterface_Qt.cpp \
 			main.cpp \
 			ProjectUserInterface_Qt.cpp \
-			SRUserInterface_Qt.cpp \
-		\#	sdl/infrastructure/
-			CommonSDLMethods.cpp
+			SRUserInterface_Qt.cpp
 
 RESOURCES += \
 		\#	qt/resource/
