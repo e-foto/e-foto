@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/icons">
-        <file>images/none.png</file>
-        <file>images/logo.png</file>
-        <file>images/pattern.png</file>
-        <file>images/WindowIcon.png</file>
-        <file>images/efotux-about.png</file>
-    </qresource>
-</RCC>
