@@ -23,6 +23,9 @@ class RadialSymmetricDistortionCoefficient
 
 public:
 
+	double getValue();
+	double getSigma();
+
 	friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
 	friend class SensorWithKnowDimensions;
@@ -35,6 +38,9 @@ class DecenteredDistortionCoefficient
 	double sigma;
 
 public:
+
+	double getValue();
+	double getSigma();
 
 	friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
@@ -108,7 +114,9 @@ public:
 	double getFocalDistance();
 	double getFocalDistanceSigma();
 	AnalogImageSpaceCoordinate getPrincipalPointCoordinates();
-	//string getDescription();
+	//string getDescription();	
+	deque<RadialSymmetricDistortionCoefficient> getRadialSymmetricCoefficients();
+	deque<DecenteredDistortionCoefficient> getDecenteredCoefficients();
 
 	// Associated object accessor methods
 	//

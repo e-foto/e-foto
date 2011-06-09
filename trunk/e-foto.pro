@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = e-foto
+#TARGET = e-foto
 
 # Build settings
 DESTDIR = ../bin
@@ -272,3 +272,18 @@ SOURCES += \
 RESOURCES += \
 		\#	qt/resource/
 			resource.qrc
+
+ABOUTDIR = qt/infrastructure/
+
+unix {
+	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+		MYDATA = $$system(date -u +%y.%m.%d) # a versao release so precisa da data e olhe la!
+		system(sed -r s/[0-9]{2}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
+		message(Release build!) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
+	}else{
+		MYDATA = $$system(date -u +%y.%m.%d)#%k.%M.%S)
+		message(Debug build!) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Debug_$${MYDATA}
+	}
+}

@@ -11,6 +11,7 @@
 #include "Flight.h"
 #include "EOQuality.h"
 #include "DigitalImageSpaceCoordinate.h"
+#include "AnalogImageSpaceCoordinate.h"
 
 /**
   * class SpatialRessection
@@ -43,6 +44,7 @@ class SpatialRessection : public ExteriorOrientation
 
     int totalIterations;
 	bool gnssConverged, insConverged;
+	bool useDistortions;
 
     // Composed objects
     //
@@ -127,6 +129,17 @@ public:
     void generateX0();
     void initialize();
 	bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
+
+	// Private support methods
+	//
+	AnalogImageSpaceCoordinate applyDistortions(double xi, double eta);
+	AnalogImageSpaceCoordinate applyDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate);
+	AnalogImageSpaceCoordinate removeDistortions(double xi, double eta);
+	AnalogImageSpaceCoordinate removeDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate);
+	AnalogImageSpaceCoordinate getRadialDistortions(double xi, double eta);
+	AnalogImageSpaceCoordinate getDecenteredDistortions(double xi, double eta);
+	AnalogImageSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
+	AnalogImageSpaceCoordinate getCurvatureDistortions(double xi, double eta);
 
 };
 
