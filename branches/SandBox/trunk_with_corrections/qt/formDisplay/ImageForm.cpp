@@ -207,29 +207,31 @@ QString ImageForm::loadImageFile()
 
 	QDir absolutePath (proj->getSavedIn());
 		//qDebug()<<proj->getSavedIn();
-        if (fileImage !="")
-            {
-               //***************************************************************************************************
-               // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-               int i=fileImage.lastIndexOf("/");
-			   int j=absolutePath.relativeFilePath(fileImage).lastIndexOf(('/'));
-			   fileImageName = fileImage.right(fileImage.length()-i-1);
-               fileImagePath = fileImage.left(i);
+	if (fileImage !="")
+	{
+		//***************************************************************************************************
+		// Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+		int i=fileImage.lastIndexOf("/");
+		int j=absolutePath.relativeFilePath(fileImage).lastIndexOf(('/'));
+		fileImageName = fileImage.right(fileImage.length()-i-1);
+		fileImagePath = fileImage.left(i);
 
-               fileNameLine->setText(fileImageName);
-			   if (j<0)
-				   filePathLine->setText(".");
-			   else
-				   filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
-			   lastPath = filePathLine->text();
-               //***************************************************************************************************
-               QImage * imageData=new QImage(fileImage);
-               heightLine->setText(QString::number(imageData->height())+" px");
-               widthLine->setText(QString::number(imageData->width())+" px");
-			   return fileImage;
+		fileNameLine->setText(fileImageName);
+		if (j<0)
+			filePathLine->setText(".");
+		else
+			filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
+		lastPath = filePathLine->text();
+		//***************************************************************************************************
+		int w, h, f;
 
-            }else
-               return fileNameLine->text();
+		CommonMethods::instance(CM::CVMethods)->loadImage(w,h,f,fileImage.toStdString());
+		CommonMethods::instance(CM::CVMethods)->freeImage();
+		heightLine->setText(QString::number(h)+" px");
+		widthLine->setText(QString::number(w)+" px");
+		return fileImage;
+	}else
+		return fileNameLine->text();
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)
