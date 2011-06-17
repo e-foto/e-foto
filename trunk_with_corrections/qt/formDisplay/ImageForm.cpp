@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
+#include "CommonMethods.h"
 
 ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 {

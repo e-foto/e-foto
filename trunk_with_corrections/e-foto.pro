@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = e-foto
+#TARGET = e-foto
 
 # Build settings
 DESTDIR = ../bin
@@ -48,6 +48,9 @@ LIBS += \
 			-lcvaux \
 			-lSDL \
 			-lSDL_image
+
+HEADERS += CommonSDLMethods.h
+SOURCES += CommonSDLMethods.cpp
 }
 win32 {
 INCLUDEPATH += \
@@ -111,7 +114,6 @@ HEADERS +=	\
 			PhotogrammetricPoint.h \
 			Point.h \
 			ProjectHeader.h \
-			ProjectiveRay.h \
 			Sensor.h \
 			SensorWithFiducialMarks.h \
 			SensorWithKnowDimensions.h \
@@ -153,9 +155,7 @@ HEADERS +=	\
 		\#	qt/interface/
 			IOUserInterface_Qt.h \
 			ProjectUserInterface_Qt.h \
-			SRUserInterface_Qt.h \
-		\#	sdl/infrastructure/
-			sdl/infrastructure/CommonSDLMethods.h
+			SRUserInterface_Qt.h
 
 FORMS +=	\
 		\#	qt/formDisplay/
@@ -226,7 +226,6 @@ SOURCES += \
 			PhotogrammetricPoint.cpp \
 			Point.cpp \
 			ProjectHeader.cpp \
-			ProjectiveRay.cpp \
 			Sensor.cpp \
 			SensorWithFiducialMarks.cpp \
 			SensorWithKnowDimensions.cpp \
@@ -268,10 +267,42 @@ SOURCES += \
 			IOUserInterface_Qt.cpp \
 			main.cpp \
 			ProjectUserInterface_Qt.cpp \
-			SRUserInterface_Qt.cpp \
-		\#	sdl/infrastructure/
-			CommonSDLMethods.cpp
+			SRUserInterface_Qt.cpp
 
 RESOURCES += \
 		\#	qt/resource/
 			resource.qrc
+
+ABOUTDIR = qt/infrastructure/
+
+unix {
+        MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+        CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+                system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+                !build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
+	}else{
+                !build_pass:message(Debug build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Debug_$${MYDATA}
+	}
+}
+
+win32 {
+	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %i in (\'%date%\') do @echo %k.%j.%i)
+	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+		!build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
+		}else{
+			!build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+			TARGET= e-foto_Debug_$${MYDATA}
+		}
+}
+
+#'usebackq' para poder usar aspas duplas(").
+#tokens=#n são as strings encontradas na n-esima iteração, entre quaisquer delimitadores definidos.
+#'delims' são os delimitadores para os tokens.
+#%date% é a variavel interna com a data.
+#@echo para retornar os valores das variaveis/tokens %i, %j %k etc.
+#OBS.: o caracter '\' foi usado para passar as aspas duplas(") e simples(') para o cmd do windows, do contrario elas seriam suprimidas, ocasionando erro.
+#Mais informações em : http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/for.mspx?pf=true
