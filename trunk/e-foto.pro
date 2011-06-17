@@ -276,14 +276,33 @@ RESOURCES += \
 ABOUTDIR = qt/infrastructure/
 
 unix {
-	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
-		MYDATA = $$system(date -u +%y.%m.%d) # a versao release so precisa da data e olhe la!
-		system(sed -r s/[0-9]{2}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
-		message(Release build!) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+        MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+        CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+                system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+                !build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
 		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
 	}else{
-		MYDATA = $$system(date -u +%y.%m.%d)#%k.%M.%S)
-		message(Debug build!) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+                !build_pass:message(Debug build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
 		TARGET= e-foto_Debug_$${MYDATA}
 	}
 }
+
+win32 {
+	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %i in (\'%date%\') do @echo %k.%j.%i)
+	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+		!build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
+		}else{
+			!build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+			TARGET= e-foto_Debug_$${MYDATA}
+		}
+}
+
+#'usebackq' para poder usar aspas duplas(").
+#tokens=#n são as strings encontradas na n-esima iteração, entre quaisquer delimitadores definidos.
+#'delims' são os delimitadores para os tokens.
+#%date% é a variavel interna com a data.
+#@echo para retornar os valores das variaveis/tokens %i, %j %k etc.
+#OBS.: o caracter '\' foi usado para passar as aspas duplas(") e simples(') para o cmd do windows, do contrario elas seriam suprimidas, ocasionando erro.
+#Mais informações em : http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/for.mspx?pf=true

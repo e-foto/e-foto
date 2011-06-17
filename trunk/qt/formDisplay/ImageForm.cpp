@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
+#include "CommonMethods.h"
 
 ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 {
@@ -223,9 +224,12 @@ QString ImageForm::loadImageFile()
 				   filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
 			   lastPath = filePathLine->text();
                //***************************************************************************************************
-               QImage * imageData=new QImage(fileImage);
-               heightLine->setText(QString::number(imageData->height())+" px");
-               widthLine->setText(QString::number(imageData->width())+" px");
+			   int w, h, f;
+
+			   CommonMethods::instance(CM::CVMethods)->loadImage(w,h,f,fileImage.toStdString());
+			   CommonMethods::instance(CM::CVMethods)->freeImage();
+			   heightLine->setText(QString::number(h)+" px");
+			   widthLine->setText(QString::number(w)+" px");
 			   return fileImage;
 
             }else
