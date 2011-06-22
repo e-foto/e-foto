@@ -1999,7 +1999,7 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 	stringstream aux;
 	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField, newXml;
 // check	control	 tie
-	if (point.split("\t").length() == 8)
+	if (point.split("\t").length() == 7)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
 		/*
@@ -2011,12 +2011,12 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		else if (typeField== "Check")
 			typePoint="verification";
 */
-		eField = point.split("\t").at(2).toStdString().c_str();
-		nField = point.split("\t").at(3).toStdString().c_str();
-		hField = point.split("\t").at(4).toStdString().c_str();
-		dEField = point.split("\t").at(5).toStdString().c_str();
-		dNField = point.split("\t").at(6).toStdString().c_str();
-		dHField = point.split("\t").at(7).toStdString().c_str();
+		eField = point.split("\t").at(1).toStdString().c_str();
+		nField = point.split("\t").at(2).toStdString().c_str();
+		hField = point.split("\t").at(3).toStdString().c_str();
+		dEField = point.split("\t").at(4).toStdString().c_str();
+		dNField = point.split("\t").at(5).toStdString().c_str();
+		dHField = point.split("\t").at(6).toStdString().c_str();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
@@ -2041,7 +2041,7 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		aux << "</imagesMeasurements>\n";
 		aux << "</point>";
 	}
-	else if (point.split("\t").length() == 5)
+	else if (point.split("\t").length() == 4)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
 		/*
@@ -2053,9 +2053,9 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		else if (typeField== "Check")
 			typePoint="verification";
 */
-		eField = point.split("\t").at(2).toStdString().c_str();
-		nField = point.split("\t").at(3).toStdString().c_str();
-		hField = point.split("\t").at(4).toStdString().c_str();
+		eField = point.split("\t").at(1).toStdString().c_str();
+		nField = point.split("\t").at(2).toStdString().c_str();
+		hField = point.split("\t").at(3).toStdString().c_str();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
@@ -2107,11 +2107,19 @@ string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 	
 	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
 
+	Matrix stdevMatrix;
+	stdevMatrix.xmlSetData(points.elementByTagName("mml:matrix").getContent());
+
 	if (points.hasTagName("mml:matrix"))
 	{
+	   /*
 	   aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
 	   aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
 	   aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
+	   */
+	   aux << "\t" << stdevMatrix.get(1,1) <<"\t";
+	   aux << stdevMatrix.get(2,2) <<"\t";
+	   aux << stdevMatrix.get(3,3);
 	}
 
 	aux <<"\n";
