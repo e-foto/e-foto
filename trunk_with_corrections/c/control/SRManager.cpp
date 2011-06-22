@@ -404,7 +404,8 @@ bool SRManager::save(string path)
         fclose (pFile);
         return true;
     }
-    return false;
+	return false;
+
 }
 
 bool SRManager::load(string path)

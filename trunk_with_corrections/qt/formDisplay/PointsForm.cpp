@@ -43,10 +43,7 @@ void PointsForm::fillvalues(string values)
             pointsTable->setItem(i,5,HItem);
         };
 
-
-
     }
-
 }
 string PointsForm::getvalues()
 {
