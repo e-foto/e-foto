@@ -23,13 +23,13 @@ public:
     DmsEditMode getDmsEditMode();
 	double getRadianValue();
 	double getDegreeValue();
-	Dms *getDmsValue();
-	void setNewDms(Dms *newDegMinSec);
+	Dms* getDmsValue();
 
 protected:
     bool eventFilter(QObject* objeto, QEvent* evento);
     void keyPressEvent(QKeyEvent *evento);
-    void focusInEvent(QFocusEvent *);
+	void focusInEvent(QFocusEvent *);
+	void focusOutEvent(QFocusEvent *);
 
 private:
     DmsEditMode mode;
@@ -54,7 +54,7 @@ public slots:
     void selectField(PositionValue pos);
     void changedField(int oldPos, int newPos);
     void setDmsEditMode(DmsEditMode newMode);
-    void updateValue(QString newValue);
+	void updateValue(QString newValue="");
 
 };
 

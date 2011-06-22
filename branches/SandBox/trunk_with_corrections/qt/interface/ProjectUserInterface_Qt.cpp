@@ -1997,17 +1997,26 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
 {
 	stringstream aux;
-	string gcpIdField, eField, nField, hField, dEField, dNField, dHField, newXml;
-
-	if (point.split("\t").length() == 7)
+	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField, newXml;
+// check	control	 tie
+	if (point.split("\t").length() == 8)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
-		eField = point.split("\t").at(1).toStdString().c_str();
-		nField = point.split("\t").at(2).toStdString().c_str();
-		hField = point.split("\t").at(3).toStdString().c_str();
-		dEField = point.split("\t").at(4).toStdString().c_str();
-		dNField = point.split("\t").at(5).toStdString().c_str();
-		dHField = point.split("\t").at(6).toStdString().c_str();
+		/*
+		typeField = point.split("\t").at(1).toStdString().c_str();
+		if(typeField == "Tie")
+			typePoint="photogrammetric";
+		else if (typeField== "Control")
+			typePoint="control";
+		else if (typeField== "Check")
+			typePoint="verification";
+*/
+		eField = point.split("\t").at(2).toStdString().c_str();
+		nField = point.split("\t").at(3).toStdString().c_str();
+		hField = point.split("\t").at(4).toStdString().c_str();
+		dEField = point.split("\t").at(5).toStdString().c_str();
+		dNField = point.split("\t").at(6).toStdString().c_str();
+		dHField = point.split("\t").at(7).toStdString().c_str();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
@@ -2032,12 +2041,21 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		aux << "</imagesMeasurements>\n";
 		aux << "</point>";
 	}
-	else if (point.split("\t").length() == 4)
+	else if (point.split("\t").length() == 5)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
-		eField = point.split("\t").at(1).toStdString().c_str();
-		nField = point.split("\t").at(2).toStdString().c_str();
-		hField = point.split("\t").at(3).toStdString().c_str();
+		/*
+		typeField = point.split("\t").at(1).toStdString().c_str();
+		if(typeField == "Tie")
+			typePoint="photogrammetric";
+		else if (typeField== "Control")
+			typePoint="control";
+		else if (typeField== "Check")
+			typePoint="verification";
+*/
+		eField = point.split("\t").at(2).toStdString().c_str();
+		nField = point.split("\t").at(3).toStdString().c_str();
+		hField = point.split("\t").at(4).toStdString().c_str();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
@@ -2059,7 +2077,7 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 }
 
 /** This function exports all points in current XML to *.txt file with a one point in
-*   each line in pattern GCPID\tE\tN\tH\tdE\tdN\tdH or GCPID\tE\tN\tH
+*   each line in pattern GCPID\tType\tE\tN\tH\tdE\tdN\tdH or GCPID\tType\tE\tN\tH
 */
 void ProjectUserInterface_Qt::exportPointsToTxt()
 {
@@ -2085,6 +2103,8 @@ string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 	stringstream stdev;
 	QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
 	aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
+	//aux << points.attribute("type")<< "\t";
+	
 	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
 
 	if (points.hasTagName("mml:matrix"))
