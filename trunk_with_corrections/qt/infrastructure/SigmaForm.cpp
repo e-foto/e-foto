@@ -131,18 +131,22 @@ void SigmaFormController::fillValues(string xml)
 	if (values.getCols() == 1) //Standard deviations
 	{
 		changeToMode("Standard Deviations");
+		//setMode("Standard Deviations");
+		toMode("Available");
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			edits.at(i)->setTextValue(QString::number(values.get(i+1,1)));
 		}
+
 	}
 	else if (values.getCols() == values.getRows()) //Variance and covariance matrix
 	{
-		changeToMode("Covariance Matrix");
+
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			edits.at(i)->setTextValue(QString::number(values.get(i+1,i+1)));
 		}
+		changeToMode("Covariance Matrix");
 	}
 }
 

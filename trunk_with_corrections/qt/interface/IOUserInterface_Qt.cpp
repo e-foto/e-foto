@@ -179,7 +179,7 @@ bool IOUserInterface_Qt::viewReport()
 		listaXa << "A0" << "A1" << "A2" << "B0" << "B1" << "B2";
 		myXaView->setRowCount(listaXa.size());
 		myXaView->setVerticalHeaderLabels(listaXa);
-		myXaView->setTableData(myValues.at(0));
+		myXaView->setTableData(myValues.at(0),'f',5);
 
 		TableIOEOWidget *mySXaView = new TableIOEOWidget();
 		mySXaView->setTableData(myValues.at(4),'f',5);
@@ -207,9 +207,9 @@ bool IOUserInterface_Qt::viewReport()
         QWidget *LaView = new QWidget();
         QHBoxLayout *LaLayout= new QHBoxLayout();
         TableIOEOWidget *myLaView = new TableIOEOWidget();
-		myLaView->setTableData(myValues.at(1));
+		myLaView->setTableData(myValues.at(1),'f',5);
         TableIOEOWidget *mySLaView = new TableIOEOWidget();
-        mySLaView->setTableData(myValues.at(5));
+		mySLaView->setTableData(myValues.at(5),'f',5);
         LaLayout->addWidget(myLaView);
         LaLayout->addWidget(mySLaView);
         LaView->setLayout(LaLayout);
@@ -237,7 +237,7 @@ bool IOUserInterface_Qt::viewReport()
 		myValueLabel2->setTextFormat(Qt::RichText);
 
         TableIOEOWidget *myVView = new TableIOEOWidget();
-        myVView->setTableData(myValues.at(3));
+		myVView->setTableData(myValues.at(3),'f',5);
 
 		formulasLayout->addWidget(myValueLabel1);
 		formulasLayout->addWidget(myValueLabel2);

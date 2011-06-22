@@ -52,7 +52,20 @@ void PointForm::fillvalues(string values)
 	eDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	nDoubleSpinBox->setSuffix(" "+suffix.right(1));
 	hDoubleSpinBox->setSuffix(" "+suffix.right(1));
-	sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
+
+	if (ede.elementByTagName("sigma").hasTagName("mml:matrix"))
+	{
+		sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
+		//Paulo: block e unblock signals
+		//Gambiarra feita para a classe sigma selector se atualizar sem zerar os stdev
+		//Caso contrario ela muda a combo box para um valor inexistente, causando um bug na exibiçao do conteudo
+		sigmaSelector->blockSignals(true);
+		sigmaSelector->setCurrentIndex(1);
+		sigmaSelector->blockSignals(false);
+	}
+	else
+		;//sigmaSelector->setCurrentIndex(0);
+
 	//sigmaController->fillValues(ede.elementByTagName("sigma").toString());
 	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));
 
