@@ -14,20 +14,22 @@ Dms::Dms()
 
 Dms::Dms(int degree, int minute, double second, bool signal)
 {
-	setLocale(QLocale::system());
-	setSecondsPrecision(2);
+	setSignal(signal);
+	if (degree<0)
+	{
+		setSignal(true);
+		degree=-degree;
+	}
+	setSecondsPrecision();
 	setDegree(degree);
     setMinute(minute);
     setSeconds(second);
-    setSignal(signal);
-
 }
 
 Dms::Dms(QString degree)
 {
     Dms *newDegree = stringToDms(degree);
-	setLocale(QLocale::system());
-	this->setSecondsPrecision(2);
+	setSecondsPrecision();
     this->setDegree(newDegree->getDegree());
     this->setMinute(newDegree->getMinute());
     this->setSeconds(newDegree->getSeconds());
@@ -35,8 +37,7 @@ Dms::Dms(QString degree)
 }
 Dms::Dms(double seconds)
 {
-	setSecondsPrecision(2);
-	setLocale(QLocale::system());
+	setSecondsPrecision();
 	double value=fabs(seconds);
 
 	int deg=(int)value/3600;
@@ -63,14 +64,9 @@ void Dms::setMinute(int newMinutes)
 void Dms::setSeconds(double newSeconds)
 {
 	sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
-	double temp=sec;
-	if(getSecondsPrecision()==0 ||getSecondsPrecision()>10)
-		setSecondsPrecision(2);
-
-	temp= round(temp*pow(10,getSecondsPrecision()))/pow(10,getSecondsPrecision());
-
-	qDebug("precision=%d segundos= %f",getSecondsPrecision(),temp);
-	sec=temp;
+    //double temp=sec;
+    //temp= round(temp*pow(10,getSecondsPrecision()))/pow(10,getSecondsPrecision());
+    //sec=temp;
 }
 
 void Dms::setSignal(bool newSignal)
@@ -116,8 +112,6 @@ Dms* Dms::getDms()
 
 void Dms::setDms(Dms newDms)
 {
-	this->setSecondsPrecision(2);
-	this->setLocale(QLocale::system());
 	this->setDegree(newDms.getDegree());
 	this->setMinute(newDms.getMinute());
 	this->setSeconds(newDms.getSeconds());
@@ -126,8 +120,6 @@ void Dms::setDms(Dms newDms)
 
 void Dms::setDms(int degree, int minute, double seconds,bool signal)
 {
-	this->setSecondsPrecision(2);
-	this->setLocale(QLocale::system());
     this->setDegree(degree);
     this->setMinute(minute);
     this->setSeconds(seconds);
@@ -141,11 +133,13 @@ QString Dms::toString(int decimals)
     if(this->hasSignal())
         text+="-";
 
+   // qDebug("tostring: deg= %d  min = %d sec = %f",getDegree(),getMinute(),getSeconds());
     text+=QString::number(this->getDegree());
     text+=QString::fromUtf8("°");
     text+=QString::number(this->getMinute());
     text+="'";
-	text.append(getLocale().toString(this->getSeconds(),'f',decimals));
+	text.append(QLocale::system().toString(this->getSeconds(),'f',decimals));
+	//text.append(QString::number(this->getSeconds(),'f',decimals));
     text+="\"";
 
     return text;
@@ -153,62 +147,39 @@ QString Dms::toString(int decimals)
 
 Dms* Dms::stringToDms(QString dms)
 {
-
-	dms.replace(QString::fromUtf8("°")," ");
-	dms.replace("'"," ");
-	dms.replace("\""," ");
+        dms.replace(QString::fromUtf8("°")," ");
+        dms.replace("'"," ");
+        dms.replace("\""," ");
 
 	int degree=(dms.section(" ",0,0)).toInt();
 	int minute=(dms.section(" ",1,1)).toInt();
 	double second=(dms.section(" ",2,2)).toDouble();
-/*
-	if (this!=0)
+
+	if(dms.startsWith('-'))
 	{
-		if(dms.startsWith('-'))
-		{
-			degree=-degree;
-			setSignal(true);
-		}
-		else
-		{
-			setSignal(false);
-		}
-		setDegree(degree);
-		setMinute(minute);
-		setSeconds(second);
-		return this;
+		degree=-degree;
+		setSignal(true);
 	}
-	else*/
+	else
 	{
-		Dms *result=new Dms();
-		if(dms.startsWith('-'))
-		{
-			degree=-degree;
-			result->setSignal(true);
-		}
-		else
-		{
-			result->setSignal(false);
-		}
-		result->setDegree(degree);
-		result->setMinute(minute);
-		result->setSeconds(second);
-		return result;
+		setSignal(false);
 	}
+	setDegree(degree);
+	setMinute(minute);
+	setSeconds(second);
 	//setSecondsPrecision(getSecondsPrecision());
 	// qDebug()<<this->toString();
-
+	return this;
 }
-
 
 void Dms::setSecondsPrecision(int precision)
 {
-	this->secondsPrecision = (precision>=1 ? precision : 2);
+	secondsPrecision = (precision>=1 ? precision : 2);
 }
 
 int  Dms::getSecondsPrecision()
 {
-	return this->secondsPrecision;
+	return secondsPrecision;
 }
 
 /**
@@ -246,47 +217,47 @@ double Dms::dmsToRadiano()
     return degreeDecimalToRadiano(parcial);
 }
 
-void Dms::degreeDecimalToDms(double degreeDecimal)
+
+Dms* Dms::degreeDecimalToDms(double degreeDecimal)
 {
-    int degrees;
-    int minutes;
-    double seconds;
-	double integerDeg;
-	modf(degreeDecimal, &integerDeg);
-
-	if(degreeDecimal>=0)
+    int degrees=0;
+    int minutes=0;
+    double seconds=0.0;
+    if(degreeDecimal>=0)
     {
-		degrees = integerDeg;
-		minutes = (degreeDecimal-degrees)*60.0;
-        seconds = ((degreeDecimal-degrees)*60.0-minutes)*60;
+        degrees = degreeDecimal;
+        minutes = (degreeDecimal-degrees)*60.0;
+		seconds = (double)((degreeDecimal-degrees)*60.0-minutes)*60.0;
         setSignal(false);
-		qDebug("antes %d %d %f",degrees,minutes,seconds);
-
     }else
     {
         degreeDecimal=-degreeDecimal;
         degrees = degreeDecimal;
         minutes = (degreeDecimal-degrees)*60.0;
-        seconds = ((degreeDecimal-degrees)*60.0-minutes)*60;
+		seconds = (double)((degreeDecimal-degrees)*60.0-minutes)*60.0;
         setSignal(true);
         //	return (new Dms(degrees,minutes,seconds,true));
     }
-	setDegree(degrees);
+    setDegree(degrees);
     setMinute(minutes);
     setSeconds(seconds);
+	//qDebug("toDMS: \tdeg= %d min= %d sec=%.9f",degrees,minutes,getSeconds());
 
-	qDebug("degree: %f dms: %s",degreeDecimal,this->toString().toStdString().c_str());
+    //qDebug("dg->dms: degree: %f dms: %s",degreeDecimal,this->toString(9).toStdString().c_str());
 
+    return this;
 }
 
-double Dms::degreeDecimalToRadiano(double degree)
+double Dms::degreeDecimalToRadiano(double oldDegree)
 {
-    //qDebug("degree: %f radiano: %f",degree,(degree*M_PI)/180);
-    return (degree*M_PI)/180;
+	//qDebug("degree: %f radiano: %f",degree,(degree*M_PI)/180);
+	double k=(oldDegree*M_PI)/180;
+	return k;
 }
 
-void Dms::radianoToDms(double radiano)
+Dms* Dms::radianoToDms(double radiano)
 {
+    //qDebug("radia= %f",radiano);
     return degreeDecimalToDms(radianoToDegreeDecimal(radiano));
 }
 
@@ -295,7 +266,7 @@ double Dms::radianoToDegreeDecimal(double radiano)
     //qDebug("radiano: %f degree: %f",radiano,(radiano/M_PI)*180);
     return (radiano/M_PI)*180;
 }
-/*
+
 void Dms::addDegMinSecs(Dms *degMinSec1)
 {
     /*int newDegree= degMinSec1->getDegree()+degMinSec2->getDegree();
@@ -314,21 +285,21 @@ void Dms::addDegMinSecs(Dms *degMinSec1)
     }
     if(newDegree>=360)
         newDegree-=360;
-	*//*
+    */
 	double sum=this->dmsToDegreeDecimal()+degMinSec1->dmsToDegreeDecimal();
 
 	Dms *temp=degreeDecimalToDms(sum);
 	this->setDms(*temp);
 
-}*/
-/*
+}
+
 void Dms::mulDegMinSecs(int factor)
 {
 	for (int i=1; i<factor;i++)
     {
 		addDegMinSecs(this);
     }
-}*/
+}
 
 /** If calling object is bigger than degMinSec then function returns 1
 *   If calling object is smaller than degMinSec then function returns -1
@@ -377,14 +348,4 @@ int Dms::compareDegMinSecs(Dms *degMinSec)
                 return 0;
         }
     }
-}
-
-void Dms::setLocale(QLocale locale)
-{
-	localeDms=locale;
-}
-
-QLocale Dms::getLocale()
-{
-	return localeDms;
 }
