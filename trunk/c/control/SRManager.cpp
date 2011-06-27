@@ -313,11 +313,15 @@ bool SRManager::exteriorDone()
 	return true;
 }
 
+#include <qdebug.h>
 deque<string> SRManager::makeReport()
 {
+	qDebug(mySR->getLa().xmlGetData().c_str());
+
+	// Modificado em 27/06/2011 a pedido do Prof Nunes para exibir La e Sigma La se existirem. A saber o codigo anterior exibia Lb e sigma de Lb.
     deque<string> result;
     result.push_back(mySR->getXa().xmlGetData());
-    result.push_back(mySR->getLb().xmlGetData());
+	result.push_back(mySR->getLa().xmlGetData());
     result.push_back(doubleToString(myIO->getQuality().getsigma0Squared()));
     result.push_back(mySR->getQuality().getV().xmlGetData());
     result.push_back(mySR->getQuality().getSigmaXa().xmlGetData());

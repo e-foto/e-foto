@@ -534,20 +534,20 @@ void SpatialRessection::generateL0()
             double Y = myCoordinate.getY();
             double Z = myCoordinate.getZ();
 
-			double L0xi = xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
-			double L0eta = eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
+			//double L0xi = xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
+			//double L0eta = eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
 
 			//AnalogImageSpaceCoordinate newXiEta = applyDistortions(L0xi, L0eta);
-			AnalogImageSpaceCoordinate newXiEta = removeDistortions(L0xi, L0eta);
+			//AnalogImageSpaceCoordinate newXiEta = removeDistortions(L0xi, L0eta);
 
-			double newXi = newXiEta.getXi();
-			double newEta = newXiEta.getEta();
+			//double newXi = newXiEta.getXi();
+			//double newEta = newXiEta.getEta();
 
-			L0.set(j,1,newXi);
-			L0.set(j+1,1,newEta);
+			//L0.set(j,1,newXi);
+			//L0.set(j+1,1,newEta);
 
-			//L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
-			//L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
+			L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
+			L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
         }
     }
 }
@@ -699,7 +699,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
     {
         int iterations = 0;
 
-        Matrix X0temp, L0temp;
+		Matrix X0temp, L0temp, firstA;
         X0temp = X0;
         L0temp = L0;
 
@@ -711,6 +711,8 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 
 				generateLb();
 				generateA();
+				if (iterations == 0)
+					firstA = A;
 				generateP();
 
 				Xa = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
@@ -752,6 +754,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 				iterations++;
 			}
 		}
+		/*
 		else
 		{
 			generateLb();
@@ -766,6 +769,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 			Xa.set(6, 1, myImage->getInsKappa());
 			gnssConverged = insConverged = true;
 		}
+		*/
 
 		totalIterations = iterations;
 
@@ -775,6 +779,10 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
         L0 = L0temp;
 
         myQuality.calculate(this);
+
+		setLa(Lb + myQuality.getV());
+
+
     }
 	return gnssConverged && insConverged;
 }

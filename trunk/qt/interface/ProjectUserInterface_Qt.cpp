@@ -1997,11 +1997,20 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
 {
 	stringstream aux;
-	string gcpIdField, eField, nField, hField, dEField, dNField, dHField, newXml;
-
+	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField, newXml;
+// check	control	 tie
 	if (point.split("\t").length() == 7)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		/*
+		typeField = point.split("\t").at(1).toStdString().c_str();
+		if(typeField == "Tie")
+			typePoint="photogrammetric";
+		else if (typeField== "Control")
+			typePoint="control";
+		else if (typeField== "Check")
+			typePoint="verification";
+*/
 		eField = point.split("\t").at(1).toStdString().c_str();
 		nField = point.split("\t").at(2).toStdString().c_str();
 		hField = point.split("\t").at(3).toStdString().c_str();
@@ -2035,6 +2044,16 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 	else if (point.split("\t").length() == 4)
 	{
 		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		/*
+		typeField = point.split("\t").at(1).toStdString().c_str();
+		if(typeField == "Tie")
+			typePoint="photogrammetric";
+		else if (typeField== "Control")
+			typePoint="control";
+		else if (typeField== "Check")
+			typePoint="verification";
+*/
 		eField = point.split("\t").at(1).toStdString().c_str();
 		nField = point.split("\t").at(2).toStdString().c_str();
 		hField = point.split("\t").at(3).toStdString().c_str();
@@ -2085,13 +2104,23 @@ string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 	stringstream stdev;
 	QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
 	aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
+	//aux << points.attribute("type")<< "\t";
+	
 	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
+
+	Matrix stdevMatrix;
+	stdevMatrix.xmlSetData(points.elementByTagName("mml:matrix").getContent());
 
 	if (points.hasTagName("mml:matrix"))
 	{
+	   /*
 	   aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
 	   aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
 	   aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
+	   */
+	   aux << "\t" << stdevMatrix.get(1,1) <<"\t";
+	   aux << stdevMatrix.get(2,2) <<"\t";
+	   aux << stdevMatrix.get(3,3);
 	}
 
 	aux <<"\n";

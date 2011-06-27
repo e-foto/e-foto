@@ -165,31 +165,81 @@ bool IOUserInterface_Qt::viewReport()
         QHBoxLayout *XaLayout= new QHBoxLayout();
         TableIOEOWidget *myXaView = new TableIOEOWidget();
 
+		/* novo*/
+		QLabel *xa= new QLabel("<font size=5>Xa");
+		xa->setTextFormat(Qt::RichText);
+		xa->setAlignment(Qt::AlignHCenter);
+
+		QLabel *mvcxa= new QLabel("<font size=5>MVC(Xa)");
+		mvcxa->setTextFormat(Qt::RichText);
+		mvcxa->setAlignment(Qt::AlignHCenter);
+	/**/
 
 		QStringList listaXa;
 		listaXa << "A0" << "A1" << "A2" << "B0" << "B1" << "B2";
 		myXaView->setRowCount(listaXa.size());
 		myXaView->setVerticalHeaderLabels(listaXa);
-		myXaView->setTableData(myValues.at(0));
+		myXaView->setTableData(myValues.at(0),'f',5);
 
 		TableIOEOWidget *mySXaView = new TableIOEOWidget();
-        mySXaView->setTableData(myValues.at(4));
-        XaLayout->addWidget(myXaView);
-        XaLayout->addWidget(mySXaView);
+		mySXaView->setTableData(myValues.at(4),'f',5);
+
+		/* novo */
+		QVBoxLayout *xalabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de Xa
+		QVBoxLayout *mvclabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de mvc(Xa)
+	/**/
+		/* novo */
+		xalabelLayout->addWidget(xa);
+		xalabelLayout->addWidget(myXaView);
+		/**/
+		mvclabelLayout->addWidget(mvcxa);
+		mvclabelLayout->addWidget(mySXaView);
+
+		XaLayout->addLayout(xalabelLayout);
+		XaLayout->addLayout(mvclabelLayout);
+
+		//XaLayout->addWidget(mySXaView);
         XaView->setLayout(XaLayout);
         myTab->addTab(XaView, QString::fromUtf8("Xa"));
         connect(myXaView,SIGNAL(focusReceived()),mySXaView,SLOT(clearSelection()));
         connect(mySXaView,SIGNAL(focusReceived()),myXaView,SLOT(clearSelection()));
 
-        QWidget *LaView = new QWidget();
+		//Aba La
+
+		QWidget *LaView = new QWidget();
         QHBoxLayout *LaLayout= new QHBoxLayout();
         TableIOEOWidget *myLaView = new TableIOEOWidget();
-		myLaView->setTableData(myValues.at(1));
-        TableIOEOWidget *mySLaView = new TableIOEOWidget();
-        mySLaView->setTableData(myValues.at(5));
-        LaLayout->addWidget(myLaView);
-        LaLayout->addWidget(mySLaView);
-        LaView->setLayout(LaLayout);
+		myLaView->setTableData(myValues.at(1),'f',5);
+
+		/* novo */
+		QVBoxLayout *laLabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de La
+		QVBoxLayout *mvcLaLabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de mvc(La)
+	/**/
+		/* novo*/
+		QLabel *la= new QLabel("<font size=5>La");
+		la->setTextFormat(Qt::RichText);
+		la->setAlignment(Qt::AlignHCenter);
+
+		QLabel *mvcLa= new QLabel("<font size=5>MVC(La)");
+		mvcLa->setTextFormat(Qt::RichText);
+		mvcLa->setAlignment(Qt::AlignHCenter);
+
+
+		TableIOEOWidget *mySLaView = new TableIOEOWidget();
+		mySLaView->setTableData(myValues.at(5),'f',5);
+
+		/* novo */
+		laLabelLayout->addWidget(la);
+		laLabelLayout->addWidget(myLaView);
+		/**/
+
+		mvcLaLabelLayout->addWidget(mvcLa);
+		mvcLaLabelLayout->addWidget(mySLaView);
+
+		LaLayout->addLayout(laLabelLayout);
+		LaLayout->addLayout(mvcLaLabelLayout);
+
+		LaView->setLayout(LaLayout);
 		if (myLaView->rowCount() != 0)
 			myTab->addTab(LaView, QString::fromUtf8("La"));
 
@@ -198,7 +248,7 @@ bool IOUserInterface_Qt::viewReport()
         QHBoxLayout *sigmaLayout= new QHBoxLayout();
 		QVBoxLayout *formulasLayout= new QVBoxLayout();
 
-		QString aux1=QString::fromUtf8("<font size=12>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV/(n-m)");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
+		QString aux1=QString::fromUtf8("<font size=5>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV/(n-m)");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 
 		aux1+="=";
 		aux1+=QString::number(stringToDouble(myValues.at(2)),'f',6);
@@ -206,20 +256,26 @@ bool IOUserInterface_Qt::viewReport()
 		QLabel* myValueLabel1 = new QLabel(aux1);
 		myValueLabel1->setTextFormat(Qt::RichText);
 
-		QString aux2=QString::fromUtf8("<font size=12>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
+		QString aux2=QString::fromUtf8("<font size=5>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 		aux2+="=";
 		aux2+=QString::number(sqrt(stringToDouble(myValues.at(2))),'f',6);
 		aux2+="</font>";
 		QLabel* myValueLabel2 = new QLabel(aux2);
 		myValueLabel2->setTextFormat(Qt::RichText);
 
+		QLabel* vLabel= new QLabel("<font size=5>V");
+		vLabel->setTextFormat(Qt::RichText);
+		vLabel->setAlignment(Qt::AlignHCenter);
+		QVBoxLayout *vTableLayout= new QVBoxLayout();
         TableIOEOWidget *myVView = new TableIOEOWidget();
-        myVView->setTableData(myValues.at(3));
+		myVView->setTableData(myValues.at(3),'f',5);
+		vTableLayout->addWidget(vLabel);
+		vTableLayout->addWidget(myVView);
 
 		formulasLayout->addWidget(myValueLabel1);
 		formulasLayout->addWidget(myValueLabel2);
 
-        sigmaLayout->addWidget(myVView);
+		sigmaLayout->addLayout(vTableLayout);
 		sigmaLayout->addLayout(formulasLayout);
 
         sigmaLayout->setSpacing(QHBoxLayout::SetMinimumSize);
