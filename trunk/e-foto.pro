@@ -288,7 +288,7 @@ unix {
 }
 
 win32 {
-	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %i in (\'%date%\') do @echo %k.%j.%i)
+	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %i in (\'%date%\') do @echo %l.%k.%j)
 	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
 		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
 		!build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)

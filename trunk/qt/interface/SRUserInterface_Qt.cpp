@@ -304,7 +304,8 @@ bool SRUserInterface_Qt::viewReport()
 	LaLayout->addLayout(mvcLaLabelLayout);
 
 	LaView->setLayout(LaLayout);
-	myTab->addTab(LaView, QString::fromUtf8("La"));
+	if (myLaView->rowCount() !=0)
+		myTab->addTab(LaView, QString::fromUtf8("La"));
 
 
 	// Aba V dos Residuos
