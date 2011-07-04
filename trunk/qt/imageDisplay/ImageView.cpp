@@ -118,10 +118,10 @@ void ImageView::drawPoints(QStandardItemModel* points, int mode)
 				{
 					selectedPoint->setNewMarker(getPin("mySRPin2"));
 				}
-				selectedImage->addMark(selectedPoint, x, y, selectedViewport, true);
+                                selectedImage->addMark(selectedPoint, x+0.5, y+0.5, selectedViewport, true);
 			}
 		}
-	}
+        }
 }
 
 void ImageView::clearPoints()
