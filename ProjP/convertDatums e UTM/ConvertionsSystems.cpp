@@ -81,7 +81,7 @@ Matrix ConvertionsSystems::getMatrixR(double phi, double lambda)
 		return R;
 }
 
-Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltura, GeoSystem system, char hemi, char side)
+Matrix ConvertionsSystems::geoToUtmFran(double phi, double lambda, double haltura, GeoSystem system, char hemi, char side)
 {
 
 	/*
@@ -170,7 +170,7 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 	}
 */
 //teste com as equações da tabela
-//geoElipToUtm(double phi, double lambda, double haltura, char hemi)
+//geoToUtmFran(double phi, double lambda, double haltura, char hemi)
 //wgs-84
 /*
 
@@ -186,6 +186,15 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 	double k0=0.9996;
 	double n=(a-b)/(a+b);
 
+        double nu=a/sqrt(1-e2*pow(sin(phi),2));
+
+        double zona;
+        modf((lambda*180/M_PI)/6, &zona);
+        zona+=31;
+        zona=(int)zona;
+
+
+
 	//em teste
 	double A=a*(1 - n + (5*n*n/4)*(1-n)+(81*pow(n,4)/64)*(1-n));
 	double B=(3*a*n/2)*(1-n-(7*n*n/8)*(1-n)+55*pow(n,4)/64);
@@ -195,11 +204,8 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 
 	double S=A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E2*sin(8*phi);
 
-	double inteiro;
-	modf((lambda*180/M_PI)/6, &inteiro);
-
 	//qDebug("%d",inteiro);
-	int lambda0=(inteiro)*6+3;
+        int lambda0=zona*6-183;
 
 	double dLambda=lambda-lambda0*M_PI/180;
 /*
@@ -209,41 +215,43 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 	double IV  = v*cos(phi)*k0;//*1e4*sin1;
 	double V   = (v*pow(cos(phi),3)/*(1 - pow(tan(phi),2) + el2*pow(cos(phi),2) )*k0)/6;
 	*/
-	double nu=a/sqrt(1-e2*pow(sin(phi),2));
+
 
 	double I   = S*k0;								// Ko=0.9996
 	//double I=3374564.9755;
-	double II  = (nu*sin(phi)*cos(phi)*k0)/2;
+        double II  = nu*sin(phi)*cos(phi)/2;
 	double III = nu*sin(phi)*pow(cos(phi),3)*(5 - pow(tan(phi),2) + 9*el2*pow(cos(phi),2) + 4*pow(el2,2)*pow(cos(phi),4) ) *k0/24;
 	double IV  = nu*cos(phi)*k0;
 	double V   = (nu*pow(cos(phi),3)*(1 - pow(tan(phi),2) + el2*pow(cos(phi),2) )*k0)/6;
 
- //   qDebug("arc= %.12g \nnu= %.12g \np= %.12g",S,nu,dLambda);
- //   qDebug("I= %.12g \nII= %.12g \nIII= %.12g ",I,II,III);
+  //  qDebug("arc= %.12g \nnu= %.12g \np= %.12g",S,nu,dLambda);
+   // qDebug("I= %.12g \nII= %.12g \nIII= %.12g ",I,II,III);
 //    double A6=pow(M_PI/(3600*180)*dLambda,6)*(nu*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
 
 	double N=I+II*pow(dLambda,2)+III*pow(dLambda,4);
-    double E=(IV*dLambda+V*pow(dLambda,3));
+        double E=500000+(IV*dLambda+V*pow(dLambda,3));
+        if (N<0)
+            N=10000000+N;
 
-	Matrix xyh(1,4);
+        Matrix xyh(1,5);
 
-	E=round(E*1e4)/1e4;
-	N=round(N*1e4)/1e4;
+        //E=round(E*1e4)/1e4;
+        //N=round(N*1e4)/1e4;
 	//haltura=round(haltura*1e6)/1e6;
 
-    if (hemi=='s')
-        N=10000000-N;
+    //if (hemi=='s')
 
+/*
     if (side=='w')
         E=500000-E;
     else
-        E+=500000;
+        E+=500000;*/
 	//Dms oneSecond;
-	xyh.set(1,1,E);
-	xyh.set(1,2,N);
+        xyh.set(1,1,E);
+        xyh.set(1,2,N);
 	xyh.set(1,3,haltura);
 	xyh.set(1,4,lambda0);
-
+        xyh.setInt(1,5,zona);
 	//oneSecond.setSecondsPrecision(2);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
 	//qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
@@ -252,7 +260,7 @@ Matrix ConvertionsSystems::geoElipToUtm(double phi, double lambda, double haltur
 	return xyh;
 }
 
-Matrix ConvertionsSystems::utmToGeo(double E, double N, double haltura, double MC, GeoSystem system, char hemi, char side)
+Matrix ConvertionsSystems::utmToGeoFran(double E, double N, double haltura, int zona, GeoSystem system, char hemi, char side)
 {
 
     //double El=E-500000;
@@ -326,32 +334,15 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, double haltura, double M
 // uTmToGeo(double E, double N, double haltura, double MC, char hemi)
 
 	//funcionando com a precisão dada
-    double Nl,El;
     if (hemi=='s')
     {
-        N=N-10000000;
-        qDebug("sul hemi %c\tN= %f",hemi,N);
-
+        N=10000000-N;
+       // qDebug("sul hemi %c\tN= %f",hemi,N);
     }
-    else
-    {
+    int MC = 6*zona-183;
 
-        qDebug("norte hemi %c\tN= %f",hemi,N);
-
-    }
-
-    if (side=='w')
-    {
-        El=E-500000;
-        qDebug("West side %c\tE= %f\n",side,El);
-
-    }
-    else
-    {
-        El=500000-E;
-        qDebug("East side %c\tE= %f\n",side,El);
-    }
-
+    qDebug("zona %d \tMC %d",zona,MC);
+    double El=500000-E;
 
 	double a=system.getA();
 	double f=system.getF();
@@ -389,7 +380,7 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, double haltura, double M
 	double fact1=n0*tan(phi1)/r0;
 	double fact2=d0*d0/2;
 	double fact3=(5+3*t0+10*q0-4*q0*q0-9*el2)*pow(d0,4)/24;
-	double fact4=(61+90*t0+298*q0+45*t0*t0-252*el2-3*q0*q0)*pow(d0,6)/720;
+        double fact4=(61+90*t0+298*q0+45*t0*t0-3*q0*q0-252*el2)*pow(d0,6)/720;
 
 	//0,592160605	0,000111165		1,2421e-8	1,48861e-12
 //    qDebug("fact1= %.9g \nfact2= %.9g \nfact3= %.9g \nfact4= %.9g",fact1,fact2,fact3,fact4);
@@ -408,7 +399,7 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, double haltura, double M
 	//double phi=180*(phi1-fact1*(fact2+fact3+fact4))/M_PI;
 	double phi=phi1-fact1*(fact2+fact3+fact4);			//Latitude valor em radianos
 
-	Matrix plh(1,3);
+        Matrix plh(1,4);
 /*
 	Dms phiDms;
 	Dms lambdaDms;
@@ -426,6 +417,7 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, double haltura, double M
 	plh.set(1,1,phi);
 	plh.set(1,2,lambda);
 	plh.set(1,3,haltura);
+        plh.setInt(1,4,MC);
 	return plh;
 }
 
