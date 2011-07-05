@@ -126,78 +126,20 @@ p, li { white-space: pre-wrap; }
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Hemisferio</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="hemiNSGeoUTMComboBox">
-          <item>
-           <property name="text">
-            <string>NORTE (N)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>SUL (S)</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="hemiWEGeoUtmComboBox">
-          <item>
-           <property name="text">
-            <string>OCIDENTE (W)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>ORIENTE (E)</string>
-           </property>
-          </item>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
              <string>Longitude</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="DmsEdit" name="latGeotoUtmDmsEdit"/>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>E</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QDoubleSpinBox" name="EGeoToUtmDoubleSpinBox">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <double>1000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Latitude</string>
@@ -207,23 +149,58 @@ p, li { white-space: pre-wrap; }
           <item row="1" column="1">
            <widget class="DmsEdit" name="longGeotoUtmDmsEdit"/>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>N</string>
-            </property>
-           </widget>
+          <item row="4" column="1">
+           <widget class="DmsEdit" name="latGeotoUtmDmsEdit"/>
           </item>
           <item row="1" column="3">
            <widget class="QDoubleSpinBox" name="NGeoToUtmDoubleSpinBox">
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
             <property name="decimals">
              <number>3</number>
             </property>
+            <property name="minimum">
+             <double>-1000000000.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>1000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QDoubleSpinBox" name="EGeoToUtmDoubleSpinBox">
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-1000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>E</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>N</string>
             </property>
            </widget>
           </item>
@@ -240,11 +217,17 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="mCGeoToUtmDoubleSpinBox">
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
             <property name="decimals">
              <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>-1000.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -264,6 +247,26 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Zona</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="zonaGeoUtmSpinBox">
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -282,7 +285,7 @@ p, li { white-space: pre-wrap; }
      <property name="title">
       <string/>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="label_25">
         <property name="text">
@@ -374,123 +377,149 @@ p, li { white-space: pre-wrap; }
           </item>
          </widget>
         </item>
-        <item>
-         <widget class="QComboBox" name="hemiWEUtmGeoComboBox">
-          <item>
-           <property name="text">
-            <string>OCIDENTE (W)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>ORIENTE (E)</string>
-           </property>
-          </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Longitude</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="DmsEdit" name="latUtmToGeoDmsEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>N</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>E</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Latitude</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="DmsEdit" name="longUtmToGeoDmsEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDoubleSpinBox" name="NUtmToGeoDoubleSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="minimum">
+           <double>-1000000000.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1000000000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="EUtmToGeoDoubleSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="minimum">
+           <double>-1000000000.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1000000000.000000000000000</double>
+          </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>E</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="EUtmToGeoDoubleSpinBox">
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <double>1000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="DmsEdit" name="longUtmToGeoDmsEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>N</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="NUtmToGeoDoubleSpinBox">
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <double>1000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Latitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="DmsEdit" name="latUtmToGeoDmsEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Longitude</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Meridiano Central</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Meridiano Central</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="mCUtmToGeoDoubleSpinBox">
-            <property name="decimals">
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <widget class="QDoubleSpinBox" name="mCUtmToGeoDoubleSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="decimals">
+           <number>0</number>
+          </property>
+          <property name="minimum">
+           <double>-100.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_27">
+          <property name="text">
+           <string>Zona</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="zonaUtmGeoSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::UpDownArrows</enum>
+          </property>
+          <property name="accelerated">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
