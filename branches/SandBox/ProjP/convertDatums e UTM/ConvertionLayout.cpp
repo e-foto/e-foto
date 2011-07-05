@@ -32,18 +32,18 @@ ConvertionsLayout::ConvertionsLayout(QWidget* parent)
 
     geoUtmSystem = new GeoSystem(WGS84);
 
-    latGeotoUtmDmsEdit->getDmsValue()->setDms(36,52,31);
+    latGeotoUtmDmsEdit->getDmsValue()->setDms(23,0,0,true);
 	latGeotoUtmDmsEdit->updateValue();
-    longGeotoUtmDmsEdit->getDmsValue()->setDms(4,5,16);
+    longGeotoUtmDmsEdit->getDmsValue()->setDms(48,0,0,true);
 	longGeotoUtmDmsEdit->updateValue();
 
-    hemiNSGeoUTMComboBox->setCurrentIndex(1);
+    //hemiNSGeoUTMComboBox->setCurrentIndex(1);
 	geoUTMOldSystemComboBox->setCurrentIndex(3);
 
 	connect(geoUTMOldSystemComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(systemChangedGeoUtm(int)));
     connect(geoUTMOldSystemComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertGeoUtmSystems()));
-    connect(hemiNSGeoUTMComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertGeoUtmSystems()));
-    connect(hemiWEGeoUtmComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertGeoUtmSystems()));
+    //connect(hemiNSGeoUTMComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertGeoUtmSystems()));
+    //connect(hemiWEGeoUtmComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertGeoUtmSystems()));
 
     connect(latGeotoUtmDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
     connect(longGeotoUtmDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
@@ -58,11 +58,11 @@ ConvertionsLayout::ConvertionsLayout(QWidget* parent)
     connect(utmGeoOldSystemComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(systemChangedGeoUtm(int)));
     connect(utmGeoOldSystemComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertUtmGeoSystems()));
     connect(hemiNSUtmGeoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertUtmGeoSystems()));
-    connect(hemiWEUtmGeoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertUtmGeoSystems()));
+    //connect(hemiWEUtmGeoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(convertUtmGeoSystems()));
 
     connect(EUtmToGeoDoubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(convertUtmGeoSystems()));
     connect(NUtmToGeoDoubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(convertUtmGeoSystems()));
-    connect(mCUtmToGeoDoubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(convertUtmGeoSystems()));
+    connect(zonaUtmGeoSpinBox,SIGNAL(valueChanged(int)),this,SLOT(convertUtmGeoSystems()));
 
     //connect(latUtmToGeoDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
     //connect(longUtmToGeoDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
@@ -176,25 +176,27 @@ void ConvertionsLayout::convertGeoUtmSystems()
 {
     char hemNS,hemWE;
 
-    if(hemiNSGeoUTMComboBox->currentIndex()==0)
+    /*if(hemiNSGeoUTMComboBox->currentIndex()==0)
         hemNS='n';
 	else
         hemNS='s';
-
-    if(hemiWEGeoUtmComboBox->currentIndex()==0)
+*/
+    /*if(hemiWEGeoUtmComboBox->currentIndex()==0)
         hemWE='w';
     else
         hemWE='e';
-
-    Matrix utm=ConvertionsSystems::geoElipToUtm(latGeotoUtmDmsEdit->getRadianValue(),longGeotoUtmDmsEdit->getRadianValue(),0.0,*geoUtmSystem,hemNS,hemWE);
+*/
+    Matrix utm=ConvertionsSystems::geoToUtmFran(latGeotoUtmDmsEdit->getRadianValue(),longGeotoUtmDmsEdit->getRadianValue(),0.0,*geoUtmSystem,hemNS,hemWE);
 
 	EGeoToUtmDoubleSpinBox->setValue(utm.get(1,1));
 	NGeoToUtmDoubleSpinBox->setValue(utm.get(1,2));
 	mCGeoToUtmDoubleSpinBox->setValue(utm.get(1,4));
+        zonaGeoUtmSpinBox->setValue(utm.getInt(1,5));
 
     EUtmToGeoDoubleSpinBox->setValue(utm.get(1,1));
     NUtmToGeoDoubleSpinBox->setValue(utm.get(1,2));
     mCUtmToGeoDoubleSpinBox->setValue(utm.get(1,4));
+    zonaUtmGeoSpinBox->setValue(utm.getInt(1,5));
 
 }
 
@@ -207,18 +209,20 @@ void ConvertionsLayout::convertUtmGeoSystems()
     else
         hemNS='s';
 
-    if(hemiWEUtmGeoComboBox->currentIndex()==0)
+    /*if(hemiWEUtmGeoComboBox->currentIndex()==0)
         hemWE='w';
     else
         hemWE='e';
-
-    Matrix geo=ConvertionsSystems::utmToGeo(EUtmToGeoDoubleSpinBox->value(),NUtmToGeoDoubleSpinBox->value(),0.0,mCUtmToGeoDoubleSpinBox->value(),*geoUtmSystem,hemNS,hemWE);
+*/
+    Matrix geo=ConvertionsSystems::utmToGeoFran(EUtmToGeoDoubleSpinBox->value(),NUtmToGeoDoubleSpinBox->value(),0.0,zonaUtmGeoSpinBox->value(),*geoUtmSystem,hemNS,hemWE);
 
     longUtmToGeoDmsEdit->getDmsValue()->radianoToDms(geo.get(1,1));
     longUtmToGeoDmsEdit->updateValue();
     latUtmToGeoDmsEdit->getDmsValue()->radianoToDms(geo.get(1,2));
     latUtmToGeoDmsEdit->updateValue();
-    //mCGeoToUtmDoubleSpinBox->setValue(utm.get(1,4));
+    mCUtmToGeoDoubleSpinBox->setValue(geo.get(1,4));
+    //zonaUtmGeoSpinBox->setValue(geo.getInt(1,4));
+
 }
 
 

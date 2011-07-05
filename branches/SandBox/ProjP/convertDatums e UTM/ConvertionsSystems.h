@@ -19,9 +19,9 @@ public :
         static double* convertSystemsFullMolodensky(GeoSystem oldSystem, GeoSystem newSystem, double phi, double lambda, double haltura);
         static double* convertSystemsSimplifiedMolodensky(GeoSystem oldSystem, GeoSystem newSystem, double phi, double lambda, double haltura);
 
-        static Matrix geoElipToUtm(double phi, double lambda, double haltura, GeoSystem system,char hemi, char side);
 
-        static Matrix utmToGeo(double E, double N, double haltura,double MC, GeoSystem system,char hemi, char side);
+        static Matrix geoToUtmFran(double phi, double lambda, double haltura, GeoSystem system,char hemi, char side);
+        static Matrix utmToGeoFran(double E, double N, double haltura,int zona, GeoSystem system,char hemi, char side);
 
         Matrix getMatrixR(double phi, double lambda);
 
