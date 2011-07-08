@@ -277,8 +277,11 @@ ABOUTDIR = qt/infrastructure/
 
 unix {
         MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+        MYREV = $$system(svnversion)
+        MYREV ~= s/[a-z]|[A-Z]/
         CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
                 system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compila√ßao
+                system(sed -r s/Revision\ [0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revis„o do AboutLayout
                 !build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
 		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
 	}else{
@@ -288,10 +291,22 @@ unix {
 }
 
 win32 {
-	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %i in (\'%date%\') do @echo %l.%k.%j)
+        MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
+        MYDATA ~= s/[a-z]/
+        MYDATA =$$join(MYDATA,.)
+        #MYREV = $$system(subWCrev ../)
+        #MYREV2 = $$find(MYREV, [0-9]{2}.)
+        #MYREV2 ~= s/[a-z]|[A-Z]|[\\\\]|[\,]|[\:]|[\']|[\-]/
+        #for(a,MYREV):!build_pass:message($${a} ;;;;;)
+        #for(a,MYREV): MYREV~= s/([a-z]*)|([A-Z]*)/
+        #MYREV ~= s/[a-Z].+/
+        #!build_pass:message(REV: $${MYREV})
+        #!build_pass:message(REV2: $${MYREV2})
+        #!build_pass:message(REV3: $${MYREV3})
 	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
 		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compila√ßao
-		!build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+                #system(sed -r s/Revision\ [0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revis„o do AboutLayout
+                !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
 		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
 		}else{
 			!build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
