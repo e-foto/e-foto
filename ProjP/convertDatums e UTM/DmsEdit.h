@@ -16,16 +16,33 @@ enum DmsEditMode { DMS, DEG, RAD };
 class DmsEdit : public QLineEdit
 {
     Q_OBJECT
+protected:
+    Dms *dmsMin;
+    Dms *dmsMax;
+    Dms *oldDegMinSecLine;
+    double radMax,radMin,degMin,degMax;
+
 public:
     DmsEdit(QWidget *parent=0);
     void setDecimals(int newDecimals);
     int getDecimals();
     DmsEditMode getDmsEditMode();
-	double getRadianValue();
-	double getDegreeValue();
-	Dms* getDmsValue();
+    double getRadianValue();
+    double getDegreeValue();
+    Dms* getDmsValue();
+    void setDmsMinimum(int degree,int minutes, double seconds, bool signal);
+    void setDmsMaximum(int degree,int minutes, double seconds, bool signal);
+
+    double getMinimumDeg();
+    double getMaximumDeg();
+    double getMinimumRad();
+    double getMaximumRad();
+    Dms * getMinimumDms();
+    Dms * getMaximumDms();
+
 
 protected:
+
     bool eventFilter(QObject* objeto, QEvent* evento);
     void keyPressEvent(QKeyEvent *evento);
 	void focusInEvent(QFocusEvent *);
@@ -44,8 +61,6 @@ private:
     QDoubleValidator *degValidator;
     QDoubleValidator *radValidator;
 
-signals:
-
 public slots:
     void validate();
     void stepDown();
@@ -54,7 +69,7 @@ public slots:
     void selectField(PositionValue pos);
     void changedField(int oldPos, int newPos);
     void setDmsEditMode(DmsEditMode newMode);
-	void updateValue(QString newValue="");
+    void updateValue(QString newValue="");
 
 };
 

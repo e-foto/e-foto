@@ -30,7 +30,7 @@ protected slots:
     void acceptedNewSystem(double a, double f);
 
 	/** Entre Sistemas*/
-	void systemChangedGeoUtm(int index);
+    //void systemChangedGeoUtm(int index);
     void convertGeoUtmSystems();
     void convertUtmGeoSystems();
 //    void rejected();

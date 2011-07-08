@@ -1,5 +1,5 @@
 #include "ConvertionsSystems.h"
-#include <QDebug>
+//#include <QDebug>
 #include "Dms.h"
 
 ConvertionsSystems::ConvertionsSystems()
@@ -341,13 +341,13 @@ Matrix ConvertionsSystems::utmToGeoFran(double E, double N, double haltura, int 
     }
     int MC = 6*zona-183;
 
-    qDebug("zona %d \tMC %d",zona,MC);
+    //qDebug("zona %d \tMC %d",zona,MC);
     double El=500000-E;
 
 	double a=system.getA();
 	double f=system.getF();
 
-	double b=a*(1-f);
+    double b=a*(1-f);
 	//double e=sqrt(1-(b*b)/(a*a));
 	double e2=(1-(b*b)/(a*a));
 	double el2=e2/(1-e2);
@@ -607,7 +607,7 @@ double* ConvertionsSystems::convertSystems3Parameters(GeoSystem oldSystem, GeoSy
 		}
 	}
 
-	qDebug("convertions xi=%.6f\t yi=%.6f zi=%.6f",aux.get(1,1),aux.get(1,2),aux.get(1,3));
+    //qDebug("convertions xi=%.6f\t yi=%.6f zi=%.6f",aux.get(1,1),aux.get(1,2),aux.get(1,3));
 
 	double *result=(double *)malloc(3*sizeof(double));
 	Matrix temp=GeocentricCartesianToGeoelip(aux.get(1,1),aux.get(1,2),aux.get(1,3),newSystem);
@@ -616,7 +616,7 @@ double* ConvertionsSystems::convertSystems3Parameters(GeoSystem oldSystem, GeoSy
 	result[2]=temp.get(1,3);
 
 
-	qDebug("convertions phi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
+    //qDebug("convertions phi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
 	return result;
 }
 
@@ -661,11 +661,11 @@ double* ConvertionsSystems::convertSystemsSimplifiedMolodensky(GeoSystem oldSyst
 	result[1]=lambda+dlambda;
 	result[2]=haltura+dN;
 
-	qDebug("phi=%.16f\t lambda=%.16f h=%.16f",phi,lambda,haltura); //
-	qDebug("dX= %.6f\tdY= %.6f\tdZ= %.6f",dX,dY,dZ);
+    //qDebug("phi=%.16f\t lambda=%.16f h=%.16f",phi,lambda,haltura); //
+    //qDebug("dX= %.6f\tdY= %.6f\tdZ= %.6f",dX,dY,dZ);
    // qDebug("e= %.16f\ndf= %.16f\nda= %.16f\nM= %.16f\nN= %.16f",e,df,da,M,N);
    // qDebug("dphi= %.16f\ndlambda= %.16f\ndN= %.16f",dphi,dlambda,dN);
-	qDebug("converted\nphi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
+    //qDebug("converted\nphi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
 	return result;
 }
 
@@ -705,11 +705,11 @@ double* ConvertionsSystems::convertSystemsFullMolodensky(GeoSystem oldSystem, Ge
 	result[1]=lambda+dlambda;
     result[2]=H+dN;
 */
-	qDebug("phi=%.16f\t lambda=%.16f h=%.16f",phi,lambda,haltura); //
-	qDebug("dX= %.6f\tdY= %.6f\tdZ= %.6f",dX,dY,dZ);
+    //qDebug("phi=%.16f\t lambda=%.16f h=%.16f",phi,lambda,haltura); //
+    //qDebug("dX= %.6f\tdY= %.6f\tdZ= %.6f",dX,dY,dZ);
    // qDebug("e= %.16f\ndf= %.16f\nda= %.16f\nM= %.16f\nN= %.16f",e,df,da,M,N);
    // qDebug("dphi= %.16f\ndlambda= %.16f\ndN= %.16f",dphi,dlambda,dN);
-	qDebug("converted\nphi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
+    //qDebug("converted\nphi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
 	return result;
 }
 

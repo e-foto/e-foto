@@ -47,7 +47,7 @@ public:
     static double radianoToDegreeDecimal(double radiano);
 	static Dms * secondsToDms(double seconds);
 
-private:
+protected:
     int degree;
     int min;
     double sec;
@@ -55,35 +55,4 @@ private:
 	int secondsPrecision;
 };
 
-/*
-class DegreeRadSpin:public QSpinBox
-{
-    Q_OBJECT
-public:
-    DegreeRadSpin(QWidget *parent=0);
-    void stepUp();
-    void stepDown();
-    void stepBy(int steps);
-    void setMinimum(int min);
-    void setMaximum(int max);
-    int minimum();
-    int maximum();
-
-
-    QString textFromValue(int val) const;
-    int valueFromText(const QString &text) const;
-    QValidator::State validate(QString &input, int &pos) const;
-    PositionValue positionValue();
-    void validateAndInterprete();
-    void correctCursorPosition(int oldPosition, int oldLength);
-
-private:
-	Dms *DmsThis;
-    QRegExpValidator *validator;
-    QLineEdit *texto;
-
-public slots:
-    void showTexto();
-};
-*/
 #endif // DMS_H

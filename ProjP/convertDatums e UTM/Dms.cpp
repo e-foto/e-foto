@@ -35,6 +35,7 @@ Dms::Dms(QString degree)
     this->setSeconds(newDegree->getSeconds());
     this->setSignal(newDegree->hasSignal());
 }
+
 Dms::Dms(double seconds)
 {
 	setSecondsPrecision();
@@ -49,21 +50,23 @@ Dms::Dms(double seconds)
 		setDms(deg,min,sec,true);
 	else
 		setDms(deg,min,sec);
+
 }
 
 void Dms::setDegree(int newDegrees)
 {
-	degree = (newDegrees<0||newDegrees>359)? abs(degree) : abs(newDegrees) ;
+//    if (signalMin && signalMax)
+        degree = (newDegrees<0||newDegrees>359)? abs(degree) : abs(newDegrees) ;
 }
 
 void Dms::setMinute(int newMinutes)
 {
-	min = (newMinutes<0||newMinutes>59)? min : newMinutes ;
+    min = (newMinutes<0||newMinutes>59)? min : newMinutes ;
 }
 
 void Dms::setSeconds(double newSeconds)
 {
-	sec = (newSeconds<0.0 || newSeconds>=60.0)? sec : newSeconds;
+    sec = (newSeconds<0.0 || newSeconds>60.0)? sec : newSeconds;
     //double temp=sec;
     //temp= round(temp*pow(10,getSecondsPrecision()))/pow(10,getSecondsPrecision());
     //sec=temp;
@@ -133,12 +136,12 @@ QString Dms::toString(int decimals)
     if(this->hasSignal())
         text+="-";
 
-   // qDebug("tostring: deg= %d  min = %d sec = %f",getDegree(),getMinute(),getSeconds());
+    //qDebug("tostring: deg= %d  min = %d sec = %f",getDegree(),getMinute(),getSeconds());
     text+=QString::number(this->getDegree());
     text+=QString::fromUtf8("°");
     text+=QString::number(this->getMinute());
     text+="'";
-	text.append(QLocale::system().toString(this->getSeconds(),'f',decimals));
+    text.append(QLocale::system().toString(this->getSeconds(),'f',decimals));
 	//text.append(QString::number(this->getSeconds(),'f',decimals));
     text+="\"";
 
@@ -155,6 +158,9 @@ Dms* Dms::stringToDms(QString dms)
 	int minute=(dms.section(" ",1,1)).toInt();
 	double second=(dms.section(" ",2,2)).toDouble();
 
+//    qDebug("string: %s",dms.toStdString().c_str());
+//    qDebug("stringToDMS: %d %d %.9f",degree,minute,second);
+
 	if(dms.startsWith('-'))
 	{
 		degree=-degree;
@@ -167,7 +173,8 @@ Dms* Dms::stringToDms(QString dms)
 	setDegree(degree);
 	setMinute(minute);
 	setSeconds(second);
-	//setSecondsPrecision(getSecondsPrecision());
+
+    //setSecondsPrecision(getSecondsPrecision());
 	// qDebug()<<this->toString();
 	return this;
 }
@@ -206,8 +213,10 @@ Dms * Dms::secondsToDms(double seconds)
 
 double Dms::dmsToDegreeDecimal()
 {
+  //  qDebug("dms to degree: %d %d %.9f",getDegree(),getMinute(),getSeconds());
     double minPartial=this->getMinute()+this->getSeconds()/60.0;
     double result=this->getDegree()+minPartial/60.0;
+
     return (this->hasSignal() ? -result:result );
 }
 
@@ -217,17 +226,17 @@ double Dms::dmsToRadiano()
     return degreeDecimalToRadiano(parcial);
 }
 
-
 Dms* Dms::degreeDecimalToDms(double degreeDecimal)
 {
     int degrees=0;
     int minutes=0;
     double seconds=0.0;
+
     if(degreeDecimal>=0)
     {
         degrees = degreeDecimal;
         minutes = (degreeDecimal-degrees)*60.0;
-		seconds = (double)((degreeDecimal-degrees)*60.0-minutes)*60.0;
+        seconds = (double)((degreeDecimal-degrees)*60.0-minutes)*60.0;
         setSignal(false);
     }else
     {
@@ -241,7 +250,8 @@ Dms* Dms::degreeDecimalToDms(double degreeDecimal)
     setDegree(degrees);
     setMinute(minutes);
     setSeconds(seconds);
-	//qDebug("toDMS: \tdeg= %d min= %d sec=%.9f",degrees,minutes,getSeconds());
+    //qDebug("degreeDecimal %.9f",degreeDecimal);
+    //qDebug("degreeDecimalToDMS: \tdeg= %d min= %d sec=%.9f",degrees,minutes,getSeconds());
 
     //qDebug("dg->dms: degree: %f dms: %s",degreeDecimal,this->toString(9).toStdString().c_str());
 
@@ -310,42 +320,78 @@ int Dms::compareDegMinSecs(Dms *degMinSec)
     if (this->hasSignal() && !degMinSec->hasSignal())
     {
         return -1;
-    }
-    if (!this->hasSignal() && degMinSec->hasSignal())
+    }else if (!this->hasSignal() && degMinSec->hasSignal())
     {
         return 1;
-    }
-    if(this->getDegree()>degMinSec->getDegree())
+    }else if (!this->hasSignal() && !degMinSec->hasSignal())
     {
-        return 1;
-    }
-    else if (this->getDegree()<degMinSec->getDegree())
-    {
-        return -1;
-    }
-
-    else
-    {
-        if(this->getMinute()>degMinSec->getMinute())
+        if(this->getDegree()>degMinSec->getDegree())
         {
             return 1;
         }
-        else if(this->getMinute()<degMinSec->getMinute())
+        else if (this->getDegree()<degMinSec->getDegree())
         {
             return -1;
         }
+
         else
         {
-            if(this->getSeconds()>degMinSec->getSeconds())
+            if(this->getMinute()>degMinSec->getMinute())
             {
                 return 1;
             }
-            else if (this->getSeconds()<degMinSec->getSeconds())
+            else if(this->getMinute()<degMinSec->getMinute())
             {
                 return -1;
             }
             else
-                return 0;
+            {
+                if(this->getSeconds()>degMinSec->getSeconds())
+                {
+                    return 1;
+                }
+                else if (this->getSeconds()<degMinSec->getSeconds())
+                {
+                    return -1;
+                }
+                else
+                    return 0;
+            }
+        }
+    }else if(this->hasSignal() && degMinSec->hasSignal())
+    {
+        if(this->getDegree()>degMinSec->getDegree())
+        {
+            return -1;
+        }
+        else if (this->getDegree()<degMinSec->getDegree())
+        {
+            return 1;
+        }
+
+        else
+        {
+            if(this->getMinute()>degMinSec->getMinute())
+            {
+                return -1;
+            }
+            else if(this->getMinute()<degMinSec->getMinute())
+            {
+                return 1;
+            }
+            else
+            {
+                if(this->getSeconds()>degMinSec->getSeconds())
+                {
+                    return -1;
+                }
+                else if (this->getSeconds()<degMinSec->getSeconds())
+                {
+                    return +1;
+                }
+                else
+                    return 0;
+            }
         }
     }
 }
