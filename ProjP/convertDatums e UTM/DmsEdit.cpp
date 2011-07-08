@@ -11,9 +11,13 @@ DmsEdit::DmsEdit(QWidget *parent):
     //qDebug()<< "language:"<<locale().name();
     //qDebug()<<"simbolo decimal: "<<locale().decimalPoint();
 
-	installEventFilter(this);
-	degMinSecLine= new Dms("0 0'0\"");
-	setDecimals(5);
+    installEventFilter(this);
+    degMinSecLine= new Dms("0 0'0\"");
+    oldDegMinSecLine= new Dms("0 0\"");
+    dmsMin= new Dms(180,0,0.0,true);
+    dmsMax= new Dms(180,0,0.0,false);
+
+    setDecimals(5);
     setText(degMinSecLine->toString(getDecimals()));
     setDmsEditMode(DMS);
     connect(this,SIGNAL(cursorPositionChanged(int,int)), this,SLOT(changedField(int,int)));
@@ -40,35 +44,39 @@ void DmsEdit::validate()
     {
         degMinSecLine->stringToDms(this->text());
 
-        if(degMinSecLine->isValid())
+        int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
+        int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
+        if (compMin>0 && compMax<0)
         {
-           setText(degMinSecLine->toString(getDecimals()));
+        //    qDebug("validate");
+          //  qDebug("%s\t<\t%s\t<\t%s\n",getMinimumDms()->getDms()->toString(3).toStdString().c_str(),degMinSecLine->toString(3).toStdString().c_str(),getMaximumDms()->toString(3).toStdString().c_str());
+            setText(degMinSecLine->toString(getDecimals()));
         }
         else
         {
-            //qDebug("caiu no else");
-           setText(QString::fromUtf8("0Â°0'0.0\""));
+            degMinSecLine->setDms(*oldDegMinSecLine);
+            setText(degMinSecLine->toString(getDecimals()));
         }
     }
     else if (getDmsEditMode()==RAD)
     {
-//		QString decimalPnt=QLocale::decimalPoint();
-		QString radVal="(-)?[0-6]{1}?(\\.|,)\\d{";
+        //		QString decimalPnt=QLocale::decimalPoint();
+        QString radVal="(-)?[0-6]{1}?(\\.|,)\\d{";
 
 	//	radVal.append();
-		radVal.append(QString::number(getDecimals()));
+        radVal.append(QString::number(getDecimals()));
         radVal.append("}");
 
-	   // qDebug()<<radVal;
-		QRegExpValidator *radValidator1=new QRegExpValidator(QRegExp(radVal),this);
-		radValidator1->setLocale(QLocale::system());
-		//radValidator1->locale().setNumberOptions(QLocale::O);
-		//qDebug()<<radValidator1->locale().name()<<"simbolo decimal: "<<radValidator1->locale().decimalPoint();
+        // qDebug()<<radVal;
+        QRegExpValidator *radValidator1=new QRegExpValidator(QRegExp(radVal),this);
+        radValidator1->setLocale(QLocale::system());
+        //radValidator1->locale().setNumberOptions(QLocale::O);
+        //qDebug()<<radValidator1->locale().name()<<"simbolo decimal: "<<radValidator1->locale().decimalPoint();
 
-		this->setValidator(radValidator1);
-		//setValidator(new QDoubleValidator(-2*M_PI,2*M_PI,5,this));
+        this->setValidator(radValidator1);
+        //setValidator(new QDoubleValidator(-2*M_PI,2*M_PI,5,this));
         //em teste //Novo 11.3.08
-		setText(locale().toString(radValue,'f',getDecimals()));
+        setText(locale().toString(radValue,'f',getDecimals()));
 
     }
     else if (getDmsEditMode()==DEG)
@@ -78,20 +86,19 @@ void DmsEdit::validate()
         degVal.append(QString::number(getDecimals()));
         degVal.append("}");
 
-//        qDebug()<<degVal;
+        //qDebug()<<degVal;
         QRegExpValidator *degValidator1=new QRegExpValidator(QRegExp(degVal),this);
-		this->setValidator(degValidator1);
+        this->setValidator(degValidator1);
 	//	setValidator(new QDoubleValidator(-2*M_PI,2*M_PI,5,this));
         //em teste //Novo 11.3.08
-		setText(locale().toString(degValue,'f',getDecimals()));
+        setText(locale().toString(degValue,'f',getDecimals()));
     }
 }
 
-
 void DmsEdit::stepBy(int steps)
 {
-
     int pos=cursorPosition();
+    //this->blockSignals(true);
     if(steps<0)
     {
         for(int i=steps;i<0;i++)
@@ -102,30 +109,39 @@ void DmsEdit::stepBy(int steps)
         for (int i=0; i<steps; i++)
             stepUp();
     }
+   // this->blockSignals(false);
+    updateValue();
     setCursorPosition(pos);
-
 }
 
+/** Method to subtract one step in current Field
+*/
 void DmsEdit::stepDown()
 {
     bool ok;
     if (getDmsEditMode()==DMS)
     {
-        degMinSecLine->stringToDms(text());
+        //degMinSecLine->stringToDms(text());
         if (positionValue()==DEGREES)
         {
-            degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
-			setText(degMinSecLine->toString(getDecimals()));
+            if(degMinSecLine->getDegree()==0)
+                degMinSecLine->setSignal(true);
+
+            if(degMinSecLine->hasSignal() )
+                degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
+            else
+                degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
+            //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==MINUTES)
         {
             degMinSecLine->setMinute(degMinSecLine->getMinute()-1);
-			setText(degMinSecLine->toString(getDecimals()));
+            //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
             degMinSecLine->setSeconds(degMinSecLine->getSeconds()-1);
-			setText(degMinSecLine->toString(getDecimals()));
+            //setText(degMinSecLine->toString(getDecimals()));
         }
     }
     else
@@ -134,26 +150,34 @@ void DmsEdit::stepDown()
     }
 }
 
+/** Method to add one step in current Field
+*/
 void DmsEdit::stepUp()
 {
     bool ok;
     if (getDmsEditMode()==DMS)
     {
-        degMinSecLine->stringToDms(text());
+        //degMinSecLine->stringToDms(text());
         if (positionValue()==DEGREES)
         {
-            degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
-			setText(degMinSecLine->toString(getDecimals()));
+            if(degMinSecLine->hasSignal())
+                degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
+            else
+                degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
+
+            if (degMinSecLine->getDegree()==0)
+                degMinSecLine->setSignal(false);
+            //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==MINUTES)
         {
             degMinSecLine->setMinute(degMinSecLine->getMinute()+1);
-			setText(degMinSecLine->toString(getDecimals()));
+            //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
             degMinSecLine->setSeconds(degMinSecLine->getSeconds()+1);
-			setText(degMinSecLine->toString(getDecimals()));
+            //setText(degMinSecLine->toString(getDecimals()));
         }
     }
     else
@@ -162,6 +186,8 @@ void DmsEdit::stepUp()
     }
 }
 
+/** Method to determine where Field cursor is currently
+*/
 PositionValue DmsEdit::positionValue()
 {
     if(cursorPosition()<=text().lastIndexOf(QString::fromUtf8("Â°")))
@@ -173,6 +199,8 @@ PositionValue DmsEdit::positionValue()
     return NONE;
 }
 
+/** Overloaded method
+  */
 PositionValue DmsEdit::positionValue(int pos)
 {
     if(pos<=text().lastIndexOf(QString::fromUtf8("Â°")))
@@ -184,6 +212,8 @@ PositionValue DmsEdit::positionValue(int pos)
     return NONE;
 }
 
+/** Method to determine to from field to wich field cursor moved
+  */
 void DmsEdit::changedField(int oldPos, int newPos)
 {
     if (getDmsEditMode()==DMS)
@@ -212,7 +242,8 @@ void DmsEdit::changedField(int oldPos, int newPos)
         }
     }
 }
-
+/** Method to select field in @param pos
+  */
 void DmsEdit::selectField(PositionValue pos)
 {
     if (getDmsEditMode()==DMS)
@@ -234,6 +265,8 @@ void DmsEdit::selectField(PositionValue pos)
     }
 }
 
+/** Method overloaded from QLineEdit
+  */
 bool DmsEdit::eventFilter(QObject *objeto, QEvent *evento)
 {
 
@@ -261,6 +294,8 @@ bool DmsEdit::eventFilter(QObject *objeto, QEvent *evento)
 	}
 }
 
+/** Method overloaded from QLineEdit
+  */
 void DmsEdit::keyPressEvent(QKeyEvent *evento)
 {
     if (getDmsEditMode()==DMS)
@@ -323,11 +358,13 @@ void DmsEdit::keyPressEvent(QKeyEvent *evento)
             stepBy(-1);
             break;
         default:
-			QLineEdit::keyPressEvent(evento);
+            QLineEdit::keyPressEvent(evento);
         }
     }
 }
 
+/** Method overloaded from QLineEdit
+  */
 void DmsEdit::focusInEvent(QFocusEvent *evento)
 {
     if (getDmsEditMode()==DMS)
@@ -346,35 +383,40 @@ void DmsEdit::focusInEvent(QFocusEvent *evento)
     }
 }
 
+/** Method overloaded from QLineEdit
+  */
 void DmsEdit::focusOutEvent(QFocusEvent *evento)
 {
 	validate();
 	QLineEdit::focusOutEvent(evento);
 }
-
+/** Method to @return mode. Which may be RAD, DEG and DMS
+  */
 DmsEditMode DmsEdit::getDmsEditMode()
 {
     return mode;
 }
 
+/** Method to set mode
+  */
 void DmsEdit::setDmsEditMode(DmsEditMode newMode)
 {
-	blockSignals(true);
+    blockSignals(true);
     bool ok;
     if (getDmsEditMode()==DMS && newMode==RAD)
     {
     //	qDebug()<<"dms to rad";
-		radValue=degMinSecLine->dmsToRadiano();
-		degValue=degMinSecLine->dmsToDegreeDecimal();
-		setText(locale().toString(radValue,'f',getDecimals()));
+        radValue=degMinSecLine->dmsToRadiano();
+        degValue=degMinSecLine->dmsToDegreeDecimal();
+        setText(locale().toString(radValue,'f',getDecimals()));
 		//setText(QString::number(degMinSecLine->dmsToRadiano(),'f',getDecimals()));
     //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
     }
     else if(getDmsEditMode()==DMS && newMode==DEG)
     {
     //	qDebug()<<"dms to deg";
-		degValue=degMinSecLine->dmsToDegreeDecimal();
-		radValue=degMinSecLine->dmsToRadiano();
+        degValue=degMinSecLine->dmsToDegreeDecimal();
+        radValue=degMinSecLine->dmsToRadiano();
 		setText(locale().toString(degValue,'f',getDecimals()));
 		//setText(QString::number(degMinSecLine->dmsToDegreeDecimal(),'f',getDecimals()));
     //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
@@ -382,7 +424,7 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     else if(getDmsEditMode()==DEG && newMode==DMS)
     {
     //	qDebug()<<"deg to dms";
-		setText(degMinSecLine->degreeDecimalToDms(degValue)->toString(getDecimals()));
+        setText(degMinSecLine->degreeDecimalToDms(degValue)->toString(getDecimals()));
 		//setText(degMinSecLine->degreeDecimalToDms(text().toDouble(&ok))->toString(getDecimals()));
         //qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
     }
@@ -391,8 +433,8 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     //	qDebug()<<"deg to rad";
     //	qDebug("antes: radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
         radValue=Dms::degreeDecimalToRadiano(degValue);
-		qDebug("depois: radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
-		degMinSecLine->degreeDecimalToDms(degValue);
+        qDebug("depois: radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
+        degMinSecLine->degreeDecimalToDms(degValue);
 		setText(locale().toString(radValue,'f',getDecimals()));
         //setText(QString::number(Dms::degreeDecimalToRadiano(text().toDouble),'f',getDecimals()));
 
@@ -401,71 +443,109 @@ void DmsEdit::setDmsEditMode(DmsEditMode newMode)
     {
         setText(degMinSecLine->radianoToDms(radValue)->toString(getDecimals()));
         //setText(degMinSecLine->radianoToDms(text().toDouble(&ok))->toString(getDecimals()));
-    //	qDebug()<<"rad to dms";
-    //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
+        //	qDebug()<<"rad to dms";
+        //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
     }
     else if(getDmsEditMode()==RAD && newMode==DEG)
     {
         degValue=Dms::radianoToDegreeDecimal(radValue);
-		degMinSecLine->radianoToDms(radValue);
-		setText(locale().toString(degValue,'f',getDecimals()));
+        degMinSecLine->radianoToDms(radValue);
+        setText(locale().toString(degValue,'f',getDecimals()));
         //setText(QString::number(Dms::radianoToDegreeDecimal(text().toDouble(&ok)),'f',getDecimals()));
-    //	qDebug()<<"rad to dms";
-    //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
+        //	qDebug()<<"rad to dms";
+        //	qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
     }
     mode=newMode;
     validate();
-	blockSignals(false);
+    blockSignals(false);
 }
 
 void DmsEdit::updateValue(QString newValue)
 {
-	DmsEditMode mode=getDmsEditMode();
+    int pos=cursorPosition();
+    DmsEditMode mode=getDmsEditMode();
+    //Dms old(degMinSecLine->getDegree(),degMinSecLine->getMinute(),degMinSecLine->getSeconds(),degMinSecLine->hasSignal());
 
-	if (newValue=="")
-	{
+    if (newValue=="")
+    {
         //qDebug("update value chamado");
-		if (mode==DMS)
+        if (mode==DMS)
         {
-			setText(degMinSecLine->toString(getDecimals()));
-            degValue=degMinSecLine->dmsToDegreeDecimal();
-            radValue=degMinSecLine->dmsToRadiano();
+            int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
+            int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
+            if (compMin>0 && compMax<0)
+            {
+                //qDebug("%s < %s < %s",getMinimumDms()->toString(getDecimals()).toStdString().c_str(),degMinSecLine->toString(getDecimals()).toStdString().c_str(),getMaximumDms()->toString(getDecimals()).toStdString().c_str());
+                oldDegMinSecLine->setDms(*degMinSecLine);
+                setText(degMinSecLine->toString(getDecimals()));
+                // degValue=degMinSecLine->dmsToDegreeDecimal();
+                //radValue=degMinSecLine->dmsToRadiano();
+            }
+            else
+            {
+                degMinSecLine->setDms(*oldDegMinSecLine);
+                //qDebug("%s não esta entre ",oldDegMinSecLine->toString(getDecimals()).toStdString().c_str());
+                setText(degMinSecLine->toString(getDecimals()));
+            }
+            //setText(degMinSecLine->toString(getDecimals()));
+            return;
         }
-		else if (mode==DEG)
+        else if (mode==DEG)
         {
-			setText(QString::number(degValue,'f',5));
+            setText(QString::number(degValue,'f',5));
             degMinSecLine->degreeDecimalToDms(degValue);
             radValue=degMinSecLine->dmsToRadiano();
         }
-		else if (mode==RAD)
+        else if (mode==RAD)
         {
-			setText(QString::number(radValue,'f',5));
+            setText(QString::number(radValue,'f',5));
             degMinSecLine->radianoToDms(radValue);
             degValue=degMinSecLine->dmsToDegreeDecimal();
         }
-       // qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
+        // qDebug("radvalue =%f \tdegvalue= %f\tdms=%s",radValue,degValue,degMinSecLine->toString(5).toStdString().c_str());
         return;
-	}
-	bool ok;
-	if (mode==DMS)
-    {
-        degMinSecLine->stringToDms(newValue);
-		radValue=degMinSecLine->dmsToRadiano();
-		degValue=degMinSecLine->dmsToDegreeDecimal();
     }
-	else if(mode==RAD)
+    bool ok;
+    if (mode==DMS)
+    {
+        //qDebug("\nString não vazia\n");
+
+        degMinSecLine->stringToDms(newValue);
+        int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
+        int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
+        if (compMin>0 && compMax<0)
+        {
+            radValue=degMinSecLine->dmsToRadiano();
+            degValue=degMinSecLine->dmsToDegreeDecimal();
+            setText(degMinSecLine->toString(getDecimals()));
+            oldDegMinSecLine->setDms(*degMinSecLine);
+          //  qDebug("%s < %s < %s",getMinimumDms()->toString(getDecimals()).toStdString().c_str(),degMinSecLine->toString(getDecimals()).toStdString().c_str(),getMaximumDms()->toString(getDecimals()).toStdString().c_str());
+            // degValue=degMinSecLine->dmsToDegreeDecimal();
+            //radValue=degMinSecLine->dmsToRadiano();
+        }
+        else
+        {
+            degMinSecLine->setDms(*oldDegMinSecLine);
+            //qDebug("%s não esta entre ",oldDegMinSecLine->toString(getDecimals()).toStdString().c_str());
+            setText(degMinSecLine->toString(getDecimals()));
+        }
+       // degMinSecLine->stringToDms(newValue);
+        //radValue=degMinSecLine->dmsToRadiano();
+        //degValue=degMinSecLine->dmsToDegreeDecimal();
+    }
+    else if(mode==RAD)
     {
         radValue=newValue.toDouble(&ok);
-		degMinSecLine->radianoToDms(radValue);
-		degValue=degMinSecLine->dmsToDegreeDecimal();
+        degMinSecLine->radianoToDms(radValue);
+        degValue=degMinSecLine->dmsToDegreeDecimal();
     }
-	else if(mode==DEG)
+    else if(mode==DEG)
     {
-		degValue=newValue.toDouble(&ok);
-		degMinSecLine->degreeDecimalToDms(degValue);
-		radValue=Dms::degreeDecimalToRadiano(degValue);
+        degValue=newValue.toDouble(&ok);
+        degMinSecLine->degreeDecimalToDms(degValue);
+        radValue=Dms::degreeDecimalToRadiano(degValue);
     }
-
+    setCursorPosition(pos);
    // qDebug("rad value = %f",radValue);
 }
 
@@ -481,5 +561,49 @@ double DmsEdit::getDegreeValue()
 
 Dms* DmsEdit::getDmsValue()
 {
-	return degMinSecLine;
+    return degMinSecLine;
+}
+
+double DmsEdit::getMaximumDeg()
+{
+    return degMax;
+}
+
+double DmsEdit::getMinimumDeg()
+{
+    return degMin;
+}
+
+double DmsEdit::getMaximumRad()
+{
+    return radMax;
+}
+
+double DmsEdit::getMinimumRad()
+{
+    return radMin;
+}
+
+Dms* DmsEdit::getMaximumDms()
+{
+    return dmsMax;
+}
+
+Dms* DmsEdit::getMinimumDms()
+{
+    return dmsMin;
+}
+
+void DmsEdit::setDmsMaximum(int degree, int minutes, double seconds, bool signal)
+{
+    dmsMax->setDms(degree,minutes,seconds,signal);
+    radMax=dmsMax->dmsToRadiano();
+    degMax=dmsMax->dmsToDegreeDecimal();
+}
+
+void DmsEdit::setDmsMinimum(int degree, int minutes, double seconds, bool signal)
+{
+    dmsMin->setDms(degree,minutes,seconds,signal);
+    radMin=dmsMin->dmsToRadiano();
+    degMin=dmsMin->dmsToDegreeDecimal();
 }
