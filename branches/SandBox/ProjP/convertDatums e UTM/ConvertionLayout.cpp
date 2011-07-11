@@ -31,6 +31,10 @@ ConvertionsLayout::ConvertionsLayout(QWidget* parent)
     //Geo to UTM
 
     geoUtmSystem = new GeoSystem(WGS84);
+    latGeotoUtmDmsEdit->setDmsMinimum(84,0,0,true);
+    latGeotoUtmDmsEdit->setDmsMaximum(84,0,0,false);
+    //longGeotoUtmDmsEdit->setDmsMinimum(177,0,0,true);
+    //longGeotoUtmDmsEdit->setDmsMaximum(177,0,0,false);
 
     latGeotoUtmDmsEdit->getDmsValue()->setDms(23,0,0,true);
 	latGeotoUtmDmsEdit->updateValue();
