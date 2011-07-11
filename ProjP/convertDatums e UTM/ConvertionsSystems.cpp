@@ -189,8 +189,10 @@ Matrix ConvertionsSystems::geoToUtmFran(double phi, double lambda, double haltur
         double nu=a/sqrt(1-e2*pow(sin(phi),2));
 
         double zona;
-        modf((lambda*180/M_PI)/6, &zona);
-        zona+=31;
+        //qDebug("zona= %f",-177-lambda*180/M_PI);
+        //Homologado pelo Professor Jorge Luis Nunes e Silva Brito
+        modf(fabs(-177-lambda*180/M_PI)/6, &zona);
+        zona+=1;
         zona=(int)zona;
 
 

@@ -46,7 +46,7 @@ void DmsEdit::validate()
 
         int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
         int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
-        if (compMin>0 && compMax<0)
+        if (compMin>=0 && compMax<=0)
         {
         //    qDebug("validate");
           //  qDebug("%s\t<\t%s\t<\t%s\n",getMinimumDms()->getDms()->toString(3).toStdString().c_str(),degMinSecLine->toString(3).toStdString().c_str(),getMaximumDms()->toString(3).toStdString().c_str());
@@ -135,12 +135,29 @@ void DmsEdit::stepDown()
         }
         else if (positionValue()==MINUTES)
         {
-            degMinSecLine->setMinute(degMinSecLine->getMinute()-1);
+            if(degMinSecLine->getMinute()==0)
+            {
+                degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
+                degMinSecLine->setMinute(59);
+            }
+            else
+                degMinSecLine->setMinute(degMinSecLine->getMinute()-1);
             //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
-            degMinSecLine->setSeconds(degMinSecLine->getSeconds()-1);
+            if(degMinSecLine->getSeconds()<1.0)
+            {
+                if(degMinSecLine->getMinute()==0)
+                {
+                    degMinSecLine->setDegree(degMinSecLine->getDegree()-1);
+                    degMinSecLine->setMinute(59);
+                }else
+                    degMinSecLine->setMinute(degMinSecLine->getMinute()-1);
+                degMinSecLine->setSeconds(degMinSecLine->getSeconds()+59.0);
+            }
+            else
+                degMinSecLine->setSeconds(degMinSecLine->getSeconds()-1);
             //setText(degMinSecLine->toString(getDecimals()));
         }
     }
@@ -171,12 +188,31 @@ void DmsEdit::stepUp()
         }
         else if (positionValue()==MINUTES)
         {
-            degMinSecLine->setMinute(degMinSecLine->getMinute()+1);
+            if(degMinSecLine->getMinute()==59)
+            {
+                degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
+                degMinSecLine->setMinute(0);
+            }
+            else
+                degMinSecLine->setMinute(degMinSecLine->getMinute()+1);
             //setText(degMinSecLine->toString(getDecimals()));
         }
         else if (positionValue()==SECONDS)
         {
-            degMinSecLine->setSeconds(degMinSecLine->getSeconds()+1);
+            if(degMinSecLine->getSeconds()>=59.0)
+            {
+                if(degMinSecLine->getMinute()==59)
+                {
+                    degMinSecLine->setDegree(degMinSecLine->getDegree()+1);
+                    degMinSecLine->setMinute(0);
+                }
+                else
+                    degMinSecLine->setMinute(degMinSecLine->getMinute()+1);
+                degMinSecLine->setSeconds(degMinSecLine->getSeconds()-59.0);
+                //degMinSecLine->setSeconds(0);
+            }
+            else
+                degMinSecLine->setSeconds(degMinSecLine->getSeconds()+1);
             //setText(degMinSecLine->toString(getDecimals()));
         }
     }
@@ -473,7 +509,7 @@ void DmsEdit::updateValue(QString newValue)
         {
             int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
             int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
-            if (compMin>0 && compMax<0)
+            if (compMin>=0 && compMax<=0)
             {
                 //qDebug("%s < %s < %s",getMinimumDms()->toString(getDecimals()).toStdString().c_str(),degMinSecLine->toString(getDecimals()).toStdString().c_str(),getMaximumDms()->toString(getDecimals()).toStdString().c_str());
                 oldDegMinSecLine->setDms(*degMinSecLine);
@@ -513,7 +549,7 @@ void DmsEdit::updateValue(QString newValue)
         degMinSecLine->stringToDms(newValue);
         int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
         int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
-        if (compMin>0 && compMax<0)
+        if (compMin>=0 && compMax<=0)
         {
             radValue=degMinSecLine->dmsToRadiano();
             degValue=degMinSecLine->dmsToDegreeDecimal();
