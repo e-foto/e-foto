@@ -229,6 +229,9 @@ p, li { white-space: pre-wrap; }
             <property name="minimum">
              <double>-1000.000000000000000</double>
             </property>
+            <property name="maximum">
+             <double>200.000000000000000</double>
+            </property>
            </widget>
           </item>
           <item>
@@ -264,6 +267,12 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>60</number>
             </property>
            </widget>
           </item>
@@ -481,7 +490,10 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="minimum">
-           <double>-100.000000000000000</double>
+           <double>-200.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>200.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -518,6 +530,12 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="accelerated">
            <bool>true</bool>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>60</number>
           </property>
          </widget>
         </item>
