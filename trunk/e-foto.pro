@@ -1,5 +1,5 @@
 TEMPLATE = app
-#TARGET = e-foto
+TARGET = e-foto
 
 # Build settings
 DESTDIR = ../bin
@@ -277,41 +277,40 @@ ABOUTDIR = qt/infrastructure/
 
 unix {
         MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+        #MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
         MYREV = $$system(svnversion)
         MYREV ~= s/[a-z]|[A-Z]/
         CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
                 system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compila√ßao
                 system(sed -r s/Revision\ [0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revis„o do AboutLayout
                 !build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
-	}else{
+        }else{
                 !build_pass:message(Debug build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-		TARGET= e-foto_Debug_$${MYDATA}
-	}
+        }
 }
 
 win32 {
         MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
         MYDATA ~= s/[a-z]/
         MYDATA =$$join(MYDATA,.)
-        #MYREV = $$system(subWCrev ../)
-        #MYREV2 = $$find(MYREV, [0-9]{2}.)
-        #MYREV2 ~= s/[a-z]|[A-Z]|[\\\\]|[\,]|[\:]|[\']|[\-]/
-        #for(a,MYREV):!build_pass:message($${a} ;;;;;)
-        #for(a,MYREV): MYREV~= s/([a-z]*)|([A-Z]*)/
-        #MYREV ~= s/[a-Z].+/
-        #!build_pass:message(REV: $${MYREV})
-        #!build_pass:message(REV2: $${MYREV2})
-        #!build_pass:message(REV3: $${MYREV3})
-	CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
-		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compila√ßao
-                #system(sed -r s/Revision\ [0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revis„o do AboutLayout
-                !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-		TARGET= e-foto_Release_$${MYDATA} #altera o nome do executavel
-		}else{
-			!build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-			TARGET= e-foto_Debug_$${MYDATA}
-		}
+      # MYDATA2 = $${MYDATA}
+      # MYDATA2 ~= s/^[0-9]{2}/ #Retira os dois primeiros digitos do Ano na data, ou seja, yy.mm.dd
+
+        MYREV = $$system(subWCrev ../)
+        MYREV = $$find(MYREV, [0-9]{2}.)
+        MYREV ~= s/\D/# Pega tudo menos numeros(Non-digit)
+        MYREV ~= s/^[0-9]{2}/  #Elimina os dois primeiros digitos
+
+        #!build_pass:message(MYREV:A$${MYREV}A)
+       # TEXT =sed -r s/Revision\s[0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui
+        #!build_pass:message($${TEXT})
+        CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
+                system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza o data do BUILD AboutLayout.ui com a data da compila√ßao
+                system(sed -r s/Revision\" \"[0-9]{2}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revis„o do AboutLayout
+                !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso sÛ aparecer· na saida do compilador(Compile Output)
+                }else{
+                        !build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso sÛ aparecer· na saida do compilador(Compile Output)
+                }
 }
 
 #'usebackq' para poder usar aspas duplas(").
