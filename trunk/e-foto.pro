@@ -298,13 +298,10 @@ win32 {
 
         MYREV = $$system(subWCrev ../)
         MYREV = $$find(MYREV, [0-9]{2}.)
-        MYREV ~= s/\D/# Pega tudo menos numeros(Non-digit)
+		MYREV ~= s/\D/					# Pega tudo menos numeros(Non-digit)
         MYREV ~= s/^[0-9]{2}/  #Elimina os dois primeiros digitos
 
-        #!build_pass:message(MYREV:A$${MYREV}A)
-       # TEXT =sed -r s/Revision\s[0-9]{2}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui
-        #!build_pass:message($${TEXT})
-        CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
+		CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
                 system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
                 system(sed -r s/Revision\" \"[0-9]{2}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revisão do AboutLayout
                 !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)

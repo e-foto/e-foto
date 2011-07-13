@@ -32,8 +32,8 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 
 void ImageForm::fillvalues(string values)
 {
-    cleanForm();
-    EDomElement ede(values);
+	this->cleanForm();
+	EDomElement ede(values);
 	bool ok;
 
 	tagXml = "<image key=\"";
@@ -69,8 +69,7 @@ void ImageForm::fillvalues(string values)
 	//flightIDSpin->setValue( (QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str())).toInt(&ok)
 						   //);
 
-	resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok)
-							  );
+	resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok) );
 
 	if (ede.elementByTagName("GNSS").getContent() == "")
 	{
@@ -172,7 +171,8 @@ string ImageForm::getvalues()
 	}
     auxStream << "</image>\n";
     xmlString = auxStream.str();
-    return xmlString;
+	this->cleanForm();
+	return xmlString;
 }
 
 void ImageForm:: setReadOnly(bool state)
@@ -278,7 +278,7 @@ void ImageForm::setEOAvailable(bool state)
 void ImageForm::cleanForm()
 {
     imageIDLine->clear();
-    resolutionSpin->clear();
+	resolutionSpin->setSpecialValueText("N/A");
     flightIdComboBox->setCurrentIndex(0);
     //ground coordinates
     eDoubleSpinBox_2->clear();

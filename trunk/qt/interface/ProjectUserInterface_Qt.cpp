@@ -1503,7 +1503,7 @@ void ProjectUserInterface_Qt::newImage()
 	text += "<fileName></fileName>\n";
 	text += "<filePath>.</filePath>\n";
 	text += "<flightId></flightId>\n";
-	text += "<resolution uom=\"#dpi\">600</resolution>\n";
+	text += "<resolution uom=\"#dpi\">N/A</resolution>\n";
 	text += "</image>";
 
 	imageForm.fillvalues(text);
