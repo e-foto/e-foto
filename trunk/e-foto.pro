@@ -291,8 +291,12 @@ unix {
 
 win32 {
         MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
-        MYDATA ~= s/[a-z]/
-        MYDATA =$$join(MYDATA,.)
+        MYDATA ~= s/\D/
+        MYYEAR  =$$member(MYDATA,0).
+        MYMONTH =$$member(MYDATA,1).
+        MYDAY   =$$member(MYDATA,2)
+        MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
+
       # MYDATA2 = $${MYDATA}
       # MYDATA2 ~= s/^[0-9]{2}/ #Retira os dois primeiros digitos do Ano na data, ou seja, yy.mm.dd
 
@@ -301,6 +305,7 @@ win32 {
 		MYREV ~= s/\D/					# Pega tudo menos numeros(Non-digit)
         MYREV ~= s/^[0-9]{2}/  #Elimina os dois primeiros digitos
 
+        !build_pass:message(data:$${MYDATA}) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)
 		CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
                 system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
                 system(sed -r s/Revision\" \"[0-9]{2}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revisão do AboutLayout
