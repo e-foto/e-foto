@@ -11,7 +11,7 @@
 class BundleAdjustment
 {
 
-/* Matriz de configuraÃ§Ã£o do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃ©trico, valor 0, ponto nÃ£o
+/* Matriz de configuraÄ‚Â§Ä‚Åo do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÄ‚Å trico, valor 0, ponto nÄ‚Åo
 contido na imagem. linha = imagem, coluna = ponto.
 */
 /*int blc[3][6];
@@ -19,24 +19,24 @@ Matrix BLC;*/
 
 protected:
 
-// Matrizes de coordenadas dos pontos(E N H) e de pixel(Col Lin), na seguinte conformaçao, para cada coordenada ENH:
+// Matrizes de coordenadas dos pontos(E N H) e de pixel(Col Lin), na seguinte conformaÃ§ao, para cada coordenada ENH:
 //      #  --> pontos de controle
-//      -1 --> pontos fotogramétricos
+//      -1 --> pontos fotogramÃ©tricos
 //           p1   p2    p3    p4 ....
 //      img1 -1    #    -1    #
 //      img2 -1    #    -1    #
 //       .
 //       .
     Matrix X, Y, Z , Col, Lin;
-/* Se fosse passado matrizes(deque<Matrix>) de pontos, a BundleAdjustment teria que saber que ponto está em que imagem,
+/* Se fosse passado matrizes(deque<Matrix>) de pontos, a BundleAdjustment teria que saber que ponto estÃ¡ em que imagem,
 *  e qual a coordenada em pixel daquele ponto para aquela imagem, ou seja, acesso ao xml,
-*  portanto é dever da PTManager criar as matrizes X Y Z Col Lin
+*  portanto Ã© dever da PTManager criar as matrizes X Y Z Col Lin
 */
 
-    // Matriz blc: essa matriz é responsavel por dizer se ponto está na imagem, se é de controle ou fotogramétrico
-//  0 --> ponto não está na imagem
+    // Matriz blc: essa matriz Ã© responsavel por dizer se ponto estÃ¡ na imagem, se Ã© de controle ou fotogramÃ©trico
+//  0 --> ponto nÄƒo estÃ¡ na imagem
 //  1 --> ponto de controle
-// -1 --> ponto fotogramétrico
+// -1 --> ponto fotogramÃ©trico
 //           p1   p2    p3    p4 ....
 //      img1 -1    0    0     1
 //      img2 -1    1    -1    1
@@ -45,7 +45,7 @@ protected:
 //       .
     Matrix blc;
 
-// Matriz ois: onde cada linha tem os seis parametros de uma imagem: com a seguinte conformação
+// Matriz ois: onde cada linha tem os seis parametros de uma imagem: com a seguinte conformaÃ§Äƒo
 //
 //           a0   a1   a2    b0    b1    b2
 //      img1 #    #    #     #     #     #
@@ -54,11 +54,11 @@ protected:
 //       .
     Matrix ois;
     double c;     // Distancia focal calibrada
-    int fliDir;   // Marca fiducial com a direçao de vôo
+    int fliDir;   // Marca fiducial com a direÃ§ao de vÃ´o
     //Coordenadas do ponto principal das imagens em milimetros
     double xsi0,eta0;
 
-    Matrix AFP; //Matriz com resultados finais
+	Matrix afp; //Matriz com resultados finais
 /* Variaveis auxiliares */
     Matrix Lba;
 
@@ -69,14 +69,16 @@ protected:
     Matrix JacCtrl;
     Matrix JacFoto;
 
+    bool done;
 
 public:
+    BundleAdjustment();
     BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC,double focalCalibrada, int flightDirection);
-    //pnts[0]são os pontos de controle e pnts[1] são os pontos fotogrametricos;
+    //pnts[0]sÄƒo os pontos de controle e pnts[1] sÄƒo os pontos fotogrametricos;
     int* pointsToAdjustament();
     int numberOfEquations(int images, int pnts);
 
-    void calculate();
+    bool calculate();
 
     double* digitalToAnalog(Matrix Xa,int linha, int coluna,int indexImg);
     int* analogToDigital(Matrix Xa, double xsi, double eta, int indexImg);
@@ -85,13 +87,13 @@ public:
     void imprime(Matrix mat, char *id);
 
 // metodos para fototri
-	Matrix createB(int numImages);
-// monta a matrix das observações
+
+// monta a matrix das observaÃ§Å‘es
 	Matrix createL(Matrix X2, Matrix Y2);
 
     void createcXsicEta();
 
-//funções para a montagem das matrizes para o ajustamento
+//funÃ§Å‘es para a montagem das matrizes para o ajustamento
     Matrix createMl(Matrix C,Matrix L);
     Matrix createM2();
 
@@ -101,9 +103,9 @@ public:
     Matrix getm1(Matrix M1, Matrix L1);
     Matrix getm2(Matrix M2,Matrix L1);
 
-    //Calculo das aproximações para as coordenadas planimetricas dos pontos fotogrametricos
+    //Calculo das aproximaÃ§Å‘es para as coordenadas planimetricas dos pontos fotogrametricos
     Matrix getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf);
-    //Calculo das aproximações para as coordenadas Z dos pontos fotogrametricos
+    //Calculo das aproximaÃ§Å‘es para as coordenadas Z dos pontos fotogrametricos
     double getZpf();
 
     Matrix getPTA(Matrix PAf,int imageId);
@@ -111,10 +113,10 @@ public:
 //chute dos parametros iniciais
     double getKappaZero(Matrix pta,int imageId);
 
-//matrix das aproximações iniciais O
+//matrix das aproximaÃ§Å‘es iniciais O
     Matrix getInicialsValues(Matrix pfa);
 
-//retorna a matriz com os indices dos 1ºs pontos de controle de cada imagem
+//retorna a matriz com os indices dos 1ÅŸs pontos de controle de cada imagem
     Matrix firstPntCtrl();
 //calcula o denominador da escala media da imagem
     double getMediaScale(int imageId);
@@ -126,25 +128,30 @@ public:
     //passagem dos valores calculados para a matrix Z das coordenadas de terreno
     Matrix getPZ(double zpf);
 
-    /** Cálculo dos parâmetros de transformação entre o espaço imagem e o espaço objeto
+    /** CÃ¡lculo dos parÃ¢metros de transformaÃ§Äƒo entre o espaÃ§o imagem e o espaÃ§o objeto
  para todas as imagens do bloco*/
     Matrix getPAf(Matrix M11,Matrix M12, Matrix M22,Matrix m1, Matrix m2);
 
 
-/** Matriz de rotações
+/** Matriz de rotaÃ§Å‘es
   */
     //Seta a matrix baseado nos angulos
     Matrix setRot(double omega, double phi, double kappa);
     //Devolve a matrix previamente setada
     Matrix getRot();
 
-    //Seta as equações baseado nos parametros passados
+    //Seta as equaÃ§Å‘es baseado nos parametros passados
     Matrix setEquationsColinear(Matrix parameters);
-    //Devolve coordenadas(xsi, eta) pelas equações colinearidades previamente setada
+    //Devolve coordenadas(xsi, eta) pelas equaÃ§Å‘es colinearidades previamente setada
     Matrix getCoordinatesEqColin(double X, double Y, double Z);
     Matrix getJacobianaControl(Matrix parameters,double X, double Y, double Z);
     Matrix getJacobianaFotogrametric(Matrix parameters,double X, double Y, double Z);
     Matrix getA1();
+
+
+
+	void setAFP(Matrix aFP);
+	Matrix getAFP();
 };
 
 #endif // BUNDLEADJUSTMENT_H

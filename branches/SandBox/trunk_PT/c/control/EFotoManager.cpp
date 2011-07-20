@@ -702,14 +702,17 @@ bool EFotoManager::execPT()
 {
 	bool result;
 	nextModule = 2;
-        deque<Image*> ptImages;
-        deque<InteriorOrientation*> ptOis;
+	EDomElement images(getXml("images"));
+	int numimgs=images.children().size();
 
-        for (int i=1; i<=3/*images.size()*/; i++)
+	// A foto tri so pode ser disparada quando todas as ois forem feitas;
+	deque<Image*> ptImages;
+	deque<InteriorOrientation*> ptOis;
+		for (int i=1; i<=numimgs; i++)
         {
             ptImages.push_back(instanceImage(i));
         }
-        for (int i=1; i<=3/*IOs.size()*/; i++)
+		for (int i=1; i<=numimgs; i++)
         {
             ptOis.push_back(instanceIO(i));
         }
@@ -720,15 +723,15 @@ bool EFotoManager::execPT()
         //qDebug("\nQtd Sensor: %d",ftImages.size());
         //qDebug("Qtd Ois: %d",ftOis.size());
 
-        Sensor *ptSensor = instanceSensor(ptImages.at(1)->getSensorId());
-        Flight *ptFlight = instanceFlight(ptImages.at(1)->getFlightId());
+		Sensor *ptSensor = instanceSensor(ptImages.at(0)->getSensorId());
+		Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
         Terrain* ptTerrain = instanceTerrain();
         ptFlight->setTerrain(ptTerrain);
 
         fotoTri = new PTManager(this,ptImages,ptOis,ptSensor,ptFlight);
 
         result = fotoTri->exec();
-        printf("passou da execPT");
+        qDebug("EfotoManager passou da execPT\n");
 	return result;
 }
 

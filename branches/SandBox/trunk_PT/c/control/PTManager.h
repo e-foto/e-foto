@@ -3,7 +3,8 @@
 
 #include "EObject.h"
 #include <deque>
-
+#include "BundleAdjustment.h"
+#include "Matrix.h"
 
 class PTUserInterface;
 class EFotoManager;
@@ -18,31 +19,54 @@ class InteriorOrientation;
 //FotoTri Manager precisa conhecer: os pontos, as imagens, alguns dados do sensor e os parametros da OI de todas as imagens
 class PTManager
 {
+protected:
 	bool started;
 	bool status;
         EFotoManager* efotoManager;
-    PTUserInterface* myInterface;
+        PTUserInterface* myInterface;
 
-        Sensor *mySensor;
+		Sensor *mySensor;
         Flight *myFlight;
         deque<Image*> listImages;
         deque<Point*> listPoints;
         deque<InteriorOrientation*> listOis;
 
+		Matrix AFP;
+
 public:
     PTManager();
-        //como as imagens contens os pontos n„o È necess·rio passar os pontos
-        PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight);
+    //como as imagens contens os pontos n√£o √© necess√°rio passar os pontos
+    PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight);
     ~PTManager();
 
     string getImagefile(int imageId);
 
-
-
     void setInterface(PTUserInterface* newInterface);
     PTUserInterface* getInterface();
-	bool exec();
-	void returnProject();
+    bool calculatePT();
+    bool exec();
+    void returnProject();
+    void setMatrixAFP(Matrix afp);
+    Matrix getMatrixAFP();
+
+
+protected:
+	Matrix Col,Lin,ENH, BLC;
+
+	void setENH();
+	void setColLin();
+	void setBLC();
+
+	Matrix getCol();
+    Matrix getLin();
+
+	Matrix getBLC();
+    Matrix getX();
+    Matrix getY();
+    Matrix getZ();
+
+	Matrix getOis();
+
 
 };
 
