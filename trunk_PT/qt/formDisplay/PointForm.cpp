@@ -63,8 +63,7 @@ void PointForm::fillvalues(string values)
 		sigmaSelector->setCurrentIndex(1);
 		sigmaSelector->blockSignals(false);
 	}
-	else
-		;//sigmaSelector->setCurrentIndex(0);
+		//sigmaSelector->setCurrentIndex(0);
 
 	//sigmaController->fillValues(ede.elementByTagName("sigma").toString());
 	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));

@@ -325,6 +325,7 @@ Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
  * This method displays on the default output stream the contents of the current matrix.
  * @bug Won't work under Windows XP OS.
  */
+/*
 void Matrix::show()
 {
     cout << "Matrix " << nrows << 'x' << ncols << endl;
@@ -338,6 +339,28 @@ void Matrix::show()
     }
     cout.unsetf(ios::fixed | ios::scientific);
     cout << endl;
+}*/
+
+void Matrix::show(char mode, int precision)
+{
+	cout << "Matrix " << nrows << 'x' << ncols << endl;
+	if (mode=='f')
+		cout.setf(ios::fixed);
+	if (mode=='e')
+		cout.setf(ios::scientific);
+	for (unsigned int i = 1; i <= nrows; i++)
+	{
+		for (unsigned int j = 1; j <= ncols; j++)
+			//printf("%10.1f ", get((unsigned int) i, (unsigned int) j));
+			cout << setw(15) << setprecision(precision) <<  get((unsigned int) i, (unsigned int) j) << " ";
+		cout << endl;
+	}
+	if (mode=='f')
+		cout.unsetf(ios::fixed);
+	if (mode=='e')
+		cout.unsetf(ios::scientific);
+
+	cout << endl;
 }
 
 /**

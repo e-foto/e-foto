@@ -1,4 +1,5 @@
 #include "BundleAdjustment.h"
+#include <sys/time.h>
 /*
 pontos de controle
   omega       phi         kappa       X0      Y0      Z0
@@ -18,27 +19,56 @@ AFP
     0                   0               0       680931.229759843    7465299.79667213    68.8406838744
     0                   0               0           -0.0035636276       0.6617979107    -2.4392336491
 
-15 itera��es e 4 mudan�a de pesos
+15 iterações e 4 mudança de pesos
 */
+//#include "qdebug.h"
+#define N3 8
+BundleAdjustment::BundleAdjustment()
+{
+	Matrix dummy(N3,N3);
+	for (int i=1; i<=N3; i++)
+		for (int j=1; j<=N3; j++)
+			dummy.set(i,j,i*N3+j);
+
+	setAFP(dummy);
+
+//	for (int j=1;j<=dummy.getCols();j++)
+//		qDebug("%f",dummy.get(1,j));
+
+
+	c     = 0.0;
+	fliDir= 0.0;
+}
+
 
 BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC, double focalCalibrada, int flightDirection)
 {
-    X=x;
-    Y=y;
-    Z=z;
-    Col= col;
-    Lin= lin;
+    X   = x;
+    Y   = y;
+    Z   = z;
+    Col = col;
+    Lin = lin;
     ois   = OIs;
     blc   = BLC;
     c     = focalCalibrada;
     fliDir= flightDirection;
 
+/*
+	Matrix N1(120,240);
+	Matrix N2(240,120);
+
+	timeval tim;
+	gettimeofday(&tim, NULL);
+	double t1=tim.tv_sec+(tim.tv_usec/1000000.0);
+		 N2*N1;
+	gettimeofday(&tim, NULL);
+	double t2=tim.tv_sec+(tim.tv_usec/1000000.0);
+	printf("%.6lf seconds elapsed\n", t2-t1);
+*/
 
     /* c=153.528;*/
 
-    /*  xsi0=-0.063;
-    eta0=-0.037;
-
+/*
     L[1][1]=1848;  C[1][1]=5133;
     L[1][2]=2135;  C[1][2]=9734;
     L[1][3]=10016; C[1][3]=8328;
@@ -52,11 +82,11 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
     L[2][5]=4402;  C[2][5]=3246;
 */
 
-    /*Matrizes das coordenadas dos pontos do bloco. As imagens estão representadas nas linhas e os pontos nas
-    colunas, onde o número da linha é o mesmo do identificador da imagem e o da coluna, o mesmo do identificador do ponto.
-    Valor -1 indica ponto fotogramétrico, e valor 0 indica ponto não contido na imagem.
+    /*Matrizes das coordenadas dos pontos do bloco. As imagens estÃ£o representadas nas linhas e os pontos nas
+    colunas, onde o nÃºmero da linha Ã© o mesmo do identificador da imagem e o da coluna, o mesmo do identificador do ponto.
+    Valor -1 indica ponto fotogramÃ©trico, e valor 0 indica ponto nÃ£o contido na imagem.
     */
-    //espa�o Objeto
+    //espaço Objeto
 
     /*
     X={{    0    ,     0     ,     0     ,     0     ,    0    ,    0    },
@@ -72,7 +102,7 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
        {  0  , 18.475, 10.725, 11.738, -1 , -1 }
       };*/
 
-    /* Matriz de configuração do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramétrico, valor 0, ponto não
+    /* Matriz de configuraÃ§Ã£o do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃ©trico, valor 0, ponto nÃ£o
     contido na imagem. linha = imagem, coluna = ponto.
     */
     /*
@@ -85,7 +115,7 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
   //  double matrixXA16[6]={-118.9025073577284400,0.021001571200814785,-0.00013043219281323558,116.7800380235976800,-0.000121134075620769601,-0.0209922789399759820};
   //  double matrixXA17[6]={-118.7921178522728400,0.0210042583045778,-0.0000211860692717,116.0421313171841900,-0.0000157955917203,-0.0209949671357402};
 
-    createcXsicEta();
+	//createcXsicEta();
 
 
     xsi0 = 0;
@@ -93,12 +123,14 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
 
 }
 
-void BundleAdjustment::calculate()
+bool BundleAdjustment::calculate()
 {
-/*
-    Matrix L1=createL(blc,X,Y);
+
+
+
+	Matrix L1=createL(X,Y);
     Matrix mm1=createMl(Col,Lin);
-    Matrix mm2=createM2(blc);
+    Matrix mm2=createM2();
 
     Matrix m11=getM11(mm1);
     Matrix m12=getM12(mm1,mm2);
@@ -123,12 +155,15 @@ void BundleAdjustment::calculate()
 
     //printf("KappaZero1 = %f \n",getKappaZero(getPTA(paf,1),1));
     //printf("KappaZero2= %f \n",getKappaZero(getPTA(paf,2),2));
-    //Matrix O=getInicialsValues(paf);
-	imprime(getInicialsValues(paf),"O");*/
+    Matrix O=getInicialsValues(paf);
+    setAFP(O);
+
+    return true;
+        //imprime(getInicialsValues(paf),"O");*/
 }
 
 
-//pnts[1]s�o os pontos de controle e pnts[2] s�o os pontos fotogrametricos;
+//pnts[1]são os pontos de controle e pnts[2] são os pontos fotogrametricos;
 int* BundleAdjustment::pointsToAdjustament()
 {
     //imprime(newBLC,"BLC");
@@ -197,28 +232,6 @@ void BundleAdjustment::createcXsicEta()
     //imprime(cEta,"CETA");
 }
 
-Matrix BundleAdjustment::createB(int numImages)
-{
-    int *points=pointsToAdjustament();
-    int pnts=points[0];
-    int pntCntr=points[1];
-    int pntFtg=points[2];
-
-    //printf("pnts = %d pc = %d pf = %d",pnts,pntCntr, pntFtg);
-
-    int colunas=6*numImages+2*pntFtg;
-    int linhas=1;
-    //calculo das dimensoes da matrix B
-    // for (int )
-
-    createM2();
-    //create
-
-    Matrix result(linhas,colunas);
-
-
-    return result;
-}
 //Monta a matrix de todos os pontos para imagem
 Matrix BundleAdjustment::createMl(Matrix C, Matrix L)
 {
@@ -245,9 +258,10 @@ Matrix BundleAdjustment::createMl(Matrix C, Matrix L)
             auxc1.set(1,3,ana[0]);
             auxc2=auxc1;
             auxc1.putMatrix(auxc2,2,4);
-            auxc2=auxc2|empilhada;
+			printf ("createMl");
+			auxc2=auxc1|empilhada;
         }
-        //p�e as matrizes diagonalmente em rela�ao a outra
+        //põe as matrizes diagonalmente em relaçao a outra
         empilhada.putMatrix(total,total.getRows()+1,6*(i-1)+1);
     }
     //imprime(total,"M1");
@@ -459,7 +473,7 @@ Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
 
 Matrix BundleAdjustment::firstPntCtrl()
 {
-    //matrix com os indices dos 1� pontos de controle
+    //matrix com os indices dos 1º pontos de controle
     int rows=blc.getRows();
     int cols=blc.getCols();
     Matrix pc(1,rows-1);
@@ -672,7 +686,7 @@ int* BundleAdjustment::analogToDigital(Matrix Xa, double xsi, double eta, int in
     b2 = Xa.get(1,indexImg);
 
     int *result= (int*)malloc(2*sizeof(int));
-    //Id�ia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+    //Idéia do Rafael Aguiar para contornar erro de cast (somar 0.1)
     result[0]=(int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 );
     result[1]=(int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 );
     return result;
@@ -758,6 +772,66 @@ Matrix BundleAdjustment::getA1()
     Matrix A1(1,3);
 
     return A1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void BundleAdjustment::setAFP(Matrix aFP)
+{
+	afp=aFP;
+}
+
+Matrix BundleAdjustment::getAFP()
+{
+	imprime(afp, "BA:afp");
+	return afp;
 }
 
 

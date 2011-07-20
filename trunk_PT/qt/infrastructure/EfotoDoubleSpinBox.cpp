@@ -17,8 +17,9 @@ bool EfotoDoubleSpinBox::eventFilter(QObject *obj, QEvent *evt)
 		return true;
 	}else
 	{
-		QDoubleSpinBox::eventFilter(obj,evt);
+		return QDoubleSpinBox::eventFilter(obj,evt);
 	}
+
 
 
 }

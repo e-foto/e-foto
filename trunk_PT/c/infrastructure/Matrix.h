@@ -76,7 +76,7 @@ public:
     string getUnit();
     Matrix sel(const unsigned int FirstRow, const unsigned int LastRow,
                const unsigned int FirstCol, const unsigned int LastCol);
-    void show();
+	void show(char mode='f',int precision=4);
     double highestValue() const;
     double lowestValue() const;
 
