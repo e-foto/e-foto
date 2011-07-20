@@ -34,6 +34,9 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(calculatePT()));
 
 	setWindowState(this->windowState() | Qt::WindowMaximized);
+	actionMove->setChecked(true);
+	actionView_Report->setEnabled(false);
+
 	qApp->processEvents();
 	init();
 }
@@ -45,7 +48,7 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 void PTUserInterface_Qt::init()
 {
 	QWidget* areaImageLeftWidget = new QWidget();
-        QWidget* areaImageRightWidget = new QWidget();
+   //     QWidget* areaImageRightWidget = new QWidget();
 
         //QLabel* areaImageLeftWidget = new QLabel("imagem esquerda");
         //QLabel* areaImageRightWidget = new QLabel("imagem direita");
@@ -53,21 +56,22 @@ void PTUserInterface_Qt::init()
 	QGridLayout* gridLayout = new QGridLayout();
 
 	myImageLeftView = new ImageView(areaImageLeftWidget);
-        myImageRightView = new ImageView(areaImageRightWidget);
+        //myImageRightView = new ImageView(areaImageRightWidget);
 
-    tableImageLeft = new TableIOEOWidget();
-    tableImageRight = new TableIOEOWidget();
+        tableImageLeft = new TableIOEOWidget();
+ //   tableImageRight = new TableIOEOWidget();
 
 	QVBoxLayout *verticalLeftLayout= new QVBoxLayout();
 	verticalLeftLayout->addWidget(myImageLeftView,Qt::AlignCenter);
 	verticalLeftLayout->addWidget(tableImageLeft);
 
+        /*
 	QVBoxLayout *verticalRightLayout= new QVBoxLayout();
 	verticalRightLayout->addWidget(myImageRightView,Qt::AlignCenter);
 	verticalRightLayout->addWidget(tableImageRight);
-
+*/
 	gridLayout->addLayout(verticalLeftLayout,0,0,1,1);
-	gridLayout->addLayout(verticalRightLayout,0,1,1,1);
+//	gridLayout->addLayout(verticalRightLayout,0,1,1,1);
 
 	centralwidget->setLayout(gridLayout);
 
@@ -77,7 +81,7 @@ void PTUserInterface_Qt::init()
 
         //connect(myImageRightView, SIGNAL(mousePressed()), this, SLOT(informState()));
         //connect(myImageRightView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
-        connect(myImageRightView, SIGNAL(changed()), this, SLOT(makeRepaint()));
+      //  connect(myImageRightView, SIGNAL(changed()), this, SLOT(makeRepaint()));
 
 
 
@@ -101,23 +105,23 @@ bool PTUserInterface_Qt::exec()
 
 	LoadingScreen::instance().close();
 	qApp->processEvents();
-        myImageLeftView->loadImage(QString(ptManager->getImagefile(0).c_str()));
+        //myImageLeftView->loadImage(QString(ptManager->getImagefile(0).c_str()));
 
 	return true;
 }
 
 void PTUserInterface_Qt::makeRepaint()
 {
-    if (sender()->objectName()==myImageLeftView->objectName())
-    {
+   // if (sender()->objectName()==myImageLeftView->objectName())
+    //{
         myImageLeftView->repaint();
-        tableImageLeft->repaint();
-    }
-    if (sender()->objectName()==myImageRightView->objectName())
-    {
+      /*  tableImageLeft->repaint();
+    //}
+    //if (sender()->objectName()==myImageRightView->objectName())
+    //{
         myImageRightView->repaint();
         tableImageRight->repaint();
-    }
+    //}*/
 }
 /*
 void PTUserInterface_Qt::activeSetMode()
@@ -142,10 +146,26 @@ void PTUserInterface_Qt::fitView()
 
 void PTUserInterface_Qt::viewReport()
 {
-    qDebug("Vendo Report");
+	//qDebug("Vendo Report");
+    QWidget *afpView = new QWidget();
+    QHBoxLayout *horizontalLayout= new QHBoxLayout();
+	TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',4);
+
+    horizontalLayout->addWidget(afpTable);
+
+    afpView->setLayout(horizontalLayout);
+
+    afpView->show();
+
 }
 
-void PTUserInterface_Qt::calculatePT()
+bool PTUserInterface_Qt::calculatePT()
 {
-    qDebug("Calculando FotoTri");
+	//qDebug("Calculando FotoTri");
+
+	bool result = ptManager->calculatePT();
+    viewReport();
+	actionView_Report->setEnabled(true);
+    return result;
+
 }

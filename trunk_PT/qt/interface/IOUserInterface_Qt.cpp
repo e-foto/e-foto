@@ -144,7 +144,7 @@ bool IOUserInterface_Qt::measureMark(int id, int col, int lin)
 
 bool IOUserInterface_Qt::calculateIO()
 {
-	bool result = manager->calculateIO();
+        bool result = manager->calculateIO();
 	viewReport();
 	actionView_report->setEnabled(true);
 	return result;

@@ -17,25 +17,25 @@ protected:
     ~PTUserInterface_Qt();
 
     ImageView *myImageLeftView;
-    ImageView *myImageRightView;
+   // ImageView *myImageRightView;
     TableIOEOWidget *tableImageLeft;
     TableIOEOWidget *tableImageRight;
     PTManager *ptManager;
     void closeEvent(QCloseEvent *event);
 
 private:
-	void init();
+    void init();
 
 public:
     static PTUserInterface_Qt* instance(PTManager* ptManager);
-	bool exec();
+    bool exec();
 
 public slots:
     void activePanMode();
     void activeZoomMode();
     void fitView();
     void viewReport();
-    void calculatePT();
+    bool calculatePT();
     void makeRepaint();
 
 };

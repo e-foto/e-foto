@@ -19,13 +19,13 @@ TableIOEOWidget::TableIOEOWidget(QWidget *parent):QTableWidget(parent)
     horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
     verticalHeader()->setResizeMode(QHeaderView::Stretch);
 }
-TableIOEOWidget::TableIOEOWidget(Matrix values, QWidget *parent):QTableWidget(parent)
+TableIOEOWidget::TableIOEOWidget(Matrix values,char mode,int precision, QWidget *parent):QTableWidget(parent)
 {
-    setTableData(values);
+	setTableData(values,mode,precision);
     connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     enableAutoCopy();
-    setMode('e');
-    setDecimals(6);
+	setMode(mode);
+	setDecimals(precision);
     setTableData(values,getMode(),getDecimals());
 
     horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
@@ -155,14 +155,17 @@ bool TableIOEOWidget::eventFilter(QObject *obj, QEvent *evento)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evento);
         keyPressEvent(keyEvent);
         return true;
-    }
-    if (evento->type()==QEvent::FocusIn)
+	}else if (evento->type()==QEvent::FocusIn)
     {
         QFocusEvent *focusInEvento = static_cast<QFocusEvent *>(evento);
         focusInEvent(focusInEvento);
         //emit focusReceived();
         return true;
-    }
+	}else
+	{
+		return QTableWidget::eventFilter(obj,evento);
+	}
+
     /*
     if (evento->type()==QEvent::MouseButtonRelease)
     {
