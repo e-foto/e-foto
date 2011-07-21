@@ -68,6 +68,7 @@ bool PTManager::exec()
 		myFlight->setSensor(mySensor);
 		for (int i=0; i<listImages.size(); i++)
 		{
+                        mySensor->putImage(listImages.at(i));
 			listImages.at(i)->setSensor(mySensor);
 			listImages.at(i)->setFlight(myFlight);
 			listImages.at(i)->setIO(listOis.at(i));
@@ -86,6 +87,8 @@ void PTManager::returnProject()
 {
     //if (efotoManager->is("EFotoManager"))
 	efotoManager->reloadProject();
+
+        //delete(pt);
     //else
 	//  qDebug("nao e efotomanager");
 }
@@ -113,7 +116,7 @@ bool PTManager::calculatePT()
 	Matrix zero2(1,cols);
 //	getOis();
 
-	BundleAdjustment* pt= new BundleAdjustment(zero.putMatrix(getX(),2,2),zero.putMatrix(getY(),2,2),zero.putMatrix(getZ(),2,2),zero.putMatrix(getCol(),2,2),zero.putMatrix(getLin(),2,2),zero.putMatrix(getOis(),2,2),zero2.putMatrix(getBLC(),2,2),mySensor->getFocalDistance(),1);
+        pt= new BundleAdjustment(zero.putMatrix(getX(),2,2),zero.putMatrix(getY(),2,2),zero.putMatrix(getZ(),2,2),zero.putMatrix(getCol(),2,2),zero.putMatrix(getLin(),2,2),getOis(),zero2.putMatrix(getBLC(),2,2),mySensor,1);
 
     bool result=pt->calculate();
 
@@ -342,8 +345,41 @@ Matrix PTManager::getOis()
 	}
 	//ois.show();
 	return ois;
-
-
-
-
 }
+
+
+Matrix PTManager::getMatrixA1()
+{
+    return pt->A1;
+}
+
+Matrix PTManager::getMatrixA2()
+{
+    return pt->A2;
+}
+
+Matrix PTManager::getMatrixN11()
+{
+    return pt->N11;
+}
+
+Matrix PTManager::getMatrixN12()
+{
+    return pt->N12;
+}
+
+Matrix PTManager::getMatrixN22()
+{
+    return pt->N22;
+}
+
+Matrix PTManager::getMatrixL0()
+{
+    return pt->L0;
+}
+
+Matrix PTManager::getMatrixLb()
+{
+    return pt->Lb;
+}
+

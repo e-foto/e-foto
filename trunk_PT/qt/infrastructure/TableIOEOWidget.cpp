@@ -21,11 +21,11 @@ TableIOEOWidget::TableIOEOWidget(QWidget *parent):QTableWidget(parent)
 }
 TableIOEOWidget::TableIOEOWidget(Matrix values,char mode,int precision, QWidget *parent):QTableWidget(parent)
 {
-	setTableData(values,mode,precision);
+    //setTableData(values,mode,precision);
     connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     enableAutoCopy();
-	setMode(mode);
-	setDecimals(precision);
+    setMode(mode);
+    setDecimals(precision);
     setTableData(values,getMode(),getDecimals());
 
     horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
@@ -52,6 +52,7 @@ TableIOEOWidget::TableIOEOWidget(Matrix values,char mode,int precision, QWidget 
 
     //connect(this, SIGNAL())
     //connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    //resizeTable();
 }
 
 void TableIOEOWidget::setTableData(Matrix values,char mode,int precision)
@@ -102,13 +103,13 @@ void TableIOEOWidget::resizeTable()
     int widlinhas=lineWidth()*(columnCount()-1);
     int heilinhas=lineWidth()*(rowCount()-1);
 
-	resizeRowsToContents();   //novo
+    resizeRowsToContents();   //novo
     resizeColumnsToContents();//novo
 
-	if (columnCount()==1)
-		setFixedSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+    if (columnCount()==1)
+        setBaseSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
     else
-        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+        setBaseSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
 }
 
 void TableIOEOWidget::setVerticalHeadersLabelsHtml(QStringList list)

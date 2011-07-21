@@ -14,20 +14,6 @@ using namespace std;
 
 int main( int argc, char ** argv )
 {
-
-	Matrix N1(780,5790);
-	Matrix N2(5790,780);
-
-	timeval tim;
-	gettimeofday(&tim, NULL);
-	double t1=tim.tv_sec+(tim.tv_usec/1000000.0);
-	for(int i=0;i<4;i++)
-		N2*N1;
-	gettimeofday(&tim, NULL);
-	double t2=tim.tv_sec+(tim.tv_usec/1000000.0);
-	printf("%.6lf seconds elapsed\n", t2-t1);
-
-
     QApplication efoto(argc, argv);
 	efoto.setStyle("plastique");
 	efoto.quitOnLastWindowClosed();

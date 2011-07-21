@@ -33,7 +33,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
     connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(calculatePT()));
 
-	setWindowState(this->windowState() | Qt::WindowMaximized);
+        //setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 	actionView_Report->setEnabled(false);
 
@@ -149,14 +149,66 @@ void PTUserInterface_Qt::viewReport()
 	//qDebug("Vendo Report");
     QWidget *afpView = new QWidget();
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
-	TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',4);
+    TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',6);
 
+/*Matar isso tão cedo quanto possivel
+    QWidget *a1View = new QWidget();
+    TableIOEOWidget *A1Table=  new TableIOEOWidget(ptManager->getMatrixA1(),'f',6);
+    QHBoxLayout *a1horizontalLayout= new QHBoxLayout();
+
+
+    QWidget *a2View = new QWidget();
+    TableIOEOWidget *A2Table=  new TableIOEOWidget(ptManager->getMatrixA2(),'f',6);
+    QHBoxLayout *a2horizontalLayout= new QHBoxLayout();
+
+
+    QWidget *l0View = new QWidget();
+    TableIOEOWidget *L0Table=  new TableIOEOWidget(ptManager->getMatrixL0(),'f',6);
+    QHBoxLayout *l0horizontalLayout= new QHBoxLayout();
+
+    QWidget *lbView = new QWidget();
+    TableIOEOWidget *LbTable=  new TableIOEOWidget(ptManager->getMatrixLb(),'f',6);
+    QHBoxLayout *lbhorizontalLayout= new QHBoxLayout();
+
+    QWidget *n11View = new QWidget();
+    TableIOEOWidget *N11Table=  new TableIOEOWidget(ptManager->getMatrixN11(),'f',6);
+    QHBoxLayout *n11horizontalLayout= new QHBoxLayout();
+
+
+    QWidget *n12View = new QWidget();
+    TableIOEOWidget *N12Table=  new TableIOEOWidget(ptManager->getMatrixN12(),'f',6);
+    QHBoxLayout *n12horizontalLayout= new QHBoxLayout();
+
+
+    QWidget *n22View = new QWidget();
+    TableIOEOWidget *N22Table=  new TableIOEOWidget(ptManager->getMatrixN22(),'f',6);
+    QHBoxLayout *n22horizontalLayout= new QHBoxLayout();
+
+
+
+a1horizontalLayout->addWidget(A1Table);
+a2horizontalLayout->addWidget(A2Table);
+l0horizontalLayout->addWidget(L0Table);
+lbhorizontalLayout->addWidget(LbTable);
+n11horizontalLayout->addWidget(N11Table);
+n22horizontalLayout->addWidget(N22Table);
+
+
+
+    a1View->setLayout(a1horizontalLayout);
+    a2View->setLayout(a2horizontalLayout);
+    l0View->setLayout(l0horizontalLayout);
+    lbView->setLayout(lbhorizontalLayout);
+
+
+    a1View->show();
+    a2View->show();
+    l0View->show();
+    lbView->show();
+*/
     horizontalLayout->addWidget(afpTable);
-
     afpView->setLayout(horizontalLayout);
-
     afpView->show();
-
 }
 
 bool PTUserInterface_Qt::calculatePT()

@@ -266,7 +266,7 @@ double Matrix::get(const unsigned int i, const unsigned int j) const
     if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
         return _Mat[(i-1) * ncols + j - 1];
     else
-        cerr << "i, j values out of the range of the matrix." << endl;
+        cerr << "Get i, j values out of the range of the matrix." << intToString(i) << intToString(j) << endl;
     return 0;
 }
 
@@ -410,10 +410,11 @@ double Matrix::lowestValue() const
  */
 void Matrix::set(unsigned int i, unsigned int j, double value) const
 {
+
     if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
         _Mat[(i-1) * ncols + j - 1]=value;
     else
-        cerr << "i, j values out of the range of the matrix." << endl;
+        cerr << "Set i, j values out of the range of the matrix." << intToString(i) << intToString(j) <<endl;
 }
 
 /**
@@ -1074,7 +1075,7 @@ Matrix& Matrix::putMatrix(Matrix put, int lin, int col)
 {
     if (lin<=this->getRows() || col<=this->getCols())
     {
-        printf("sobrescrevendo matrix original\n");
+       // printf("sobrescrevendo matrix original\n");
     }
 
     int newRows=max(lin-1+put.getRows(),this->getRows());
