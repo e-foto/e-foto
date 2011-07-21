@@ -2,16 +2,20 @@
 #define BUNDLEADJUSTMENT_H
 
 #include "Matrix.h"
-#include "stdlib.h"
+#include <stdlib.h>
 #include <deque>
 #include <math.h>
+
+#include "Sensor.h"
+#include "Image.h"
+#include "Point.h"
 //#include ""
 
 //using namespace std;
 class BundleAdjustment
 {
 
-/* Matriz de configuraĂ§ĂŁo do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramĂŠtrico, valor 0, ponto nĂŁo
+/* Matriz de configuraĂ§ĂŁo do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramĂ� trico, valor 0, ponto nĂŁo
 contido na imagem. linha = imagem, coluna = ponto.
 */
 /*int blc[3][6];
@@ -69,11 +73,12 @@ protected:
     Matrix JacCtrl;
     Matrix JacFoto;
 
+    Sensor* sensor;
     bool done;
 
 public:
     BundleAdjustment();
-    BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC,double focalCalibrada, int flightDirection);
+    BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC, Sensor * sensor, int flightDirection);
     //pnts[0]săo os pontos de controle e pnts[1] săo os pontos fotogrametricos;
     int* pointsToAdjustament();
     int numberOfEquations(int images, int pnts);
@@ -89,12 +94,12 @@ public:
 // metodos para fototri
 
 // monta a matrix das observaçőes
-	Matrix createL(Matrix X2, Matrix Y2);
+    Matrix createL(Matrix X2, Matrix Y2);
 
     void createcXsicEta();
 
 //funçőes para a montagem das matrizes para o ajustamento
-    Matrix createMl(Matrix C,Matrix L);
+    Matrix createMl();
     Matrix createM2();
 
     Matrix getM11(Matrix M1);
@@ -132,26 +137,90 @@ public:
  para todas as imagens do bloco*/
     Matrix getPAf(Matrix M11,Matrix M12, Matrix M22,Matrix m1, Matrix m2);
 
+    void setAFP(Matrix aFP);
+    Matrix getAFP();
 
-/** Matriz de rotaçőes
+    Matrix A1,A2,P,Lb,L0,x1,x2;
+    Matrix matAdjust;
+ /** Matriz de rotaçőes
   */
+    /**retirar*/
+    Matrix N11,N12,N22;
+    Matrix gN11();
+    Matrix gN22();
+    Matrix gN12();
+/**/
+protected:
     //Seta a matrix baseado nos angulos
-    Matrix setRot(double omega, double phi, double kappa);
+    void setRot(double omega, double phi, double kappa);
+    double r11,r12,r13,r21,r22,r23,r31,r32,r33;
+
     //Devolve a matrix previamente setada
     Matrix getRot();
 
     //Seta as equaçőes baseado nos parametros passados
-    Matrix setEquationsColinear(Matrix parameters);
+   // void setEquationsColinear(Matrix parameters);
     //Devolve coordenadas(xsi, eta) pelas equaçőes colinearidades previamente setada
-    Matrix getCoordinatesEqColin(double X, double Y, double Z);
-    Matrix getJacobianaControl(Matrix parameters,double X, double Y, double Z);
-    Matrix getJacobianaFotogrametric(Matrix parameters,double X, double Y, double Z);
-    Matrix getA1();
+    Matrix getCoordinatesEqColin(double X, double Y, double Z, int imageId);
+    Matrix getJacobianaControl(double X, double Y, double Z,int imageId);
+    Matrix getJacobianaFotogrametric(double X, double Y, double Z, int imageId);
+
+    void createA1();
+    void createA2();
+    void createLb();
+    void createL0();
+
+    Matrix getN11();
+    Matrix getN22();
+    Matrix getN12();
+    Matrix getn1(Matrix L1);
+    Matrix getn2(Matrix L1);
+
+    void setP(Matrix p);
+    Matrix getP();
+
+    Matrix invertN11(Matrix N11);
+    Matrix invertN22(Matrix N22);
+    Matrix getx1(Matrix N11,Matrix N12,Matrix N22,Matrix n1,Matrix n2);
+    Matrix getx2(Matrix N12, Matrix N22, Matrix n2, Matrix x1);
+
+    void setx1(Matrix x1);
+    void setx2(Matrix x2);
+
+
+    double getdOmegax1(int imageId);
+    double getdPhix1(int imageId);
+    double getdKappax1(int imageId);
+    double getdXx1(int imageId);
+    double getdYx1(int imageId);
+    double getdZx1(int imageId);
+
+    double getOmegaAdjus(int imageId);
+    double getPhiAdjus(int imageId);
+    double getKappaAdjus(int imageId);
+    double getXAdjus(int imageId);
+    double getYAdjus(int imageId);
+    double getZAdjus(int imageId);
+
+
+    double getdXx2(int fotogrPointId);
+    double getdYx2(int fotogrPointId);
+    double getdZx2(int fotogrPointId);
+
+    void updateMatAdjust();
+    void updateCoordFotog();
+    bool isConverged();
+
+    int numberCntrlPnts(int imageId);
+    int numberFtgPnts(int imageId);
 
 
 
-	void setAFP(Matrix aFP);
-	Matrix getAFP();
+   /* Em Teste*/
+    Matrix imageToMatrix(Image* img);
+    Matrix imagesToMatrixes(deque<Image*> listImgs);
+    void putPointsInImage(Image *img,deque<Point*> listPoints);
+
 };
 
 #endif // BUNDLEADJUSTMENT_H

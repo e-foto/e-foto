@@ -252,7 +252,6 @@ RESOURCES += resource.qrc
 ABOUTDIR = qt/infrastructure/
 unix { 
     MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
-    
     # MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
     MYREV = $$system(svnversion)
     MYREV ~= s/[a-z]|[A-Z]/

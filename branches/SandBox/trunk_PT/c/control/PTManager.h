@@ -31,7 +31,8 @@ protected:
         deque<Point*> listPoints;
         deque<InteriorOrientation*> listOis;
 
-		Matrix AFP;
+        BundleAdjustment* pt;
+        Matrix AFP;
 
 public:
     PTManager();
@@ -48,6 +49,15 @@ public:
     void returnProject();
     void setMatrixAFP(Matrix afp);
     Matrix getMatrixAFP();
+
+    /**serao inutilizados*/
+    Matrix getMatrixA1();
+    Matrix getMatrixA2();
+    Matrix getMatrixN11();
+    Matrix getMatrixN12();
+    Matrix getMatrixN22();
+    Matrix getMatrixL0();
+    Matrix getMatrixLb();
 
 
 protected:
