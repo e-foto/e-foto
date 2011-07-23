@@ -7,6 +7,7 @@
 #include "Image.h"
 #include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
+#include "Dms.h"
 
 //#include <qdebug.h>
 
@@ -112,16 +113,15 @@ bool PTManager::calculatePT()
 
 	//getY().show();
 	//getZ().show();
-	Matrix zero(1,cols);
-	Matrix zero2(1,cols);
-//	getOis();
 
-        pt= new BundleAdjustment(zero.putMatrix(getX(),2,2),zero.putMatrix(getY(),2,2),zero.putMatrix(getZ(),2,2),zero.putMatrix(getCol(),2,2),zero.putMatrix(getLin(),2,2),getOis(),zero2.putMatrix(getBLC(),2,2),mySensor,1);
+        //getOis();
 
-    bool result=pt->calculate();
+        pt= new BundleAdjustment(getX(),getY(),getZ(),getCol(),getLin(),getOis(),getBLC(),mySensor,1);
 
-	//setMatrixAFP(pt->getAFP());
-	setMatrixAFP(pt->getAFP());
+        bool result=pt->calculate();
+    //bool result = true;
+
+        setMatrixAFP(pt->getAFP());
 
 	//qDebug("Saiu do calculate PTManager");
     return result;
@@ -129,9 +129,8 @@ bool PTManager::calculatePT()
 
 void PTManager::setMatrixAFP(Matrix afp)
 {
-	AFP=afp;
+    AFP=afp;
 }
-
 
 Matrix PTManager::getMatrixAFP()
 {

@@ -61,8 +61,15 @@ protected:
     int fliDir;   // Marca fiducial com a direçao de vôo
     //Coordenadas do ponto principal das imagens em milimetros
     double xsi0,eta0;
+    int numEquations;
+    int numUnknows;
+    int numImages;
+    int numPoints;
+    int numControlPoints;
+    int numFotogrametricPoints;
 
-	Matrix afp; //Matriz com resultados finais
+
+    Matrix afp; //Matriz com resultados finais
 /* Variaveis auxiliares */
     Matrix Lba;
 
@@ -80,8 +87,8 @@ public:
     BundleAdjustment();
     BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC, Sensor * sensor, int flightDirection);
     //pnts[0]săo os pontos de controle e pnts[1] săo os pontos fotogrametricos;
-    int* pointsToAdjustament();
-    int numberOfEquations(int images, int pnts);
+    void pointsToAdjustament();
+    int numberOfEquations();
 
     bool calculate();
 
@@ -119,7 +126,7 @@ public:
     double getKappaZero(Matrix pta,int imageId);
 
 //matrix das aproximaçőes iniciais O
-    Matrix getInicialsValues(Matrix pfa);
+    void getInicialsValues(Matrix pfa);
 
 //retorna a matriz com os indices dos 1şs pontos de controle de cada imagem
     Matrix firstPntCtrl();
@@ -140,7 +147,7 @@ public:
     void setAFP(Matrix aFP);
     Matrix getAFP();
 
-    Matrix A1,A2,P,Lb,L0,x1,x2;
+    Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
     Matrix matAdjust;
  /** Matriz de rotaçőes
   */
@@ -176,8 +183,8 @@ protected:
     Matrix getn1(Matrix L1);
     Matrix getn2(Matrix L1);
 
-    void setP(Matrix p);
-    Matrix getP();
+    void setPeso(Matrix p);
+    Matrix getPeso();
 
     Matrix invertN11(Matrix N11);
     Matrix invertN22(Matrix N22);
@@ -214,6 +221,16 @@ protected:
     int numberCntrlPnts(int imageId);
     int numberFtgPnts(int imageId);
 
+
+    Matrix getCoordColinearTerrain(double xsi, double eta, double z, int imageId);
+    Matrix calculateResiduos();
+    bool testResiduo();
+    void calculatePeso();
+    Matrix getMatRes();
+
+    //Retorna os residuos nas coordenadas no ponto 'pointId' da imagem 'imageId'
+    double getRx(int imageId, int pointId);
+    double getRy(int imageId, int pointId);
 
 
    /* Em Teste*/

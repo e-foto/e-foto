@@ -149,9 +149,8 @@ void PTUserInterface_Qt::viewReport()
 	//qDebug("Vendo Report");
     QWidget *afpView = new QWidget();
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
-    TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',6);
-
-/*Matar isso tão cedo quanto possivel
+    TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',4);
+    /*Matar isso tão cedo quanto possivel
     QWidget *a1View = new QWidget();
     TableIOEOWidget *A1Table=  new TableIOEOWidget(ptManager->getMatrixA1(),'f',6);
     QHBoxLayout *a1horizontalLayout= new QHBoxLayout();
