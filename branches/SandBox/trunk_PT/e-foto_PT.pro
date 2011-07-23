@@ -63,7 +63,7 @@ HEADERS += EFotoManager.h \
     IOManager.h \
     ProjectManager.h \
     SRManager.h \
-    PTManager.h \# c/imageDisplay/
+    PTManager.h \ # c/imageDisplay/
     AbstractSWidget.h \
     GLMethods.h \
     SExhibition.h \
@@ -142,7 +142,11 @@ HEADERS += EFotoManager.h \
     IOUserInterface_Qt.h \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
-    PTUserInterface_Qt.h
+    PTUserInterface_Qt.h \
+    c/infrastructure/Dms.h \
+    c/infrastructure/ConvertionsSystems.h \
+    c/infrastructure/GeoSystem.h \
+    qt/infrastructure/DmsEdit.h
 
 # qt/formDisplay/
 FORMS += FlightLayout.ui \
@@ -190,7 +194,7 @@ SOURCES += EFotoManager.cpp \
     IOUserInterface.cpp \
     ProjectUserInterface.cpp \
     SRUserInterface.cpp \
-    PTUserInterface.cpp \   # photogrammetry/
+    PTUserInterface.cpp \ # photogrammetry/
     AnalogFiductialMark.cpp \
     AnalogImageSpaceCoordinate.cpp \
     BundleAdjustment.cpp \
@@ -245,13 +249,18 @@ SOURCES += EFotoManager.cpp \
     main.cpp \
     ProjectUserInterface_Qt.cpp \
     SRUserInterface_Qt.cpp \
-    PTUserInterface_Qt.cpp
+    PTUserInterface_Qt.cpp \
+    c/infrastructure/Dms.cpp \
+    c/infrastructure/ConvertionsSystems.cpp \
+    c/infrastructure/GeoSystem.cpp \
+    qt/infrastructure/DmsEdit.cpp
 
 # qt/resource/
 RESOURCES += resource.qrc
 ABOUTDIR = qt/infrastructure/
 unix { 
     MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+    
     # MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
     MYREV = $$system(svnversion)
     MYREV ~= s/[a-z]|[A-Z]/
@@ -268,7 +277,7 @@ win32 {
     MYYEAR = $$member(MYDATA,0).
     MYMONTH = $$member(MYDATA,1).
     MYDAY = $$member(MYDATA,2)
-    MYDATA =$$MYYEAR$$MYMONTH$$MYDAY
+    MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
     
     # MYDATA2 = $${MYDATA}
     # MYDATA2 ~= s/^[0-9]{3}/ #Retira os três primeiros digitos do Ano na data, ou seja, yy.mm.dd
@@ -276,13 +285,12 @@ win32 {
     MYREV = $$find(MYREV, [0-9]{3}.)
     MYREV ~= s/\D/ # Pega tudo menos numeros(Non-digit)
     MYREV ~= s/^[0-9]{3}/ # Elimina os três primeiros digitos
-        !build_pass:message(rev: $${MYREV})
-        !build_pass:message(data: $${MYDATA})
+    !build_pass:message(rev: $${MYREV})
+    !build_pass:message(data: $${MYDATA})
     CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-		system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
-		system(sed -r s/Revision\" \"[0-9]{3}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza a revisï¿½o do AboutLayout
+        system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+        system(sed -r s/Revision\" \"[0-9]{3}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza a revisï¿½o do AboutLayout
         !build_pass:message(Release build! WIN32)# Essa linha pode ser suprimida, isso sï¿½ aparecerï¿½ na saida do compilador(Compile Output)
-    }else{
-        !build_pass:message(Debug build! WIN32)# Essa linha pode ser suprimida, isso sï¿½ aparecerï¿½ na saida do compilador(Compile Output)
     }
+    else:!build_pass:message(Debug build! WIN32)# Essa linha pode ser suprimida, isso sï¿½ aparecerï¿½ na saida do compilador(Compile Output)
 }

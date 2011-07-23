@@ -1,4 +1,5 @@
 #include "BundleAdjustment.h"
+#include "Dms.h";
 /*
 pontos de controle
   omega       phi         kappa       X0      Y0      Z0
@@ -23,21 +24,19 @@ AFP
 #include <qdebug.h>
 
 #define N3 8
-#define ITERATIONS 10
+#define MAXITERATIONS 10
 #define CONVERGENCY 0.001
+#define MAXRESIDUO 0.0001
+
 BundleAdjustment::BundleAdjustment()
 {
 	Matrix dummy(N3,N3);
 	for (int i=1; i<=N3; i++)
 		for (int j=1; j<=N3; j++)
 			dummy.set(i,j,i*N3+j);
-
 	setAFP(dummy);
-
 //	for (int j=1;j<=dummy.getCols();j++)
 //		qDebug("%f",dummy.get(1,j));
-
-
 	c     = 0.0;
 	fliDir= 0.0;
 }
@@ -45,21 +44,23 @@ BundleAdjustment::BundleAdjustment()
 
 BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC, Sensor *sensor, int flightDirection)
 {
+    blc   = BLC;
     X   = x;
     Y   = y;
     Z   = z;
     Col = col;
     Lin = lin;
     ois   = OIs;
-    blc   = BLC;
-
     c     = sensor->getFocalDistance();
     fliDir= flightDirection;
+
 
     this->sensor=sensor;
     xsi0 = sensor->getPrincipalPointCoordinates().getXi();
     eta0 = sensor->getPrincipalPointCoordinates().getEta();
-
+    pointsToAdjustament();
+    numEquations=numberOfEquations();
+    numUnknows=6*numImages+3*numFotogrametricPoints;
 
     //ois.show();
 /*
@@ -124,14 +125,15 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
   //  double matrixXA16[6]={-118.9025073577284400,0.021001571200814785,-0.00013043219281323558,116.7800380235976800,-0.000121134075620769601,-0.0209922789399759820};
   //  double matrixXA17[6]={-118.7921178522728400,0.0210042583045778,-0.0000211860692717,116.0421313171841900,-0.0000157955917203,-0.0209949671357402};
 
-        createcXsicEta();
 
-
+createcXsicEta();
 
 }
 
 bool BundleAdjustment::calculate()
 {
+
+    /*Chute inicial*/
     Matrix L1=createL(X,Y);
     Matrix mm1=createMl();
     Matrix mm2=createM2();
@@ -142,98 +144,113 @@ bool BundleAdjustment::calculate()
     Matrix m2=getm2(mm2,L1);
 
     Matrix paf=getPAf(m11,m12,m22,m1,m2);
+   // paf.show();
     Matrix xypf=getXYpf(m22,m2,m12,paf);
-
     double zpf=getZpf();
-
     X=getPX(xypf);
     Y=getPY(xypf);
     Z=getPZ(zpf);
+    getInicialsValues(paf);
 
-    //X.show();
-    //Y.show();
-    //Z.show();
+    //matAdjust.show();
+    //matAdjust=
+    /**/
+/*
+    X.show();
+    Y.show();
+    Z.show();
+
+    matAdjust.show();
+    /**Calculo dos parametros*/
 
 
-    matAdjust=getInicialsValues(paf);
-//    matAdjust.show();
-
-    int cont=0;
-    bool converged=false;
-    while(cont<ITERATIONS && !converged)
+    P.identity(numEquations);
+    bool resOk=false;
+    int changePesos=0;
+    Matrix res1;
+    while(!resOk)
     {
-        createA1();
-        //printf()
-        createA2();
-        Matrix p;
-        p.identity(A1.getRows());
-        createL0();
-        createLb();
-        Matrix l=Lb-L0;
-        setP(p);
-        Matrix n11=getN11();
-        Matrix n12=getN12();
-        Matrix n22=getN22();
-        Matrix n1=getn1(l);
-        Matrix n2=getn2(l);
+        int iterations=0;
+        bool converged=false;
+        while(iterations<MAXITERATIONS && !converged)
+        {
+            createA1();
+            createA2();
+            //P.identity(A1.getRows());
+            createL0();
+            createLb();
+            Matrix l=Lb-L0;
 
-        setx1(getx1(n11,n12,n22,n1,n2));
-        setx2(getx2(n12,n22,n2,x1));
+            Matrix n11=getN11();
+            Matrix n12=getN12();
+            Matrix n22=getN22();
+            Matrix n1=getn1(l);
+            Matrix n2=getn2(l);
+            setx1(getx1(n11,n12,n22,n1,n2));
+            setx2(getx2(n12,n22,n2,x1));
+            updateMatAdjust();
+            updateCoordFotog();
+            converged=isConverged();
+            iterations++;
+        }
 
-        updateMatAdjust();
-        updateCoordFotog();
-        converged=isConverged();
-        //testconvergency();
-//matAdjust.set();
-        cont++;
+        printf("numero de iteracoes %d\n",iterations);
+        imprime(matAdjust,"MatAdjust");
+        calculateResiduos();
+
+        if (changePesos==0)
+        {
+            res1.resize(matRes.getRows(),1);
+            //printf("dimensao de res:%d,%d",res1.getRows(),res1.getCols());
+        }
+
+        matRes=matRes-res1;
+        calculatePeso();
+        resOk=testResiduo();
+
+        res1=matRes;
+        changePesos++;
     }
-    printf("Numero de iteracoes: %d",cont);
+
+    printf("Numero de troca de pesos: %d\n",changePesos);/**/
+    imprime(matRes,"RESIDUOS");
     setAFP(matAdjust);
+
     return true;
 }
 
 
 //pnts[1]sÃ£o os pontos de controle e pnts[2] sÃ£o os pontos fotogrametricos;
-int* BundleAdjustment::pointsToAdjustament()
+void BundleAdjustment::pointsToAdjustament()
 {
-    //imprime(newBLC,"BLC");
-    int linhas=blc.getRows();
-    int colunas= blc.getCols();
-    int *aux=(int*)malloc(colunas*sizeof(int));
-    int *pnts=(int*)malloc(3*sizeof(int));
+    numImages=blc.getRows();
+    numPoints=blc.getCols();
 
-    pnts[0]=0;
-    pnts[1]=0;
-    pnts[2]=0;
-
-    for (int i=0;i<colunas;i++)
+    int *aux=(int*)malloc(numPoints*sizeof(int));
+    numControlPoints=0;
+    numFotogrametricPoints=0;
+    for (int i=0;i<numPoints;i++)
         aux[i]=0;
 
-    for (int i=1;i<=linhas;i++)
-    {
-        for (int j=1;j<=colunas;j++)
-        {
+    for (int i=1;i<=numImages;i++)
+        for (int j=1;j<=numPoints;j++)
             if (blc.getInt(i,j)!=0)
                 aux[j]=blc.getInt(i,j);
-        }
-    }
-    for (int i=1;i<=colunas;i++)
+
+    for (int i=1;i<=numPoints;i++)
     {
         if (aux[i]==1)
-            pnts[1]++;
+            numControlPoints++;
         if( aux[i]==-1)
-            pnts[2]++;
+            numFotogrametricPoints++;
     }
-
-    pnts[0]=pnts[1]+pnts[2];
-    return pnts;
 }
 
-int BundleAdjustment::numberOfEquations(int images, int pnts)
+int BundleAdjustment::numberOfEquations()
 {
     int n=0;
-    for (int i=0;i<images;i++)
-        for (int j=0;j<pnts;j++)
+    for (int i=0;i<numImages;i++)
+        for (int j=0;j<numPoints;j++)
             n+=2;
     return n;
 }
@@ -241,23 +258,20 @@ int BundleAdjustment::numberOfEquations(int images, int pnts)
 
 void BundleAdjustment::createcXsicEta()
 {
-    int rows=blc.getRows();
-    int cols=blc.getCols();
-
-    Matrix cEta(rows,cols);
-    Matrix cXsi(rows,cols);
+    Matrix ceta(numImages,numPoints);
+    Matrix cxsi(numImages,numPoints);
 
     double *ana;
-    for (int i=1;i<rows;i++)
-        for(int j=cols;j>1;j--)
-            if(blc.getInt(i+1,j)!=0)
+    for (int i=1;i<=numImages;i++)
+        for(int j=1;j<=numPoints;j++)
+            if(blc.getInt(i,j)!=0)
             {
-        ana=digitalToAnalog(ois,Lin.getInt(i+1,j),Col.getInt(i+1,j),i);
-        cEta.set(i+1,j,ana[1]);
-        cXsi.set(i+1,j,ana[0]);
-    }
-    this->cXsi=cXsi;
-    this->cEta=cEta;
+                ana=digitalToAnalog(ois,Lin.getInt(i,j),Col.getInt(i,j),i);
+                ceta.set(i,j,ana[1]);
+                cxsi.set(i,j,ana[0]);
+            }
+    this->cXsi=cxsi;
+    this->cEta=ceta;
    // cXsi.show();
     //cEta.show();
 }
@@ -265,23 +279,20 @@ void BundleAdjustment::createcXsicEta()
 //Monta a matrix de todos os pontos para imagem
 Matrix BundleAdjustment::createMl()
 {
-    int rows= Col.getRows();
-    int cols= Col.getCols();
-
     Matrix total(0,6);
     double *ana;
 
     //itera por todas as imagens
-    for (int i=1;i<rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
         //Matriz de apenas uma imagem
         Matrix empilhada(0,6);
         //itera por todos os pontos
-        for(int j=cols;j>1;j--)
+        for(int j=numPoints;j>=1;j--)
         {
             Matrix auxc1(1,3);
             Matrix auxc2(1,3);
-            ana=digitalToAnalog(ois,Lin.getInt(i+1,j),Col.getInt(i+1,j),i);
+            ana=digitalToAnalog(ois,Lin.getInt(i,j),Col.getInt(i,j),i);
             auxc1.set(1,1,1);
             auxc1.set(1,2,ana[1]);
             auxc1.set(1,3,ana[0]);
@@ -292,7 +303,6 @@ Matrix BundleAdjustment::createMl()
            // auxc1.show();
             //auxc2.show();
             //empilhada.show();
-            //printf ("createMl");
         }
         //pÃµe as matrizes diagonalmente em relaÃ§ao a outra
         total.putMatrix(empilhada,total.getRows()+1,6*(i-1)+1);
@@ -304,14 +314,11 @@ Matrix BundleAdjustment::createMl()
 
 Matrix BundleAdjustment::createL(Matrix X2, Matrix Y2)
 {
-    int rows=blc.getRows();
-    int cols=blc.getCols();
-
-    Matrix L2(2*(rows-1)*(cols-1),1);
+    Matrix L2(2*numImages*numPoints,1);
     int k=1;
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
-        for(int j=1;j<=cols;j++)
+        for(int j=1;j<=numPoints;j++)
         {
             if(blc.getInt(i,j)==-1)
             {
@@ -331,17 +338,17 @@ Matrix BundleAdjustment::createL(Matrix X2, Matrix Y2)
 
 Matrix BundleAdjustment::createM2()
 {
-    int rows=blc.getRows();
-    int cols=blc.getCols();
+   // int rows=blc.getRows();
+   // int cols=blc.getCols();
 
-    Matrix M2aux(2*(rows-1)*(cols-1),2*pointsToAdjustament()[2]);
+    Matrix M2aux(2*numImages*numPoints,2*numFotogrametricPoints);
     int pntctr=1;
 
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
         int pntftg=1;
 
-        for(int j=1;j<=cols;j++)
+        for(int j=1;j<=numPoints;j++)
         {
             if (blc.getInt(i,j)==-1)
             {
@@ -396,13 +403,11 @@ Matrix BundleAdjustment::getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf)
 
 double BundleAdjustment::getZpf()
 {
-    int rows=blc.getRows()-1;
-    int cols=blc.getCols()-1;
     int n=0;
     double z=0;
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
-        for(int j=1;j<=cols;j++)
+        for(int j=1;j<=numPoints;j++)
         {
             if(blc.getInt(i,j)==1)
             {
@@ -418,21 +423,18 @@ double BundleAdjustment::getZpf()
 
 Matrix BundleAdjustment::getPX(Matrix xypf)
 {
-    int rows=blc.getRows();
     Matrix coord=X;
-    int *dp=pointsToAdjustament();
-    int d=dp[1];
     // imprime(X,"X");
     //  printf("ctr=%d ft=%d\n",dp[1],dp[2]);
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
-        for (int j=1;j<=dp[2]+1;j++)
+        for (int j=1;j<=numFotogrametricPoints;j++)
         {
-            if (blc.getInt(i,j+d)==-1)
+            if (blc.getInt(i,j+numControlPoints)==-1)
             {
                 //printf("If-X[%d,%d]=%f\n",i,j,X.get(i,j));
-                //          printf("i=%d\tj=%d\tj+d=%d\n",i,j,j+d);
-                coord.set(i,j+d,xypf.get((j-1)*2-1,1));
+                //printf("i=%d\tj=%d\tj+d=%d\n",i,j,j+d);
+                coord.set(i,j+numControlPoints,xypf.get((j-1)*2+1,1));
             }
         }
     }
@@ -443,21 +445,17 @@ Matrix BundleAdjustment::getPX(Matrix xypf)
 
 Matrix BundleAdjustment::getPY(Matrix xypf)
 {
-    int rows=blc.getRows();
+
     Matrix coord=Y;
-    int *dp=pointsToAdjustament();
-    int d=dp[1];
-    // imprime(X,"X");
-    //  printf("ctr=%d ft=%d\n",dp[1],dp[2]);
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
-        for (int j=1;j<=dp[2]+1;j++)
+        for (int j=1;j<=numFotogrametricPoints;j++)
         {
-            if (blc.getInt(i,j+d)==-1)
+            if (blc.getInt(i,j+numControlPoints)==-1)
             {
                 // printf("If-X[%d,%d]=%f\n",i,j,Y.get(i,j));
                 //          printf("i=%d\tj=%d\tj+d=%d\n",i,j,j+d);
-                coord.set(i,j+d,xypf.get((j-1)*2,1));
+                coord.set(i,j+numControlPoints,xypf.get((j-1)*2+2,1));
             }
         }
     }
@@ -468,21 +466,18 @@ Matrix BundleAdjustment::getPY(Matrix xypf)
 
 Matrix BundleAdjustment::getPZ(double zpf)
 {
-    int rows=blc.getRows();
     Matrix coord=Z;
-    int *dp=pointsToAdjustament();
-    int d=dp[1];
     // imprime(X,"X");
     //  printf("ctr=%d ft=%d\n",dp[1],dp[2]);
-    for (int i=1;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
-        for (int j=1;j<=dp[2]+1;j++)
+        for (int j=1;j<=numFotogrametricPoints;j++)
         {
-            if (blc.getInt(i,j+d)==-1)
+            if (blc.getInt(i,j+numControlPoints)==-1)
             {
                 //printf("If-X[%d,%d]=%f\n",i,j,Z.get(i,j));
                 //          printf("i=%d\tj=%d\tj+d=%d\n",i,j,j+d);
-                coord.set(i,j+d,zpf);
+                coord.set(i,j+numControlPoints,zpf);
             }
         }
     }
@@ -494,25 +489,23 @@ Matrix BundleAdjustment::getPZ(double zpf)
 Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
 {
     Matrix result(6,1);
-    for (int i=6*(imageId-1), j=1;i<6*(imageId);i++,j++)
-        result.set(j,1,PAf.get(i+1,1));
+    for (int i=6*(imageId-1)+1,j=1 ; i<=6*(imageId) ; i++,j++)
+        result.set(j,1,PAf.get(i,1));
+
     return result;
 }
 
 Matrix BundleAdjustment::firstPntCtrl()
 {
     //matrix com os indices dos 1Âº pontos de controle
-    int rows=blc.getRows();
-    int cols=blc.getCols();
-    Matrix pc(1,rows-1);
+    Matrix pc(1,numImages);
 
-    for (int i=2;i<=rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
         int aux=0;
-        for (int j=2;aux==0 && j<=cols;j++)
+        for (int j=1;aux==0 && j<=numPoints;j++)
             if(blc.getInt(i,j)==1)
-                aux=j-1;
-        pc.setInt(1,i-1,aux);
+               pc.setInt(++aux,i,j);
     }
 
     //imprime(BLC,"BLC");
@@ -526,41 +519,35 @@ double BundleAdjustment::getMediaScale(int imageId)
 {
     Matrix pc=firstPntCtrl();
 
-    int pnts=blc.getCols()-1;
     int count=0;
-    imageId++;
 
     double media=0.0;
     double dis=0.0;
     double Dis=0.0;
-    /*
-    Matrix pc(1,2);
-    pc.set(1,1,5);
-    pc.set(1,2,5);
-*/
-    double cxsi=cXsi.get(imageId,pc.get(1,imageId-1)+1);
-    double ceta=cEta.get(imageId,pc.get(1,imageId-1)+1);
-    double x=X.get(imageId,pc.get(1,imageId-1)+1);
-    double y=Y.get(imageId,pc.get(1,imageId-1)+1);
-    double z=Z.get(imageId,pc.get(1,imageId-1)+1);
 
-    //printf("cxsi=%f ceta=%f\n",cxsi,ceta);
+    double cxsi=cXsi.get(imageId,pc.get(1,imageId));
+    double ceta=cEta.get(imageId,pc.get(1,imageId));
+    double x=X.get(imageId,pc.get(1,imageId));
+    double y=Y.get(imageId,pc.get(1,imageId));
+    double z=Z.get(imageId,pc.get(1,imageId));
+
+   // printf("cxsi=%f ceta=%f\n",cxsi,ceta);
     //imprime(BLC,"BLC");
     // imprime(X,"X");
     // imprime(Y,"Y");
     //imprime(Z,"Z");
-    for (int j=1;j<=pnts+1;j++)
+    for (int j=1;j<=numPoints;j++)
     {
-        if(blc.getInt(imageId,j)!=0  && j!=pc.get(1,imageId-1)+1)//)
+        if(blc.getInt(imageId,j)!=0  && j!=pc.get(1,imageId))//)
         {
             dis=sqrt(pow(cxsi-cXsi.get(imageId,j),2)+pow(ceta-cEta.get(imageId,j),2));
-            // printf("i=%d j=%d\n",imageId,j);
-            // printf("sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ))",cxsi,cXsi.get(imageId,j),ceta,cEta.get(imageId,j));
-            //printf("= %f\n",dis);
+       //      printf("i=%d j=%d\n",imageId,j);
+        //     printf("sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ))",cxsi,cXsi.get(imageId,j),ceta,cEta.get(imageId,j));
+         //   printf("= %f\n",dis);
 
             Dis=sqrt(pow(x-X.get(imageId,j),2)+pow(y-Y.get(imageId,j),2)+pow(z-Z.get(imageId,j),2));
-            //printf("sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ) + ( %.3f - %.3f)^2 ))",x,X.get(imageId,j),y,Y.get(imageId,j),z,Z.get(imageId,j));
-            //printf("= %f\n",Dis);
+        //    printf("sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ) + ( %.3f - %.3f)^2 ))",x,X.get(imageId,j),y,Y.get(imageId,j),z,Z.get(imageId,j));
+         //   printf("= %f\n",Dis);
             media+=Dis/dis;
             count++;
         }
@@ -582,7 +569,7 @@ double BundleAdjustment::getKappaZero(Matrix pta,int imageId)
     int linha=sensor->setCalculationMode();
     int coluna=sensor->getImage(imageId)->getDigFidMarkAt(0).getCol();
     */
-
+    //pta.show();
 
     double mfX= pta.get(1,1) + pta.get(2,1)*coluna + pta.get(3,1)*linha;
     double mfY= pta.get(4,1) + pta.get(5,1)*coluna + pta.get(6,1)*linha;
@@ -645,27 +632,21 @@ double BundleAdjustment::getKappaZero(Matrix pta,int imageId)
 }
 
 /** omega, phi, kappa, X0, Y0, Z0)*/
-Matrix BundleAdjustment::getInicialsValues(Matrix paf)
+void BundleAdjustment::getInicialsValues(Matrix paf)
 {
-    int rows=blc.getRows();
-    Matrix result(1,6);
-    for (int i=1;i<rows;i++)
+    Matrix temp(numImages,6);
+    matAdjust=temp;
+    for (int i=1;i<=numImages;i++)
     {
         //    printf("imagens i=%d\n",i);
         Matrix pta=getPTA(paf,i);
-        Matrix O(1,6);
-        O.set(1,1,0);
-        O.set(1,2,0);
-        O.set(1,3,getKappaZero(pta,i));
-        O.set(1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
-        O.set(1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-        O.set(1,6,c*getMediaScale(i));
-        //  imprime(O,"parcial");
-        result=result|O;
-        // imprime(result,"result");
+        matAdjust.set(i,1,0);
+        matAdjust.set(i,2,0);
+        matAdjust.set(i,3,getKappaZero(pta,i));
+        matAdjust.set(i,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+        matAdjust.set(i,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+        matAdjust.set(i,6,c*getMediaScale(i));
     }
-
-    return result;
 }
 
 
@@ -783,19 +764,6 @@ void BundleAdjustment::setRot(double omega, double phi, double kappa)
     r31=sin(omega) * sin(kappa) - cos(omega) * sin(phi) * cos(kappa);
     r32=sin(omega) * cos(kappa) + cos(omega) * sin(phi) * sin(kappa);
     r33=cos(omega) * cos(phi);
-
-    Matrix ROT(3,3);
-    ROT.set(1,1,r11);
-    ROT.set(1,2,r12);
-    ROT.set(1,3,r13);
-    ROT.set(2,1,r21);
-    ROT.set(2,2,r22);
-    ROT.set(2,3,r23);
-    ROT.set(3,1,r31);
-    ROT.set(3,2,r32);
-    ROT.set(3,3,r33);
-
-    rot=ROT;
 }
 
 Matrix BundleAdjustment::getRot()
@@ -806,12 +774,12 @@ Matrix BundleAdjustment::getRot()
 Matrix BundleAdjustment::getCoordinatesEqColin(double X, double Y, double Z, int imageId)
 {
     Matrix coord(1,2);
-    double omega=matAdjust.get(imageId+1,1);
-    double phi=matAdjust.get(imageId+1,2);
-    double kappa=matAdjust.get(imageId+1,3);
-    double X0=matAdjust.get(imageId+1,4);
-    double Y0=matAdjust.get(imageId+1,5);
-    double Z0=matAdjust.get(imageId+1,6);
+    double omega=matAdjust.get(imageId,1);
+    double phi=matAdjust.get(imageId,2);
+    double kappa=matAdjust.get(imageId,3);
+    double X0=matAdjust.get(imageId,4);
+    double Y0=matAdjust.get(imageId,5);
+    double Z0=matAdjust.get(imageId,6);
 
     setRot(omega,phi,kappa);
     double xi=xsi0-c*(r11*(X-X0)+r21*(Y-Y0)+r31*(Z-Z0))/(r13*(X-X0)+r23*(Y-Y0)+r33*(Z-Z0));
@@ -827,12 +795,12 @@ Matrix BundleAdjustment::getJacobianaControl(double X, double Y, double Z, int i
 {
     Matrix JacCtrl(2,6);
 
-    double omega=matAdjust.get(imageId+1,1);
-    double phi=matAdjust.get(imageId+1,2);
-    double kappa=matAdjust.get(imageId+1,3);
-    double X0=matAdjust.get(imageId+1,4);
-    double Y0=matAdjust.get(imageId+1,5);
-    double Z0=matAdjust.get(imageId+1,6);
+    double omega=matAdjust.get(imageId,1);
+    double phi=matAdjust.get(imageId,2);
+    double kappa=matAdjust.get(imageId,3);
+    double X0=matAdjust.get(imageId,4);
+    double Y0=matAdjust.get(imageId,5);
+    double Z0=matAdjust.get(imageId,6);
 
     JacCtrl.set(1,1,c*cos(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*sin(phi));
     JacCtrl.set(1,2,-c*(-sin(kappa)*cos(omega)-cos(kappa)*sin(phi)*sin(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*cos(phi)*sin(omega));
@@ -856,12 +824,12 @@ Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
 {
     Matrix JacFoto(2,3);
 
-    double omega=matAdjust.get(imageId+1,1);
-    double phi=matAdjust.get(imageId+1,2);
-    double kappa=matAdjust.get(imageId+1,3);
-    double X0=matAdjust.get(imageId+1,4);
-    double Y0=matAdjust.get(imageId+1,5);
-    double Z0=matAdjust.get(imageId+1,6);
+    double omega=matAdjust.get(imageId,1);
+    double phi=matAdjust.get(imageId,2);
+    double kappa=matAdjust.get(imageId,3);
+    double X0=matAdjust.get(imageId,4);
+    double Y0=matAdjust.get(imageId,5);
+    double Z0=matAdjust.get(imageId,6);
 
 
     JacFoto.set(1,1,-c*cos(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*sin(phi));
@@ -874,31 +842,29 @@ Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
 
     this->JacFoto=JacFoto;
 
+    //qDebug("saiu do jacfoto");
     return JacFoto;
 }
 
 
 void BundleAdjustment::createA1()
 {
-    int rows= blc.getRows();
-    int cols= blc.getCols();
-
     Matrix total(0,6);
 
     //itera por todas as imagens
-    for (int i=1;i<rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
         //Matriz de apenas uma imagem
         Matrix empilhada(0,6);
         //itera por todos os pontos
-        for(int j=cols;j>1;j--)
+        for(int j=numPoints;j>=1;j--)
         {
             //Se o ponto estiver na imagem, sendo fotogramétrico ou não.
-            if (blc.getInt(i+1,j)!=0)
+            if (blc.getInt(i,j)!=0)
             {
-                double x=X.get(i+1,j);
-                double y=Y.get(i+1,j);
-                double z=Z.get(i+1,j);
+                double x=X.get(i,j);
+                double y=Y.get(i,j);
+                double z=Z.get(i,j);
                 //qDebug("x%d: %f\ty%d: %f\tz%d: %f\t",j,x,j,y,j,z);
                 Matrix auxc2=getJacobianaControl(x,y,z,i);
                 //auxc2.show('f',6);
@@ -911,60 +877,61 @@ void BundleAdjustment::createA1()
     }
     //imprime(total,"M1");
     A1=total;
+   // A1.show();
 }
 
 void BundleAdjustment::createA2()
 {
-    int rows= blc.getRows();
-    int cols= blc.getCols();
-    int pf=pointsToAdjustament()[2];
-    Matrix total(0,3*pf);
+    Matrix total(0,3*numFotogrametricPoints);
     //itera por todas as imagens
-    for (int i=1;i<rows;i++)
+    for (int i=1;i<=numImages;i++)
     {
         //Matriz de apenas uma imagem
-        Matrix empilhada(0,3*pf);
+        Matrix empilhada(0,3*numFotogrametricPoints);
         int npc=numberCntrlPnts(i);
         int npf=0;
         //itera por todos os pontos
-        for(int j=1;j<=cols;j++)
+        for(int j=1;j<=numPoints;j++)
         {
             //Se o ponto for fotogramétrico.
-            if (blc.getInt(i+1,j)==-1)
+            if (blc.getInt(i,j)==-1)
             {
                 npf++;
-                double x=X.get(i+1,j);
-                double y=Y.get(i+1,j);
-                double z=Z.get(i+1,j);
+                double x=X.get(i,j);
+                double y=Y.get(i,j);
+                double z=Z.get(i,j);
+
                 Matrix auxc2=getJacobianaFotogrametric(x,y,z,i);
-                empilhada.putMatrix(auxc2,2*(npc+npf)-1,3*(j-npc-2)+1);
+                int k=2*(npc+npf)-1;
+                int l=3*(j-numControlPoints-1)+1;
+               // qDebug("colocar em %d,%d",k,l);
+                empilhada.putMatrix(auxc2,k,l);
             }
         }
-        //empilhada.show();
+       // empilhada.show();
         total=total|empilhada;
     }
     A2=total;
+   // A2.show();
 
 }
 
 void BundleAdjustment::createLb()
 {
     Matrix lb(0,1);//2*(cXsi.getCols()-1),1);
-
-    int numImages=blc.getRows()-1;
-    int numPnts=blc.getCols()-1;
     for (int i=1;i<=numImages;i++)
-        for(int j=1;j<=numPnts;j++)
+        for(int j=1;j<=numPoints;j++)
         {
             Matrix temp(2,1);
             // se o ponto está na imagem i
-            if (blc.getInt(i+1,j+1)!=0)
+            if (blc.getInt(i,j)!=0)
             {
-                temp.set(1,1,cXsi.get(i+1,j+1));
-                temp.set(2,1,cEta.get(i+1,j+1));
+                temp.set(1,1,cXsi.get(i,j));
+                temp.set(2,1,cEta.get(i,j));
             }
             lb=lb|temp;
         }
+    //lb.show();
     Lb=lb;
 }
 
@@ -972,23 +939,23 @@ void BundleAdjustment::createL0()
 {
     Matrix l0(0,1);
 
-    int numImages=blc.getRows()-1;//2
-    int numPnts=blc.getCols()-1;//5
     //qDebug("num images: %d\tnum pontos:%d",numImages,numPnts);
     for (int i=1;i<=numImages;i++)//1 a 2
-        for(int j=1;j<=numPnts;j++)//1 a 5
+        for(int j=1;j<=numPoints;j++)//1 a 5
         {
             // se o ponto está na imagem i
-            if (blc.getInt(i+1,j+1)!=0)//2,2 a 3,6
+            if (blc.getInt(i,j)!=0)//2,2 a 3,6
             {
-                double x=X.get(i+1,j+1);
-                double y=Y.get(i+1,j+1);
-                double z=Z.get(i+1,j+1);
+                double x=X.get(i,j);
+                double y=Y.get(i,j);
+                double z=Z.get(i,j);
                 Matrix coord=getCoordinatesEqColin(x,y,z,i);
-                l0=l0|coord.transpose();
+                l0=l0|(coord.transpose());
             }
         }
     L0=l0;
+   // l0.show();
+    //qDebug("saiu do L0");
 }
 
 
@@ -1084,37 +1051,37 @@ double BundleAdjustment::getdZx2(int fotogrPointId)
 
 double BundleAdjustment::getOmegaAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,1);
+    return matAdjust.get(imageId,1);
 }
 
 double BundleAdjustment::getPhiAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,2);
+    return matAdjust.get(imageId,2);
 }
 
 double BundleAdjustment::getKappaAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,3);
+    return matAdjust.get(imageId,3);
 }
 
 double BundleAdjustment::getXAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,4);
+    return matAdjust.get(imageId,4);
 }
 
 double BundleAdjustment::getYAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,5);
+    return matAdjust.get(imageId,5);
 }
 
 double BundleAdjustment::getZAdjus(int imageId)
 {
-    return matAdjust.get(imageId+1,6);
+    return matAdjust.get(imageId,6);
 }
 
 Matrix BundleAdjustment::invertN11(Matrix N11)
 {
-    int numMatrixs=blc.getRows()-1;
+    int numMatrixs=numImages;
     Matrix N11i=N11;
     for (int i=0;i<numMatrixs;i++)
     {
@@ -1132,7 +1099,7 @@ Matrix BundleAdjustment::invertN11(Matrix N11)
 
 Matrix BundleAdjustment::invertN22(Matrix N22)
 {
-    int numMatrixs=blc.getCols()-1;
+    int numMatrixs=numPoints;
     Matrix N22i=N22;
     for (int i=0;i<numMatrixs;i++)
     {
@@ -1148,28 +1115,29 @@ Matrix BundleAdjustment::invertN22(Matrix N22)
     return N22i;
 }
 
-void BundleAdjustment::setP(Matrix p)
+void BundleAdjustment::setPeso(Matrix p)
 {
     P=p;
 }
 
-Matrix BundleAdjustment::getP()
+Matrix BundleAdjustment::getPeso()
 {
     return P;
 }
 
 void BundleAdjustment::updateMatAdjust()
 {
-    int numImages= blc.getRows()-1;
+   // int numImages= numImages;
     for (int i=1;i<=numImages;i++)
     {
-        matAdjust.set(i+1,0, getOmegaAdjus(i) + getdOmegax1(i) );//ajustando omega
-        matAdjust.set(i+1,1, getPhiAdjus(i)   + getdPhix1(i)   );//ajustando phi
-        matAdjust.set(i+1,2, getKappaAdjus(i) + getdKappax1(i) );//ajustando kappa
-        matAdjust.set(i+1,3, getXAdjus(i)     + getdXx1(i)     );//ajustando X
-        matAdjust.set(i+1,4, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
-        matAdjust.set(i+1,5, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
+        matAdjust.set(i,1, getOmegaAdjus(i) + getdOmegax1(i) );//ajustando omega
+        matAdjust.set(i,2, getPhiAdjus(i)   + getdPhix1(i)   );//ajustando phi
+        matAdjust.set(i,3, getKappaAdjus(i) + getdKappax1(i) );//ajustando kappa
+        matAdjust.set(i,4, getXAdjus(i)     + getdXx1(i)     );//ajustando X
+        matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
+        matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
     }
+   // qDebug("Saiu do updateMatAdjust");
 }
 
 void BundleAdjustment::updateCoordFotog()
@@ -1177,30 +1145,33 @@ void BundleAdjustment::updateCoordFotog()
     int numImags = blc.getRows();//3
     int numPnts  = blc.getCols();//3
 
+     //qDebug("Entrou em update coordFotog %d, %d");
     // melhorar esquema de pontos com urgencia: só é necessario conhecer os pontos uma unica vez
     // sendo fotogramétrico ou não
-    for (int i=2;i<=numImags;i++)
+    for (int i=1;i<=numImags;i++)
     {
-        for (int j=2;j<=numPnts;i++)
+        int cont=0;
+        for (int j=1;j<=numPnts;j++)
         {
             // Se é ponto fotogramétrico
-            int cont=0;
             if (blc.getInt(i,j)==-1)
             {
                 cont++;
+                //qDebug("dentro de update coordFotog :cont %d",cont);
                 X.set(i,j, X.get(i,j) + getdXx2(cont));//ajustando X fotogramétrico
                 Y.set(i,j, Y.get(i,j) + getdYx2(cont));//ajustando Y fotogramétrico
                 Z.set(i,j, Z.get(i,j) + getdZx2(cont));//ajustando Z fotogramétrico
             }
         }
     }
+   // qDebug("Saiu do updateCoordFotog");
 }
 
 bool BundleAdjustment::isConverged()
 {
     int rowsX1=x1.getRows();
     int rowsX2=x2.getRows();
-    printf("testando X1");
+   // printf("testando X1");
     for (int i=1;i<=rowsX1;i++)
     {
         if (fabs(x1.get(i,1)>CONVERGENCY))
@@ -1208,10 +1179,112 @@ bool BundleAdjustment::isConverged()
             return false;
         }
     }
-    printf("testando X2");
+    //printf("testando X2");
     for (int i=1;i<=rowsX2;i++)
     {
         if (fabs(x2.get(i,1)>CONVERGENCY))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*funções para o calculo dos residuos*/
+Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double z, int imageId)
+{
+    Matrix result(1,2);
+    setRot(getOmegaAdjus(imageId),getPhiAdjus(imageId),getKappaAdjus(imageId));
+
+    double x=getXAdjus(imageId)+(z-getZAdjus(imageId))*(r11*(xsi-xsi0)+r12*(eta-eta0)-r13*c)/(r31*(xsi-xsi0)+r32*(eta-eta0)-r33*c);
+    double y=getYAdjus(imageId)+(z-getZAdjus(imageId))*(r21*(xsi-xsi0)+r22*(eta-eta0)-r23*c)/(r31*(xsi-xsi0)+r32*(eta-eta0)-r33*c);
+   // printf("\nX: %.7f\n",x);
+
+    result.set(1,1,x);
+    result.set(1,2,y);
+    return result;
+}
+
+// Também é colocado na matriz o residuo dos pontos de controle que não estão na imagem??
+// Averiguar isso!!!!!
+Matrix BundleAdjustment::calculateResiduos()
+{
+    Matrix result(0,1);
+     printf("c= %.4f",c);
+    for (int i=1;i<=numImages;i++)
+        for (int j=1;j<=numControlPoints;j++)
+        {
+            Matrix coord=getCoordColinearTerrain(cXsi.get(i,j),cEta.get(i,j),Z.get(i,j),i);
+            double resx=X.get(i,j)-coord.get(1,1);
+            double resy=Y.get(i,j)-coord.get(1,2);
+            // reaproveitando a matrix que não será mais utilizada nesse loop;
+            coord=coord.transpose();
+            coord.set(1,1,resx);
+            coord.set(2,1,resy);
+           // printf("resx: %.6f\tresy: %.6f",coord.get(1,1),coord.get(2,1));
+
+            result=result|coord;
+        }
+    return matRes=result;
+}
+
+void BundleAdjustment::calculatePeso()
+{
+    int d=1;
+    for (int i=1;i<=numImages;i++)
+    {
+        for (int j=1;j<=numControlPoints;j++)
+        {
+            if (blc.get(i,j)==1)
+            {
+                double p=(numEquations-numUnknows)/(pow(getRx(i,j),2));
+                P.set(d,d,p);
+                d++;
+                p=(numEquations-numUnknows)/((pow(getRy(i,j),2)));
+                P.set(d,d,p);
+                d++;
+            }
+        }
+        for (int j=1;j<=numFotogrametricPoints;j++)
+        {
+            if (blc.get(i,j+numControlPoints)==-1)
+            {
+                P.set(d,d,1);
+                d++;
+                P.set(d,d,1);
+                d++;
+            }
+        }
+    }
+}
+
+Matrix BundleAdjustment::getMatRes()
+{
+    return matRes;
+}
+
+double BundleAdjustment::getRx(int imageId, int pointId)
+{
+    int base=0;
+    for (int i=1;i<imageId;i++)
+        base+=2*numberCntrlPnts(i);
+    return matRes.get(base+2*(pointId-1)+1,1);
+}
+
+double BundleAdjustment::getRy(int imageId, int pointId)
+{
+    int base=0;
+    for (int i=1;i<imageId;i++)
+        base+=2*numberCntrlPnts(i);
+    return matRes.get(base+2*(pointId-1)+2,1);
+}
+
+bool BundleAdjustment::testResiduo()
+{
+    int rowsMatRes=matRes.getRows();
+    for (int i=1;i<=rowsMatRes;i++)
+    {
+        if (fabs(matRes.get(i,1)>MAXRESIDUO))
         {
             return false;
         }
@@ -1224,23 +1297,12 @@ bool BundleAdjustment::isConverged()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 int BundleAdjustment::numberCntrlPnts(int imageId)
 {
     int num=0;
     int cols=blc.getCols();
     for (int j=1;j<=cols;j++)
-        if(blc.getInt(imageId+1,j)==1)
+        if(blc.getInt(imageId,j)==1)
             num++;
     return num;
 }
@@ -1249,7 +1311,7 @@ int BundleAdjustment::numberFtgPnts(int imageId)
     int num=0;
     int cols=blc.getCols();
     for (int j=1;j<=cols;j++)
-        if(blc.getInt(imageId+1,j)==-1)
+        if(blc.getInt(imageId,j)==-1)
             num++;
     return num;
 }
@@ -1261,12 +1323,25 @@ int BundleAdjustment::numberFtgPnts(int imageId)
 
 void BundleAdjustment::setAFP(Matrix aFP)
 {
-	afp=aFP;
+    //int rows=matAdjust.getRows()-1;
+    //Isso é feito apenas para:
+    //Exibiçao dos angulos em Graus.
+    Matrix result(matAdjust.getRows(),matAdjust.getCols());
+    for (int i=1;i<=numImages;i++)
+    {
+        result.set(i,1,Dms::radianoToDegreeDecimal(matAdjust.get(i,1)));
+        result.set(i,2,Dms::radianoToDegreeDecimal(matAdjust.get(i,2)));
+        result.set(i,3,Dms::radianoToDegreeDecimal(matAdjust.get(i,3)));
+        result.set(i,4,matAdjust.get(i,4));
+        result.set(i,5,matAdjust.get(i,5));
+        result.set(i,6,matAdjust.get(i,6));
+    }
+    afp=result;
 }
 
 Matrix BundleAdjustment::getAFP()
 {
-	imprime(afp, "BA:afp");
+//	imprime(afp, "BA:afp");
 	return afp;
 }
 
