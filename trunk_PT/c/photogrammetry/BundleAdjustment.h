@@ -126,7 +126,7 @@ public:
     double getKappaZero(Matrix pta,int imageId);
 
 //matrix das aproximaçőes iniciais O
-    void getInicialsValues(Matrix pfa);
+    void getInicialsValues();
 
 //retorna a matriz com os indices dos 1şs pontos de controle de cada imagem
     Matrix firstPntCtrl();
@@ -147,17 +147,20 @@ public:
     void setAFP(Matrix aFP);
     Matrix getAFP();
 
-    Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
+
     Matrix matAdjust;
+    Matrix getL0();
+    Matrix getLb();
+    Matrix getMatRes();
  /** Matriz de rotaçőes
   */
     /**retirar*/
     Matrix N11,N12,N22;
-    Matrix gN11();
-    Matrix gN22();
-    Matrix gN12();
-/**/
+
 protected:
+    Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
+    int totalIterations;
+
     //Seta a matrix baseado nos angulos
     void setRot(double omega, double phi, double kappa);
     double r11,r12,r13,r21,r22,r23,r31,r32,r33;
@@ -226,7 +229,6 @@ protected:
     Matrix calculateResiduos();
     bool testResiduo();
     void calculatePeso();
-    Matrix getMatRes();
 
     //Retorna os residuos nas coordenadas no ponto 'pointId' da imagem 'imageId'
     double getRx(int imageId, int pointId);

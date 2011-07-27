@@ -105,6 +105,30 @@ bool PTUserInterface_Qt::exec()
 
 	LoadingScreen::instance().close();
 	qApp->processEvents();
+
+        Matrix exhibition=ptManager->getENH();
+        QStringList headerlabels;
+        headerlabels<<"E"<<"N"<<"H"<<"Coluna"<<"Linha";
+        Matrix col=ptManager->getCol().transpose();
+        Matrix lin=ptManager->getLin().transpose();
+
+        /*
+        for (int i=0;i<exhibition.getRows();i++)
+        {
+            for (int j=0;j<exhi)
+            Matrix temp(ptManager->getColLin(i,j);
+            exhibition.putMatrix()
+        }
+        */
+        //exhibition.putMatrix(ptManager->getLin().transpose(),1,exhibition.getCols()+1);
+
+
+        tableImageLeft->setTableData(exhibition,'f',3);
+        tableImageLeft->setHorizontalHeaderLabels(headerlabels);
+        tableImageLeft->resizeTable();
+        //for(int i=0;)
+        //tableImageLeft->setVerticalHeadersLabels();
+
         //myImageLeftView->loadImage(QString(ptManager->getImagefile(0).c_str()));
 
 	return true;
@@ -147,65 +171,30 @@ void PTUserInterface_Qt::fitView()
 void PTUserInterface_Qt::viewReport()
 {
 	//qDebug("Vendo Report");
+    QStringList afpHeaderLabels;
+    // omega, phi, kappa, X0, Y0, Z0;
+    afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+
+
     QWidget *afpView = new QWidget();
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
-    TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',4);
-    /*Matar isso t�o cedo quanto possivel
-    QWidget *a1View = new QWidget();
-    TableIOEOWidget *A1Table=  new TableIOEOWidget(ptManager->getMatrixA1(),'f',6);
-    QHBoxLayout *a1horizontalLayout= new QHBoxLayout();
+    TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',5);
+    afpTable->setHorizontalHeaderLabels(afpHeaderLabels);
+    TableIOEOWidget *L0Table = new TableIOEOWidget(ptManager->getMatrixL0(),'f',5);
+    L0Table->setHorizontalHeaderLabels(QStringList("L0"));
+    TableIOEOWidget *LbTable = new TableIOEOWidget(ptManager->getMatrixLb(),'f',5);
+    LbTable->setHorizontalHeaderLabels(QStringList("Lb"));
+    TableIOEOWidget *residuosTable = new TableIOEOWidget(ptManager->getResiduos(),'f',8);
+    residuosTable->setHorizontalHeaderLabels(QStringList("Residuos"));
 
-
-    QWidget *a2View = new QWidget();
-    TableIOEOWidget *A2Table=  new TableIOEOWidget(ptManager->getMatrixA2(),'f',6);
-    QHBoxLayout *a2horizontalLayout= new QHBoxLayout();
-
-
-    QWidget *l0View = new QWidget();
-    TableIOEOWidget *L0Table=  new TableIOEOWidget(ptManager->getMatrixL0(),'f',6);
-    QHBoxLayout *l0horizontalLayout= new QHBoxLayout();
-
-    QWidget *lbView = new QWidget();
-    TableIOEOWidget *LbTable=  new TableIOEOWidget(ptManager->getMatrixLb(),'f',6);
-    QHBoxLayout *lbhorizontalLayout= new QHBoxLayout();
-
-    QWidget *n11View = new QWidget();
-    TableIOEOWidget *N11Table=  new TableIOEOWidget(ptManager->getMatrixN11(),'f',6);
-    QHBoxLayout *n11horizontalLayout= new QHBoxLayout();
-
-
-    QWidget *n12View = new QWidget();
-    TableIOEOWidget *N12Table=  new TableIOEOWidget(ptManager->getMatrixN12(),'f',6);
-    QHBoxLayout *n12horizontalLayout= new QHBoxLayout();
-
-
-    QWidget *n22View = new QWidget();
-    TableIOEOWidget *N22Table=  new TableIOEOWidget(ptManager->getMatrixN22(),'f',6);
-    QHBoxLayout *n22horizontalLayout= new QHBoxLayout();
-
-
-
-a1horizontalLayout->addWidget(A1Table);
-a2horizontalLayout->addWidget(A2Table);
-l0horizontalLayout->addWidget(L0Table);
-lbhorizontalLayout->addWidget(LbTable);
-n11horizontalLayout->addWidget(N11Table);
-n22horizontalLayout->addWidget(N22Table);
-
-
-
-    a1View->setLayout(a1horizontalLayout);
-    a2View->setLayout(a2horizontalLayout);
-    l0View->setLayout(l0horizontalLayout);
-    lbView->setLayout(lbhorizontalLayout);
-
-
-    a1View->show();
-    a2View->show();
-    l0View->show();
-    lbView->show();
-*/
     horizontalLayout->addWidget(afpTable);
+    horizontalLayout->addWidget(L0Table);
+    horizontalLayout->addWidget(LbTable);
+    horizontalLayout->addWidget(residuosTable);
+    horizontalLayout->setStretchFactor(afpTable,3);
+    horizontalLayout->setStretchFactor(L0Table,1);
+    horizontalLayout->setStretchFactor(LbTable,1);
+    horizontalLayout->setStretchFactor(residuosTable,1);
     afpView->setLayout(horizontalLayout);
     afpView->show();
 }
