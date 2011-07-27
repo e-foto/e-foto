@@ -39,6 +39,10 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 
 	started = false;
 	status = false;
+
+        setENH();
+        setColLin();
+        setBLC();
 }
 
 PTManager::~PTManager()
@@ -105,9 +109,7 @@ string PTManager::getImagefile(int imageId)
 
 bool PTManager::calculatePT()
 {
-	setENH();
-	setColLin();
-	setBLC();
+
 
 	int cols=getX().getCols();
 
@@ -123,7 +125,7 @@ bool PTManager::calculatePT()
 
         setMatrixAFP(pt->getAFP());
 
-	//qDebug("Saiu do calculate PTManager");
+
     return result;
 }
 
@@ -346,39 +348,30 @@ Matrix PTManager::getOis()
 	return ois;
 }
 
-
-Matrix PTManager::getMatrixA1()
+Matrix PTManager::getResiduos()
 {
-    return pt->A1;
-}
-
-Matrix PTManager::getMatrixA2()
-{
-    return pt->A2;
-}
-
-Matrix PTManager::getMatrixN11()
-{
-    return pt->N11;
-}
-
-Matrix PTManager::getMatrixN12()
-{
-    return pt->N12;
-}
-
-Matrix PTManager::getMatrixN22()
-{
-    return pt->N22;
+    return pt->getMatRes();
 }
 
 Matrix PTManager::getMatrixL0()
 {
-    return pt->L0;
+    return pt->getL0();
 }
 
 Matrix PTManager::getMatrixLb()
 {
-    return pt->Lb;
+    return pt->getLb();
 }
 
+Matrix PTManager::getENH()
+{
+    return ENH;
+}
+
+PositionMatrix PTManager::getColLin(int imageId, int pointId)
+{
+    PositionMatrix coord(2,"pixel");
+    coord.set(1,Col.get(imageId,pointId));
+    coord.set(2,Lin.get(imageId,pointId));
+    return coord;
+}

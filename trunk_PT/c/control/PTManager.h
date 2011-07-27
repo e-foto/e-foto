@@ -50,32 +50,30 @@ public:
     void setMatrixAFP(Matrix afp);
     Matrix getMatrixAFP();
 
-    /**serao inutilizados*/
-    Matrix getMatrixA1();
-    Matrix getMatrixA2();
-    Matrix getMatrixN11();
-    Matrix getMatrixN12();
-    Matrix getMatrixN22();
+    Matrix getResiduos();
     Matrix getMatrixL0();
     Matrix getMatrixLb();
 
+    Matrix getENH();
+    Matrix getCol();
+    Matrix getLin();
+    PositionMatrix getColLin(int imageId, int pointId);
 
 protected:
-	Matrix Col,Lin,ENH, BLC;
+    Matrix Col,Lin,ENH, BLC;
 
-	void setENH();
-	void setColLin();
-	void setBLC();
+    void setENH();
+    void setColLin();
+    void setBLC();
 
-	Matrix getCol();
-    Matrix getLin();
-
-	Matrix getBLC();
+    Matrix getBLC();
     Matrix getX();
     Matrix getY();
     Matrix getZ();
 
-	Matrix getOis();
+    Matrix getOis();
+
+
 
 
 };
