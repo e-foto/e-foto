@@ -26,7 +26,7 @@ AFP
 #define N3 8
 #define MAXITERATIONS 10
 #define CONVERGENCY 0.001
-#define MAXRESIDUO 0.0001
+#define MAXRESIDUO 0.00001
 
 BundleAdjustment::BundleAdjustment()
 {
@@ -133,41 +133,14 @@ createcXsicEta();
 bool BundleAdjustment::calculate()
 {
 
-    /*Chute inicial*/
-    Matrix L1=createL(X,Y);
-    Matrix mm1=createMl();
-    Matrix mm2=createM2();
-    Matrix m11=getM11(mm1);
-    Matrix m12=getM12(mm1,mm2);
-    Matrix m22=getM22(mm2);
-    Matrix m1=getm1(mm1,L1);
-    Matrix m2=getm2(mm2,L1);
-
-    Matrix paf=getPAf(m11,m12,m22,m1,m2);
-   // paf.show();
-    Matrix xypf=getXYpf(m22,m2,m12,paf);
-    double zpf=getZpf();
-    X=getPX(xypf);
-    Y=getPY(xypf);
-    Z=getPZ(zpf);
-    getInicialsValues(paf);
-
-    //matAdjust.show();
-    //matAdjust=
-    /**/
-/*
-    X.show();
-    Y.show();
-    Z.show();
-
-    matAdjust.show();
+    getInicialsValues();
+//    matAdjust.show();
     /**Calculo dos parametros*/
-
-
     P.identity(numEquations);
     bool resOk=false;
     int changePesos=0;
-    Matrix res1;
+    Matrix tempRes;
+    totalIterations=0;
     while(!resOk)
     {
         int iterations=0;
@@ -176,11 +149,9 @@ bool BundleAdjustment::calculate()
         {
             createA1();
             createA2();
-            //P.identity(A1.getRows());
             createL0();
             createLb();
             Matrix l=Lb-L0;
-
             Matrix n11=getN11();
             Matrix n12=getN12();
             Matrix n22=getN22();
@@ -194,25 +165,23 @@ bool BundleAdjustment::calculate()
             iterations++;
         }
 
-        printf("numero de iteracoes %d\n",iterations);
-        imprime(matAdjust,"MatAdjust");
+        // printf("numero de iteracoes %d\n",iterations);
+        //imprime(matAdjust,"MatAdjust");
         calculateResiduos();
-
-        if (changePesos==0)
-        {
-            res1.resize(matRes.getRows(),1);
-            //printf("dimensao de res:%d,%d",res1.getRows(),res1.getCols());
-        }
-
-        matRes=matRes-res1;
-        calculatePeso();
         resOk=testResiduo();
+        if (changePesos==0)
+            tempRes.resize(matRes.getRows(),1);
 
-        res1=matRes;
+        calculatePeso();
+        matRes=matRes-tempRes;
+        tempRes=matRes;
         changePesos++;
+        totalIterations+=iterations;
     }
 
+
     printf("Numero de troca de pesos: %d\n",changePesos);/**/
+    calculateResiduos();
     imprime(matRes,"RESIDUOS");
     setAFP(matAdjust);
 
@@ -632,8 +601,26 @@ double BundleAdjustment::getKappaZero(Matrix pta,int imageId)
 }
 
 /** omega, phi, kappa, X0, Y0, Z0)*/
-void BundleAdjustment::getInicialsValues(Matrix paf)
+void BundleAdjustment::getInicialsValues()
 {
+
+    /*Chute inicial*/
+    Matrix L1=createL(X,Y);
+    Matrix mm1=createMl();
+    Matrix mm2=createM2();
+    Matrix m11=getM11(mm1);
+    Matrix m12=getM12(mm1,mm2);
+    Matrix m22=getM22(mm2);
+    Matrix m1=getm1(mm1,L1);
+    Matrix m2=getm2(mm2,L1);
+
+    Matrix paf=getPAf(m11,m12,m22,m1,m2);
+    Matrix xypf=getXYpf(m22,m2,m12,paf);
+    double zpf=getZpf();
+    X=getPX(xypf);
+    Y=getPY(xypf);
+    Z=getPZ(zpf);
+
     Matrix temp(numImages,6);
     matAdjust=temp;
     for (int i=1;i<=numImages;i++)
@@ -842,7 +829,6 @@ Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
 
     this->JacFoto=JacFoto;
 
-    //qDebug("saiu do jacfoto");
     return JacFoto;
 }
 
@@ -955,7 +941,6 @@ void BundleAdjustment::createL0()
         }
     L0=l0;
    // l0.show();
-    //qDebug("saiu do L0");
 }
 
 
@@ -1127,7 +1112,6 @@ Matrix BundleAdjustment::getPeso()
 
 void BundleAdjustment::updateMatAdjust()
 {
-   // int numImages= numImages;
     for (int i=1;i<=numImages;i++)
     {
         matAdjust.set(i,1, getOmegaAdjus(i) + getdOmegax1(i) );//ajustando omega
@@ -1137,7 +1121,6 @@ void BundleAdjustment::updateMatAdjust()
         matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
         matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
     }
-   // qDebug("Saiu do updateMatAdjust");
 }
 
 void BundleAdjustment::updateCoordFotog()
@@ -1157,7 +1140,6 @@ void BundleAdjustment::updateCoordFotog()
             if (blc.getInt(i,j)==-1)
             {
                 cont++;
-                //qDebug("dentro de update coordFotog :cont %d",cont);
                 X.set(i,j, X.get(i,j) + getdXx2(cont));//ajustando X fotogramétrico
                 Y.set(i,j, Y.get(i,j) + getdYx2(cont));//ajustando Y fotogramétrico
                 Z.set(i,j, Z.get(i,j) + getdZx2(cont));//ajustando Z fotogramétrico
@@ -1210,7 +1192,7 @@ Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double 
 Matrix BundleAdjustment::calculateResiduos()
 {
     Matrix result(0,1);
-     printf("c= %.4f",c);
+    // printf("c= %.4f",c);
     for (int i=1;i<=numImages;i++)
         for (int j=1;j<=numControlPoints;j++)
         {
@@ -1256,11 +1238,6 @@ void BundleAdjustment::calculatePeso()
             }
         }
     }
-}
-
-Matrix BundleAdjustment::getMatRes()
-{
-    return matRes;
 }
 
 double BundleAdjustment::getRx(int imageId, int pointId)
@@ -1316,10 +1293,20 @@ int BundleAdjustment::numberFtgPnts(int imageId)
     return num;
 }
 
+Matrix BundleAdjustment::getL0()
+{
+    return L0;
+}
 
+Matrix BundleAdjustment::getLb()
+{
+    return Lb;
+}
 
-
-
+Matrix BundleAdjustment::getMatRes()
+{
+    return matRes;
+}
 
 void BundleAdjustment::setAFP(Matrix aFP)
 {
@@ -1373,8 +1360,71 @@ Matrix BundleAdjustment::getAFP()
 
 
 
-/* Em teste*/
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Em teste*/
 // Retorna um matriz correspondente a uma imagem na Matriz A
 Matrix BundleAdjustment::imageToMatrix(Image *img)
 {
