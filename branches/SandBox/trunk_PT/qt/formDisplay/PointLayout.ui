@@ -309,12 +309,12 @@ p, li { white-space: pre-wrap; }
            </column>
            <column>
             <property name="text">
-             <string>Line</string>
+             <string>Column</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Column</string>
+             <string>Line</string>
             </property>
            </column>
           </widget>
