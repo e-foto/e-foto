@@ -703,19 +703,30 @@ bool EFotoManager::execPT()
 	bool result;
 	nextModule = 2;
 	EDomElement images(getXml("images"));
+	EDomElement points(getXml("points"));
 	int numimgs=images.children().size();
+	int numPoints=points.children().size();
 
 	// A foto tri so pode ser disparada quando todas as ois forem feitas;
 	deque<Image*> ptImages;
 	deque<InteriorOrientation*> ptOis;
-		for (int i=1; i<=numimgs; i++)
-        {
-            ptImages.push_back(instanceImage(i));
-        }
-		for (int i=1; i<=numimgs; i++)
-        {
-            ptOis.push_back(instanceIO(i));
-        }
+	deque<Point*> ptPoints;
+
+	images.elementsByTagName("key");
+
+
+	for (int i=1; i<=numimgs; i++)
+	{
+		ptImages.push_back(instanceImage(i));
+	}
+	for (int i=1; i<=numimgs; i++)
+	{
+		ptOis.push_back(instanceIO(i));
+	}
+	for (int i=1; i<=numPoints; i++)
+	{
+		ptPoints.push_back(instancePoint(i));
+	}
 
         //for( int i=0; i<ftImages.size(); i++)
           // qDebug("Caminho : %s",ftImages.at(i)->getFilepath().c_str());
@@ -729,6 +740,8 @@ bool EFotoManager::execPT()
         ptFlight->setTerrain(ptTerrain);
 
         fotoTri = new PTManager(this,ptImages,ptOis,ptSensor,ptFlight);
+
+
 
         result = fotoTri->exec();
         qDebug("EfotoManager passou da execPT\n");
@@ -772,7 +785,7 @@ bool EFotoManager::exec(string filename)
 			break;
 		case 5:
 			savedState = true;
-                        execPT();
+			execPT();
 			break;
 		default:
 			nextModule = 0;

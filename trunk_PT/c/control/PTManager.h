@@ -59,6 +59,9 @@ public:
     Matrix getLin();
     PositionMatrix getColLin(int imageId, int pointId);
 
+	bool connectImagePoints();
+	void setListPoint();
+
 protected:
     Matrix Col,Lin,ENH, BLC;
 

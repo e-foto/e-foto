@@ -251,7 +251,7 @@ bool SRManager::connectImagePoints()
             string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(myImage->getId())).getContent();
             if (data != "")
             {
-                Point* pointToInsert = manager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
+				Point* pointToInsert = manager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
                 if (pointToInsert != NULL)
                 {
                     myImage->putPoint(pointToInsert);

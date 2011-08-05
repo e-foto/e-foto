@@ -19,7 +19,7 @@ AFP
     0                   0               0       680931.229759843    7465299.79667213    68.8406838744
     0                   0               0           -0.0035636276       0.6617979107    -2.4392336491
 
-15 iterações e 4 mudança de pesos
+15 iteraÃ§Ãµes e 4 mudanÃ§a de pesos
 */
 #include <qdebug.h>
 
@@ -40,7 +40,6 @@ BundleAdjustment::BundleAdjustment()
 	c     = 0.0;
 	fliDir= 0.0;
 }
-
 
 BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Matrix lin, Matrix OIs, Matrix BLC, Sensor *sensor, int flightDirection)
 {
@@ -92,11 +91,11 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
     L[2][5]=4402;  C[2][5]=3246;
 */
 
-    /*Matrizes das coordenadas dos pontos do bloco. As imagens estÃ£o representadas nas linhas e os pontos nas
-    colunas, onde o nÃºmero da linha Ã© o mesmo do identificador da imagem e o da coluna, o mesmo do identificador do ponto.
-    Valor -1 indica ponto fotogramÃ©trico, e valor 0 indica ponto nÃ£o contido na imagem.
+    /*Matrizes das coordenadas dos pontos do bloco. As imagens estÃÂ£o representadas nas linhas e os pontos nas
+    colunas, onde o nÃÂºmero da linha ÃÂ© o mesmo do identificador da imagem e o da coluna, o mesmo do identificador do ponto.
+    Valor -1 indica ponto fotogramÃÂ©trico, e valor 0 indica ponto nÃÂ£o contido na imagem.
     */
-    //espaço Objeto
+    //espaÃ§o Objeto
 
     /*
     X={{    0    ,     0     ,     0     ,     0     ,    0    ,    0    },
@@ -112,7 +111,7 @@ BundleAdjustment::BundleAdjustment(Matrix x, Matrix y, Matrix z, Matrix col, Mat
        {  0  , 18.475, 10.725, 11.738, -1 , -1 }
       };*/
 
-    /* Matriz de configuraÃ§Ã£o do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃ©trico, valor 0, ponto nÃ£o
+    /* Matriz de configuraÃÂ§ÃÂ£o do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃÂ©trico, valor 0, ponto nÃÂ£o
     contido na imagem. linha = imagem, coluna = ponto.
     */
     /*
@@ -133,16 +132,20 @@ createcXsicEta();
 bool BundleAdjustment::calculate()
 {
 
+
+
+
     getInicialsValues();
 //    matAdjust.show();
     /**Calculo dos parametros*/
+
     P.identity(numEquations);
     bool resOk=false;
     int changePesos=0;
     Matrix tempRes;
     totalIterations=0;
-    while(!resOk)
-    {
+/*    while(!resOk)
+	{*/
         int iterations=0;
         bool converged=false;
         while(iterations<MAXITERATIONS && !converged)
@@ -167,7 +170,7 @@ bool BundleAdjustment::calculate()
 
         // printf("numero de iteracoes %d\n",iterations);
         //imprime(matAdjust,"MatAdjust");
-        calculateResiduos();
+/*        calculateResiduos();
         resOk=testResiduo();
         if (changePesos==0)
             tempRes.resize(matRes.getRows(),1);
@@ -177,19 +180,20 @@ bool BundleAdjustment::calculate()
         tempRes=matRes;
         changePesos++;
         totalIterations+=iterations;
-    }
+	}*/
 
 
-    printf("Numero de troca de pesos: %d\n",changePesos);/**/
+ /*   printf("Numero de troca de pesos: %d\n",changePesos);
     calculateResiduos();
-    imprime(matRes,"RESIDUOS");
+	imprime(matRes,"RESIDUOS");*/
     setAFP(matAdjust);
 
     return true;
+
 }
 
 
-//pnts[1]são os pontos de controle e pnts[2] são os pontos fotogrametricos;
+//pnts[1]sÃ£o os pontos de controle e pnts[2] sÃ£o os pontos fotogrametricos;
 void BundleAdjustment::pointsToAdjustament()
 {
     numImages=blc.getRows();
@@ -250,7 +254,8 @@ Matrix BundleAdjustment::createMl()
 {
     Matrix total(0,6);
     double *ana;
-
+	//imprime(Lin,"LIN");
+	//imprime(Col,"COL");
     //itera por todas as imagens
     for (int i=1;i<=numImages;i++)
     {
@@ -262,7 +267,10 @@ Matrix BundleAdjustment::createMl()
             Matrix auxc1(1,3);
             Matrix auxc2(1,3);
             ana=digitalToAnalog(ois,Lin.getInt(i,j),Col.getInt(i,j),i);
-            auxc1.set(1,1,1);
+
+			//qDebug("matrix col: %d\t lin: %d",Col.getInt(i,j),Lin.getInt(i,j));
+
+			auxc1.set(1,1,1);
             auxc1.set(1,2,ana[1]);
             auxc1.set(1,3,ana[0]);
             auxc2=auxc1;
@@ -273,10 +281,10 @@ Matrix BundleAdjustment::createMl()
             //auxc2.show();
             //empilhada.show();
         }
-        //põe as matrizes diagonalmente em relaçao a outra
+		//poe as matrizes diagonalmente em relaçao a outra
         total.putMatrix(empilhada,total.getRows()+1,6*(i-1)+1);
     }
-    //imprime(total,"M1");
+	//imprime(total,"M1");
     //printf("saiu do create M1");
     return total;
 }
@@ -301,7 +309,7 @@ Matrix BundleAdjustment::createL(Matrix X2, Matrix Y2)
             }
         }
     }
-    //imprime(L2,"L");
+	//imprime(L2,"L");
     return L2;
 }
 
@@ -329,7 +337,7 @@ Matrix BundleAdjustment::createM2()
                 pntctr+=2;
         }
     }
-    //imprime(M2aux,"M2");
+	imprime(M2aux,"M2");
 
     return M2aux;
 }
@@ -378,6 +386,7 @@ double BundleAdjustment::getZpf()
     {
         for(int j=1;j<=numPoints;j++)
         {
+			//se for ponto de controle
             if(blc.getInt(i,j)==1)
             {
                 z+=Z.get(i,j);
@@ -466,7 +475,7 @@ Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
 
 Matrix BundleAdjustment::firstPntCtrl()
 {
-    //matrix com os indices dos 1º pontos de controle
+    //matrix com os indices dos 1Âº pontos de controle
     Matrix pc(1,numImages);
 
     for (int i=1;i<=numImages;i++)
@@ -617,7 +626,8 @@ void BundleAdjustment::getInicialsValues()
     Matrix paf=getPAf(m11,m12,m22,m1,m2);
     Matrix xypf=getXYpf(m22,m2,m12,paf);
     double zpf=getZpf();
-    X=getPX(xypf);
+	// atualizaçao das coordenadas
+	X=getPX(xypf);
     Y=getPY(xypf);
     Z=getPZ(zpf);
 
@@ -635,32 +645,6 @@ void BundleAdjustment::getInicialsValues()
         matAdjust.set(i,6,c*getMediaScale(i));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void BundleAdjustment:: imprime(Matrix mat, char *id)
 {
@@ -697,49 +681,13 @@ int* BundleAdjustment::analogToDigital(Matrix Xa, double xsi, double eta, int in
     b2 = Xa.get(indexImg,6);
 
     int *result= (int*)malloc(2*sizeof(int));
-    //Idéia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+    //IdÃ©ia do Rafael Aguiar para contornar erro de cast (somar 0.1)
     result[0]=(int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 );
     result[1]=(int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 );
     return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /** 20_07_2011*/
-
 void BundleAdjustment::setRot(double omega, double phi, double kappa)
 {
     r11=cos(phi) * cos(kappa);
@@ -806,7 +754,6 @@ Matrix BundleAdjustment::getJacobianaControl(double X, double Y, double Z, int i
     return JacCtrl;
 }
 
-
 Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z, int imageId)
 {
     Matrix JacFoto(2,3);
@@ -832,7 +779,6 @@ Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
     return JacFoto;
 }
 
-
 void BundleAdjustment::createA1()
 {
     Matrix total(0,6);
@@ -845,7 +791,7 @@ void BundleAdjustment::createA1()
         //itera por todos os pontos
         for(int j=numPoints;j>=1;j--)
         {
-            //Se o ponto estiver na imagem, sendo fotogram�trico ou n�o.
+            //Se o ponto estiver na imagem, sendo fotogramétrico ou não.
             if (blc.getInt(i,j)!=0)
             {
                 double x=X.get(i,j);
@@ -858,7 +804,7 @@ void BundleAdjustment::createA1()
             }
         }
         //empilhada.show();
-        //põe as matrizes diagonalmente em relaçao a outra
+        //pÃµe as matrizes diagonalmente em relaÃ§ao a outra
         total.putMatrix(empilhada,total.getRows()+1,6*(i-1)+1);
     }
     //imprime(total,"M1");
@@ -879,7 +825,7 @@ void BundleAdjustment::createA2()
         //itera por todos os pontos
         for(int j=1;j<=numPoints;j++)
         {
-            //Se o ponto for fotogram�trico.
+            //Se o ponto for fotogramétrico.
             if (blc.getInt(i,j)==-1)
             {
                 npf++;
@@ -909,7 +855,7 @@ void BundleAdjustment::createLb()
         for(int j=1;j<=numPoints;j++)
         {
             Matrix temp(2,1);
-            // se o ponto est� na imagem i
+            // se o ponto está na imagem i
             if (blc.getInt(i,j)!=0)
             {
                 temp.set(1,1,cXsi.get(i,j));
@@ -929,8 +875,9 @@ void BundleAdjustment::createL0()
     for (int i=1;i<=numImages;i++)//1 a 2
         for(int j=1;j<=numPoints;j++)//1 a 5
         {
-            // se o ponto est� na imagem i
-            if (blc.getInt(i,j)!=0)//2,2 a 3,6
+            // se o ponto está na imagem i
+
+			if (blc.getInt(i,j)!=0)
             {
                 double x=X.get(i,j);
                 double y=Y.get(i,j);
@@ -942,7 +889,6 @@ void BundleAdjustment::createL0()
     L0=l0;
    // l0.show();
 }
-
 
 Matrix BundleAdjustment::getN11()
 {
@@ -1070,9 +1016,9 @@ Matrix BundleAdjustment::invertN11(Matrix N11)
     Matrix N11i=N11;
     for (int i=0;i<numMatrixs;i++)
     {
-        /*itera�ao i=0
+        /*iteraçao i=0
         sel[(6*0+1 x 6*0+1 ; 6*(0+1) x 6*(0+1) ] = 1x1;6x6
-        itera�ao i=1
+        iteraçao i=1
         sel[(6*1+1 x 6*1+1 ; 6*(1+1) x 6*(1+1) ] = 7x7;12x12
         */
         Matrix partial(6,6);
@@ -1088,9 +1034,9 @@ Matrix BundleAdjustment::invertN22(Matrix N22)
     Matrix N22i=N22;
     for (int i=0;i<numMatrixs;i++)
     {
-        /*itera�ao i=0
+        /*iteraçao i=0
         sel[(3*0+1 x 3*0+1 ; 3*(0+1) x 3*(0+1) ] = 1x1;3x3
-        itera�ao i=1
+        iteraçao i=1
         sel[(3*1+1 x 3*1+1 ; 3*(1+1) x 3*(1+1) ] = 4x4;6x6
         */
         Matrix partial(3,3);
@@ -1129,20 +1075,20 @@ void BundleAdjustment::updateCoordFotog()
     int numPnts  = blc.getCols();//3
 
      //qDebug("Entrou em update coordFotog %d, %d");
-    // melhorar esquema de pontos com urgencia: s� � necessario conhecer os pontos uma unica vez
-    // sendo fotogram�trico ou n�o
+    // melhorar esquema de pontos com urgencia: só é necessario conhecer os pontos uma unica vez
+    // sendo fotogramétrico ou não
     for (int i=1;i<=numImags;i++)
     {
         int cont=0;
         for (int j=1;j<=numPnts;j++)
         {
-            // Se � ponto fotogram�trico
+            // Se é ponto fotogramétrico
             if (blc.getInt(i,j)==-1)
             {
                 cont++;
-                X.set(i,j, X.get(i,j) + getdXx2(cont));//ajustando X fotogram�trico
-                Y.set(i,j, Y.get(i,j) + getdYx2(cont));//ajustando Y fotogram�trico
-                Z.set(i,j, Z.get(i,j) + getdZx2(cont));//ajustando Z fotogram�trico
+                X.set(i,j, X.get(i,j) + getdXx2(cont));//ajustando X fotogramétrico
+                Y.set(i,j, Y.get(i,j) + getdYx2(cont));//ajustando Y fotogramétrico
+                Z.set(i,j, Z.get(i,j) + getdZx2(cont));//ajustando Z fotogramétrico
             }
         }
     }
@@ -1172,7 +1118,7 @@ bool BundleAdjustment::isConverged()
     return true;
 }
 
-/*fun��es para o calculo dos residuos*/
+/*funções para o calculo dos residuos*/
 Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double z, int imageId)
 {
     Matrix result(1,2);
@@ -1187,7 +1133,7 @@ Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double 
     return result;
 }
 
-// Tamb�m � colocado na matriz o residuo dos pontos de controle que n�o est�o na imagem??
+// Também é colocado na matriz o residuo dos pontos de controle que não estão na imagem??
 // Averiguar isso!!!!!
 Matrix BundleAdjustment::calculateResiduos()
 {
@@ -1199,7 +1145,7 @@ Matrix BundleAdjustment::calculateResiduos()
             Matrix coord=getCoordColinearTerrain(cXsi.get(i,j),cEta.get(i,j),Z.get(i,j),i);
             double resx=X.get(i,j)-coord.get(1,1);
             double resy=Y.get(i,j)-coord.get(1,2);
-            // reaproveitando a matrix que n�o ser� mais utilizada nesse loop;
+            // reaproveitando a matrix que não será mais utilizada nesse loop;
             coord=coord.transpose();
             coord.set(1,1,resx);
             coord.set(2,1,resy);
@@ -1245,7 +1191,8 @@ double BundleAdjustment::getRx(int imageId, int pointId)
     int base=0;
     for (int i=1;i<imageId;i++)
         base+=2*numberCntrlPnts(i);
-    return matRes.get(base+2*(pointId-1)+1,1);
+
+	return matRes.get(base+2*(pointId-1)+1,1);
 }
 
 double BundleAdjustment::getRy(int imageId, int pointId)
@@ -1268,11 +1215,6 @@ bool BundleAdjustment::testResiduo()
     }
     return true;
 }
-
-
-
-
-
 
 int BundleAdjustment::numberCntrlPnts(int imageId)
 {
@@ -1311,8 +1253,8 @@ Matrix BundleAdjustment::getMatRes()
 void BundleAdjustment::setAFP(Matrix aFP)
 {
     //int rows=matAdjust.getRows()-1;
-    //Isso � feito apenas para:
-    //Exibi�ao dos angulos em Graus.
+    //Isso é feito apenas para:
+    //Exibiçao dos angulos em Graus.
     Matrix result(matAdjust.getRows(),matAdjust.getCols());
     for (int i=1;i<=numImages;i++)
     {
@@ -1357,88 +1299,153 @@ Matrix BundleAdjustment::getAFP()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//
 /* Em teste*/
-// Retorna um matriz correspondente a uma imagem na Matriz A
-Matrix BundleAdjustment::imageToMatrix(Image *img)
+
+BundleAdjustment::BundleAdjustment(deque<Image*>listImages, deque<Point*> listPoints, int flightDirection)
 {
-    int rows=2*img->countPoints();
+	this->listImages=listImages;
+	this->listPoints=listPoints;
+	fliDir=flightDirection;
+
+	numImages=listImages.size();
+	numPoints=listPoints.size();
+
+
+}
+
+void BundleAdjustment::getInicialsValuesObject()
+{
+	Matrix L=createLObject();
+	Matrix M1=createM1Object();
+	Matrix M2=createM2Object();
+/*
+	Matrix m11=getM11(M1);
+	Matrix m12=getM12(M1,M2);
+	Matrix m22=getM22(M2);
+	Matrix m1=getm1(M1,L);
+	Matrix m2=getm2(M2,L);
+
+	Matrix paf=getPAf(m11,m12,m22,m1,m2);
+	Matrix xypf=getXYpf(m22,m2,m12,paf);*/
+}
+
+Matrix BundleAdjustment::createLObject()
+{
+	Matrix L(0,1);
+	for (int i=0;i<numImages;i++)
+    {
+		int numpnts=listImages.at(i)->countPoints();
+		for(int j=0;j<numpnts;j++)
+        {
+			Matrix temp(2,1);
+			// talvez esse teste possa ser eliminado! tendo em vista que a matriz sempre e inicializada com zeros
+			if(isPhotogrammetricPoint(i,j))
+			{
+				temp.set(1,1,0.0);
+				temp.set(2,1,0.0);
+            }
+			else if(isControlPoint(i,j))
+            {
+				temp.set(1,1,listImages.at(i)->getPointAt(j)->getObjectCoordinate().getX());
+				temp.set(2,1,listImages.at(i)->getPointAt(j)->getObjectCoordinate().getY());
+            }
+			L=L|temp;
+        }
+    }
+	//imprime(L,"Lobject");
+	return L;
+}
+
+Matrix BundleAdjustment::createM1Object()
+{
+    Matrix result(0,0);
+    for (int i=0;i<numImages;i++)
+    {
+        Matrix temp=imageToMatrixAnalogicalCoordenates(listImages.at(i));
+        result.putMatrix(temp,result.getRows()+1,6*i+1);
+    }
+	//imprime(result,"M1object");
+    return result;
+}
+
+Matrix BundleAdjustment::createM2Object()
+{
+	Matrix result(0,2*numFotogrametricPoints);
+	for (int i=0;i<numImages;i++)
+	{
+		int pointsPos=0;
+		int pnts=listImages.at(i)->countPoints();
+		int numCP=numberControlPoints(listImages.at(i));
+
+		for (int j=0;j<pnts;j++,pointsPos++)
+		{
+
+			Matrix temp(2,2);
+			temp.set(1,1,-1);
+			temp.set(2,2,-1);
+			if(isPhotogrammetricPoint(i,j))
+			{
+				int pos=whereInPoints(listImages.at(i)->getPoint(j));
+				qDebug("put in i=%d j=%d",2*j+1,2*pos+numCP);
+				result.putMatrix(temp,2*j+1,2*pos+numCP);
+			}
+		}
+	}
+
+	imprime(result,"M2object");
+	return result;
+}
+
+// Retorna uma matriz correspondente a uma imagem na matriz M
+Matrix BundleAdjustment::imageToMatrixAnalogicalCoordenates(Image *img)
+{
+	int numpnts=img->countPoints();
+
+	Matrix result(0,6);
+	for (int i=0;i<numpnts;i++)
+	{
+		/* configuraçao de cada matriz temp
+				   |1	eta xi	0	 0		0 |
+                   |0	 0	0	1	eta 	xi|
+		*/
+		Matrix temp(2,6);
+		/** conversao digital to analog sera feito pela classe do Rafael em breve */
+                int lin=img->getPointAt(i)->getDigitalCoordinate(img->getId()).getLin();
+                int col=img->getPointAt(i)->getDigitalCoordinate(img->getId()).getCol();
+
+				//qDebug("object col: %d\t lin: %d",col, lin);
+                Matrix coord=digitalToAnalog(img->getIO(),lin,col);
+
+                temp.set(1,1,1);
+				temp.set(1,2,coord.get(1,2));
+				temp.set(1,3,coord.get(1,1));
+                temp.set(2,4,1);
+				temp.set(2,5,coord.get(1,2));
+				temp.set(2,6,coord.get(1,1));
+
+                result=result|temp;
+	}
+	   // imprime(result,"image");
+        return result;
+}
+// Retorna uma matriz correspondente a uma imagem na Matriz A
+Matrix BundleAdjustment::imageToMatrixJacobiana(Image *img)
+{
+	//qDebug("pontos nessa imagem %d",img->countPoints());
+	int rows=img->countPoints();
+	//img->getPointAt(1)->getObjectCoordinate().getX()
     Matrix result(0,6);
     for (int i=0;i<rows;i++)
     {
-        string xyz=img->getPoint(i)->getAnalogCoordinate(img->getId()).getGmlPos();
-        int p1=xyz.find_first_of(" ");
-        int p2=xyz.find_last_of(" ");
-        double x=stringToDouble(xyz.substr(0,p1));
-        double y=stringToDouble(xyz.substr(p1+1,p2));
-        double z=stringToDouble(xyz.substr(p2+1,xyz.size()));
-        result=getJacobianaControl(x,y,z,img->getId())|result;
+		qDebug("ponto numero %d",i);
+		//if (img->getPointAt(i)->is("ControlPoint"))
+		{
+			double x=img->getPointAt(i)->getObjectCoordinate().getX();
+			double y=img->getPointAt(i)->getObjectCoordinate().getY();
+			double z=img->getPointAt(i)->getObjectCoordinate().getZ();
+			result=getJacobianaControl(x,y,z,img->getId())|result;
+		}
     }
     return result;
 }
@@ -1446,54 +1453,119 @@ Matrix BundleAdjustment::imageToMatrix(Image *img)
 /* Teoricamente: retornaria toda a matriz A1 se todas as imagens
 *  forem passadas com os seus pontos indexados
 */
-Matrix BundleAdjustment::imagesToMatrixes(deque<Image*> listImgs)
+Matrix BundleAdjustment::imagesToMatrixesJacobianas(deque<Image*> listImgs)
 {
     int numImgs=listImgs.size();
     Matrix result;
     int currentRows=0;
     for (int i=0;i<numImgs;i++)
     {
-        Matrix partial=imageToMatrix(listImgs.at(i));
+		Matrix partial=imageToMatrixJacobiana(listImgs.at(i));
         result.putMatrix(partial,currentRows+1,6*i+1);
         currentRows+=partial.getRows();
     }
     return result;
 }
 
-// Anexa uma lista de pontos na imagem
-// Ap�s a execu��o. Esse metodo ajudaria a saber quais pontos est�o na imagem
-void BundleAdjustment::putPointsInImage(Image *img, deque<Point*> listPoints)
+bool BundleAdjustment::calculateObject()
 {
-    int numPnts=listPoints.size();
-    for (int i=0;i<numPnts;i++)
-        img->putPoint(listPoints.at(i));
+	getInicialsValuesObject();
+	//Matrix imgMatrix=imagesToMatrixes(listImages);
+	//imprime(imgMatrix,"imagesToMatrix");
+	//imprime(A1,"A1 normal");
+
+	return true;
+}
+
+bool BundleAdjustment::isControlPoint(int imageIndex ,int pointIndex)
+{
+	//listPoints
+	Image *img;
+	//img->getPointAt(1)->getObjectCoordinate().getX();
+	Point *pnt;
+	InteriorOrientation *oi;
+	//oi->getXa().
+
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("ControlPoint");
+}
+
+bool BundleAdjustment::isPhotogrammetricPoint(int imageIndex, int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("PhotogrammetricPoint");
+}
+
+bool BundleAdjustment::isCheckingPoint(int imageIndex, int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("CheckingPoint");
 }
 
 
+Matrix BundleAdjustment::digitalToAnalog(InteriorOrientation *oi,int linha, int coluna)
+{
+        double a0, a1, a2, b0, b1, b2;
 
+        a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
 
+		//imprime(oi->getXa(),"Xa");
 
+        Matrix result(1,2);
+        result.set(1,1, a0 + a1*coluna + a2*linha);
+        result.set(1,2, b0 + b1*coluna + b2*linha);
+        return result;
+}
 
+Matrix BundleAdjustment::analogToDigital(InteriorOrientation *oi,double xsi, double eta)
+{
+        double a0, a1, a2, b0, b1, b2;
+		a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
+        //Ideia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+        Matrix result(1,2);
+        result.setInt(1,1, (int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 ) );
+        result.setInt(1,2, (int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 ) );
+        return result;
+}
 
+int BundleAdjustment::numberControlPoints(Image *img)
+{
+	int cont=0;
+	int points=img->countPoints();
+	for (int i=0;i<points;i++)
+		if(img->getPointAt(i)->is("ControlPoint"))
+			cont++;
+	return cont;
+}
 
+int BundleAdjustment::numberPhotogrammetricPoints(Image *img)
+{
+	int cont=0;
+	int points=img->countPoints();
+	for (int i=0;i<points;i++)
+		if(img->getPointAt(i)->is("PhotogrammetricPoint"))
+			cont++;
+	return cont;
+}
 
+// Procura onde esta o ponto na lista de todos os pontos e retorna o seu indice na lista
+int BundleAdjustment::whereInPoints(Point *pnt)
+{
+	qDebug("numero de pontos: %d",numPoints);
 
+	for (int i=0;i<numPoints;i++)
+		if (pnt==listPoints.at(i))
+		{
+			qDebug("achou o ponto no indice : %d",i);
+			return i;
+		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return -1;
+}

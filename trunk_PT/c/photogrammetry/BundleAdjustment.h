@@ -9,7 +9,7 @@
 #include "Sensor.h"
 #include "Image.h"
 #include "Point.h"
-//#include ""
+#include "InteriorOrientation.h"
 
 //using namespace std;
 class BundleAdjustment
@@ -235,10 +235,41 @@ protected:
     double getRy(int imageId, int pointId);
 
 
-   /* Em Teste*/
-    Matrix imageToMatrix(Image* img);
-    Matrix imagesToMatrixes(deque<Image*> listImgs);
-    void putPointsInImage(Image *img,deque<Point*> listPoints);
+   /* Em Teste; Bundle com objetos*/
+public:
+	deque<Image*> listImages;
+	deque<Point*> listPoints;
+
+	BundleAdjustment(deque<Image*> listImages, deque<Point*>listPoints, int flightDirection);
+
+	//conversao de espaço objeto e espaço imagem
+
+	Matrix analogToDigital(InteriorOrientation *oi,double xsi, double eta);
+	Matrix digitalToAnalog(InteriorOrientation *oi,int linha, int coluna);
+	void getInicialsValuesObject();
+
+	Matrix imageToMatrixAnalogicalCoordenates(Image *img);
+	Matrix imageToMatrixJacobiana(Image* img);
+	Matrix imagesToMatrixesJacobianas(deque<Image*> listImgs);
+
+
+	bool calculateObject();
+	Matrix createLObject();
+	Matrix createM1Object();
+	Matrix createM2Object();
+
+
+	//Esses metodos tem como referencia a ordem deles na LISTA DE PONTOS INDEXADOS DE CADA IMAGEM e nao na lista do xml
+	bool isPhotogrammetricPoint(int imageIndex, int pointIndex);
+	bool isControlPoint(int imageIndex, int pointIndex);
+	bool isCheckingPoint(int imageIndex, int pointIndex);
+	//
+
+
+	int numberControlPoints(Image *img);
+	int numberPhotogrammetricPoints(Image *img);
+
+	int whereInPoints(Point *pnt);
 
 };
 
