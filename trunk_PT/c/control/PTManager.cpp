@@ -34,15 +34,16 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 	efotoManager = newManager;
 	listImages = images;
 	listOis = ois;
+	setListPoint();//lista todos os pontos
 	mySensor = sensor;
 	myFlight = flight;
 
 	started = false;
 	status = false;
 
-        setENH();
-        setColLin();
-        setBLC();
+	setENH();
+	setColLin();
+	setBLC();
 }
 
 PTManager::~PTManager()
@@ -68,18 +69,17 @@ bool PTManager::exec()
 		{
 			myInterface = PTUserInterface_Qt::instance(this);
 		}
-		started = true;
-
 		myFlight->setSensor(mySensor);
 		for (int i=0; i<listImages.size(); i++)
 		{
-                        mySensor->putImage(listImages.at(i));
+			mySensor->putImage(listImages.at(i));
 			listImages.at(i)->setSensor(mySensor);
 			listImages.at(i)->setFlight(myFlight);
 			listImages.at(i)->setIO(listOis.at(i));
-			//listOis.at(i)->setImage(listImages.at(i));
+			listOis.at(i)->setImage(listImages.at(i));
 		}
-
+		connectImagePoints();
+		started=true;
 		if (myInterface != NULL)
 		{
 			myInterface->exec();
@@ -109,16 +109,16 @@ string PTManager::getImagefile(int imageId)
 
 bool PTManager::calculatePT()
 {
-
-
-	int cols=getX().getCols();
-
+	//int cols=getX().getCols();
 	//getY().show();
 	//getZ().show();
+	//getOis();
+	pt= new BundleAdjustment(getX(),getY(),getZ(),getCol(),getLin(),getOis(),getBLC(),mySensor,1);
 
-        //getOis();
+		//deque<InteriorOrientation*>listOis;// confirmar isso urgentemente;
 
-        pt= new BundleAdjustment(getX(),getY(),getZ(),getCol(),getLin(),getOis(),getBLC(),mySensor,1);
+		BundleAdjustment *teste= new BundleAdjustment(listImages,listPoints,1);
+		teste->calculateObject();
 
         bool result=pt->calculate();
     //bool result = true;
@@ -206,8 +206,8 @@ void PTManager::setColLin()
 
             string coordenada=coord.elementByTagName("gml:pos").toString().c_str();
             int ini=coordenada.find_first_of(" ");
-			int linha=stringToInt(coordenada.substr(0,ini).c_str());
-			int coluna=stringToInt(coordenada.substr(ini+1,coordenada.size()).c_str());
+			int coluna=stringToInt(coordenada.substr(0,ini).c_str());
+			int linha=stringToInt(coordenada.substr(ini+1,coordenada.size()).c_str());
 
             //qDebug("%d,%d\tCol=%d\tLin=%d\n",i,j,coluna,linha);
 
@@ -375,3 +375,49 @@ PositionMatrix PTManager::getColLin(int imageId, int pointId)
     coord.set(2,Lin.get(imageId,pointId));
     return coord;
 }
+
+
+
+
+bool PTManager::connectImagePoints()
+{
+	if (!(started))
+	{
+		EDomElement xmlPoints(efotoManager->getXml("points"));
+		deque<EDomElement> allPoints = xmlPoints.children();
+		for (unsigned int j = 0; j < listImages.size(); j++)
+		{
+			for (unsigned int i = 0; i < allPoints.size(); i++)
+			{
+				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(listImages.at(j)->getId())).getContent();
+				if (data != "")
+				{
+					Point* pointToInsert = efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
+					if (pointToInsert != NULL)
+					{
+						//qDebug("connectImagePoints(): colocou um ponto");
+						listImages.at(j)->putPoint(pointToInsert);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+void PTManager::setListPoint()
+{
+	EDomElement xmlPoints(efotoManager->getXml("points"));
+	deque<EDomElement> allPoints = xmlPoints.children();
+
+	for(int i=0;i<allPoints.size();i++)
+	{
+		Point* point= efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
+		listPoints.push_back(point);
+	}
+
+
+}
+
+
