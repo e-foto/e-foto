@@ -397,6 +397,7 @@ bool PTManager::connectImagePoints()
 					{
 						//qDebug("connectImagePoints(): colocou um ponto");
 						listImages.at(j)->putPoint(pointToInsert);
+						pointToInsert->putImage(listImages.at(j));//nove em teste:06/08/2011
 					}
 				}
 			}

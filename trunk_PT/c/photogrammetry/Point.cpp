@@ -219,7 +219,7 @@ AnalogImageSpaceCoordinate Point::getAnalogCoordinate(int imageId)
 {
 
     for (unsigned int i = 0; i < analogCoordinates.size(); i++)
-        if (analogCoordinates.at(i).getImageId() == imageId)
+		if (analogCoordinates.at(i).getImageId() == imageId)
             return analogCoordinates.at(i);
     return AnalogImageSpaceCoordinate();
 }

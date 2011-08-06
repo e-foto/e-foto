@@ -712,7 +712,7 @@ bool EFotoManager::execPT()
 	deque<InteriorOrientation*> ptOis;
 	deque<Point*> ptPoints;
 
-	images.elementsByTagName("key");
+	//images.elementsByTagName("key");
 
 
 	for (int i=1; i<=numimgs; i++)
@@ -740,8 +740,6 @@ bool EFotoManager::execPT()
         ptFlight->setTerrain(ptTerrain);
 
         fotoTri = new PTManager(this,ptImages,ptOis,ptSensor,ptFlight);
-
-
 
         result = fotoTri->exec();
         qDebug("EfotoManager passou da execPT\n");

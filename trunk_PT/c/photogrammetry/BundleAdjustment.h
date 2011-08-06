@@ -258,6 +258,18 @@ public:
 	Matrix createM1Object();
 	Matrix createM2Object();
 
+	Matrix createL0Object();
+	Matrix createLbObject();
+	Matrix createA1Object();
+	Matrix createA2Object();
+
+
+
+	double getInicialZPhotogrammetricPoints();
+	double getMediaScaleObject(int imageIndex);
+	void updateCoordinatesAllPoints(Matrix xypf,double zphotogrammetric);
+	void updateMatAdjustObject();
+
 
 	//Esses metodos tem como referencia a ordem deles na LISTA DE PONTOS INDEXADOS DE CADA IMAGEM e nao na lista do xml
 	bool isPhotogrammetricPoint(int imageIndex, int pointIndex);
@@ -265,6 +277,7 @@ public:
 	bool isCheckingPoint(int imageIndex, int pointIndex);
 	//
 
+	Point *getPointFrom(int imageIndex,int pointIndex);
 
 	int numberControlPoints(Image *img);
 	int numberPhotogrammetricPoints(Image *img);
