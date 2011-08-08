@@ -242,6 +242,8 @@ public:
 
 	BundleAdjustment(deque<Image*> listImages, deque<Point*>listPoints, int flightDirection);
 
+	void fillAnalogCoordinates();
+
 	//conversao de espaço objeto e espaço imagem
 
 	Matrix analogToDigital(InteriorOrientation *oi,double xsi, double eta);
@@ -281,8 +283,11 @@ public:
 
 	int numberControlPoints(Image *img);
 	int numberPhotogrammetricPoints(Image *img);
-
 	int whereInPoints(Point *pnt);
+
+	Matrix calculateResiduosObject();
+	void calculatePesoObject();
+	void updateCoordFotogObject();
 
 };
 
