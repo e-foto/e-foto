@@ -31,6 +31,9 @@ protected:
         deque<Point*> listPoints;
         deque<InteriorOrientation*> listOis;
 
+		deque<Image*> listSelectedImages;
+		deque<Point*> listSelectedPoints;
+
         BundleAdjustment* pt;
         Matrix AFP;
 
@@ -51,8 +54,6 @@ public:
     Matrix getMatrixAFP();
 
     Matrix getResiduos();
-    Matrix getMatrixL0();
-    Matrix getMatrixLb();
 
     Matrix getENH();
     Matrix getCol();
@@ -77,7 +78,8 @@ protected:
     Matrix getOis();
 
 
-
+	void selectPoints();
+	void selectImages();
 
 };
 

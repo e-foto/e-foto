@@ -43,7 +43,7 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 
 	setENH();
 	setColLin();
-	setBLC();
+	/*setBLC();*/
 }
 
 PTManager::~PTManager()
@@ -109,23 +109,11 @@ string PTManager::getImagefile(int imageId)
 
 bool PTManager::calculatePT()
 {
-	//int cols=getX().getCols();
-	//getY().show();
-	//getZ().show();
-	//getOis();
-	pt= new BundleAdjustment(getX(),getY(),getZ(),getCol(),getLin(),getOis(),getBLC(),mySensor,1);
-
-		//deque<InteriorOrientation*>listOis;// confirmar isso urgentemente;
-
-		BundleAdjustment *teste= new BundleAdjustment(listImages,listPoints,1);
-		teste->calculateObject();
-
-        bool result=pt->calculate();
-    //bool result = true;
-
-        setMatrixAFP(pt->getAFP());
-
-
+	selectImages();
+	selectPoints();
+	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
+	bool result=pt->calculate();
+	setMatrixAFP(pt->getAFP());
     return result;
 }
 
@@ -148,6 +136,7 @@ Matrix PTManager::getMatrixAFP()
 
 
 /**novo*/
+
 void PTManager::setENH()
 {
     //string pointxml=efotoManager->getXml("point");
@@ -263,7 +252,7 @@ Matrix PTManager::getLin()
 }
 
 
-
+/*
 Matrix PTManager::getX()
 {
 	int rows=BLC.getRows();
@@ -283,7 +272,7 @@ Matrix PTManager::getX()
 	}
 	return X;
 }
-
+/*
 Matrix PTManager::getY()
 {
 	int rows=BLC.getRows();
@@ -303,6 +292,7 @@ Matrix PTManager::getY()
 	}
 	return Y;
 }
+/*
 Matrix PTManager::getZ()
 {
 	int rows=BLC.getRows();
@@ -321,7 +311,7 @@ Matrix PTManager::getZ()
 		}
 	}
 	return Z;
-}
+}*/
 
 Matrix PTManager::getBLC()
 {
@@ -353,16 +343,6 @@ Matrix PTManager::getResiduos()
     return pt->getMatRes();
 }
 
-Matrix PTManager::getMatrixL0()
-{
-    return pt->getL0();
-}
-
-Matrix PTManager::getMatrixLb()
-{
-    return pt->getLb();
-}
-
 Matrix PTManager::getENH()
 {
     return ENH;
@@ -375,9 +355,6 @@ PositionMatrix PTManager::getColLin(int imageId, int pointId)
     coord.set(2,Lin.get(imageId,pointId));
     return coord;
 }
-
-
-
 
 bool PTManager::connectImagePoints()
 {
@@ -411,14 +388,21 @@ void PTManager::setListPoint()
 {
 	EDomElement xmlPoints(efotoManager->getXml("points"));
 	deque<EDomElement> allPoints = xmlPoints.children();
-
 	for(int i=0;i<allPoints.size();i++)
 	{
 		Point* point= efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
 		listPoints.push_back(point);
 	}
 
-
 }
 
+void PTManager::selectImages()
+{
 
+	listSelectedImages=listImages;
+}
+
+void PTManager::selectPoints()
+{
+	listSelectedPoints=listPoints;
+}
