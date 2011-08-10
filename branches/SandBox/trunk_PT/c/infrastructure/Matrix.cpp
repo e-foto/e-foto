@@ -341,9 +341,9 @@ void Matrix::show()
     cout << endl;
 }*/
 
-void Matrix::show(char mode, int precision)
+void Matrix::show(char mode, int precision, char *name)
 {
-	cout << "Matrix " << nrows << 'x' << ncols << endl;
+	cout << "Matrix " << name << " ["<<nrows << 'x' << ncols << "] "<<endl;
 	if (mode=='f')
 		cout.setf(ios::fixed);
 	if (mode=='e')
