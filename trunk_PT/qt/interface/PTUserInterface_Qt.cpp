@@ -180,20 +180,22 @@ void PTUserInterface_Qt::viewReport()
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
     TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',5);
     afpTable->setHorizontalHeaderLabels(afpHeaderLabels);
-    TableIOEOWidget *L0Table = new TableIOEOWidget(ptManager->getMatrixL0(),'f',5);
+	/*
+	TableIOEOWidget *L0Table = new TableIOEOWidget(ptManager->getMatrixL0(),'f',5);
     L0Table->setHorizontalHeaderLabels(QStringList("L0"));
     TableIOEOWidget *LbTable = new TableIOEOWidget(ptManager->getMatrixLb(),'f',5);
     LbTable->setHorizontalHeaderLabels(QStringList("Lb"));
+	*/
     TableIOEOWidget *residuosTable = new TableIOEOWidget(ptManager->getResiduos(),'f',8);
     residuosTable->setHorizontalHeaderLabels(QStringList("Residuos"));
 
     horizontalLayout->addWidget(afpTable);
-    horizontalLayout->addWidget(L0Table);
-    horizontalLayout->addWidget(LbTable);
+	//horizontalLayout->addWidget(L0Table);
+	//horizontalLayout->addWidget(LbTable);
     horizontalLayout->addWidget(residuosTable);
     horizontalLayout->setStretchFactor(afpTable,3);
-    horizontalLayout->setStretchFactor(L0Table,1);
-    horizontalLayout->setStretchFactor(LbTable,1);
+	//horizontalLayout->setStretchFactor(L0Table,1);
+	//horizontalLayout->setStretchFactor(LbTable,1);
     horizontalLayout->setStretchFactor(residuosTable,1);
     afpView->setLayout(horizontalLayout);
     afpView->show();
