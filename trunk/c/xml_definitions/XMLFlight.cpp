@@ -8,8 +8,8 @@ void XMLFlight::xmlSetData(string xml)
 {
     EDomElement root(xml);
 
-    setId(stringToInt(root.attribute("key")));
-    setSensorId(stringToInt(root.attribute("sensor_key")));
+    setId(Conversion::stringToInt(root.attribute("key")));
+    setSensorId(Conversion::stringToInt(root.attribute("sensor_key")));
 
     //questionar sobre esse metodo
     //flightId = root.elementByTagName("flightId").toString();

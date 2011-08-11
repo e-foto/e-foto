@@ -873,7 +873,7 @@ string Matrix::xmlGetData()
     {
         result << "<mml:matrixrow>\n";
         for (unsigned int j = 1; j <= getCols(); j++)
-            result << "<mml:cn>" << doubleToString(get(i, j)) << "</mml:cn>\n";
+            result << "<mml:cn>" << Conversion::doubleToString(get(i, j)) << "</mml:cn>\n";
         result << "</mml:matrixrow>\n";
     }
     result << "</mml:matrix>\n";

@@ -31,12 +31,12 @@ private:
     //
     int id;
     int sensorId;
-	string flightId;
+    string flightId;
     string description;
     string execution;
     string producerName;
     string scale;
-	double scaleDen;
+    double scaleDen;
     double height;
     double longitudinalOverlap;
     double transversalOverlap;
@@ -44,7 +44,7 @@ private:
 
     // Associated objects
     //
-	Terrain* myTerrain;
+    Terrain* myTerrain;
     Sensor* mySensor;
     deque<Image*> myImages;
 
@@ -74,15 +74,15 @@ public:
     string getExecution();
     string getProducerName();
     string getScale();
-	double getScaleDen();
+    double getScaleDen();
     double getHeight();
     double getLongitudinalOverlap();
     double getTransversalOverlap();
 
     // Associated objects accessor methods
     //
-	void setTerrain(Terrain* newTerrain); // associate one terrain only.
-	Terrain* getTerrain();
+    void setTerrain(Terrain* newTerrain); // associate one terrain only.
+    Terrain* getTerrain();
     void setSensor(Sensor* newSensor); // associate one sensor only.
     Sensor* getSensor();
 

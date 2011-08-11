@@ -477,9 +477,9 @@ bool Image::is(string s)
 void Image::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
-    sensorId = stringToInt(root.attribute("sensor_key"));
-    flightId = stringToInt(root.attribute("flight_key"));
+    id = Conversion::stringToInt(root.attribute("key"));
+    sensorId = Conversion::stringToInt(root.attribute("sensor_key"));
+    flightId = Conversion::stringToInt(root.attribute("flight_key"));
 	imageId = root.elementByTagName("imageId").toString();
     width = root.elementByTagName("width").toInt();
     height = root.elementByTagName("height").toInt();
@@ -547,13 +547,13 @@ void Image::xmlSetData(string xml)
 string Image::xmlGetData()
 {
     stringstream result;
-    result << "<image key=\"" << intToString(id) << "\" sensor_key=\"" << intToString(sensorId) << "\" flight_key=\"" << intToString(flightId) << "\">\n";
+    result << "<image key=\"" << Conversion::intToString(id) << "\" sensor_key=\"" << Conversion::intToString(sensorId) << "\" flight_key=\"" << Conversion::intToString(flightId) << "\">\n";
 	result << "<imageId>" << imageId << "</imageId>\n";
-    result << "<width uom=\"#px\">" << intToString(width) << "</width>\n";
-    result << "<height uom=\"#px\">" << intToString(height) << "</height>\n";
+    result << "<width uom=\"#px\">" << Conversion::intToString(width) << "</width>\n";
+    result << "<height uom=\"#px\">" << Conversion::intToString(height) << "</height>\n";
     result << "<fileName>" << filename << "</fileName>\n";
     result << "<filePath>" << filepath << "</filePath>\n";
-    result << "<resolution uom=\"" << resolutionUnit << "\">" << intToString(resolution) << "</resolution>\n";
+    result << "<resolution uom=\"" << resolutionUnit << "\">" << Conversion::intToString(resolution) << "</resolution>\n";
 
     //Isso deve ser corrigido...
     //result << spatialCoordinates.xmlGetData();
@@ -561,7 +561,7 @@ string Image::xmlGetData()
 	result << "<GNSS uom=\"#m\" type=\"" << gnssType << "\">\n";
     if (gnssAvailable)
     {
-	result << "<gml:pos>" << doubleToString(gnssX0) << " " << doubleToString(gnssY0) << " " << doubleToString(gnssZ0) << "</gml:pos>\n";
+        result << "<gml:pos>" << Conversion::doubleToString(gnssX0) << " " << Conversion::doubleToString(gnssY0) << " " << Conversion::doubleToString(gnssZ0) << "</gml:pos>\n";
     }
     else
     {
@@ -580,9 +580,9 @@ string Image::xmlGetData()
 	result << "<INS uom=\"#rad\" type=\"" << insType << "\">\n";
     if (insAvailable)
     {
-	result << "<omega>" << doubleToString(insOmega) <<"</sigma>\n";
-	result << "<phi>" << doubleToString(insPhi) <<"</sigma>\n";
-	result << "<kappa>" << doubleToString(insKappa) <<"</sigma>\n";
+        result << "<omega>" << Conversion::doubleToString(insOmega) <<"</sigma>\n";
+        result << "<phi>" << Conversion::doubleToString(insPhi) <<"</sigma>\n";
+        result << "<kappa>" << Conversion::doubleToString(insKappa) <<"</sigma>\n";
     }
     else
     {

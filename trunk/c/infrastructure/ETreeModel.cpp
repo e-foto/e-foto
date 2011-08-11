@@ -20,22 +20,22 @@ ETreeElement::ETreeElement(string data)
     EDomElement xmlData(data);
     if (xmlData.tagName() == "sensor")
     {
-        id = stringToInt(xmlData.attribute("key"));
+        id = Conversion::stringToInt(xmlData.attribute("key"));
 		description = xmlData.elementByTagName("sensorId").toString();
     }
     else if (xmlData.tagName() == "flight")
     {
-        id = stringToInt(xmlData.attribute("key"));
+        id = Conversion::stringToInt(xmlData.attribute("key"));
 		description = xmlData.elementByTagName("flightId").toString();
     }
     else if (xmlData.tagName() == "image")
     {
-        id = stringToInt(xmlData.attribute("key"));
+        id = Conversion::stringToInt(xmlData.attribute("key"));
 		description = xmlData.elementByTagName("imageId").toString();
     }
     else if (xmlData.tagName() == "point")
     {
-        id = stringToInt(xmlData.attribute("key"));
+        id = Conversion::stringToInt(xmlData.attribute("key"));
 		description = xmlData.elementByTagName("pointId").toString();
     }
 }

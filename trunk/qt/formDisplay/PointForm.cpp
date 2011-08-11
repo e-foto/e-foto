@@ -78,7 +78,7 @@ void PointForm::fillvalues(string values)
 		QTableWidgetItem *linItem = new QTableWidgetItem();
 		QTableWidgetItem *colItem = new QTableWidgetItem();
 
-		EDomElement imgMeasure = ede.elementByTagAtt("imageCoordinates","image_key",intToString(imageKeyList.at(i)));
+                EDomElement imgMeasure = ede.elementByTagAtt("imageCoordinates","image_key",Conversion::intToString(imageKeyList.at(i)));
 		if (imgMeasure.getContent() != "")
 		{
 			checkItem->setChecked(true);
@@ -105,7 +105,7 @@ string PointForm::getvalues()
 	auxStream << "<pointId>" << lineEdit_gcp_id->text().toUtf8().data() << "</pointId>\n";
 	auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
 	auxStream << "<spatialCoordinates uom=\"#" << eDoubleSpinBox->suffix().right(1).toStdString().c_str() << "\">\n";
-	auxStream << "<gml:pos>" << doubleToString(eDoubleSpinBox->value()) << " " << doubleToString(nDoubleSpinBox->value()) << " " << doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
+        auxStream << "<gml:pos>" << Conversion::doubleToString(eDoubleSpinBox->value()) << " " << Conversion::doubleToString(nDoubleSpinBox->value()) << " " << Conversion::doubleToString(hDoubleSpinBox->value()) << "</gml:pos>\n";
 	auxStream << sigmaController->getValues();
 	auxStream << "</spatialCoordinates>\n";
 	auxStream << "<imagesMeasurements>\n";

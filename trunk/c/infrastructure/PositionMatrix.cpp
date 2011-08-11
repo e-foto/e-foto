@@ -623,7 +623,7 @@ string PositionMatrix::toGmlPosFormat()
     for (unsigned int i = 1; i <= nrows; i++)
         for (unsigned int j = 1; j <= ncols; j++)
         {
-        oss << doubleToString(get((unsigned int) i, (unsigned int) j));
+        oss << Conversion::doubleToString(get((unsigned int) i, (unsigned int) j));
         if ( !( ( i == nrows) && (j == ncols) ) )
             oss << " ";
     };

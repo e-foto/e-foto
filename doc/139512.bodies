@@ -1,0 +1,53 @@
+class Conversion
+!!!183800.cpp!!!	doubleToString(in value : double) : string
+    stringstream converter;
+    converter << setprecision(16);
+    converter << value;
+    return converter.str();
+!!!183928.cpp!!!	doubleToString(in value : double, in precision : int) : string
+	stringstream converter;
+	converter << setprecision(precision);
+	converter << fixed;
+	converter << value;
+	return converter.str();
+!!!184056.cpp!!!	stringToDouble(in value : string) : double
+    double result;
+    stringstream converter;
+    converter << setprecision(16);
+    converter << value;
+    converter >> result;
+    return result;
+!!!184184.cpp!!!	intToString(in value : int) : string
+    stringstream converter;
+    converter << value;
+    return converter.str();
+!!!184312.cpp!!!	stringToInt(in value : string) : int
+    int result;
+    stringstream converter;
+    converter << value;
+    converter >> result;
+    return result;
+!!!184440.cpp!!!	longToString(in value : long) : string
+    stringstream converter;
+    converter << value;
+    return converter.str();
+!!!184568.cpp!!!	stringToLong(in value : string) : long
+    long result;
+    stringstream converter;
+    converter << value;
+    converter >> result;
+    return result;
+!!!184696.cpp!!!	testAvailable(in element : EDomElement) : bool
+    if (element.children().size() == 0)
+    {
+        string value = element.toString();
+        if (value == "Not Available" || value == "Not available" || value == "not available" || value == "N/A" || value == "n/a")
+            return false;
+    }
+    return true;
+!!!184824.cpp!!!	testTagName(in element : EDomElement, in tagname : string) : bool
+    EDomElement check = element.elementByTagName(tagname);
+    if (check.tagName() == tagname)
+        return true;
+    else
+        return false;

@@ -271,9 +271,9 @@ string Terrain::xmlGetData()
 {
     stringstream result;
     result << "<terrain>\n";
-    result << "<meanAltitude uom=\"" << meanAltitudeUnit << "\">" << doubleToString(meanAltitude) << "</meanAltitude>\n";
-    result << "<minAltitude uom=\"" << minAltitudeUnit << "\">" << doubleToString(minAltitude) << "</minAltitude>\n";
-    result << "<maxAltitude uom=\"" << maxAltitudeUnit << "\">" << doubleToString(maxAltitude) << "</maxAltitude>\n";
+    result << "<meanAltitude uom=\"" << meanAltitudeUnit << "\">" << Conversion::doubleToString(meanAltitude) << "</meanAltitude>\n";
+    result << "<minAltitude uom=\"" << minAltitudeUnit << "\">" << Conversion::doubleToString(minAltitude) << "</minAltitude>\n";
+    result << "<maxAltitude uom=\"" << maxAltitudeUnit << "\">" << Conversion::doubleToString(maxAltitude) << "</maxAltitude>\n";
     result << "<GRS>" << GRS << "</GRS>\n";
     result << "<CPS>" << CPS << "</CPS>\n";
     result << "<workAreaCenterCoordinates>\n";
@@ -296,7 +296,7 @@ string Terrain::xmlGetData()
     result << "<seconds>" << workAreaCentralCoordinateLong.substr(secDiv + 1, thirdDiv - secDiv) << "</seconds>\n";
     result << "</Long>\n";
 
-    result << "<utmFuse>" << intToString(utmFuse) << "</utmFuse>\n";
+    result << "<utmFuse>" << Conversion::intToString(utmFuse) << "</utmFuse>\n";
     result << "</workAreaCenterCoordinates>\n";
     result << "</terrain>\n";
     return result.str();

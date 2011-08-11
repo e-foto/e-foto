@@ -50,14 +50,14 @@ namespace sclass
 	protected:
 		SWidget* parent;
 		string nickname;
-		double left, bottom, width, height;
-		int leftOffset, bottomOffset, widthOffset, heightOffset;
-		bool visibility, anaglyphMode;
-		double zoomFactor, minZoomFactor, maxZoomFactor, zoomStep;
+                double left; double bottom; double width; double height;
+                int leftOffset; int bottomOffset; int widthOffset; int heightOffset;
+                bool visibility; bool anaglyphMode;
+                double zoomFactor; double minZoomFactor; double maxZoomFactor; double zoomStep;
 		deque<sclass::SImageInViewport*> exposeImage;
 		sclass::SImageInViewport* leftChannel;
 		sclass::SImageInViewport* rightChannel;
-		bool lRMask, lGMask, lBMask, rRMask, rGMask, rBMask;
+                bool lRMask; bool lGMask; bool lBMask; bool rRMask; bool rGMask; bool rBMask;
 		//deque<SMarkInViewport*> exposeMark;
 
 	};

@@ -1,0 +1,3 @@
+class ProjectUserInterface
+!!!206584.cpp!!!	getManager() : ProjectManager
+	return manager;

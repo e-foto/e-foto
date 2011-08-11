@@ -1,0 +1,115 @@
+class Terrain
+!!!266488.cpp!!!	setMeanAltitude(in newMeanAltitude : double) : void
+    meanAltitude = newMeanAltitude;
+!!!266616.cpp!!!	setMeanAltitudeUnit(in newMeanAltitudeUnit : string) : void
+    meanAltitudeUnit = newMeanAltitudeUnit;
+!!!266744.cpp!!!	setMinAltitude(in newMinAltitude : double) : void
+    minAltitude = newMinAltitude;
+!!!266872.cpp!!!	setMinAltitudeUnit(in newMinAltitudeUnit : string) : void
+    minAltitudeUnit = newMinAltitudeUnit;
+!!!267000.cpp!!!	setMaxAltitude(in newMaxAltitude : double) : void
+    maxAltitude = newMaxAltitude;
+!!!267128.cpp!!!	setMaxAltitudeUnit(in newMaxAltitudeUnit : string) : void
+    maxAltitudeUnit = newMaxAltitudeUnit;
+!!!267256.cpp!!!	setGRS(in newGRS : string) : void
+    GRS = newGRS;
+!!!267384.cpp!!!	setCPS(in newCPS : string) : void
+    CPS = newCPS;
+!!!267512.cpp!!!	setCentralCoordLat(in newCentralCoordLat : string) : void
+    workAreaCentralCoordinateLat = newCentralCoordLat;
+!!!267640.cpp!!!	setCentralCoordLong(in newCentralCoordLong : string) : void
+    workAreaCentralCoordinateLong = newCentralCoordLong;
+!!!267768.cpp!!!	setUtmFuse(in newUtmFuse : int) : void
+    utmFuse = newUtmFuse;
+!!!267896.cpp!!!	getMeanAltitude() : double
+    return meanAltitude;
+!!!268024.cpp!!!	getMeanAltitudeUnit() : string
+    return meanAltitudeUnit;
+!!!268152.cpp!!!	getMinAltitude() : double
+    return minAltitude;
+!!!268280.cpp!!!	getMinAltitudeUnit() : string
+    return minAltitudeUnit;
+!!!268408.cpp!!!	getMaxAltitude() : double
+    return maxAltitude;
+!!!268536.cpp!!!	getMaxAltitudeUnit() : string
+    return maxAltitudeUnit;
+!!!268664.cpp!!!	getGRS() : string
+    return GRS;
+!!!268792.cpp!!!	getCPS() : string
+    return CPS;
+!!!268920.cpp!!!	getCentralCoordLat() : string
+    return workAreaCentralCoordinateLat;
+!!!269048.cpp!!!	getCentralCoordLong() : string
+    return workAreaCentralCoordinateLong;
+!!!269176.cpp!!!	getUtmFuse() : int
+    return utmFuse;
+!!!269304.cpp!!!	objectType(in  : void) : string
+    return "Terrain";
+!!!269432.cpp!!!	objectAssociations(in  : void) : string
+    return "";
+!!!269560.cpp!!!	is(in s : string) : bool
+    return (s == "Terrain" ? true : false);
+!!!269688.cpp!!!	xmlSetData(in xml : string) : void
+    EDomElement root(xml);
+    meanAltitudeUnit = root.elementByTagName("meanAltitude").attribute("uom");
+    meanAltitude = root.elementByTagName("meanAltitude").toDouble();
+    minAltitudeUnit = root.elementByTagName("minAltitude").attribute("uom");
+    minAltitude = root.elementByTagName("minAltitude").toDouble();
+    maxAltitudeUnit = root.elementByTagName("maxAltitude").attribute("uom");
+    maxAltitude = root.elementByTagName("maxAltitude").toDouble();
+    GRS = root.elementByTagName("GRS").toString();
+    CPS = root.elementByTagName("CPS").toString();
+
+    EDomElement xmlLat = root.elementByTagName("Lat");
+    workAreaCentralCoordinateLat = "";
+    workAreaCentralCoordinateLat += xmlLat.elementByTagName("degrees").toString();
+    workAreaCentralCoordinateLat += " ";
+    workAreaCentralCoordinateLat += xmlLat.elementByTagName("minutes").toString();
+    workAreaCentralCoordinateLat += " ";
+    workAreaCentralCoordinateLat += xmlLat.elementByTagName("seconds").toString();
+    workAreaCentralCoordinateLat += " ";
+    workAreaCentralCoordinateLat += xmlLat.attribute("direction");
+
+    EDomElement xmlLong = root.elementByTagName("Long");
+    workAreaCentralCoordinateLong = "";
+    workAreaCentralCoordinateLong += xmlLong.elementByTagName("degrees").toString();
+    workAreaCentralCoordinateLong += " ";
+    workAreaCentralCoordinateLong += xmlLong.elementByTagName("minutes").toString();
+    workAreaCentralCoordinateLong += " ";
+    workAreaCentralCoordinateLong += xmlLong.elementByTagName("seconds").toString();
+    workAreaCentralCoordinateLong += " ";
+    workAreaCentralCoordinateLong += xmlLong.attribute("direction");
+
+    utmFuse = root.elementByTagName("utmFuse").toInt();
+!!!269816.cpp!!!	xmlGetData() : string
+    stringstream result;
+    result << "<terrain>\n";
+    result << "<meanAltitude uom=\"" << meanAltitudeUnit << "\">" << Conversion::doubleToString(meanAltitude) << "</meanAltitude>\n";
+    result << "<minAltitude uom=\"" << minAltitudeUnit << "\">" << Conversion::doubleToString(minAltitude) << "</minAltitude>\n";
+    result << "<maxAltitude uom=\"" << maxAltitudeUnit << "\">" << Conversion::doubleToString(maxAltitude) << "</maxAltitude>\n";
+    result << "<GRS>" << GRS << "</GRS>\n";
+    result << "<CPS>" << CPS << "</CPS>\n";
+    result << "<workAreaCenterCoordinates>\n";
+
+    int firstDiv, secDiv, thirdDiv;
+    firstDiv = workAreaCentralCoordinateLat.find(" ");
+    secDiv = workAreaCentralCoordinateLat.find(" ", firstDiv + 1);
+    thirdDiv = workAreaCentralCoordinateLat.rfind(" ");
+    result << "<Lat direction=\"" << workAreaCentralCoordinateLat.substr(thirdDiv + 1) << "\">\n";
+    result << "<degrees>" << workAreaCentralCoordinateLat.substr(0, firstDiv)  << "</degrees>\n";
+    result << "<minutes>" << workAreaCentralCoordinateLat.substr(firstDiv + 1, secDiv - firstDiv) << "</minutes>\n";
+    result << "<seconds>" << workAreaCentralCoordinateLat.substr(secDiv + 1, thirdDiv - secDiv) << "</seconds>\n";
+    result << "</Lat>\n";
+    firstDiv = workAreaCentralCoordinateLong.find(" ");
+    secDiv = workAreaCentralCoordinateLong.find(" ", firstDiv + 1);
+    thirdDiv = workAreaCentralCoordinateLong.rfind(" ");
+    result << "<Long direction=\"" << workAreaCentralCoordinateLong.substr(thirdDiv + 1) << "\">\n";
+    result << "<degrees>" << workAreaCentralCoordinateLong.substr(0, firstDiv)  << "</degrees>\n";
+    result << "<minutes>" << workAreaCentralCoordinateLong.substr(firstDiv + 1, secDiv - firstDiv) << "</minutes>\n";
+    result << "<seconds>" << workAreaCentralCoordinateLong.substr(secDiv + 1, thirdDiv - secDiv) << "</seconds>\n";
+    result << "</Long>\n";
+
+    result << "<utmFuse>" << Conversion::intToString(utmFuse) << "</utmFuse>\n";
+    result << "</workAreaCenterCoordinates>\n";
+    result << "</terrain>\n";
+    return result.str();

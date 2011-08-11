@@ -1,0 +1,116 @@
+class Flight
+!!!217976.cpp!!!	Flight()
+
+!!!218104.cpp!!!	Flight(in myId : int, in mySensorId : int)
+    id = myId;
+    sensorId = mySensorId;
+!!!218232.cpp!!!	~Flight()
+
+!!!218360.cpp!!!	setId(in newId : int) : void
+    id = newId;
+!!!218488.cpp!!!	setSensorId(in newSensorId : int) : void
+    sensorId = newSensorId;
+!!!218616.cpp!!!	setDescription(in newDescription : string) : void
+    description = newDescription;
+!!!218744.cpp!!!	setExecution(in newExecution : string) : void
+    execution = newExecution;
+!!!218872.cpp!!!	setProducerName(in newProducerName : string) : void
+    producerName = newProducerName;
+!!!219000.cpp!!!	setScale(in newScale : string) : void
+    scale = newScale;
+!!!219128.cpp!!!	setHeight(in newHeight : double) : void
+    height = newHeight;
+!!!219256.cpp!!!	setLongitudinalOverlap(in newLongitudinalOverlap : double) : void
+    longitudinalOverlap = newLongitudinalOverlap;
+!!!219384.cpp!!!	setTransversalOverlap(in newTransversalOverlap : double) : void
+    transversalOverlap = newTransversalOverlap;
+!!!219512.cpp!!!	getId() : int
+    return id;
+!!!219640.cpp!!!	getSensorId() : int
+    return sensorId;
+!!!219768.cpp!!!	getDescription() : string
+    return description;
+!!!219896.cpp!!!	getExecution() : string
+    return execution;
+!!!220024.cpp!!!	getProducerName() : string
+    return producerName;
+!!!220152.cpp!!!	getScale() : string
+	return scale;
+!!!220280.cpp!!!	getScaleDen() : double
+	return scaleDen;
+!!!220408.cpp!!!	getHeight() : double
+    return height;
+!!!220536.cpp!!!	getLongitudinalOverlap() : double
+    return longitudinalOverlap;
+!!!220664.cpp!!!	getTransversalOverlap() : double
+    return transversalOverlap;
+!!!220792.cpp!!!	setTerrain(inout newTerrain : Terrain) : void
+	myTerrain = newTerrain;
+!!!220920.cpp!!!	getTerrain() : Terrain
+	return myTerrain;
+!!!221048.cpp!!!	setSensor(inout newSensor : Sensor) : void
+    mySensor = newSensor;
+!!!221176.cpp!!!	getSensor() : Sensor
+    return mySensor;
+!!!221304.cpp!!!	putImage(inout newImageAssociation : Image) : void
+    bool insert = true;
+    for (unsigned int i = 0; i < myImages.size(); i++)
+        if (myImages.at(i) == newImageAssociation)
+            insert = false;
+    if (insert)
+        myImages.push_back(newImageAssociation);
+!!!221432.cpp!!!	getImage(in imageId : int) : Image
+    for (unsigned int i = 0; i < myImages.size(); i++)
+        if (myImages.at(i)->getId() == imageId)
+            return myImages.at(i);
+    return NULL;
+!!!221560.cpp!!!	countImages() : int
+    return myImages.size();
+!!!221688.cpp!!!	getImageAt(in index : uint) : Image
+    if (index < myImages.size())
+        return myImages.at(index);
+    return NULL;
+!!!221816.cpp!!!	objectType(in  : void) : string
+    stringstream result;
+    result << "Flight " << id;
+    return result.str();
+!!!221944.cpp!!!	objectAssociations(in  : void) : string
+    return mySensor->objectType();
+!!!222072.cpp!!!	is(in s : string) : bool
+    return (s == "Flight" ? true : false);
+!!!222200.cpp!!!	xmlSetData(in xml : string) : void
+    EDomElement root(xml);
+    id = Conversion::stringToInt(root.attribute("key"));
+    sensorId = Conversion::stringToInt(root.attribute("sensor_key"));
+	flightId = root.elementByTagName("flightId").toString();
+    description = root.elementByTagName("description").toString();
+    execution = root.elementByTagName("execution").toString();
+    producerName = root.elementByTagName("producerName").toString();
+    scale = "";
+    scale += root.elementsByTagName("mml:mn").at(0).toString();
+    scale += ":";
+    scale += root.elementsByTagName("mml:mn").at(1).toString();
+	scaleDen = root.elementsByTagName("mml:mn").at(1).toDouble();
+    height = root.elementByTagName("flightHeight").toDouble();
+    longitudinalOverlap = root.elementByTagName("longitudinal").toDouble();
+    transversalOverlap = root.elementByTagName("transversal").toDouble();
+!!!222328.cpp!!!	xmlGetData() : string
+    stringstream result;
+    result << "<flight key=\"" << Conversion::intToString(id) << "\" sensor_key=\"" << Conversion::intToString(sensorId) << "\">\n";
+	result << "<flightId>" << flightId << "</flightId>\n";
+    result << "<description>" << description << "</description>\n";
+    result << "<execution>" << execution << "</execution>\n";
+    result << "<producerName>" << producerName << "</producerName>\n";
+    result << "<nominalScale>\n";
+    result << "<mml:mfrac>\n";
+    result << "<mml:mn>" << scale.substr(0, scale.find(":")) << "</mml:mn>\n";
+    result << "<mml:mn>" << scale.substr(scale.find(":") + 1) << "</mml:mn>\n";
+    result << "</mml:mfrac>\n";
+    result << "</nominalScale>\n";
+    result << "<flightHeight uom=\"#m\">" << Conversion::doubleToString(height) << "</flightHeight>\n";
+    result << "<overlap>\n";
+    result << "<longitudinal uom=\"#%\">" << Conversion::doubleToString(longitudinalOverlap) << "</longitudinal>\n";
+    result << "<transversal uom=\"#%\">" << Conversion::doubleToString(transversalOverlap) << "</transversal>\n";
+    result << "</overlap>\n";
+    result << "</flight>\n";
+    return result.str();

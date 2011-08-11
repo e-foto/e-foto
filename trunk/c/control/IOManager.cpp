@@ -98,13 +98,13 @@ deque<string> IOManager::markData(int index)
 	{
 		PositionMatrix analogMarks = getAnalogMarks();
 
-		result.push_back(doubleToString(analogMarks.get(2 * index + 1),3));
-		result.push_back(doubleToString(analogMarks.get(2 * index + 2),3));
+                result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 1),3));
+                result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 2),3));
 		DigitalFiductialMark myMark = myImage->getDigFidMark(index + 1);
 		if (myMark.isAvailable())
 		{
-			result.push_back(intToString(myMark.getCol()));
-			result.push_back(intToString(myMark.getLin()));
+                        result.push_back(Conversion::intToString(myMark.getCol()));
+                        result.push_back(Conversion::intToString(myMark.getLin()));
 		}
 	}
 	return result;
@@ -163,7 +163,7 @@ deque<string> IOManager::makeReport()
 	deque<string> result;
 	result.push_back(myIO->getXa().xmlGetData());
 	result.push_back(myIO->getLa().xmlGetData());
-	result.push_back(doubleToString(myIO->getQuality().getsigma0Squared()));
+        result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
 	result.push_back(myIO->getQuality().getV().xmlGetData());
 	result.push_back(myIO->getQuality().getSigmaXa().xmlGetData());
 	result.push_back(myIO->getQuality().getSigmaLa().xmlGetData());
@@ -214,7 +214,7 @@ bool IOManager::save(string path)
 	if (started)
 	{
 		FILE* pFile;
-		string output = "IO state data for Image " + intToString(myImage->getId()) + "\n\n";
+                string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
 
 		output += mySensor->xmlGetData();
 		output += "\n";
@@ -310,8 +310,8 @@ int IOManager::getFrameColumns()
 void IOManager::acceptIO()
 {
 	EDomElement newXml(manager->xmlGetData());
-	if (newXml.elementByTagAtt("imageIO", "image_key", intToString(myImage->getId())).getContent() != "")
-		newXml.replaceChildByTagAtt("imageIO", "image_key", intToString(myImage->getId()), myIO->xmlGetData());
+        if (newXml.elementByTagAtt("imageIO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
+                newXml.replaceChildByTagAtt("imageIO", "image_key", Conversion::intToString(myImage->getId()), myIO->xmlGetData());
 	else
 		newXml.addChildAtTagName("interiorOrientation", myIO->xmlGetData());
 	manager->xmlSetData(newXml.getContent());

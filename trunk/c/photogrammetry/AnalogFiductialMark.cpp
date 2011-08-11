@@ -167,7 +167,7 @@ bool AnalogFiductialMark::is(string s)
 void AnalogFiductialMark::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
+    id = Conversion::stringToInt(root.attribute("key"));
     EDomElement xmlPos = root.elementByTagName("gml:pos");
     if (xmlPos.isAvailable())
     {
@@ -201,9 +201,9 @@ void AnalogFiductialMark::xmlSetData(string xml)
 string AnalogFiductialMark::xmlGetData()
 {
     stringstream result;
-    result << "<fiductialMark key=\"" << intToString(id) << "\">\n";
+    result << "<fiductialMark key=\"" << Conversion::intToString(id) << "\">\n";
     if (available)
-        result << "<gml:pos>" << doubleToString(xi) << " " << doubleToString(eta) << "</gml:pos>\n";
+        result << "<gml:pos>" << Conversion::doubleToString(xi) << " " << Conversion::doubleToString(eta) << "</gml:pos>\n";
     else
         result << "<gml:pos>Not Available</gml:pos>\n";
     if (sigmaAvailable)

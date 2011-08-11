@@ -282,17 +282,17 @@ bool ProjectManager::removeComponent(string type, int id)
     {
         EDomElement newXml(manager->xmlGetData());
         if (type == "Sensor")
-            newXml.replaceChildByTagAtt("sensor", "key", intToString(id), "");
+            newXml.replaceChildByTagAtt("sensor", "key", Conversion::intToString(id), "");
         else if (type == "Flight")
-            newXml.replaceChildByTagAtt("flight", "key", intToString(id), "");
+            newXml.replaceChildByTagAtt("flight", "key", Conversion::intToString(id), "");
         else if (type == "Image")
-            newXml.replaceChildByTagAtt("image", "key", intToString(id), "");
+            newXml.replaceChildByTagAtt("image", "key", Conversion::intToString(id), "");
         else if (type == "Point")
-            newXml.replaceChildByTagAtt("point", "key", intToString(id), "");
+            newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(id), "");
         else if (type == "IO")
-            newXml.replaceChildByTagAtt("imageIO", "image_key", intToString(id), "");
+            newXml.replaceChildByTagAtt("imageIO", "image_key", Conversion::intToString(id), "");
         else if (type == "EO")
-            newXml.replaceChildByTagAtt("imageEO", "image_key", intToString(id), "");
+            newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(id), "");
         manager->xmlSetData(newXml.getContent());
 
         if (treeModel != NULL)
@@ -328,17 +328,17 @@ bool ProjectManager::editComponent(string type, int id, string data)
     {
         EDomElement newXml(manager->xmlGetData());
         if (type == "Sensor")
-            newXml.replaceChildByTagAtt("sensor", "key", intToString(id), data);
+            newXml.replaceChildByTagAtt("sensor", "key", Conversion::intToString(id), data);
         else if (type == "Flight")
-            newXml.replaceChildByTagAtt("flight", "key", intToString(id), data);
+            newXml.replaceChildByTagAtt("flight", "key", Conversion::intToString(id), data);
         else if (type == "Image")
-            newXml.replaceChildByTagAtt("image", "key", intToString(id), data);
+            newXml.replaceChildByTagAtt("image", "key", Conversion::intToString(id), data);
         else if (type == "Point")
-            newXml.replaceChildByTagAtt("point", "key", intToString(id), data);
+            newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(id), data);
         else if (type == "IO")
-            newXml.replaceChildByTagAtt("imageIO", "image_key", intToString(id), data);
+            newXml.replaceChildByTagAtt("imageIO", "image_key", Conversion::intToString(id), data);
         else if (type == "EO")
-            newXml.replaceChildByTagAtt("imageEO", "image_key", intToString(id), data);
+            newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(id), data);
         manager->xmlSetData(newXml.getContent());
 
         if (treeModel != NULL)
@@ -407,8 +407,8 @@ int ProjectManager::getFreeImageId()
 		result = 1;
 		for (int i = images.size()-1; i >= 0; i--)
 		{
-			if (stringToInt(images.at(i).attribute("key")) >= result)
-				result = stringToInt(images.at(i).attribute("key"))+1;
+                        if (Conversion::stringToInt(images.at(i).attribute("key")) >= result)
+                                result = Conversion::stringToInt(images.at(i).attribute("key"))+1;
 		}
 		return result;
 	}
@@ -424,8 +424,8 @@ int ProjectManager::getFreePointId()
 		result = 1;
 		for (int i = points.size()-1; i >= 0; i--)
 		{
-			if (stringToInt(points.at(i).attribute("key")) >= result)
-				result = stringToInt(points.at(i).attribute("key"))+1;
+                        if (Conversion::stringToInt(points.at(i).attribute("key")) >= result)
+                                result = Conversion::stringToInt(points.at(i).attribute("key"))+1;
 		}
 		return result;
 	}
@@ -534,22 +534,22 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		// Isto e compativel com a versao 1.6 do modulo e devera mudar logo que ele corrija a sua parte.
 		value += "Stereoscopic Visualization and Mesure Module Data\n";
 
-        value += doubleToString(io1->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(io1->getXa().get(6, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(1, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(2, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(3, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(4, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(5, 1)); value += "\n";
+        value += Conversion::doubleToString(io1->getXa().get(6, 1)); value += "\n";
 
-        value += doubleToString(io2->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(io2->getXa().get(6, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(1, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(2, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(3, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(4, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(5, 1)); value += "\n";
+        value += Conversion::doubleToString(io2->getXa().get(6, 1)); value += "\n";
 
-        value += doubleToString(sensor->getFocalDistance()); value += "\n";
-        value += doubleToString(flight->getHeight()); value += "\n";
+        value += Conversion::doubleToString(sensor->getFocalDistance()); value += "\n";
+        value += Conversion::doubleToString(flight->getHeight()); value += "\n";
 
         string scale = flight->getScale();
         value += scale.substr(scale.find(':') + 1); value += "\n";
@@ -561,27 +561,27 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
         double airbase = sqrt(pow(X01 - X02, 2) + pow(Y01 - Y02, 2));
         double photobase = airbase * sensor->getFocalDistance() / flight->getHeight();
 
-        value += doubleToString(photobase); value += "\n";
-        value += doubleToString(airbase); value += "\n";
+        value += Conversion::doubleToString(photobase); value += "\n";
+        value += Conversion::doubleToString(airbase); value += "\n";
 
-        value += doubleToString(sr1->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(sr1->getXa().get(6, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(1, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(2, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(3, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(4, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(5, 1)); value += "\n";
+        value += Conversion::doubleToString(sr1->getXa().get(6, 1)); value += "\n";
 
-        value += doubleToString(sr2->getXa().get(1, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(2, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(3, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(4, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(5, 1)); value += "\n";
-        value += doubleToString(sr2->getXa().get(6, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(1, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(2, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(3, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(4, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(5, 1)); value += "\n";
+        value += Conversion::doubleToString(sr2->getXa().get(6, 1)); value += "\n";
 
-		value += doubleToString(sensor->getPrincipalPointCoordinates().getXi()); value += "\n";
-		value += doubleToString(sensor->getPrincipalPointCoordinates().getEta()); value += "\n";
+                value += Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getXi()); value += "\n";
+                value += Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getEta()); value += "\n";
 
-		value += doubleToString(terrain->getMeanAltitude()); value += "\n";
+                value += Conversion::doubleToString(terrain->getMeanAltitude()); value += "\n";
 
         value += "End of data";
 

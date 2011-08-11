@@ -40,13 +40,13 @@ string FlightForm::getvalues()
 	auxStream << "<nominalScale>\n";
 	auxStream << "<mml:mfrac>\n";
 	auxStream << "<mml:mn>1</mml:mn>\n";
-	auxStream << "<mml:mn>" << intToString(nominalScaleSpinBox->value()) <<"</mml:mn>\n";
+        auxStream << "<mml:mn>" << Conversion::intToString(nominalScaleSpinBox->value()) <<"</mml:mn>\n";
 	auxStream << "</mml:mfrac>\n";
 	auxStream << "</nominalScale>\n";
-	auxStream << "<flightHeight uom=\"#m\">" << intToString(flightHeightSpinBox->value())<<"</flightHeight>\n";
+        auxStream << "<flightHeight uom=\"#m\">" << Conversion::intToString(flightHeightSpinBox->value())<<"</flightHeight>\n";
 	auxStream << "<overlap>\n";
-	auxStream << "<longitudinal uom=\"#%\">" << doubleToString(horizontalOverlapDoubleSpinBox->value())<<"</longitudinal>\n";
-	auxStream << "<transversal uom=\"#%\">" << doubleToString(verticalOverlapDoubleSpinBox->value())<<"</transversal>\n";
+        auxStream << "<longitudinal uom=\"#%\">" << Conversion::doubleToString(horizontalOverlapDoubleSpinBox->value())<<"</longitudinal>\n";
+        auxStream << "<transversal uom=\"#%\">" << Conversion::doubleToString(verticalOverlapDoubleSpinBox->value())<<"</transversal>\n";
 	auxStream << "</overlap>\n";
 	auxStream << "</flight>\n";
 

@@ -62,7 +62,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* e);
 	QPoint getPointCoords();
 
-	int mode, dx, dy, adjustX, adjustY, modeBackup;
+        int mode; int dx; int dy; int adjustX; int adjustY; int modeBackup;
 	bool windowChanged;
 	QPoint currentPos;
 

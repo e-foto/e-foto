@@ -1029,7 +1029,7 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelSensor()));
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSensor()));
 
-	EDomElement node(manager->getXml("sensor", "key", intToString(id)));
+        EDomElement node(manager->getXml("sensor", "key", Conversion::intToString(id)));
 		sensorForm.clearForm();
 		sensorForm.setFormLocale(QLocale(QLocale::system()));
 	sensorForm.fillvalues(node.getContent());
@@ -1084,7 +1084,7 @@ void ProjectUserInterface_Qt::viewFlight(int id)
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelFlight()));
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deleteFlight()));
 
-	EDomElement node(manager->getXml("flight", "key", intToString(id)));
+        EDomElement node(manager->getXml("flight", "key", Conversion::intToString(id)));
 
 	flightForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
@@ -1147,7 +1147,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelImage()));
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deleteImage()));
 
-	EDomElement node(manager->getXml("image", "key", intToString(id)));
+        EDomElement node(manager->getXml("image", "key", Conversion::intToString(id)));
 
 	imageForm.fillvalues(node.getContent());
 	centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
@@ -1156,7 +1156,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 	currentForm->setReadOnly(true);
 	validatingImage();
 
-	EDomElement node2(manager->getXml("imageIO", "image_key", intToString(id)));
+        EDomElement node2(manager->getXml("imageIO", "image_key", Conversion::intToString(id)));
 	if (node2.getContent()!="")
 	{
 		imageForm.setIOAvailable(true);
@@ -1166,7 +1166,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 		imageForm.setIOAvailable(false);
 	}
 
-	EDomElement node3(manager->getXml("imageEO", "image_key", intToString(id)));
+        EDomElement node3(manager->getXml("imageEO", "image_key", Conversion::intToString(id)));
 	if (node3.getContent()!="")
 	{
 		imageForm.setEOAvailable(true);
@@ -1218,7 +1218,7 @@ void ProjectUserInterface_Qt::viewPoint(int id)
 	connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelPoint()));
 	connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this, SLOT(deletePoint()));
 
-	EDomElement node(manager->getXml("point", "key", intToString(id)));
+        EDomElement node(manager->getXml("point", "key", Conversion::intToString(id)));
 
 	pointForm.setImageList(manager->listImageKeys(), manager->listImages());
 	pointForm.fillvalues(node.getContent());
@@ -1496,7 +1496,7 @@ void ProjectUserInterface_Qt::newImage()
 	currentItemId = manager->getFreeImageId();
 
 	string text = "";
-	text += "<image key=\"" + intToString(currentItemId) + "\" sensor_key=\"1\" flight_key=\"1\">\n";
+        text += "<image key=\"" + Conversion::intToString(currentItemId) + "\" sensor_key=\"1\" flight_key=\"1\">\n";
 	text += "<imageId></imageId>\n";
 	text += "<width uom=\"#px\"></width>\n";
 	text += "<height uom=\"#px\"></height>\n";
@@ -1525,7 +1525,7 @@ void ProjectUserInterface_Qt::newPoint()
 	string text = "";
 
 	currentItemId = manager->getFreePointId();
-	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"\">\n";
+        text += "<point key=\"" + Conversion::intToString(currentItemId) + "\" type=\"\">\n";
 	text += "<pointId></pointId>\n";
 	text += "<description></description>\n";
 	text += "<spatialCoordinates uom=\"#m\">\n";
@@ -2018,7 +2018,7 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		dNField = point.split("\t").at(5).toStdString().c_str();
 		dHField = point.split("\t").at(6).toStdString().c_str();
 
-		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+                aux << "<point key=\""<< Conversion::intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
@@ -2058,7 +2058,7 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		nField = point.split("\t").at(2).toStdString().c_str();
 		hField = point.split("\t").at(3).toStdString().c_str();
 
-		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+                aux << "<point key=\""<< Conversion::intToString(key)<<"\" type=\"" << typePoint << "\">\n";
 		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
@@ -2091,7 +2091,7 @@ void ProjectUserInterface_Qt::exportPointsToTxt()
 
 	for (int i=1; i<=points.children().size(); i++)
 	{
-		exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+                exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",Conversion::intToString(i))).data() );
 	}
 	exportFileName->close();
 }
@@ -2174,7 +2174,7 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 
 	// implementar o xml de images aqui
 	/*
-	aux << "<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
+        aux << "<image key=\""<< Conversion::intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
 	aux << "<imageId>" << "" << "</imageId>\n";
 	aux << "<width uom=\"#px\"" << "" << "</width>\n";
 	aux << "<height uom=\"#px\"" << ""  << "</height>\n";

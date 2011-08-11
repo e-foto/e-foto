@@ -1,0 +1,29 @@
+class FrameSensor
+!!!222968.cpp!!!	FrameSensor()
+
+!!!223096.cpp!!!	FrameSensor(in sensor : Sensor)
+	//*this = sensor;
+!!!223224.cpp!!!	FrameSensor(in sensor : FrameSensor)
+	*this = sensor;
+!!!223352.cpp!!!	FrameSensor(in myId : int)
+
+!!!223480.cpp!!!	~FrameSensor()
+
+!!!223608.cpp!!!	setFocalDistance(in newFocalDistance : double) : void
+	focalDistance = newFocalDistance;
+!!!223736.cpp!!!	setFocalDistanceSigma(in newFocalDistanceSigma : double) : void
+	focalDistanceSigma = newFocalDistanceSigma;
+!!!223864.cpp!!!	setPrincipalPointCoordinates(in newCoordinates : AnalogImageSpaceCoordinate) : void
+	principalPointCoordinates = newCoordinates;
+!!!223992.cpp!!!	getFocalDistance() : double
+	return focalDistance;
+!!!224120.cpp!!!	getFocalDistanceSigma() : double
+	return focalDistanceSigma;
+!!!224248.cpp!!!	getPrincipalPointCoordinates() : AnalogImageSpaceCoordinate
+	return principalPointCoordinates;
+!!!224376.cpp!!!	getRadialSymmetricCoefficients() : deque<RadialSymmetricDistortionCoefficient>
+	return rsCoefficients;
+!!!224504.cpp!!!	getDecenteredCoefficients() : deque<DecenteredDistortionCoefficient>
+	return dCoefficients;
+!!!224632.cpp!!!	objectType(in  : void) : string
+	return "FrameSensor";

@@ -1,0 +1,72 @@
+class DigitalFiductialMark
+!!!212472.cpp!!!	DigitalFiductialMark()
+    id = 0;
+    imageId = 0;
+    col = 0;
+    lin = 0;
+    unit = "";
+    available = false;
+    sigmaAvailable = false;
+!!!212600.cpp!!!	DigitalFiductialMark(in myId : int, in myImageId : int)
+    id = myId;
+    imageId = myImageId;
+    col = 0;
+    lin = 0;
+    unit = "";
+    available = false;
+    sigmaAvailable = false;
+!!!212728.cpp!!!	DigitalFiductialMark(in myId : int, in myImageId : int, in myCol : int, in myLin : int)
+    id = myId;
+    imageId = myImageId;
+    col = myCol;
+    lin = myLin;
+    unit = "px";
+    available = true;
+    sigmaAvailable = false;
+!!!212856.cpp!!!	DigitalFiductialMark(in myId : int, in myImageId : int, in myPosition : PositionMatrix)
+    id = myId;
+    imageId = myImageId;
+    setPosition(myPosition);
+    sigmaAvailable = false;
+!!!212984.cpp!!!	~DigitalFiductialMark()
+
+!!!213112.cpp!!!	setId(in newId : int) : void
+    id = newId;
+!!!213240.cpp!!!	setImageId(in newImageId : int) : void
+    imageId = newImageId;
+!!!213368.cpp!!!	getId() : int
+    return id;
+!!!213496.cpp!!!	getImageId() : int
+    return imageId;
+!!!213624.cpp!!!	objectType(in  : void) : string
+    stringstream result;
+    result << "DigitalFiductialMark " << id;
+    return result.str();
+!!!213752.cpp!!!	objectAssociations(in  : void) : string
+    return "";
+!!!213880.cpp!!!	is(in s : string) : bool
+    return (s == "DigitalFiductialMark" ? true : false);
+!!!214008.cpp!!!	xmlSetData(in xml : string) : void
+    EDomElement root(xml);
+    id = Conversion::stringToInt(root.attribute("key"));
+    EDomElement xmlPos = root.elementByTagName("gml:pos");
+    if (xmlPos.isAvailable())
+    {
+        deque<double> gmlPosValues = xmlPos.toGmlPos();
+        col = (int) gmlPosValues.at(0);
+        lin = (int) gmlPosValues.at(1);
+        available = true;
+    }
+    else
+    {
+        available = false;
+    }
+!!!214136.cpp!!!	xmlGetData() : string
+    stringstream result;
+    result << "<fiductialMark key=\"" << Conversion::intToString(id) << "\">\n";
+    if (available)
+        result << "<gml:pos>" << Conversion::intToString(col) << " " << Conversion::intToString(lin) << "</gml:pos>\n";
+    else
+        result << "<gml:pos>Not Available</gml:pos>\n";
+    result << "</fiductialMark>";
+    return result.str();

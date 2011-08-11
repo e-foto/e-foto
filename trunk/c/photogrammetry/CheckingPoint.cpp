@@ -60,7 +60,7 @@ bool CheckingPoint::is(string s)
 void CheckingPoint::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
+    id = Conversion::stringToInt(root.attribute("key"));
 	pointId = root.elementByTagName("pointId").toString();
     description = root.elementByTagName("description").toString();
     objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
@@ -80,7 +80,7 @@ void CheckingPoint::xmlSetData(string xml)
 string CheckingPoint::xmlGetData()
 {
     stringstream result;
-    result << "<point key=\"" << intToString(id) << "\" type=\"checking\">\n";
+    result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"checking\">\n";
 	result << "<pointId>" << pointId << "</pointId>\n";
     result << "<description>" << description << "</description>\n";
     result << objectCoordinate.xmlGetData();

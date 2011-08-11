@@ -45,11 +45,11 @@ class Image : public EObject
     ObjectSpaceCoordinate spatialCoordinates;
 
     // IMPORTANTE: Gambiarra temporaria...
-	bool gnssAvailable, gnssSigmaAvailable, insAvailable, insSigmaAvailable;
-	string gnssType, insType;
-    double gnssX0, gnssY0, gnssZ0;
+        bool gnssAvailable; bool gnssSigmaAvailable; bool insAvailable; bool insSigmaAvailable;
+        string gnssType; string insType;
+    double gnssX0; double gnssY0; double gnssZ0;
     Matrix gnssSigma;
-    double insOmega, insPhi, insKappa;
+    double insOmega; double insPhi; double insKappa;
     Matrix insSigma;
 
     // Composed objects

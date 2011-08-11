@@ -1,0 +1,15 @@
+class ExteriorOrientation
+!!!217208.cpp!!!	setImageId(in newImageId : int) : void
+    imageId = newImageId;
+!!!217336.cpp!!!	setImage(inout newImage : Image) : void
+    myImage = newImage;
+!!!217464.cpp!!!	getImageId() : int
+    return imageId;
+!!!217592.cpp!!!	getImage() : Image
+    return myImage;
+!!!217720.cpp!!!	objectType(in  : void) : string
+    stringstream result;
+    result << "ExteriorOrientation " << imageId;
+    return result.str();
+!!!217848.cpp!!!	objectAssociations(in  : void) : string
+    return myImage->objectType();

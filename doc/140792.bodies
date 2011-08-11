@@ -1,0 +1,92 @@
+class AnalogImageSpaceCoordinate
+!!!209016.cpp!!!	AnalogImageSpaceCoordinate()
+    imageId = 0;
+    unit = "";
+    xi = 0;
+    eta = 0;
+    sigmaXi = 0;
+    sigmaEta = 0;
+    sigmaXiEta = 0;
+    available = false;
+    sigmaAvailable = false;
+!!!209144.cpp!!!	AnalogImageSpaceCoordinate(in myImageId : int)
+    imageId = myImageId;
+    unit = "";
+    xi = 0;
+    eta = 0;
+    sigmaXi = 0;
+    sigmaEta = 0;
+    sigmaXiEta = 0;
+    available = false;
+    sigmaAvailable = false;
+!!!209272.cpp!!!	AnalogImageSpaceCoordinate(in myImageId : int, in myUnit : string, in myXi : double, in myEta : double, in mySigmaXi : double = 1, in mySigmaEta : double = 1, in mySigmaXiEta : double = 0)
+    imageId = myImageId;
+    unit = myUnit;
+    xi = myXi;
+    eta = myEta;
+    sigmaXi = mySigmaXi;
+    sigmaEta = mySigmaEta;
+    sigmaXiEta = mySigmaXiEta;
+    available = true;
+    sigmaAvailable = true;
+!!!209400.cpp!!!	AnalogImageSpaceCoordinate(in myImageId : int, in myPosition : PositionMatrix)
+    imageId = myImageId;
+    setPosition(myPosition);
+    sigmaAvailable = false;
+!!!209528.cpp!!!	AnalogImageSpaceCoordinate(in myImageId : int, in myPosition : PositionMatrix, in myPositionSigmas : Matrix)
+    imageId = myImageId;
+    setPosition(myPosition);
+    setPositionSigmas(myPositionSigmas);
+!!!209656.cpp!!!	~AnalogImageSpaceCoordinate()
+
+!!!209784.cpp!!!	setImageId(in newImageId : int) : void
+    imageId = newImageId;
+!!!209912.cpp!!!	getImageId() : int
+    return imageId;
+!!!210040.cpp!!!	objectType(in  : void) : string
+    return "AnalogImageSpaceCoordinate";
+!!!210168.cpp!!!	objectAssociations(in  : void) : string
+    return "";
+!!!210296.cpp!!!	is(in s : string) : bool
+    return (s == "AnalogImageSpaceCoordinate" ? true : false);
+!!!210424.cpp!!!	xmlSetData(in xml : string) : void
+    EDomElement root(xml);
+    imageId = Conversion::stringToInt(root.attribute("image_key"));
+    unit = root.attribute("uom");
+    EDomElement xmlPos = root.elementByTagName("gml:pos");
+    if (xmlPos.isAvailable())
+    {
+        deque<double> gmlPosValues = xmlPos.toGmlPos();
+        xi = gmlPosValues.at(0);
+        eta = gmlPosValues.at(1);
+        available = true;
+    }
+    else
+    {
+        available = false;
+    }
+    Matrix sigmaMatrix;
+    EDomElement xmlSigma = root.elementByTagName("sigma");
+    if (xmlSigma.isAvailable())
+    {
+        sigmaMatrix.xmlSetData(root.elementByTagName("sigma").elementByTagName("mml:matrix").getContent());
+        sigmaAvailable = true;
+    }
+    else
+    {
+        sigmaMatrix.identity(2);
+        sigmaAvailable = false;
+    }
+    setPositionSigmas(sigmaMatrix);
+!!!210552.cpp!!!	xmlGetData() : string
+    stringstream result;
+
+    if (available)
+        result << "<gml:pos>" << Conversion::doubleToString(xi) << " " << Conversion::doubleToString(eta) << "</gml:pos>\n";
+    else
+        result << "<gml:pos>Not Available</gml:pos>\n";
+    if (sigmaAvailable)
+        result << "<sigma>\n" << getPositionSigmas().xmlGetData() << "</sigma>\n";
+    else
+        result << "<sigma>Not Available</sigma>\n";
+    return result.str();

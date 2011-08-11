@@ -1,0 +1,83 @@
+class SPoint
+!!!167800.cpp!!!	SPoint()
+	parent = 0;
+	nickname = "";
+	markedWith = 0;
+!!!167928.cpp!!!	SPoint(inout parent : SWidget, in nickname : string)
+	this->parent = parent;
+	this->nickname = nickname;
+	this->markedWith = 0;
+!!!168056.cpp!!!	SPoint(inout parent : SWidget, in nickname : string, inout markedWith : Pin)
+	this->parent = parent;
+	this->nickname = nickname;
+	this->markedWith = markedWith;
+!!!168184.cpp!!!	~SPoint()
+	// Por fazer
+!!!168312.cpp!!!	getNickname() : string
+	return nickname;
+!!!168440.cpp!!!	setNewMarker(inout markedWith : Pin) : void
+	if (markedWith != 0)
+	{
+		this->markedWith = markedWith;
+	}
+!!!168568.cpp!!!	addExhibition(inout exhibition : SMarkInImage) : void
+	if (exhibition->getMarkNickname() == nickname)
+	{
+		string imageNickname = exhibition->getImageNickname();
+		// Impedimos associação que aponte uma imagem de nickname inválido.
+		if (imageNickname == "" || string::npos != imageNickname.find(";") || isShowedInImage(imageNickname))
+			return;
+		exposedInImage.push_back(exhibition);
+	}
+!!!168696.cpp!!!	removeExhibition(inout exhibition : SMarkInImage) : void
+	for (unsigned int i = 0; i < exposedInImage.size(); i++)
+	{
+		if (exposedInImage.at(i) == exhibition)
+		{
+			exposedInImage.erase(exposedInImage.begin()+i);
+			break;
+		}
+	}
+!!!168824.cpp!!!	removeExhibitions() : void
+	while (!exposedInImage.empty())
+		delete exposedInImage.at(0);
+!!!168952.cpp!!!	isShowedInImage(in imageNickname : string) : bool
+	for (unsigned int i = 0; i < exposedInImage.size(); i++)
+	{
+		if (exposedInImage.at(i)->getImageNickname() == imageNickname)
+		{
+			return true;
+		}
+	}
+	return false;
+!!!169080.cpp!!!	getXInImage(in imageNickname : string) : double
+	for (unsigned int i = 0; i < exposedInImage.size(); i++)
+	{
+		if (exposedInImage.at(i)->getImageNickname() == imageNickname)
+		{
+			return exposedInImage.at(i)->getX();
+		}
+	}
+	return 0;
+!!!169208.cpp!!!	getYInImage(in imageNickname : string) : double
+	for (unsigned int i = 0; i < exposedInImage.size(); i++)
+	{
+		if (exposedInImage.at(i)->getImageNickname() == imageNickname)
+		{
+			return exposedInImage.at(i)->getY();
+		}
+	}
+	return 0;
+!!!169336.cpp!!!	panInImage(in imageNickname : string, in x : double, in y : double) : void
+	for (unsigned int i = 0; i < exposedInImage.size(); i++)
+	{
+		if (exposedInImage.at(i)->getImageNickname() == imageNickname)
+		{
+			exposedInImage.at(i)->pan(x,y);
+		}
+	}
+!!!169464.cpp!!!	draw(inout link : SMarkInImage, in x : double, in y : double, in zoom : double) : void
+	if (link != NULL && markedWith != NULL)
+	{
+		markedWith->draw(x,y,zoom);
+	}

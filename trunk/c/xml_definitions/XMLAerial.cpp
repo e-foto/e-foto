@@ -7,7 +7,7 @@ XMLAerial::XMLAerial()
 void XMLAerial::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    setId(stringToInt(root.attribute("key")));
+    setId(Conversion::stringToInt(root.attribute("key")));
 */
     /*Sem methodos ainda para preencher
         sensorId = root.elementByTagName("sensorId").toString();
@@ -21,7 +21,7 @@ void XMLAerial::xmlSetData(string xml)
     for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
     {
         SpectralRange* spec = new SpectralRange;
-        spec->band = stringToInt(xmlSpectralRanges.at(i).attribute("band"));
+        spec->band = Conversion::stringToInt(xmlSpectralRanges.at(i).attribute("band"));
         spec->inferiorLimit = xmlSpectralRanges.at(i).elementByTagName("inferiorLimit").toDouble();
         spec->superiorLimit = xmlSpectralRanges.at(i).elementByTagName("superiorLimit").toDouble();
         spectralRanges.push_back(*spec);
@@ -82,7 +82,7 @@ void XMLAerial::xmlSetData(string xml)
 string Aerial::xmlGetData()
 {
     stringstream result;
-    result << "<sensor key=\"" << intToString(id) << "\">\n";
+    result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
         result << "<sensorId>" << sensorId << "</sensorId>\n";
     result << "<type>\n";
     result << "<geometry>" << geometry << "</geometry>\n";
@@ -92,9 +92,9 @@ string Aerial::xmlGetData()
     result << "<spectralRanges uom=\"" << spectralRangesUnit << "\">\n";
     for (unsigned int i = 0; i < spectralRanges.size(); i++)
     {
-        result << "<spectralRange band=\"" << intToString(spectralRanges.at(i).band) << "\">\n";
-        result << "<inferiorLimit>" << doubleToString(spectralRanges.at(i).inferiorLimit) << "</inferiorLimit>\n";
-        result << "<superiorLimit>" << doubleToString(spectralRanges.at(i).superiorLimit) << "</superiorLimit>\n";
+        result << "<spectralRange band=\"" << Conversion::intToString(spectralRanges.at(i).band) << "\">\n";
+        result << "<inferiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).inferiorLimit) << "</inferiorLimit>\n";
+        result << "<superiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).superiorLimit) << "</superiorLimit>\n";
         result << "</spectralRange>\n";
     }
     result << "</spectralRanges>\n";
@@ -105,22 +105,22 @@ string Aerial::xmlGetData()
     result << "<expiration>" << calibrationCertificateExpiration << "</expiration>\n";
     result << "</calibrationCertificate>\n";
     result << "<focalDistance uom=\"" << focalDistanceUnit << "\">\n";
-    result << "<value>" << doubleToString(focalDistance) << "</value>\n";
+    result << "<value>" << Conversion::doubleToString(focalDistance) << "</value>\n";
     if (focalDistanceSigma == 1.0)
         result << "<sigma>Not Available</sigma>\n";
     else
-        result << "<sigma>" << doubleToString(focalDistanceSigma) << "</sigma>\n";
+        result << "<sigma>" << Conversion::doubleToString(focalDistanceSigma) << "</sigma>\n";
     result << "</focalDistance>\n";
     result << "<distortionCoefficients>\n";
     result << "<radialSymmetric>\n";
     for (unsigned int i = 0; i < rsCoefficients.size(); i++)
     {
         result << "<k" << i << ">\n";
-        result << "<value>" << doubleToString(rsCoefficients.at(i).value) << "</value>\n";
+        result << "<value>" << Conversion::doubleToString(rsCoefficients.at(i).value) << "</value>\n";
         if (rsCoefficients.at(i).sigma == 1.0)
             result << "<sigma>Not Available</sigma>\n";
         else
-            result << "<sigma>" << doubleToString(rsCoefficients.at(i).sigma) << "</sigma>\n";
+            result << "<sigma>" << Conversion::doubleToString(rsCoefficients.at(i).sigma) << "</sigma>\n";
         result << "</k" << i << ">\n";
     }
     result << "</radialSymmetric>\n";
@@ -128,11 +128,11 @@ string Aerial::xmlGetData()
     for (unsigned int i = 0; i < dCoefficients.size(); i++)
     {
         result << "<P" << i+1 << ">\n";
-        result << "<value>" << doubleToString(dCoefficients.at(i).value) << "</value>\n";
+        result << "<value>" << Conversion::doubleToString(dCoefficients.at(i).value) << "</value>\n";
         if (dCoefficients.at(i).sigma == 1.0)
             result << "<sigma>Not Available</sigma>\n";
         else
-            result << "<sigma>" << doubleToString(dCoefficients.at(i).sigma) << "</sigma>\n";
+            result << "<sigma>" << Conversion::doubleToString(dCoefficients.at(i).sigma) << "</sigma>\n";
         result << "</P" << i+1 << ">\n";
     }
     result << "</decentered>\n";

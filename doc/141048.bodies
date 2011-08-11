@@ -1,0 +1,48 @@
+class ControlPoint
+!!!211576.cpp!!!	ControlPoint()
+
+
+!!!211704.cpp!!!	ControlPoint(in myId : int)
+
+
+!!!211832.cpp!!!	objectType(in  : void) : string
+
+    stringstream result;
+    result << "ControlPoint " << id;
+    return result.str();
+!!!211960.cpp!!!	objectAssociations(in  : void) : string
+
+    return "";
+!!!212088.cpp!!!	is(in s : string) : bool
+
+    return (s == "ControlPoint" ? true : false);
+!!!212216.cpp!!!	xmlSetData(in xml : string) : void
+
+    EDomElement root(xml);
+    id = Conversion::stringToInt(root.attribute("key"));
+	pointId = root.elementByTagName("pointId").toString();
+    description = root.elementByTagName("description").toString();
+    objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
+    deque<EDomElement> xmlDigitalCoordinates = root.elementsByTagName("imageCoordinates");
+    digitalCoordinates.clear();
+    for (unsigned int i = 0; i < xmlDigitalCoordinates.size(); i++)
+    {
+        DigitalImageSpaceCoordinate* disc = new DigitalImageSpaceCoordinate;
+        disc->xmlSetData(xmlDigitalCoordinates.at(i).getContent());
+        digitalCoordinates.push_back(*disc);
+    }
+!!!212344.cpp!!!	xmlGetData() : string
+
+    stringstream result;
+    result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"control\">\n";
+	result << "<pointId>" << pointId << "</pointId>\n";
+    result << "<description>" << description << "</description>\n";
+    result << objectCoordinate.xmlGetData() << "\n";
+    result << "<imagesMeasurements>\n";
+    for (unsigned int i = 0; i < digitalCoordinates.size(); i++)
+    {
+        result << digitalCoordinates.at(i).xmlGetData();
+    }
+    result << "</imagesMeasurements>\n";
+    result << "</point>\n";
+    return result.str();

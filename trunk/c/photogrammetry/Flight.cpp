@@ -323,8 +323,8 @@ bool Flight::is(string s)
 void Flight::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
-    sensorId = stringToInt(root.attribute("sensor_key"));
+    id = Conversion::stringToInt(root.attribute("key"));
+    sensorId = Conversion::stringToInt(root.attribute("sensor_key"));
 	flightId = root.elementByTagName("flightId").toString();
     description = root.elementByTagName("description").toString();
     execution = root.elementByTagName("execution").toString();
@@ -345,7 +345,7 @@ void Flight::xmlSetData(string xml)
 string Flight::xmlGetData()
 {
     stringstream result;
-    result << "<flight key=\"" << intToString(id) << "\" sensor_key=\"" << intToString(sensorId) << "\">\n";
+    result << "<flight key=\"" << Conversion::intToString(id) << "\" sensor_key=\"" << Conversion::intToString(sensorId) << "\">\n";
 	result << "<flightId>" << flightId << "</flightId>\n";
     result << "<description>" << description << "</description>\n";
     result << "<execution>" << execution << "</execution>\n";
@@ -356,10 +356,10 @@ string Flight::xmlGetData()
     result << "<mml:mn>" << scale.substr(scale.find(":") + 1) << "</mml:mn>\n";
     result << "</mml:mfrac>\n";
     result << "</nominalScale>\n";
-    result << "<flightHeight uom=\"#m\">" << doubleToString(height) << "</flightHeight>\n";
+    result << "<flightHeight uom=\"#m\">" << Conversion::doubleToString(height) << "</flightHeight>\n";
     result << "<overlap>\n";
-    result << "<longitudinal uom=\"#%\">" << doubleToString(longitudinalOverlap) << "</longitudinal>\n";
-    result << "<transversal uom=\"#%\">" << doubleToString(transversalOverlap) << "</transversal>\n";
+    result << "<longitudinal uom=\"#%\">" << Conversion::doubleToString(longitudinalOverlap) << "</longitudinal>\n";
+    result << "<transversal uom=\"#%\">" << Conversion::doubleToString(transversalOverlap) << "</transversal>\n";
     result << "</overlap>\n";
     result << "</flight>\n";
     return result.str();

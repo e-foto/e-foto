@@ -125,7 +125,7 @@ string IOQuality::xmlGetData()
 	if (sigma0Squared == 1.0)
 		result << "<sigma0Squared>Not Available</sigma0Squared>\n";
 	else
-		result << "<sigma0Squared>" << doubleToString(sigma0Squared) << "</sigma0Squared>\n";
+                result << "<sigma0Squared>" << Conversion::doubleToString(sigma0Squared) << "</sigma0Squared>\n";
 	if (SigmaXa.isIdentity())
 		result << "<SigmaXa>Not Available</SigmaXa>\n";
 	else

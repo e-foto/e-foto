@@ -251,14 +251,14 @@ bool IOUserInterface_Qt::viewReport()
 		QString aux1=QString::fromUtf8("<font size=5>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV/(n-m)");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 
 		aux1+="=";
-		aux1+=QString::number(stringToDouble(myValues.at(2)),'f',6);
+                aux1+=QString::number(Conversion::stringToDouble(myValues.at(2)),'f',6);
 		aux1+="</font>";
 		QLabel* myValueLabel1 = new QLabel(aux1);
 		myValueLabel1->setTextFormat(Qt::RichText);
 
 		QString aux2=QString::fromUtf8("<font size=5>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 		aux2+="=";
-		aux2+=QString::number(sqrt(stringToDouble(myValues.at(2))),'f',6);
+                aux2+=QString::number(sqrt(Conversion::stringToDouble(myValues.at(2))),'f',6);
 		aux2+="</font>";
 		QLabel* myValueLabel2 = new QLabel(aux2);
 		myValueLabel2->setTextFormat(Qt::RichText);

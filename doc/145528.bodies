@@ -1,0 +1,53 @@
+class PointsForm
+!!!293240.cpp!!!	PointsForm(inout parent : QWidget = 0)
+    setupUi(this);
+	connect( pointsTable, SIGNAL( cellClicked(int,int)), this , SLOT( emitSignal(int) ) );
+	pointsTable->setColumnHidden(0,true);
+	pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
+
+	//connect(importButton, SIGNAL(clicked()), this ,SLOT(importFromTxt()));
+!!!293368.cpp!!!	fillvalues(in values : string) : void
+   EDomElement ede(values);
+    int rows=ede.children().size();
+    pointsTable->setRowCount(rows);
+    pointsTable->setColumnCount(6);
+
+    for (int i=0;i<rows;i++){
+
+        EDomElement pnt=ede.children().at(i);
+
+		deque<double> values;
+
+        QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pnt.attribute("key").c_str()) );
+		QTableWidgetItem *gcpItem = new QTableWidgetItem(pnt.elementByTagName("pointId").toString().c_str()) ;
+        QTableWidgetItem *typeItem = new QTableWidgetItem(pnt.attribute("type").c_str()) ;
+		values = pnt.elementByTagName("gml:pos").toGmlPos();
+		if(values.size() == 3)
+        {
+			QTableWidgetItem *EItem = new QTableWidgetItem(QString::number(values.at(0),'f',3));
+			QTableWidgetItem *NItem = new QTableWidgetItem(QString::number(values.at(1),'f',3));
+			QTableWidgetItem *HItem = new QTableWidgetItem(QString::number(values.at(2),'f',3));
+            pointsTable->setItem(i,0,keyItem);
+            pointsTable->setItem(i,1,gcpItem);
+            pointsTable->setItem(i,2,typeItem);
+            pointsTable->setItem(i,3,EItem);
+            pointsTable->setItem(i,4,NItem);
+            pointsTable->setItem(i,5,HItem);
+        };
+
+
+
+    }
+
+!!!293496.cpp!!!	getvalues() : string
+    string xmlString;
+    stringstream auxStream;
+
+    auxStream << "\nNot Available\n";
+
+    xmlString = auxStream.str();
+    return xmlString;
+!!!293752.cpp!!!	isForm(in formName : string) : bool
+        return !formName.compare("PointsForm");
+!!!293880.cpp!!!	emitSignal(in i : int) : void
+    emit clicked(i);

@@ -6,7 +6,7 @@
 
 // Common functions
 //
-string doubleToString(double value)
+string Conversion::doubleToString(double value)
 {
     stringstream converter;
     converter << setprecision(16);
@@ -14,7 +14,7 @@ string doubleToString(double value)
     return converter.str();
 }
 
-string doubleToString(double value, int precision)
+string Conversion::doubleToString(double value, int precision)
 {
 	stringstream converter;
 	converter << setprecision(precision);
@@ -23,7 +23,7 @@ string doubleToString(double value, int precision)
 	return converter.str();
 }
 
-double stringToDouble(string value)
+double Conversion::stringToDouble(string value)
 {
     double result;
     stringstream converter;
@@ -33,14 +33,14 @@ double stringToDouble(string value)
     return result;
 }
 
-string intToString(int value)
+string Conversion::intToString(int value)
 {
     stringstream converter;
     converter << value;
     return converter.str();
 }
 
-int stringToInt(string value)
+int Conversion::stringToInt(string value)
 {
     int result;
     stringstream converter;
@@ -49,14 +49,14 @@ int stringToInt(string value)
     return result;
 }
 
-string longToString(long value)
+string Conversion::longToString(long value)
 {
     stringstream converter;
     converter << value;
     return converter.str();
 }
 
-long stringToLong(string value)
+long Conversion::stringToLong(string value)
 {
     long result;
     stringstream converter;
@@ -65,7 +65,7 @@ long stringToLong(string value)
     return result;
 }
 
-bool testAvailable(EDomElement element)
+bool Conversion::testAvailable(EDomElement element)
 {
     if (element.children().size() == 0)
     {
@@ -76,7 +76,7 @@ bool testAvailable(EDomElement element)
     return true;
 }
 
-bool testTagName(EDomElement element, string tagname)
+bool Conversion::testTagName(EDomElement element, string tagname)
 {
     EDomElement check = element.elementByTagName(tagname);
     if (check.tagName() == tagname)
@@ -721,7 +721,7 @@ int EDomElement::toInt()
         if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
         {
             string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
-            result = stringToInt(value);
+            result = Conversion::stringToInt(value);
         }
         return result;
     }
@@ -740,7 +740,7 @@ long EDomElement::toLong()
         if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
         {
             string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
-            result = stringToLong(value);
+            result = Conversion::stringToLong(value);
         }
         return result;
     }
@@ -759,7 +759,7 @@ double EDomElement::toDouble()
         if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
         {
             string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
-            result = stringToDouble(value);
+            result = Conversion::stringToDouble(value);
         }
         return result;
     }
@@ -787,7 +787,7 @@ deque<double> EDomElement::toGmlPos()
             else
                 limit = values.length();
             string valueStr = values.substr(pos, limit - pos);
-            value = stringToDouble(valueStr);
+            value = Conversion::stringToDouble(valueStr);
             result.push_back(value);
             pos = limit + 1;
         }

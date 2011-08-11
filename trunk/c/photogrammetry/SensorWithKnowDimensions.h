@@ -29,7 +29,7 @@ private:
 	//Private attributes
 	//
 	double pixelSize;
-	int frameColumns, frameRows;
+        int frameColumns; int frameRows;
 
 	//Composed objects
 	//

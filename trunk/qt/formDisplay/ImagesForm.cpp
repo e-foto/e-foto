@@ -55,7 +55,7 @@ void ImagesForm ::setReadOnly(bool state)
 //emite o sinal da linha(row) correspondente a image key
 void ImagesForm :: emitSignal(int i)
 {
-    //int key=stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
+    //int key=Conversion::stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
     //emit clicked(key);
     // Provisóriamente nós enviamos a posição da linha clicada e não a key efetivamente.
     emit clicked(i);
@@ -72,7 +72,7 @@ void ImagesForm::setIOsAvailable(string xmlIOs)
 
 	for (int i=0;i<imagesTable->rowCount();i++){
 		int key = imagesTable->item(i,0)->text().toInt();
-		EDomElement IOXml = ede.elementByTagAtt("imageIO","image_key",intToString(key));
+                EDomElement IOXml = ede.elementByTagAtt("imageIO","image_key",Conversion::intToString(key));
 		QTableWidgetItem *IOItem = new QTableWidgetItem();
 		IOItem->setTextAlignment(Qt::AlignHCenter);
 		if(IOXml.getContent() != "")
@@ -97,7 +97,7 @@ void ImagesForm::setEOsAvailable(string xmlEOs)
 
 	for (int i=0;i<imagesTable->rowCount();i++){
 		int key = imagesTable->item(i,0)->text().toInt();
-		EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",intToString(key));
+                EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
 		QTableWidgetItem *EOItem = new QTableWidgetItem();
 		EOItem->setTextAlignment(Qt::AlignHCenter);
 		if(EOXml.getContent() != "")

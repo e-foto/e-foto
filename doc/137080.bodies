@@ -1,0 +1,209 @@
+class SWidget
+!!!150776.cpp!!!	containsViewport(in nickname : string) : bool
+	for (unsigned int i = 0; i < viewport.size(); i++)
+		if (viewport.at(i).getNickname() == nickname)
+			return true;
+	return false;
+!!!150904.cpp!!!	containsImage(in nickname : string) : bool
+	for (unsigned int i = 0; i < image.size(); i++)
+		if (image.at(i).getNickname() == nickname)
+			return true;
+	return false;
+!!!151032.cpp!!!	containsPin(in nickname : string) : bool
+	for (unsigned int i = 0; i < pin.size(); i++)
+		if (pin.at(i).getNickname() == nickname)
+			return true;
+	return false;
+!!!151160.cpp!!!	containsPoint(in nickname : string) : bool
+	for (unsigned int i = 0; i < point.size(); i++)
+		if (point.at(i).getNickname() == nickname)
+			return true;
+	return false;
+!!!151288.cpp!!!	countViewports() : int
+	return viewport.size();
+!!!151416.cpp!!!	countImages() : int
+	return image.size();
+!!!151544.cpp!!!	countPins() : int
+	return pin.size();
+!!!151672.cpp!!!	countPoints() : int
+	return point.size();
+!!!151800.cpp!!!	createViewport(in nickname : string) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsViewport(nickname))
+		return false;
+	viewport.push_back(sclass::SViewport(this, nickname, 0, 0, 100, 100));
+	return true;
+!!!151928.cpp!!!	createViewport(in nickname : string, in left : double, in bottom : double, in width : double, in height : double) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsViewport(nickname))
+		return false;
+	viewport.push_back(sclass::SViewport(this, nickname, left, bottom, width, height));
+	return true;
+!!!152056.cpp!!!	createViewport(in nickname : string, in left : double, in leftOffset : int, in bottom : double, in bottomOffset : int, in width : double, in widthOffset : int, in height : double, in heightOffset : int) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsViewport(nickname))
+		return false;
+	viewport.push_back(sclass::SViewport(this, nickname, left, leftOffset, bottom, bottomOffset, width, widthOffset, height, heightOffset));
+	return true;
+!!!152184.cpp!!!	createImage(in nickname : string, in filename : string) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsImage(nickname))
+		return false;
+	sclass::SImage img(this, nickname, filename);
+	// E a imagem que não consegue fazer o load não entra na estrutura da SWidget.
+	if (img.loaded())
+	{
+		image.push_back(img);
+		return true;
+	}
+	else
+		return false;
+!!!152312.cpp!!!	createPin(in nickname : string, in filename : string) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsPin(nickname))
+		return false;
+	sclass::SPin p(this, nickname, filename);
+	// E o pin que não consegue fazer o load não entra na estrutura da SWidget.
+	if (p.loaded())
+	{
+		pin.push_back(p);
+		return true;
+	}
+	else
+		return false;
+!!!152440.cpp!!!	createPoint(in nickname : string, in markerNickname : string) : bool
+	// Impedimos o nickname vazio ou com ponto e virgula e a replica de nicknames
+	if (nickname == "" || string::npos != nickname.find(";") || containsPoint(nickname))
+		return false;
+	// Verificamos primeiro se o ponto pode ser associado a um pin para o nome informado
+	if (containsPin(markerNickname))
+	{
+		point.push_back(sclass::SPoint(this,nickname,getPin(markerNickname)));
+		return true;
+	}
+	else
+	{
+		point.push_back(sclass::SPoint(this,nickname));
+		return false;
+	}
+!!!152568.cpp!!!	destroyViewport(in nickname : string) : void
+	for (unsigned int i = 0; i < viewport.size(); i++)
+	{
+		if (viewport.at(i).getNickname() == nickname)
+		{
+			viewport.erase(viewport.begin()+i);
+			break;
+		}
+	}
+!!!152696.cpp!!!	destroyImage(in nickname : string) : void
+	for (unsigned int i = 0; i < image.size(); i++)
+	{
+		if (image.at(i).getNickname() == nickname)
+		{
+			image.at(i).unload();
+			image.erase(image.begin()+i);
+			break;
+		}
+	}
+!!!152824.cpp!!!	destroyPin(in nickname : string) : void
+	for (unsigned int i = 0; i < pin.size(); i++)
+	{
+		if (pin.at(i).getNickname() == nickname)
+		{
+			pin.at(i).unload();
+			pin.erase(pin.begin()+i);
+			break;
+		}
+	}
+!!!152952.cpp!!!	destroyPoint(in nickname : string) : void
+	for (unsigned int i = 0; i < point.size(); i++)
+	{
+		if (point.at(i).getNickname() == nickname)
+		{
+			point.erase(point.begin()+i);
+			break;
+		}
+	}
+!!!153080.cpp!!!	getViewport(in nickname : string) : Viewport
+	for (unsigned int i = 0; i < viewport.size(); i++)
+		if (viewport.at(i).getNickname() == nickname)
+			return &viewport.at(i);
+	return NULL;
+!!!153208.cpp!!!	getImage(in nickname : string) : Image
+	for (unsigned int i = 0; i < image.size(); i++)
+		if (image.at(i).getNickname() == nickname)
+			return &image.at(i);
+	return NULL;
+!!!153336.cpp!!!	getPin(in nickname : string) : Pin
+	for (unsigned int i = 0; i < pin.size(); i++)
+		if (pin.at(i).getNickname() == nickname)
+			return &pin.at(i);
+	return NULL;
+!!!153464.cpp!!!	getPoint(in nickname : string) : Point
+	for (unsigned int i = 0; i < point.size(); i++)
+		if (point.at(i).getNickname() == nickname)
+			return &point.at(i);
+	return NULL;
+!!!153592.cpp!!!	getSelectedViewport() : Viewport
+	return selectedViewport;
+!!!153720.cpp!!!	getSelectedImage() : Image
+	return selectedImage;
+!!!153848.cpp!!!	getSelectedPin() : Pin
+	return selectedPin;
+!!!153976.cpp!!!	getSelectedPoint() : Point
+	return selectedPoint;
+!!!154104.cpp!!!	selectViewport(in nickname : string) : void
+	selectedViewport = getViewport(nickname);
+!!!154232.cpp!!!	selectImage(in nickname : string) : void
+	selectedImage = getImage(nickname);
+!!!154360.cpp!!!	selectPin(in nickname : string) : void
+	selectedPin = getPin(nickname);
+!!!154488.cpp!!!	selectPoint(in nickname : string) : void
+	selectedPoint = getPoint(nickname);
+!!!154616.cpp!!!	setZoomCursor() : void
+	cursorType = 0;
+!!!154744.cpp!!!	setMarkingCursor() : void
+	cursorType = 1;
+!!!154872.cpp!!!	setMoveCursor() : void
+	cursorType = 2;
+!!!155000.cpp!!!	setDirectionCursor() : void
+	cursorType = 3;
+!!!155128.cpp!!!	pan(in dx : int, in dy : int) : void
+	if (selectedViewport != NULL)
+	{
+		if (selectedImage != NULL)
+			selectedImage->panInViewport(dx,dy,selectedViewport->getNickname());
+		else
+			selectedViewport->panImages(dx,dy);
+		repaint();
+	}
+!!!155256.cpp!!!	zoom(in zoom : double) : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoom(zoom,0,0);
+	}
+!!!155384.cpp!!!	zoom(in zoom : double, in x : int, in y : int) : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoom(zoom,x,y);
+	}
+!!!155512.cpp!!!	zoomIn() : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoomIn(0,0);
+	}
+!!!155640.cpp!!!	zoomIn(in x : int, in y : int) : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoomIn(x,y);
+	}
+!!!155768.cpp!!!	zoomOut() : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoomOut(0,0);
+	}
+!!!155896.cpp!!!	zoomOut(in x : int, in y : int) : void
+	if (selectedViewport != NULL)
+	{
+		selectedViewport->zoomOut(x,y);
+	}

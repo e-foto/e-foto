@@ -39,8 +39,8 @@ namespace sclass
 		bool texturize();
 
 		SWidget* parent;
-		string nickname, filePath;
-		int width, height;
+                string nickname; string filePath;
+                int width; int height;
 		bool canLoaded;
 		int format;
 		double ang;

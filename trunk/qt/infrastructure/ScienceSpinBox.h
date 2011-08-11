@@ -12,7 +12,6 @@
 
 // This class contains code of Matthias Pospiech to reimplement some of the validation methods.
 
-static bool isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64 *match = 0);
 
 class ScienceSpinBox : public QDoubleSpinBox
 {
@@ -37,9 +36,10 @@ public:
 
 private:
 	int dispDecimals;
-	QTimer adjustDelayer, aux;
-	QChar delimiter, thousand;
+        QTimer adjustDelayer; QTimer aux;
+        QChar delimiter; QChar thousand;
 	QDoubleValidator * v;
+        static bool isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64 *match = 0);
 
 
 private:

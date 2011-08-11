@@ -63,13 +63,13 @@ int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
     {
 		return -3; //buildTwo (thisXmlBuild) is invalid
     }
-    int iniOne=stringToInt(buildOne.substr(0,buildOne.find_first_of('.')).c_str());
-    int meioOne=stringToInt(buildOne.substr(buildOne.find_first_of('.')+1,(buildOne.find_last_of('.')-buildOne.find_first_of('.')-1)).c_str());
-    int ultOne=stringToInt(buildOne.substr(buildOne.find_last_of('.')).c_str()+1);
+    int iniOne=Conversion::stringToInt(buildOne.substr(0,buildOne.find_first_of('.')).c_str());
+    int meioOne=Conversion::stringToInt(buildOne.substr(buildOne.find_first_of('.')+1,(buildOne.find_last_of('.')-buildOne.find_first_of('.')-1)).c_str());
+    int ultOne=Conversion::stringToInt(buildOne.substr(buildOne.find_last_of('.')).c_str()+1);
 
-    int iniTwo=stringToInt(buildTwo.substr(0,buildTwo.find_first_of('.')).c_str());
-    int meioTwo=stringToInt(buildTwo.substr(buildTwo.find_first_of('.')+1,buildTwo.find_last_of('.')-2).c_str());
-    int ultTwo=stringToInt(buildTwo.substr(buildTwo.find_last_of('.')).c_str()+1);
+    int iniTwo=Conversion::stringToInt(buildTwo.substr(0,buildTwo.find_first_of('.')).c_str());
+    int meioTwo=Conversion::stringToInt(buildTwo.substr(buildTwo.find_first_of('.')+1,buildTwo.find_last_of('.')-2).c_str());
+    int ultTwo=Conversion::stringToInt(buildTwo.substr(buildTwo.find_last_of('.')).c_str()+1);
 
     if(iniOne>iniTwo)
     {

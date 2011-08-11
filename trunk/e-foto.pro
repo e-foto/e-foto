@@ -146,7 +146,7 @@ HEADERS +=	\
 			SWidgetQt.h \
 		\#	qt/infrastructure/
 			AboutForm.h \
-			LoadingScreen.h \
+                        LoadingScreen.h \
 			CommonQtMethods.h \
 			EfotoDoubleSpinBox.h \
 			ScienceSpinBox.h \
@@ -162,8 +162,7 @@ FORMS +=	\
 			FlightLayout.ui \
 			HeaderLayout.ui \
 			ImageLayout.ui \
-			ImagesLayout.ui \
-			LoadingScreen.ui \
+                        ImagesLayout.ui \
 			PointLayout.ui \
 			PointsLayout.ui \
 			SensorLayout.ui \

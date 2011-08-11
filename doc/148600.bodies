@@ -1,0 +1,7 @@
+class SigmaFormDialogButton
+!!!312696.cpp!!!	setSigmaFormController(inout newController : SigmaFormController) : void
+	controller = newController;
+	connect(this, SIGNAL(clicked()), controller, SLOT(showMatrixEditor()));
+	connect(controller, SIGNAL(changeMatrixButtonVisibility(bool)), this, SLOT(setEnabled(bool)));
+	connect(controller, SIGNAL(changeMatrixButtonVisibility(bool)), this, SLOT(setVisible(bool)));
+	connect(controller, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));

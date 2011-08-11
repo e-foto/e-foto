@@ -15,10 +15,10 @@ namespace sclass
 	{
 	protected:
 		SImage* myImage;
-		int left, top;
+                int left; int top;
 		unsigned int texture;
 		bool texturized;
-		double width, height, offset2X, offset2Y;
+                double width; double height; double offset2X; double offset2Y;
 
 	public:
 		STile();

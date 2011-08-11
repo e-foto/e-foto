@@ -158,7 +158,7 @@ string SigmaFormController::getValues()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			if (!edits.at(i)->text().isEmpty())
-				result.set(1+i,1,stringToDouble(edits.at(i)->textValue().toStdString()));
+                                result.set(1+i,1,Conversion::stringToDouble(edits.at(i)->textValue().toStdString()));
 			else
 				result.set(1+i,1,0);
 		}

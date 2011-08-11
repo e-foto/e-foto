@@ -62,7 +62,7 @@ Sensor* EFotoManager::instanceSensor(int id)
 		if (sensors.at(i)->getId() == id)
 			return sensors.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlSensor = root.elementByTagAtt("sensor", "key", intToString(id));
+        EDomElement xmlSensor = root.elementByTagAtt("sensor", "key", Conversion::intToString(id));
 	if (xmlSensor.getContent().compare("") == 0)
 		return NULL;
 	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
@@ -101,7 +101,7 @@ Flight* EFotoManager::instanceFlight(int id)
 		if (flights.at(i)->getId() == id)
 			return flights.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlFlight = root.elementByTagAtt("flight", "key", intToString(id));
+        EDomElement xmlFlight = root.elementByTagAtt("flight", "key", Conversion::intToString(id));
 	if (xmlFlight.getContent().compare("") == 0)
 		return NULL;
 	Flight* newFlight = new Flight();
@@ -119,7 +119,7 @@ Image* EFotoManager::instanceImage(int id)
 		if (images.at(i)->getId() == id)
 			return images.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlImage = root.elementByTagAtt("image", "key", intToString(id));
+        EDomElement xmlImage = root.elementByTagAtt("image", "key", Conversion::intToString(id));
 	if (xmlImage.getContent().compare("") == 0)
 		return NULL;
 	Image* newImage = new Image();
@@ -137,7 +137,7 @@ Point* EFotoManager::instancePoint(int id)
 		if (points.at(i)->getId() == id)
 			return points.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlPoint = root.elementByTagAtt("point", "key", intToString(id));
+        EDomElement xmlPoint = root.elementByTagAtt("point", "key", Conversion::intToString(id));
 	if (xmlPoint.getContent().compare("") == 0)
 		return NULL;
 	if (xmlPoint.attribute("type").compare("control") == 0)
@@ -173,7 +173,7 @@ InteriorOrientation* EFotoManager::instanceIO(int imageId)
 		if (IOs.at(i)->getImageId() == imageId)
 			return IOs.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlIO = root.elementByTagAtt("imageIO", "image_key", intToString(imageId));
+        EDomElement xmlIO = root.elementByTagAtt("imageIO", "image_key", Conversion::intToString(imageId));
 	if (xmlIO.getContent().compare("") == 0)
 		return NULL;
 	InteriorOrientation* newIO = new InteriorOrientation();
@@ -193,7 +193,7 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 		if (EOs.at(i)->getImageId() == imageId)
 			return EOs.at(i);
 	EDomElement root(xmlData);
-	EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", intToString(imageId));
+        EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
 	if (xmlEO.getContent().compare("") == 0)
 		return NULL;
 	if (xmlEO.attribute("type").compare("spatialRessection") == 0)

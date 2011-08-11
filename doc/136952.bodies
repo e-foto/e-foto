@@ -1,0 +1,3 @@
+class SRUserInterface
+!!!206840.cpp!!!	getManager() : SRManager
+    return manager;

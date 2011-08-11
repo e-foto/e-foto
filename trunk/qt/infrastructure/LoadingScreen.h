@@ -2,12 +2,10 @@
 #define LOADINGSCREEN_H
 
 #include <QWidget>
+#include "ui_LoadingScreen.h"
 
-namespace Ui {
-	class LoadingScreen;
-}
-
-class LoadingScreen : public QWidget {
+class LoadingScreen: public QWidget, public Ui::LoadingScreen
+{
 	Q_OBJECT
 public:
 	static LoadingScreen& instance();

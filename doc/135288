@@ -1,0 +1,5154 @@
+format 70
+"infrastructure" // trunk::c::infrastructure
+  revision 1
+  modified_by 120 "jonasr"
+  // class settings
+  //class diagram settings
+  draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+  //use case diagram settings
+  package_name_in_tab default show_context default auto_label_position default draw_all_relations default class_drawing_mode default shadow default show_stereotype_properties default
+  //sequence diagram settings
+  show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default
+  //collaboration diagram settings
+  show_full_operations_definition default show_hierarchical_rank default write_horizontally default drawing_language default package_name_in_tab default show_context default draw_all_relations default shadow default show_stereotype_properties default
+  //object diagram settings
+   write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+  //component diagram settings
+  package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+  //deployment diagram settings
+  package_name_in_tab default show_context default write_horizontally default auto_label_position default draw_all_relations default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+  //state diagram settings
+  package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+  show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+  //activity diagram settings
+  package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+  show_infonote default drawing_language default show_stereotype_properties default
+  
+  classview 135032 "infrastructure"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default drawing_language default package_name_in_tab default show_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 136184 "PositionMatrix"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "*
+* class PositionMatrix
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 143864 // <generalisation>
+	relation 143864 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 143864 // <generalisation>
+	  b parent class_ref 140536 // RectSupport
+      end
+
+      attribute 146936 "_Mat"
+	private explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 147064 "unit"
+	private explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 200824 "del"
+	preserve_cpp_body_indent protected explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Protected methods
+//
+//*
+// * This method deletes the matrix in memory.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Protected methods
+"
+      end
+
+      operation 200952 "nw"
+	preserve_cpp_body_indent protected explicit_return_type "void"
+	nparams 2
+	  param in name "rows" explicit_type "uint"
+	  param in name "cols" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method allocates a matrix in memory, fills the values of its attributes and set its values to zero.
+// * @param rows number of rows of the new matrix
+// * @param cols number of columns of the new matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      classrelation 143992 // <dependency>
+	relation 143992 -_->
+	  stereotype "friend"
+	  a default
+	    cpp default "Generated"
+	    classrelation_ref 143992 // <dependency>
+	  b parent class_ref 139128 // Matrix
+      end
+
+      operation 201080 "PositionMatrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 2
+	  param in name "dimensions" explicit_type "uint"
+	  param in name "newUnit" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${volatile}${throw};
+"
+	cpp_def "//Constructors and destructors methods
+//
+//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}:RectSupport(dimensions, 1)
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment "Constructors and destructors methods
+"
+      end
+
+      operation 201208 "PositionMatrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "anotherMatrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${inline}${name}${(}const ${t0} & ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}const ${t0} & ${p0}${)}:RectSupport(anotherMatrix.getRows(), anotherMatrix.getCols())
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 201336 "PositionMatrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "anotherMatrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${inline}${name}${(}const ${t0} & ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}const ${t0} & ${p0}${)}:RectSupport(anotherMatrix.getRows(), anotherMatrix.getCols())
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 201464 "PositionMatrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates default matrices of 0 x 0.
+// * @return a new empty matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}${)}:RectSupport(0, 0)
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 201592 "~PositionMatrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * Destructor method of the class matrix.
+// * @return
+// 
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 201720 "resize"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 2
+	  param in name "rows" explicit_type "uint"
+	  param in name "cols" explicit_type "uint"
+	    defaultvalue "1"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Special matrix dispositions methods
+//
+//*
+// * This member function turns the current matrix object into a Rows x Cols filled with zeros.
+// * @param rows number of rows of the zeros matrix.
+// * @param cols number of columns of the zeros matrix.
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Special matrix dispositions methods
+"
+      end
+
+      operation 201848 "zero"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function turns the current matrix object into a Rows x Cols filled with zeros.
+// * @param rows number of rows of the zeros matrix.
+// * @param cols number of columns of the zeros matrix.
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 201976 "load"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 1
+	  param inout name "filename" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} * ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//File operations methods
+//
+//*
+// * This member function Loads an emf, E-foto Matrix File, which is an ascii format, similarly pbm/pgm/ppm. The first line of the file contains the header, second line
+// * the filename, third line the number of columns and rows of the matrix and fourth line its elements (ascii double) separated by spaces.
+// *
+// * Example of emf:
+// *
+// * E-foto project double Matrix Format
+// * filename.emf
+// * 24 7
+// * 0.3  7e3  87.3  8.3   ...
+// *
+// * @param filename path + name of the file to be opened
+// * @return integer flag:1 for successfull load and 0 for unsuccessfull
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} * ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "File operations methods
+"
+      end
+
+      operation 202104 "save"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 1
+	  param inout name "filename" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} * ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method saves a emf E-foto Matrix File which is an ascii format, similarly to pbm/pgm/ppm. The first line of the file contains the  header, second line
+// * the filename, third line the number of columns and rows of the matrix and fourth line its elements (ascii double) separated by spaces.
+// *
+// * Example of emf:
+// *
+// * E-foto project double Matrix Format
+// * filename.emf
+// * 24 7
+// * 0.3  7e3  87.3  8.3   ...
+// *
+// * @param filename path + name of the file to be saved
+// * @return integer flag: 1 for successfull save and 0 for unsuccessfull
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} * ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 202232 "get"
+	preserve_cpp_body_indent const public explicit_return_type "double"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	    defaultvalue "1"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Recuperate elements methods
+//
+//*
+// * This method returns the value of the element i,j of the matrix.
+// * @param i row index
+// * @param j column index
+// * @return Matrix [i,j]
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Recuperate elements methods
+"
+      end
+
+      operation 202360 "getInt"
+	preserve_cpp_body_indent const public explicit_return_type "int"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	    defaultvalue "1"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method returns the value of the element i,j of the matrix cast in int.
+// * @param i row index
+// * @param j column index
+// * @return (int) Matrix [i,j]
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 202488 "getUnit"
+	preserve_cpp_body_indent const public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 202616 "sel"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 4
+	  param in name "FirstRow" explicit_type "uint"
+	  param in name "LastRow" explicit_type "uint"
+	  param in name "FirstCol" explicit_type "uint"
+	    defaultvalue "1"
+	  param in name "LastCol" explicit_type "uint"
+	    defaultvalue "1"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}, const ${t2} ${p2}${v2}, const ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method return one selected submatrix of the matrix represented by the current object.
+// * @param FirstRow first row of the selection
+// * @param LastRow  last row of the selection
+// * @param FirstCol first column of the selection
+// * @param LastCol  last column of the selection
+// * @return the submatrix Matrix mxn, m = (LastRow - FirstRow) and n = (LastCol - FirstCol)
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}, const ${t2} ${p2}, const ${t3} ${p3}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 202744 "show"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method displays on the default output stream the contents of the current matrix.
+// * @bug Won't work under Windows XP OS.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 202872 "set"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 3
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	  param in name "value" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Change elements methods
+//
+//*
+// * This method changes the value of the element (i,j) of the matrix.
+// * @param i row index
+// * @param j column index
+// * @param value new value of the matrix (i,j) element
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Change elements methods
+"
+      end
+
+      operation 203000 "set"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "value" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method changes the value of the element (i,j) of the matrix.
+// * @param i row index
+// * @param j column index
+// * @param value new value of the matrix (i,j) element
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203128 "setInt"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 3
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	  param in name "value" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203256 "setInt"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "value" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203384 "setUnit"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newUnit" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203512 "operator &"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Overloaded operators
+//
+//*
+// * The operator & horizontally concatenates two matrices. The matrices must have the same number of rows which is the same number of rows of the resulting matrix.
+// * The number of columns of the resulting matrix is equal to the sum of the columns of both input matrices.
+// * @param Par_Matrix matrix to be concatenated to the current scope matrix.
+// * @return the resulting matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Overloaded operators
+"
+      end
+
+      operation 203640 "operator |"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * The operator | vertically concatenates two matrices. The matrices must have the same number of cols which is the same number of cols of the resulting matrix.
+// * The number of rows of the resulting matrix is equal to the sum of the rows of both input matrices.
+// * @param Par_Matrix matrix to be concatenated to the current scope matrix.
+// * @return the resulting matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203768 "operator ="
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the assignment operator, making the matrix in the current scope equal to the matrix on the right of the operator =
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 203896 "operator ="
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the assignment operator, making the matrix in the current scope equal to the matrix on the right of the operator =
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204024 "operator =="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the equality operator, return 1 for equal matrix and 0 for inequal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204152 "operator =="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the equality operator, return 1 for equal matrix and 0 for inequal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204280 "operator !="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the inequality operator, return 1 for inequal matrix and 0 for equal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204408 "operator !="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the inequality operator, return 1 for inequal matrix and 0 for equal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204536 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+
+      operation 204664 "objectAssociations"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204792 "is"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "s" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 204920 "xmlGetData"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// XML methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " XML methods
+"
+      end
+
+      operation 205048 "xmlSetData"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 205176 "toDiagonal"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Other methods
+//
+//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Other methods
+"
+      end
+
+      operation 205304 "toGmlPosFormat"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 136568 "ETreeModel"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 143480 // children (<directional composition>)
+	relation 143480 *-->
+	  stereotype "deque"
+	  a role_name "children" private
+	    cpp default "    ${comment}${static}${mutable}${volatile}${const}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 143480 // children (<directional composition>)
+	  b parent class_ref 140408 // ETreeNode
+      end
+
+      operation 192760 "ETreeModel"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//* ETreeModel methods *
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192888 "ETreeModel"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "children" explicit_type "deque<ETreeNode>"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193016 "ETreeModel"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "data" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193144 "countChildren"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193272 "countGrandchildren"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193400 "getChildren"
+	preserve_cpp_body_indent public explicit_return_type "deque<ETreeNode>"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193528 "getChild"
+	preserve_cpp_body_indent public return_type class_ref 140408 // ETreeNode
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193656 "dataAt"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 2
+	  param in name "nodeIndex" explicit_type "uint"
+	  param in name "elementIndex" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193784 "idAt"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 2
+	  param in name "nodeIndex" explicit_type "uint"
+	  param in name "elementIndex" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 193912 "dataAt"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 194040 "data"
+	preserve_cpp_body_indent public explicit_return_type "deque< deque<string> >"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 136696 "EObject"
+      abstract visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "class Mounter;
+*
+* class EObject
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 143224 // <generalisation>
+	relation 143224 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 143224 // <generalisation>
+	  b parent class_ref 139896 // EDom
+      end
+
+      operation 190456 "objectType"
+	abstract cpp_virtual public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+	comment "EOBJECT"
+      end
+
+      operation 190584 "objectAssociations"
+	abstract cpp_virtual public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 190712 "is"
+	abstract cpp_virtual public explicit_return_type "bool"
+	nparams 1
+	  param in name "s" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 138872 "AbstractAnalogCoordinate"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "*
+* class AbstractAnalogCoordinate
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 142584 // <generalisation>
+	relation 142584 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 142584 // <generalisation>
+	  b parent class_ref 139000 // Coordinate
+      end
+
+      attribute 143864 "xi"
+	protected explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 143992 "eta"
+	protected explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144120 "sigmaXi"
+	protected explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144248 "sigmaEta"
+	protected explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144376 "sigmaXiEta"
+	protected explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144504 "unit"
+	protected explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 177656 "~AbstractAnalogCoordinate"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//Constructors and destructors methods
+//
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment "Constructors and destructors methods
+"
+      end
+
+      operation 177784 "setXi"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newXi" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Private attribute accessor methods
+//
+//*
+// * Set the value of xi
+// * @param newXi the new value of xi
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Private attribute accessor methods
+"
+      end
+
+      operation 177912 "setEta"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newEta" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of eta
+// * @param newEta the new value of eta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178040 "setSigmaXi"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newSigmaXi" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of sigmaXi
+// * @param newSigmaXi the new value of sigmaXi
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178168 "setSigmaEta"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newSigmaEta" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of sigmaEta
+// * @param newSigmaEta the new value of sigmaEta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178296 "setSigmaXiEta"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newSigmaXiEta" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of sigmaXiEta
+// * @param newSigmaXi the new value of sigmaXiEta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178424 "setUnit"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newUnit" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of unit
+// * @param newUnit the new value of unit
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178552 "getXi"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of xi
+// * @return the value of xi
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178680 "getEta"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of eta
+// * @return the value of eta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178808 "getSigmaXi"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of sigmaXi
+// * @return the value of sigmaXi
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 178936 "getSigmaEta"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of sigmaEta
+// * @return the value of sigmaEta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179064 "getSigmaXiEta"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of sigmaXiEta
+// * @return the value of sigmaXiEta
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179192 "getUnit"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of unit
+// * @return the value of unit
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179320 "setPosition"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newPosition" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Matrix use methods
+//
+//*
+// *
+// * @param newPosition
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Matrix use methods
+"
+      end
+
+      operation 179448 "setPositionSigmas"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newPositionSigmas" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// * @param newPositionSigmas
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179576 "getPosition"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// * @return
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179704 "getPositionSigmas"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// * @return
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 179832 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+    end
+
+    class 139000 "Coordinate"
+      abstract visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "****************************** Abstract Class ********************************
+Coordinate does not have any pure virtual methods, but its author
+  defined it as an abstract class, so you should not use it directly.
+  Inherit from it instead and create only objects from the derived classes
+******************************************************************************
+*
+* class Coordinate
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 143096 // <generalisation>
+	relation 143096 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 143096 // <generalisation>
+	  b parent class_ref 136696 // EObject
+      end
+
+      attribute 145400 "available"
+	protected explicit_type "bool"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 145528 "sigmaAvailable"
+	protected explicit_type "bool"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 182648 "~Coordinate"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "// Destructor
+//
+//*
+// *
+// 
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment " Constructors and Destructors
+"
+      end
+
+      operation 182776 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+
+      operation 182904 "setAvailable"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "value" explicit_type "bool"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Other methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Private attribute accessors
+"
+      end
+
+      operation 183032 "setSigmaAvailable"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "value" explicit_type "bool"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 183160 "isAvailable"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 183288 "isSigmaAvailable"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 183416 "getPosition"
+	abstract cpp_virtual public return_type class_ref 136184 // PositionMatrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+	comment " Other methods
+"
+      end
+
+      operation 183544 "getGmlPos"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * @return string
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 183672 "setPosition"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 1
+	  param in name "newPosition" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 139128 "Matrix"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "*
+* class Matrix
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 143608 // <generalisation>
+	relation 143608 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 143608 // <generalisation>
+	  b parent class_ref 140536 // RectSupport
+      end
+
+      attribute 146680 "_Mat"
+	private explicit_type "double"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 146808 "unit"
+	private explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 194168 "del"
+	preserve_cpp_body_indent protected explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Protected methods
+//
+//*
+// * This method deletes the matrix in memory.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Protected methods
+"
+      end
+
+      operation 194296 "nw"
+	preserve_cpp_body_indent protected explicit_return_type "void"
+	nparams 2
+	  param in name "rows" explicit_type "uint"
+	  param in name "cols" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method allocates a matrix in memory, fills the values of its attributes and set its values to zero.
+// * @param rows number of rows of the new matrix
+// * @param cols number of columns of the new matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      classrelation 143736 // <dependency>
+	relation 143736 -_->
+	  stereotype "friend"
+	  a default
+	    cpp default "Generated"
+	    classrelation_ref 143736 // <dependency>
+	  b parent class_ref 136184 // PositionMatrix
+      end
+
+      operation 194424 "Matrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 2
+	  param in name "rows" explicit_type "uint"
+	  param in name "cols" explicit_type "uint"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${volatile}${throw};
+"
+	cpp_def "//Constructors and destructors methods
+//
+//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}:RectSupport(rows, cols)
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment "Constructors and destructors methods
+"
+      end
+
+      operation 194552 "Matrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "anotherMatrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${inline}${name}${(}const ${t0} & ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}const ${t0} & ${p0}${)}:RectSupport(anotherMatrix.getRows(), anotherMatrix.getCols())
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 194680 "Matrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "anotherMatrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${inline}${name}${(}const ${t0} & ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates matrices of Rows x Cols.
+// * @param rows
+// * @param cols
+// * @return a new matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}const ${t0} & ${p0}${)}:RectSupport(anotherMatrix.getRows(), anotherMatrix.getCols())
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 194808 "Matrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is one version of the overloaded constructor of the class matrix. It invokes the constructor of RectSupport and creates default matrices of 0 x 0.
+// * @return a new empty matrix object
+// 
+
+${comment}${inline}${class}::${name}${(}${)}:RectSupport(0, 0)
+${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 194936 "~Matrix"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * Destructor method of the class matrix.
+// * @return
+// 
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 195064 "resize"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 2
+	  param in name "rows" explicit_type "uint"
+	  param in name "cols" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Special matrix dispositions methods
+//
+//*
+// * This member function turns the current matrix object into a Rows x Cols filled with zeros.
+// * @param rows number of rows of the zeros matrix.
+// * @param cols number of columns of the zeros matrix.
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Special matrix dispositions methods
+"
+      end
+
+      operation 195192 "identity"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "size" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Create an identity matrix of any given size.
+// * @param size number of columns and rows of the identity matrix
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Esses metodos alteram a própria matrix,"
+      end
+
+      operation 195320 "ones"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function turns the current matrix object into a Rows x Cols filled with ones.
+// * @param rows number of rows of the ones matrix.
+// * @param cols number of columns of the ones matrix.
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " mas permitem o uso em sequencia"
+      end
+
+      operation 195448 "zero"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function turns the current matrix object into a Rows x Cols filled with zeros.
+// * @param rows number of rows of the zeros matrix.
+// * @param cols number of columns of the zeros matrix.
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " já que retornam uma referencia ao resultado."
+      end
+
+      operation 195576 "load"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 1
+	  param inout name "filename" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} * ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//File operations methods
+//
+//*
+// * This member function Loads an emf, E-foto Matrix File, which is an ascii format, similarly pbm/pgm/ppm. The first line of the file contains the header, second line
+// * the filename, third line the number of columns and rows of the matrix and fourth line its elements (ascii double) separated by spaces.
+// *
+// * Example of emf:
+// *
+// * E-foto project double Matrix Format
+// * filename.emf
+// * 24 7
+// * 0.3  7e3  87.3  8.3   ...
+// *
+// * @param filename path + name of the file to be opened
+// * @return integer flag:1 for successfull load and 0 for unsuccessfull
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} * ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "File operations methods
+"
+      end
+
+      operation 195704 "save"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 1
+	  param inout name "filename" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} * ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method saves a emf E-foto Matrix File which is an ascii format, similarly to pbm/pgm/ppm. The first line of the file contains the  header, second line
+// * the filename, third line the number of columns and rows of the matrix and fourth line its elements (ascii double) separated by spaces.
+// *
+// * Example of emf:
+// *
+// * E-foto project double Matrix Format
+// * filename.emf
+// * 24 7
+// * 0.3  7e3  87.3  8.3   ...
+// *
+// * @param filename path + name of the file to be saved
+// * @return integer flag: 1 for successfull save and 0 for unsuccessfull
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} * ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 195832 "get"
+	preserve_cpp_body_indent const public explicit_return_type "double"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Recuperate elements methods
+//
+//*
+// * This method returns the value of the element i,j of the matrix.
+// * @param i row index
+// * @param j column index
+// * @return Matrix [i,j]
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Recuperate elements methods
+"
+      end
+
+      operation 195960 "getInt"
+	preserve_cpp_body_indent const public explicit_return_type "int"
+	nparams 2
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method returns the value of the element i,j of the matrix cast in int.
+// * @param i row index
+// * @param j column index
+// * @return (int) Matrix [i,j]
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196088 "getUnit"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196216 "sel"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 4
+	  param in name "FirstRow" explicit_type "uint"
+	  param in name "LastRow" explicit_type "uint"
+	  param in name "FirstCol" explicit_type "uint"
+	  param in name "LastCol" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} ${p0}${v0}, const ${t1} ${p1}${v1}, const ${t2} ${p2}${v2}, const ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method return one selected submatrix of the matrix represented by the current object.
+// * @param FirstRow first row of the selection
+// * @param LastRow  last row of the selection
+// * @param FirstCol first column of the selection
+// * @param LastCol  last column of the selection
+// * @return the submatrix Matrix mxn, m = (LastRow - FirstRow) and n = (LastCol - FirstCol)
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} ${p0}, const ${t1} ${p1}, const ${t2} ${p2}, const ${t3} ${p3}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196344 "show"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method displays on the default output stream the contents of the current matrix.
+// * @bug Won't work under Windows XP OS.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196472 "highestValue"
+	preserve_cpp_body_indent const public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method returns the highest value of the elements in matrix.
+// * @return highest value in matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196600 "lowestValue"
+	preserve_cpp_body_indent const public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method returns the lowest value of the elements in matrix.
+// * @return lowest value in matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196728 "set"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 3
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	  param in name "value" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Change elements methods
+//
+//*
+// * This method changes the value of the element (i,j) of the matrix.
+// * @param i row index
+// * @param j column index
+// * @param value new value of the matrix (i,j) element
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Change elements methods
+"
+      end
+
+      operation 196856 "setInt"
+	preserve_cpp_body_indent const public explicit_return_type "void"
+	nparams 3
+	  param in name "i" explicit_type "uint"
+	  param in name "j" explicit_type "uint"
+	  param in name "value" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 196984 "setUnit"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newUnit" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 197112 "isIdentity"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Verifications methods
+//
+//*
+// * This member function checks if the matrix is identity.
+// * @return boolean flag: 1 for identity and 0 for non identity
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Verifications methods
+"
+      end
+
+      operation 197240 "isTriang"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function checks if the matrix is unitriangular.
+// * @return boolean flag: 1 for unitriangular and 0 for non unitriangular
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 197368 "isZeroes"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function checks if the matrix is zeroes composed.
+// * @return boolean flag: 1 for zeroes composed and 0 for non zeroes composed
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 197496 "operator &"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Overloaded operators
+//
+//*
+// * The operator & horizontally concatenates two matrices. The matrices must have the same number of rows which is the same number of rows of the resulting matrix.
+// * The number of columns of the resulting matrix is equal to the sum of the columns of both input matrices.
+// * @param Par_Matrix matrix to be concatenated to the current scope matrix.
+// * @return the resulting matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Overloaded operators
+"
+      end
+
+      operation 197624 "operator |"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * The operator | vertically concatenates two matrices. The matrices must have the same number of cols which is the same number of cols of the resulting matrix.
+// * The number of rows of the resulting matrix is equal to the sum of the rows of both input matrices.
+// * @param Par_Matrix matrix to be concatenated to the current scope matrix.
+// * @return the resulting matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 197752 "operator +"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the mathemetical addition of matrices, the matrix on the left of the + is the object in the current scope.
+// * @param Par_Matrix is the matrix on the right of + operator
+// * @return the resulting of the addition operation
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 197880 "operator -"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the mathemetical subtraction of matrices, the matrix on the left of the - is the object in the current scope.
+// * @param Par_Matrix is the matrix on the right of operator -
+// * @return the resulting of the matrices subtraction.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198008 "operator *"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the mathemetical multiplication of matrices, the matrix on the left of the * is the object in the current scope.
+// * @param Par_Matrix is the matrix on the right of the operator *
+// * @return the result of the matrices multiplication
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198136 "operator +"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Scalar" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the addition of a matrix and a scalar.
+// * @param Par_Scalar is the scalar value to be added to the matrix.
+// * @return The result of the addition of the Matrix in the current scope and Par_Scalar.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198264 "operator -"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Scalar" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the subtraction of a matrix by a scalar.
+// * @param Par_Scalar is the scalar value to be subtracted to the matrix.
+// * @return The result of the subtraction of the Matrix in the current scope by Par_Scalar.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198392 "operator *"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Scalar" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the multiplication of a matrix by a scalar.
+// * @param Par_Scalar is the scalar value by which the matrix will be multiplied.
+// * @return The result of the multiplication of the Matrix in the current scope by Par_Scalar.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198520 "operator /"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Scalar" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the division of a matrix by a scalar.
+// * @param Par_Scalar is the scalar value by which the matrix will be divided.
+// * @return The result of the division of the Matrix in the current scope by Par_Scalar.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198648 "operator ="
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the assignment operator, making the matrix in the current scope equal to the matrix on the right of the operator =
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198776 "operator ="
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} & ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the assignment operator, making the matrix in the current scope equal to the matrix on the right of the operator =
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} & ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 198904 "operator =="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the equality operator, return 1 for equal matrix and 0 for inequal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199032 "operator =="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the equality operator, return 1 for equal matrix and 0 for inequal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199160 "operator !="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the inequality operator, return 1 for inequal matrix and 0 for equal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199288 "operator !="
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "Par_Matrix" type class_ref 139128 // Matrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method implements the inequality operator, return 1 for inequal matrix and 0 for equal matrix.
+// * @param Par_Matrix
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199416 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+
+      operation 199544 "objectAssociations"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199672 "is"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "s" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 199800 "xmlGetData"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// XML methods
+//
+//*
+// * 
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " XML methods
+"
+      end
+
+      operation 199928 "xmlSetData"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * 
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 200056 "inverse"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//Other methods
+//
+//*
+// * This method calculates the inverse matrix using the Gauss-Jordan Elimination.
+// * @return The inverse of the matrix in the current scope
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Other methods
+"
+      end
+
+      operation 200184 "transpose"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method calculates the transpose matrix
+// * @return The tranpose of the matrix in the current scope
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 200312 "reduction"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method returns the reduction to the canonic form of the matrix in the current scope.
+// * @return A matrix equivalent to the reduction to the canonic form of the matrix in the current scope.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 200440 "triang"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method performs the triangularization of the matrix
+// * @return the result of the triangularization
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 200568 "toDiagonal"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 200696 "selDiagonal"
+	preserve_cpp_body_indent public return_type class_ref 139128 // Matrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This method
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 139256 "AbstractDigitalCoordinate"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "*
+* class AbstractDigitalCoordinate
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 142712 // <generalisation>
+	relation 142712 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 142712 // <generalisation>
+	  b parent class_ref 139000 // Coordinate
+      end
+
+      attribute 144632 "lin"
+	protected explicit_type "int"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144760 "col"
+	protected explicit_type "int"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 144888 "unit"
+	protected explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 179960 "~AbstractDigitalCoordinate"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//Constructors and destructors methods
+//
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment "Constructors and destructors methods
+"
+      end
+
+      operation 180088 "setLin"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newLin" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of lin
+// * @param newEta the new value of lin
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Private attribute accessor methods
+"
+      end
+
+      operation 180216 "setCol"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newCol" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Private attribute accessor methods
+//
+//*
+// * Set the value of col
+// * @param newCol the new value of col
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 180344 "setUnit"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newUnit" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Set the value of unit
+// * @param newUnit the new value of unit
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 180472 "getLin"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of lin
+// * @return the value of lin
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 180600 "getCol"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of col
+// * @return the value of col
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 180728 "getUnit"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * Get the value of unit
+// * @return the value of unit
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 180856 "setPosition"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newPosition" type class_ref 136184 // PositionMatrix
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}const ${t0} & ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Matrix use methods
+//
+//*
+// *
+// * @param newPosition
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}const ${t0} & ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment "Matrix use methods
+"
+      end
+
+      operation 180984 "getPosition"
+	preserve_cpp_body_indent public return_type class_ref 136184 // PositionMatrix
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// *
+// * @return
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 181112 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+    end
+
+    class 139384 "CommonMethods"
+      abstract visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment ", SDLMethods"
+      operation 181240 "instance"
+	class_operation preserve_cpp_body_indent public return_type class_ref 139384 // CommonMethods
+	nparams 1
+	  param in name "type" type class_ref 138744 // ImplementationType
+	    defaultvalue "CM::CVMethods"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} * ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} * ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 181368 "putImage"
+	abstract cpp_virtual public explicit_return_type "bool"
+	nparams 4
+	  param inout name "width" explicit_type "int"
+	  param inout name "height" explicit_type "int"
+	  param inout name "format" explicit_type "int"
+	  param inout name "image" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} & ${p0}${v0}, ${t1} & ${p1}${v1}, ${t2} & ${p2}${v2}, ${t3} * ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 181496 "loadImage"
+	abstract cpp_virtual public explicit_return_type "bool"
+	nparams 4
+	  param inout name "width" explicit_type "int"
+	  param inout name "height" explicit_type "int"
+	  param inout name "format" explicit_type "int"
+	  param in name "filePath" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} & ${p0}${v0}, ${t1} & ${p1}${v1}, ${t2} & ${p2}${v2}, ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 181624 "rotateImage"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 1
+	  param in name "ang" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 181752 "cutImage"
+	abstract cpp_virtual public explicit_return_type "bool"
+	nparams 4
+	  param in name "x" explicit_type "int"
+	  param in name "y" explicit_type "int"
+	  param in name "w" explicit_type "int"
+	  param in name "h" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}, ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 181880 "freeImage"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 182008 "freeCropped"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 182136 "getImagePixels"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} * ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 182264 "getCroppedPixels"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} * ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+
+      operation 182392 "~CommonMethods"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      classrelation 142840 // commonInst (<unidirectional association>)
+	relation 142840 --->
+	  a role_name "commonInst" init_value "= 0" class_relation private
+	    cpp default "    ${comment}${static}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	    classrelation_ref 142840 // commonInst (<unidirectional association>)
+	  b parent class_ref 139384 // CommonMethods
+      end
+
+      operation 182520 "destroyInstance"
+	class_operation preserve_cpp_body_indent private explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      classrelation 142968 // impType (<directional composition>)
+	relation 142968 *-->
+	  a role_name "impType" init_value "= CM::None" class_relation private
+	    cpp default "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 142968 // impType (<directional composition>)
+	  b parent class_ref 138744 // ImplementationType
+      end
+    end
+
+    class 139512 "Conversion"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment " Common functions
+"
+      operation 183800 "doubleToString"
+	class_operation preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "value" explicit_type "double"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Common functions
+//
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 183928 "doubleToString"
+	class_operation preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 2
+	  param in name "value" explicit_type "double"
+	  param in name "precision" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184056 "stringToDouble"
+	class_operation preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 1
+	  param in name "value" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184184 "intToString"
+	class_operation preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "value" explicit_type "int"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184312 "stringToInt"
+	class_operation preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 1
+	  param in name "value" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184440 "longToString"
+	class_operation preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "value" explicit_type "long"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184568 "stringToLong"
+	class_operation preserve_cpp_body_indent public explicit_return_type "long"
+	nparams 1
+	  param in name "value" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184696 "testAvailable"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "element" type class_ref 139640 // EDomElement
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 184824 "testTagName"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 2
+	  param in name "element" type class_ref 139640 // EDomElement
+	  param in name "tagname" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 139640 "EDomElement"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      class 139768 "anonymous1"
+	visibility package stereotype "enum"
+	cpp_decl "${comment}enum  {
+${items}
+};
+"
+	java_decl ""
+	php_decl ""
+	python_2_2 python_decl ""
+	idl_decl ""
+	explicit_switch_type ""
+	
+	attribute 145656 "INVALID_TAG"
+	  public type class_ref 139768 // anonymous1
+	  init_value "= 0"
+	  cpp_decl "  ${name}${value},${comment}"
+	  java_decl ""
+	  php_decl ""
+	  python_decl ""
+	  idl_decl ""
+	end
+
+	attribute 145784 "OPEN_TAG"
+	  public type class_ref 139768 // anonymous1
+	  init_value "= 1"
+	  cpp_decl "  ${name}${value},${comment}"
+	  java_decl ""
+	  php_decl ""
+	  python_decl ""
+	  idl_decl ""
+	end
+
+	attribute 145912 "CLOSE_TAG"
+	  public type class_ref 139768 // anonymous1
+	  init_value "= 2"
+	  cpp_decl "  ${name}${value},${comment}"
+	  java_decl ""
+	  php_decl ""
+	  python_decl ""
+	  idl_decl ""
+	end
+
+	attribute 146040 "SIMPLE_TAG"
+	  public type class_ref 139768 // anonymous1
+	  init_value "= 3 "
+	  cpp_decl "  ${name}${value},${comment}"
+	  java_decl ""
+	  php_decl ""
+	  python_decl ""
+	  idl_decl ""
+	end
+      end
+
+      attribute 146168 "content"
+	private explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 184952 "tagType"
+	preserve_cpp_body_indent private explicit_return_type "int"
+	nparams 1
+	  param in name "tag" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Private methods
+//
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Private methods (functions)
+"
+      end
+
+      operation 185080 "tagName"
+	preserve_cpp_body_indent private explicit_return_type "string"
+	nparams 1
+	  param in name "tag" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 185208 "setAttribute"
+	preserve_cpp_body_indent private explicit_return_type "bool"
+	nparams 2
+	  param in name "att" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 185336 "addAttribute"
+	preserve_cpp_body_indent private explicit_return_type "bool"
+	nparams 2
+	  param in name "newAttName" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 185464 "EDomElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "// Constructors and Destructors
+//
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment " Constructors and Destructors
+"
+      end
+
+      operation 185592 "EDomElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "myXml" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 185720 "~EDomElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 185848 "setContent"
+	preserve_cpp_body_indent public explicit_return_type "void"
+	nparams 1
+	  param in name "newXml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Attribute accessor methods
+//
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Attribute accessor methods
+"
+      end
+
+      operation 185976 "getContent"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186104 "children"
+	preserve_cpp_body_indent public explicit_return_type "deque<EDomElement>"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// XML methods
+//
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " XML methods
+"
+      end
+
+      operation 186232 "elementsByTagName"
+	preserve_cpp_body_indent public explicit_return_type "deque<EDomElement>"
+	nparams 1
+	  param in name "name" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186360 "elementsByTagAtt"
+	preserve_cpp_body_indent public explicit_return_type "deque<EDomElement>"
+	nparams 3
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186488 "elementByTagName"
+	preserve_cpp_body_indent public return_type class_ref 139640 // EDomElement
+	nparams 1
+	  param in name "tagname" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186616 "elementByTagAtt"
+	preserve_cpp_body_indent public return_type class_ref 139640 // EDomElement
+	nparams 3
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186744 "addChildAtTagName"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 2
+	  param in name "tagname" explicit_type "string"
+	  param in name "newChild" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 186872 "addChildAtTagAtt"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 4
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	  param in name "newChild" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}, ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}, ${t3} ${p3}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187000 "replaceChildByTagName"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 2
+	  param in name "tagname" explicit_type "string"
+	  param in name "newChild" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187128 "replaceChildByTagAtt"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 4
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	  param in name "newChild" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}, ${t3} ${p3}${v3}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}, ${t3} ${p3}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187256 "tagName"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187384 "attribute"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "att" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187512 "addAttributeByTagName"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 3
+	  param in name "tagname" explicit_type "string"
+	  param in name "newAtt" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187640 "addAttributeByTagAtt"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 5
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	  param in name "newAtt" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}, ${t3} ${p3}${v3}, ${t4} ${p4}${v4}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}, ${t3} ${p3}, ${t4} ${p4}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187768 "replaceAttributeByTagName"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 3
+	  param in name "tagname" explicit_type "string"
+	  param in name "replaceAtt" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 187896 "replaceAttributeByTagAtt"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 5
+	  param in name "tagname" explicit_type "string"
+	  param in name "att" explicit_type "string"
+	  param in name "value" explicit_type "string"
+	  param in name "replaceAtt" explicit_type "string"
+	  param in name "newAttValue" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}, ${t2} ${p2}${v2}, ${t3} ${p3}${v3}, ${t4} ${p4}${v4}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}, ${t2} ${p2}, ${t3} ${p3}, ${t4} ${p4}${)}${const}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188024 "toString"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188152 "toInt"
+	preserve_cpp_body_indent public explicit_return_type "int"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188280 "toLong"
+	preserve_cpp_body_indent public explicit_return_type "long"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188408 "toDouble"
+	preserve_cpp_body_indent public explicit_return_type "double"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188536 "toGmlPos"
+	preserve_cpp_body_indent public explicit_return_type "deque<double>"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188664 "isAvailable"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188792 "hasTagName"
+	preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "tagname" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 188920 "indent"
+	preserve_cpp_body_indent public return_type class_ref 139640 // EDomElement
+	nparams 1
+	  param in name "indentation" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Test method
+//
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Test method
+"
+      end
+
+      operation 189048 "trim"
+	preserve_cpp_body_indent public return_type class_ref 139640 // EDomElement
+	nparams 1
+	  param in name "charToTrim" explicit_type "char"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 189176 "removeBlankLines"
+	preserve_cpp_body_indent public return_type class_ref 139640 // EDomElement
+	nparams 1
+	  param in name "removeIndentation" explicit_type "bool"
+	    defaultvalue "false"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 139896 "EDom"
+      abstract visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      operation 189304 "xmlGetData"
+	abstract cpp_virtual public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+	comment " XML methods
+"
+      end
+
+      operation 189432 "xmlSetData"
+	abstract cpp_virtual public explicit_return_type "void"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 140024 "EDomValidator"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      operation 189560 "validateProject"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 189688 "validateHeader"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 189816 "validateTerrain"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 189944 "validateFlight"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 190072 "validateSensor"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 190200 "validateImage"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 190328 "validatePoint"
+	class_operation preserve_cpp_body_indent public explicit_return_type "bool"
+	nparams 1
+	  param in name "xml" explicit_type "string"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 140152 "EParser"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+    end
+
+    class 140280 "ETreeElement"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 146296 "id"
+	private explicit_type "uint"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 146424 "description"
+	private explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 190840 "ETreeElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//* ETreeElement methods *
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 190968 "ETreeElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 2
+	  param in name "id" explicit_type "int"
+	  param in name "description" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191096 "ETreeElement"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "data" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191224 "getId"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191352 "getDescription"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 140408 "ETreeNode"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 146552 "description"
+	private explicit_type "string"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      classrelation 143352 // children (<directional composition>)
+	relation 143352 *-->
+	  stereotype "deque"
+	  a role_name "children" private
+	    cpp default "    ${comment}${static}${mutable}${volatile}${const}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 143352 // children (<directional composition>)
+	  b parent class_ref 140280 // ETreeElement
+      end
+
+      operation 191480 "ETreeNode"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//* ETreeNode methods *
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191608 "ETreeNode"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 2
+	  param in name "description" explicit_type "string"
+	  param in name "children" explicit_type "deque<ETreeElement>"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191736 "ETreeNode"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 1
+	  param in name "data" explicit_type "string"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}${)}${volatile}${throw};
+"
+	cpp_def "${comment}${inline}${class}::${name}${(}${t0} ${p0}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191864 "getDescription"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 191992 "countChildren"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192120 "getChildren"
+	preserve_cpp_body_indent public explicit_return_type "deque<ETreeElement>"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192248 "getChild"
+	preserve_cpp_body_indent public return_type class_ref 140280 // ETreeElement
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192376 "dataAt"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192504 "idAt"
+	preserve_cpp_body_indent public explicit_return_type "uint"
+	nparams 1
+	  param in name "index" explicit_type "uint"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 192632 "data"
+	preserve_cpp_body_indent public explicit_return_type "deque<string>"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+
+    class 140536 "RectSupport"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      comment "*
+* class RectSupport
+*
+* @author E-Foto group
+*
+* * * * * * * * * * * *
+* @date 06/05/2009
+* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+"
+      classrelation 144120 // <generalisation>
+	relation 144120 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 144120 // <generalisation>
+	  b parent class_ref 136696 // EObject
+      end
+
+      attribute 147192 "ncols"
+	protected explicit_type "uint"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 147320 "nrows"
+	protected explicit_type "uint"
+	cpp_decl "    ${comment}${static}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      operation 205432 "RectSupport"
+	preserve_cpp_body_indent public explicit_return_type ""
+	nparams 2
+	  param in name "parNcols" explicit_type "uint"
+	  param in name "parNrows" explicit_type "uint"
+	cpp_decl "    ${comment}${inline}${name}${(}${t0} ${p0}${v0}, ${t1} ${p1}${v1}${)}${volatile}${throw};
+"
+	cpp_def "// Constructors and destructors
+//
+//*
+// * This is the empty constructor, it does not allocate memory.
+// * @param parNcols number of columns.
+// * @param parNrows number of rows.
+// * @return an RectSupport object.
+// 
+
+${comment}${inline}${class}::${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+	comment "Constructors and Destructors
+"
+      end
+
+      operation 205560 "~RectSupport"
+	preserve_cpp_body_indent cpp_virtual public explicit_return_type ""
+	nparams 0
+	cpp_decl "    ${comment}${inline}${virtual}${name}${(}${)}${volatile}${throw};
+"
+	cpp_def "//*
+// * This is the destructor of the class RectSupport.
+// * @return no returning parameter.
+// 
+
+${comment}${inline}${class}::${name}${(}${)}${throw}{
+${body}}
+"
+	
+	
+	
+	
+      end
+
+      operation 205688 "objectType"
+	preserve_cpp_body_indent public explicit_return_type "string"
+	nparams 1
+	  param in name "" explicit_type "void"
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${t0} ${p0}${v0}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// EObject methods
+//
+//*
+// *
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${t0} ${p0}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " EObject methods
+"
+      end
+
+      operation 205816 "getCols"
+	preserve_cpp_body_indent const public explicit_return_type "uint"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "// Other methods
+//
+//*
+// * This member function returns the numeber of columns of the matrix.
+// * @return Number of columns of the matrix.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+	comment " Other methods
+"
+      end
+
+      operation 205944 "getRows"
+	preserve_cpp_body_indent const public explicit_return_type "uint"
+	nparams 0
+	cpp_decl "    ${comment}${friend}${static}${inline}${virtual}${type} ${name}${(}${)}${const}${volatile}${throw}${abstract};
+"
+	cpp_def "//*
+// * This member function returns the number of lines of the matrix.
+// * @return Number of lines of the matrix.
+// 
+
+${comment}${inline}${type} ${class}::${name}${(}${)}${const}${volatile}${throw}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+	
+      end
+    end
+  end
+
+  package_ref 135928 // CM
+
+  deploymentview 135160 "infrastructure"
+    //deployment diagram settings
+    package_name_in_tab default show_context default write_horizontally default auto_label_position default draw_all_relations default shadow default
+    draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+    artifact 136696 "AbstractAnalogCoordinate"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 138872 // AbstractAnalogCoordinate
+      end
+    end
+
+    artifact 136824 "AbstractDigitalCoordinate"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 139256 // AbstractDigitalCoordinate
+      end
+    end
+
+    artifact 137080 "CommonMethods"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 139384 // CommonMethods
+      end
+    end
+
+    artifact 137208 "Coordinate"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 139000 // Coordinate
+      end
+    end
+
+    artifact 137336 "EDom"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 139512 // Conversion
+	class_ref 139640 // EDomElement
+	class_ref 139896 // EDom
+      end
+    end
+
+    artifact 137464 "EDomValidator"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 140024 // EDomValidator
+      end
+    end
+
+    artifact 137592 "EObject"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 136696 // EObject
+      end
+    end
+
+    artifact 137720 "EParser"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 140152 // EParser
+      end
+    end
+
+    artifact 137848 "ETreeModel"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 140280 // ETreeElement
+	class_ref 140408 // ETreeNode
+	class_ref 136568 // ETreeModel
+      end
+    end
+
+    artifact 137976 "Matrix"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 139128 // Matrix
+      end
+    end
+
+    artifact 138104 "PositionMatrix"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 136184 // PositionMatrix
+      end
+    end
+
+    artifact 138232 "RectSupport"
+      stereotype "source"
+      cpp_h "#ifndef ${NAMESPACE}_${NAME}_H
+#define ${NAMESPACE}_${NAME}_H
+
+${comment}
+${includes}
+${declarations}
+${namespace_start}
+${definition}
+${namespace_end}
+#endif
+"
+      cpp_src "${comment}
+${includes}
+${namespace_start}
+${members}
+${namespace_end}"
+      associated_classes
+	class_ref 140536 // RectSupport
+      end
+    end
+  end
+end

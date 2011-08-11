@@ -1,0 +1,29 @@
+class LoadingScreen
+!!!303352.cpp!!!	instance() : LoadingScreen
+	if (loadingScreenInstance == NULL)
+	{
+		loadingScreenInstance = new LoadingScreen;
+	}
+	return *loadingScreenInstance;
+!!!303480.cpp!!!	LoadingScreen(inout parent : QWidget = 0)
+	ui->setupUi(this);
+	setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::CustomizeWindowHint);
+	//setWindowModality(Qt::ApplicationModal);
+	setWindowTitle("Loading...");
+	ui->progressBar->setMaximum(0);
+	ui->progressBar->setMinimum(0);
+	QDesktopWidget desktopWidget;
+	QRect desktopRect(desktopWidget.availableGeometry(desktopWidget.primaryScreen()));
+	QRect widgetRect(rect());
+	move(desktopRect.center() - widgetRect.center());
+!!!303608.cpp!!!	~LoadingScreen()
+	delete ui;
+!!!303736.cpp!!!	changeEvent(inout e : QEvent) : void
+	QWidget::changeEvent(e);
+	switch (e->type()) {
+	case QEvent::LanguageChange:
+		ui->retranslateUi(this);
+		break;
+	default:
+		break;
+	}

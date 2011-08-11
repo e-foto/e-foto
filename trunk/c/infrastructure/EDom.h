@@ -39,15 +39,20 @@ class EDomElement;
 
 // Common functions
 //
-string doubleToString(double value);
-string doubleToString(double value, int precision);
-double stringToDouble(string value);
-string intToString(int value);
-int stringToInt(string value);
-string longToString(long value);
-long stringToLong(string value);
-bool testAvailable(EDomElement element);
-bool testTagName(EDomElement element, string tagname);
+class Conversion
+{
+public:
+    static string doubleToString(double value);
+    static string doubleToString(double value, int precision);
+    static double stringToDouble(string value);
+    static string intToString(int value);
+    static int stringToInt(string value);
+    static string longToString(long value);
+    static long stringToLong(string value);
+    static bool testAvailable(EDomElement element);
+    static bool testTagName(EDomElement element, string tagname);
+};
+
 
 class EDomElement
 {

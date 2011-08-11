@@ -152,7 +152,7 @@ bool InteriorOrientation::is(string s)
 void InteriorOrientation::xmlSetData(string xml)
 {
 	EDomElement root(xml);
-	imageId = stringToInt(root.attribute("image_key"));
+        imageId = Conversion::stringToInt(root.attribute("image_key"));
 	Xa.resize(6,1);
 	EDomElement xmlXa = root.elementByTagName("Xa");
 	Xa.set(1,1, xmlXa.elementByTagName("a0").toDouble());
@@ -183,15 +183,15 @@ void InteriorOrientation::xmlSetData(string xml)
 string InteriorOrientation::xmlGetData()
 {
 	stringstream result;
-	result << "<imageIO type=\"Affine\" image_key=\"" << intToString(imageId) << "\">\n";
+        result << "<imageIO type=\"Affine\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
 	result << "<parameters>\n";
 	result << "<Xa>\n";
-	result << "<a0>" << doubleToString(Xa.get(1,1)) << "</a0>\n";
-	result << "<a1>" << doubleToString(Xa.get(2,1)) << "</a1>\n";
-	result << "<a2>" << doubleToString(Xa.get(3,1)) << "</a2>\n";
-	result << "<b0>" << doubleToString(Xa.get(4,1)) << "</b0>\n";
-	result << "<b1>" << doubleToString(Xa.get(5,1)) << "</b1>\n";
-	result << "<b2>" << doubleToString(Xa.get(6,1)) << "</b2>\n";
+        result << "<a0>" << Conversion::doubleToString(Xa.get(1,1)) << "</a0>\n";
+        result << "<a1>" << Conversion::doubleToString(Xa.get(2,1)) << "</a1>\n";
+        result << "<a2>" << Conversion::doubleToString(Xa.get(3,1)) << "</a2>\n";
+        result << "<b0>" << Conversion::doubleToString(Xa.get(4,1)) << "</b0>\n";
+        result << "<b1>" << Conversion::doubleToString(Xa.get(5,1)) << "</b1>\n";
+        result << "<b2>" << Conversion::doubleToString(Xa.get(6,1)) << "</b2>\n";
 	result << "</Xa>\n";
 	result << "</parameters>\n";
 	//result << "<La>\n";

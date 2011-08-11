@@ -1,0 +1,85 @@
+class SMarkInImage
+!!!160376.cpp!!!	SMarkInImage()
+	point = NULL;
+	image = NULL;
+!!!160504.cpp!!!	SMarkInImage(inout point : Point, inout image : Image)
+	this->point = NULL;
+	this->image = NULL;
+	x = y = 0;
+	scale = 1;
+	if (point !=NULL && image != NULL)
+	{
+		this->point = point;
+		this->image = image;
+		point->addExhibition(this);
+		image->addExhibition(this);
+	}
+!!!160632.cpp!!!	SMarkInImage(inout point : Point, inout image : Image, in x : double, in y : double, in scale : double = 1.0)
+	this->point = NULL;
+	this->image = NULL;
+	this->x = x;
+	this->y = y;
+	this->scale = scale;
+	if (point != NULL && image != NULL)
+	{
+		this->point = point;
+		this->image = image;
+		point->addExhibition(this);
+		image->addExhibition(this);
+	}
+!!!160760.cpp!!!	~SMarkInImage()
+	if (point != NULL)
+	{
+		point->removeExhibition(this);
+	}
+	if (image != NULL)
+	{
+		image->removeExhibition(this);
+	}
+!!!160888.cpp!!!	getMarkNickname() : string
+	if (point != NULL)
+		return point->getNickname();
+	return "";
+!!!161016.cpp!!!	getImageNickname() : string
+	if (image != NULL)
+		return image->getNickname();
+	return "";
+!!!161144.cpp!!!	getX() : double
+	return x;
+!!!161272.cpp!!!	getY() : double
+	return y;
+!!!161400.cpp!!!	getScale() : double
+	return scale;
+!!!161528.cpp!!!	setScale(in scale : double) : void
+	this->scale = scale;
+!!!161656.cpp!!!	moveTo(in x : double, in y : double) : void
+	this->x = x;
+	this->y = y;
+	correctMovement();
+!!!161784.cpp!!!	pan(in dx : double, in dy : double) : void
+	this->x += dx;
+	this->y += dy;
+	correctMovement();
+!!!161912.cpp!!!	draw(in x : double, in y : double, in zoom : double) : void
+	if (point != NULL && image != NULL)
+	{
+		point->draw(this,this->x*zoom+x,this->y*zoom+y, scale);
+	}
+!!!162040.cpp!!!	getEfectiveZoom() : double
+	if (point != NULL && image != NULL)
+	{
+		return scale;
+	}
+	return 0;
+!!!162168.cpp!!!	correctMovement() : void
+	if (image != NULL)
+	{
+		if (x > image->getWidth()/2)
+			x = image->getWidth()/2;
+		else if (x < -image->getWidth()/2)
+			x = -image->getWidth()/2;
+		if (y > image->getHeight()/2)
+			y = image->getHeight()/2;
+		else if (y < -image->getHeight()/2)
+			y = -image->getHeight()/2;
+	}

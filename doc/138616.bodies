@@ -1,0 +1,31 @@
+class STile
+!!!171768.cpp!!!	STile(in xOffset : double, in yOffset : double, inout image : SImage, in l : int, in t : int, in w : int, in h : int)
+	myImage = image;
+	width = w;
+	height = h;
+	left = l;
+	top = t;
+	texture = 0;
+	offset2X = xOffset;
+	offset2Y = yOffset;
+	texturized = false;
+	texturize();
+!!!172024.cpp!!!	texturize() : void
+	if (CommonMethods::instance()->cutImage(left,top,width,height))
+	{
+		texturized = createTexture(&texture, myImage->getFormat(), width, height, CommonMethods::instance()->getCroppedPixels());
+		CommonMethods::instance()->freeCropped();
+	}
+!!!172152.cpp!!!	untexturize() : void
+	if (texturized)
+	{
+		deleteTexture(&texture);
+	}
+!!!172280.cpp!!!	isTexturized() : bool
+	return texturized;
+!!!172408.cpp!!!	draw(in centerCoordX : double, in centerCoordY : double, in zoomFactor : double) : void
+	double left = (centerCoordX + (offset2X * zoomFactor)) - (width/2 * zoomFactor);
+	double right = (centerCoordX + (offset2X * zoomFactor)) + (width/2 * zoomFactor);
+	double top = (centerCoordY + (offset2Y * zoomFactor)) - (height/2 * zoomFactor);
+	double bottom = (centerCoordY + (offset2Y * zoomFactor)) + (height/2 * zoomFactor);
+	drawImage(texture, left, right, top, bottom);

@@ -1,0 +1,222 @@
+class TableIOEOWidget
+!!!312824.cpp!!!	TableIOEOWidget(inout parent : QWidget = 0)
+    io= new Matrix(1,1);
+    setRowCount(io->getRows());
+    setColumnCount(io->getCols());
+    installEventFilter(this);
+    enableAutoCopy();
+    setMode('f');
+    setDecimals(6);
+    horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setResizeMode(QHeaderView::Stretch);
+!!!312952.cpp!!!	TableIOEOWidget(in values : Matrix, inout parent : QWidget = 0)
+    setTableData(values);
+    connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    enableAutoCopy();
+    setMode('e');
+    setDecimals(6);
+    setTableData(values,getMode(),getDecimals());
+
+    horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setResizeMode(QHeaderView::Stretch);
+/*
+    QVBoxLayout* verLayout = new QVBoxLayout();
+    QHBoxLayout *horLayout = new QHBoxLayout();
+
+    QCheckBox *caixa=new QCheckBox("Enable AutoCopy");
+    caixa->setChecked(true);
+    QComboBox *modo= new QComboBox();
+    modo->addItem("Cientifico"); //'e'
+    modo->addItem("Decimal");    //'f'
+    QSpinBox *decimals = new QSpinBox();
+    decimals->setMinimum(1);
+    decimals->setMaximum(9);
+
+    horLayout->addWidget(caixa);
+    horLayout->addWidget(modo);
+    horLayout->addWidget(decimals);
+    verLayout->addWidget(caixa);
+    verLayout->addWidget(tabela);
+*/
+
+    //connect(this, SIGNAL())
+    //connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+!!!313080.cpp!!!	setTableData(in values : Matrix, in mode : char = 'e', in precision : int = 6) : void
+    horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
+
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
+    //falta tratamento para destruir antiga matrix se ela existir antes
+    io= new Matrix(values);
+
+    setMode(mode);
+    setDecimals(precision);
+
+    setRowCount(io->getRows());
+    setColumnCount(io->getCols());
+    for (int i=0;i<rowCount();i++)
+    {
+        for(int j=0;j<columnCount();j++)
+        {
+            QTableWidgetItem *temp= new QTableWidgetItem(QString::number(io->get(i+1,j+1),getMode(),getDecimals()));
+            temp->setTextAlignment(Qt::AlignCenter);
+            temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
+            this->setItem(i,j,temp);
+        }
+    }
+    //resizeColumnsToContents();
+    //resizeRowsToContents();
+    resizeTable();
+!!!313208.cpp!!!	setTableData(in xml : EDomElement, in mode : char = 'e', in precision : int = 6) : void
+    io= new Matrix();
+    io->xmlSetData(xml.getContent());
+    setTableData(*io, mode, precision);
+!!!313336.cpp!!!	setTableData(in xmlString : string, in mode : char = 'e', in precision : int = 6) : void
+    io= new Matrix();
+    io->xmlSetData(xmlString);
+    setTableData(*io, mode, precision);
+!!!313464.cpp!!!	setVerticalHeadersLabelsHtml(in list : QStringList) : void
+	verticalHeader()->setVisible(false);
+	setColumnCount(columnCount()+1);
+
+	for (int i=0; i<list.size(); i++)
+	{
+		QLabel *lab=new QLabel(list.at(i));
+		lab->setAlignment(Qt::AlignCenter);
+		setCellWidget(i,1,lab);
+
+	}
+	resizeTable();
+!!!313592.cpp!!!	resizeTable() : void
+    int widlinhas=lineWidth()*(columnCount()-1);
+    int heilinhas=lineWidth()*(rowCount()-1);
+
+	resizeRowsToContents();   //novo
+    resizeColumnsToContents();//novo
+
+	if (columnCount()==1)
+		setFixedSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+    else
+        setFixedSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
+!!!313720.cpp!!!	enableAutoCopy(in enable : bool = true) : void
+    //testado e até agora sem problemas
+    if(enable)
+    {
+        connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
+    else
+    {
+        disconnect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
+!!!313848.cpp!!!	setMode(in newMode : char) : void
+    mode=( (newMode=='e' || newMode=='f')? newMode: 'e');
+!!!313976.cpp!!!	setDecimals(in newDecimals : int) : void
+    decimals=(newDecimals>0 ? newDecimals : 1 );
+!!!314104.cpp!!!	getMode() : char
+    return mode;
+!!!314232.cpp!!!	getDecimals() : int
+    return decimals;
+!!!314360.cpp!!!	autoCopy() : void
+    QString copyStr;
+    if (selectedRanges().size()!=0)
+    {
+        int cols=selectedRanges().at(0).columnCount();
+        int rows=selectedRanges().at(0).rowCount();
+        for (int i=0;i<rows;i++)
+        {
+            for (int j=0;j<cols;j++)
+            {
+                copyStr.append(selectedItems().at(j*rows+i)->text()).append("\t");
+            }
+            copyStr.append("\n");
+        }
+        //Gambiarra muito da feia, para acessar o clipboard do sistema
+        QLineEdit aux(copyStr);
+        aux.selectAll();
+        aux.copy();
+    }
+!!!314488.cpp!!!	enableAutoCopy(in enable : int) : void
+
+    if(enable==0)
+    {
+        disconnect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
+    else
+    {
+        connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
+    }
+!!!314616.cpp!!!	updateTableValues(in mode : char, in precision : int) : void
+    bool ok;
+    for (int i=0;i<rowCount();i++)
+    {
+        for(int j=0;j<columnCount();j++)
+        {
+            //double tempValue=this->item(i,j)->text().toDouble(&ok);
+            item(i,j)->setText(QString::number(io->get(i+1,j+1),mode,precision));
+        }
+    }
+    //this->resizeColumnsToContents();
+    resizeTable();
+!!!314744.cpp!!!	updateModoValues(in modo : int) : void
+    if (modo==0)            // 'e' == Cientifico
+    {
+        setMode('e');
+    }
+    else if (modo==1)       // 'f' == Decimal
+    {
+        setMode('f');
+    }
+    else                    // caso em que um valor invalido é passado
+        setMode('f');
+
+    updateTableValues(getMode(),getDecimals());
+!!!314872.cpp!!!	updateDecimalsValues(in decimal : int) : void
+    setDecimals(decimal);
+    updateTableValues(getMode(),getDecimals());
+!!!315128.cpp!!!	keyPressEvent(inout event : QKeyEvent) : void
+    if (event->modifiers()==Qt::ControlModifier)
+    {
+        if (event->key()==Qt::Key_C)
+        {
+            autoCopy();
+        }
+        else
+        {
+            QTableWidget::keyPressEvent(event);
+        }
+    }
+    else
+        QTableWidget::keyPressEvent(event);
+!!!315256.cpp!!!	eventFilter(inout obj : QObject, inout evento : QEvent) : bool
+    if (evento->type()==QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evento);
+        keyPressEvent(keyEvent);
+        return true;
+    }
+    if (evento->type()==QEvent::FocusIn)
+    {
+        QFocusEvent *focusInEvento = static_cast<QFocusEvent *>(evento);
+        focusInEvent(focusInEvento);
+        //emit focusReceived();
+        return true;
+    }
+    /*
+    if (evento->type()==QEvent::MouseButtonRelease)
+    {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evento);
+        mouseReleaseEvent(mouseEvent);
+        return true;
+    }
+    if (evento->type()==QEvent::Resize)
+    {
+        QResizeEvent *resEvent= static_cast<QResizeEvent*>(evento);
+        resizeEvent(resEvent);
+        return true;
+    }*/
+
+!!!315384.cpp!!!	focusInEvent(inout evento : QFocusEvent) : void
+    emit focusReceived();
+
+    QTableWidget::focusInEvent(evento);
+

@@ -54,9 +54,9 @@ namespace sclass
 		bool createTextureTiles();
 
 		SWidget* parent;
-		string nickname, filePath;
+                string nickname; string filePath;
 		int tileSize;
-		int width, height;
+                int width; int height;
 		bool canLoaded;
 		int format;
 		deque<sclass::SImageInViewport*> exposedInViewport;

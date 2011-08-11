@@ -13,7 +13,7 @@ class SensorForm : public AbstractForm, public Ui::SensorView
 public:
     EDomElement ede;
 	SensorForm(QWidget *parent =0);
-	bool radialAvailable,decenteredAvailable;
+        bool radialAvailable; bool decenteredAvailable;
 
     void fillvalues(string values);
     string getvalues();

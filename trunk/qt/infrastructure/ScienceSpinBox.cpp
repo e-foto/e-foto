@@ -952,7 +952,7 @@ void ScienceSpinBox::adjustDisplay()
 }
 
 // reimplemented function, copied from qspinbox.cpp
-static bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64 *match)
+bool ScienceSpinBox::isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64 *match)
 {
 	//qDebug("isIntermediateValueHelper");
 	//qDebug("%lld %lld %lld", num, min, max);

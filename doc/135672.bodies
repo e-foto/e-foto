@@ -1,0 +1,193 @@
+class Point
+!!!241784.cpp!!!	Point()
+
+    setId(0);
+!!!241912.cpp!!!	Point(in myId : int)
+
+    setId(myId);
+!!!242040.cpp!!!	~Point()
+
+!!!242168.cpp!!!	setId(in newId : int) : void
+
+    id = newId;
+!!!242296.cpp!!!	setPointId(in newPointId : string) : void
+
+	pointId = newPointId;
+!!!242424.cpp!!!	setDescription(in newDescription : string) : void
+
+    description = newDescription;
+!!!242552.cpp!!!	getId() : int
+
+    return id;
+!!!242680.cpp!!!	getPointId() : string
+
+	return pointId;
+!!!242808.cpp!!!	getDescription() : string
+
+    return description;
+!!!242936.cpp!!!	setObjectCoordinate(in newObjectCoordinate : ObjectSpaceCoordinate) : void
+
+    objectCoordinate = newObjectCoordinate;
+!!!243064.cpp!!!	getObjectCoordinate() : ObjectSpaceCoordinate
+
+    return objectCoordinate;
+!!!243192.cpp!!!	setDigitalCoordinates(in newDigitalCoordinates : deque<DigitalImageSpaceCoordinate>) : void
+
+    digitalCoordinates = newDigitalCoordinates;
+!!!243320.cpp!!!	setAnalogCoordinates(in newAnalogCoordinates : deque<AnalogImageSpaceCoordinate>) : void
+
+    analogCoordinates = newAnalogCoordinates;
+!!!243448.cpp!!!	getDigitalCoordinates() : deque<DigitalImageSpaceCoordinate>
+
+    return digitalCoordinates;
+!!!243576.cpp!!!	getAnalogCoordinates() : deque<AnalogImageSpaceCoordinate>
+
+    return analogCoordinates;
+!!!243704.cpp!!!	putDigitalCoordinate(in newDigitalCoordinate : DigitalImageSpaceCoordinate) : int
+
+    if (digitalCoordinates.empty())
+    {
+        digitalCoordinates.push_back(newDigitalCoordinate);
+    }
+    else
+    {
+        if (digitalCoordinates.back().getImageId() < newDigitalCoordinate.getImageId())
+        {
+            digitalCoordinates.push_back(newDigitalCoordinate);
+        }
+        else
+        {
+            for (unsigned int i = 0; i < digitalCoordinates.size(); i++)
+            {
+                if (digitalCoordinates.at(i).getImageId() > newDigitalCoordinate.getImageId())
+                {
+                    digitalCoordinates.insert(digitalCoordinates.begin()+i,newDigitalCoordinate);
+                    break;
+                }
+                else if (digitalCoordinates.at(i).getImageId() == newDigitalCoordinate.getImageId())
+                {
+                    digitalCoordinates.erase(digitalCoordinates.begin()+i);
+                    digitalCoordinates.insert(digitalCoordinates.begin()+i,newDigitalCoordinate);
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+!!!243832.cpp!!!	putAnalogCoordinate(in newAnalogCoordinate : AnalogImageSpaceCoordinate) : int
+
+
+    int imageId = newAnalogCoordinate.getImageId();
+    if (hasAnalogCoordinate(imageId))
+        return 1;
+    analogCoordinates.push_back(newAnalogCoordinate);
+    return 0;
+!!!243960.cpp!!!	getDigitalCoordinate(in imageId : int) : DigitalImageSpaceCoordinate
+
+
+    for (unsigned int i = 0; i < digitalCoordinates.size(); i++)
+        if (digitalCoordinates.at(i).getImageId() == imageId)
+            return digitalCoordinates.at(i);
+    return DigitalImageSpaceCoordinate();
+!!!244088.cpp!!!	getAnalogCoordinate(in imageId : int) : AnalogImageSpaceCoordinate
+
+
+    for (unsigned int i = 0; i < analogCoordinates.size(); i++)
+        if (analogCoordinates.at(i).getImageId() == imageId)
+            return analogCoordinates.at(i);
+    return AnalogImageSpaceCoordinate();
+!!!244216.cpp!!!	getDigitalCoordinateAt(in index : uint) : DigitalImageSpaceCoordinate
+
+    if (index < digitalCoordinates.size())
+        return digitalCoordinates.at(index);
+    return DigitalImageSpaceCoordinate();
+!!!244344.cpp!!!	getAnalogCoordinateAt(in index : uint) : AnalogImageSpaceCoordinate
+
+    if (index < analogCoordinates.size())
+        return analogCoordinates.at(index);
+    return AnalogImageSpaceCoordinate();
+!!!244472.cpp!!!	countDigitalCoordinates() : uint
+
+    return digitalCoordinates.size();
+!!!244600.cpp!!!	countAnalogCoordinates() : uint
+
+    return analogCoordinates.size();
+!!!244728.cpp!!!	clearDigitalCoordinates() : void
+
+    digitalCoordinates.clear();
+!!!244856.cpp!!!	clearAnalogCoordinates() : void
+
+    analogCoordinates.clear();
+!!!244984.cpp!!!	deleteDigitalCoordinate(in imageId : int) : void
+
+
+    for (unsigned int i = 0; i < digitalCoordinates.size(); i++)
+        if (digitalCoordinates.at(i).getImageId() == imageId)
+        {
+        digitalCoordinates.erase(digitalCoordinates.begin()+i);
+        break;
+    }
+!!!245112.cpp!!!	deleteAnalogCoordinate(in imageId : int) : void
+
+
+    for (unsigned int i = 0; i < analogCoordinates.size(); i++)
+        if (analogCoordinates.at(i).getImageId() == imageId)
+        {
+        analogCoordinates.erase(analogCoordinates.begin()+i);
+        break;
+    }
+!!!245240.cpp!!!	putImage(inout newImageAssociation : Image) : void
+
+    bool insert = true;
+    // Eliminamos primeiro a possibilidade duplicar uma associação.
+    for (unsigned int i = 0; i < myImages.size(); i++)
+        if (myImages.at(i) == newImageAssociation)
+            insert = false;
+    // Fazemos a nova associação.
+    if (insert)
+        myImages.push_back(newImageAssociation);
+!!!245368.cpp!!!	getImage(in imageId : int) : Image
+
+    for (unsigned int i = 0; i < myImages.size(); i++)
+        if (myImages.at(i)->getId() == imageId)
+            return myImages.at(i);
+    return NULL;
+!!!245496.cpp!!!	countImages() : int
+
+    return myImages.size();
+!!!245624.cpp!!!	getImageAt(in index : uint) : Image
+
+    if (index < myImages.size())
+        return myImages.at(index);
+    return NULL;
+!!!245752.cpp!!!	hasDigitalCoordinate(in imageId : int) : bool
+
+
+    for (unsigned int i = 0; i < digitalCoordinates.size(); i++)
+        if (digitalCoordinates.at(i).getImageId() == imageId)
+            return true;
+    return false;
+!!!245880.cpp!!!	hasAnalogCoordinate(in imageId : int) : bool
+
+
+    for (unsigned int i = 0; i < analogCoordinates.size(); i++)
+        if (analogCoordinates.at(i).getImageId() == imageId)
+            return true;
+    return false;
+
+!!!246008.cpp!!!	objectType(in  : void) : string
+
+    stringstream result;
+    result << "Point " << id;
+    return result.str();
+!!!246136.cpp!!!	objectAssociations(in  : void) : string
+
+    stringstream result;
+    if (countImages() != 0)
+        result << "Image";
+    for (int i = 0; i < countImages(); i++)
+        result << " " << getImageAt(i)->getId();
+    return result.str();
+!!!246264.cpp!!!	is(in s : string) : bool
+
+    return (s == "Point" ? true : false);

@@ -60,7 +60,7 @@ bool ControlPoint::is(string s)
 void ControlPoint::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
+    id = Conversion::stringToInt(root.attribute("key"));
 	pointId = root.elementByTagName("pointId").toString();
     description = root.elementByTagName("description").toString();
     objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
@@ -80,7 +80,7 @@ void ControlPoint::xmlSetData(string xml)
 string ControlPoint::xmlGetData()
 {
     stringstream result;
-    result << "<point key=\"" << intToString(id) << "\" type=\"control\">\n";
+    result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"control\">\n";
 	result << "<pointId>" << pointId << "</pointId>\n";
     result << "<description>" << description << "</description>\n";
     result << objectCoordinate.xmlGetData() << "\n";

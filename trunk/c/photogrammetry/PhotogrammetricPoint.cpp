@@ -58,7 +58,7 @@ bool PhotogrammetricPoint::is(string s)
 void PhotogrammetricPoint::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    id = stringToInt(root.attribute("key"));
+    id = Conversion::stringToInt(root.attribute("key"));
 	pointId = root.elementByTagName("pointId").toString();
     description = root.elementByTagName("description").toString();
     objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
@@ -78,7 +78,7 @@ void PhotogrammetricPoint::xmlSetData(string xml)
 string PhotogrammetricPoint::xmlGetData()
 {
     stringstream result;
-    result << "<point key=\"" << intToString(id) << "\" type=\"photogrammetric\">\n";
+    result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"photogrammetric\">\n";
 	result << "<pointId>" << pointId << "</pointId>\n";
     result << "<description>" << description << "</description>\n";
     result << objectCoordinate.xmlGetData();

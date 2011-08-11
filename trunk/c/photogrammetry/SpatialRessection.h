@@ -36,14 +36,14 @@ class SpatialRessection : public ExteriorOrientation
     Matrix Lb;
     Matrix lastL0;
 
-    double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
-    double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
+    double X00; double Y00; double Z00; double omega0; double phi0; double kappa0; // Variables just for speeding up calculations, not really needed.
+    double r11; double r12; double r13; double r21; double r22; double r23; double r31; double r32; double r33; // To make code reading and maintenance easier.
     deque<int> selectedPoints;
     bool pointForFlightDirectionAvailable;
     DigitalImageSpaceCoordinate pointForFlightDirection;
 
     int totalIterations;
-	bool gnssConverged, insConverged;
+        bool gnssConverged; bool insConverged;
 	bool useDistortions;
 
     // Composed objects

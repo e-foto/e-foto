@@ -1,0 +1,30 @@
+class AbstractDigitalCoordinate
+!!!179960.cpp!!!	~AbstractDigitalCoordinate()
+
+!!!180088.cpp!!!	setLin(in newLin : int) : void
+    lin = newLin;
+!!!180216.cpp!!!	setCol(in newCol : int) : void
+    col = newCol;
+!!!180344.cpp!!!	setUnit(in newUnit : string) : void
+    unit = newUnit;
+!!!180472.cpp!!!	getLin() : int
+    return lin;
+!!!180600.cpp!!!	getCol() : int
+    return col;
+!!!180728.cpp!!!	getUnit() : string
+    return unit;
+!!!180856.cpp!!!	setPosition(in newPosition : PositionMatrix) : void
+    if (newPosition.getRows() == 2 && newPosition.getCols() == 1)
+    {
+        col = newPosition.getInt(1);
+        lin = newPosition.getInt(2);
+        unit = "px";
+    }
+    available = true;
+!!!180984.cpp!!!	getPosition() : PositionMatrix
+    PositionMatrix position(2, "px");
+    position.setInt(1,col);
+    position.setInt(2,lin);
+    return position;
+!!!181112.cpp!!!	objectType(in  : void) : string
+    return "AbstractDigitalCoordinate";

@@ -155,7 +155,7 @@ string ImageForm::getvalues()
 	{
 		string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
 		auxStream << "<GNSS uom=\"#m\" type=\"" << type << "\">\n";
-		auxStream << "<gml:pos>" << doubleToString(eDoubleSpinBox_2->value()) << " " << doubleToString(nDoubleSpinBox_2->value()) << " " << doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
+                auxStream << "<gml:pos>" << Conversion::doubleToString(eDoubleSpinBox_2->value()) << " " << Conversion::doubleToString(nDoubleSpinBox_2->value()) << " " << Conversion::doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
 		auxStream << gnssSigmaController->getValues();
 		auxStream << "</GNSS>\n";
 	}
@@ -163,9 +163,9 @@ string ImageForm::getvalues()
 	{
 		string type = insTypeComboBox->currentIndex() == 0 ? "Initial": insTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
 		auxStream << "<INS uom=\"#rad\" type=\"" << type << "\">\n";
-		auxStream << "<omega>" << doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
-		auxStream << "<phi>" << doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
-		auxStream << "<kappa>" << doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
+                auxStream << "<omega>" << Conversion::doubleToString(omegaDoubleSpinBox->value()) <<"</omega>\n";
+                auxStream << "<phi>" << Conversion::doubleToString(phiDoubleSpinBox->value()) <<"</phi>\n";
+                auxStream << "<kappa>" << Conversion::doubleToString(kappaDoubleSpinBox->value()) <<"</kappa>\n";
 		auxStream << insSigmaController->getValues();
 		auxStream << "</INS>\n";
 	}

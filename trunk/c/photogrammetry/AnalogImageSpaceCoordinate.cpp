@@ -142,7 +142,7 @@ bool AnalogImageSpaceCoordinate::is(string s)
 void AnalogImageSpaceCoordinate::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    imageId = stringToInt(root.attribute("image_key"));
+    imageId = Conversion::stringToInt(root.attribute("image_key"));
     unit = root.attribute("uom");
     EDomElement xmlPos = root.elementByTagName("gml:pos");
     if (xmlPos.isAvailable())
@@ -179,7 +179,7 @@ string AnalogImageSpaceCoordinate::xmlGetData()
     stringstream result;
 
     if (available)
-        result << "<gml:pos>" << doubleToString(xi) << " " << doubleToString(eta) << "</gml:pos>\n";
+        result << "<gml:pos>" << Conversion::doubleToString(xi) << " " << Conversion::doubleToString(eta) << "</gml:pos>\n";
     else
         result << "<gml:pos>Not Available</gml:pos>\n";
     if (sigmaAvailable)

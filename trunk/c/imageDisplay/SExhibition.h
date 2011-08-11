@@ -40,10 +40,10 @@ namespace sclass
 
 		S::Image* image;
 		S::Viewport* viewport;
-		double x, y, scale;
-		double left, right, top, bottom;
-		double xMax, xMin, yMax, yMin;
-		bool limitXMovement, limitYMovement;
+                double x; double y; double scale;
+                double left; double right; double top; double bottom;
+                double xMax; double xMin; double yMax; double yMin;
+                bool limitXMovement; bool limitYMovement;
 	};
 
 	class SMarkInImage
@@ -71,7 +71,7 @@ namespace sclass
 
 		S::Point* point;
 		S::Image* image;
-		double x, y, scale;
+                double x; double y; double scale;
 	};
 /*
 	class SMarkInViewport
@@ -104,10 +104,10 @@ namespace sclass
 
 		S::Point* point;
 		S::Viewport* viewport;
-		double x, y, scale;
-		double left, right, top, bottom;
-		double xMax, xMin, yMax, yMin;
-		bool limitXMovement, limitYMovement;
+                double x; double y; double scale;
+                double left; double right; double top; double bottom;
+                double xMax; double xMin; double yMax; double yMin;
+                bool limitXMovement; bool limitYMovement;
 	};
 */
 } // namespace sclass

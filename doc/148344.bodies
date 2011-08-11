@@ -1,0 +1,9 @@
+class SigmaFormContent
+!!!312312.cpp!!!	SigmaFormContent(inout parent : QWidget = 0)
+	setContentsMargins(0,0,0,0);
+	if (layout() == 0)
+		this->setLayout(new QVBoxLayout());
+	layout()->setMargin(0);
+!!!312440.cpp!!!	setSigmaFormController(inout newController : SigmaFormController) : void
+	controller = newController;
+	layout()->addWidget(controller->getContent());

@@ -1,0 +1,144 @@
+class SImageInViewport
+!!!157560.cpp!!!	SImageInViewport()
+	image = NULL;
+	viewport = NULL;
+!!!157688.cpp!!!	SImageInViewport(inout image : Image, inout viewport : Viewport)
+	this->image = NULL;
+	this->viewport = NULL;
+	x = y = 0;
+	scale = 1;
+	limitXMovement = true;
+	limitYMovement = true;
+	if (image != NULL && viewport != NULL)
+	{
+		this->image = image;
+		this->viewport = viewport;
+		image->addExhibition(this);
+		viewport->addExhibition(this);
+		calculateMargins();
+	}
+!!!157816.cpp!!!	~SImageInViewport()
+	if (image != NULL)
+	{
+		image->removeExhibition(this);
+	}
+	if (viewport != NULL)
+	{
+		viewport->removeExhibition(this);
+	}
+!!!157944.cpp!!!	getImageNickname() : string
+	if (image != NULL)
+		return image->getNickname();
+	return "";
+!!!158072.cpp!!!	getViewportNickname() : string
+	if (viewport != NULL)
+		return viewport->getNickname();
+	return "";
+!!!158200.cpp!!!	getX() : double
+	return x;
+!!!158328.cpp!!!	getY() : double
+	return y;
+!!!158456.cpp!!!	getImageLeft() : double
+	return left;
+!!!158584.cpp!!!	getImageRight() : double
+	return right;
+!!!158712.cpp!!!	getImageTop() : double
+	return top;
+!!!158840.cpp!!!	getImageBottom() : double
+	return bottom;
+!!!158968.cpp!!!	getImageWidth() : int
+	if (image != NULL)
+		return image->getWidth();
+	return 0;
+!!!159096.cpp!!!	getImageHeight() : int
+	if (image != NULL)
+		return image->getHeight();
+	return 0;
+!!!159224.cpp!!!	getScale() : double
+	return scale;
+!!!159352.cpp!!!	setScale(in scale : double) : void
+	this->scale = scale;
+	calculateMargins();
+!!!159480.cpp!!!	moveTo(in x : double, in y : double, in autoCorrect : bool = true) : void
+	this->x = x;
+	this->y = y;
+	calculateMargins();
+	if (autoCorrect/* && limitXMovement*/)
+		correctXMovement();
+	if (autoCorrect/* && limitYMovement*/)
+		correctYMovement();
+!!!159608.cpp!!!	pan(in dx : double, in dy : double, in autoCorrect : bool = true) : void
+	this->x += dx;
+	this->y += dy;
+	this->left += dx;
+	this->right += dx;
+	this->top += dy;
+	this->bottom +=dy;
+	if (autoCorrect/* && limitXMovement*/)
+		correctXMovement();
+	if (autoCorrect/* && limitYMovement*/)
+		correctYMovement();
+!!!159736.cpp!!!	draw() : void
+	if (image != NULL && viewport != NULL)
+	{
+		image->draw(this);
+	}
+!!!159864.cpp!!!	getEfectiveZoom() : double
+	if (image != NULL && viewport != NULL)
+	{
+		return viewport->getZoomFactor() * scale;
+	}
+	return 0;
+!!!159992.cpp!!!	calculateMargins() : void
+	if (viewport != NULL && image != NULL)
+	{
+		double z = viewport->getZoomFactor();
+		int w = image->getWidth();
+		int h = image->getHeight();
+		int vl, vb, vw, vh;
+		viewport->informDimensions(vl,vb,vw,vh);
+
+		left = (x - w*scale/2)*z;
+		right = (x + w*scale/2)*z;
+		top = (y + h*scale/2)*z;
+		bottom = (y - h*scale/2)*z;
+
+		if (vw <= w*scale*z)
+		{
+			//with viewportWidth < imageWidth
+			xMax = -vw/2 + w*scale*z/2;
+			xMin = vw/2 - w*scale*z/2;
+		}
+		else
+		{
+			//with viewportWidth > imageWidth
+			//xMin = -vw/2 + w*scale*z/2;
+			//xMax = vw/2 - w*scale*z/2;
+			//to no moviment in this case
+			xMax = xMin = 0;
+		}
+		if (vh <= h*scale*z)
+		{
+			//with viewportHeight < imageHeight
+			yMax = -vh/2 + h*scale*z/2;
+			yMin = vh/2 - h*scale*z/2;
+		}
+		else
+		{
+			//with viewportHeight > imageHeight
+			//yMin = -vh/2 + h*scale*z/2;
+			//yMax = vh/2 - h*scale*z/2;
+			//to no moviment in this case
+			yMax = yMin = 0;
+		}
+	}
+!!!160120.cpp!!!	correctXMovement() : void
+	if (x > xMax)
+		x = xMax;
+	else if (x < xMin)
+		x = xMin;
+!!!160248.cpp!!!	correctYMovement() : void
+	if (y > yMax)
+		y = yMax;
+	else if (y < yMin)
+		y = yMin;

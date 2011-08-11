@@ -1,0 +1,124 @@
+class CommonQtMethods
+!!!301688.cpp!!!	putImage(inout width : int, inout height : int, inout format : int, inout image : void) : bool
+	if (currentImage != NULL)
+	{
+		freeImage();
+	}
+	QImage* temp = (QImage*)image;
+	if (temp == NULL)
+	{
+		cerr << "Error: sorry, can't load image.\n";
+		width = 0;
+		height = 0;
+		format = 0;
+		return false;
+	}
+	if (!temp->isGrayscale())
+	{
+		currentImage = new QImage(temp->rgbSwapped());
+		if (currentImage->hasAlphaChannel())
+		{
+			format = 4;
+		}
+		else
+		{
+			format = 3;
+		}
+		delete(temp);
+	}
+	else
+	{
+		currentImage = temp;
+		format = 1;
+	}
+	width = currentImage->width();
+	height = currentImage->height();
+	return true;
+!!!301816.cpp!!!	loadImage(inout width : int, inout height : int, inout format : int, in filePath : string) : bool
+	if (currentImage != NULL)
+	{
+		freeImage();
+	}
+	QImage* temp = new QImage(filePath.c_str());
+	if (temp == NULL)
+	{
+		cerr << "Error: sorry, can't load image.\n";
+		width = 0;
+		height = 0;
+		format = 0;
+		return false;
+	}
+	if (!temp->isGrayscale())
+	{
+		currentImage = new QImage(temp->rgbSwapped());
+		if (currentImage->hasAlphaChannel())
+		{
+			format = 4;
+		}
+		else
+		{
+			format = 3;
+		}
+		delete(temp);
+	}
+	else
+	{
+		currentImage = temp;
+		format = 1;
+	}
+	width = currentImage->width();
+	height = currentImage->height();
+	return true;
+!!!301944.cpp!!!	rotateImage(in ang : double) : void
+	if (currentImage == NULL)
+	{
+		return;
+	}
+	QTransform transf;
+	QImage* temp = new QImage(currentImage->transformed(transf.rotate(-ang),Qt::SmoothTransformation));
+	*temp = temp->copy(temp->width()/2-16,temp->height()/2-16,32,32);
+	delete(currentImage);
+	currentImage = temp;
+!!!302072.cpp!!!	cutImage(in x : int, in y : int, in w : int, in h : int) : bool
+	if (currentImage == NULL)
+		return false;
+	if (this->cropped != NULL)
+	{
+		freeCropped();
+	}
+
+	cropped = new QImage(currentImage->copy(x, y, w, h));
+
+	return cropped;
+!!!302200.cpp!!!	freeImage() : void
+	if (currentImage != NULL)
+	{
+		delete(currentImage);
+		currentImage = NULL;
+	}
+!!!302328.cpp!!!	freeCropped() : void
+	if (cropped != NULL)
+	{
+		delete(cropped);
+		cropped = NULL;
+	}
+!!!302456.cpp!!!	getImagePixels() : void
+	if (currentImage != NULL)
+		return currentImage->bits();
+	return NULL;
+!!!302584.cpp!!!	getCroppedPixels() : void
+	if (cropped != NULL)
+		return cropped->bits();
+	return NULL;
+!!!302712.cpp!!!	CommonQtMethods()
+	currentImage = NULL;
+	cropped = NULL;
+!!!302840.cpp!!!	~CommonQtMethods()
+	if (this->currentImage != NULL)
+	{
+		freeImage();
+	}
+	if (this->cropped != NULL)
+	{
+		freeCropped();
+	}

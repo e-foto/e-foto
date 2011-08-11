@@ -121,7 +121,7 @@ bool DigitalImageSpaceCoordinate::is(string s)
 void DigitalImageSpaceCoordinate::xmlSetData(string xml)
 {
     EDomElement root(xml);
-    imageId = stringToInt(root.attribute("image_key"));
+    imageId = Conversion::stringToInt(root.attribute("image_key"));
     unit = root.attribute("uom");
     EDomElement xmlPos = root.elementByTagName("gml:pos");
     if (xmlPos.isAvailable())
@@ -147,7 +147,7 @@ string DigitalImageSpaceCoordinate::xmlGetData()
     stringstream result;
     result << "<imageCoordinates uom=\"" << unit << "\" image_key=\"" << imageId << "\">";
     if (available)
-        result << "<gml:pos>" << intToString(col) << " " << intToString(lin) << "</gml:pos>";
+        result << "<gml:pos>" << Conversion::intToString(col) << " " << Conversion::intToString(lin) << "</gml:pos>";
     else
         result << "<gml:pos>Not Available</gml:pos>";
     result << "</imageCoordinates>\n";

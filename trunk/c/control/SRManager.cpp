@@ -157,7 +157,7 @@ deque<string> SRManager::listSelectedPoints()
         for (unsigned int i = 0; i < selectedPoints.size(); i++)
         {
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
-            string value = intToString(myPoint->getId());
+            string value = Conversion::intToString(myPoint->getId());
             value += " ";
 			value += myPoint->getPointId();
             value += " ";
@@ -176,7 +176,7 @@ deque<string> SRManager::listImagePoints()
         for (int i = 0; i < myImage->countPoints(); i++)
         {
             Point* myPoint = myImage->getPointAt(i);
-            string value = intToString(myPoint->getId());
+            string value = Conversion::intToString(myPoint->getId());
             value += " ";
 			value += myPoint->getPointId();
             value += " ";
@@ -217,19 +217,19 @@ deque<string> SRManager::pointData(int index)
     if (started)
     {
         Point* myPoint = myImage->getPointAt(index);
-        result.push_back(intToString(myPoint->getId()));
+        result.push_back(Conversion::intToString(myPoint->getId()));
 		result.push_back(myPoint->getPointId());
         result.push_back(myPoint->getDescription());
-		result.push_back(doubleToString(myPoint->getObjectCoordinate().getX(),3));
-		result.push_back(doubleToString(myPoint->getObjectCoordinate().getY(),3));
-		result.push_back(doubleToString(myPoint->getObjectCoordinate().getZ(),3));
+                result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getX(),3));
+                result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getY(),3));
+                result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getZ(),3));
         if (myPoint->hasDigitalCoordinate(myImage->getId()) && myPoint->getDigitalCoordinate(myImage->getId()).isAvailable())
         {
-            result.push_back(intToString(myPoint->getDigitalCoordinate(myImage->getId()).getCol()));
-            result.push_back(intToString(myPoint->getDigitalCoordinate(myImage->getId()).getLin()));
+            result.push_back(Conversion::intToString(myPoint->getDigitalCoordinate(myImage->getId()).getCol()));
+            result.push_back(Conversion::intToString(myPoint->getDigitalCoordinate(myImage->getId()).getLin()));
             AnalogImageSpaceCoordinate aisc = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
-			result.push_back(doubleToString(aisc.getXi(),3));
-			result.push_back(doubleToString(aisc.getEta(),3));
+                        result.push_back(Conversion::doubleToString(aisc.getXi(),3));
+                        result.push_back(Conversion::doubleToString(aisc.getEta(),3));
         }
     }
     return result;
@@ -248,10 +248,10 @@ bool SRManager::connectImagePoints()
         deque<EDomElement> allPoints = xmlPoints.children();
         for (unsigned int i = 0; i < allPoints.size(); i++)
         {
-            string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(myImage->getId())).getContent();
+            string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(myImage->getId())).getContent();
             if (data != "")
             {
-                Point* pointToInsert = manager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
+                Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
                 if (pointToInsert != NULL)
                 {
                     myImage->putPoint(pointToInsert);
@@ -322,11 +322,11 @@ deque<string> SRManager::makeReport()
     deque<string> result;
     result.push_back(mySR->getXa().xmlGetData());
 	result.push_back(mySR->getLa().xmlGetData());
-    result.push_back(doubleToString(myIO->getQuality().getsigma0Squared()));
+    result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
     result.push_back(mySR->getQuality().getV().xmlGetData());
     result.push_back(mySR->getQuality().getSigmaXa().xmlGetData());
     result.push_back(mySR->getQuality().getSigmaLa().xmlGetData());
-    result.push_back(intToString(mySR->getTotalIterations()));
+    result.push_back(Conversion::intToString(mySR->getTotalIterations()));
     if (mySR->getConverged())
         result.push_back("yes");
     else
@@ -381,7 +381,7 @@ bool SRManager::save(string path)
     if (started)
     {
         FILE* pFile;
-        string output = "IO state data for Image " + intToString(myImage->getId()) + "\n\n";
+        string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
 
         output += mySensor->xmlGetData();
         output += "\n";
@@ -472,15 +472,15 @@ string SRManager::getImageFile()
 void SRManager::acceptSR()
 {
     EDomElement newXml(manager->xmlGetData());
-    if (newXml.elementByTagAtt("imageEO", "image_key", intToString(myImage->getId())).getContent() != "")
-        newXml.replaceChildByTagAtt("imageEO", "image_key", intToString(myImage->getId()), mySR->xmlGetData());
+    if (newXml.elementByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
+        newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetData());
     else
         newXml.addChildAtTagName("exteriorOrientation", mySR->xmlGetData());
     int currentPointId;
 	for (int i = 0; i < myImage->countPoints(); i++)
     {
         currentPointId = myImage->getPointAt(i)->getId();
-        newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());
+        newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());
     }
     manager->xmlSetData(newXml.getContent());
 	manager->setSavedState(false);

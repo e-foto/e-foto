@@ -387,7 +387,7 @@ string ObjectSpaceCoordinate::xmlGetData()
     stringstream result;
     result << "<spatialCoordinates uom=\"" << unit << "\">\n";
     if (available)
-        result << "<gml:pos>" << doubleToString(x) << " " << doubleToString(y) << " " << doubleToString(z) << "</gml:pos>\n";
+        result << "<gml:pos>" << Conversion::doubleToString(x) << " " << Conversion::doubleToString(y) << " " << Conversion::doubleToString(z) << "</gml:pos>\n";
     else
         result << "<gml:pos>Not Available</gml:pos>\n";
     if (sigmaAvailable)
