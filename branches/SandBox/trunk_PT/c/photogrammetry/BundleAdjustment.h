@@ -145,16 +145,16 @@ protected:
     double getdZx2(int fotogrPointId);
 
     void updateMatAdjust();
-	bool isConverged();
+
 
     Matrix getCoordColinearTerrain(double xsi, double eta, double z, int imageId);
-	bool testResiduo();
 
 
    /* Em Teste; Bundle com objetos*/
 public:
 	deque<Image*> listImages;
 	deque<Point*> listPoints;
+	bool converged;
 
 	BundleAdjustment(deque<Image*> listImages, deque<Point*>listPoints, int flightDirection);
 
@@ -184,6 +184,10 @@ public:
 	bool isPhotogrammetricPoint(int imageIndex, int pointIndex);
 	bool isControlPoint(int imageIndex, int pointIndex);
 	bool isCheckingPoint(int imageIndex, int pointIndex);
+	bool isConverged();
+
+	bool testConverged();
+	bool testResiduo();
 	//
 
 	Point *getPointFrom(int imageIndex,int pointIndex);
@@ -194,6 +198,8 @@ public:
 
 	double getRx(Image *img, int pointId);
 	double getRy(Image *img, int pointId);
+	bool getConvergencyStatus();
+	int getTotalIterations();
 
 	void calculateResiduos();
 	void calculatePeso();

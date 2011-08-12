@@ -5,6 +5,9 @@
 #include <deque>
 #include "BundleAdjustment.h"
 #include "Matrix.h"
+#include <QStringList>
+#include <deque>
+
 
 class PTUserInterface;
 class EFotoManager;
@@ -27,8 +30,8 @@ protected:
 
 		Sensor *mySensor;
         Flight *myFlight;
-        deque<Image*> listImages;
-        deque<Point*> listPoints;
+		deque<Image*> listAllImages;
+		deque<Point*> listAllPoints;
         deque<InteriorOrientation*> listOis;
 
 		deque<Image*> listSelectedImages;
@@ -63,6 +66,12 @@ public:
 	bool connectImagePoints();
 	void setListPoint();
 
+	deque<string> getStringPoints();
+	deque<string> getStringImages();
+
+	void selectPoints(deque<string> selectedPointsList);
+	void selectImages(deque<string> selectedImagesList);
+
 protected:
     Matrix Col,Lin,ENH, BLC;
 
@@ -71,15 +80,9 @@ protected:
     void setBLC();
 
     Matrix getBLC();
-    Matrix getX();
-    Matrix getY();
-    Matrix getZ();
-
     Matrix getOis();
 
 
-	void selectPoints();
-	void selectImages();
 
 };
 

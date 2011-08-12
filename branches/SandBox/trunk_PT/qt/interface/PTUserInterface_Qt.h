@@ -6,6 +6,7 @@
 #include "ImageView.h"
 #include "LoadingScreen.h"
 #include "TableIOEOWidget.h"
+#include "WindowsSelectPage.h"
 
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
@@ -23,6 +24,9 @@ protected:
     PTManager *ptManager;
     void closeEvent(QCloseEvent *event);
 
+	WindowsSelectPage *selectionImagesView;
+	WindowsSelectPage *selectionPointsView;
+
 private:
     void init();
 
@@ -35,9 +39,10 @@ public slots:
     void activeZoomMode();
     void fitView();
     void viewReport();
-    bool calculatePT();
-    void makeRepaint();
-
+	void makeRepaint();
+	void showSelectionWindow();
+	void acceptResults();
+	bool calculatePT();
 };
 
 

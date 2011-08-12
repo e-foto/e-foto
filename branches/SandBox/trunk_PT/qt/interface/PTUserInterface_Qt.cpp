@@ -1,7 +1,9 @@
 #include "PTUserInterface_Qt.h"
+#include "WindowsSelectPage.h"
 
 #include <qapplication.h>
 #include <QtGui>
+
 
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
@@ -31,7 +33,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionZoom,SIGNAL(triggered()),this,SLOT(activeZoomMode()));
     connect(actionFit_View,SIGNAL(triggered()),this,SLOT(fitView()));
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
-    connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(calculatePT()));
+	connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(showSelectionWindow()));
 
         //setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
@@ -176,7 +178,7 @@ void PTUserInterface_Qt::viewReport()
     afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
 
-    QWidget *afpView = new QWidget();
+	QWidget *afpView = new QWidget();
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
     TableIOEOWidget *afpTable=  new TableIOEOWidget(ptManager->getMatrixAFP(),'f',5);
     afpTable->setHorizontalHeaderLabels(afpHeaderLabels);
@@ -197,17 +199,86 @@ void PTUserInterface_Qt::viewReport()
 	//horizontalLayout->setStretchFactor(L0Table,1);
 	//horizontalLayout->setStretchFactor(LbTable,1);
     horizontalLayout->setStretchFactor(residuosTable,1);
-    afpView->setLayout(horizontalLayout);
+
+	QHBoxLayout *buttonsLayout= new QHBoxLayout();
+	QPushButton *acceptButton= new QPushButton(tr("Accept"));
+	QPushButton *discardButton= new QPushButton(tr("Discard"));
+	buttonsLayout->addWidget(acceptButton);
+	buttonsLayout->addWidget(discardButton);
+
+	QVBoxLayout *reportLayout= new QVBoxLayout;
+
+	reportLayout->addLayout(horizontalLayout);
+	reportLayout->addLayout(buttonsLayout);
+
+	afpView->setLayout(reportLayout);
     afpView->show();
+
+	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
+	connect(acceptButton,SIGNAL(clicked()),afpView,SLOT(close()));
+	connect(discardButton, SIGNAL(clicked()),afpView,SLOT(close()));
+
+	afpView->setWindowModality(Qt::ApplicationModal);
 }
 
 bool PTUserInterface_Qt::calculatePT()
 {
-	//qDebug("Calculando FotoTri");
+
+	ptManager->selectImages(selectionImagesView->getSelectedItens());
+	ptManager->selectPoints(selectionPointsView->getSelectedItens());
 
 	bool result = ptManager->calculatePT();
-    viewReport();
+	viewReport();
 	actionView_Report->setEnabled(true);
-    return result;
+	return result;
 
+}
+
+void PTUserInterface_Qt::showSelectionWindow()
+{
+	QWidget *selectionView= new QWidget();
+	selectionImagesView= new WindowsSelectPage("Images available","Images selected");
+	selectionPointsView= new WindowsSelectPage("Points available","Points selected");
+
+	QStringList listImages;
+	deque<string> lista;
+	lista=ptManager->getStringImages();
+	int sizeList=lista.size();
+	for (int i=0;i<sizeList;i++)
+		listImages << QString(lista.at(i).c_str());
+	selectionImagesView->setInitialList(listImages);
+
+	QStringList listPoints;
+	lista=ptManager->getStringPoints();
+	sizeList=lista.size();
+	for (int i=0;i<sizeList;i++)
+		listPoints << QString(lista.at(i).c_str());
+
+	selectionPointsView->setInitialList(listPoints);
+
+	QHBoxLayout *buttonsLayout= new QHBoxLayout();
+	QPushButton *runButton= new QPushButton("Run");
+	QPushButton *cancelButton= new QPushButton("Cancel");
+
+	buttonsLayout->addWidget(runButton);
+	buttonsLayout->addWidget(cancelButton);
+
+	QVBoxLayout *layout= new QVBoxLayout(this);
+	layout->addWidget(selectionImagesView);
+	layout->addWidget(selectionPointsView);
+	layout->addLayout(buttonsLayout);
+
+	selectionView->setLayout(layout);
+	selectionView->show();
+
+	connect(runButton,SIGNAL(clicked()),this,SLOT(calculatePT()));
+	connect(runButton,SIGNAL(clicked()),selectionView,SLOT(close()));
+	connect(cancelButton,SIGNAL(clicked()),selectionView,SLOT(close()));
+
+	selectionView->setWindowModality(Qt::ApplicationModal);
+}
+
+void PTUserInterface_Qt::acceptResults()
+{
+	// salvar resultados no xml
 }
