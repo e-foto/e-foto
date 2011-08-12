@@ -32,7 +32,7 @@ PTManager::PTManager()
 PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
 {
 	efotoManager = newManager;
-	listImages = images;
+	listAllImages = images;
 	listOis = ois;
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
@@ -63,20 +63,20 @@ PTUserInterface* PTManager::getInterface()
 
 bool PTManager::exec()
 {
-	if (efotoManager != NULL && mySensor != NULL && myFlight != NULL && listImages.size()> 1 && listOis.size()>1)
+	if (efotoManager != NULL && mySensor != NULL && myFlight != NULL && listAllImages.size()> 1 && listOis.size()>1)
 	{
 		if (efotoManager->getInterfaceType().compare("Qt") == 0)
 		{
 			myInterface = PTUserInterface_Qt::instance(this);
 		}
 		myFlight->setSensor(mySensor);
-		for (int i=0; i<listImages.size(); i++)
+		for (int i=0; i<listAllImages.size(); i++)
 		{
-			mySensor->putImage(listImages.at(i));
-			listImages.at(i)->setSensor(mySensor);
-			listImages.at(i)->setFlight(myFlight);
-			listImages.at(i)->setIO(listOis.at(i));
-			listOis.at(i)->setImage(listImages.at(i));
+			mySensor->putImage(listAllImages.at(i));
+			listAllImages.at(i)->setSensor(mySensor);
+			listAllImages.at(i)->setFlight(myFlight);
+			listAllImages.at(i)->setIO(listOis.at(i));
+			listOis.at(i)->setImage(listAllImages.at(i));
 		}
 		connectImagePoints();
 		started=true;
@@ -100,17 +100,15 @@ void PTManager::returnProject()
 
 string PTManager::getImagefile(int imageId)
 {
-    string imagefile=listImages.at(imageId)->getFilepath();
+	string imagefile=listAllImages.at(imageId)->getFilepath();
     imagefile +="/";
-    imagefile +=listImages.at(imageId)->getFilename();
+	imagefile +=listAllImages.at(imageId)->getFilename();
 
     return imagefile;
 }
 
 bool PTManager::calculatePT()
 {
-	selectImages();
-	selectPoints();
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
 	bool result=pt->calculate();
 	setMatrixAFP(pt->getAFP());
@@ -251,68 +249,6 @@ Matrix PTManager::getLin()
     return Lin;
 }
 
-
-/*
-Matrix PTManager::getX()
-{
-	int rows=BLC.getRows();
-	int cols=BLC.getCols();
-	Matrix X(rows,cols);
-	for (int i=1;i<=rows;i++)
-	{
-		for (int j=1;j<=cols;j++)
-		{
-			if (BLC.getInt(i,j)==1)
-				X.set(i,j,ENH.get(j,1));
-			else if (BLC.getInt(i,j)==-1)
-				X.set(i,j,-1);
-			else
-				X.set(i,j,0);
-		}
-	}
-	return X;
-}
-/*
-Matrix PTManager::getY()
-{
-	int rows=BLC.getRows();
-	int cols=BLC.getCols();
-	Matrix Y(rows,cols);
-	for (int i=1;i<=rows;i++)
-	{
-		for (int j=1;j<=cols;j++)
-		{
-			if (BLC.getInt(i,j)==1)
-				Y.set(i,j,ENH.get(j,2));
-			else if (BLC.getInt(i,j)==-1)
-				Y.set(i,j,-1);
-			else
-				Y.set(i,j,0);
-		}
-	}
-	return Y;
-}
-/*
-Matrix PTManager::getZ()
-{
-	int rows=BLC.getRows();
-	int cols=BLC.getCols();
-	Matrix Z(rows,cols);
-	for (int i=1;i<=rows;i++)
-	{
-		for (int j=1;j<=cols;j++)
-		{
-			if (BLC.getInt(i,j)==1)
-				Z.set(i,j,ENH.get(j,3));
-			else if (BLC.getInt(i,j)==-1)
-				Z.set(i,j,-1);
-			else
-				Z.set(i,j,0);
-		}
-	}
-	return Z;
-}*/
-
 Matrix PTManager::getBLC()
 {
 	return BLC;
@@ -362,19 +298,19 @@ bool PTManager::connectImagePoints()
 	{
 		EDomElement xmlPoints(efotoManager->getXml("points"));
 		deque<EDomElement> allPoints = xmlPoints.children();
-		for (unsigned int j = 0; j < listImages.size(); j++)
+		for (unsigned int j = 0; j < listAllImages.size(); j++)
 		{
 			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
-				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(listImages.at(j)->getId())).getContent();
+				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(listAllImages.at(j)->getId())).getContent();
 				if (data != "")
 				{
 					Point* pointToInsert = efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
 					if (pointToInsert != NULL)
 					{
 						//qDebug("connectImagePoints(): colocou um ponto");
-						listImages.at(j)->putPoint(pointToInsert);
-						pointToInsert->putImage(listImages.at(j));//nove em teste:06/08/2011
+						listAllImages.at(j)->putPoint(pointToInsert);
+						pointToInsert->putImage(listAllImages.at(j));//nove em teste:06/08/2011
 					}
 				}
 			}
@@ -391,18 +327,67 @@ void PTManager::setListPoint()
 	for(int i=0;i<allPoints.size();i++)
 	{
 		Point* point= efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
-		listPoints.push_back(point);
+		listAllPoints.push_back(point);
 	}
-
 }
 
-void PTManager::selectImages()
+deque<string> PTManager::getStringImages()
 {
-
-	listSelectedImages=listImages;
+	deque<string> list;
+	int numImages=listAllImages.size();
+	for (int i=0;i<numImages;i++)
+		list.push_back(listAllImages.at(i)->getFilename());
+	return list;
 }
 
-void PTManager::selectPoints()
+deque<string> PTManager::getStringPoints()
 {
-	listSelectedPoints=listPoints;
+	deque<string> list;
+	int numPoints=listAllPoints.size();
+	for (int i=0;i<numPoints;i++)
+		list.push_back(listAllPoints.at(i)->getPointId());
+	return list;
+}
+
+void PTManager::selectImages(deque<string> selectedImagesList)
+{
+	if(listSelectedImages.size()!=0)
+		listSelectedImages.clear();
+
+	int numImgs= listAllImages.size();
+	int	numSelectedImgs=selectedImagesList.size();
+//	Image *img;
+	//img->getId()
+	for(int i=0;i<numSelectedImgs;i++)
+		for (int j=0;j<numImgs;j++)
+			if (listAllImages.at(j)->getFilename()==selectedImagesList.at(i))
+			{
+				listSelectedImages.push_back(listAllImages.at(j));
+				qDebug("IdImage: %d",listAllImages.at(j)->getId());
+			}
+
+	//listSelectedImages=listImages;
+}
+
+void PTManager::selectPoints(deque<string> selectedPointsList)
+{
+	if(listSelectedPoints.size()!=0)
+		listSelectedPoints.clear();
+
+	int numPnts= listAllPoints.size();
+	int	numSelectedPnts=selectedPointsList.size();
+	for(int i=0;i<numSelectedPnts;i++)
+		for (int j=0;j<numPnts;j++)
+			if (listAllPoints.at(j)->getPointId()==selectedPointsList.at(i))
+			{
+				listSelectedPoints.push_back(listAllPoints.at(j));
+				qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
+			}
+			else
+			{
+				qDebug("Ponto nao encontrado");
+			}
+
+//	listSelectedPoints=listPoints;
+
 }

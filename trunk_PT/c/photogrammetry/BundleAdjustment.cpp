@@ -154,7 +154,7 @@ bool BundleAdjustment::calculate()
 {
 	getInicialsValues();
 
-	//matAdjust.show('f',5,"matAdjust Inicial Values");
+	matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
 	bool resOk=false;
 	int changePesos=0;
@@ -165,11 +165,13 @@ bool BundleAdjustment::calculate()
 	while(!resOk)
 	{
 		int iterations=0;
-		bool converged=false;
+		bool converge=false;
 		while(iterations<MAXITERATIONS && !converged)
 		{
 			createA1();
+			A1.show('f',3,"A1");
 			createA2();
+			A2.show('f',3,"A2");
 			createL0();
 			createLb();
 			Matrix l=Lb-L0;
@@ -183,7 +185,7 @@ bool BundleAdjustment::calculate()
 			//matAdjust.show('f',5,"MatAdjus dentro do loop");
 			updateMatAdjust();
 			updateCoordFotog();
-			converged=isConverged();
+			converge=testConverged();
 			iterations++;
 		}
 		//matAdjust.show('f',5,"MatAdjus depois da iteracao");
@@ -534,29 +536,6 @@ void BundleAdjustment::updateMatAdjust()
 		matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
 		matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
 	}
-}
-
-bool BundleAdjustment::isConverged()
-{
-	int rowsX1=x1.getRows();
-	int rowsX2=x2.getRows();
-   // printf("testando X1");
-	for (int i=1;i<=rowsX1;i++)
-	{
-		if (fabs(x1.get(i,1)>CONVERGENCY))
-		{
-			return false;
-		}
-	}
-	//printf("testando X2");
-	for (int i=1;i<=rowsX2;i++)
-	{
-		if (fabs(x2.get(i,1)>CONVERGENCY))
-		{
-			return false;
-		}
-	}
-	return true;
 }
 
 /*funções para o calculo dos residuos*/
@@ -1082,6 +1061,16 @@ Matrix BundleAdjustment::getMatRes()
 	return matRes;
 }
 
+bool BundleAdjustment::getConvergencyStatus()
+{
+	return converged;
+}
+
+int BundleAdjustment::getTotalIterations()
+{
+	return totalIterations;
+}
+
 void BundleAdjustment::setAFP()
 {
 	//Isso é feito apenas para:
@@ -1132,3 +1121,36 @@ bool BundleAdjustment::testResiduo()
 	}
 	return true;
 }
+
+bool BundleAdjustment::testConverged()
+{
+	int rowsX1=x1.getRows();
+	int rowsX2=x2.getRows();
+   // printf("testando X1");
+	for (int i=1;i<=rowsX1;i++)
+	{
+		if (fabs(x1.get(i,1)>CONVERGENCY))
+		{
+			return false;
+		}
+	}
+	//printf("testando X2");
+	for (int i=1;i<=rowsX2;i++)
+	{
+		if (fabs(x2.get(i,1)>CONVERGENCY))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool BundleAdjustment::isConverged()
+{
+	if(totalIterations<=MAXITERATIONS)
+		return converged=true;
+	else
+		return converged=false;
+}
+
+
