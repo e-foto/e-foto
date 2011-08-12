@@ -146,7 +146,8 @@ HEADERS += EFotoManager.h \
     c/infrastructure/Dms.h \
     c/infrastructure/ConvertionsSystems.h \
     c/infrastructure/GeoSystem.h \
-    qt/infrastructure/DmsEdit.h
+    qt/infrastructure/DmsEdit.h \
+	qt/infrastructure/WindowsSelectPage.h
 
 # qt/formDisplay/
 FORMS += FlightLayout.ui \
@@ -253,7 +254,8 @@ SOURCES += EFotoManager.cpp \
     c/infrastructure/Dms.cpp \
     c/infrastructure/ConvertionsSystems.cpp \
     c/infrastructure/GeoSystem.cpp \
-    qt/infrastructure/DmsEdit.cpp
+    qt/infrastructure/DmsEdit.cpp \
+	qt/infrastructure/WindowsSelectPage.cpp
 
 # qt/resource/
 RESOURCES += resource.qrc
@@ -280,11 +282,11 @@ win32 {
     MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
     
     # MYDATA2 = $${MYDATA}
-    # MYDATA2 ~= s/^[0-9]{3}/ #Retira os três primeiros digitos do Ano na data, ou seja, yy.mm.dd
+    # MYDATA2 ~= s/^[0-9]{3}/ #Retira os trs primeiros digitos do Ano na data, ou seja, yy.mm.dd
     MYREV = $$system(subWCrev ../)
     MYREV = $$find(MYREV, [0-9]{3}.)
     MYREV ~= s/\D/ # Pega tudo menos numeros(Non-digit)
-    MYREV ~= s/^[0-9]{3}/ # Elimina os três primeiros digitos
+    MYREV ~= s/^[0-9]{3}/ # Elimina os trs primeiros digitos
     !build_pass:message(rev: $${MYREV})
     !build_pass:message(data: $${MYDATA})
     CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
