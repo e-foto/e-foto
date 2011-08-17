@@ -948,9 +948,12 @@ Matrix Matrix::inverse()
 
         A_I = *this;
         A_I = A_I & I;
-        A_I = A_I.triang();
+		A_I = A_I.triang();
+		//A_I.show('f',3,"Inverse triang");
         A_I = A_I.reduction();
+		//A_I.show('f',3,"Inverse reduction");
         A_I = A_I.sel(1,nrows,(ncols+1),(2*ncols));
+		//A_I.show('f',3,"Inverse");
         Inv = A_I;
     }
     return Inv;
@@ -983,7 +986,7 @@ Matrix Matrix::reduction()
     Result = *this;
     // this if the first value is too small it will performed a pivoting
     // @bug Bug may exist here!
-    if (sqrt(pow(Result.get(1,1),2))<0.0000000001)
+	if (sqrt(pow(Result.get(1,1),2))<0.0000000000000000001)
     {
         double MaximumValueinFirstColumn=0; // maximum absolute value in first columns
         unsigned int Maximum_Row=0;

@@ -9,16 +9,16 @@ PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
 PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
 {
-    if (ptInst != NULL)
+	if (ptInst != NULL)
 	{
-        delete ptInst;
-        ptInst = NULL;
+		delete ptInst;
+		ptInst = NULL;
 	}
-    if (ptInst == NULL)
+	if (ptInst == NULL)
 	{
-                ptInst = new PTUserInterface_Qt(ptManager);
+		ptInst = new PTUserInterface_Qt(ptManager);
 	}
-    return ptInst;
+	return ptInst;
 }
 
 PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::WindowFlags fl)
@@ -35,7 +35,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
 	connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(showSelectionWindow()));
 
-        //setWindowState(this->windowState() | Qt::WindowMaximized);
+	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 	actionView_Report->setEnabled(false);
 
@@ -110,7 +110,7 @@ bool PTUserInterface_Qt::exec()
 
         Matrix exhibition=ptManager->getENH();
         QStringList headerlabels;
-        headerlabels<<"E"<<"N"<<"H"<<"Coluna"<<"Linha";
+		headerlabels<<"E"<<"N"<<"H"<<"Column"<<"Row";
         Matrix col=ptManager->getCol().transpose();
         Matrix lin=ptManager->getLin().transpose();
 
@@ -177,6 +177,19 @@ void PTUserInterface_Qt::viewReport()
     // omega, phi, kappa, X0, Y0, Z0;
     afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
+	QString iter="Iterations ";
+	iter+=QString::number(ptManager->getBundleAdjustment()->getTotalIterations());
+
+	QLabel *iterations = new QLabel(iter);
+	QLabel *converged;
+	if (ptManager->getBundleAdjustment()->isConverged())
+		converged = new QLabel(tr("Converged: yes"));
+	else
+		converged = new QLabel(tr("Converged: no"));
+
+	QHBoxLayout *infoLayout= new QHBoxLayout();
+	infoLayout->addWidget(iterations);
+	infoLayout->addWidget(converged);
 
 	QWidget *afpView = new QWidget();
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
@@ -189,9 +202,9 @@ void PTUserInterface_Qt::viewReport()
     LbTable->setHorizontalHeaderLabels(QStringList("Lb"));
 	*/
     TableIOEOWidget *residuosTable = new TableIOEOWidget(ptManager->getResiduos(),'f',8);
-    residuosTable->setHorizontalHeaderLabels(QStringList("Residuos"));
+	residuosTable->setHorizontalHeaderLabels(QStringList(tr("Residuos")));
 
-    horizontalLayout->addWidget(afpTable);
+	horizontalLayout->addWidget(afpTable);
 	//horizontalLayout->addWidget(L0Table);
 	//horizontalLayout->addWidget(LbTable);
     horizontalLayout->addWidget(residuosTable);
@@ -207,7 +220,7 @@ void PTUserInterface_Qt::viewReport()
 	buttonsLayout->addWidget(discardButton);
 
 	QVBoxLayout *reportLayout= new QVBoxLayout;
-
+	reportLayout->addLayout(infoLayout);
 	reportLayout->addLayout(horizontalLayout);
 	reportLayout->addLayout(buttonsLayout);
 
@@ -237,8 +250,17 @@ bool PTUserInterface_Qt::calculatePT()
 void PTUserInterface_Qt::showSelectionWindow()
 {
 	QWidget *selectionView= new QWidget();
-	selectionImagesView= new WindowsSelectPage("Images available","Images selected");
-	selectionPointsView= new WindowsSelectPage("Points available","Points selected");
+	//if (selectionImagesView==NULL || selectionPointsView==NULL)
+	{
+		//qDebug("Ponteiros nulos");
+		selectionImagesView= new WindowsSelectPage(tr("Images available"),tr("Images selected"));
+		selectionPointsView= new WindowsSelectPage(tr("Points available"),tr("Points selected"));
+	}
+	//if ((selectionImagesView!=NULL || selectionPointsView!=NULL))
+	{
+		//qDebug("Ponteiros n�o nulos");
+	}
+
 
 	QStringList listImages;
 	deque<string> lista;
@@ -257,8 +279,8 @@ void PTUserInterface_Qt::showSelectionWindow()
 	selectionPointsView->setInitialList(listPoints);
 
 	QHBoxLayout *buttonsLayout= new QHBoxLayout();
-	QPushButton *runButton= new QPushButton("Run");
-	QPushButton *cancelButton= new QPushButton("Cancel");
+	QPushButton *runButton= new QPushButton(tr("Run"));
+	QPushButton *cancelButton= new QPushButton(tr("Cancel"));
 
 	buttonsLayout->addWidget(runButton);
 	buttonsLayout->addWidget(cancelButton);
