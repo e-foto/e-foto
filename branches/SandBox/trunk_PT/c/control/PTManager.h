@@ -72,6 +72,8 @@ public:
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
 
+	BundleAdjustment* getBundleAdjustment();
+
 protected:
     Matrix Col,Lin,ENH, BLC;
 

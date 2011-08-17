@@ -119,10 +119,10 @@ protected:
     Matrix invertN11(Matrix N11);
     Matrix invertN22(Matrix N22);
     Matrix getx1(Matrix N11,Matrix N12,Matrix N22,Matrix n1,Matrix n2);
-    Matrix getx2(Matrix N12, Matrix N22, Matrix n2, Matrix x1);
+	Matrix getx2(Matrix N12, Matrix N22, Matrix n2);//, Matrix x1);
 
-    void setx1(Matrix x1);
-    void setx2(Matrix x2);
+	//void setx1(Matrix x1);
+	//void setx2(Matrix x2);
 
 
     double getdOmegax1(int imageId);
@@ -156,7 +156,7 @@ public:
 	deque<Point*> listPoints;
 	bool converged;
 
-	BundleAdjustment(deque<Image*> listImages, deque<Point*>listPoints, int flightDirection);
+	BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints, int flightDirection);
 
 	void fillAnalogCoordinates();
 
@@ -167,7 +167,7 @@ public:
 	void getInicialsValues();
 
 	Matrix imageToMatrixAnalogicalCoordenates(Image *img);
-	Matrix imageToMatrixJacobiana(Image* img);
+	Matrix imageToMatrixJacobiana(int indexImage);
 	Matrix imagesToMatrixesJacobianas(deque<Image*> listImgs);
 
 
