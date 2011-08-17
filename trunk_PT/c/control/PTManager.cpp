@@ -387,7 +387,11 @@ void PTManager::selectPoints(deque<string> selectedPointsList)
 			{
 				qDebug("Ponto nao encontrado");
 			}
-
-//	listSelectedPoints=listPoints;
-
 }
+
+BundleAdjustment* PTManager::getBundleAdjustment()
+{
+	return pt;
+}
+
+
