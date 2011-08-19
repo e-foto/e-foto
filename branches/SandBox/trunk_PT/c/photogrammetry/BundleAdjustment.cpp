@@ -25,7 +25,7 @@ AFP
 
 #define MAXITERATIONS 10
 #define CONVERGENCY 0.001
-#define MAXRESIDUO 0.001
+#define MAXRESIDUO 0.0001
 
 BundleAdjustment::BundleAdjustment()
 {
@@ -104,59 +104,102 @@ bool BundleAdjustment::calculate()
 	Matrix tempRes;
 	totalIterations=0;
 
-	while(!resOk)
+	if (numFotogrametricPoints!=0)
 	{
-		int iterations=0;
-		bool conv=false;
-		while(iterations<MAXITERATIONS && !conv)
+		while(!resOk)
 		{
-			createA1();
-			A1.show('f',3,"A1");
-			createA2();
-			A2.show('f',3,"A2");
-			createL0();
-			L0.show('f',3,"L0");
-			createLb();
-			Lb.show('f',3,"Lb");
-			Matrix l=Lb-L0;
-			Matrix n11=getN11();
-			//n11.show('f',3,"N11");
-			Matrix n12=getN12();
-			//n12.show('f',3,"N12");
-			Matrix n22=getN22();
-			//n22.show('f',3,"N22");
-			Matrix n1=getn1(l);
-			//n1.show('f',3,"n1");
-			Matrix n2=getn2(l);
-			//n2.show('f',3,"n2");
-			/*setx1(*/getx1(n11,n12,n22,n1,n2);//);
-			/*setx2(*/getx2(n12,n22,n2);//);//,x1));
-			x1.show('f',3,"x1");
-			x2.show('f',3,"x2");
-			matAdjust.show('f',5,"MatAdjus antes do update do loop");
-			updateMatAdjust();
-			matAdjust.show('f',5,"MatAdjus depois do update do loop");
-			updateCoordFotog();
-			conv=testConverged();
-			iterations++;
-			//qDebug("iteration %d",iterations);
+			int iterations=0;
+			bool conv=false;
+			while(iterations<MAXITERATIONS && !conv)
+			{
+				createA1();
+				//A1.show('f',3,"A1");
+				createA2();
+				//A2.show('f',3,"A2");
+				createL0();
+				//L0.show('f',3,"L0");
+				createLb();
+				//Lb.show('f',3,"Lb");
+				Matrix l=Lb-L0;
+				Matrix n11=getN11();
+				n11.show('f',3,"N11");
+				Matrix n12=getN12();
+				//n12.show('f',3,"N12");
+				Matrix n22=getN22();
+				//n22.show('f',3,"N22");
+				Matrix n1=getn1(l);
+				//n1.show('f',3,"n1");
+				Matrix n2=getn2(l);
+				//n2.show('f',3,"n2");
+				getx1(n11,n12,n22,n1,n2);
+				getx2(n12,n22,n2);
+				x1.show('f',3,"x1");
+				//x2.show('f',3,"x2");
+				matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				updateMatAdjust();
+				matAdjust.show('f',5,"MatAdjus depois do update do loop");
+				updateCoordFotog();
+				conv=testConverged();
+				iterations++;
+				//qDebug("iteration %d",iterations);
+			}
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
+
+			matAdjust.show('f',5,"MatAdjus depois da iteracao");
+			calculateResiduos();
+			matRes.show('f',5,"MatRes depois da iteracao");
+			resOk=testResiduo();
+			if (changePesos==0)
+				tempRes.resize(matRes.getRows(),1);
+			calculatePeso();
+			matRes=matRes-tempRes;
+			tempRes=matRes;
+			changePesos++;
+			totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
 		}
-		//qDebug("numero iterations %d=%d",changePesos,iterations);
-
-		matAdjust.show('f',5,"MatAdjus depois da iteracao");
-		calculateResiduos();
-		matRes.show('f',5,"MatRes depois da iteracao");
-		resOk=testResiduo();
-		if (changePesos==0)
-			tempRes.resize(matRes.getRows(),1);
-		calculatePeso();
-		matRes=matRes-tempRes;
-		tempRes=matRes;
-		changePesos++;
-		totalIterations+=iterations;
-		//matRes.show('f',5,"MatRes");
 	}
-
+	else
+	{
+		qDebug("Sem pontos Fotogrametricos");
+		/*while(!resOk)
+		{*/
+			int iterations=0;
+			bool conv=false;
+			while(iterations<MAXITERATIONS && !conv)
+			{
+				createA1();
+				createL0();
+				createLb();
+				Matrix l=Lb-L0;
+				Matrix n11=getN11();
+				Matrix n1=getn1(l);
+				n11.show('f',3,"N11");
+				x1=n11.inverse()*n1;
+				x1.show('f',3,"x1");
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				updateMatAdjust();
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
+				conv=testConverged();
+				iterations++;
+				//qDebug("iteration %d",iterations);
+			}
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
+/*
+			matAdjust.show('f',7,"MatAdjus depois da iteracao");
+			calculateResiduos();
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			resOk=testResiduo();
+			if (changePesos==0)
+				tempRes.resize(matRes.getRows(),1);
+			calculatePeso();
+			matRes=matRes-tempRes;
+			tempRes=matRes;
+			changePesos++;
+			totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
+		}*/
+	}
 	printf("Numero de troca de pesos: %d\n",changePesos);
 	calculateResiduos();
 	//matRes.show('f',8,"MatResCalculate");
@@ -536,44 +579,73 @@ Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double 
 /** omega, phi, kappa, X0, Y0, Z0)*/
 void BundleAdjustment::getInicialsValues()
 {
-	Matrix L=createL();
-	L.show('f',3,"L");
-	Matrix M1=createM1();
-	M1.show('f',3,"M1");
-	Matrix M2=createM2();
-	M2.show('f',3,"M2");
-	Matrix m11=getM11(M1);
-	Matrix m12=getM12(M1,M2);
-	m12.show('f',3,"M12");
-
-	Matrix m22=getM22(M2);
-	m22.show('f',3,"M22");
-	Matrix m1=getm1(M1,L);
-	Matrix m2=getm2(M2,L);
-
-	Matrix paf=getPAf(m11,m12,m22,m1,m2);
-	Matrix xypf=getXYpf(m22,m2,m12,paf);
-
-	paf.show('f',4,"paf");
-	xypf.show('f',4,"xypf");
-	updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
-
-	Matrix temp(numImages,6);
-	matAdjust=temp;
-	for (int i=0;i<numImages;i++)
+	if (numFotogrametricPoints!=0)
 	{
-		xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
-		eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
-		c=listImages.at(i)->getSensor()->getFocalDistance();
+		Matrix L=createL();
+		L.show('f',3,"L");
+		Matrix M1=createM1();
+		M1.show('f',3,"M1");
+		Matrix M2=createM2();
+		M2.show('f',3,"M2");
+		Matrix m11=getM11(M1);
+		Matrix m12=getM12(M1,M2);
+		m12.show('f',3,"M12");
 
-		Matrix pta=getPTA(paf,i);
+		Matrix m22=getM22(M2);
+		m22.show('f',3,"M22");
+		Matrix m1=getm1(M1,L);
+		Matrix m2=getm2(M2,L);
 
-		matAdjust.set(i+1,1,0);
-		matAdjust.set(i+1,2,0);
-		matAdjust.set(i+1,3,getKappaZero(pta,i));
-		matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
-		matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-		matAdjust.set(i+1,6,c*getMediaScale(i));
+		Matrix paf=getPAf(m11,m12,m22,m1,m2);
+		Matrix xypf=getXYpf(m22,m2,m12,paf);
+
+		paf.show('f',4,"paf");
+		xypf.show('f',4,"xypf");
+		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
+
+		Matrix temp(numImages,6);
+		matAdjust=temp;
+		for (int i=0;i<numImages;i++)
+		{
+			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
+			eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
+			c=listImages.at(i)->getSensor()->getFocalDistance();
+
+			Matrix pta=getPTA(paf,i);
+
+			matAdjust.set(i+1,1,0);
+			matAdjust.set(i+1,2,0);
+			matAdjust.set(i+1,3,getKappaZero(pta,i));
+			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			matAdjust.set(i+1,6,c*getMediaScale(i));
+		}
+	}
+	else
+	{
+		qDebug("initial Values: Sem pontos Fotogrametricos");
+
+		Matrix L=createL();
+		Matrix M1=createM1();
+		Matrix m11=getM11(M1);
+		Matrix m1=getm1(M1,L);
+		Matrix paf=m11.inverse()*m1;
+
+		Matrix temp(numImages,6);
+		matAdjust=temp;
+		for (int i=0;i<numImages;i++)
+		{
+			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
+			eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
+			c=listImages.at(i)->getSensor()->getFocalDistance();
+			Matrix pta=getPTA(paf,i);
+			matAdjust.set(i+1,1,0);
+			matAdjust.set(i+1,2,0);
+			matAdjust.set(i+1,3,getKappaZero(pta,i));
+			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			matAdjust.set(i+1,6,c*getMediaScale(i));
+		}
 	}
 }
 
@@ -814,7 +886,7 @@ double BundleAdjustment::getMediaScale(int imageIndex)
 		}
 	}
 	int p=numberControlPoints(listImages.at(imageIndex))+numberPhotogrammetricPoints(listImages.at(imageIndex));
-	printf("object media %f count: %d",media,p);
+	//printf("object media %f count: %d\n",media,p);
 	return media/(p-1);
 }
 
@@ -1033,6 +1105,7 @@ double BundleAdjustment::getRy(Image *img, int pointId)
 }
 
 /*Metodos para aumento de performance do calculo*/
+/*
 Matrix BundleAdjustment::invertN11(Matrix N11)
 {
 	int numMatrixs=numImages;
@@ -1044,13 +1117,30 @@ Matrix BundleAdjustment::invertN11(Matrix N11)
 		iteraçao i=1
 		sel[(6*1+1 x 6*1+1 ; 6*(1+1) x 6*(1+1) ] = 7x7;12x12
 		*/
+		/*
 		Matrix partial(6,6);
 		partial=N11.sel(6*i+1,6*(i+1),6*i+1,6*(i+1));
 		N11i.putMatrix(partial.inverse(),6*i+1,6*i+1);
 	}
 	return N11i;
 }
+*/
 
+Matrix BundleAdjustment::getSparseN11()
+{
+	Matrix result;
+	int currentRows=0;
+	for (int i=0;i<numImages;i++)
+	{
+		Matrix partial=imageToMatrixJacobiana(i);
+
+		result.putMatrix(partial,currentRows+1,6*i+1);
+		currentRows+=partial.getRows();
+	}
+	A1=result;
+}
+
+/*
 Matrix BundleAdjustment::invertN22(Matrix N22)
 {
 	int numMatrixs=numPoints;
@@ -1061,7 +1151,7 @@ Matrix BundleAdjustment::invertN22(Matrix N22)
 		sel[(3*0+1 x 3*0+1 ; 3*(0+1) x 3*(0+1) ] = 1x1;3x3
 		iteraçao i=1
 		sel[(3*1+1 x 3*1+1 ; 3*(1+1) x 3*(1+1) ] = 4x4;6x6
-		*/
+		*//*
 		Matrix partial(3,3);
 		partial=N22.sel(3*i+1,3*(i+1),3*i+1,3*(i+1));
 		N22i.putMatrix(partial.inverse(),3*i+1,3*i+1);
@@ -1167,4 +1257,5 @@ bool BundleAdjustment::isConverged()
 	else
 		return converged=false;
 }
+
 
