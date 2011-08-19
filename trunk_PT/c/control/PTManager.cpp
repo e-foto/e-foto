@@ -381,11 +381,11 @@ void PTManager::selectPoints(deque<string> selectedPointsList)
 			if (listAllPoints.at(j)->getPointId()==selectedPointsList.at(i))
 			{
 				listSelectedPoints.push_back(listAllPoints.at(j));
-				qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
+				//qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
 			}
 			else
 			{
-				qDebug("Ponto nao encontrado");
+				//qDebug("Ponto nao encontrado");
 			}
 }
 
