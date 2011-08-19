@@ -116,8 +116,8 @@ protected:
     void setPeso(Matrix p);
     Matrix getPeso();
 
-    Matrix invertN11(Matrix N11);
-    Matrix invertN22(Matrix N22);
+	//Matrix invertN11(Matrix N11);
+	//Matrix invertN22(Matrix N22);
     Matrix getx1(Matrix N11,Matrix N12,Matrix N22,Matrix n1,Matrix n2);
 	Matrix getx2(Matrix N12, Matrix N22, Matrix n2);//, Matrix x1);
 
@@ -205,6 +205,7 @@ public:
 	void calculatePeso();
 	void updateCoordFotog();
 
+	Matrix getSparseN11();
 };
 
 #endif // BUNDLEADJUSTMENT_H
