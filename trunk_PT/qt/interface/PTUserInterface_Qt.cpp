@@ -16,6 +16,7 @@ PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
 	}
 	if (ptInst == NULL)
 	{
+		delete(ptInst);
 		ptInst = new PTUserInterface_Qt(ptManager);
 	}
 	return ptInst;
@@ -124,7 +125,6 @@ bool PTUserInterface_Qt::exec()
         */
         //exhibition.putMatrix(ptManager->getLin().transpose(),1,exhibition.getCols()+1);
 
-
         tableImageLeft->setTableData(exhibition,'f',3);
         tableImageLeft->setHorizontalHeaderLabels(headerlabels);
         tableImageLeft->resizeTable();
@@ -173,11 +173,12 @@ void PTUserInterface_Qt::fitView()
 void PTUserInterface_Qt::viewReport()
 {
 	//qDebug("Vendo Report");
-    QStringList afpHeaderLabels;
-    // omega, phi, kappa, X0, Y0, Z0;
-    afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+	QStringList afpHeaderLabels;
+	//omega, phi, kappa, X0, Y0, Z0;ωφκ// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
+	afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
-	QString iter="Iterations ";
+
+	QString iter="Iterations: ";
 	iter+=QString::number(ptManager->getBundleAdjustment()->getTotalIterations());
 
 	QLabel *iterations = new QLabel(iter);
@@ -258,7 +259,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 	}
 	//if ((selectionImagesView!=NULL || selectionPointsView!=NULL))
 	{
-		//qDebug("Ponteiros n�o nulos");
+		//qDebug("Ponteiros não nulos");
 	}
 
 

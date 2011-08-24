@@ -155,6 +155,7 @@ public:
 	deque<Image*> listImages;
 	deque<Point*> listPoints;
 	bool converged;
+	bool userInitialValues;
 
 	BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints, int flightDirection);
 
@@ -164,7 +165,9 @@ public:
 
 	Matrix analogToDigital(InteriorOrientation *oi,double xsi, double eta);
 	Matrix digitalToAnalog(InteriorOrientation *oi,int linha, int coluna);
+
 	void getInicialsValues();
+	void setUserInitialValues(Matrix initialValues);
 
 	Matrix imageToMatrixAnalogicalCoordenates(Image *img);
 	Matrix imageToMatrixJacobiana(int indexImage);
