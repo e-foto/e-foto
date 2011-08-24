@@ -29,14 +29,14 @@ PTManager::PTManager()
 	status = false;
 }
 
-PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
+PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor)//, Flight *flight)
 {
 	efotoManager = newManager;
 	listAllImages = images;
 	listOis = ois;
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
-	myFlight = flight;
+//	myFlight = flight;
 
 	started = false;
 	status = false;
@@ -63,18 +63,18 @@ PTUserInterface* PTManager::getInterface()
 
 bool PTManager::exec()
 {
-	if (efotoManager != NULL && mySensor != NULL && myFlight != NULL && listAllImages.size()> 1 && listOis.size()>1)
+	if (efotoManager != NULL && mySensor != NULL && /*myFlight != NULL &&*/ listAllImages.size()> 1 && listOis.size()>1)
 	{
 		if (efotoManager->getInterfaceType().compare("Qt") == 0)
 		{
 			myInterface = PTUserInterface_Qt::instance(this);
 		}
-		myFlight->setSensor(mySensor);
+		//myFlight->setSensor(mySensor);
 		for (int i=0; i<listAllImages.size(); i++)
 		{
 			mySensor->putImage(listAllImages.at(i));
 			listAllImages.at(i)->setSensor(mySensor);
-			listAllImages.at(i)->setFlight(myFlight);
+			//listAllImages.at(i)->setFlight(myFlight);
 			listAllImages.at(i)->setIO(listOis.at(i));
 			listOis.at(i)->setImage(listAllImages.at(i));
 		}
