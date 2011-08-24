@@ -60,6 +60,7 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	xsi0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getXi();
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
+	userInitialValues= false;
 }
 
 int BundleAdjustment::numberOfEquations()
@@ -93,24 +94,27 @@ void BundleAdjustment::fillAnalogCoordinates()
 	}
 }
 
+//Professor Nunes mandou matar a iteraçao sobre os residuos para evitar os valores "NANs"
 bool BundleAdjustment::calculate()
 {
-	getInicialsValues();
+	if (!userInitialValues)
+		getInicialsValues();
+
 
 	matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
-	bool resOk=false;
+	//bool resOk=false;
 	int changePesos=0;
-	Matrix tempRes;
+	//Matrix tempRes;
 	totalIterations=0;
 
 	if (numFotogrametricPoints!=0)
 	{
-		while(!resOk)
-		{
-			int iterations=0;
+
+		//while(!resOk)
+		//{
 			bool conv=false;
-			while(iterations<MAXITERATIONS && !conv)
+			while(totalIterations<MAXITERATIONS && !conv)
 			{
 				createA1();
 				//A1.show('f',3,"A1");
@@ -122,7 +126,7 @@ bool BundleAdjustment::calculate()
 				//Lb.show('f',3,"Lb");
 				Matrix l=Lb-L0;
 				Matrix n11=getN11();
-				n11.show('f',3,"N11");
+				//n11.show('f',3,"N11");
 				Matrix n12=getN12();
 				//n12.show('f',3,"N12");
 				Matrix n22=getN22();
@@ -133,40 +137,40 @@ bool BundleAdjustment::calculate()
 				//n2.show('f',3,"n2");
 				getx1(n11,n12,n22,n1,n2);
 				getx2(n12,n22,n2);
-				x1.show('f',3,"x1");
+				//x1.show('f',3,"x1");
 				//x2.show('f',3,"x2");
-				matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 				updateMatAdjust();
-				matAdjust.show('f',5,"MatAdjus depois do update do loop");
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
 				updateCoordFotog();
 				conv=testConverged();
-				iterations++;
+				totalIterations++;
 				//qDebug("iteration %d",iterations);
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
 			matAdjust.show('f',5,"MatAdjus depois da iteracao");
 			calculateResiduos();
-			matRes.show('f',5,"MatRes depois da iteracao");
-			resOk=testResiduo();
-			if (changePesos==0)
-				tempRes.resize(matRes.getRows(),1);
-			calculatePeso();
-			matRes=matRes-tempRes;
-			tempRes=matRes;
-			changePesos++;
-			totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			//resOk=testResiduo();
+			//if (changePesos==0)
+				//tempRes.resize(matRes.getRows(),1);
+			//calculatePeso();
+			//matRes=matRes-tempRes;
+			//tempRes=matRes;
+			//changePesos++;
+			//totalIterations+=iterations;
 			//matRes.show('f',5,"MatRes");
-		}
+		//}
 	}
 	else
 	{
 		qDebug("Sem pontos Fotogrametricos");
 		/*while(!resOk)
 		{*/
-			int iterations=0;
+			totalIterations=0;
 			bool conv=false;
-			while(iterations<MAXITERATIONS && !conv)
+			while(totalIterations<MAXITERATIONS && !conv)
 			{
 				createA1();
 				createL0();
@@ -181,26 +185,26 @@ bool BundleAdjustment::calculate()
 				updateMatAdjust();
 				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
 				conv=testConverged();
-				iterations++;
+				totalIterations++;
 				//qDebug("iteration %d",iterations);
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
-/*
+
 			matAdjust.show('f',7,"MatAdjus depois da iteracao");
 			calculateResiduos();
 			//matRes.show('f',5,"MatRes depois da iteracao");
-			resOk=testResiduo();
-			if (changePesos==0)
-				tempRes.resize(matRes.getRows(),1);
-			calculatePeso();
-			matRes=matRes-tempRes;
-			tempRes=matRes;
-			changePesos++;
-			totalIterations+=iterations;
+			//resOk=testResiduo();
+			//if (changePesos==0)
+				//tempRes.resize(matRes.getRows(),1);
+			//calculatePeso();
+			//matRes=matRes-tempRes;
+			//tempRes=matRes;
+			//changePesos++;
+			//totalIterations+=iterations;
 			//matRes.show('f',5,"MatRes");
-		}*/
+		//}
 	}
-	printf("Numero de troca de pesos: %d\n",changePesos);
+	//printf("Numero de troca de pesos: %d\n",changePesos);
 	calculateResiduos();
 	//matRes.show('f',8,"MatResCalculate");
 	setAFP();
@@ -1105,26 +1109,6 @@ double BundleAdjustment::getRy(Image *img, int pointId)
 }
 
 /*Metodos para aumento de performance do calculo*/
-/*
-Matrix BundleAdjustment::invertN11(Matrix N11)
-{
-	int numMatrixs=numImages;
-	Matrix N11i=N11;
-	for (int i=0;i<numMatrixs;i++)
-	{
-		/*iteraçao i=0
-		sel[(6*0+1 x 6*0+1 ; 6*(0+1) x 6*(0+1) ] = 1x1;6x6
-		iteraçao i=1
-		sel[(6*1+1 x 6*1+1 ; 6*(1+1) x 6*(1+1) ] = 7x7;12x12
-		*/
-		/*
-		Matrix partial(6,6);
-		partial=N11.sel(6*i+1,6*(i+1),6*i+1,6*(i+1));
-		N11i.putMatrix(partial.inverse(),6*i+1,6*i+1);
-	}
-	return N11i;
-}
-*/
 
 Matrix BundleAdjustment::getSparseN11()
 {
@@ -1140,29 +1124,10 @@ Matrix BundleAdjustment::getSparseN11()
 	A1=result;
 }
 
-/*
-Matrix BundleAdjustment::invertN22(Matrix N22)
-{
-	int numMatrixs=numPoints;
-	Matrix N22i=N22;
-	for (int i=0;i<numMatrixs;i++)
-	{
-		/*iteraçao i=0
-		sel[(3*0+1 x 3*0+1 ; 3*(0+1) x 3*(0+1) ] = 1x1;3x3
-		iteraçao i=1
-		sel[(3*1+1 x 3*1+1 ; 3*(1+1) x 3*(1+1) ] = 4x4;6x6
-		*//*
-		Matrix partial(3,3);
-		partial=N22.sel(3*i+1,3*(i+1),3*i+1,3*(i+1));
-		N22i.putMatrix(partial.inverse(),3*i+1,3*i+1);
-	}
-	return N22i;
-}
-
 /* setters and getters*/
 Matrix BundleAdjustment::getMatRes()
 {
-	matRes.show('f',8,"MatRes");
+	//matRes.show('f',8,"MatRes");
 	return matRes;
 }
 
@@ -1258,4 +1223,10 @@ bool BundleAdjustment::isConverged()
 		return converged=false;
 }
 
+void BundleAdjustment::setUserInitialValues(Matrix initialValues)
+{
 
+	matAdjust=initialValues;
+	userInitialValues= true;
+
+}

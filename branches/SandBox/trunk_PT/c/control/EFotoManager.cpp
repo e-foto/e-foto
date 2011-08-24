@@ -735,22 +735,41 @@ bool EFotoManager::execPT()
         //qDebug("Qtd Ois: %d",ftOis.size());
 
 		Sensor *ptSensor = instanceSensor(ptImages.at(0)->getSensorId());
-		Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
-        Terrain* ptTerrain = instanceTerrain();
-        ptFlight->setTerrain(ptTerrain);
+		//Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
+		//Terrain* ptTerrain = instanceTerrain();
+		//ptFlight->setTerrain(ptTerrain);
 
-        fotoTri = new PTManager(this,ptImages,ptOis,ptSensor,ptFlight);
+		fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
 
         result = fotoTri->exec();
-        qDebug("EfotoManager passou da execPT\n");
+	   // qDebug("EfotoManager passou da execPT\n");
 	return result;
 }
 
 void EFotoManager::stopPT()
 {
 	delete fotoTri;
-
 	fotoTri = NULL;
+	deleteSensor(images.at(0)->getSensorId());
+
+	for (int i=0;i<points.size();i++)
+	{
+		deletePoint(points.at(i)->getId());
+	}
+	for (int i=0;i<images.size();i++)
+	{
+		deleteIO(images.at(i)->getId());
+		deleteImage(images.at(i)->getId());
+	}
+	/*
+	Image* srImage = instanceImage(id);
+	delete spatialRessection;
+	spatialRessection = NULL;
+	deleteEO(id);
+	deleteIO(id);
+
+	deleteImage(id);
+	*/
 
 }
 
