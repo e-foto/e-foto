@@ -7,7 +7,7 @@
 #include <qaction.h>
 #include <qstring.h>
 
-#include "TableIOEOWidget.h"
+#include "ETableWidget.h"
 
 //#include <iostream>
 
@@ -160,7 +160,7 @@ bool IOUserInterface_Qt::viewReport()
 
         QWidget *XaView= new QWidget();
         QHBoxLayout *XaLayout= new QHBoxLayout();
-        TableIOEOWidget *myXaView = new TableIOEOWidget();
+		ETableWidget *myXaView = new ETableWidget();
 
 		/* novo*/
 		QLabel *xa= new QLabel("<font size=5>Xa");
@@ -178,7 +178,7 @@ bool IOUserInterface_Qt::viewReport()
 		myXaView->setVerticalHeaderLabels(listaXa);
 		myXaView->setTableData(myValues.at(0),'f',5);
 
-		TableIOEOWidget *mySXaView = new TableIOEOWidget();
+		ETableWidget *mySXaView = new ETableWidget();
 		mySXaView->setTableData(myValues.at(4),'f',5);
 
 		/* novo */
@@ -205,7 +205,7 @@ bool IOUserInterface_Qt::viewReport()
 
 		QWidget *LaView = new QWidget();
         QHBoxLayout *LaLayout= new QHBoxLayout();
-        TableIOEOWidget *myLaView = new TableIOEOWidget();
+		ETableWidget *myLaView = new ETableWidget();
 		myLaView->setTableData(myValues.at(1),'f',5);
 
 		/* novo */
@@ -222,7 +222,7 @@ bool IOUserInterface_Qt::viewReport()
 		mvcLa->setAlignment(Qt::AlignHCenter);
 
 
-		TableIOEOWidget *mySLaView = new TableIOEOWidget();
+		ETableWidget *mySLaView = new ETableWidget();
 		mySLaView->setTableData(myValues.at(5),'f',5);
 
 		/* novo */
@@ -264,7 +264,7 @@ bool IOUserInterface_Qt::viewReport()
 		vLabel->setTextFormat(Qt::RichText);
 		vLabel->setAlignment(Qt::AlignHCenter);
 		QVBoxLayout *vTableLayout= new QVBoxLayout();
-        TableIOEOWidget *myVView = new TableIOEOWidget();
+		ETableWidget *myVView = new ETableWidget();
 		myVView->setTableData(myValues.at(3),'f',5);
 		vTableLayout->addWidget(vLabel);
 		vTableLayout->addWidget(myVView);

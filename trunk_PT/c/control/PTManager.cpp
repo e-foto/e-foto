@@ -36,7 +36,7 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 	listOis = ois;
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
-//	myFlight = flight;
+	//	myFlight = flight;
 
 	started = false;
 	status = false;
@@ -90,12 +90,18 @@ bool PTManager::exec()
 
 void PTManager::returnProject()
 {
-    //if (efotoManager->is("EFotoManager"))
-	efotoManager->reloadProject();
+	//if (pt!=NULL)
+		// delete pt;
+	//delete myInterface;
+	//delete mySensor;
+	//delete myFlight;
+	listAllImages.clear();
+	listAllPoints.clear();
+	listOis.clear();
+	listSelectedImages.clear();
+	listSelectedPoints.clear();
 
-        //delete(pt);
-    //else
-	//  qDebug("nao e efotomanager");
+	efotoManager->reloadProject();
 }
 
 string PTManager::getImagefile(int imageId)
@@ -156,7 +162,7 @@ void PTManager::setENH()
         points.set(i,2,N);
         points.set(i,3,H);
     }
-//	points.show('f',4);
+	//	points.show('f',4);
     ENH=points;
 }
 
@@ -176,9 +182,9 @@ void PTManager::setColLin()
     for (int i=1;i<=col.getRows();i++)
         for (int j=1;j<=col.getCols();j++)
         {
-		col.set(i,j,-1);
-		lin.set(i,j,-1);
-	}
+			col.set(i,j,-1);
+			lin.set(i,j,-1);
+		}
 
     for (int i=1;i<=numPoints;i++)
     {
@@ -205,8 +211,8 @@ void PTManager::setColLin()
 
     Col=col;
     Lin=lin;
-//    col.show();
- //   lin.show();
+	//    col.show();
+	//   lin.show();
 }
 
 void PTManager::setBLC()
@@ -330,7 +336,7 @@ void PTManager::setListPoint()
 		listAllPoints.push_back(point);
 	}
 }
-
+// retorna uma lista com os caminhos das imagens
 deque<string> PTManager::getStringImages()
 {
 	deque<string> list;
@@ -340,15 +346,51 @@ deque<string> PTManager::getStringImages()
 	return list;
 }
 
-deque<string> PTManager::getStringPoints()
+deque<string> PTManager::getStringTypePoints(string imageFileName)
 {
 	deque<string> list;
-	int numPoints=listAllPoints.size();
-	for (int i=0;i<numPoints;i++)
-		list.push_back(listAllPoints.at(i)->getPointId());
-	return list;
+	if (imageFileName =="")
+	{
+		int numPnts=listAllPoints.size();
+		for (int i=0; i<numPnts; i++)
+		{
+			if (listAllPoints.at(i)->is("ControlPoint"))
+				list.push_back("Control");
+			if (listAllPoints.at(i)->is("PhotogrammetricPoint"))
+				list.push_back("Photogrammetric");
+			if (listAllPoints.at(i)->is("CheckingPoint"))
+				list.push_back("Checking");
+		}
+		return list;
+	}else
+	{
+		int numImages= listAllImages.size();
+		for (int i=0;i<numImages;i++)
+		{
+			//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+			//qDebug("Antes %s",imageFileName.c_str());
+			if(listAllImages.at(i)->getFilename() == imageFileName)
+			{
+				//qDebug("Achou %s",imageFileName.c_str());
+				Image *temp=listAllImages.at(i);
+				int numpnts=temp->countPoints();
+				for (int j=0;j<numpnts;j++)
+				{
+					//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
+					if (temp->getPointAt(j)->is("ControlPoint"))
+						list.push_back("Control");
+					if (temp->getPointAt(j)->is("PhotogrammetricPoint"))
+						list.push_back("Photogrammetric");
+					if (temp->getPointAt(j)->is("CheckingPoint"))
+						list.push_back("Checking");
+				}
+				return list;
+			}
+		}
+	}
 }
 
+// preenche a lista de imagens selecionadas(listSelectedImages) atraves de um deque de strings com os caminhos das imagens
 void PTManager::selectImages(deque<string> selectedImagesList)
 {
 	if(listSelectedImages.size()!=0)
@@ -356,19 +398,17 @@ void PTManager::selectImages(deque<string> selectedImagesList)
 
 	int numImgs= listAllImages.size();
 	int	numSelectedImgs=selectedImagesList.size();
-//	Image *img;
-	//img->getId()
 	for(int i=0;i<numSelectedImgs;i++)
 		for (int j=0;j<numImgs;j++)
 			if (listAllImages.at(j)->getFilename()==selectedImagesList.at(i))
 			{
 				listSelectedImages.push_back(listAllImages.at(j));
-				qDebug("IdImage: %d",listAllImages.at(j)->getId());
+				//qDebug("IdImage: %d",listAllImages.at(j)->getId());
 			}
 
 	//listSelectedImages=listImages;
 }
-
+// preenche a lista de pontos selecionados(listSelectedPoints) atraves de um deque de strings com Ids dos pontos
 void PTManager::selectPoints(deque<string> selectedPointsList)
 {
 	if(listSelectedPoints.size()!=0)
@@ -394,4 +434,104 @@ BundleAdjustment* PTManager::getBundleAdjustment()
 	return pt;
 }
 
+// retorna uma lista com os ids dos pontos
+deque<string> PTManager::getStringIdPoints(string imageFileName)
+{
+	deque<string> list;
+	if (imageFileName =="")
+	{
+		int numPnts=listAllPoints.size();
+		for (int i=0; i<numPnts; i++)
+		{
+			Point *pnt=listAllPoints.at(i);
+			list.push_back(pnt->getPointId());
+		}
+		return list;
+	}else
+	{
+		int numImages= listAllImages.size();
+		//qDebug("lista de imagens %d",listAllImages.size());
+		for (int i=0;i<numImages;i++)
+		{
+			//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+			//qDebug("Antes %s",imageFileName.c_str());
+			if(listAllImages.at(i)->getFilename() == imageFileName)
+			{
+				//qDebug("Achou %s",imageFileName.c_str());
+				Image *temp=listAllImages.at(i);
+				int numpnts=temp->countPoints();
+				for (int j=0;j<numpnts;j++)
+				{
+					//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
+					list.push_back(temp->getPointAt(j)->getPointId());
+				}
+				return list;
+			}
+		}
+	}
+	return list;
+}
 
+deque<string> PTManager::getStringKeysPoints(string imageFileName)
+{
+	deque<string> list;
+
+	//qDebug("lista de imagens %d",listAllImages.size());
+	if (imageFileName =="")
+	{
+		int numPnts=listAllPoints.size();
+		for (int i=0; i<numPnts; i++)
+		{
+			Point *pnt=listAllPoints.at(i);
+			list.push_back(intToString(pnt->getId()));
+		}
+		return list;
+	}else
+	{
+		int numImages= listAllImages.size();
+		for (int i=0;i<numImages;i++)
+		{
+			//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+			//qDebug("Antes %s",imageFileName.c_str());
+			if(listAllImages.at(i)->getFilename() == imageFileName)
+			{
+				//qDebug("Achou %s",imageFileName.c_str());
+				Image *temp=listAllImages.at(i);
+				int numpnts=temp->countPoints();
+				for (int j=0;j<numpnts;j++)
+				{
+					//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
+					list.push_back(intToString(temp->getPointAt(j)->getId()));
+				}
+				return list;
+			}
+		}
+	}
+
+}
+
+Matrix PTManager::getColLin(string imageFilename)
+{
+	int numImages= listAllImages.size();
+	//qDebug("lista de imagens %d",listAllImages.size());
+	for (int i=0;i<numImages;i++)
+	{
+		//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+		//qDebug("Antes %s",imageFileName.c_str());
+		if(listAllImages.at(i)->getFilename() == imageFilename)
+		{
+			//qDebug("Achou %s",imageFileName.c_str());
+			Image *temp=listAllImages.at(i);
+			int numpnts=temp->countPoints();
+			Matrix result(numpnts,2);
+			for (int j=0;j<numpnts;j++)
+			{
+				DigitalImageSpaceCoordinate coord=temp->getPointAt(j)->getDigitalCoordinate(temp->getId());
+				//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
+				result.setInt(j+1,1,coord.getCol());
+				result.setInt(j+1,2,coord.getLin());
+			}
+			return result;
+		}
+	}
+}

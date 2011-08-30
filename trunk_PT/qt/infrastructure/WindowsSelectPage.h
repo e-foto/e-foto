@@ -17,15 +17,14 @@ class WindowsSelectPage : public QWizardPage
 		void setInitialList(QStringList list);
 		deque<string> getSelectedItens();
 		void initializePage();
-	protected:
 
-
-	private slots:
+	public slots :
 		void addAllItems();
 		void addSelectedItem();
 		void removeSelectedItem();
 		void removeAllItems();
 		void exchangeAllItems();
+	protected:
 
 	private:
 		QStringListModel *uncheckedModel;

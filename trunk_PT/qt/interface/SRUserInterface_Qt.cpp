@@ -1,7 +1,7 @@
 #include "SRUserInterface_Qt.h"
 #include <QPushButton>
 
-#include "TableIOEOWidget.h"
+#include "ETableWidget.h"
 
 SRUserInterface_Qt* SRUserInterface_Qt::srInst = NULL;
 
@@ -243,7 +243,7 @@ bool SRUserInterface_Qt::viewReport()
 	QVBoxLayout *mvclabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de mvc(Xa)
 /**/
 
-	TableIOEOWidget *myXaView = new TableIOEOWidget();
+	ETableWidget *myXaView = new ETableWidget();
 
 	QStringList listaXa;
 	listaXa<<"X0"<<"Y0"<<"Z0"<<QString::fromUtf8("φ")<<QString::fromUtf8("ω")<<QString::fromUtf8("κ");
@@ -256,7 +256,7 @@ bool SRUserInterface_Qt::viewReport()
 	xalabelLayout->addWidget(myXaView);
 	/**/
 
-    TableIOEOWidget *mySXaView = new TableIOEOWidget();
+	ETableWidget *mySXaView = new ETableWidget();
 	mySXaView->setTableData(myValues.at(4),'f',5);
 /* novo */
 	mvclabelLayout->addWidget(mvcxa);
@@ -288,13 +288,13 @@ bool SRUserInterface_Qt::viewReport()
 	QVBoxLayout *mvcLaLabelLayout= new QVBoxLayout();// layout contendo o label e a tabela de mvc(Xa)
 
 
-	TableIOEOWidget *myLaView = new TableIOEOWidget();
+	ETableWidget *myLaView = new ETableWidget();
 	myLaView->setTableData(myValues.at(1),'f',5);
 
 	laLabelLayout->addWidget(la);
 	laLabelLayout->addWidget(myLaView);
 
-	TableIOEOWidget *mySLaView = new TableIOEOWidget();
+	ETableWidget *mySLaView = new ETableWidget();
 	mySLaView->setTableData(myValues.at(5),'f',5);
 
 	mvcLaLabelLayout->addWidget(mvcLa);
@@ -331,7 +331,7 @@ bool SRUserInterface_Qt::viewReport()
 	formulasLayout->addWidget(myValueLabel1);
 	formulasLayout->addWidget(myValueLabel2);
 
-	TableIOEOWidget *myVView = new TableIOEOWidget();
+	ETableWidget *myVView = new ETableWidget();
 	myVView->setTableData(myValues.at(3),'f',5);
 
 	sigmaLayout->addWidget(myVView);

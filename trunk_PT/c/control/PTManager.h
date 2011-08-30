@@ -25,20 +25,20 @@ class PTManager
 protected:
 	bool started;
 	bool status;
-        EFotoManager* efotoManager;
-        PTUserInterface* myInterface;
+	EFotoManager* efotoManager;
+	PTUserInterface* myInterface;
 
-		Sensor *mySensor;
-        Flight *myFlight;
-		deque<Image*> listAllImages;
-		deque<Point*> listAllPoints;
-        deque<InteriorOrientation*> listOis;
+	Sensor *mySensor;
+	Flight *myFlight;
+	deque<Image*> listAllImages;
+	deque<Point*> listAllPoints;
+	deque<InteriorOrientation*> listOis;
 
-		deque<Image*> listSelectedImages;
-		deque<Point*> listSelectedPoints;
+	deque<Image*> listSelectedImages;
+	deque<Point*> listSelectedPoints;
 
-        BundleAdjustment* pt;
-        Matrix AFP;
+	BundleAdjustment* pt;
+	Matrix AFP;
 
 public:
     PTManager();
@@ -55,22 +55,29 @@ public:
     void returnProject();
     void setMatrixAFP(Matrix afp);
     Matrix getMatrixAFP();
-
     Matrix getResiduos();
 
     Matrix getENH();
     Matrix getCol();
     Matrix getLin();
     PositionMatrix getColLin(int imageId, int pointId);
-
+	Matrix getColLin(string imageFilename);
 	bool connectImagePoints();
 	void setListPoint();
 
-	deque<string> getStringPoints();
+	//deque<string> getStringPoints();
+	deque<string> getStringKeysPoints(string imageFileName="");
+	deque<string> getStringTypePoints(string imageFileName="");
+	deque<string> getStringIdPoints(string imageFileName="");
 	deque<string> getStringImages();
+
+
 
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
+
+
+
 
 	BundleAdjustment* getBundleAdjustment();
 
