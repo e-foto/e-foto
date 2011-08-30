@@ -761,6 +761,8 @@ void EFotoManager::stopPT()
 		deleteIO(images.at(i)->getId());
 		deleteImage(images.at(i)->getId());
 	}
+
+	delete fotoTri;
 	/*
 	Image* srImage = instanceImage(id);
 	delete spatialRessection;
