@@ -1230,3 +1230,5 @@ void BundleAdjustment::setUserInitialValues(Matrix initialValues)
 	userInitialValues= true;
 
 }
+
+//void BundleAdjustment::

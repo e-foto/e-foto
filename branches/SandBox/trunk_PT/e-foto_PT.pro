@@ -138,7 +138,7 @@ HEADERS += EFotoManager.h \
     EfotoDoubleSpinBox.h \
     ScienceSpinBox.h \
     SigmaForm.h \
-    TableIOEOWidget.h \ # qt/interface/
+	ETableWidget.h \ # qt/interface/
     IOUserInterface_Qt.h \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
@@ -245,7 +245,7 @@ SOURCES += EFotoManager.cpp \
     EfotoDoubleSpinBox.cpp \
     ScienceSpinBox.cpp \
     SigmaForm.cpp \
-    TableIOEOWidget.cpp \ # qt/interface/
+	ETableWidget.cpp \ # qt/interface/
     IOUserInterface_Qt.cpp \
     main.cpp \
     ProjectUserInterface_Qt.cpp \
