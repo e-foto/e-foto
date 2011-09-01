@@ -21,6 +21,10 @@ protected:
 	ETableWidget *tableImageRight;
     PTManager *ptManager;
     void closeEvent(QCloseEvent *event);
+
+	int currentPointKey;
+	string leftImageString;
+	string rightImageString;
 	QStringList listAllImages;// contem os file name das imagens
 	QStringList listAllPoints;// contem os ids dos pontos
 
@@ -35,7 +39,7 @@ private:
 
 public:
     static PTUserInterface_Qt* instance(PTManager* ptManager);
-	void updateImageTable(QString image,QString imageFilename);
+	void updateImageTable(QString image,string imageFilename);
     bool exec();
 
 public slots:
@@ -48,9 +52,12 @@ public slots:
 	void acceptResults();
 	bool calculatePT();
 
-	void updateImagesList(QString);
+	void updateImagesList(QString imageFilename);
 	void selectAllAppearances(int index);
 	int findKeyAppearances(QString table, QString searched);
+	void updateMark(string image,int imageKey, int pointKey, int col, int lin);
+	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
+	//void updatePoint(QTableWidgetItem * item);
 };
 
 
