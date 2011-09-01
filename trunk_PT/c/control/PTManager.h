@@ -75,8 +75,9 @@ public:
 
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
-
-
+	// metodo para dar um update nas coordenadas digitais do pont
+	void updateDigitalCoordinatesPoint(int imageKey,int pointKey,int col, int lin);
+	int getImageId(string imageFilename);
 
 
 	BundleAdjustment* getBundleAdjustment();

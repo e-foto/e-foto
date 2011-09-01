@@ -535,3 +535,21 @@ Matrix PTManager::getColLin(string imageFilename)
 		}
 	}
 }
+
+//Faz um update das coordenadas digitais do ponto 'pointKey' na imagem 'imageKey'
+void PTManager::updateDigitalCoordinatesPoint(int imageKey, int pointKey, int col, int lin)
+{
+	Point *pnt=efotoManager->instancePoint(pointKey);
+	pnt->getDigitalCoordinate(imageKey).setCol(col);
+	pnt->getDigitalCoordinate(imageKey).setLin(lin);
+}
+
+// Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
+int PTManager::getImageId(string imageFilename)
+{
+	int numImages= listAllImages.size();
+	for (int i=0;i<numImages;i++)
+		if(listAllImages.at(i)->getFilename() == imageFilename)
+			return listAllImages.at(i)->getId();
+	return -1;
+}
