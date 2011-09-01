@@ -36,6 +36,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
 	connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(showSelectionWindow()));
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
+
 	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 	actionView_Report->setEnabled(false);
@@ -65,6 +66,10 @@ void PTUserInterface_Qt::init()
 	for (int i=0;i<images.size();i++)
 		listAllPoints << QString(points.at(i).c_str());
 
+	leftImageString = images.at(0);
+	rightImageString= images.at(1);
+
+
 	leftImageComboBox->addItems(listImageLeft);
 	rightImageComboBox->addItems(listImageRight);
 
@@ -72,13 +77,35 @@ void PTUserInterface_Qt::init()
 	pointsTableWidget->setColumnHidden(5,true);
 	rightImageTableWidget->setColumnHidden(3,true);
 
+	/***/
+	updateImageTable("leftImage",leftImageString);
+/*
+	Matrix pointsMatrix=ptManager->getENH();
+	for (int i=0;i<ids.size();i++)
+	{
+		idPoints << QString(ids.at(i).c_str());
+		typePoints << QString(types.at(i).c_str());
+		keysPoints << QString(keys.at(i).c_str());
+	}
+	pointsTableWidget->putInColumn(idPoints,1);
+	pointsTableWidget->putInColumn(typePoints,2);
+	pointsTableWidget->putIn(pointsMatrix,0,2,'f',3);
+	pointsTableWidget->putInColumn(keysPoints,6);
+	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
+	pointsTableWidget->resizeTable();
+*/
+	updateImageTable("rightImage",rightImageString);
+/***/
+
+
+
 	connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 	connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 
 	connect(leftImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
-
+	
 }
 
 void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
@@ -110,7 +137,8 @@ bool PTUserInterface_Qt::exec()
 	deque<string> keys  = ptManager->getStringKeysPoints();
 	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";//<<"Column"<<"Row";
 
-	updateImageTable("leftImage",leftImageComboBox->currentText());
+
+	updateImageTable("leftImage",leftImageString);
 
 	Matrix pointsMatrix=ptManager->getENH();
 	for (int i=0;i<ids.size();i++)
@@ -126,9 +154,11 @@ bool PTUserInterface_Qt::exec()
 	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
 	pointsTableWidget->resizeTable();
 
-	updateImageTable("rightImage",rightImageComboBox->currentText());
+	updateImageTable("rightImage",rightImageString);
 
-
+	connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
+	connect(rightImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
+	
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
@@ -175,7 +205,7 @@ void PTUserInterface_Qt::viewReport()
 	//qDebug("Vendo Report");
 	QStringList afpHeaderLabels;
 	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
-	afpHeaderLabels<< QString::fromUtf8("Ï")<<QString::fromUtf8("Ï")<<QString::fromUtf8("Îº")<<"X0"<<"Y0"<<"Z0";
+	afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
 
 	QString iter="Iterations: ";
@@ -305,6 +335,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 
 	if(sender()->objectName()==leftImageComboBox->objectName())
 	{
+		leftImageString=imageFilename.toStdString().c_str();
 		//qDebug("leftImage: %s",imageFilename.toStdString().c_str());
 		QString currentRightImage=rightImageComboBox->currentText();
 		rightImageComboBox->blockSignals(true);
@@ -313,12 +344,15 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		rightImageComboBox->addItems(listImageRight);
 		rightImageComboBox->setCurrentIndex(rightImageComboBox->findText(currentRightImage,Qt::MatchExactly));
 		rightImageComboBox->blockSignals(false);
-		updateImageTable("leftImage",leftImageComboBox->currentText());
+		updateImageTable("leftImage",leftImageString);
+
 
 	}
 	else if(sender()->objectName()==rightImageComboBox->objectName())
 	{
+		rightImageString= imageFilename.toStdString().c_str();
 		//qDebug("RightImage: %s",imageFilename.toStdString().c_str());
+
 		QString currentLefttImage=leftImageComboBox->currentText();
 		leftImageComboBox->blockSignals(true);
 		leftImageComboBox->clear();
@@ -326,21 +360,21 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		leftImageComboBox->addItems(listImageLeft);
 		leftImageComboBox->setCurrentIndex(leftImageComboBox->findText(currentLefttImage,Qt::MatchExactly));
 		leftImageComboBox->blockSignals(false);
-		updateImageTable("rightImage",rightImageComboBox->currentText());
+		updateImageTable("rightImage",rightImageString);
 	}
 }
 
-void PTUserInterface_Qt::updateImageTable(QString image, QString imageFilename)
+void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 {
 	QStringList idImagesPoints, keysImagePoints;
-	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename.toStdString());
-	deque<string> keysPoints = ptManager->getStringKeysPoints(imageFilename.toStdString());
+	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
+	deque<string> keysPoints = ptManager->getStringKeysPoints(imageFilename);
 	for (int i=0;i<imagesPoints.size();i++)
 	{
 		idImagesPoints << QString(imagesPoints.at(i).c_str());
 		keysImagePoints << QString(keysPoints.at(i).c_str());
 	}
-	Matrix imageColLin= ptManager->getColLin(imageFilename.toStdString());
+	Matrix imageColLin= ptManager->getColLin(imageFilename);
 	//qDebug()<< "keys " <<imageFilename << " : "<<keysImagePoints;
 	if(image=="leftImage")
 	{
@@ -350,7 +384,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, QString imageFilename)
 		leftImageTableWidget->putInColumn(idImagesPoints,1);
 		leftImageTableWidget->putIn(imageColLin,0,1,'f',0);
 		leftImageTableWidget->putInColumn(keysImagePoints,4);
-		//leftImageTableWidget->resizeTable();
+		leftImageTableWidget->selectRow(findKeyAppearances("leftImageTable",QString::number(currentPointKey)));
 	}else if (image == "rightImage")
 	{
 		//qDebug()<<"chamou updateImageTable: "<< image << " : " << imageFilename;
@@ -359,33 +393,37 @@ void PTUserInterface_Qt::updateImageTable(QString image, QString imageFilename)
 		rightImageTableWidget->putInColumn(idImagesPoints,1);
 		rightImageTableWidget->putIn(imageColLin,0,1,'f',0);
 		rightImageTableWidget->putInColumn(keysImagePoints,4);
-		//rightImageTableWidget->resizeTable();
+		rightImageTableWidget->selectRow(findKeyAppearances("rightImageTable",QString::number(currentPointKey)));
 	}
 }
 //Seleciona em todas as tabelas onde o ponto aparece
-void PTUserInterface_Qt::selectAllAppearances(int index)
+void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 {
+	bool ok;
 	int indexLeftSearched,indexRightSearched, indexPointsSearched;
 	if (sender()->objectName()==leftImageTableWidget->objectName())
 	{
-		QString searched=leftImageTableWidget->item(index,3)->text();
-		indexLeftSearched = index;
+		QString searched=leftImageTableWidget->item(tableRow,3)->text();
+		currentPointKey=searched.toInt(&ok);
+		indexLeftSearched = tableRow;
 		indexPointsSearched = findKeyAppearances("pointsTable", searched);
 		indexRightSearched = findKeyAppearances("rightImageTable", searched);
 	}
 	else if (sender()->objectName()==pointsTableWidget->objectName())
 	{
-		QString searched=pointsTableWidget->item(index,5)->text();
+		QString searched=pointsTableWidget->item(tableRow,5)->text();
+		currentPointKey=searched.toInt(&ok);
 		indexLeftSearched=findKeyAppearances("leftImageTable",searched);
-		indexPointsSearched=index;
+		indexPointsSearched=tableRow;
 		indexRightSearched = findKeyAppearances("rightImageTable", searched);
 	}
 	else if (sender()->objectName()==rightImageTableWidget->objectName())
 	{
-		QString searched=rightImageTableWidget->item(index,3)->text();
+		QString searched=rightImageTableWidget->item(tableRow,3)->text();
+		currentPointKey=searched.toInt(&ok);
 		indexLeftSearched=findKeyAppearances("leftImageTable",searched);
 		indexPointsSearched = findKeyAppearances("pointsTable", searched);
-		indexRightSearched =index;
+		indexRightSearched =tableRow;
 	}
 	//Limpando seleção
 	leftImageTableWidget->clearSelection();
@@ -417,6 +455,7 @@ void PTUserInterface_Qt::selectAllAppearances(int index)
 // Se encontrar retorna o indice na tabela da key procurada senão retorna -1
 int PTUserInterface_Qt::findKeyAppearances(QString table, QString searched)
 {
+
 	if (table == "leftImageTable")
 	{
 		for (int i=0;i<leftImageTableWidget->rowCount();i++)
@@ -438,9 +477,69 @@ int PTUserInterface_Qt::findKeyAppearances(QString table, QString searched)
 	}
 }
 
+void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, int col, int lin)
+{
+	if (image=="leftImage")
+	{
+		int pos=findKeyAppearances("leftImageTable", QString::number(pointKey));
+		leftImageTableWidget->item(pos,1)->setText(QString::number(col));
+		leftImageTableWidget->item(pos,2)->setText(QString::number(lin));
+		//imageKey=ptManager->getImageId(leftImage);
+	}else if(image =="rightImage")
+	{
+		int pos=findKeyAppearances("rightImageTable", QString::number(pointKey));
+		rightImageTableWidget->item(pos,1)->setText(QString::number(col));
+		rightImageTableWidget->item(pos,2)->setText(QString::number(lin));
+		//imageKey=ptManager->getImageId(rightImage);
+	}
+	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
+}
+
+/* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
+void PTUserInterface_Qt::updatePoint(QTableWidgetItem *item)
+{
+	bool ok;
+	int col=-1;
+	int lin=-1;
+	int rowPoint=item->row();
+	int pointKey=item->tableWidget()->item(rowPoint,3)->text().toInt(&ok);
+
+	if (item->tableWidget()->objectName()==leftImageTableWidget->objectName())
+	{
+		int imageKey=ptManager->getImageId(leftImageString);
+		if(item->column()==1)
+		{
+			col=item->text().toInt(&ok);
+			lin=leftImageTableWidget->item(item->row(),2)->text().toInt(&ok);
+		}
+		else if(item->column()==2)
+		{
+			lin=item->text().toInt(&ok);
+			col=leftImageTableWidget->item(item->row(),1)->text().toInt(&ok);
+		}
+		ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin);
+		qDebug("col %d lin %d",col,lin);
+	} else if (item->tableWidget()->objectName()==rightImageTableWidget->objectName())
+	{
+		int imageKey=ptManager->getImageId(rightImageString);
+		if(item->column()==1)
+		{
+			col=item->text().toInt(&ok);
+			lin=rightImageTableWidget->item(item->row(),2)->text().toInt(&ok);
+		}
+		else if(item->column()==2)
+		{
+			lin=item->text().toInt(&ok);
+			col=rightImageTableWidget->item(item->row(),1)->text().toInt(&ok);
+		}
+		ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin);
+		qDebug("col %d lin %d",col,lin);
+	}
+
+}
+*/
+
 void PTUserInterface_Qt::acceptResults()
 {
 	// salvar resultados no xml
 }
-
-
