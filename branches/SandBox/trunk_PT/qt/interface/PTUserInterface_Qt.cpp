@@ -495,7 +495,7 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, int
 	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
 }
 
-/* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
+/* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface. Atualmente desabilitada
 void PTUserInterface_Qt::updatePoint(QTableWidgetItem *item)
 {
 	bool ok;

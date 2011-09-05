@@ -84,6 +84,11 @@ public:
 	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
 	string edomImageToTxt(EDomElement images);
 
+	// Inserido pelo Paulo 05/09/2011
+//insere as coordenadas digitais no ponto
+	bool insertDigitalCoordinates(QString coordinates);
+	bool availablePhotoTri();
+
 
 public slots:
 	virtual void closeEvent(QCloseEvent *event);
@@ -141,6 +146,8 @@ public slots:
 	void exportPointsToTxt();
 	void importImagesFromTxt();
 	//void exportImagesToTxt();
+
+	void importDigitalCoordinatesFromTxt();
 
 };
 

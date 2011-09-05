@@ -42,7 +42,7 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 	status = false;
 
 	setENH();
-	setColLin();
+//	setColLin();
 	/*setBLC();*/
 }
 
@@ -134,11 +134,6 @@ Matrix PTManager::getMatrixAFP()
 
 
 
-
-
-
-
-
 /**novo*/
 
 void PTManager::setENH()
@@ -166,120 +161,6 @@ void PTManager::setENH()
     ENH=points;
 }
 
-void PTManager::setColLin()
-{
-    EDomElement points(efotoManager->getXml("points"));
-    int numPoints=points.children().size();
-    EDomElement images(efotoManager->getXml("images"));
-    int numimgs=images.children().size();
-
-    //numimgs=3;
-    //numPoints=13;
-
-    Matrix col(numimgs,numPoints);
-    Matrix lin(numimgs,numPoints);
-
-    for (int i=1;i<=col.getRows();i++)
-        for (int j=1;j<=col.getCols();j++)
-        {
-			col.set(i,j,-1);
-			lin.set(i,j,-1);
-		}
-
-    for (int i=1;i<=numPoints;i++)
-    {
-        EDomElement point=points.elementByTagAtt("point","key",intToString(i));
-        deque<EDomElement> imgPnts=point.elementsByTagName("imageCoordinates");
-		int imgs=imgPnts.size();
-		for(int j=0;j<imgs;j++)
-        {
-            string numImg=imgPnts.at(j).attribute("image_key");
-            EDomElement coord=imgPnts.at(j).elementByTagAtt("imageCoordinates","image_key",numImg);
-			// qDebug("%s",imgPnts.at(j).getContent().c_str());
-
-            string coordenada=coord.elementByTagName("gml:pos").toString().c_str();
-            int ini=coordenada.find_first_of(" ");
-			int coluna=stringToInt(coordenada.substr(0,ini).c_str());
-			int linha=stringToInt(coordenada.substr(ini+1,coordenada.size()).c_str());
-
-            //qDebug("%d,%d\tCol=%d\tLin=%d\n",i,j,coluna,linha);
-
-            col.setInt(stringToInt(numImg),i,coluna);
-            lin.setInt(stringToInt(numImg),i,linha);
-        }
-    }
-
-    Col=col;
-    Lin=lin;
-	//    col.show();
-	//   lin.show();
-}
-
-void PTManager::setBLC()
-{
-	//string pointxml=efotoManager->getXml("point");
-	EDomElement pointsXml(efotoManager->getXml("points"));
-	int numPnts=pointsXml.children().size();
-	EDomElement images(efotoManager->getXml("images"));
-	int numImgs=images.children().size();
-
-	Matrix blc(numImgs,numPnts);
-	for (int i=1;i<=numPnts;i++)
-	{
-		EDomElement point=pointsXml.elementByTagAtt("point","key",intToString(i));
-		deque<EDomElement> imgPnts=point.elementsByTagName("imageCoordinates");
-		int imgs=imgPnts.size();
-		int type=0;
-		if(point.attribute("type").compare("control")==0)
-			type=1;
-		else if(point.attribute("type").compare("photogrammetric")>=0)
-			type=-1;
-		for (int j=0;j<imgs;j++)
-		{
-			int img=stringToInt(imgPnts.at(j).attribute("image_key"));
-			blc.set(img,i,type);
-		}
-	}
-	BLC=blc;
-	//BLC.show();
-}
-
-
-Matrix PTManager::getCol()
-{
-    return Col;
-}
-
-Matrix PTManager::getLin()
-{
-    return Lin;
-}
-
-Matrix PTManager::getBLC()
-{
-	return BLC;
-}
-
-Matrix PTManager::getOis()
-{
-	Matrix ois(BLC.getRows(),6);
-
-	EDomElement oisXml=efotoManager->getXml("interiorOrientation");
-	int rows = ois.getRows();
-	for (int i=1;i<=rows;i++)
-	{
-		EDomElement xa=(oisXml.elementByTagAtt("imageIO","image_key",intToString(i))).elementByTagName("Xa");
-		ois.set(i,1,xa.elementByTagName("a0").toDouble());
-		ois.set(i,2,xa.elementByTagName("a1").toDouble());
-		ois.set(i,3,xa.elementByTagName("a2").toDouble());
-		ois.set(i,4,xa.elementByTagName("b0").toDouble());
-		ois.set(i,5,xa.elementByTagName("b1").toDouble());
-		ois.set(i,6,xa.elementByTagName("b2").toDouble());
-	}
-	//ois.show();
-	return ois;
-}
-
 Matrix PTManager::getResiduos()
 {
     return pt->getMatRes();
@@ -288,14 +169,6 @@ Matrix PTManager::getResiduos()
 Matrix PTManager::getENH()
 {
     return ENH;
-}
-
-PositionMatrix PTManager::getColLin(int imageId, int pointId)
-{
-    PositionMatrix coord(2,"pixel");
-    coord.set(1,Col.get(imageId,pointId));
-    coord.set(2,Lin.get(imageId,pointId));
-    return coord;
 }
 
 bool PTManager::connectImagePoints()
