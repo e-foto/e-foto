@@ -581,7 +581,7 @@ bool EFotoManager::reloadProject()
 	{
 		if (fotoTri !=NULL)
 		{
-                        stopPT();
+			stopPT();
 		}
 		if (interiorOrientation != NULL)
 		{

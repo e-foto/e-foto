@@ -29,6 +29,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	menuExecute->setEnabled(false);
 	actionSave_file->setEnabled(false);
 	actionSave_file_as->setEnabled(false);
+
 	setWindowTitle(tr("efoto[Project Manager]"));
 	imageForm.proj = this;
 
@@ -74,7 +75,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	//setGeometry(qApp->desktop()->availableGeometry());
 	setWindowState(this->windowState() | Qt::WindowMaximized);
 	qApp->processEvents();
-	// Bloqueia alguns dos  dipositivos
+	// Bloqueia alguns dos dipositivos
 	this->removeDockWidget(debuggerDockWidget);
 	this->removeDockWidget(projectDockWidget);
 
@@ -124,6 +125,14 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	// Adiciona um atalho para os desenvolvedores observarem as mudanças no XML durante o runtime
 	QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
+
+	// Inserido pelo Paulo 05/09/2011
+	// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
+	QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
+	connect(shortcut2, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesFromTxt()));
+
+	actionFoto_Tri->setEnabled(availablePhotoTri());
+
 }
 
 ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
@@ -487,8 +496,10 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			QDir dir(filename.left(i));
 			dir.setCurrent(dir.absolutePath());
 
-			//viewHeader();
+
 			newTree();
+			// Inserido pelo Paulo 05/09/2011
+			actionFoto_Tri->setEnabled(availablePhotoTri());
 		}
 		else
 		{
@@ -956,10 +967,12 @@ void ProjectUserInterface_Qt::updateTree()
 bool ProjectUserInterface_Qt::exec()
 {
 	actionSave_file->setEnabled(!manager->getSavedState());
+	actionFoto_Tri->setEnabled(availablePhotoTri());
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
 	changeModule = false;
+
 	//if (qApp->exec())
 		//return false;
 	return true;
@@ -1170,6 +1183,7 @@ void ProjectUserInterface_Qt::viewImages()
 
 	menuProject->setEnabled(true);
 	menuExecute->setEnabled(true);
+
 }
 
 void ProjectUserInterface_Qt::viewImage(int id)
@@ -2025,6 +2039,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 	}
 	updateTree();
 	viewPoints();
+	actionSave_file->setEnabled(true);
 }
 
 /** This function convert a point data from a *.txt line in a children point XML valid
@@ -2198,6 +2213,7 @@ void ProjectUserInterface_Qt::importImagesFromTxt()
 	}
 	updateTree();
 	viewImages();
+
 }
 
 /** This function convert image data from a *.txt line in a children image XML valid
@@ -2235,4 +2251,66 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 	EDomElement newImageXml(newXml.c_str());
 
 	return newImageXml;
+}
+
+//inserido pelo Paulo 05/09/2011
+// Coloca as coordenadas digitais linha e coluna nos pontos;
+void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
+{
+	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	QFile *importFile = new QFile(importFileName);
+	QStringList pointsList;
+
+	importFile->open(QIODevice::ReadOnly);
+
+	while(!importFile->atEnd())
+	{
+		QByteArray line = importFile->readLine();
+		QString aux(line);
+		pointsList << aux.remove('\n');
+	}
+
+	importFile->close();
+
+	for (int i=0; i<pointsList.length();i++)
+		if(!insertDigitalCoordinates(pointsList.at(i)))
+			QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
+	updateTree();
+	viewPoints();
+	actionSave_file->setEnabled(true);
+}
+
+bool ProjectUserInterface_Qt::insertDigitalCoordinates(QString coordinates)
+{
+	QStringList digitalPoint=coordinates.split("\t");
+	if (digitalPoint.size()!=4)
+		return false;
+	else
+	{
+		string imagekey=digitalPoint.at(0).toStdString().c_str();
+		string pointkey=digitalPoint.at(1).toStdString().c_str();
+		string colValue=digitalPoint.at(2).toStdString().c_str();
+		string linValue=digitalPoint.at(3).toStdString().c_str();
+
+		EDomElement pointsXML(manager->getXml("points").c_str());
+		EDomElement point(pointsXML.elementByTagAtt("point","key",pointkey));
+		stringstream aux;
+		aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
+		aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
+		aux << "</imageCoordinates>";
+		point.addChildAtTagName("imagesMeasurements",aux.str());
+		manager->editComponent("Point",stringToInt(pointkey),point.getContent());
+		return true;
+	}
+}
+
+bool ProjectUserInterface_Qt::availablePhotoTri()
+{
+	EDomElement ois(manager->getXml("interiorOrientation"));
+	EDomElement images(manager->getXml(("images")));
+	//qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
+
+	if(images.children().size()==ois.children().size())
+		return true;
+	return false;
 }
