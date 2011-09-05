@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -186,7 +186,10 @@
   </widget>
   <action name="actionNew">
    <property name="text">
-    <string>New</string>
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionSave_file_as">
@@ -291,12 +294,18 @@
   </action>
   <action name="actionInterior_Orientation">
    <property name="text">
-    <string>Interior Orientation</string>
+    <string>&amp;Interior Orientation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionSpatial_resection">
    <property name="text">
-    <string>Spatial resection</string>
+    <string>Spatial &amp;resection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -306,7 +315,10 @@
   </action>
   <action name="actionSave_file">
    <property name="text">
-    <string>Save file</string>
+    <string>&amp;Save file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
    <property name="visible">
     <bool>true</bool>
@@ -314,7 +326,10 @@
   </action>
   <action name="actionLoad_file">
    <property name="text">
-    <string>Load file</string>
+    <string>L&amp;oad file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
    <property name="visible">
     <bool>true</bool>
@@ -338,20 +353,25 @@
   </action>
   <action name="actionExport_Stereo">
    <property name="text">
-    <string>Export Stereo File</string>
+    <string>&amp;Export Stereo File</string>
    </property>
    <property name="toolTip">
     <string>Export a file to be used on Stereoplotter or DEM File</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionFoto_Tri">
    <property name="text">
-    <string>Photo Triangulation</string>
+    <string>&amp;Photo Triangulation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>
  <resources>
-  <include location="../resource/resource.qrc"/>
   <include location="../resource/resource.qrc"/>
  </resources>
  <connections/>

@@ -38,7 +38,7 @@ protected:
 	deque<Point*> listSelectedPoints;
 
 	BundleAdjustment* pt;
-	Matrix AFP;
+	Matrix ENH,AFP;
 
 public:
     PTManager();
@@ -56,22 +56,18 @@ public:
     void setMatrixAFP(Matrix afp);
     Matrix getMatrixAFP();
     Matrix getResiduos();
+	void setENH();
+	Matrix getENH();
 
-    Matrix getENH();
-    Matrix getCol();
-    Matrix getLin();
-    PositionMatrix getColLin(int imageId, int pointId);
+
 	Matrix getColLin(string imageFilename);
 	bool connectImagePoints();
 	void setListPoint();
 
-	//deque<string> getStringPoints();
 	deque<string> getStringKeysPoints(string imageFileName="");
 	deque<string> getStringTypePoints(string imageFileName="");
 	deque<string> getStringIdPoints(string imageFileName="");
 	deque<string> getStringImages();
-
-
 
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
@@ -83,16 +79,6 @@ public:
 	BundleAdjustment* getBundleAdjustment();
 
 protected:
-    Matrix Col,Lin,ENH, BLC;
-
-    void setENH();
-    void setColLin();
-    void setBLC();
-
-    Matrix getBLC();
-    Matrix getOis();
-
-
 
 };
 
