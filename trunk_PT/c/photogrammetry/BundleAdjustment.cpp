@@ -1,26 +1,6 @@
 #include "BundleAdjustment.h"
 #include "Dms.h"
-/*
-pontos de controle
-  omega       phi         kappa       X0      Y0      Z0
-deltaOmega  deltaPhi    deltaKappa  deltaX0 deltaY0 deltaZ0
 
-pontos fotogrametricos
-0     0      0       X0     Y0     Z0
-0     0      0     deltaX deltaY deltaZ
-
-AFP
-1.7697356457    -0.7688118809   -1.1453517757   680604.933846218    7465090.87025837    1317.1186409173
-	0                   0               -0        -0.0000000032       -0.0000000013      -0.0000000094
-0.6647216963    -0.899885954    -1.7753587946   681317.250762181    7465080.89358158    1321.0706144451
-	-0           0.0000000001   0.0000000001       0.0000001227       -0.0000000023     -0.0000002349
-	0                   0               0       680541.006295581    7464680.17672666    11.3455967171
-	0                   0               0           0.0173889526        0.0038905975    -0.0043300409
-	0                   0               0       680931.229759843    7465299.79667213    68.8406838744
-	0                   0               0           -0.0035636276       0.6617979107    -2.4392336491
-
-15 iteraÃ§Ãµes e 4 mudanÃ§a de pesos
-*/
 #include <qdebug.h>
 
 #define MAXITERATIONS 10
@@ -1122,6 +1102,7 @@ Matrix BundleAdjustment::getSparseN11()
 		currentRows+=partial.getRows();
 	}
 	A1=result;
+	return A1;
 }
 
 /* setters and getters*/

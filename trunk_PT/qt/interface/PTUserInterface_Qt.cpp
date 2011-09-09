@@ -106,6 +106,9 @@ void PTUserInterface_Qt::init()
 	connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	
+	connect(leftImageTableWidget,SIGNAL(cellActivated(int,int)),SLOT(selectAllAppearances(int)));
+
+
 }
 
 void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
@@ -135,7 +138,7 @@ bool PTUserInterface_Qt::exec()
 	deque<string>  ids  = ptManager->getStringIdPoints();
 	deque<string> types = ptManager->getStringTypePoints();
 	deque<string> keys  = ptManager->getStringKeysPoints();
-	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";//<<"Column"<<"Row";
+	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";
 
 
 	updateImageTable("leftImage",leftImageString);
@@ -147,17 +150,17 @@ bool PTUserInterface_Qt::exec()
 		typePoints << QString(types.at(i).c_str());
 		keysPoints << QString(keys.at(i).c_str());
 	}
-	pointsTableWidget->putInColumn(idPoints,1);
-	pointsTableWidget->putInColumn(typePoints,2);
+	pointsTableWidget->putInColumn(idPoints,0);
+	pointsTableWidget->putInColumn(typePoints,1);
 	pointsTableWidget->putIn(pointsMatrix,0,2,'f',3);
-	pointsTableWidget->putInColumn(keysPoints,6);
+	pointsTableWidget->putInColumn(keysPoints,5);
 	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
 	pointsTableWidget->resizeTable();
 
 	updateImageTable("rightImage",rightImageString);
 
-	connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
-	connect(rightImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
+	//connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
+	//connect(rightImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
 	
 	this->show();
 	LoadingScreen::instance().close();
@@ -202,10 +205,13 @@ void PTUserInterface_Qt::fitView()
 
 void PTUserInterface_Qt::viewReport()
 {
+	QWidget *resultView = new QWidget();
+	resultView->setGeometry(resultView->x(),resultView->y(),1200,400);
+	QHBoxLayout *horizontalLayout= new QHBoxLayout();
 	//qDebug("Vendo Report");
-	QStringList afpHeaderLabels;
+	QStringList oeHeaderLabels;
 	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
-	afpHeaderLabels<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
 
 	QString iter="Iterations: ";
@@ -222,17 +228,54 @@ void PTUserInterface_Qt::viewReport()
 	infoLayout->addWidget(iterations);
 	infoLayout->addWidget(converged);
 
-	QWidget *afpView = new QWidget();
-    QHBoxLayout *horizontalLayout= new QHBoxLayout();
-	ETableWidget *afpTable=  new ETableWidget(ptManager->getMatrixAFP(),'f',5);
-    afpTable->setHorizontalHeaderLabels(afpHeaderLabels);
-	ETableWidget *residuosTable = new ETableWidget(ptManager->getResiduos(),'f',8);
-	residuosTable->setHorizontalHeaderLabels(QStringList(tr("Residuos")));
 
-	horizontalLayout->addWidget(afpTable);
-	horizontalLayout->addWidget(residuosTable);
-    horizontalLayout->setStretchFactor(afpTable,3);
-    horizontalLayout->setStretchFactor(residuosTable,1);
+	/**///tabela das OEs
+	QVBoxLayout *oeLayout= new QVBoxLayout();
+	ETableWidget *oeTable=  new ETableWidget();
+	QStringList imagesSelected;
+	deque<string> images=selectionImagesView->getSelectedItens();
+	for (int i=0;i<images.size();i++)
+		imagesSelected << QString(images.at(i).c_str());
+	oeTable->setColumnCount(7);
+	oeTable->putInColumn(imagesSelected,0);
+	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',5);
+	oeTable->setHorizontalHeaderLabels(oeHeaderLabels);
+	oeTable->setSortingEnabled(true);
+
+	oeLayout->addLayout(infoLayout);
+	oeLayout->addWidget(oeTable);
+	//infoLayout->setStretchFactor(oeTable,1);
+	horizontalLayout->addLayout(oeLayout);
+	/**/
+
+	/**///tabela dos pontos fotogrametricos
+
+	deque<string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
+	if (ids.size()!=0)
+	{
+		QVBoxLayout *phtgLayout= new QVBoxLayout();
+		QLabel *phtgLabel= new QLabel("<font size=5>Photogrammetric Points");
+		phtgLabel->setTextFormat(Qt::RichText);
+		phtgLabel->setAlignment(Qt::AlignHCenter);
+		ETableWidget *photogrammetricTable = new ETableWidget();
+		QStringList headerLabelsPoints,idsPhotogrammetric;//,leftImageIdPoints, rightImageIdPoints;
+		headerLabelsPoints<<"Id"<<"E"<<"N"<<"H";
+		Matrix pointsPhotogrametricMatrix=ptManager->getPhotogrammetricENH();
+		for (int i=0;i<ids.size();i++)
+			idsPhotogrammetric << QString(ids.at(i).c_str());
+		photogrammetricTable->setColumnCount(4);
+		photogrammetricTable->putInColumn(idsPhotogrammetric,0);
+		photogrammetricTable->putIn(pointsPhotogrametricMatrix,0,1,'f',4);
+		photogrammetricTable->setHorizontalHeaderLabels(headerLabelsPoints);
+		photogrammetricTable->resizeTable();
+		photogrammetricTable->setSortingEnabled(true);
+		phtgLayout->addWidget(phtgLabel);
+		phtgLayout->addWidget(photogrammetricTable);
+		horizontalLayout->addLayout(phtgLayout);
+		//horizontalLayout->setStretchFactor(photogrammetricTable,1);
+	}
+	/**/
+
 
 	QHBoxLayout *buttonsLayout= new QHBoxLayout();
 	QPushButton *acceptButton= new QPushButton(tr("Accept"));
@@ -241,18 +284,18 @@ void PTUserInterface_Qt::viewReport()
 	buttonsLayout->addWidget(discardButton);
 
 	QVBoxLayout *reportLayout= new QVBoxLayout;
-	reportLayout->addLayout(infoLayout);
+	//reportLayout->addLayout(infoLayout);
 	reportLayout->addLayout(horizontalLayout);
 	reportLayout->addLayout(buttonsLayout);
 
-	afpView->setLayout(reportLayout);
-    afpView->show();
+	resultView->setLayout(reportLayout);
+	resultView->show();
 
 	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
-	connect(acceptButton,SIGNAL(clicked()),afpView,SLOT(close()));
-	connect(discardButton, SIGNAL(clicked()),afpView,SLOT(close()));
+	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
+	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
 
-	afpView->setWindowModality(Qt::ApplicationModal);
+	resultView->setWindowModality(Qt::ApplicationModal);
 }
 
 bool PTUserInterface_Qt::calculatePT()
@@ -381,18 +424,25 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 		//qDebug()<<"chamou updateImageTable: "<< image << " : " << imageFilename;
 		leftImageTableWidget->clearContents();
 		leftImageTableWidget->setRowCount(0);
-		leftImageTableWidget->putInColumn(idImagesPoints,1);
-		leftImageTableWidget->putIn(imageColLin,0,1,'f',0);
-		leftImageTableWidget->putInColumn(keysImagePoints,4);
+		leftImageTableWidget->putInColumn(idImagesPoints,0);
+		leftImageTableWidget->putIn(imageColLin,0,1,'f',0);//,"QSpinBox",true,0,dim.getInt(1,1),dim.getInt(1,2));
+		leftImageTableWidget->putInColumn(keysImagePoints,3);
+		PositionMatrix dim=ptManager->getImageDimensions(leftImageString);
+		//dim.show();
+		//qDebug("col %f lin %f",dim.getInt(1,1),dim.get(2,1));
+		leftImageTableWidget->setColumnType(1,"QSpinBox",true,0,dim.get(1,1));
+		leftImageTableWidget->setColumnType(2,"QSpinBox",true,0,dim.get(2,1));
+
 		leftImageTableWidget->selectRow(findKeyAppearances("leftImageTable",QString::number(currentPointKey)));
 	}else if (image == "rightImage")
 	{
 		//qDebug()<<"chamou updateImageTable: "<< image << " : " << imageFilename;
 		rightImageTableWidget->clearContents();
 		rightImageTableWidget->setRowCount(0);
-		rightImageTableWidget->putInColumn(idImagesPoints,1);
-		rightImageTableWidget->putIn(imageColLin,0,1,'f',0);
-		rightImageTableWidget->putInColumn(keysImagePoints,4);
+		rightImageTableWidget->putInColumn(idImagesPoints,0);
+		//PositionMatrix dim=ptManager->getImageDimensions(leftImageString);
+		rightImageTableWidget->putIn(imageColLin,0,1,'f',0);//,"QSpinBox",false,0,);
+		rightImageTableWidget->putInColumn(keysImagePoints,3);
 		rightImageTableWidget->selectRow(findKeyAppearances("rightImageTable",QString::number(currentPointKey)));
 	}
 }
@@ -400,6 +450,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 {
 	bool ok;
+	qDebug("linha clicada: %d",tableRow);
 	int indexLeftSearched,indexRightSearched, indexPointsSearched;
 	if (sender()->objectName()==leftImageTableWidget->objectName())
 	{
@@ -430,27 +481,22 @@ void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 	pointsTableWidget->clearSelection();
 	rightImageTableWidget->clearSelection();
 
-	//qDebug()<<QApplication::focusWidget()->objectName();
 	if (indexLeftSearched>=0)
 	{
-		//leftImageTableWidget->setFocus(Qt::OtherFocusReason);
 		leftImageTableWidget->selectRow(indexLeftSearched);
 		leftImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexLeftSearched,3,indexLeftSearched,3),false);
-		//leftImageTableWidget->setFocusPolicy(Qt::FocusPolicy);
 	}
 	if (indexPointsSearched>=0)
 	{
-		//pointsTableWidget->setFocus(Qt::OtherFocusReason);
 		pointsTableWidget->selectRow(indexPointsSearched);
 		pointsTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexPointsSearched,5,indexPointsSearched,5),false);
 	}
 	if (indexRightSearched>=0)
 	{
-		//rightImageTableWidget->setFocus(Qt::OtherFocusReason);
 		rightImageTableWidget->selectRow(indexRightSearched);
 		rightImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexRightSearched,3,indexRightSearched,3),false);
 	}
-	//((QTableWidget*)sender())->setFocus();
+
 }
 // Se encontrar retorna o indice na tabela da key procurada senão retorna -1
 int PTUserInterface_Qt::findKeyAppearances(QString table, QString searched)

@@ -123,6 +123,9 @@
        <property name="toolTip">
         <string>Table with image's points</string>
        </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
        <property name="rowCount">
         <number>0</number>
        </property>
@@ -184,6 +187,9 @@ p, li { white-space: pre-wrap; }
       <widget class="ETableWidget" name="pointsTableWidget">
        <property name="toolTip">
         <string>Table with all points</string>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
        </property>
        <property name="rowCount">
         <number>0</number>
@@ -248,6 +254,9 @@ p, li { white-space: pre-wrap; }
       <widget class="ETableWidget" name="rightImageTableWidget">
        <property name="toolTip">
         <string>Table with image's points</string>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
        </property>
        <property name="rowCount">
         <number>0</number>

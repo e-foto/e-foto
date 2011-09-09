@@ -115,10 +115,30 @@ string PTManager::getImagefile(int imageId)
 
 bool PTManager::calculatePT()
 {
+	sortPointsSelected();
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
 	bool result=pt->calculate();
 	setMatrixAFP(pt->getAFP());
     return result;
+}
+
+PositionMatrix PTManager::getImageDimensions(string filename)
+{
+	for (int i=0;i<listAllImages.size();i++)
+	{
+		//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+		//qDebug("Antes %s",imageFileName.c_str());
+		if(listAllImages.at(i)->getFilename() == filename)
+		{
+			//qDebug("Achou %s",imageFileName.c_str());
+			Image *temp=listAllImages.at(i);
+			PositionMatrix dimensions(2,"");
+			qDebug("height:= %d",temp->getHeight());
+			dimensions.setInt(1,temp->getHeight());
+			dimensions.setInt(2,temp->getWidth());
+			return dimensions;
+		}
+	}
 }
 
 void PTManager::setMatrixAFP(Matrix afp)
@@ -126,7 +146,7 @@ void PTManager::setMatrixAFP(Matrix afp)
     AFP=afp;
 }
 
-Matrix PTManager::getMatrixAFP()
+Matrix PTManager::getMatrixOE()
 {
 	return AFP;
 }
@@ -193,6 +213,7 @@ bool PTManager::connectImagePoints()
 					}
 				}
 			}
+			listAllImages.at(j)->sortPoints();
 		}
 		return true;
 	}
@@ -425,4 +446,52 @@ int PTManager::getImageId(string imageFilename)
 		if(listAllImages.at(i)->getFilename() == imageFilename)
 			return listAllImages.at(i)->getId();
 	return -1;
+}
+
+void PTManager::sortPointsSelected()
+{
+	deque<Point *>listCtrl;
+	for(int i=0; i<listSelectedPoints.size() ;i++)
+	{
+		Point *pnt=listSelectedPoints.at(i);
+		if (pnt->is("ControlPoint"))
+			listCtrl.push_front(pnt);
+		else if (pnt->is("PhotogrammetricPoint"))
+			listCtrl.push_back(pnt);
+	}
+	listSelectedPoints=listCtrl;
+}
+
+// retorna o ENH dos pontos Fotogrammetricos
+Matrix PTManager::getPhotogrammetricENH()
+{
+	int points=listSelectedPoints.size();
+	Matrix enh(0,3);
+	for (int i=0;i<points;i++)
+	{
+		Point *pnt=listSelectedPoints.at(i);
+		if (pnt->is("PhotogrammetricPoint"))
+		{
+			ObjectSpaceCoordinate coor=pnt->getObjectCoordinate();
+			Matrix temp(1,3);
+			temp.set(1,1,coor.getX());
+			temp.set(1,2,coor.getY());
+			temp.set(1,3,coor.getZ());
+			enh=enh|temp;
+		}
+	}
+	return enh;
+}
+
+deque<string> PTManager::getSelectedPointIdPhotogrammetric()
+{
+	int points=listSelectedPoints.size();
+	deque<string> selected;
+	for (int i=0;i<points;i++)
+	{
+		Point *pnt=listSelectedPoints.at(i);
+		if (pnt->is("PhotogrammetricPoint"))
+			selected.push_back(pnt->getPointId());
+	}
+	return selected;
 }
