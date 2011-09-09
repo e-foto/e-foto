@@ -499,7 +499,7 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 
 			newTree();
 			// Inserido pelo Paulo 05/09/2011
-			actionFoto_Tri->setEnabled(availablePhotoTri());
+			//actionFoto_Tri->setEnabled(availablePhotoTri());
 		}
 		else
 		{

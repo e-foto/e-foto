@@ -54,7 +54,7 @@ public:
     bool exec();
     void returnProject();
     void setMatrixAFP(Matrix afp);
-    Matrix getMatrixAFP();
+	Matrix getMatrixOE();
     Matrix getResiduos();
 	void setENH();
 	Matrix getENH();
@@ -74,10 +74,14 @@ public:
 	// metodo para dar um update nas coordenadas digitais do pont
 	void updateDigitalCoordinatesPoint(int imageKey,int pointKey,int col, int lin);
 	int getImageId(string imageFilename);
+	PositionMatrix getImageDimensions(string filename);
 
 
 	BundleAdjustment* getBundleAdjustment();
+	void sortPointsSelected();
 
+	Matrix getPhotogrammetricENH();
+	deque<string> getSelectedPointIdPhotogrammetric();
 protected:
 
 };

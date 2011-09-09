@@ -229,12 +229,12 @@ void ETableWidget::focusInEvent(QFocusEvent *evento)
 {
 	if(evento->reason()==Qt::OtherFocusReason)
 	{
-		qDebug()<<"app call:: focus in";
+		//qDebug()<<"app call:: focus in";
 	}
 	else
 	{
 		QTableWidget::focusInEvent(evento);
-		qDebug()<<"outro motivo:: focus in "<<evento->reason();
+		//qDebug()<<"outro motivo:: focus in "<<evento->reason();
 	}
 }
 
@@ -244,18 +244,18 @@ void ETableWidget::focusOutEvent(QFocusEvent *evento)
 	{
 		evento->gotFocus();
 		//evento->
-		qDebug()<<"app call:: focus out";
+		//qDebug()<<"app call:: focus out";
 	}
 	else
 	{
-		qDebug()<<"outro motivo::focus out "<<evento->reason();
+		//qDebug()<<"outro motivo::focus out "<<evento->reason();
 		QTableWidget::focusOutEvent(evento);
 	}
 }
 
 void ETableWidget::enableAutoCopy(bool enable)
 {
-    //testado e até agora sem problemas
+    //testado e atÃ© agora sem problemas
     if(enable)
     {
         connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
@@ -303,7 +303,7 @@ void ETableWidget::updateModoValues(int modo)
     {
         setMode('f');
     }
-    else                    // caso em que um valor invalido é passado
+    else                    // caso em que um valor invalido Ã© passado
         setMode('f');
 
     updateTableValues(getMode(),getDecimals());
@@ -326,7 +326,7 @@ char ETableWidget::getMode()
 
 int ETableWidget::getDecimals()
 {
-    return decimals;
+	return decimals;
 }
 
 void ETableWidget::putIn(Matrix input, int row, int column, char mode, int precision)
@@ -340,47 +340,37 @@ void ETableWidget::putIn(Matrix input, int row, int column, char mode, int preci
 
 	setRowCount(newRows);
 	setColumnCount(newCols);
-	//qDebug("[%d,%d]",newRows,newCols);
-	for (int i=1;i<=input.getRows();i++)
+	for (int i=0;i<input.getRows();i++)
 	{
-		for(int j=1;j<=input.getCols();j++)
+		for(int j=0;j<input.getCols();j++)
 		{
-			QTableWidgetItem *temp= new QTableWidgetItem(QString::number(input.get(i,j),getMode(),getDecimals()));
+			QTableWidgetItem *temp= new QTableWidgetItem(QString::number(input.get(i+1,j+1),getMode(),getDecimals()));
 			temp->setTextAlignment(Qt::AlignCenter);
 			temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
 			//qDebug("set[%d,%d] = %.3f in [%d,%d]",i,j,input.get(i,j),i+row-1,j-1+column);
-			this->setItem(i+row-1,j+column-1,temp);
+			this->setItem(i+row,j+column,temp);
 		}
 	}
-	//resizeTable();
 }
 
-void ETableWidget::putInColumn(QStringList list, int column)
+void ETableWidget::putInColumn(QStringList list, int column)//, QString type, bool enable, PositionMatrix *limits)
 {
 	if(columnCount()<column)
-		setColumnCount(column);
+		setColumnCount(column+1);
 
-	//qDebug() << list;
-	//horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
-	//verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
 	setRowCount(list.size());
-
-	//qDebug("rows: %d \tcols: %d",rowCount(),columnCount());
 	for(int i=0;i<rowCount();i++)
 	{
-		if (item(i,column-1)==0)
+		if (item(i,column)==0)
 		{
 			QTableWidgetItem *temp= new QTableWidgetItem(list.at(i));
 			temp->setTextAlignment(Qt::AlignCenter);
 			temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
-			setItem(i,column-1,temp);
-			//qDebug("Nulo: [%d,%d]= %s",i,column,list.at(i).toStdString().c_str());
-		}else
-		{
-			//qDebug("Nao Nulo: [%d,%d]= %s",i,column,item(i,column)->text().toStdString().c_str());
+			setItem(i,column,temp);
+
 		}
 	}
-	//resizeTable();
+
 }
 
 void ETableWidget::putInRow(QStringList list, int row)
@@ -405,12 +395,12 @@ void ETableWidget::selectionBackground()
 {
 	if(!hasFocus())
 	{
-		//qDebug()<<"n�o tem focus mas a sele��o mudou "<<objectName();
+		//qDebug()<<"não tem focus mas a seleção mudou "<<objectName();
 		//this->updateMicroFocus();
 		//this->adjustSize();
 	}else
 	{
-		//qDebug()<<"Tem focus mas a sele��o mudou "<<objectName();
+		//qDebug()<<"Tem focus mas a seleção mudou "<<objectName();
 	}
 
 }
@@ -419,3 +409,46 @@ void ETableWidget::clearSelection()
 {
 	setRangeSelected(QTableWidgetSelectionRange(0,0,rowCount()-1,columnCount()-1),false);
 }
+
+void ETableWidget::setColumnType(int colIndex, QString type, bool enable, double minValue, double maxValue)
+{
+	int rows=rowCount();
+	bool ok;
+	if (type=="QSpinBox")
+	{
+		for (int i=0;i<rows;i++)
+		{
+			QSpinBox *spinBox= new QSpinBox();
+			spinBox->setAlignment(Qt::AlignHCenter);
+			spinBox->setButtonSymbols(QSpinBox::NoButtons);
+			spinBox->setEnabled(enable);
+			spinBox->setMinimum((int)minValue);
+			spinBox->setMaximum((int)maxValue);
+
+			if (item(i,colIndex)!=NULL)
+				spinBox->setValue(item(i,colIndex)->text().toInt(&ok));
+
+			//connect(spinBox,SIGNAL(valueChanged(int)),this,SIGNAL());
+			//connect(spinBox,SIGNAL())
+			this->setCellWidget(i,colIndex,spinBox);
+		}
+	}else if (type=="QDoubleSpinBox")
+	{
+		for (int i=0;i<rows;i++)
+		{
+			QDoubleSpinBox *doubleSpinBox= new QDoubleSpinBox();
+			doubleSpinBox->setAlignment(Qt::AlignHCenter);
+			doubleSpinBox->setButtonSymbols(QDoubleSpinBox::NoButtons);
+			doubleSpinBox->setEnabled(enable);
+			doubleSpinBox->setMinimum(minValue);
+			doubleSpinBox->setMaximum(maxValue);
+
+			if (item(i,colIndex)!=NULL)
+				doubleSpinBox->setValue(item(i,colIndex)->text().toDouble(&ok));
+
+
+			this->setCellWidget(i,colIndex,doubleSpinBox);
+		}
+	}
+}
+

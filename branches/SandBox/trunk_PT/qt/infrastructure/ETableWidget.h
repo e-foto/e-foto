@@ -29,6 +29,8 @@ public:
 	void putIn(Matrix input, int row, int column,char mode='e',int precision=6);
 	void putInColumn(QStringList list, int column);
 	void putInRow(QStringList list,int row);
+	void setColumnType(int colIndex,QString type="QSpinBox", bool enable=true, double minValue=0, double maxValue=100);
+
 
 	void clearSelection();
 	void setMode(char newMode);
