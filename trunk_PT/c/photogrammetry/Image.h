@@ -133,8 +133,9 @@ public:
     Point* getPoint(int pointId); // Get associated point at image by id.
     int countPoints(); // Inform the number of points associated the image.
     Point* getPointAt(unsigned int index); // Get associated point at image by index in deque for iterations.
+	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints
 
-    // EObject methods
+	// EObject methods
     //
     string objectType(void);
     string objectAssociations(void);
