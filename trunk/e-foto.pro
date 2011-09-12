@@ -20,8 +20,7 @@ DEPENDPATH += \
 			qt/imageDisplay \
 			qt/infrastructure \
 			qt/interface \
-			qt/resource \
-			sdl/infrastructure
+			qt/resource
 INCLUDEPATH += . \
 			c/control \
 			c/infrastructure \
@@ -34,23 +33,16 @@ INCLUDEPATH += . \
 			qt/imageDisplay \
 			qt/formDisplay \
 			qt/infrastructure \
-			qt/resource \
-			sdl/infrastructure
+			qt/resource
 unix {
 INCLUDEPATH += \
-			/usr/include/opencv \
-			/usr/include/SDL
+			/usr/include/opencv
 LIBS += \
 			-lGL \
 			-lGLU \
 			-lcv \
 			-lhighgui \
-			-lcvaux \
-			-lSDL \
-			-lSDL_image
-
-HEADERS += CommonSDLMethods.h
-SOURCES += CommonSDLMethods.cpp
+			-lcvaux
 }
 win32 {
 INCLUDEPATH += \
@@ -146,7 +138,7 @@ HEADERS +=	\
 			SWidgetQt.h \
 		\#	qt/infrastructure/
 			AboutForm.h \
-                        LoadingScreen.h \
+			LoadingScreen.h \
 			CommonQtMethods.h \
 			EfotoDoubleSpinBox.h \
 			ScienceSpinBox.h \
@@ -162,7 +154,7 @@ FORMS +=	\
 			FlightLayout.ui \
 			HeaderLayout.ui \
 			ImageLayout.ui \
-                        ImagesLayout.ui \
+			ImagesLayout.ui \
 			PointLayout.ui \
 			PointsLayout.ui \
 			SensorLayout.ui \
@@ -275,42 +267,42 @@ RESOURCES += \
 ABOUTDIR = qt/infrastructure/
 
 unix {
-        MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
-        #MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
-        MYREV = $$system(svnversion)
-        MYREV ~= s/[a-z]|[A-Z]/
-        CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
-                system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
-                system(sed -r s/Revision\ [0-9]{3}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revisão do AboutLayout
-                !build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-        }else{
-                !build_pass:message(Debug build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-        }
+		MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+		#MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
+		MYREV = $$system(svnversion)
+		MYREV ~= s/[a-z]|[A-Z]/
+		CONFIG(release, debug|release){    #Verifica se esta em modo RELEASE
+				system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+				system(sed -r s/Revision\ [0-9]{3}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revisão do AboutLayout
+				!build_pass:message(Release build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		}else{
+				!build_pass:message(Debug build! UNIX) # Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
+		}
 }
 
 win32 {
-        MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
-        MYDATA ~= s/\D/
-        MYYEAR  =$$member(MYDATA,0).
-        MYMONTH =$$member(MYDATA,1).
-        MYDAY   =$$member(MYDATA,2)
-        MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
+		MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
+		MYDATA ~= s/\D/
+		MYYEAR  =$$member(MYDATA,0).
+		MYMONTH =$$member(MYDATA,1).
+		MYDAY   =$$member(MYDATA,2)
+		MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
 
-      # MYDATA2 = $${MYDATA}
-      # MYDATA2 ~= s/^[0-9]{2}/ #Retira os dois primeiros digitos do Ano na data, ou seja, yy.mm.dd
+	  # MYDATA2 = $${MYDATA}
+	  # MYDATA2 ~= s/^[0-9]{2}/ #Retira os dois primeiros digitos do Ano na data, ou seja, yy.mm.dd
 
-        MYREV = $$system(subWCrev ../)
-        MYREV = $$find(MYREV, [0-9]{2}.)
+		MYREV = $$system(subWCrev ../)
+		MYREV = $$find(MYREV, [0-9]{2}.)
 		MYREV ~= s/\D/					# Pega tudo menos numeros(Non-digit)
-        MYREV ~= s/^[0-9]{3}/  #Elimina os três primeiros digitos
+		MYREV ~= s/^[0-9]{3}/  #Elimina os três primeiros digitos
 
-        CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
-               system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
+		CONFIG(release, debug|release){                     #Verifica se esta em modo RELEASE
+			   system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza o data do BUILD AboutLayout.ui com a data da compilaÃ§ao
 			   system(sed -r s/Revision\" \"[0-9]{3}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui) # atualiza a revisão do AboutLayout
-               !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)
-               }else{
-                       !build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)
-               }
+			   !build_pass:message(Release build! WIN32) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)
+			   }else{
+					   !build_pass:message(Debug build! WIN32) # Essa linha pode ser suprimida, isso só aparecerá na saida do compilador(Compile Output)
+			   }
 }
 
 #'usebackq' para poder usar aspas duplas(").
