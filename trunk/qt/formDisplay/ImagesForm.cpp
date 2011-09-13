@@ -11,41 +11,42 @@ ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
 
 void ImagesForm::fillvalues(string values)
 {
-    EDomElement ede(values);
-    int rows=ede.children().size();
+	EDomElement ede(values);
+	int rows=ede.children().size();
 	imagesTable->setRowCount(rows);
 
-    for (int i=0;i<rows;i++){
-        EDomElement ima=ede.children().at(i);
-        string tableParameter;
-        stringstream auxStream;
+	deque<EDomElement> imaChildren = ede.children();
+	for (int i=0;i<rows;i++){
+		string tableParameter;
+		stringstream auxStream;
 
-        auxStream << ima.elementByTagName("filePath").toString().c_str();
-        auxStream << "/";
-        auxStream << ima.elementByTagName("fileName").toString().c_str();
+		auxStream << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
+		auxStream << "/";
+		auxStream << imaChildren.at(i).elementByTagName("fileName").toString().c_str();
 
-        tableParameter = auxStream.str();
+		tableParameter = auxStream.str();
 
-        QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (ima.attribute("key").c_str()) );
-		QTableWidgetItem *idItem = new QTableWidgetItem(ima.elementByTagName("imageId").toString().c_str()) ;
+		QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (imaChildren.at(i).attribute("key").c_str()) );
+		QTableWidgetItem *idItem = new QTableWidgetItem(imaChildren.at(i).elementByTagName("imageId").toString().c_str()) ;
 		QTableWidgetItem *fileItem = new QTableWidgetItem(tableParameter.c_str());
 		keyItem->setTextAlignment(Qt::AlignCenter);
 		idItem->setTextAlignment(Qt::AlignCenter);
 
-        imagesTable->setItem(i,0,keyItem);
-        imagesTable->setItem(i,1,idItem);
+		imagesTable->setItem(i,0,keyItem);
+		imagesTable->setItem(i,1,idItem);
 		imagesTable->setItem(i,4,fileItem);
 	}
+	imaChildren.clear();
 }
 string ImagesForm::getvalues()
 {
-    string xmlString;
-    stringstream auxStream;
+	string xmlString;
+	stringstream auxStream;
 
-    auxStream << "\nNot Available\n";
+	auxStream << "\nNot Available\n";
 
-    xmlString = auxStream.str();
-    return xmlString;
+	xmlString = auxStream.str();
+	return xmlString;
 }
 
 void ImagesForm ::setReadOnly(bool state)
@@ -55,10 +56,10 @@ void ImagesForm ::setReadOnly(bool state)
 //emite o sinal da linha(row) correspondente a image key
 void ImagesForm :: emitSignal(int i)
 {
-    //int key=Conversion::stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
-    //emit clicked(key);
-    // Provisóriamente nós enviamos a posição da linha clicada e não a key efetivamente.
-    emit clicked(i);
+	//int key=Conversion::stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
+	//emit clicked(key);
+	// Provisóriamente nós enviamos a posição da linha clicada e não a key efetivamente.
+	emit clicked(i);
 }
 
 bool ImagesForm::isForm(string formName)
@@ -72,7 +73,7 @@ void ImagesForm::setIOsAvailable(string xmlIOs)
 
 	for (int i=0;i<imagesTable->rowCount();i++){
 		int key = imagesTable->item(i,0)->text().toInt();
-                EDomElement IOXml = ede.elementByTagAtt("imageIO","image_key",Conversion::intToString(key));
+				EDomElement IOXml = ede.elementByTagAtt("imageIO","image_key",Conversion::intToString(key));
 		QTableWidgetItem *IOItem = new QTableWidgetItem();
 		IOItem->setTextAlignment(Qt::AlignHCenter);
 		if(IOXml.getContent() != "")
@@ -97,7 +98,7 @@ void ImagesForm::setEOsAvailable(string xmlEOs)
 
 	for (int i=0;i<imagesTable->rowCount();i++){
 		int key = imagesTable->item(i,0)->text().toInt();
-                EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
+				EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
 		QTableWidgetItem *EOItem = new QTableWidgetItem();
 		EOItem->setTextAlignment(Qt::AlignHCenter);
 		if(EOXml.getContent() != "")

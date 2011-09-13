@@ -142,6 +142,8 @@ HEADERS +=	\
 			CommonQtMethods.h \
 			EfotoDoubleSpinBox.h \
 			ScienceSpinBox.h \
+			Dms.h \
+			DmsEdit.h \
 			SigmaForm.h \
 			TableIOEOWidget.h \
 		\#	qt/interface/
@@ -252,6 +254,8 @@ SOURCES += \
 			CommonQtMethods.cpp \
 			EfotoDoubleSpinBox.cpp \
 			ScienceSpinBox.cpp \
+			Dms.cpp \
+			DmsEdit.cpp \
 			SigmaForm.cpp \
 			TableIOEOWidget.cpp \
 		\#	qt/interface/
