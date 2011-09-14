@@ -72,7 +72,7 @@ public:
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
 	// metodo para dar um update nas coordenadas digitais do pont
-	void updateDigitalCoordinatesPoint(int imageKey,int pointKey,int col, int lin);
+	void updateDigitalCoordinatesPoint(int imageId,int pointKey,int col, int lin);
 	int getImageId(string imageFilename);
 	PositionMatrix getImageDimensions(string filename);
 
@@ -82,6 +82,10 @@ public:
 
 	Matrix getPhotogrammetricENH();
 	deque<string> getSelectedPointIdPhotogrammetric();
+
+	string getFilePath(string fileName);
+
+	void saveResults();
 protected:
 
 };

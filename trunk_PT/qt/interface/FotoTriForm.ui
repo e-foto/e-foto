@@ -20,6 +20,22 @@
      <height>16777215</height>
     </size>
    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <layout class="QVBoxLayout" name="leftVerticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="topLeftHorizontalLayout"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="rightVerticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="topRightHorizontalLayout"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

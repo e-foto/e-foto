@@ -589,7 +589,6 @@ bool EFotoManager::reloadProject()
 		}
 		if (spatialRessection != NULL)
 		{
-			qDebug("Ponteiro para a spatial ressection nao e nulo!!");
 			stopSR(spatialRessection->getId());
 		}
 		return project->reload();

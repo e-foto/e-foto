@@ -43,7 +43,7 @@ public:
     void setImageId(int newImageId);
     int getImageId();
 
-    // EObject methods
+	// EObject methods
     //
     string objectType(void);
     string objectAssociations(void);

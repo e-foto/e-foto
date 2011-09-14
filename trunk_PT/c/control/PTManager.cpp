@@ -230,7 +230,7 @@ void PTManager::setListPoint()
 		listAllPoints.push_back(point);
 	}
 }
-// retorna uma lista com os caminhos das imagens
+// retorna uma lista com os nomes das imagens
 deque<string> PTManager::getStringImages()
 {
 	deque<string> list;
@@ -238,6 +238,18 @@ deque<string> PTManager::getStringImages()
 	for (int i=0;i<numImages;i++)
 		list.push_back(listAllImages.at(i)->getFilename());
 	return list;
+}
+
+string PTManager::getFilePath(string fileName)
+{
+	int numImages=listAllImages.size();
+	for (int i=0;i<numImages;i++)
+		if(listAllImages.at(i)->getFilename()==fileName)
+		{
+			string file = listAllImages.at(i)->getFilepath() + "/" +fileName;
+			return file;
+		}
+	return "";
 }
 
 deque<string> PTManager::getStringTypePoints(string imageFileName)
@@ -431,11 +443,18 @@ Matrix PTManager::getColLin(string imageFilename)
 }
 
 //Faz um update das coordenadas digitais do ponto 'pointKey' na imagem 'imageKey'
-void PTManager::updateDigitalCoordinatesPoint(int imageKey, int pointKey, int col, int lin)
+void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey, int col, int lin)
 {
 	Point *pnt=efotoManager->instancePoint(pointKey);
-	pnt->getDigitalCoordinate(imageKey).setCol(col);
-	pnt->getDigitalCoordinate(imageKey).setLin(lin);
+	DigitalImageSpaceCoordinate temp= pnt->getDigitalCoordinate(imageId);
+	temp.setCol(col);
+	temp.setLin(lin);
+
+	pnt->getDigitalCoordinate(imageId).setCol(col);
+	pnt->deleteDigitalCoordinate(imageId);
+	pnt->putDigitalCoordinate(temp);
+
+	//qDebug("updateDigitalCoordinates:%dx%d %s->col: %d lin: %d",col,lin,pnt->getPointId().c_str(),pnt->getDigitalCoordinate(imageId).getCol(),pnt->getDigitalCoordinate(imageId).getLin());
 }
 
 // Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
@@ -494,4 +513,20 @@ deque<string> PTManager::getSelectedPointIdPhotogrammetric()
 			selected.push_back(pnt->getPointId());
 	}
 	return selected;
+}
+
+void PTManager::saveResults()
+{
+	EDomElement newXml(efotoManager->xmlGetData());
+	for (int i=0; i<listSelectedImages.size(); i++)
+	{
+		Image *myImage= listSelectedImages.at(i);
+		for (int j = 0; j < myImage->countPoints(); j++)
+		{
+			int currentPointId = myImage->getPointAt(j)->getId();
+			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
+		}
+	}
+	efotoManager->xmlSetData(newXml.getContent());
+	efotoManager->setSavedState(false);
 }
