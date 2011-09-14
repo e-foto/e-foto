@@ -9,6 +9,7 @@
 #include <QShortcut>
 #include <QMessageBox>
 #include <QDesktopWidget>
+#include <QProgressBar>
 
 #include "EDomValidator.h"
 
@@ -968,6 +969,8 @@ bool ProjectUserInterface_Qt::exec()
 {
 	actionSave_file->setEnabled(!manager->getSavedState());
 	actionFoto_Tri->setEnabled(availablePhotoTri());
+	//PAULO -> codigo para dar um refresh no formulario
+	updateCurrentForm();
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
@@ -1176,7 +1179,8 @@ void ProjectUserInterface_Qt::viewImages()
 	{
 		imagesForm.setEOsAvailable(node3.getContent());
 	}
-
+	int height=(imagesForm.imagesTable->rowCount()+2)*imagesForm.imagesTable->rowHeight(0)+imagesForm.label->height()+imagesForm.importButton->height();
+	imagesForm.setMinimumSize(imagesForm.imagesTable->width(),height);
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
@@ -1248,7 +1252,8 @@ void ProjectUserInterface_Qt::viewPoints()
 	centerArea.setCurrentIndex(6);
 	currentForm = &pointsForm;
 	currentForm->setReadOnly(true);
-
+	int height=(pointsForm.pointsTable->rowCount()+2)*pointsForm.pointsTable->rowHeight(0)+pointsForm.importButton->height()+pointsForm.label->height();
+	pointsForm.setMinimumSize(pointsForm.pointsTable->width(),height);
 	debuggerTextEdit->clear();
 	debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
 	debuggerTextEdit->setReadOnly(true);
@@ -2014,6 +2019,8 @@ QString ProjectUserInterface_Qt::getSavedIn()
 void ProjectUserInterface_Qt::importPointsFromTxt()
 {
 	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	if(importFileName=="")
+		return;
 	QFile *importFile = new QFile(importFileName);
 	QStringList pointsList;
 
@@ -2026,17 +2033,35 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 		//pointsList << aux.left(aux.lastIndexOf('\n'));
 		pointsList << aux.remove('\n');
 	}
-
 	importFile->close();
 
-	for (int i=0; i<pointsList.length();i++)
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	QPushButton cancelButton("Cancel");
+	loading.setRange(0,pointsList.size());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Loading Points"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
 	{
+		loading.setFormat(tr("%v/%m : %p%"));
+		loading.setValue(i+1);
 		EDomElement newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId(),i+1);
 		if ( newPointXML.hasTagName("pointId") )
 		{
 			manager->addComponent(newPointXML.getContent().data(),"points");
 		}
 	}
+	loadWidget->close();
 	updateTree();
 	viewPoints();
 	actionSave_file->setEnabled(true);
@@ -2048,10 +2073,12 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 {
 	stringstream aux;
 	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField, newXml;
+	QStringList fields= point.split("\t");
 // check	control	 tie
-	if (point.split("\t").length() == 7)
+	if (fields.length() == 7)
 	{
-		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+
+		gcpIdField = fields.at(0).toStdString().c_str();
 		/*
 		typeField = point.split("\t").at(1).toStdString().c_str();
 		if(typeField == "Tie")
@@ -2061,18 +2088,18 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		else if (typeField== "Check")
 			typePoint="verification";
 */
-		eField = point.split("\t").at(1).toStdString().c_str();
-		nField = point.split("\t").at(2).toStdString().c_str();
-		hField = point.split("\t").at(3).toStdString().c_str();
-		dEField = point.split("\t").at(4).toStdString().c_str();
-		dNField = point.split("\t").at(5).toStdString().c_str();
-		dHField = point.split("\t").at(6).toStdString().c_str();
+		eField = fields.at(1).toStdString();
+		nField = fields.at(2).toStdString();
+		hField = fields.at(3).toStdString();
+		dEField = fields.at(4).toStdString();
+		dNField = fields.at(5).toStdString();
+		dHField = fields.at(6).toStdString();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+		aux << "<pointId>" << gcpIdField << "</pointId>\n";
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
-		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+		aux << "<gml:pos>" << eField << " " << nField << " " << hField << "</gml:pos>\n";
 		aux << "<sigma>\n";
 		aux << "<mml:matrix>\n";
 		aux << "<mml:matrixrow>\n";
@@ -2093,8 +2120,8 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 	}
 	else if (point.split("\t").length() == 4)
 	{
-		gcpIdField = point.split("\t").at(0).toStdString().c_str();
-		gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		//gcpIdField = point.split("\t").at(0).toStdString().c_str();
+		gcpIdField = fields.at(0).toStdString();
 		/*
 		typeField = point.split("\t").at(1).toStdString().c_str();
 		if(typeField == "Tie")
@@ -2104,15 +2131,15 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		else if (typeField== "Check")
 			typePoint="verification";
 */
-		eField = point.split("\t").at(1).toStdString().c_str();
-		nField = point.split("\t").at(2).toStdString().c_str();
-		hField = point.split("\t").at(3).toStdString().c_str();
+		eField = fields.at(1).toStdString();
+		nField = fields.at(2).toStdString();
+		hField = fields.at(3).toStdString();
 
 		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-		aux << "<pointId>" << gcpIdField.c_str() << "</pointId>\n";
+		aux << "<pointId>" << gcpIdField << "</pointId>\n";
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
-		aux << "<gml:pos>" << eField.c_str() << " " << nField.c_str() << " " << hField.c_str() << "</gml:pos>\n";
+		aux << "<gml:pos>" << eField << " " << nField << " " << hField << "</gml:pos>\n";
 		aux << "<sigma>Not Available</sigma>\n";
 		aux << "</spatialCoordinates>\n";
 		aux << "<imagesMeasurements>\n";
@@ -2133,16 +2160,37 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 void ProjectUserInterface_Qt::exportPointsToTxt()
 {
 	QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
+	if (fileSaveName=="")
+		return;
 	QFile *exportFileName= new QFile(fileSaveName);
 	exportFileName->setFileName(fileSaveName);
 	exportFileName->open(QIODevice::WriteOnly);
 
 	EDomElement points(manager->getXml("points").c_str());
 
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	QPushButton cancelButton("Cancel");
+	loading.setRange(0,points.children().size());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Exporting Points"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
 	for (int i=1; i<=points.children().size(); i++)
 	{
+		loading.setFormat(tr("Point %v/%m : %p%"));
+		loading.setValue(i);
 		exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
 	}
+	loadWidget->close();
 	exportFileName->close();
 }
 
@@ -2258,6 +2306,8 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
 {
 	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	if(importFileName=="")
+		return;
 	QFile *importFile = new QFile(importFileName);
 	QStringList pointsList;
 
@@ -2272,9 +2322,30 @@ void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
 
 	importFile->close();
 
-	for (int i=0; i<pointsList.length();i++)
-		if(!insertDigitalCoordinates(pointsList.at(i)))
-			QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	QPushButton cancelButton("Cancel");
+	loading.setRange(0,pointsList.length());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Loading Digitals Coordinates"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	for (int i=0; i<pointsList.length() ;i++)
+	{
+			loading.setFormat(tr("Coordinate %v/%m : %p%"));
+			loading.setValue(i+1);
+			if(!insertDigitalCoordinates(pointsList.at(i)))
+				QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
+	}
+	loadWidget->close();
 	updateTree();
 	viewPoints();
 	actionSave_file->setEnabled(true);
@@ -2313,4 +2384,25 @@ bool ProjectUserInterface_Qt::availablePhotoTri()
 	if(images.children().size()==ois.children().size())
 		return true;
 	return false;
+}
+
+void ProjectUserInterface_Qt::updateCurrentForm()
+{
+	if(currentForm!=NULL)
+		if (currentForm== &headerForm)
+			viewHeader();
+		else if (currentForm==&terrainForm)
+			viewTerrain();
+		else if (currentForm==&sensorForm)
+			viewSensor(currentItemId);
+		else if (currentForm==&flightForm)
+			viewFlight(currentItemId);
+		else if (currentForm==&imagesForm)
+			viewImages();
+		else if (currentForm==&imageForm)
+			viewImage(currentItemId);
+		else if (currentForm==&pointsForm)
+			viewPoints();
+		else if (currentForm==&pointForm)
+			viewPoint(currentItemId);
 }

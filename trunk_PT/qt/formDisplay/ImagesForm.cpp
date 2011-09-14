@@ -11,31 +11,32 @@ ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
 
 void ImagesForm::fillvalues(string values)
 {
-    EDomElement ede(values);
-    int rows=ede.children().size();
+	EDomElement ede(values);
+	int rows=ede.children().size();
 	imagesTable->setRowCount(rows);
 
-    for (int i=0;i<rows;i++){
-        EDomElement ima=ede.children().at(i);
-        string tableParameter;
-        stringstream auxStream;
+	deque<EDomElement> imaChildren = ede.children();
+	for (int i=0;i<rows;i++){
+		string tableParameter;
+		stringstream auxStream;
 
-        auxStream << ima.elementByTagName("filePath").toString().c_str();
-        auxStream << "/";
-        auxStream << ima.elementByTagName("fileName").toString().c_str();
+		auxStream << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
+		auxStream << "/";
+		auxStream << imaChildren.at(i).elementByTagName("fileName").toString().c_str();
 
-        tableParameter = auxStream.str();
+		tableParameter = auxStream.str();
 
-        QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (ima.attribute("key").c_str()) );
-		QTableWidgetItem *idItem = new QTableWidgetItem(ima.elementByTagName("imageId").toString().c_str()) ;
+		QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (imaChildren.at(i).attribute("key").c_str()) );
+		QTableWidgetItem *idItem = new QTableWidgetItem(imaChildren.at(i).elementByTagName("imageId").toString().c_str()) ;
 		QTableWidgetItem *fileItem = new QTableWidgetItem(tableParameter.c_str());
 		keyItem->setTextAlignment(Qt::AlignCenter);
 		idItem->setTextAlignment(Qt::AlignCenter);
 
-        imagesTable->setItem(i,0,keyItem);
-        imagesTable->setItem(i,1,idItem);
+		imagesTable->setItem(i,0,keyItem);
+		imagesTable->setItem(i,1,idItem);
 		imagesTable->setItem(i,4,fileItem);
 	}
+	imaChildren.clear();
 }
 string ImagesForm::getvalues()
 {

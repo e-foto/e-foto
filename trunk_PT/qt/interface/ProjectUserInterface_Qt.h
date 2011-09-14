@@ -148,7 +148,7 @@ public slots:
 	//void exportImagesToTxt();
 
 	void importDigitalCoordinatesFromTxt();
-
+	void updateCurrentForm();
 };
 
 #endif // PROJECTUSERINTERFACE_QT_H

@@ -7,6 +7,7 @@
 #include "LoadingScreen.h"
 #include "ETableWidget.h"
 #include "WindowsSelectPage.h"
+#include "StereoService.h"
 
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
@@ -17,12 +18,22 @@ protected:
     PTUserInterface_Qt(PTManager* manager,QWidget* parent=0, Qt::WindowFlags fl = Qt::Window);
     ~PTUserInterface_Qt();
 
+	//StereoView *viewStereo;
+	MonoDisplay *leftDisplay;
+	MonoDisplay *rightDisplay;
+	MonoView *leftView;
+	MonoView *rightView;
+
+	QLabel *leftCoordinatesInfoLabel;
+	QLabel *rightCoordinatesInfoLabel;
+
 	ETableWidget *tableImageLeft;
 	ETableWidget *tableImageRight;
     PTManager *ptManager;
     void closeEvent(QCloseEvent *event);
 
 	int currentPointKey;
+
 	string leftImageString;
 	string rightImageString;
 	QStringList listAllImages;// contem os file name das imagens
@@ -55,6 +66,9 @@ public slots:
 	void updateImagesList(QString imageFilename);
 	void selectAllAppearances(int index);
 	int findKeyAppearances(QString table, QString searched);
+
+	void imageClicked(QPointF* pixel);
+	void updateCoordinatesInfo(QPointF* pixel);
 	void updateMark(string image,int imageKey, int pointKey, int col, int lin);
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	//void updatePoint(QTableWidgetItem * item);
