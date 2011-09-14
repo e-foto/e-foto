@@ -209,6 +209,9 @@ public:
 	void updateCoordFotog();
 
 	Matrix getSparseN11();
+
+	//imprime todas as imagens com seus pontos
+	void printAll();
 };
 
 #endif // BUNDLEADJUSTMENT_H

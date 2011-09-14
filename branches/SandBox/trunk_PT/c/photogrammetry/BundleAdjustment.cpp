@@ -41,6 +41,7 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
 	userInitialValues= false;
+	printAll();
 }
 
 int BundleAdjustment::numberOfEquations()
@@ -1212,4 +1213,24 @@ void BundleAdjustment::setUserInitialValues(Matrix initialValues)
 
 }
 
-//void BundleAdjustment::
+void BundleAdjustment::printAll()
+{
+	int numImages=listImages.size();
+	for (int i=0;i<numImages;i++)
+	{
+		Image *img=listImages.at(i);
+		printf("%s:\n",img->getFilename().c_str());
+		int numPoints=img->countPoints();
+		for (int j=0; j<numPoints;j++)
+		{
+			Point *pnt=img->getPointAt(j);
+			int col=pnt->getDigitalCoordinate(img->getId()).getCol();
+			int lin=pnt->getDigitalCoordinate(img->getId()).getLin();
+			printf("\t%s: col: %d lin %d\n",pnt->getPointId().c_str(),col,lin);
+		}
+		printf("\n");
+	}
+}
+
+
+

@@ -21,12 +21,12 @@ AbstractDigitalCoordinate::~AbstractDigitalCoordinate()
  */
 void AbstractDigitalCoordinate::setCol(int newCol)
 {
-    col = newCol;
+	col = newCol;
 }
 
 /**
  * Set the value of lin
- * @param newEta the new value of lin
+ * @param newLin the new value of lin
  */
 void AbstractDigitalCoordinate::setLin(int newLin)
 {

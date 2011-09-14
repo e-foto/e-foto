@@ -63,7 +63,8 @@ HEADERS += EFotoManager.h \
     IOManager.h \
     ProjectManager.h \
     SRManager.h \
-    PTManager.h \ # c/imageDisplay/
+	PTManager.h \
+	# c/imageDisplay/
     AbstractSWidget.h \
     GLMethods.h \
     SExhibition.h \
@@ -71,11 +72,15 @@ HEADERS += EFotoManager.h \
     SMark.h \
     SMarker.h \
     STile.h \
-    SViewport.h \ # c/infrastructure/
+	SViewport.h \
+	# c/infrastructure/
     AbstractAnalogCoordinate.h \
     AbstractDigitalCoordinate.h \
     CommonMethods.h \
     Coordinate.h \
+	Dms.h \
+	ConvertionsSystems.h \
+	GeoSystem.h \
     EDom.h \
     EDomValidator.h \
     EObject.h \
@@ -83,11 +88,13 @@ HEADERS += EFotoManager.h \
     ETreeModel.h \
     Matrix.h \
     PositionMatrix.h \
-    RectSupport.h \ # c/interface
+	RectSupport.h \
+	# c/interface
     IOUserInterface.h \
     ProjectUserInterface.h \
     SRUserInterface.h \
-    PTUserInterface.h \ # c/photogrammetry/
+	PTUserInterface.h \
+	# c/photogrammetry/
     AnalogFiductialMark.h \
     AnalogImageSpaceCoordinate.h \
     BundleAdjustment.h \
@@ -111,15 +118,18 @@ HEADERS += EFotoManager.h \
     SensorWithKnowDimensions.h \
     SensorWithKnowParameters.h \
     SpatialRessection.h \
-    Terrain.h \ # c/xml_definitions/
+	Terrain.h \
+	# c/xml_definitions/
     XMLAerial.h \
     XMLFlight.h \
     XMLProjectHeader.h \
     XMLSensor.h \
     XMLSensorWithFiducialMarks.h \
     XMLTerrain.h \
-    XmlUpdater.h \ # cv/infrastructure/
-    CommonCVMethods.h \ # qt/formDisplay
+	XmlUpdater.h \
+	# cv/infrastructure/
+	CommonCVMethods.h \
+	# qt/formDisplay
     AbstractForm.h \
     ControlButtons.h \
     FlightForm.h \
@@ -129,25 +139,31 @@ HEADERS += EFotoManager.h \
     PointForm.h \
     PointsForm.h \
     SensorForm.h \
-    TerrainForm.h \ # qt/imageDisplay
+	TerrainForm.h \
+	# qt/imageDisplay
     ImageView.h \
-    SWidgetQt.h \ # qt/infrastructure/
+	SWidgetQt.h \
+	AbstractDisplay.h \
+	StereoService.h \
+	StereoDisplay.h \
+	RasterResource.h \
+	Geometry.h \
+	View.h \
+	# qt/infrastructure/
     AboutForm.h \
     LoadingScreen.h \
     CommonQtMethods.h \
     EfotoDoubleSpinBox.h \
     ScienceSpinBox.h \
     SigmaForm.h \
-	ETableWidget.h \ # qt/interface/
+	ETableWidget.h \
+	DmsEdit.h \
+	WindowsSelectPage.h \
+	# qt/interface/
     IOUserInterface_Qt.h \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
-    PTUserInterface_Qt.h \
-    c/infrastructure/Dms.h \
-    c/infrastructure/ConvertionsSystems.h \
-    c/infrastructure/GeoSystem.h \
-    qt/infrastructure/DmsEdit.h \
-	qt/infrastructure/WindowsSelectPage.h
+	PTUserInterface_Qt.h
 
 # qt/formDisplay/
 FORMS += FlightLayout.ui \
@@ -158,9 +174,11 @@ FORMS += FlightLayout.ui \
     PointLayout.ui \
     PointsLayout.ui \
     SensorLayout.ui \
-    TerrainLayout.ui \ # qt/infrastructure/
+	TerrainLayout.ui \
+	# qt/infrastructure/
     AboutLayout.ui \
-    LoadingScreen.ui \ # qt/interface/
+	LoadingScreen.ui \
+	# qt/interface/
     FormProject.ui \
     IOForm.ui \
     SRForm.ui \
@@ -171,7 +189,8 @@ SOURCES += EFotoManager.cpp \
     IOManager.cpp \
     ProjectManager.cpp \
     SRManager.cpp \
-    PTManager.cpp \ # c/imageDisplay/
+	PTManager.cpp \
+	# c/imageDisplay/
     AbstractSWidget.cpp \
     GLMethods.cpp \
     SExhibition.cpp \
@@ -179,23 +198,29 @@ SOURCES += EFotoManager.cpp \
     SMark.cpp \
     SMarker.cpp \
     STile.cpp \
-    SViewport.cpp \ # c/infrastructure/
+	SViewport.cpp \
+	# c/infrastructure/
     AbstractAnalogCoordinate.cpp \
     AbstractDigitalCoordinate.cpp \
     CommonMethods.cpp \
     Coordinate.cpp \
+	ConvertionsSystems.cpp \
+	Dms.cpp \
     EDom.cpp \
     EDomValidator.cpp \
     EObject.cpp \
     EParser.cpp \
     ETreeModel.cpp \
+	GeoSystem.cpp \
     Matrix.cpp \
     PositionMatrix.cpp \
-    RectSupport.cpp \ # c/interface/
+	RectSupport.cpp \
+	# c/interface/
     IOUserInterface.cpp \
     ProjectUserInterface.cpp \
     SRUserInterface.cpp \
-    PTUserInterface.cpp \ # photogrammetry/
+	PTUserInterface.cpp \
+	# photogrammetry/
     AnalogFiductialMark.cpp \
     AnalogImageSpaceCoordinate.cpp \
     BundleAdjustment.cpp \
@@ -219,15 +244,18 @@ SOURCES += EFotoManager.cpp \
     SensorWithKnowDimensions.cpp \
     SensorWithKnowParameters.cpp \
     SpatialRessection.cpp \
-    Terrain.cpp \ # c/xml_definitions/
+	Terrain.cpp \
+	# c/xml_definitions/
     XMLAerial.cpp \
     XMLFlight.cpp \
     XMLProjectHeader.cpp \
     XMLSensor.cpp \
     XMLSensorWithFiducialMarks.cpp \
     XMLTerrain.cpp \
-    XmlUpdater.cpp \ # cv/infrastructure/
-    CommonCVMethods.cpp \ # qt/formDisplay/
+	XmlUpdater.cpp \
+	# cv/infrastructure/
+	CommonCVMethods.cpp \
+	# qt/formDisplay/
     ControlButtons.cpp \
     FlightForm.cpp \
     HeaderForm.cpp \
@@ -236,26 +264,32 @@ SOURCES += EFotoManager.cpp \
     PointForm.cpp \
     PointsForm.cpp \
     SensorForm.cpp \
-    TerrainForm.cpp \ # qt/imageDisplay/
+	TerrainForm.cpp \
+	# qt/imageDisplay/
     ImageView.cpp \
-    SWidgetQt.cpp \ # qt/infrastructure/
+	SWidgetQt.cpp \
+	AbstractDisplay.cpp \
+	StereoService.cpp \
+	StereoDisplay.cpp \
+	RasterResource.cpp \
+	Geometry.cpp \
+	View.cpp \
+	# qt/infrastructure/
     AboutForm.cpp \
     LoadingScreen.cpp \
     CommonQtMethods.cpp \
-    EfotoDoubleSpinBox.cpp \
+	DmsEdit.cpp \
+	ETableWidget.cpp \
+	EfotoDoubleSpinBox.cpp \
     ScienceSpinBox.cpp \
     SigmaForm.cpp \
-	ETableWidget.cpp \ # qt/interface/
+	WindowsSelectPage.cpp \
+	# qt/interface/
     IOUserInterface_Qt.cpp \
     main.cpp \
     ProjectUserInterface_Qt.cpp \
     SRUserInterface_Qt.cpp \
-    PTUserInterface_Qt.cpp \
-    c/infrastructure/Dms.cpp \
-    c/infrastructure/ConvertionsSystems.cpp \
-    c/infrastructure/GeoSystem.cpp \
-    qt/infrastructure/DmsEdit.cpp \
-	qt/infrastructure/WindowsSelectPage.cpp
+	PTUserInterface_Qt.cpp
 
 # qt/resource/
 RESOURCES += resource.qrc
