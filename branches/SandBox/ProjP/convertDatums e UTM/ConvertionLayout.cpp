@@ -51,7 +51,7 @@ ConvertionsLayout::ConvertionsLayout(QWidget* parent)
 
     connect(latGeotoUtmDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
     connect(longGeotoUtmDmsEdit,SIGNAL(textChanged(QString)),this,SLOT(convertGeoUtmSystems()));
-    connect(mCGeoToUtmDoubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(convertGeoUtmSystems()));
+    //connect(mCGeoToUtmDoubleSpinBox,SIGNAL(valueChanged(double)),this,SLOT(convertGeoUtmSystems()));
 
 
     // UTM to Geo
