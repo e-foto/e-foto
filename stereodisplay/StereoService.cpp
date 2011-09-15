@@ -8,7 +8,7 @@ StereoService::~StereoService()
 }
 MonoDisplay* StereoService::getMonoDisplay(QWidget *parent, MonoView *currentView)
 {
-        return new MonoDisplay(parent,currentView);
+	return new MonoDisplay(parent,currentView);
 }
 DetailDisplay* StereoService::getDetailDisplay(MonoDisplay *parent)
 {
@@ -24,7 +24,7 @@ StereoDisplay* StereoService::getStereoDisplay(QWidget *parent, StereoView *curr
 }
 MonoView* StereoService::getMonoView(QObject* parent, QString filepath)
 {
-        return new MonoView(parent,filepath);
+	return new MonoView(parent,filepath);
 }
 StereoView* StereoService::getStereoView(QObject* parent, QString leftImageFilepath, QString rightImageFilepath)
 {
