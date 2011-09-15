@@ -84,91 +84,6 @@ Matrix ConvertionsSystems::getMatrixR(double phi, double lambda)
 Matrix ConvertionsSystems::geoToUtmFran(double phi, double lambda, double haltura, GeoSystem system, char hemi, char side)
 {
 
-	/*
-//wgs-84
-	double a=6378137;
-	double f=3.352811e-3;//066474e-3;
-	double b=a*(1-f);
-//clarke 1866
-	double k0=0.9996;
-	//double a=6378206.4;
-	//double f=1/294.978698;
-	//double a=6378388;
-	//double f=1/297;
-
-   // double b=a*(1-f);
-	double e2=(a*a-b*b)/(a*a);
-
-	Dms lamb0;
-	Dms oneSecond(0,0,1);
-	double sin1=sin(oneSecond.dmsToRadiano());
-	double inteiro;
-	modf(lamb0.radianoToDegreeDecimal(lambda)/6, &inteiro);
-
-	//qDebug("%d",inteiro);
-	int lambda0=(inteiro)*6+3;
-	//int lambda0=(lamb0.radianoToDegreeDecimal(lambda)/6 )*6+3;
-
-	double el2=e2/(1-e2);
-	double v=a/(sqrt(1-e2*pow(sin(phi),2)));
-
-	double A=1 + 3*e2/4 + 45*pow(e2,2)/64 + 175*pow(e2,3)/256 + 11025*pow(e2,4)/16384 + 43659*pow(e2,5)/65536;
-	double B=   (3*e2/4 + 15*pow(e2,2)/16 + 525*pow(e2,3)/512 + 2205*pow(e2,4)/2048 + 72765*pow(e2,5)/65536)/2;
-	double C=            (15*pow(e2,2)/64 + 105*pow(e2,3)/256 + 2205*pow(e2,4)/4096 + 10395*pow(e2,5)/16384)/4;
-	double D=                               (35*pow(e2,3)/512 + 315*pow(e2,4)/2048 + 31185*pow(e2,5)/131072)/6;
-	double E2=                                                  (315*pow(e2,4)/16384 + 3465*pow(e2,5)/65536)/8;
-	double F=                                                                         (693*pow(e2,5)/131072)/10;
-
-	double S=a*(1-e2)*(A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E2*sin(8*phi) - F*sin(10*phi) );
-
-	double I=S*k0;// Ko=0.9996
-	double II  = (v*sin(phi)*pow(sin1,2)*cos(phi)*k0*1e8)/2;
-	double III = v*sin(phi)*pow(sin1,4)*pow(cos(phi),3)* (5 - pow(tan(phi),2) + 9*el2*pow(cos(phi),2) + 4*pow(el2,2)*pow(cos(phi),4) ) *k0*1e16/24;
-	double IV  = v*cos(phi)*k0;//*1e4*sin1;
-	//double V   = (v*pow(cos(phi),3)/**pow(sin1,3)*//*(1 - pow(tan(phi),2) + el2*pow(cos(phi),2) )*k0)/6;
-	double V   = (v*pow(cos(phi),3)*pow(sin1,3)*(1 - pow(tan(phi),2) + el2*pow(cos(phi),2) )*k0)/6;
-
-	//qDebug("v = %f",v);
-
-	double dlambda=(lambda-Dms::degreeDecimalToRadiano(lambda0));
-
-	double p=0.0001*fabs(dlambda)*3600*180/(M_PI);
-
-	//qDebug("p= %f",p);
-
-	double A6=pow(sin1,6)*pow(p,6)*(v*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
-	double B5=pow(sin1,5)*pow(p,5)*(v*pow(cos(phi),5))*(5 - 18*pow(tan(phi),2) + pow(tan(phi),4) + 14*el2*pow(cos(phi),2) - 58*el2*pow(sin(phi),2) )*k0*1e20/120;
-
-	double Nl=I+II*pow(p,2)+III*pow(p,4)+A6;
-	double q=Dms::radianoToDegreeDecimal(dlambda)*M_PI/180;
-
-	//qDebug("q = %f",q);
-	//qDebug("IV = %f",IV);
-	//qDebug("V = %f",V);
-
-	double El=IV*q+V*pow(q,3);//+B5;-201821,819682498475+0,000042532615327860497751625
-
-	double N;
-	if (hemi=='s' || hemi =='S')
-	{
-		N=10000000 - Nl;
-	}
-	else
-	{
-		N=Nl;
-	}
-
-	double E;
-
-	if(dlambda<0)
-	{
-		E = El + 500000;
-	}
-	else
-	{
-		E = El;
-	}
-*/
 //teste com as equações da tabela
 //geoToUtmFran(double phi, double lambda, double haltura, char hemi)
 //wgs-84
@@ -191,11 +106,15 @@ Matrix ConvertionsSystems::geoToUtmFran(double phi, double lambda, double haltur
         double zona;
         //qDebug("zona= %f",-177-lambda*180/M_PI);
         //Homologado pelo Professor Jorge Luis Nunes e Silva Brito
-        modf(fabs(-177-lambda*180/M_PI)/6, &zona);
-        zona+=1;
-        zona=(int)zona;
+        //modf(fabs(-180-lambda*180/M_PI)/6, &zona);
+        //zona+=1;
+        //zona=(int)zona;
 
-
+        //Correção do Fr0ancisco 15/09/2011
+        double lon=lambda*180/M_PI;
+        if (lon>=180)
+            lon=179;
+        zona=(int)(fabs(31+lon/6)+0.1);//+0.1: Idéia do rafael para contornar erro de arredondamento.
 
 	//em teste
 	double A=a*(1 - n + (5*n*n/4)*(1-n)+(81*pow(n,4)/64)*(1-n));
@@ -207,7 +126,7 @@ Matrix ConvertionsSystems::geoToUtmFran(double phi, double lambda, double haltur
 	double S=A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E2*sin(8*phi);
 
 	//qDebug("%d",inteiro);
-        int lambda0=zona*6-183;
+        int lambda0=6*zona-183;
 
 	double dLambda=lambda-lambda0*M_PI/180;
 /*
