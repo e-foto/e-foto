@@ -97,6 +97,20 @@ QImage MonoView::getFrame(QSize targetSize)
 
 	return rasterRsrc_->getImageCut(targetSize, imageCut);
 }
+QImage MonoView::getFrame(QSize targetSize, double scale)
+{
+	if (!rasterRsrc_)
+		return QImage();
+
+	QRectF imageCut;
+	QSizeF newSize;
+	newSize.setWidth(targetSize.width()/scale);
+	newSize.setHeight(targetSize.height()/scale);
+	imageCut.setSize(newSize);
+	imageCut.moveCenter(viewpoint_);
+
+	return rasterRsrc_->getImageCut(targetSize, imageCut);
+}
 QImage MonoView::getThumb(QSize targetSize, QRect* rect)
 {
 	if (!rasterRsrc_)

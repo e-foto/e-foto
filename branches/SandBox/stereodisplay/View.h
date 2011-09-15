@@ -25,6 +25,7 @@ public:
 	bool imageLoaded();
 	QSize imageSize();
 	QImage getFrame(QSize targetSize);
+	QImage getFrame(QSize targetSize, double scale);
 	QImage getThumb(QSize targetSize, QRect* rect = NULL);
 	QImage getDetail(QSize targetSize, QPointF point, double zoom);
 	double getScale();
@@ -61,9 +62,9 @@ inline MonoView* StereoView::getRightView() const
 class IView : public IStructuredItem
 {
   public:
-	 IView();
-	 void appendChild(IStructuredItem * child);
-	 virtual void add(const string & fileName) = 0;
+  IView();
+  void appendChild(IStructuredItem * child);
+  virtual void add(const string & fileName) = 0;
 };
 */
 /* inline IView methods
@@ -71,17 +72,17 @@ inline IView::IView() :
 IStructuredItem(VIEW)
 {
   // Bouml preserved body begin 00027402
-	QIcon icon;
-	icon.addPixmap(QPixmap(":itemIcons/images/view_24x24.png"));
+ QIcon icon;
+ icon.addPixmap(QPixmap(":itemIcons/images/view_24x24.png"));
 
-	setIcon(icon);
+ setIcon(icon);
   // Bouml preserved body end 00027402
 }
 inline void IView::appendChild(IStructuredItem * child)
 {
   // Bouml preserved body begin 00027602
-	if(child->getItemType() == THEME)
-		IStructuredItem::appendChild(child);
+ if(child->getItemType() == THEME)
+  IStructuredItem::appendChild(child);
   // Bouml preserved body end 00027602
 }
 */
@@ -89,20 +90,20 @@ inline void IView::appendChild(IStructuredItem * child)
 class Q_DECL_EXPORT Te3View : public IView
 {
   public:
-	 Te3View(::TeView * view);
-	 ~Te3View();
-	 void add(const string & fileName);
-	 QString getLabel() const;
-	 void setLabel(const ::QString & label);
-	 int getId() const;
-	 void setId(int id);
-	 void* getTeObject();
+  Te3View(::TeView * view);
+  ~Te3View();
+  void add(const string & fileName);
+  QString getLabel() const;
+  void setLabel(const ::QString & label);
+  int getId() const;
+  void setId(int id);
+  void* getTeObject();
   protected:
-	 bool isImage(const ::QString & fileName) const;
-	::TeView * view_; //!< Pointer to a view.
-	static int themeId_; //!< Auxiliary variable for getting a valid theme id.
+  bool isImage(const ::QString & fileName) const;
+ ::TeView * view_; //!< Pointer to a view.
+ static int themeId_; //!< Auxiliary variable for getting a valid theme id.
   private:
-	 Te3View(const Te3View & source);
-	 Te3View & operator=(const Te3View & source);
+  Te3View(const Te3View & source);
+  Te3View & operator=(const Te3View & source);
 };
 */
