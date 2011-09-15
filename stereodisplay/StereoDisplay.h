@@ -19,6 +19,7 @@ protected:
 	DetailDisplay* detail_;
 	StereoDisplay* parentDisplay_;
 	bool onMove_;
+	bool cloneScale_;
 	QPointF moveLastPos_;
 	QImage frame_;
 	void paintEvent(QPaintEvent *e);
@@ -37,9 +38,12 @@ public:
 	virtual void fitView();
 	virtual void pan(int dx, int dy);
 	virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);
+	void setDetailZoom(double zoomFactor);
 	void updateAll();
 	void updateDetail();
 	void updateDetail(QPointF* newMousePosition, bool emitClicked = false);
+public slots:
+	void setCloneScale(bool status);
 signals:
 	void mousePositionChanged(QPointF*);
 	void mouseClicked(QPointF*);
@@ -49,6 +53,7 @@ class DetailDisplay : public AbstractDisplay
 {
 protected:
 	MonoDisplay* parentDisplay_;
+	double zoom_;
 	void paintEvent(QPaintEvent *);
 	void mousePressEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
@@ -85,7 +90,11 @@ protected:
 	StereoDisplay* stereoDisplay_;
 	unsigned int ltexture;
 	unsigned int rtexture;
+	unsigned int ctexture;
+	QImage ltext;
+	QImage rtext;
 	bool onMove_;
+	bool hasChanged_;
 	QPointF moveLastPos_;
 	void initializeGL();
 	void paintGL();
@@ -107,12 +116,18 @@ protected:
 	MonoDisplay* leftDisplay_;
 	MonoDisplay* rightDisplay_;
 	GLDisplay* glDisplay_;
+	QPointF leftCursorOffset_;
+	QPointF rightCursorOffset_;
 public:
 	StereoDisplay(QWidget * parent, StereoView* currentView = NULL);
 	~StereoDisplay();
 	StereoView* getCurrentView();
 	MonoDisplay* getLeftDisplay();
 	MonoDisplay* getRightDisplay();
+	QPointF getLeftCursorOffset();
+	QPointF getRightCursorOffset();
+	void setLeftCursorOffset(QPointF offset);
+	void setRightCursorOffset(QPointF offset);
 	virtual void fitView();
 	virtual void pan(int dx, int dy);
 	virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);

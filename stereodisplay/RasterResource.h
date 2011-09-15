@@ -29,17 +29,17 @@ public:
 class IRaster
 {
   public:
-	 IRaster();
-	 virtual ~IRaster();
-	 IRaster(const IRaster & source);
-	 IRaster & operator=(const IRaster & source);
-	 virtual int getWidth() = 0;
-	 virtual int getHeight() = 0;
-	 virtual void toImageCoord(const double & x, const double & y, double & l, double & c) const = 0;
-	 virtual void toWorldCoord(double l, double c, double & x, double & y) const = 0;
-	 virtual bool getPixelValue(double x, double y, int band, double & value) const;
-	 virtual bool getPixelValue(int l, int c, int band, double & value) = 0;
-	 virtual std::string getBandName(int band) = 0;
+  IRaster();
+  virtual ~IRaster();
+  IRaster(const IRaster & source);
+  IRaster & operator=(const IRaster & source);
+  virtual int getWidth() = 0;
+  virtual int getHeight() = 0;
+  virtual void toImageCoord(const double & x, const double & y, double & l, double & c) const = 0;
+  virtual void toWorldCoord(double l, double c, double & x, double & y) const = 0;
+  virtual bool getPixelValue(double x, double y, int band, double & value) const;
+  virtual bool getPixelValue(int l, int c, int band, double & value) = 0;
+  virtual std::string getBandName(int band) = 0;
 };
 */
 
@@ -62,18 +62,18 @@ inline IRaster::IRaster(const IRaster & source)
 inline IRaster & IRaster::operator=(const IRaster & source)
 {
   // Bouml preserved body begin 00049597
-	return *this;
+ return *this;
   // Bouml preserved body end 00049597
 }
 inline bool IRaster::getPixelValue(double x, double y, int band, double & value) const
 {
   // Bouml preserved body begin 00049E97
-	double c,
-		l;
+ double c,
+  l;
 
-	toImageCoord(x, y, l, c);
+ toImageCoord(x, y, l, c);
 
-	return getPixelValue(l, c, band, value);
+ return getPixelValue(l, c, band, value);
   // Bouml preserved body end 00049E97
 }
 */
@@ -82,18 +82,18 @@ inline bool IRaster::getPixelValue(double x, double y, int band, double & value)
 class Q_DECL_EXPORT Raster : public IRaster
 {
   public:
-	 Raster(::TeAbstractTheme * theme);
-	 Raster(const Raster & source);
-	 ~Raster();
-	 Raster & operator=(const Raster & source);
-	 virtual int getWidth();
-	 virtual int getHeight();
-	 virtual void toImageCoord(const double & x, const double & y, double & l, double & c) const;
-	 virtual void toWorldCoord(double l, double c, double & x, double & y) const;
-	 virtual bool getPixelValue(int l, int c, int band, double & value);
-	 virtual std::string getBandName(int band);
+  Raster(::TeAbstractTheme * theme);
+  Raster(const Raster & source);
+  ~Raster();
+  Raster & operator=(const Raster & source);
+  virtual int getWidth();
+  virtual int getHeight();
+  virtual void toImageCoord(const double & x, const double & y, double & l, double & c) const;
+  virtual void toWorldCoord(double l, double c, double & x, double & y) const;
+  virtual bool getPixelValue(int l, int c, int band, double & value);
+  virtual std::string getBandName(int band);
   protected:
-	 TeRaster* getRaster(::TeAbstractTheme * theme) const;
-	::TeAbstractTheme * theme_; //!< Pointer to related theme.
+  TeRaster* getRaster(::TeAbstractTheme * theme) const;
+ ::TeAbstractTheme * theme_; //!< Pointer to related theme.
 };
 */
