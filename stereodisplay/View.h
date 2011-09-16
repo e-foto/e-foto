@@ -4,12 +4,14 @@
 #include <QObject>
 #include <QRect>
 #include "RasterResource.h"
+#include "Geometry.h"
 
 class MonoView: public QObject
 {
 	Q_OBJECT
 protected:
 	RasterResource* rasterRsrc_;
+	GeometryResource geometryRsrc_;
 	QPointF viewpoint_;
 	double scale_;
 	void limitScale();
@@ -29,6 +31,8 @@ public:
 	QImage getThumb(QSize targetSize, QRect* rect = NULL);
 	QImage getDetail(QSize targetSize, QPointF point, double zoom);
 	double getScale();
+
+	GeometryResource* geometries();
 };
 
 class StereoView: public QObject

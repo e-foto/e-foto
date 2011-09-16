@@ -27,6 +27,8 @@ public slots:
 class TestStereoWindow : public QMainWindow
 {
 	Q_OBJECT
+	Marker mark_;
+	unsigned int marksCount_;
 public:
 	TestStereoWindow();
 	StereoDisplay* sd;
@@ -42,11 +44,15 @@ public slots:
 	void changeDetailZoom(int);
 	void leftLoad();
 	void rightLoad();
+	void clearMarks();
 };
 
 class TestPTWindow : public QMainWindow
 {
 	Q_OBJECT
+	Marker mark_;
+	unsigned int lMarksCount_;
+	unsigned int rMarksCount_;
 public:
 	TestPTWindow();
 	MonoDisplay* ld;
@@ -60,6 +66,7 @@ public slots:
 	void changeDetailZoom(int);
 	void leftLoad();
 	void rightLoad();
+	void clearMarks();
 };
 
 #endif // TESTWINDOW_H

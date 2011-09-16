@@ -93,6 +93,7 @@ TestStereoWindow::TestStereoWindow():
 
 	QAction* leftLoadAction = new QAction(QString::fromUtf8("Open left"),this);
 	QAction* rightLoadAction = new QAction(QString::fromUtf8("Open right"),this);
+	QAction* clearMarksAction = new QAction(QString::fromUtf8("Clear marks"),this);
 	QAction* stereoAction = new QAction(QString::fromUtf8("View stereo"),this);
 	stereoAction->setCheckable(true);
 	stereoAction->setChecked(true);
@@ -101,6 +102,7 @@ TestStereoWindow::TestStereoWindow():
 	cloneScaleAction->setChecked(true);
 	connect(leftLoadAction,SIGNAL(triggered()),this,SLOT(leftLoad()));
 	connect(rightLoadAction,SIGNAL(triggered()),this,SLOT(rightLoad()));
+	connect(clearMarksAction,SIGNAL(triggered()),this,SLOT(clearMarks()));
 	connect(stereoAction,SIGNAL(toggled(bool)),centralWidget(),SLOT(setVisible(bool)));
 	connect(cloneScaleAction,SIGNAL(toggled(bool)),ld,SLOT(setCloneScale(bool)));
 	connect(cloneScaleAction,SIGNAL(toggled(bool)),rd,SLOT(setCloneScale(bool)));
@@ -115,6 +117,7 @@ TestStereoWindow::TestStereoWindow():
 	QToolBar* tool = addToolBar(tr("Tool"));
 	tool->addAction(leftLoadAction);
 	tool->addAction(rightLoadAction);
+	tool->addAction(clearMarksAction);
 	tool->addSeparator();
 	tool->addAction(stereoAction);
 	tool->addAction(cloneScaleAction);
@@ -122,6 +125,9 @@ TestStereoWindow::TestStereoWindow():
 	tool->addWidget(detailZoomLabel);
 	tool->addWidget(detailComboBox);
 	addToolBar(Qt::TopToolBarArea,tool);
+
+	mark_.load("../X16x16.png");
+	marksCount_ = 0;
 }
 
 void TestStereoWindow::changeStatusBar(QPointF* p)
@@ -170,23 +176,40 @@ void TestStereoWindow::changeStatusBarOnClick(QPointF* pl, QPointF* pr)
 	QSize rs = sd->getCurrentView()->getRightView()->imageSize();
 
 	double lx, ly, rx, ry;
+	bool lValid = false;
+	bool rValid = false;
 	if (pl)
 	{
-		lx = (pl->x() >= 0 && pl->x() <= ls.width() - 1) ? pl->x() : -1;
-		ly = (pl->y() >= 0 && pl->y() <= ls.height() - 1) ? pl->y() : -1;
+		lValid = (pl->x() >= 0 && pl->x() <= ls.width()) && (pl->y() >= 0 && pl->y() <= ls.height());
+		lx = lValid ? pl->x() : -1;
+		ly = lValid ? pl->y() : -1;
 	}
 	if (pr)
 	{
-		rx = (pr->x() >= 0 && pr->x() <= rs.width() - 1) ? pr->x() : -1;
-		ry = (pr->y() >= 0 && pr->y() <= rs.height() - 1) ? pr->y() : -1;
+		rValid = (pr->x() >= 0 && pr->x() <= rs.width()) && (pr->y() >= 0 && pr->y() <= rs.height());
+		rx = rValid ? pr->x() : -1;
+		ry = rValid ? pr->y() : -1;
 	}
 
 	if (pl && pr)
+	{
 		statusBar()->showMessage(QString::fromUtf8("Clique em ").append(QString::number(lx)).append("x").append(QString::number(ly)).append(" e ").append(QString::number(rx)).append("x").append(QString::number(ry)));
+		if (lValid && rValid)
+		{
+			marksCount_++;
+			sd->getCurrentView()->getLeftView()->geometries()->addPoint(*pl, QString::number(marksCount_), &mark_);
+			sd->getCurrentView()->getRightView()->geometries()->addPoint(*pr, QString::number(marksCount_), &mark_);
+			sd->updateAll();
+		}
+	}
 	else if (pl)
+	{
 		statusBar()->showMessage(QString::fromUtf8("Clique em ").append(QString::number(lx)).append("x").append(QString::number(ly)).append(" e ").append("?x?"));
+	}
 	else if (pr)
+	{
 		statusBar()->showMessage(QString::fromUtf8("Clique em ").append("?x?").append(" e ").append(QString::number(rx)).append("x").append(QString::number(ry)));
+	}
 }
 
 void TestStereoWindow::changeDetailZoom(int nz)
@@ -237,6 +260,14 @@ void TestStereoWindow::rightLoad()
 		return;
 
 	sd->getCurrentView()->getRightView()->loadImage(filename);
+	sd->updateAll();
+}
+
+void TestStereoWindow::clearMarks()
+{
+	sd->getCurrentView()->getLeftView()->geometries()->clear();
+	sd->getCurrentView()->getRightView()->geometries()->clear();
+	marksCount_ = 0;
 	sd->updateAll();
 }
 
@@ -296,8 +327,10 @@ TestPTWindow::TestPTWindow():
 
 	QAction* leftLoadAction = new QAction(QString::fromUtf8("Open left"),this);
 	QAction* rightLoadAction = new QAction(QString::fromUtf8("Open right"),this);
+	QAction* clearMarksAction = new QAction(QString::fromUtf8("Clear marks"),this);
 	connect(leftLoadAction,SIGNAL(triggered()),this,SLOT(leftLoad()));
 	connect(rightLoadAction,SIGNAL(triggered()),this,SLOT(rightLoad()));
+	connect(clearMarksAction,SIGNAL(triggered()),this,SLOT(clearMarks()));
 
 	QLabel* detailZoomLabel = new QLabel("Detail zoom");
 	QComboBox* detailComboBox = new QComboBox();
@@ -309,16 +342,23 @@ TestPTWindow::TestPTWindow():
 	QToolBar* tool = addToolBar(tr("Tool"));
 	tool->addAction(leftLoadAction);
 	tool->addAction(rightLoadAction);
+	tool->addAction(clearMarksAction);
 	tool->addSeparator();
 	tool->addWidget(detailZoomLabel);
 	tool->addWidget(detailComboBox);
 	addToolBar(Qt::TopToolBarArea,tool);
+
+	mark_.load("../X16x16.png");
+	lMarksCount_ = 0;
+	rMarksCount_ = 0;
 }
 
 void TestPTWindow::changeStatusBar(QPointF* p)
 {
 	if (p)
 		statusBar()->showMessage(QString::fromUtf8("ModoDisplay diz que está medindo a coordenada ").append(QString::number(p->x())).append("x").append(QString::number(p->y())));
+	//changeStatusBarOnClickLeft(p);
+	//changeStatusBarOnClickRight(p);
 }
 
 void TestPTWindow::changeStatusBarOnClickLeft(QPointF* p)
@@ -327,9 +367,17 @@ void TestPTWindow::changeStatusBarOnClickLeft(QPointF* p)
 
 	if (p)
 	{
-		double x = (p->x() >= 0 && p->x() <= ls.width() - 1) ? p->x() : -1;
-		double y = (p->y() >= 0 && p->y() <= ls.height() - 1) ? p->y() : -1;
+		bool valid = (p->x() >= 0 && p->x() <= ls.width()) && (p->y() >= 0 && p->y() <= ls.height());
+		double x = valid ? p->x() : -1;
+		double y = valid ? p->y() : -1;
 		statusBar()->showMessage(QString::fromUtf8("Clique na imagem da esquerda em ").append(QString::number(x)).append("x").append(QString::number(y)));
+
+		if (valid)
+		{
+			lMarksCount_++;
+			ld->getCurrentView()->geometries()->addPoint(*p, QString::number(lMarksCount_), &mark_);
+			ld->update();
+		}
 	}
 }
 
@@ -339,9 +387,17 @@ void TestPTWindow::changeStatusBarOnClickRight(QPointF* p)
 
 	if (p)
 	{
-		double x = (p->x() >= 0 && p->x() <= rs.width() - 1) ? p->x() : -1;
-		double y = (p->y() >= 0 && p->y() <= rs.height() - 1) ? p->y() : -1;
+		bool valid = (p->x() >= 0 && p->x() <= rs.width()) && (p->y() >= 0 && p->y() <= rs.height());
+		double x = valid ? p->x() : -1;
+		double y = valid ? p->y() : -1;
 		statusBar()->showMessage(QString::fromUtf8("Clique na imagem da direita em ").append(QString::number(x)).append("x").append(QString::number(y)));
+
+		if (valid)
+		{
+			rMarksCount_++;
+			rd->getCurrentView()->geometries()->addPoint(*p, QString::number(rMarksCount_), &mark_);
+			rd->update();
+		}
 	}
 }
 
@@ -395,4 +451,14 @@ void TestPTWindow::rightLoad()
 
 	rd->getCurrentView()->loadImage(filename);
 	rd->updateAll();
+}
+
+void TestPTWindow::clearMarks()
+{
+	ld->getCurrentView()->geometries()->clear();
+	rd->getCurrentView()->geometries()->clear();
+	lMarksCount_ = 0;
+	rMarksCount_ = 0;
+	ld->update();
+	rd->update();
 }
