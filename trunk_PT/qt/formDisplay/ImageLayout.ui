@@ -409,76 +409,13 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
-                <widget class="EfotoDoubleSpinBox" name="omegaDoubleSpinBox">
-                 <property name="buttonSymbols">
-                  <enum>QAbstractSpinBox::NoButtons</enum>
-                 </property>
-                 <property name="accelerated">
-                  <bool>true</bool>
-                 </property>
-                 <property name="decimals">
-                  <number>5</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-0.100000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>0.100000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.000010000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.000000000000000</double>
-                 </property>
-                </widget>
+                <widget class="DmsEdit" name="omegaDmsEdit"/>
                </item>
                <item>
-                <widget class="EfotoDoubleSpinBox" name="phiDoubleSpinBox">
-                 <property name="buttonSymbols">
-                  <enum>QAbstractSpinBox::NoButtons</enum>
-                 </property>
-                 <property name="accelerated">
-                  <bool>true</bool>
-                 </property>
-                 <property name="decimals">
-                  <number>5</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-0.100000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>0.100000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.000010000000000</double>
-                 </property>
-                </widget>
+                <widget class="DmsEdit" name="phiDmsEdit"/>
                </item>
                <item>
-                <widget class="EfotoDoubleSpinBox" name="kappaDoubleSpinBox">
-                 <property name="buttonSymbols">
-                  <enum>QAbstractSpinBox::NoButtons</enum>
-                 </property>
-                 <property name="accelerated">
-                  <bool>true</bool>
-                 </property>
-                 <property name="decimals">
-                  <number>5</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-6.283180000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>6.283180000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.000010000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.000000000000000</double>
-                 </property>
-                </widget>
+                <widget class="DmsEdit" name="kappaDmsEdit"/>
                </item>
               </layout>
              </item>
@@ -671,6 +608,11 @@ p, li { white-space: pre-wrap; }
    <class>SigmaFormDialogButton</class>
    <extends>QPushButton</extends>
    <header>SigmaForm.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DmsEdit</class>
+   <extends>QLineEdit</extends>
+   <header>DmsEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

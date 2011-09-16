@@ -95,7 +95,7 @@ QImage MonoView::getFrame(QSize targetSize)
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(viewpoint_);
 
-	return rasterRsrc_->getImageCut(targetSize, imageCut);
+	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale_);
 }
 QImage MonoView::getFrame(QSize targetSize, double scale)
 {
@@ -109,7 +109,7 @@ QImage MonoView::getFrame(QSize targetSize, double scale)
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(viewpoint_);
 
-	return rasterRsrc_->getImageCut(targetSize, imageCut);
+	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale);
 }
 QImage MonoView::getThumb(QSize targetSize, QRect* rect)
 {
@@ -141,6 +141,11 @@ QImage MonoView::getDetail(QSize targetSize, QPointF point, double zoom)
 double MonoView::getScale()
 {
 	return scale_;
+}
+
+GeometryResource* MonoView::geometries()
+{
+	return &geometryRsrc_;
 }
 
 

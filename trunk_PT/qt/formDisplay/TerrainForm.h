@@ -25,8 +25,8 @@ public:
         bool isForm(string formName);
 
     public slots:
-        void validatorLat();
-        void validatorLong();
+        /*void validatorLat();
+        void validatorLong();*/
         void validatorAlt(double);
 };
 
