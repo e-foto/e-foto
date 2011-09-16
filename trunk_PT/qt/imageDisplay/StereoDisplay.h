@@ -116,12 +116,18 @@ protected:
 	MonoDisplay* leftDisplay_;
 	MonoDisplay* rightDisplay_;
 	GLDisplay* glDisplay_;
+	QPointF leftCursorOffset_;
+	QPointF rightCursorOffset_;
 public:
 	StereoDisplay(QWidget * parent, StereoView* currentView = NULL);
 	~StereoDisplay();
 	StereoView* getCurrentView();
 	MonoDisplay* getLeftDisplay();
 	MonoDisplay* getRightDisplay();
+	QPointF getLeftCursorOffset();
+	QPointF getRightCursorOffset();
+	void setLeftCursorOffset(QPointF offset);
+	void setRightCursorOffset(QPointF offset);
 	virtual void fitView();
 	virtual void pan(int dx, int dy);
 	virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);

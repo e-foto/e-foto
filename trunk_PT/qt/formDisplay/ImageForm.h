@@ -36,9 +36,9 @@ private slots:
 
 private:
   string tagXml;
-  QString fileImagePath, fileImageName;
+  QString fileImagePath; QString fileImageName;
   QString lastPath;
-  bool activeGNSS, activeINS;
+  bool activeGNSS; bool activeINS;
 
 };
 

@@ -8,7 +8,8 @@ MOC_DIR = ../temp/moc
 UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
-DEPENDPATH += c/control \
+DEPENDPATH += \
+	c/control \
     c/imageDisplay \
     c/infrastructure \
     c/interface \

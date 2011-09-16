@@ -24,6 +24,8 @@ protected:
 	MonoView *leftView;
 	MonoView *rightView;
 
+	Marker mark;
+
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;
 
@@ -69,9 +71,12 @@ public slots:
 
 	void imageClicked(QPointF* pixel);
 	void updateCoordinatesInfo(QPointF* pixel);
-	void updateMark(string image,int imageKey, int pointKey, int col, int lin);
+	void updateMark(string image,int imageKey, int pointKey, QPointF pixel);
+
+	void markAllpoints(MonoDisplay *display);
+	void clearAllMarks(MonoDisplay *display);
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
-	//void updatePoint(QTableWidgetItem * item);
+	void updatePoint(int, int, int);
 };
 
 
