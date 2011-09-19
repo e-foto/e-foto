@@ -103,8 +103,6 @@ void MonoDisplay::updateDetail()
 {
 	if (detail_)
 		detail_->update();
-	QPointF lastPos = getLastMousePosition();
-	emit mousePositionChanged(&lastPos);
 }
 void MonoDisplay::updateDetail(QPointF* mousePosition, bool emitClicked)
 {
@@ -192,6 +190,8 @@ void MonoDisplay::mouseMoveEvent(QMouseEvent *e)
 	{
 		updateDetail();
 	}
+	QPointF lastPos = getLastMousePosition();
+	emit mousePositionChanged(&lastPos);
 	QWidget::mouseMoveEvent(e);
 }
 void MonoDisplay::wheelEvent(QWheelEvent *e)
@@ -208,10 +208,16 @@ void MonoDisplay::wheelEvent(QWheelEvent *e)
 			zoomStep = 1.044273782; // 1*2^(1÷(2^4))
 		else if (numSteps<0)
 			zoomStep = 0.957603281; // 1/2^(1÷(2^4))
-		for (int i = 0; i<abs(numSteps);i++)
-			currentView_->zoom(zoomStep);
+		if (parentDisplay_)
+			for (int i = 0; i<abs(numSteps);i++)
+				parentDisplay_->zoom(zoomStep);
+		else
+			//for (int i = 0; i<abs(numSteps);i++)
+				currentView_->zoom(zoomStep, getLastMousePosition());
 		updateAll();
 	}
+	QPointF lastPos = getLastMousePosition();
+	emit mousePositionChanged(&lastPos);
 	QWidget::wheelEvent(e);
 }
 
@@ -691,6 +697,8 @@ void StereoDisplay::pan(int dx, int dy)
 }
 void StereoDisplay::zoom(double zoomFactor, QPoint* atPoint)
 {
+	currentView_->getLeftView()->zoom(zoomFactor);
+	currentView_->getRightView()->zoom(zoomFactor);
 }
 void StereoDisplay::updateAll()
 {

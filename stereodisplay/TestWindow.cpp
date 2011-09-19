@@ -19,13 +19,13 @@ void InitWindow::startTestStereo()
 {
 	TestStereoWindow* ts = new TestStereoWindow();
 	ts->showMaximized();
-	close();
+	//close();
 }
 void InitWindow::startTestPT()
 {
 	TestPTWindow* tpt = new TestPTWindow();
 	tpt->showMaximized();
-	close();
+	//close();
 }
 
 

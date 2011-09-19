@@ -22,7 +22,7 @@ public:
 	void moveTo(QPointF pos);
 	void pan(QPointF dPos);
 	void scaleTo(double newScale);
-	void zoom(double zoomFactor);
+	void zoom(double zoomFactor, QPointF at = QPointF(-1,-1));
 	bool loadImage(QString filepath);
 	bool imageLoaded();
 	QSize imageSize();
