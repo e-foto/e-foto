@@ -701,47 +701,35 @@ bool EFotoManager::execPT()
 {
 	bool result;
 	nextModule = 2;
-	EDomElement images(getXml("images"));
-	EDomElement points(getXml("points"));
-	int numimgs=images.children().size();
-	int numPoints=points.children().size();
 
 	// A foto tri so pode ser disparada quando todas as ois forem feitas;
 	deque<Image*> ptImages;
 	deque<InteriorOrientation*> ptOis;
 	deque<Point*> ptPoints;
 
-	//images.elementsByTagName("key");
+	EDomElement images(getXml("images"));
+	deque<EDomElement> imagesEDom=images.elementsByTagName("image");
+	for (int i=0; i<imagesEDom.size(); i++)
+		ptImages.push_back(instanceImage(stringToInt(imagesEDom.at(i).attribute("key"))));
 
+	EDomElement points(getXml("points"));
+	deque<EDomElement> pointsEDom=points.elementsByTagName("point");
+	for (int i=0; i<pointsEDom.size(); i++)
+		ptPoints.push_back(instancePoint(stringToInt(pointsEDom.at(i).attribute("key"))));
 
-	for (int i=1; i<=numimgs; i++)
-	{
-		ptImages.push_back(instanceImage(i));
-	}
-	for (int i=1; i<=numimgs; i++)
-	{
-		ptOis.push_back(instanceIO(i));
-	}
-	for (int i=1; i<=numPoints; i++)
-	{
-		ptPoints.push_back(instancePoint(i));
-	}
+	EDomElement ois(getXml("interiorOrientation"));
+	deque<EDomElement> oisEDom=ois.elementsByTagName("imageIO");
+	for (int i=0; i<oisEDom.size(); i++)
+		ptOis.push_back(instanceIO(stringToInt(oisEDom.at(i).attribute("image_key"))));
 
-        //for( int i=0; i<ftImages.size(); i++)
-          // qDebug("Caminho : %s",ftImages.at(i)->getFilepath().c_str());
+	EDomElement sensor(getXml("sensor"));
+	Sensor *ptSensor = instanceSensor(stringToInt(sensor.attribute("key")));
+	//Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
+	//Terrain* ptTerrain = instanceTerrain();
+	//ptFlight->setTerrain(ptTerrain);
+	fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
+	result = fotoTri->exec();
 
-        //qDebug("\nQtd Sensor: %d",ftImages.size());
-        //qDebug("Qtd Ois: %d",ftOis.size());
-
-		Sensor *ptSensor = instanceSensor(ptImages.at(0)->getSensorId());
-		//Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
-		//Terrain* ptTerrain = instanceTerrain();
-		//ptFlight->setTerrain(ptTerrain);
-
-		fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
-
-        result = fotoTri->exec();
-	   // qDebug("EfotoManager passou da execPT\n");
 	return result;
 }
 
@@ -761,7 +749,7 @@ void EFotoManager::stopPT()
 		deleteImage(images.at(i)->getId());
 	}
 
-	delete fotoTri;
+	//delete fotoTri;
 	/*
 	Image* srImage = instanceImage(id);
 	delete spatialRessection;
