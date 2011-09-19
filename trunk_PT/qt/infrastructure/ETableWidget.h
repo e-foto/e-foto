@@ -20,12 +20,11 @@ private:
 	int decimals;
 	QString type;
 	QSpinBox *itemSpinBox;
-	int spinBoxRow;
-	int spinBoxColumn;
+	int currentSpinBoxRow,currentSpinBoxColumn,currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn;
 	QDoubleSpinBox *itemDoubleSpinBox;
-	int doubleSpinBoxRow;
-	int doubleSpinBoxColumn;
-	QList<int> typedColumns;
+
+	QList<int> typedSpinColumns;
+	QList<int> typedDoubleSpinColumns;
 
 public:
 	ETableWidget(QWidget *parent=0);
@@ -40,9 +39,11 @@ public:
 	void putInColumn(QStringList list, int column);
 	void putInRow(QStringList list,int row);
 
-	void setColumnType(int colIndex,QString type="QSpinBox", bool enable=true, double minValue=0, double maxValue=100);
-	void setType(QString type="NONE");
-	QString getType();
+	//void setColumnType(int colIndex,QString type="QSpinBox", bool enable=true, double minValue=0, double maxValue=100);
+	void setType(int column, QString type="NONE");
+	bool checkTypeds(int column,QString type);
+	QString getType(int column);
+
 
 	void clearSelection();
 	void setMode(char newMode);

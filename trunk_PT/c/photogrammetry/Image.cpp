@@ -620,18 +620,25 @@ int Image::load()
 
 //Paulo 09/09/11
 // metodo para colocar os pontos de controle antes dos pontos photogrametricos
+#include <QDebug>
 void Image::sortPoints()
 {
-	deque<Point*>listCtrl;
+	deque<Point*> listCtrl;
 
 	for(int i=0; i<myPoints.size() ;i++)
 	{
-		Point *pnt=myPoints.at(i);
-		if (pnt->is("ControlPoint"))
-			listCtrl.push_front(pnt);
-		else if (pnt->is("PhotogrammetricPoint"))
-			listCtrl.push_back(pnt);
-		//qDebug("ponto %d = %d",i, pnt->getId());
+		//Point* pnt=myPoints.at(i);
+		if (myPoints.at(i)->is("ControlPoint")) //pnt->is("ControlPoint"))
+			listCtrl.push_front(myPoints.at(i)); //pnt);
+		else if (myPoints.at(i)->is("PhotogrammetricPoint") || myPoints.at(i)->is("CheckingPoint")) //pnt->is("PhotogrammetricPoint") || pnt->is("CheckingPoint"))
+			listCtrl.push_back(myPoints.at(i)); //pnt);
+
+		qDebug("\tponto %d = %s",i, myPoints.at(i)->getPointId().c_str());//pnt->getPointId());
 	}
 	myPoints=listCtrl;
+}
+
+void Image::clearPoints()
+{
+	myPoints.clear();
 }

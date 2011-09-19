@@ -211,6 +211,7 @@ void MonoDisplay::wheelEvent(QWheelEvent *e)
 		for (int i = 0; i<abs(numSteps);i++)
 			currentView_->zoom(zoomStep);
 		updateAll();
+		updateDetail();
 	}
 	QWidget::wheelEvent(e);
 }
