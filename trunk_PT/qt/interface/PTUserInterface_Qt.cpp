@@ -129,9 +129,6 @@ void PTUserInterface_Qt::init()
 
 	mark.load("../X16x16.png");
 
-	leftImageTableWidget->setType("QSpinBox");
-	rightImageTableWidget->setType("QSpinBox");
-
 	connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 	connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 
@@ -140,6 +137,13 @@ void PTUserInterface_Qt::init()
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 
 	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
+
+	/*Permite ediçao de coordenada via tabela*/
+	leftImageTableWidget->setType(1,"QSpinBox");
+	leftImageTableWidget->setType(2,"QSpinBox");
+
+	rightImageTableWidget->setType(1,"QSpinBox");
+	rightImageTableWidget->setType(2,"QSpinBox");
 
 }
 
@@ -304,7 +308,6 @@ void PTUserInterface_Qt::viewReport()
 		horizontalLayout->setStretchFactor(phtgLayout,3);
 	}
 	/**/
-
 
 	QHBoxLayout *buttonsLayout= new QHBoxLayout();
 	QPushButton *acceptButton= new QPushButton(tr("Accept"));

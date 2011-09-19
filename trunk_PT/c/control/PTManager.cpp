@@ -63,6 +63,7 @@ PTUserInterface* PTManager::getInterface()
 
 bool PTManager::exec()
 {
+
 	if (efotoManager != NULL && mySensor != NULL && /*myFlight != NULL &&*/ listAllImages.size()> 1 && listOis.size()>1)
 	{
 		if (efotoManager->getInterfaceType().compare("Qt") == 0)
@@ -95,7 +96,7 @@ void PTManager::returnProject()
 	//delete myInterface;
 	//delete mySensor;
 	//delete myFlight;
-	listAllImages.clear();
+	//listAllImages.clear();
 	listAllPoints.clear();
 	listOis.clear();
 	listSelectedImages.clear();
@@ -199,22 +200,27 @@ bool PTManager::connectImagePoints()
 		deque<EDomElement> allPoints = xmlPoints.children();
 		for (unsigned int j = 0; j < listAllImages.size(); j++)
 		{
+			listAllImages.at(j)->clearPoints();
 			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
 				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(listAllImages.at(j)->getId())).getContent();
 				if (data != "")
 				{
 					Point* pointToInsert = efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
-					if (pointToInsert != NULL)
+					if (pointToInsert != NULL)// && !pointToInsert->is("CheckingPoint"))
 					{
-						//qDebug("connectImagePoints(): colocou um ponto");
+						qDebug("connectImagePoints(): colocou um ponto: %s",pointToInsert->getPointId().c_str());
 						listAllImages.at(j)->putPoint(pointToInsert);
-						pointToInsert->putImage(listAllImages.at(j));//nove em teste:06/08/2011
+						pointToInsert->putImage(listAllImages.at(j));//novo em teste:06/08/2011
 					}
 				}
 			}
+			qDebug("Image %s",listAllImages.at(j)->getFilename().c_str());
 			listAllImages.at(j)->sortPoints();
+			//Image *img;
+			//img->getFilename()
 		}
+		qDebug("\n\n");
 		return true;
 	}
 	return false;
@@ -227,7 +233,8 @@ void PTManager::setListPoint()
 	for(int i=0;i<allPoints.size();i++)
 	{
 		Point* point= efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
-		listAllPoints.push_back(point);
+		if (point != NULL)// && !point->is("CheckingPoint"))
+			listAllPoints.push_back(point);
 	}
 }
 // retorna uma lista com os nomes das imagens
@@ -260,11 +267,11 @@ deque<string> PTManager::getStringTypePoints(string imageFileName)
 		int numPnts=listAllPoints.size();
 		for (int i=0; i<numPnts; i++)
 		{
-			if (listAllPoints.at(i)->is("ControlPoint"))
+			if (listAllPoints.at(i) && listAllPoints.at(i)->is("ControlPoint"))
 				list.push_back("Control");
-			if (listAllPoints.at(i)->is("PhotogrammetricPoint"))
+			if (listAllPoints.at(i) && listAllPoints.at(i)->is("PhotogrammetricPoint"))
 				list.push_back("Photogrammetric");
-			if (listAllPoints.at(i)->is("CheckingPoint"))
+			if (listAllPoints.at(i) && listAllPoints.at(i)->is("CheckingPoint"))
 				list.push_back("Checking");
 		}
 		return list;

@@ -16,13 +16,12 @@
 ETableWidget::ETableWidget(QWidget *parent):QTableWidget(parent)
 {
 	//io= new Matrix(1,1);
-	doubleSpinBoxColumn=doubleSpinBoxRow=spinBoxColumn=spinBoxRow=-1;
+	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
 	installEventFilter(this);
 	setRowCount(0);
 	setColumnCount(0);
 	setMode('f');
 	setDecimals(6);
-	setType();
 	horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
 	verticalHeader()->setResizeMode(QHeaderView::Stretch);
 	connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
@@ -34,7 +33,8 @@ ETableWidget::ETableWidget(QWidget *parent):QTableWidget(parent)
 ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *parent):QTableWidget(parent)
 {
     //setTableData(values,mode,precision);
-	doubleSpinBoxColumn=doubleSpinBoxRow=spinBoxColumn=spinBoxRow=-1;
+
+	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
 	installEventFilter(this);
     connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     enableAutoCopy();
@@ -89,11 +89,13 @@ void ETableWidget::setTableData(Matrix values,char mode,int precision)
     {
         for(int j=0;j<columnCount();j++)
         {
+
 			QTableWidgetItem *temp= new QTableWidgetItem(QString::number(io->get(i+1,j+1),getMode(),getDecimals()));
-            temp->setTextAlignment(Qt::AlignCenter);
-            temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
-            this->setItem(i,j,temp);
-        }
+			temp->setTextAlignment(Qt::AlignCenter);
+			temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
+			this->setItem(i,j,temp);
+
+		}
     }
     //resizeColumnsToContents();
     //resizeRowsToContents();
@@ -413,7 +415,7 @@ void ETableWidget::clearSelection()
 {
 	setRangeSelected(QTableWidgetSelectionRange(0,0,rowCount()-1,columnCount()-1),false);
 }
-
+/*
 void ETableWidget::setColumnType(int colIndex, QString type, bool enable, double minValue, double maxValue)
 {
 	int rows=rowCount();
@@ -451,38 +453,73 @@ void ETableWidget::setColumnType(int colIndex, QString type, bool enable, double
 			if (item(i,colIndex)!=NULL)
 				doubleSpinBox->setValue(item(i,colIndex)->text().toDouble(&ok));
 
-
 			this->setCellWidget(i,colIndex,doubleSpinBox);
 		}
 	}
 
 }
-
+*/
 void ETableWidget::avaliateType(QTableWidgetItem *item)
 {
 	bool ok;
 	int row=item->row();
 	int col=item->column();
-	if (spinBoxColumn !=-1)
+
+	if (currentSpinBoxRow !=-1 || currentSpinBoxColumn !=-1 ||currentDoubleSpinBoxColumn !=-1 || currentDoubleSpinBoxRow !=-1)
+		validateItem();
+
+	if (checkTypeds(col,"QSpinBox"))
 	{
+		/*
 		int value=itemSpinBox->value();
 		QTableWidgetItem *item= new QTableWidgetItem(QString::number(value));
 		item->setTextAlignment(Qt::AlignCenter);
-		this->removeCellWidget(spinBoxRow,spinBoxColumn);
-		this->setItem(spinBoxRow,spinBoxColumn,item);
+		//this->removeCellWidget(row,col);
+		this->setItem(row,col,item);
 		itemSpinBox=NULL;
-		emit validatedItem(spinBoxRow,spinBoxColumn,value);
+		emit validatedItem(row,col,value);
+		*/
+		itemSpinBox= new QSpinBox();
+		itemSpinBox->setAlignment(Qt::AlignHCenter);
+		itemSpinBox->setButtonSymbols(QSpinBox::NoButtons);
+		//itemSpinBox->setEnabled(enable);
+		//itemSpinBox->setMinimum((int)minValue);
+		//itemSpinBox->setMaximum((int)maxValue);
+		itemSpinBox->setMaximum(10000);
+		itemSpinBox->setValue(item->text().toInt(&ok));
+		currentSpinBoxRow=row;
+		currentSpinBoxColumn=col;
+		connect(itemSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
+		setCellWidget(row,col,itemSpinBox);
+		itemSpinBox->setFocus(Qt::OtherFocusReason);
+
 	}
-	if (doubleSpinBoxColumn !=-1)
-	{
+	if (checkTypeds(col,"QDoubleSpinBox"))
+	{	/*
 		double value=itemDoubleSpinBox->value();
 		QTableWidgetItem *item= new QTableWidgetItem(QString::number(value));
 		item->setTextAlignment(Qt::AlignCenter);
-		this->removeCellWidget(doubleSpinBoxRow,doubleSpinBoxColumn);
-		this->setItem(doubleSpinBoxRow,doubleSpinBoxColumn,item);
+		this->removeCellWidget(row,col);
+		this->setItem(row,col,item);
 		itemSpinBox=NULL;
-		emit validatedItem(doubleSpinBoxRow,doubleSpinBoxColumn,value);
+		emit validatedItem(row,col,value);
+		*/
+		itemDoubleSpinBox= new QDoubleSpinBox();
+		itemDoubleSpinBox->setAlignment(Qt::AlignHCenter);
+		itemDoubleSpinBox->setButtonSymbols(QDoubleSpinBox::NoButtons);
+		//itemDoubleSpinBox->setEnabled(enable);
+		//itemDoubleSpinBox->setMinimum((int)minValue);
+		//itemDoubleSpinBox->setMaximum((int)maxValue);
+
+		itemDoubleSpinBox->setValue(item->text().toInt(&ok));
+		currentDoubleSpinBoxRow=row;
+		currentDoubleSpinBoxColumn=col;
+		connect(itemDoubleSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
+		setCellWidget(row,col,itemDoubleSpinBox);
+
+		itemDoubleSpinBox->setFocus(Qt::OtherFocusReason);
 	}
+	/*
 	if (getType()=="NONE")
 		return;
 	if (getType()=="QSpinBox")
@@ -516,50 +553,71 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 		doubleSpinBoxRow=row;
 		doubleSpinBoxColumn=col;
 	}
+	*/
 }
 
 void ETableWidget::validateItem()
 {
-	//int row=this->currentRow();
-	//int col=this->currentColumn();
-	if (sender()==itemSpinBox)
+	if (itemSpinBox!=NULL)
 	{
 		int value=itemSpinBox->value();
 		QTableWidgetItem *item= new QTableWidgetItem(QString::number(value));
 		item->setTextAlignment(Qt::AlignCenter);
-		this->removeCellWidget(spinBoxRow,spinBoxColumn);
-		this->setItem(spinBoxRow,spinBoxColumn,item);
+		this->removeCellWidget(currentSpinBoxRow,currentSpinBoxColumn);
+		this->setItem(currentSpinBoxRow,currentSpinBoxColumn,item);
 		itemSpinBox=NULL;
-		emit validatedItem(spinBoxRow,spinBoxColumn,value);
+		emit validatedItem(currentSpinBoxRow,currentSpinBoxColumn,value);
 	}
-	else if (sender()==itemDoubleSpinBox)
+	else if (itemDoubleSpinBox!=NULL)
 	{
 		double value=itemDoubleSpinBox->value();
 		QTableWidgetItem *item= new QTableWidgetItem(QString::number(value));
 		item->setTextAlignment(Qt::AlignCenter);
-		this->removeCellWidget(doubleSpinBoxRow,doubleSpinBoxColumn);
-		this->setItem(doubleSpinBoxRow,doubleSpinBoxColumn,item);
+		this->removeCellWidget(currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn);
+		this->setItem(currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn,item);
 		itemSpinBox=NULL;
-		emit validatedItem(doubleSpinBoxRow,doubleSpinBoxColumn,value);
+		emit validatedItem(currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn,value);
 	}
-	spinBoxRow=-1;
-	spinBoxColumn=-1;
-	doubleSpinBoxColumn=-1;
-	doubleSpinBoxRow=-1;
+	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxRow=currentDoubleSpinBoxColumn=-1;
 }
 
-
-void ETableWidget::setType(QString type)
+void ETableWidget::setType(int column, QString type)
 {
 	if (type=="NONE")
 		this->type="NONE";
-	else if(type=="QSpinBox")
+	else if(type=="QSpinBox" )//&& checkTypeds(column,"QSpinBox"))
+	{
+		typedSpinColumns.push_back(column);
 		this->type="QSpinBox";
-	else if(type=="QDoubleSpinBox")
+	}
+	else if(type=="QDoubleSpinBox")// && checkTypeds(column,"QDoubleSpinBox"))
+	{
+		typedDoubleSpinColumns.push_back(column);
 		this->type="QDoubleSpinBox";
+	}
 }
 
-QString ETableWidget::getType()
+bool ETableWidget::checkTypeds(int column, QString type)
 {
-	return type;
+	if (type=="QSpinBox")
+		for(int i=0; i<typedSpinColumns.size();i++)
+			if(typedSpinColumns.at(i)==column)
+				return true;
+
+	if (type=="QDoubleSpinBox")
+		for(int i=0; i<typedDoubleSpinColumns.size();i++)
+			if(typedDoubleSpinColumns.at(i)==column)
+				return true;
+
+	return false;
+}
+
+QString ETableWidget::getType(int column)
+{
+	if (checkTypeds(column,"QSpinBox"))
+		return "QSpinBox";
+	else if (checkTypeds(column,"QDoubleSpinBox"))
+		return "QDoubleSpinBox";
+	else
+		return "NONE";
 }
