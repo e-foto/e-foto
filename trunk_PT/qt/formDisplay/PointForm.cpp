@@ -145,7 +145,7 @@ void PointForm::setType(string type)
 {
 	if (!type.compare("control"))
 		typeComboBox->setCurrentIndex(0);
-	if (!type.compare("verification"))
+	if (!type.compare("checking"))
 		typeComboBox->setCurrentIndex(1);
 	if (!type.compare("photogrammetric"))
 		typeComboBox->setCurrentIndex(2);
@@ -156,7 +156,7 @@ string PointForm::getType()
 	if (typeComboBox->currentIndex() == 0)
 		return "control";
 	if (typeComboBox->currentIndex() == 1)
-		return "verification";
+		return "checking";
 	if (typeComboBox->currentIndex() == 2)
 		return "photogrammetric";
 	return "";

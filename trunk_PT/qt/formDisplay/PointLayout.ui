@@ -71,7 +71,7 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>Verification</string>
+              <string>Checking</string>
              </property>
             </item>
             <item>

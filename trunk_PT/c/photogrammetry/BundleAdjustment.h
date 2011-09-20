@@ -85,7 +85,7 @@ public:
  /** Matriz de rotaçőes
   */
 protected:
-    Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
+	Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
     int totalIterations;
 
     //Seta a matrix baseado nos angulos
@@ -203,7 +203,7 @@ public:
 	double getRy(Image *img, int pointId);
 	bool getConvergencyStatus();
 	int getTotalIterations();
-
+	Matrix getMVC();
 	void calculateResiduos();
 	void calculatePeso();
 	void updateCoordFotog();

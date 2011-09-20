@@ -630,15 +630,10 @@ void Image::sortPoints()
 		//Point* pnt=myPoints.at(i);
 		if (myPoints.at(i)->is("ControlPoint")) //pnt->is("ControlPoint"))
 			listCtrl.push_front(myPoints.at(i)); //pnt);
-		else if (myPoints.at(i)->is("PhotogrammetricPoint") || myPoints.at(i)->is("CheckingPoint")) //pnt->is("PhotogrammetricPoint") || pnt->is("CheckingPoint"))
-			listCtrl.push_back(myPoints.at(i)); //pnt);
+		else if (myPoints.at(i)->is("PhotogrammetricPoint") || myPoints.at(i)->is("CheckingPoint"))
+			listCtrl.push_back(myPoints.at(i));
 
-		qDebug("\tponto %d = %s",i, myPoints.at(i)->getPointId().c_str());//pnt->getPointId());
+		//qDebug("\tponto %d = %s",i, myPoints.at(i)->getPointId().c_str());//pnt->getPointId());
 	}
 	myPoints=listCtrl;
-}
-
-void Image::clearPoints()
-{
-	myPoints.clear();
 }
