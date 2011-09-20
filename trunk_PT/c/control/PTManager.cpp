@@ -134,7 +134,7 @@ PositionMatrix PTManager::getImageDimensions(string filename)
 			//qDebug("Achou %s",imageFileName.c_str());
 			Image *temp=listAllImages.at(i);
 			PositionMatrix dimensions(2,"");
-			qDebug("height:= %d",temp->getHeight());
+			//qDebug("height:= %d",temp->getHeight());
 			dimensions.setInt(1,temp->getHeight());
 			dimensions.setInt(2,temp->getWidth());
 			return dimensions;
@@ -197,30 +197,29 @@ bool PTManager::connectImagePoints()
 	if (!(started))
 	{
 		EDomElement xmlPoints(efotoManager->getXml("points"));
-		deque<EDomElement> allPoints = xmlPoints.children();
+		deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 		for (unsigned int j = 0; j < listAllImages.size(); j++)
 		{
-			listAllImages.at(j)->clearPoints();
+			//listAllImages.at(j)->clearPoints();
 			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
 				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", intToString(listAllImages.at(j)->getId())).getContent();
+				//qDebug("%s\n",data.c_str());
 				if (data != "")
 				{
 					Point* pointToInsert = efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
-					if (pointToInsert != NULL)// && !pointToInsert->is("CheckingPoint"))
+					if (pointToInsert != NULL)
 					{
-						qDebug("connectImagePoints(): colocou um ponto: %s",pointToInsert->getPointId().c_str());
+						//qDebug("connectImagePoints(): colocou um ponto: %s",pointToInsert->getPointId().c_str());
 						listAllImages.at(j)->putPoint(pointToInsert);
 						pointToInsert->putImage(listAllImages.at(j));//novo em teste:06/08/2011
 					}
 				}
 			}
-			qDebug("Image %s",listAllImages.at(j)->getFilename().c_str());
+			//qDebug("Image %s",listAllImages.at(j)->getFilename().c_str());
 			listAllImages.at(j)->sortPoints();
-			//Image *img;
-			//img->getFilename()
 		}
-		qDebug("\n\n");
+		//qDebug("\n\n");
 		return true;
 	}
 	return false;
@@ -229,7 +228,7 @@ bool PTManager::connectImagePoints()
 void PTManager::setListPoint()
 {
 	EDomElement xmlPoints(efotoManager->getXml("points"));
-	deque<EDomElement> allPoints = xmlPoints.children();
+	deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 	for(int i=0;i<allPoints.size();i++)
 	{
 		Point* point= efotoManager->instancePoint(stringToInt(allPoints.at(i).attribute("key")));
@@ -329,10 +328,12 @@ void PTManager::selectPoints(deque<string> selectedPointsList)
 
 	int numPnts= listAllPoints.size();
 	int	numSelectedPnts=selectedPointsList.size();
+
 	for(int i=0;i<numSelectedPnts;i++)
 		for (int j=0;j<numPnts;j++)
-			if (listAllPoints.at(j)->getPointId()==selectedPointsList.at(i))
+			if (listAllPoints.at(j)->getPointId()==selectedPointsList.at(i) && !listAllPoints.at(j)->is("CheckingPoint"))
 			{
+
 				listSelectedPoints.push_back(listAllPoints.at(j));
 				//qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
 			}
@@ -348,7 +349,7 @@ BundleAdjustment* PTManager::getBundleAdjustment()
 }
 
 // retorna uma lista com os ids dos pontos
-deque<string> PTManager::getStringIdPoints(string imageFileName)
+deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
 {
 	deque<string> list;
 	if (imageFileName =="")
@@ -357,7 +358,8 @@ deque<string> PTManager::getStringIdPoints(string imageFileName)
 		for (int i=0; i<numPnts; i++)
 		{
 			Point *pnt=listAllPoints.at(i);
-			list.push_back(pnt->getPointId());
+			if(!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint"))
+				list.push_back(pnt->getPointId());
 		}
 		return list;
 	}else
@@ -536,4 +538,20 @@ void PTManager::saveResults()
 	}
 	efotoManager->xmlSetData(newXml.getContent());
 	efotoManager->setSavedState(false);
+}
+
+Matrix PTManager::getMVC()
+{
+	return pt->getMVC();
+}
+
+// Retorna uma lista dos fileNames das imagens que contem o ponto
+deque<string> PTManager::getImagesAppearances(int pointKey)
+{
+	deque<string> appearance;
+	Point *pnt=efotoManager->instancePoint(pointKey);
+	int numImages=pnt->countImages();
+	for(int i=0;i<numImages;i++)
+		appearance.push_back(pnt->getImageAt(i)->getFilename());
+	return appearance;
 }

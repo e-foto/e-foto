@@ -78,7 +78,7 @@ public:
 	void viewImages();
 	void viewImage(int id);
 	QString getSavedIn();
-	EDomElement pointTxtToXml(QString point, int key, int line, string typePoint="control");
+	string pointTxtToXml(QString point, int key, int line, string typePoint="control");
 	string edomPointToTxt(EDomElement points);
 
 	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);

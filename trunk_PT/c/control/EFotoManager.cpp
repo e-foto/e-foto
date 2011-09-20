@@ -715,7 +715,10 @@ bool EFotoManager::execPT()
 	EDomElement points(getXml("points"));
 	deque<EDomElement> pointsEDom=points.elementsByTagName("point");
 	for (int i=0; i<pointsEDom.size(); i++)
+	{
 		ptPoints.push_back(instancePoint(stringToInt(pointsEDom.at(i).attribute("key"))));
+		//qDebug("i=%d point key:%s point Id:%s",i,pointsEDom.at(i).attribute("key").c_str(),pointsEDom.at(i).elementByTagName("pointId").toString().c_str());
+	}
 
 	EDomElement ois(getXml("interiorOrientation"));
 	deque<EDomElement> oisEDom=ois.elementsByTagName("imageIO");
@@ -738,27 +741,18 @@ void EFotoManager::stopPT()
 	delete fotoTri;
 	fotoTri = NULL;
 	deleteSensor(images.at(0)->getSensorId());
+	int numPoints=points.size();
+	int numImages=images.size();
 
-	for (int i=0;i<points.size();i++)
+	for (int i=0;i<numPoints;i++)
 	{
-		deletePoint(points.at(i)->getId());
+		deletePoint(points.at(0)->getId());
 	}
-	for (int i=0;i<images.size();i++)
+	for (int i=0;i<numImages;i++)
 	{
-		deleteIO(images.at(i)->getId());
-		deleteImage(images.at(i)->getId());
+		deleteIO(images.at(0)->getId());
+		deleteImage(images.at(0)->getId());
 	}
-
-	//delete fotoTri;
-	/*
-	Image* srImage = instanceImage(id);
-	delete spatialRessection;
-	spatialRessection = NULL;
-	deleteEO(id);
-	deleteIO(id);
-
-	deleteImage(id);
-	*/
 
 }
 

@@ -118,7 +118,7 @@ bool BundleAdjustment::calculate()
 				//n2.show('f',3,"n2");
 				getx1(n11,n12,n22,n1,n2);
 				getx2(n12,n22,n2);
-				//x1.show('f',3,"x1");
+				//x1.show('f',10,"x1");
 				//x2.show('f',3,"x2");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 				updateMatAdjust();
@@ -126,11 +126,13 @@ bool BundleAdjustment::calculate()
 				updateCoordFotog();
 				conv=testConverged();
 				totalIterations++;
+
 				//qDebug("iteration %d",iterations);
+
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
-			matAdjust.show('f',5,"MatAdjus depois da iteracao");
+			//matAdjust.show('f',5,"MatAdjus depois da iteracao");
 			calculateResiduos();
 			//matRes.show('f',5,"MatRes depois da iteracao");
 			//resOk=testResiduo();
@@ -146,7 +148,7 @@ bool BundleAdjustment::calculate()
 	}
 	else
 	{
-		qDebug("Sem pontos Fotogrametricos");
+		//qDebug("Sem pontos Fotogrametricos");
 		/*while(!resOk)
 		{*/
 			totalIterations=0;
@@ -161,7 +163,7 @@ bool BundleAdjustment::calculate()
 				Matrix n1=getn1(l);
 				n11.show('f',3,"N11");
 				x1=n11.inverse()*n1;
-				x1.show('f',3,"x1");
+				//x1.show('f',3,"x1");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 				updateMatAdjust();
 				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
@@ -171,7 +173,7 @@ bool BundleAdjustment::calculate()
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
-			matAdjust.show('f',7,"MatAdjus depois da iteracao");
+			//matAdjust.show('f',7,"MatAdjus depois da iteracao");
 			calculateResiduos();
 			//matRes.show('f',5,"MatRes depois da iteracao");
 			//resOk=testResiduo();
@@ -567,25 +569,25 @@ void BundleAdjustment::getInicialsValues()
 	if (numFotogrametricPoints!=0)
 	{
 		Matrix L=createL();
-		L.show('f',3,"L");
+		//L.show('f',3,"L");
 		Matrix M1=createM1();
-		M1.show('f',3,"M1");
+		//M1.show('f',3,"M1");
 		Matrix M2=createM2();
-		M2.show('f',3,"M2");
+		//M2.show('f',3,"M2");
 		Matrix m11=getM11(M1);
 		Matrix m12=getM12(M1,M2);
-		m12.show('f',3,"M12");
+		//m12.show('f',3,"M12");
 
 		Matrix m22=getM22(M2);
-		m22.show('f',3,"M22");
+		//m22.show('f',3,"M22");
 		Matrix m1=getm1(M1,L);
 		Matrix m2=getm2(M2,L);
 
 		Matrix paf=getPAf(m11,m12,m22,m1,m2);
 		Matrix xypf=getXYpf(m22,m2,m12,paf);
 
-		paf.show('f',4,"paf");
-		xypf.show('f',4,"xypf");
+		//paf.show('f',4,"paf");
+		//xypf.show('f',4,"xypf");
 		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
 
 		Matrix temp(numImages,6);
@@ -608,7 +610,7 @@ void BundleAdjustment::getInicialsValues()
 	}
 	else
 	{
-		qDebug("initial Values: Sem pontos Fotogrametricos");
+		//qDebug("initial Values: Sem pontos Fotogrametricos");
 
 		Matrix L=createL();
 		Matrix M1=createM1();
@@ -724,7 +726,7 @@ Matrix BundleAdjustment::imageToMatrixAnalogicalCoordenates(Image *img)
 				   |1	eta xi	0	 0		0 |
 				   |0	 0	0	1	eta 	xi|
 		*/
-		if (whereInPoints(img->getPointAt(i))!=-1)
+		if (whereInPoints(img->getPointAt(i))!=-1 && !img->getPointAt(i)->is("CheckingPoint"))
 		{
 			Matrix temp(2,6);
 			/** conversao digital to analog sera feito pela classe do Rafael em breve */
@@ -855,7 +857,7 @@ double BundleAdjustment::getMediaScale(int imageIndex)
 
 	for(int j=1;j<pnts;j++)
 	{
-		if (whereInPoints(getPointFrom(imageIndex,j))!=-1)
+		if (whereInPoints(getPointFrom(imageIndex,j))!=-1 && !isCheckingPoint(imageIndex,j))
 		{
 			double xCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getX();
 			double yCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getY();
@@ -883,7 +885,7 @@ Matrix BundleAdjustment::imageToMatrixJacobiana(int indexImage)
 	Matrix result(0,6);
 	for (int i=0;i<pnts;i++)
 	{
-		if(whereInPoints(img->getPointAt(i))!=-1)
+		if(whereInPoints(img->getPointAt(i))!=-1 && !isCheckingPoint(indexImage,i))
 		{
 			ObjectSpaceCoordinate aux=img->getPointAt(i)->getObjectCoordinate();
 			double x=aux.getX();
@@ -921,7 +923,7 @@ void BundleAdjustment::createA2()
 		Matrix oneImage(2*rows,3*numFotogrametricPoints);
 		for (int j=0;j<pnts;j++)
 		{
-			if(whereInPoints(getPointFrom(i,j))!=-1)
+			if(whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
 			{
 				if(isPhotogrammetricPoint(i,j))
 				{
@@ -951,7 +953,7 @@ void BundleAdjustment::createL0()
 		int pnts=listImages.at(i)->countPoints();
 		for (int j=0;j<pnts;j++)
 		{
-			if (whereInPoints(getPointFrom(i,j))!=-1)
+			if (whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
 			{
 				ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
 				double x=aux.getX();
@@ -974,7 +976,7 @@ void BundleAdjustment::createLb()
 		int pnts=listImages.at(i)->countPoints();
 		for (int j=0;j<pnts;j++)
 		{
-			if (whereInPoints(getPointFrom(i,j))!=-1)
+			if (whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
 			{
 				AnalogImageSpaceCoordinate aux=getPointFrom(i,j)->getAnalogCoordinate(listImages.at(i)->getId());
 				double xi=aux.getXi();
@@ -1233,4 +1235,19 @@ void BundleAdjustment::printAll()
 }
 
 
-
+Matrix BundleAdjustment::getMVC()
+{
+	//Isso é feito apenas para:
+	//Exibiçao dos angulos em Graus.
+	Matrix tempX1(numImages,6);
+	for (int i=0;i<numImages;i++)
+	{
+		tempX1.set(i+1,1,Dms::radianoToDegreeDecimal(x1.get(6*i+4,1)));
+		tempX1.set(i+1,2,Dms::radianoToDegreeDecimal(x1.get(6*i+5,1)));
+		tempX1.set(i+1,3,Dms::radianoToDegreeDecimal(x1.get(6*i+6,1)));
+		tempX1.set(i+1,4,x1.get(6*i+1,1));
+		tempX1.set(i+1,5,x1.get(6*i+2,1));
+		tempX1.set(i+1,6,x1.get(6*i+3,1));
+	}
+	return tempX1;
+}
