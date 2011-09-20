@@ -55,8 +55,9 @@ void MonoView::zoom(double zoomFactor, QPointF at)
 
 	if (at == QPointF(-1,-1))
 		return;
-	//QPointF diffToCenter = at - viewpoint_;
-	//pan(diffToCenter*scale_-diffToCenter*oldScale);
+	if (!((at.x() >= 0 && at.x() <= rasterRsrc_->width()) && (at.y() >= 0 && at.y() <= rasterRsrc_->height())))
+		at = rasterRsrc_->center();
+	moveTo((viewpoint_-at)*oldScale/scale_ + at);
 }
 bool MonoView::loadImage(QString filepath)
 {
