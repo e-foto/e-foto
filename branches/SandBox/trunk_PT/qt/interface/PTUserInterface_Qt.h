@@ -67,6 +67,7 @@ public slots:
 
 	void updateImagesList(QString imageFilename);
 	void selectAllAppearances(int index);
+	void showImagesAppearances(int indexRow,int indexCol);
 	int findKeyAppearances(QString table, QString searched);
 
 	void imageClicked(QPointF* pixel);

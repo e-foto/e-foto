@@ -2051,17 +2051,20 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 	loading.setMinimumSize(300,30);
 	loadWidget->show();
 
+	string newPointXML;
 	for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
 	{
 		loading.setFormat(tr("%v/%m : %p%"));
 		loading.setValue(i+1);
-		EDomElement newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId(),i+1);
-		if ( newPointXML.hasTagName("pointId") )
+		newPointXML+=pointTxtToXml(pointsList.at(i),manager->getFreePointId()+i,i+1);
+		/*if ( newPointXML.hasTagName("pointId") )
 		{
 			manager->addComponent(newPointXML.getContent().data(),"points");
-		}
+		}*/
 	}
+	manager->addComponent(newPointXML,"points");
 	loadWidget->close();
+
 	updateTree();
 	viewPoints();
 	actionSave_file->setEnabled(true);
@@ -2069,10 +2072,10 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 
 /** This function convert a point data from a *.txt line in a children point XML valid
 */
-EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
+string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
 {
 	stringstream aux;
-	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField, newXml;
+	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
 	QStringList fields= point.split("\t");
 // check	control	 tie
 	if (fields.length() == 7)
@@ -2147,11 +2150,12 @@ EDomElement ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 		aux << "</point>";
 	}else{
 		QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+		return "";
 	}
 
-	newXml=aux.str();
-	EDomElement newPointXml(newXml.c_str());
-	return newPointXml;
+	return aux.str();
+	//EDomElement newPointXml(newXml.c_str());
+
 }
 
 /** This function exports all points in current XML to *.txt file with a one point in

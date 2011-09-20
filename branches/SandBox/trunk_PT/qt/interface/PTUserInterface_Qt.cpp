@@ -136,7 +136,10 @@ void PTUserInterface_Qt::init()
 	connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 
+	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
+
 	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
+	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
 
 	/*Permite ediçao de coordenada via tabela*/
 	leftImageTableWidget->setType(1,"QSpinBox");
@@ -278,7 +281,16 @@ void PTUserInterface_Qt::viewReport()
 	oeLayout->addLayout(infoLayout);
 	oeLayout->addWidget(oeTable);
 
+	QVBoxLayout *mvcLayout= new QVBoxLayout();
+	QLabel *mvcLabel= new QLabel("<font size=5>MVC");
+	mvcLabel->setTextFormat(Qt::RichText);
+	mvcLabel->setAlignment(Qt::AlignHCenter);
+	ETableWidget *mvcTable = new ETableWidget(ptManager->getMVC(),'f',10);
+	mvcLayout->addWidget(mvcLabel);
+	mvcLayout->addWidget(mvcTable);
+	oeLayout->addLayout(mvcLayout);
 	horizontalLayout->addLayout(oeLayout);
+
 	/**/
 	horizontalLayout->setStretchFactor(oeLayout,7);
 	/**///tabela dos pontos fotogrametricos
@@ -363,7 +375,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 	selectionImagesView->addAllItems();
 
 	QStringList listPoints;
-	lista=ptManager->getStringIdPoints();
+	lista=ptManager->getStringIdPoints("","noCheckingPoint");
 	sizeList=lista.size();
 	for (int i=0;i<sizeList;i++)
 		listPoints << QString(lista.at(i).c_str());
@@ -466,7 +478,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 		{
 			int col =leftImageTableWidget->item(pos,1)->text().toInt(&ok);
 			int lin =leftImageTableWidget->item(pos,2)->text().toInt(&ok);
-			qDebug("left image coord %dx%d",col,lin);
+			//qDebug("left image coord %dx%d",col,lin);
 			QPointF pixel(col,lin);
 			leftView->moveTo(pixel);
 			leftDisplay->update();
@@ -492,7 +504,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 		{
 			int col =rightImageTableWidget->item(pos,1)->text().toInt(&ok);
 			int lin =rightImageTableWidget->item(pos,2)->text().toInt(&ok);
-			qDebug("right image coord %dx%d",col,lin);
+			//qDebug("right image coord %dx%d",col,lin);
 			QPointF pixel(col,lin);
 			rightView->moveTo(pixel);
 			rightDisplay->update();
@@ -695,7 +707,7 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 			lin=value;//item->text().toInt(&ok);
 			col=leftImageTableWidget->item(tableRow,1)->text().toInt(&ok);
 		}
-		qDebug("updateLeftimage %dx%d",col,lin);
+		//qDebug("updateLeftimage %dx%d",col,lin);
 		updateMark("leftImage",imageKey,pointKey,QPointF(col,lin));
 		leftView->moveTo(QPointF(col,lin));
 		leftDisplay->update();
@@ -777,3 +789,43 @@ void PTUserInterface_Qt::clearAllMarks(MonoDisplay *display)
 	display->getCurrentView()->geometries()->clear();
 	display->update();
 }
+
+void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
+{
+	bool ok;
+	if(indexCol==0)
+	{
+		int keyPoint=pointsTableWidget->item(indexRow,5)->text().toInt(&ok);
+		deque<string> appearances=ptManager->getImagesAppearances(keyPoint);
+		QWidget *temp= new QWidget();
+		QVBoxLayout *layout=new QVBoxLayout();
+		QTreeWidget *tree=new QTreeWidget();
+
+		QList<QTreeWidgetItem*> imagesFileName;
+		QStringList lista;
+		for(int i=0;i<appearances.size();i++)
+		{
+			lista.append(QString::fromStdString(appearances.at(i)));
+			QTreeWidgetItem *item=new QTreeWidgetItem(lista);
+			imagesFileName.append(item);
+			lista.clear();
+		}
+
+		//qDebug()<<lista;
+
+		//item->
+		tree->setHeaderLabel(tr("PointId: %1").arg(pointsTableWidget->item(indexRow,0)->text()));
+		tree->addTopLevelItems(imagesFileName);
+
+		//tree->insertTopLevelItems(imagesFileName);
+		layout->addWidget(tree);
+		temp->setLayout(layout);
+		temp->show();
+		//connect(temp,SIGNAL(),temp,SLOT(close()));
+	}
+}
+
+
+
+
+
