@@ -120,9 +120,11 @@ void MonoDisplay::updateDetail(QPointF* mousePosition, bool emitClicked)
 	moveLastPos_.setY(((*mousePosition - currentView_->getViewpoint()) * scale).y() + size().height() / 2);
 	if (detail_)
 		detail_->update();
-	QPointF lastPos = getLastMousePosition();
 	if (emitClicked)
+	{
+		QPointF lastPos = getLastMousePosition();
 		emit mouseClicked(&lastPos);
+	}
 }
 void MonoDisplay::paintEvent(QPaintEvent *e)
 {
@@ -212,7 +214,7 @@ void MonoDisplay::wheelEvent(QWheelEvent *e)
 			for (int i = 0; i<abs(numSteps);i++)
 				parentDisplay_->zoom(zoomStep);
 		else
-			//for (int i = 0; i<abs(numSteps);i++)
+			for (int i = 0; i<abs(numSteps);i++)
 				currentView_->zoom(zoomStep, getLastMousePosition());
 		updateAll();
 	}
