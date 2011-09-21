@@ -131,7 +131,20 @@ QImage MonoView::getThumb(QSize targetSize, QRect* rect)
 	QSize newTargetSize = rasterRsrc_->size();
 	newTargetSize.scale(targetSize,Qt::KeepAspectRatio);
 
-	return rasterRsrc_->getImageCut(newTargetSize, imageCut);
+	double scale = newTargetSize.width()/(double)rasterRsrc_->size().width();
+
+	//return rasterRsrc_->getImageCut(newTargetSize, imageCut);
+	//qDebug("%dx%d %dx%d %f %dx%d %f", newTargetSize.width(), newTargetSize.height(), rasterRsrc_->size().width(),rasterRsrc_->size().height(), scale, rect->width(), rect->height(), scale_);
+	QRect viewedRect((viewpoint_*scale).toPoint()/*Aqui rola matemática para calcular o ponto topleft partindo de center*/,((scale*QRectF(*rect).size())/scale_).toSize());
+
+	QImage thumb = rasterRsrc_->getImageCut(newTargetSize, imageCut);
+	QImage result(thumb.size(), QImage::Format_ARGB32);
+	QPainter painter(&result);
+	painter.drawImage(0,0,thumb);
+	painter.setPen(QPen(QColor(Qt::yellow)));
+	painter.drawRect(viewedRect);
+	painter.end();
+	return result;
 }
 QImage MonoView::getDetail(QSize targetSize, QPointF point, double zoom)
 {

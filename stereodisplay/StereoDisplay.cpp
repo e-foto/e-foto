@@ -316,7 +316,7 @@ void OverviewDisplay::paintEvent(QPaintEvent *e)
 
 		QSize targetSize = target.size();
 
-		QImage thumb = currentView->getThumb(targetSize);
+		QImage thumb = currentView->getThumb(targetSize,&(parentDisplay_->rect()));
 		painter.drawImage((targetSize.width()-thumb.width())/2, (targetSize.height()-thumb.height())/2, thumb);
 	}
 }

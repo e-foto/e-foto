@@ -79,6 +79,7 @@ void GeometryResource::clear()
 #include <QDebug>
 QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale)
 {
+
 	QImage result(targetSize, QImage::Format_ARGB32);
 	//QImage mark("../X16x16.png");
 	QPainter painter(&result);
