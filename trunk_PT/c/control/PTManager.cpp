@@ -11,18 +11,11 @@
 
 //#include <qdebug.h>
 
-
 PTManager::PTManager()
 {
 	efotoManager  = NULL;
 	mySensor = NULL;
 	myFlight = NULL;
-
-	//	Matrix d(2,2);
-	//d.set(1,1,3.0);
-
-	//for (int j=1;j<=d.getCols();j++)
-	//qDebug("%f",d.get(1,j));
 
 	//afp=d;
 	started = false;
@@ -337,10 +330,7 @@ void PTManager::selectPoints(deque<string> selectedPointsList)
 				listSelectedPoints.push_back(listAllPoints.at(j));
 				//qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
 			}
-			else
-			{
-				//qDebug("Ponto nao encontrado");
-			}
+
 }
 
 BundleAdjustment* PTManager::getBundleAdjustment()

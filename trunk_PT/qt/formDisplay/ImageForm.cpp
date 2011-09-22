@@ -44,16 +44,13 @@ void ImageForm::fillvalues(string values)
 	tagXml += ede.attribute("flight_key");
 	tagXml += "\">";
 
-	imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) )	  );
+	imageIDLine->setText( (QString::fromUtf8(ede.elementByTagName("imageId").toString().c_str()) ));
 
-	widthLine->setText( (QString::fromUtf8(ede.elementByTagAtt("width","uom","#px").toString().c_str())+" px"  )
-					   );
+	widthLine->setText( (QString::fromUtf8(ede.elementByTagAtt("width","uom","#px").toString().c_str())+" px"  ));
 
-	heightLine->setText( (QString::fromUtf8(ede.elementByTagAtt("height","uom","#px").toString().c_str())+" px" )
-						);
+	heightLine->setText( (QString::fromUtf8(ede.elementByTagAtt("height","uom","#px").toString().c_str())+" px" ));
 
-	fileNameLine->setText( QString::fromUtf8(ede.elementByTagName("fileName").toString().c_str() )
-						  );
+	fileNameLine->setText( QString::fromUtf8(ede.elementByTagName("fileName").toString().c_str() ));
 
 	string auxString;
 	auxString = ede.elementByTagName("filePath").toString();
@@ -215,6 +212,10 @@ QString ImageForm::loadImageFile()
 		int j=absolutePath.relativeFilePath(fileImage).lastIndexOf(('/'));
 		fileImageName = fileImage.right(fileImage.length()-i-1);
 		fileImagePath = fileImage.left(i);
+
+		QString sugestionID=fileImageName;
+		sugestionID.chop(4);
+		imageIDLine->setText(sugestionID);
 
 		fileNameLine->setText(fileImageName);
 		if (j<0)

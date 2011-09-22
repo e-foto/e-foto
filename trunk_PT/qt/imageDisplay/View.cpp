@@ -43,12 +43,21 @@ void MonoView::scaleTo(double newScale)
 	scale_ = newScale;
 	limitScale();
 }
-void MonoView::zoom(double zoomFactor)
+void MonoView::zoom(double zoomFactor, QPointF at)
 {
 	if (!rasterRsrc_)
 		return;
+
+	double oldScale = scale_;
 	scale_ *= zoomFactor;
+
 	limitScale();
+
+	if (at == QPointF(-1,-1))
+		return;
+	if (!((at.x() >= 0 && at.x() <= rasterRsrc_->width()) && (at.y() >= 0 && at.y() <= rasterRsrc_->height())))
+		at = rasterRsrc_->center();
+	moveTo((viewpoint_-at)*oldScale/scale_ + at);
 }
 bool MonoView::loadImage(QString filepath)
 {
@@ -80,8 +89,8 @@ void MonoView::limitScale()
 {
 	if (scale_ < 1/pow(2,rasterRsrc_->levels()))
 		scale_ = 1/pow(2,rasterRsrc_->levels());
-	else if (scale_ > pow(2,8))
-		scale_ = pow(2,8);
+	else if (scale_ > pow(2,4))
+		scale_ = pow(2,4);
 }
 QImage MonoView::getFrame(QSize targetSize)
 {
