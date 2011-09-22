@@ -23,11 +23,12 @@ protected:
 	MonoDisplay *rightDisplay;
 	MonoView *leftView;
 	MonoView *rightView;
-
 	Marker mark;
 
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;
+
+	int currentZoomLevelDetail;
 
 	ETableWidget *tableImageLeft;
 	ETableWidget *tableImageRight;
@@ -57,7 +58,7 @@ public:
 
 public slots:
     void activePanMode();
-    void activeZoomMode();
+	void zoomDetail();
     void fitView();
     void viewReport();
 	void makeRepaint();

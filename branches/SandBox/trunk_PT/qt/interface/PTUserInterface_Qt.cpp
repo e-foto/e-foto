@@ -26,7 +26,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	:QMainWindow(parent, fl)
 {
 	setupUi(this);
-    ptManager = manager;
+	currentZoomLevelDetail=4;
+	ptManager = manager;
 
 	StereoService ss;
 	leftView= ss.getMonoView(this,"");
@@ -65,11 +66,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	setWindowTitle("E-foto - Phototriangulation");
 
     connect(actionMove,SIGNAL(triggered()),this,SLOT(activePanMode()));
-    connect(actionZoom,SIGNAL(triggered()),this,SLOT(activeZoomMode()));
+	//connect(actionZoom,SIGNAL(triggered()),this,SLOT(activeZoomMode()));
     connect(actionFit_View,SIGNAL(triggered()),this,SLOT(fitView()));
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
-	connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(showSelectionWindow()));
+	//connect(actionFoto_Tri,SIGNAL(triggered()), this, SLOT(showSelectionWindow()));
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
+	connect(calculateFotoTriToolButton,SIGNAL(clicked()),this,SLOT(showSelectionWindow()));
+	connect(zoomToolButton,SIGNAL(clicked()),this,SLOT(zoomDetail()));
 
 	connect(leftDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
 	connect(rightDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
@@ -136,6 +139,8 @@ void PTUserInterface_Qt::init()
 	connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
 
+	connect(leftImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
+	connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
 	connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
 
 	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
@@ -147,6 +152,7 @@ void PTUserInterface_Qt::init()
 
 	rightImageTableWidget->setType(1,"QSpinBox");
 	rightImageTableWidget->setType(2,"QSpinBox");
+
 
 }
 
@@ -197,7 +203,8 @@ bool PTUserInterface_Qt::exec()
 
 	//connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
 	//connect(rightImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
-	
+	selectAllAppearances(0);
+	showImagesAppearances(0,0);
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
@@ -229,9 +236,15 @@ void PTUserInterface_Qt::activePanMode()
 		//myImageLeftView->setViewMode(2);
 }
 
-void PTUserInterface_Qt::activeZoomMode()
+void PTUserInterface_Qt::zoomDetail()
 {
-		//myImageLeftView->setViewMode(3);
+	if(currentZoomLevelDetail!=64)
+		currentZoomLevelDetail*=2;
+	else
+		currentZoomLevelDetail=1;
+
+	leftDisplay->setDetailZoom(currentZoomLevelDetail);
+	rightDisplay->setDetailZoom(currentZoomLevelDetail);
 }
 
 void PTUserInterface_Qt::fitView()
@@ -518,7 +531,13 @@ void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 	bool ok;
 	//qDebug("linha clicada: %d",tableRow);
 	int indexLeftSearched,indexRightSearched, indexPointsSearched;
-	if (sender()==leftImageTableWidget)
+	ETableWidget *table;
+	if (sender()==NULL)
+		table=pointsTableWidget;
+	else
+		table=(ETableWidget*)sender();
+
+	if (table==leftImageTableWidget)
 	{
 		QString searched=leftImageTableWidget->item(tableRow,3)->text();
 		currentPointKey=searched.toInt(&ok);
@@ -530,7 +549,7 @@ void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 		leftView->moveTo(QPointF(col,lin));
 		leftDisplay->update();
 	}
-	else if (sender()==pointsTableWidget)
+	else if (table==pointsTableWidget)
 	{
 		QString searched=pointsTableWidget->item(tableRow,5)->text();
 		currentPointKey=searched.toInt(&ok);
@@ -554,7 +573,7 @@ void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 		}
 
 	}
-	else if (sender()==rightImageTableWidget)
+	else if (table==rightImageTableWidget)
 	{
 		QString searched=rightImageTableWidget->item(tableRow,3)->text();
 		currentPointKey=searched.toInt(&ok);
@@ -793,6 +812,7 @@ void PTUserInterface_Qt::clearAllMarks(MonoDisplay *display)
 void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 {
 	bool ok;
+	/*
 	if(indexCol==0)
 	{
 		int keyPoint=pointsTableWidget->item(indexRow,5)->text().toInt(&ok);
@@ -822,10 +842,44 @@ void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 		temp->setLayout(layout);
 		temp->show();
 		//connect(temp,SIGNAL(),temp,SLOT(close()));
+		//
+	}*/
+	ETableWidget *table;
+	int keyPoint;
+	if (sender()==NULL)
+		table=pointsTableWidget;
+	else
+		table=(ETableWidget*)sender();
+
+	if (table==leftImageTableWidget)
+	{
+		pointIdLabel->setText(QString("Point %1 is in images").arg(leftImageTableWidget->item(indexRow,0)->text()));
+		keyPoint=leftImageTableWidget->item(indexRow,3)->text().toInt(&ok);
 	}
+	else if (table==pointsTableWidget)
+	{
+		pointIdLabel->setText(QString("Point %1 is in images").arg(pointsTableWidget->item(indexRow,0)->text()));
+		keyPoint=pointsTableWidget->item(indexRow,5)->text().toInt(&ok);
+	}
+	else if (table==rightImageTableWidget)
+	{
+		pointIdLabel->setText(QString("Point %1 is in images").arg(rightImageTableWidget->item(indexRow,0)->text()));
+		keyPoint=rightImageTableWidget->item(indexRow,3)->text().toInt(&ok);
+	}
+
+	deque<string> appearances=ptManager->getImagesAppearances(keyPoint);
+	imagesPointListWidget->clear();
+
+	QStringList lista;
+	for(int i=0;i<appearances.size();i++)
+		lista.append(QString::fromStdString(appearances.at(i)));
+	imagesPointListWidget->addItems(lista);
+	if (table==leftImageTableWidget)
+		pointIdLabel->setText(QString("Point %1 is in images").arg(leftImageTableWidget->item(indexRow,0)->text()));
+	else if (table==pointsTableWidget)
+		pointIdLabel->setText(QString("Point %1 is in images").arg(pointsTableWidget->item(indexRow,0)->text()));
+	else if (table==rightImageTableWidget)
+		pointIdLabel->setText(QString("Point %1 is in images").arg(rightImageTableWidget->item(indexRow,0)->text()));
+
 }
-
-
-
-
 

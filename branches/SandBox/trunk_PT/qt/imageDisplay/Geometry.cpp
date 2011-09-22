@@ -14,7 +14,6 @@ Coord::Coord()
 Coord::Coord(QPointF location, QString label, Marker *mark) :
 	QPointF(location.x(),location.y())
 {
-	location_=location;
 	label_ = label;
 	marker_ = mark;
 }
@@ -24,11 +23,7 @@ QString Coord::getLabel()
 {
 	return label_;
 }
-//Paulo
-QPointF Coord::getLocation()
-{
-	return location_;
-}
+
 
 Geometry::Geometry()
 {
@@ -107,7 +102,6 @@ void GeometryResource::clear()
 {
 	geometries_.clear();
 }
-
 #include <QDebug>
 QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale)
 {

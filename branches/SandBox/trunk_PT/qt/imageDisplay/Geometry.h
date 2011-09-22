@@ -18,7 +18,6 @@ class Coord : public QPointF
 public:
 	Coord();
 	Coord(QPointF location, QString label, Marker* mark = NULL);
-	QPointF location_;
 	QString label_;
 	Marker* marker_;
 
