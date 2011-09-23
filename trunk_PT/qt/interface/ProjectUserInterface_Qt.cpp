@@ -441,21 +441,45 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				return;
 			}
 			*/
-			QString imagesMissing="";
+                        EDomElement imagesXml(manager->getXml("images").c_str());
+                        int numImages=imagesXml.children().size();
 
-			for (int i=0 ;i < manager->getFreeImageId() ;i++)
+                        QWidget *loadWidget= new QWidget();
+                        loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+                        QProgressBar loading;
+                        QPushButton cancelButton("Cancel");
+                        loading.setRange(0,numImages);
+
+                    QVBoxLayout loadLayout;
+                    loadLayout.addWidget(&loading,Qt::AlignCenter);
+                    loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+                    connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+                    loadWidget->setLayout(&loadLayout);
+                    loadWidget->setWindowTitle(tr("Searching for Images"));
+                    loading.setMinimumSize(300,30);
+                    loadWidget->show();
+                        QString imagesMissing="";
+                        QDir dirImage;
+                        QFileInfo imageFileInfo;
+                        EDomElement img;//(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
+                        for (int i=0 ;i < numImages ;i++)
 			{
-				EDomElement img(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
-
-				QDir dir(filename.left(filename.lastIndexOf('/')));
+                                loading.setValue(i+1);
+                                loading.setFormat("Image %v/%m : %p");
+                                img.setContent(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
+                                //QDir dir(filename.left(filename.lastIndexOf('/')));
+                                dirImage.setPath(filename.left(filename.lastIndexOf('/')));
 				QString imagesName(img.elementByTagName("filePath").toString().append("/").c_str());
 				imagesName.append(img.elementByTagName("fileName").toString().c_str());
-				QFileInfo image(dir.absoluteFilePath(imagesName));
-				if (!image.exists())
+                                //QFileInfo imageFileInfo(dir.absoluteFilePath(imagesName));
+                                imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
+                                if (!imageFileInfo.exists())
 				{
-					imagesMissing.append(image.fileName()).append("\n");
+                                        imagesMissing.append(imageFileInfo.fileName()).append("\n");
 				}
 			}
+                        loadWidget->close();
 			if(imagesMissing.compare("")!=0)
 			{
 
