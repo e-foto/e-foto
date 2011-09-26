@@ -487,6 +487,7 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 		//itemSpinBox->setMaximum((int)maxValue);
 		itemSpinBox->setMaximum(10000);
 		itemSpinBox->setValue(item->text().toInt(&ok));
+		oldValue=item->text().toDouble(&ok);
 		currentSpinBoxRow=row;
 		currentSpinBoxColumn=col;
 		connect(itemSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
@@ -511,7 +512,8 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 		//itemDoubleSpinBox->setMinimum((int)minValue);
 		//itemDoubleSpinBox->setMaximum((int)maxValue);
 
-		itemDoubleSpinBox->setValue(item->text().toInt(&ok));
+		itemDoubleSpinBox->setValue(item->text().toDouble(&ok));
+		oldValue=item->text().toDouble(&ok);
 		currentDoubleSpinBoxRow=row;
 		currentDoubleSpinBoxColumn=col;
 		connect(itemDoubleSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
@@ -620,4 +622,9 @@ QString ETableWidget::getType(int column)
 		return "QDoubleSpinBox";
 	else
 		return "NONE";
+}
+
+double ETableWidget::getOldValue()
+{
+	return oldValue;
 }

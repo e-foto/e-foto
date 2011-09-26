@@ -3,7 +3,7 @@
 
 #include <qapplication.h>
 #include <QtGui>
-
+#include <QMessageBox>
 
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
@@ -28,7 +28,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	setupUi(this);
 	currentZoomLevelDetail=4;
 	ptManager = manager;
-
+	saveMarksButton->setDisabled(true);
 	StereoService ss;
 	leftView= ss.getMonoView(this,"");
 	rightView= ss.getMonoView(this,"");
@@ -73,6 +73,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
 	connect(calculateFotoTriToolButton,SIGNAL(clicked()),this,SLOT(showSelectionWindow()));
 	connect(zoomToolButton,SIGNAL(clicked()),this,SLOT(zoomDetail()));
+	connect(saveMarksButton,SIGNAL(clicked()),this,SLOT(saveMarks()));
 
 	connect(leftDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
 	connect(rightDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
@@ -146,18 +147,36 @@ void PTUserInterface_Qt::init()
 	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
 	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
 
-	/*Permite ediçao de coordenada via tabela*/
+	/*Permite ediÃ§ao de coordenada via tabela*/
 	leftImageTableWidget->setType(1,"QSpinBox");
 	leftImageTableWidget->setType(2,"QSpinBox");
 
 	rightImageTableWidget->setType(1,"QSpinBox");
 	rightImageTableWidget->setType(2,"QSpinBox");
 
-
+	// Se tiver sido calculado antes habilita o botão
+	viewReportToolButton->setEnabled(ptManager->hasPreviousData());
 }
 
 void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 {
+	if (!ptManager->getMarksSavedState())
+	{
+		QMessageBox::StandardButton reply;
+		reply=QMessageBox::question(this,tr("Warning: exiting with unsaved marks"), tr("Do you want to save changes?"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox ::Yes )
+		{
+			saveMarks();
+		}
+		else if (reply == QMessageBox::Cancel)
+		{
+			event->ignore();
+			return;
+			//QMainWindow::closeEvent(event);
+		}
+
+	}
+
 	LoadingScreen::instance().show();
 	qApp->processEvents();
         //delete(myImageRightView);
@@ -362,8 +381,16 @@ bool PTUserInterface_Qt::calculatePT()
 	ptManager->selectPoints(selectionPointsView->getSelectedItens());
 
 	bool result = ptManager->calculatePT();
-	viewReport();
-	actionView_Report->setEnabled(true);
+	if (result)
+	{
+		viewReport();
+		actionView_Report->setEnabled(true);
+	}
+	if (!ptManager->getBundleAdjustment()->isPossibleCalculate())
+	{
+		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
+	}
+
 	return result;
 
 }
@@ -483,7 +510,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 		int pos=findKeyAppearances("leftImageTable",QString::number(currentPointKey));
 		leftImageTableWidget->selectRow(pos);
 
-		leftImageTableWidget->setSortingEnabled(true);
+
 		clearAllMarks(leftDisplay);
 		markAllpoints(leftDisplay);
 
@@ -496,6 +523,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 			leftView->moveTo(pixel);
 			leftDisplay->update();
 		}
+		leftImageTableWidget->setSortingEnabled(true);
 
 	}else if (image == "rightImage")
 	{
@@ -509,7 +537,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 		int pos=findKeyAppearances("rightImageTable",QString::number(currentPointKey));
 		rightImageTableWidget->selectRow(pos);
 
-		rightImageTableWidget->setSortingEnabled(true);
+
 		clearAllMarks(rightDisplay);
 		markAllpoints(rightDisplay);
 
@@ -522,6 +550,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 			rightView->moveTo(pixel);
 			rightDisplay->update();
 		}
+		rightImageTableWidget->setSortingEnabled(true);
 	}
 }
 
@@ -646,6 +675,8 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 		int pos=findKeyAppearances("leftImageTable", QString::number(pointKey));
 		if(pos<0 || col>leftView->imageSize().width() || lin>leftView->imageSize().height())
 			return;
+		saveMarksButton->setEnabled(true);
+		ptManager->setMarksSavedState(false);
 		leftImageTableWidget->item(pos,1)->setText(QString::number(col));
 		leftImageTableWidget->item(pos,2)->setText(QString::number(lin));
 		QString pointId=leftImageTableWidget->item(pos,0)->text();
@@ -657,6 +688,8 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 		int pos=findKeyAppearances("rightImageTable", QString::number(pointKey));
 		if(pos<0 || col>rightView->imageSize().width() || lin>rightView->imageSize().height())
 			return;
+		saveMarksButton->setEnabled(true);
+		ptManager->setMarksSavedState(false);
 		rightImageTableWidget->item(pos,1)->setText(QString::number(col));
 		rightImageTableWidget->item(pos,2)->setText(QString::number(lin));
 		QString pointId=rightImageTableWidget->item(pos,0)->text();
@@ -710,11 +743,15 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 	int pointKey;
 	QTableWidgetItem *item;
 
+
 	if (sender()==leftImageTableWidget)
 	{
 		int imageKey=ptManager->getImageId(leftImageString);
 		item=leftImageTableWidget->item(tableRow,tableCol);
 		pointKey=leftImageTableWidget->item(tableRow,3)->text().toInt(&ok);
+		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
+		if ((int)leftImageTableWidget->getOldValue()==value)
+			return;
 		if(tableCol==1)
 		{
 			//col=item->text().toInt(&ok);
@@ -737,6 +774,9 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 		int imageKey=ptManager->getImageId(rightImageString);
 		item=rightImageTableWidget->item(tableRow,tableCol);
 		pointKey=rightImageTableWidget->item(tableRow,3)->text().toInt(&ok);
+		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
+		if ((int)rightImageTableWidget->getOldValue()==value)
+			return;
 		if(tableCol==1)
 		{
 			col=value;//item->text().toInt(&ok);
@@ -883,3 +923,9 @@ void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 
 }
 
+void PTUserInterface_Qt::saveMarks()
+{
+	ptManager->saveMarks();
+	ptManager->setMarksSavedState(true);
+	saveMarksButton->setEnabled(false);
+}
