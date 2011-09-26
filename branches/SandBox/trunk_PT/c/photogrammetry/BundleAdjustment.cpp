@@ -1129,6 +1129,7 @@ void BundleAdjustment::setAFP()
 {
 	//Isso é feito apenas para:
 	//Exibiçao dos angulos em Graus.
+	/*
 	Matrix result(matAdjust.getRows(),matAdjust.getCols());
 	for (int i=1;i<=numImages;i++)
 	{
@@ -1140,6 +1141,8 @@ void BundleAdjustment::setAFP()
 		result.set(i,6,matAdjust.get(i,6));
 	}
 	afp=result;
+	*/
+	afp=matAdjust;
 }
 
 Matrix BundleAdjustment::getAFP()
@@ -1201,7 +1204,7 @@ bool BundleAdjustment::testConverged()
 
 bool BundleAdjustment::isConverged()
 {
-	if(totalIterations<=MAXITERATIONS)
+	if(totalIterations<MAXITERATIONS)
 		return converged=true;
 	else
 		return converged=false;
@@ -1250,4 +1253,22 @@ Matrix BundleAdjustment::getMVC()
 		tempX1.set(i+1,6,x1.get(6*i+3,1));
 	}
 	return tempX1;
+}
+
+bool BundleAdjustment::isPossibleCalculate()
+{
+	if (numEquations<numUnknows)
+		return false;
+	else
+		return true;
+}
+
+Matrix BundleAdjustment::getL0()
+{
+	return L0;
+}
+
+Matrix BundleAdjustment::getLb()
+{
+	return Lb;
 }
