@@ -88,6 +88,8 @@ public:
 //insere as coordenadas digitais no ponto
 	bool insertDigitalCoordinates(QString coordinates);
 	bool availablePhotoTri();
+	//bool availabeOI();
+	//bool availableOE();
 
 
 public slots:

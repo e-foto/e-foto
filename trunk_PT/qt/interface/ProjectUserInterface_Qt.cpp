@@ -132,6 +132,10 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
 	connect(shortcut2, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesFromTxt()));
 
+	QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
+	connect(shortcut3, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesOIFromTxt()));
+
+
 	actionFoto_Tri->setEnabled(availablePhotoTri());
 
 }
@@ -441,49 +445,30 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 				return;
 			}
 			*/
-                        EDomElement imagesXml(manager->getXml("images").c_str());
-                        int numImages=imagesXml.children().size();
+			EDomElement imagesXml(manager->getXml("images").c_str());
+			deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
 
-                        QWidget *loadWidget= new QWidget();
-                        loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-                        QProgressBar loading;
-                        QPushButton cancelButton("Cancel");
-                        loading.setRange(0,numImages);
+			QDir dirImage(filename.left(filename.lastIndexOf('/')));
+			QFileInfo imageFileInfo;
 
-                    QVBoxLayout loadLayout;
-                    loadLayout.addWidget(&loading,Qt::AlignCenter);
-                    loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-                    connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-                    loadWidget->setLayout(&loadLayout);
-                    loadWidget->setWindowTitle(tr("Searching for Images"));
-                    loading.setMinimumSize(300,30);
-                    loadWidget->show();
-                        QString imagesMissing="";
-                        QDir dirImage;
-                        QFileInfo imageFileInfo;
-                        EDomElement img;//(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
-                        for (int i=0 ;i < numImages ;i++)
+			QString imagesMissing="";
+			int contMissings=0;
+			for (int i=0 ;i < imagesEdom.size() ;i++)
 			{
-                                loading.setValue(i+1);
-                                loading.setFormat("Image %v/%m : %p");
-                                img.setContent(manager->getXml("image","key",QString::number(i).toStdString().c_str()));
-                                //QDir dir(filename.left(filename.lastIndexOf('/')));
-                                dirImage.setPath(filename.left(filename.lastIndexOf('/')));
-				QString imagesName(img.elementByTagName("filePath").toString().append("/").c_str());
-				imagesName.append(img.elementByTagName("fileName").toString().c_str());
-                                //QFileInfo imageFileInfo(dir.absoluteFilePath(imagesName));
-                                imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
-                                if (!imageFileInfo.exists())
+				QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
+				dirImage.setCurrent(imagesName);
+				imagesName.append(imagesEdom.at(i).elementByTagName("fileName").toString().c_str());
+				imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
+				if (!imageFileInfo.exists())
 				{
-                                        imagesMissing.append(imageFileInfo.fileName()).append("\n");
+					imagesMissing.append(contMissings%4==3 ? imageFileInfo.fileName().append("  \n") : imageFileInfo.fileName().append(" , "));
+					contMissings++;
 				}
 			}
-                        loadWidget->close();
+			imagesMissing.chop(3);
 			if(imagesMissing.compare("")!=0)
 			{
-
-				QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n"));
+				QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n").append("."));
 				alertImages->show();
 			}
 
@@ -524,7 +509,9 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 
 			newTree();
 			// Inserido pelo Paulo 05/09/2011
-			//actionFoto_Tri->setEnabled(availablePhotoTri());
+			actionFoto_Tri->setEnabled(availablePhotoTri());
+//			actionInterior_Orientation->setEnabled(availabeOI());
+	//		actionSpatial_resection->setEnabled(availableOE());
 		}
 		else
 		{
@@ -993,6 +980,8 @@ bool ProjectUserInterface_Qt::exec()
 {
 	actionSave_file->setEnabled(!manager->getSavedState());
 	actionFoto_Tri->setEnabled(availablePhotoTri());
+//	actionInterior_Orientation->setEnabled(availabeOI());
+//	actionSpatial_resection->setEnabled(availableOE());
 	//PAULO -> codigo para dar um refresh no formulario
 	updateCurrentForm();
 	this->show();
@@ -1259,6 +1248,7 @@ void ProjectUserInterface_Qt::viewImage(int id)
 
 	menuProject->setEnabled(true);
 	menuExecute->setEnabled(true);
+//	actionInterior_Orientation->setEnabled(availabeOI());
 }
 
 void ProjectUserInterface_Qt::viewPoints()
@@ -2414,6 +2404,35 @@ bool ProjectUserInterface_Qt::availablePhotoTri()
 	return false;
 }
 
+/*
+// Se houver imagens cadastradas, poderá se fazer a Orientação interior
+bool ProjectUserInterface_Qt::availabeOI()
+{
+	EDomElement images(manager->getXml(("images")));
+	if(images.children().size()>0)
+		return true;
+	else
+		return false;
+}
+// Paulo 24/09/2011
+// Se houver pelo menos uma OI e um ponto cadastrado na imagem, poderá se fazer a Orientaçao exterior
+// OBS.: Aqui não é feita a filtragem de quais imagens poderão ser feitas as OEs!!!!
+bool ProjectUserInterface_Qt::availableOE()
+{
+	EDomElement ois(manager->getXml("interiorOrientation"));
+	EDomElement points(manager->getXml("points"));
+	deque<EDomElement> point=points.elementsByTagName("point");
+
+	//points.elementByTagAtt("imageCoordinates","key",intToString(i))
+	//points.hasTagName("imageCoordinates")
+	for (int i=0;i<points.children().size();i++)
+	{
+		if (point.at(i).hasTagName("imageCoordinates"))
+			return true;
+	}
+	return false;
+}
+*/
 void ProjectUserInterface_Qt::updateCurrentForm()
 {
 	if(currentForm!=NULL)

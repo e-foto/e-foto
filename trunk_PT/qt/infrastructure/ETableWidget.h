@@ -22,6 +22,7 @@ private:
 	QSpinBox *itemSpinBox;
 	int currentSpinBoxRow,currentSpinBoxColumn,currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn;
 	QDoubleSpinBox *itemDoubleSpinBox;
+	double oldValue;
 
 	QList<int> typedSpinColumns;
 	QList<int> typedDoubleSpinColumns;
@@ -50,7 +51,7 @@ public:
 	void setDecimals(int newDecimals);
 	char getMode();
 	int getDecimals();
-
+	double getOldValue();
 public slots:
     void autoCopy();
 	void enableAutoCopy(int enable);

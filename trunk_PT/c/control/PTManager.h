@@ -25,6 +25,8 @@ class PTManager
 protected:
 	bool started;
 	bool status;
+	bool marksSaveState;
+	bool previousData;
 	EFotoManager* efotoManager;
 	PTUserInterface* myInterface;
 
@@ -85,9 +87,14 @@ public:
 
 	string getFilePath(string fileName);
 	void saveResults();
-
+	void saveBundleAdjustment();
+	void saveMarks();
+	void setMarksSavedState(bool marksState);
+	bool getMarksSavedState();
+	string createBundleAdjustmentXml();
 	deque<string> getImagesAppearances(int pointKey);
-
+	void loadFotoTriData(string fotoTriData);
+	bool hasPreviousData();
 protected:
 
 };

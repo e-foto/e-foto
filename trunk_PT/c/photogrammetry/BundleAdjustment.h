@@ -175,6 +175,7 @@ public:
 
 
 	bool calculate();
+	bool isPossibleCalculate();
 	Matrix createL();
 	Matrix createM1();
 	Matrix createM2();

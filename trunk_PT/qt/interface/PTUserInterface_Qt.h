@@ -32,8 +32,7 @@ protected:
 
 	ETableWidget *tableImageLeft;
 	ETableWidget *tableImageRight;
-    PTManager *ptManager;
-    void closeEvent(QCloseEvent *event);
+	PTManager *ptManager;
 
 	int currentPointKey;
 
@@ -47,6 +46,8 @@ protected:
 
 	WindowsSelectPage *selectionImagesView;
 	WindowsSelectPage *selectionPointsView;
+
+    void closeEvent(QCloseEvent *event);
 
 private:
     void init();
@@ -63,6 +64,7 @@ public slots:
     void viewReport();
 	void makeRepaint();
 	void showSelectionWindow();
+	void saveMarks();
 	void acceptResults();
 	bool calculatePT();
 
@@ -79,6 +81,10 @@ public slots:
 	void clearAllMarks(MonoDisplay *display);
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	void updatePoint(int, int, int);
+	//void closingPTUserInterface();
+
+protected slots:
+	//virtual bool confirmToClose();
 };
 
 

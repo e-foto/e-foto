@@ -16,10 +16,11 @@ PTManager::PTManager()
 	efotoManager  = NULL;
 	mySensor = NULL;
 	myFlight = NULL;
-
+	marksSaveState=true;
 	//afp=d;
 	started = false;
 	status = false;
+	previousData= false;
 }
 
 PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor)//, Flight *flight)
@@ -30,13 +31,24 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
 	//	myFlight = flight;
-
+	marksSaveState= true;
 	started = false;
 	status = false;
 
 	setENH();
-//	setColLin();
-	/*setBLC();*/
+
+	previousData=false;
+	/*
+	EDomElement fotoTri(efotoManager->getXml("exteriorOrientation"));
+	if (fotoTri.hasTagName("imageEO"))
+	{
+		EDomElement oe=fotoTri.elementByTagName("imageEO");
+		if (oe.attribute("type")=="photoTriangulation")
+		{
+			loadFotoTriData(oe.getContent());
+			previousData= true;
+		}
+	}*/
 }
 
 PTManager::~PTManager()
@@ -111,9 +123,14 @@ bool PTManager::calculatePT()
 {
 	sortPointsSelected();
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
-	bool result=pt->calculate();
-	setMatrixAFP(pt->getAFP());
-    return result;
+	if (pt->isPossibleCalculate())
+	{
+		bool result=pt->calculate();
+		setMatrixAFP(pt->getAFP());
+		return result;
+	}
+	else
+		return false;
 }
 
 PositionMatrix PTManager::getImageDimensions(string filename)
@@ -137,7 +154,17 @@ PositionMatrix PTManager::getImageDimensions(string filename)
 
 void PTManager::setMatrixAFP(Matrix afp)
 {
-    AFP=afp;
+	Matrix result(afp.getRows(),afp.getCols());
+	for (int i=1;i<=afp.getRows();i++)
+	{
+		result.set(i,1,Dms::radianoToDegreeDecimal(afp.get(i,1)));
+		result.set(i,2,Dms::radianoToDegreeDecimal(afp.get(i,2)));
+		result.set(i,3,Dms::radianoToDegreeDecimal(afp.get(i,3)));
+		result.set(i,4,afp.get(i,4));
+		result.set(i,5,afp.get(i,5));
+		result.set(i,6,afp.get(i,6));
+	}
+	AFP=result;
 }
 
 Matrix PTManager::getMatrixOE()
@@ -516,17 +543,9 @@ deque<string> PTManager::getSelectedPointIdPhotogrammetric()
 
 void PTManager::saveResults()
 {
-	EDomElement newXml(efotoManager->xmlGetData());
-	for (int i=0; i<listSelectedImages.size(); i++)
-	{
-		Image *myImage= listSelectedImages.at(i);
-		for (int j = 0; j < myImage->countPoints(); j++)
-		{
-			int currentPointId = myImage->getPointAt(j)->getId();
-			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
-		}
-	}
-	efotoManager->xmlSetData(newXml.getContent());
+	saveBundleAdjustment();
+	saveMarks();
+	setMarksSavedState(true);
 	efotoManager->setSavedState(false);
 }
 
@@ -544,4 +563,108 @@ deque<string> PTManager::getImagesAppearances(int pointKey)
 	for(int i=0;i<numImages;i++)
 		appearance.push_back(pnt->getImageAt(i)->getFilename());
 	return appearance;
+}
+void PTManager::saveMarks()
+{
+	qDebug("Chamado metodo para salvar as marcas");
+	EDomElement newXml(efotoManager->xmlGetData());
+	/*
+	for (int i=0; i<listSelectedImages.size(); i++)
+	{
+		Image *myImage= listSelectedImages.at(i);
+		for (int j = 0; j < myImage->countPoints(); j++)
+		{
+			int currentPointId = myImage->getPointAt(j)->getId();
+			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
+		}
+	}
+	efotoManager->xmlSetData(newXml.getContent());
+*/
+	for (int i=0; i<listAllImages.size(); i++)
+	{
+		Image *myImage= listAllImages.at(i);
+		for (int j = 0; j < myImage->countPoints(); j++)
+		{
+			int currentPointId = myImage->getPointAt(j)->getId();
+			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
+		}
+	}
+	efotoManager->xmlSetData(newXml.getContent());
+}
+
+void PTManager::saveBundleAdjustment()
+{
+	EDomElement newXml(efotoManager->xmlGetData());
+	string fotoTriString= createBundleAdjustmentXml();
+	newXml.replaceChildByTagName("exteriorOrientation",fotoTriString);
+	efotoManager->xmlSetData(newXml.getContent());
+}
+
+string PTManager::createBundleAdjustmentXml()
+{
+	stringstream fotoTriXml;
+//codigo de criaçao da xml da bundle(multiplas tags de Orientação Exterior)
+	Matrix oe=pt->getAFP();
+	string lb=pt->getLb().xmlGetData();
+	string l0=pt->getL0().xmlGetData();
+	fotoTriXml << "<exteriorOrientation>\n";
+	for (int i=1;i<=oe.getRows();i++)
+	{
+		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << intToString(i) << "\>\n";
+		fotoTriXml << "\t\t<iterations>"<< pt->getTotalIterations() <<"</iterations>\n";
+		fotoTriXml << "\t\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
+		fotoTriXml << "\t\t<parameters>\n";
+		fotoTriXml << "\t\t\t<Lb>\n";
+		fotoTriXml << lb << "\n</Lb>\n";
+		fotoTriXml << "\t\t\t<Xa>\n";
+		fotoTriXml << "\t\t\t\t<X0 uom=\"#m\">"<< doubleToString(oe.get(i,4)) << "</X0>\n";
+		fotoTriXml << "\t\t\t\t<Y0 uom=\"#m\">"<< doubleToString(oe.get(i,5)) << "</Y0>\n";
+		fotoTriXml << "\t\t\t\t<Z0 uom=\"#m\">"<< doubleToString(oe.get(i,6)) << "</Z0>\n";
+		fotoTriXml << "\t\t\t\t<phi uom=\"#m\">"<< doubleToString(oe.get(i,2)) << "</phi>\n";
+		fotoTriXml << "\t\t\t\t<omega uom=\"#m\">"<< doubleToString(oe.get(i,1)) << "</omega>\n";
+		fotoTriXml << "\t\t\t\t<kappa uom=\"#m\">"<< doubleToString(oe.get(i,3)) << "</kappa>\n";
+		fotoTriXml << "\t\t\t</Xa>\n";
+		fotoTriXml << "\t\t\t<L0>\n";
+		fotoTriXml << l0 << "\n</L0>\n";
+		fotoTriXml << "</imageEO>\n";
+	}
+	fotoTriXml << "</exteriorOrientation>\n";
+
+	qDebug("Metodo chamado create varias OEs");
+	return fotoTriXml.str();
+}
+
+void PTManager::setMarksSavedState(bool marksState)
+{
+	marksSaveState=marksState;
+	if (marksSaveState)
+		efotoManager->setSavedState(false);
+}
+
+bool PTManager::getMarksSavedState()
+{
+	return marksSaveState;
+}
+
+void PTManager::loadFotoTriData(string fotoTriData)
+{
+	//Confirmar direitinho o XML
+	//Lo Lb Iteracoes convergencia são comuns a todas as OES.
+	// E necessario repetir para cada imagem??
+	// Ou deixar esses elementos numa area comun e so subdividir os parametros da orientacao
+
+	EDomElement oe(fotoTriData);
+	int numIterations=oe.elementByTagName("iterations").toInt();
+	//bool converged = oe.elementByTagName("converged");
+	Matrix Lb;
+	Lb.xmlSetData(oe.elementByTagName("Lb").getContent());
+
+
+
+
+}
+
+bool PTManager::hasPreviousData()
+{
+	return previousData;
 }
