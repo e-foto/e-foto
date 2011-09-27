@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QMessageBox>
 
+
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
 PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
@@ -74,6 +75,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(calculateFotoTriToolButton,SIGNAL(clicked()),this,SLOT(showSelectionWindow()));
 	connect(zoomToolButton,SIGNAL(clicked()),this,SLOT(zoomDetail()));
 	connect(saveMarksButton,SIGNAL(clicked()),this,SLOT(saveMarks()));
+	connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
 
 	connect(leftDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
 	connect(rightDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
@@ -306,7 +308,7 @@ void PTUserInterface_Qt::viewReport()
 		imagesSelected << QString(images.at(i).c_str());
 	oeTable->setColumnCount(7);
 	oeTable->putInColumn(imagesSelected,0);
-	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',5);
+	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',4);
 	oeTable->setHorizontalHeaderLabels(oeHeaderLabels);
 	oeTable->setSortingEnabled(true);
 
@@ -928,4 +930,19 @@ void PTUserInterface_Qt::saveMarks()
 	ptManager->saveMarks();
 	ptManager->setMarksSavedState(true);
 	saveMarksButton->setEnabled(false);
+}
+
+void PTUserInterface_Qt::openImagesFlightDirectionForm()
+{
+	flightDirectionForm= new FlightDirectionForm();
+	flightDirectionForm->imagesFlightDirectionCombo->addItems(listAllImages);
+
+	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+
+	flightDirectionForm->show();
+}
+
+void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
+{
+	ptManager->setImageFlightDirection(imageFile.toStdString().c_str(), kappa0);
 }

@@ -159,7 +159,8 @@ void PTManager::setMatrixAFP(Matrix afp)
 	{
 		result.set(i,1,Dms::radianoToDegreeDecimal(afp.get(i,1)));
 		result.set(i,2,Dms::radianoToDegreeDecimal(afp.get(i,2)));
-		result.set(i,3,Dms::radianoToDegreeDecimal(afp.get(i,3)));
+		double kappa0 = Dms::radianoToDegreeDecimal(afp.get(i,3));
+		result.set(i,3,kappa0 > 180.0 ? kappa0-360: kappa0 );
 		result.set(i,4,afp.get(i,4));
 		result.set(i,5,afp.get(i,5));
 		result.set(i,6,afp.get(i,6));
@@ -610,7 +611,7 @@ string PTManager::createBundleAdjustmentXml()
 	fotoTriXml << "<exteriorOrientation>\n";
 	for (int i=1;i<=oe.getRows();i++)
 	{
-		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << intToString(i) << "\>\n";
+		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << intToString(i) << ">\n";
 		fotoTriXml << "\t\t<iterations>"<< pt->getTotalIterations() <<"</iterations>\n";
 		fotoTriXml << "\t\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
 		fotoTriXml << "\t\t<parameters>\n";
@@ -659,12 +660,21 @@ void PTManager::loadFotoTriData(string fotoTriData)
 	Matrix Lb;
 	Lb.xmlSetData(oe.elementByTagName("Lb").getContent());
 
-
-
-
 }
 
 bool PTManager::hasPreviousData()
 {
 	return previousData;
+}
+
+void PTManager::setImageFlightDirection(string imageFile, double flightDirection)
+{
+	//Image *img;
+//	img->setFlightDirection();
+	for (int i=0;i<listAllImages.size();i++)
+		if(listAllImages.at(i)->getFilename() == imageFile)
+		{
+			listAllImages.at(i)->setFlightDirection(flightDirection);
+			qDebug("File %s kappa0 = %.7f",imageFile.c_str(),flightDirection);
+		}
 }

@@ -602,7 +602,8 @@ void BundleAdjustment::getInicialsValues()
 
 			matAdjust.set(i+1,1,0);
 			matAdjust.set(i+1,2,0);
-			matAdjust.set(i+1,3,getKappaZero(pta,i));
+			//qDebug("Kappa0");
+			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
 			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
 			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
 			matAdjust.set(i+1,6,c*getMediaScale(i));
@@ -628,7 +629,8 @@ void BundleAdjustment::getInicialsValues()
 			Matrix pta=getPTA(paf,i);
 			matAdjust.set(i+1,1,0);
 			matAdjust.set(i+1,2,0);
-			matAdjust.set(i+1,3,getKappaZero(pta,i));
+			//matAdjust.set(i+1,3,getKappaZero(pta,i));
+			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
 			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
 			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
 			matAdjust.set(i+1,6,c*getMediaScale(i));
