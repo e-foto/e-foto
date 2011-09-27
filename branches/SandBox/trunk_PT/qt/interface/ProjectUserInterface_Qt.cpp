@@ -132,10 +132,6 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
 	connect(shortcut2, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesFromTxt()));
 
-	QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
-	connect(shortcut3, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesOIFromTxt()));
-
-
 	actionFoto_Tri->setEnabled(availablePhotoTri());
 
 }
@@ -2356,11 +2352,27 @@ void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
 	loading.setMinimumSize(300,30);
 	loadWidget->show();
 
+	EDomElement imagesXml(manager->getXml("points").c_str());
+	deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("point");
+
 	for (int i=0; i<pointsList.length() ;i++)
 	{
+		/*
 			loading.setFormat(tr("Coordinate %v/%m : %p%"));
 			loading.setValue(i+1);
-			if(!insertDigitalCoordinates(pointsList.at(i)))
+			QStringList digitalPoint=coordinates.split("\t");
+			string imagekey=digitalPoint.at(0).toStdString().c_str();
+			string pointkey=digitalPoint.at(1).toStdString().c_str();
+			string colValue=digitalPoint.at(2).toStdString().c_str();
+			string linValue=digitalPoint.at(3).toStdString().c_str();
+
+			if (pointkey=imagesEdom.at(i))
+			stringstream aux;
+			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
+			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
+			aux << "</imageCoordinates>";
+*/
+			if(!insertDigitalCoordinates(pointsList.at(i)))//,imagesEdom.at()))
 				QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
 	}
 	loadWidget->close();

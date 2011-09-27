@@ -95,6 +95,9 @@ public:
 	deque<string> getImagesAppearances(int pointKey);
 	void loadFotoTriData(string fotoTriData);
 	bool hasPreviousData();
+
+	void setImageFlightDirection(string imageFile,double flightDirection);
+
 protected:
 
 };
