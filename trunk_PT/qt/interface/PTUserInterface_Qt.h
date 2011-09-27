@@ -8,6 +8,7 @@
 #include "ETableWidget.h"
 #include "WindowsSelectPage.h"
 #include "StereoService.h"
+#include "FlightDirectionForm.h"
 
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
@@ -36,6 +37,7 @@ protected:
 
 	int currentPointKey;
 
+
 	string leftImageString;
 	string rightImageString;
 	QStringList listAllImages;// contem os file name das imagens
@@ -47,7 +49,12 @@ protected:
 	WindowsSelectPage *selectionImagesView;
 	WindowsSelectPage *selectionPointsView;
 
+	FlightDirectionForm *flightDirectionForm;
+
     void closeEvent(QCloseEvent *event);
+
+
+
 
 private:
     void init();
@@ -67,6 +74,8 @@ public slots:
 	void saveMarks();
 	void acceptResults();
 	bool calculatePT();
+	void openImagesFlightDirectionForm();
+	void setFlightDirection(QString imageFile, double kappa0);
 
 	void updateImagesList(QString imageFilename);
 	void selectAllAppearances(int index);

@@ -34,13 +34,14 @@ class Image : public EObject
     int id;
     int sensorId;
     int flightId;
-    unsigned int resolution;
+	unsigned int resolution;
     string resolutionUnit;
     unsigned int width;
     unsigned int height;
     string filename;
     string filepath;
 
+	double flightDirection;//Paulo 27/09/2011
 	string imageId;
     ObjectSpaceCoordinate spatialCoordinates;
 
@@ -103,6 +104,9 @@ public:
 	double getInsKappa();
 	string getInsType();
 
+	void setFlightDirection(double radianAngle);//Paulo 27/09/11
+	double getFlightDirection();//Paulo 27/09/11
+
     // Composed objects accessor methods
     //
     void setDigFidMarks(deque<DigitalFiductialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
@@ -133,7 +137,8 @@ public:
     Point* getPoint(int pointId); // Get associated point at image by id.
     int countPoints(); // Inform the number of points associated the image.
     Point* getPointAt(unsigned int index); // Get associated point at image by index in deque for iterations.
-	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints
+
+	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints //Paulo 27/09/2011
 	// EObject methods
     //
     string objectType(void);

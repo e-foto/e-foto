@@ -119,6 +119,15 @@ void Image::setFilepath(string newFilepath)
 }
 
 /**
+ * Set the value of flightDirection
+ * @param radianAngle the new value of flightDirection
+ */
+void Image::setFlightDirection(double radianAngle)
+{
+	flightDirection=radianAngle;
+}
+
+/**
  * Get the value of id
  * @return the value of id
  */
@@ -198,6 +207,16 @@ string Image::getFilepath()
 {
     return filepath;
 }
+/**
+  * Get the value of flightDirection
+  * @return the value of flightDirection
+  */
+double Image::getFlightDirection()
+{
+	return flightDirection;
+}
+
+
 
 bool Image::isGnssAvailable()
 {
