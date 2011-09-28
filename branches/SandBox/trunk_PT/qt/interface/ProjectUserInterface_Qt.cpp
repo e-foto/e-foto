@@ -130,7 +130,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	// Inserido pelo Paulo 05/09/2011
 	// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
 	QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
-	connect(shortcut2, SIGNAL(activated()), this, SLOT(importDigitalCoordinatesFromTxt()));
+	connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
 
 	actionFoto_Tri->setEnabled(availablePhotoTri());
 
@@ -2319,6 +2319,8 @@ EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int l
 // Coloca as coordenadas digitais linha e coluna nos pontos;
 void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
 {
+	importPointsFromTxt2();
+
 	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
 	if(importFileName=="")
 		return;
@@ -2465,3 +2467,166 @@ void ProjectUserInterface_Qt::updateCurrentForm()
 		else if (currentForm==&pointForm)
 			viewPoint(currentItemId);
 }
+
+void ProjectUserInterface_Qt::importPointsFromTxt2()
+{
+	//primeiro arquivo
+	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	if(importFileName=="")
+		return;
+	QFile *importFile = new QFile(importFileName);
+	QStringList pointsList;
+
+	importFile->open(QIODevice::ReadOnly);
+
+	while(!importFile->atEnd())
+	{
+		QByteArray line = importFile->readLine();
+		QString aux(line);
+		//pointsList << aux.left(aux.lastIndexOf('\n'));
+		pointsList << aux.remove('\n');
+	}
+	importFile->close();
+
+	//segundo arquivo
+	QString importFileName2 = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+	if(importFileName2=="")
+		return;
+	QFile *importFile2 = new QFile(importFileName2);
+	QStringList pointsList2;
+
+	importFile2->open(QIODevice::ReadOnly);
+
+	while(!importFile2->atEnd())
+	{
+		QByteArray line2 = importFile2->readLine();
+		QString aux2(line2);
+		//pointsList << aux.left(aux.lastIndexOf('\n'));
+		pointsList2 << aux2.remove('\n');
+	}
+	importFile2->close();
+
+	// Procura e concatena o ponto `as suas coordenadas digitais nas imagens
+	int cont=0;
+	for (int i=0;i<pointsList.size();i++ )
+	{
+		QStringList fields= pointsList.at(i).split("\t");
+		QString gcpIdField = fields.at(0);
+		for (int j=0;j<pointsList2.size() && cont!=-1;j++)
+		{
+			QStringList fieldsDigital= pointsList2.at(j).split("\t");
+			qDebug()<<fieldsDigital;
+			QString gcpIdFieldDigital = fieldsDigital.at(1);
+			if(gcpIdField.compare(gcpIdFieldDigital)==0)
+			{
+				//field.append(pointsList2.at(j));
+				QString temp=pointsList.at(i);
+				temp+="\t";
+				temp +=pointsList2.at(j);
+				pointsList.replace(i, temp);
+				cont++;
+			}
+		}
+	}
+	//for (int i=0;i<pointsList.size();i++ )
+	//qDebug()<< "Lista " << pointsList.at(0);
+
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	QPushButton cancelButton("Cancel");
+	loading.setRange(0,pointsList.size());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Loading Points"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	string newPointXML;
+	for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
+	{
+		loading.setFormat(tr("%v/%m : %p%"));
+		loading.setValue(i+1);
+		newPointXML+=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i,i+1);
+		/*if ( newPointXML.hasTagName("pointId") )
+		{
+			manager->addComponent(newPointXML.getContent().data(),"points");
+		}*/
+	}
+	manager->addComponent(newPointXML,"points");
+	loadWidget->close();
+	updateTree();
+	viewPoints();
+	actionSave_file->setEnabled(true);
+
+}
+
+/** This function convert a point data from a *.txt line in a children point XML valid
+*/
+string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line, string typePoint)
+{
+	stringstream aux;
+	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+	QStringList fields= point.split("\t");
+	int numImagesInPoint=fields.size()/4-1;
+
+		gcpIdField = fields.at(0).toStdString().c_str();
+		/*
+		typeField = point.split("\t").at(1).toStdString().c_str();
+		if(typeField == "Tie")
+			typePoint="photogrammetric";
+		else if (typeField== "Control")
+			typePoint="control";
+		else if (typeField== "Check")
+			typePoint="verification";
+*/
+		eField = fields.at(1).toStdString();
+		nField = fields.at(2).toStdString();
+		hField = fields.at(3).toStdString();
+//		dEField = fields.at(4).toStdString();
+//		dNField = fields.at(5).toStdString();
+//		dHField = fields.at(6).toStdString();
+
+		aux << "<point key=\""<< intToString(key)<<"\" type=\"" << typePoint << "\">\n";
+		aux << "<pointId>" << gcpIdField << "</pointId>\n";
+		aux << "<description>" << "Put point description here" << "</description>\n";
+		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
+		aux << "<gml:pos>" << eField << " " << nField << " " << hField << "</gml:pos>\n";
+	/*	aux << "<sigma>\n";
+		aux << "<mml:matrix>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dEField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dNField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "<mml:matrixrow>\n";
+		aux << "<mml:cn>" << dHField << "</mml:cn>\n";
+		aux << "</mml:matrixrow>\n";
+		aux << "</mml:matrix>\n";
+		aux << "</sigma>\n";*/
+		aux << "</spatialCoordinates>\n";
+		aux << "<imagesMeasurements>\n";
+		for(int i=0;i<numImagesInPoint;i++)
+		{
+			string imagekey =fields.at(4*(i+1)).toStdString();
+			string colValue =fields.at(4*(i+1)+2).toStdString();
+			string linValue =fields.at(4*(i+1)+3).toStdString();
+			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
+			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
+			aux << "</imageCoordinates>";
+		}
+
+		aux << "</imagesMeasurements>\n";
+		aux << "</point>";
+
+	return aux.str();
+	//EDomElement newPointXml(newXml.c_str());
+
+}
+

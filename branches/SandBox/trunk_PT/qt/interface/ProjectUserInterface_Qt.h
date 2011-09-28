@@ -81,6 +81,10 @@ public:
 	string pointTxtToXml(QString point, int key, int line, string typePoint="control");
 	string edomPointToTxt(EDomElement points);
 
+	string pointTxtToXml2(QString point, int key, int line, string typePoint="control");
+
+
+
 	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
 	string edomImageToTxt(EDomElement images);
 
@@ -147,9 +151,11 @@ public slots:
 	void importPointsFromTxt();
 	void exportPointsToTxt();
 	void importImagesFromTxt();
+	void importPointsFromTxt2();
 	//void exportImagesToTxt();
 
 	void importDigitalCoordinatesFromTxt();
+
 	void updateCurrentForm();
 };
 
