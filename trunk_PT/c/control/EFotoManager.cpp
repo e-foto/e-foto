@@ -131,14 +131,81 @@ Image* EFotoManager::instanceImage(int id)
 	return newImage;
 }
 
+void EFotoManager::instanceAllImages()
+{
+	EDomElement root(xmlData);
+	deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
+	for (unsigned int i = 0 ;i < xmlAllImages.size();i++)
+	{
+		qApp->processEvents();
+		if (xmlAllImages.at(i).getContent().compare("") == 0)
+			continue;
+		bool notAvailable = true;
+		for (unsigned int j = 0; j < images.size() && notAvailable; j++)
+			if (images.at(j)->getId() == stringToInt(xmlAllImages.at(i).attribute("key")))
+				notAvailable = false;
+		if (notAvailable)
+		{
+			Image* newImage = new Image();
+			newImage->xmlSetData(xmlAllImages.at(i).getContent());
+			images.push_back(newImage);
+		}
+	}
+}
+
 /**
  *
  */
+void EFotoManager::instanceAllPoints()
+{
+	EDomElement root(xmlData);
+	deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
+
+	for (unsigned int i = 0; i < xmlAllPoint.size(); i++)
+	{
+		qApp->processEvents();
+		if (xmlAllPoint.at(i).getContent().compare("") == 0)
+			continue;
+
+		// Evita reinstaciar pontos que ja estejam disponiveis
+		bool notAvailable = true;
+		for (unsigned int j = 0; j < points.size() && notAvailable; j++)
+			if (points.at(j)->getId() == stringToInt(xmlAllPoint.at(i).attribute("key")))
+				notAvailable = false;
+		if (notAvailable)
+		{
+			if (xmlAllPoint.at(i).attribute("type").compare("control") == 0)
+			{
+				ControlPoint* newPoint = new ControlPoint();
+				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+				points.push_back(newPoint);
+				//return (Point*) newPoint;
+			}
+			if (xmlAllPoint.at(i).attribute("type").compare("checking") == 0)
+			{
+				CheckingPoint* newPoint = new CheckingPoint();
+				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+				points.push_back(newPoint);
+				//return (Point*) newPoint;
+			}
+			if (xmlAllPoint.at(i).attribute("type").compare("photogrammetric") == 0)
+			{
+				PhotogrammetricPoint* newPoint = new PhotogrammetricPoint();
+				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+				points.push_back(newPoint);
+				//return (Point*) newPoint;
+			}
+		}
+	}
+}
+
+
 Point* EFotoManager::instancePoint(int id)
 {
 	for (unsigned int i = 0; i < points.size(); i++)
 		if (points.at(i)->getId() == id)
 			return points.at(i);
+
 	EDomElement root(xmlData);
 	EDomElement xmlPoint = root.elementByTagAtt("point", "key", intToString(id));
 	if (xmlPoint.getContent().compare("") == 0)
@@ -185,6 +252,32 @@ InteriorOrientation* EFotoManager::instanceIO(int imageId)
 	newIO->setImage(NULL);
 	IOs.push_back(newIO);
 	return newIO;
+}
+
+void EFotoManager::instanceAllIOs()
+{
+	EDomElement root(xmlData);
+	deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
+	for (unsigned int i = 0 ;i < xmlAllIOs.size();i++)
+	{
+		qApp->processEvents();
+		if (xmlAllIOs.at(i).getContent().compare("") == 0)
+			continue;
+		bool notAvailable = true;
+		for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
+			if (IOs.at(j)->getImageId() == stringToInt(xmlAllIOs.at(i).attribute("image_key")))
+				notAvailable = false;
+		//InteriorOrientation *pkj;
+		//pkj->getImageId()
+		if (notAvailable)
+		{
+			InteriorOrientation* newIO = new InteriorOrientation();
+			newIO->setImage(image(stringToInt(xmlAllIOs.at(i).attribute("image_key"))));
+			newIO->xmlSetData(xmlAllIOs.at(i).getContent());
+			newIO->setImage(NULL);
+			IOs.push_back(newIO);
+		}
+	}
 }
 
 /**
@@ -705,32 +798,38 @@ bool EFotoManager::execPT()
 	// A foto tri so pode ser disparada quando todas as ois forem feitas;
 	deque<Image*> ptImages;
 	deque<InteriorOrientation*> ptOis;
-	deque<Point*> ptPoints;
+	//deque<Point*> ptPoints;
 
-	EDomElement images(getXml("images"));
-	deque<EDomElement> imagesEDom=images.elementsByTagName("image");
-	for (int i=0; i<imagesEDom.size(); i++)
+	instanceAllImages();
+	//EDomElement images(getXml("images"));
+	//deque<EDomElement> imagesEDom=images.elementsByTagName("image");
+/*	for (int i=0; i<images.size(); i++)
 		ptImages.push_back(instanceImage(stringToInt(imagesEDom.at(i).attribute("key"))));
+*/
 
-	EDomElement points(getXml("points"));
-	deque<EDomElement> pointsEDom=points.elementsByTagName("point");
-	for (int i=0; i<pointsEDom.size(); i++)
-	{
-		ptPoints.push_back(instancePoint(stringToInt(pointsEDom.at(i).attribute("key"))));
+	instanceAllPoints();
+	//EDomElement points(getXml("points"));
+	//deque<EDomElement> pointsEDom=points.elementsByTagName("point");
+	//for (int i=0; i<pointsEDom.size(); i++)
+	//{
+		//ptPoints.push_back(instancePoint(stringToInt(pointsEDom.at(i).attribute("key"))));
 		//qDebug("i=%d point key:%s point Id:%s",i,pointsEDom.at(i).attribute("key").c_str(),pointsEDom.at(i).elementByTagName("pointId").toString().c_str());
-	}
+	//}
 
-	EDomElement ois(getXml("interiorOrientation"));
-	deque<EDomElement> oisEDom=ois.elementsByTagName("imageIO");
-	for (int i=0; i<oisEDom.size(); i++)
+	instanceAllIOs();
+
+	//EDomElement ois(getXml("interiorOrientation"));
+	//deque<EDomElement> oisEDom=ois.elementsByTagName("imageIO");
+/*	for (int i=0; i<IOs.size(); i++)
 		ptOis.push_back(instanceIO(stringToInt(oisEDom.at(i).attribute("image_key"))));
-
+*/
 	EDomElement sensor(getXml("sensor"));
 	Sensor *ptSensor = instanceSensor(stringToInt(sensor.attribute("key")));
 	//Flight *ptFlight = instanceFlight(ptImages.at(0)->getFlightId());
 	//Terrain* ptTerrain = instanceTerrain();
 	//ptFlight->setTerrain(ptTerrain);
-	fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
+	//fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
+	fotoTri = new PTManager(this,images,IOs,ptSensor);//,ptFlight);
 	result = fotoTri->exec();
 
 	return result;

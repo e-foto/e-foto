@@ -103,7 +103,7 @@ QImage MonoView::getFrame(QSize targetSize)
 	newSize.setHeight(targetSize.height()/scale_);
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(viewpoint_);
-
+//return rasterRsrc_->getImageCut(targetSize, imageCut);
 	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale_);
 }
 QImage MonoView::getFrame(QSize targetSize, double scale)
@@ -117,7 +117,7 @@ QImage MonoView::getFrame(QSize targetSize, double scale)
 	newSize.setHeight(targetSize.height()/scale);
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(viewpoint_);
-
+//return rasterRsrc_->getImageCut(targetSize, imageCut);
 	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale);
 }
 QImage MonoView::getThumb(QSize targetSize, QRect* rect)
