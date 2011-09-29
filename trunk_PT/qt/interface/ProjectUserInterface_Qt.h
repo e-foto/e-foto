@@ -157,6 +157,7 @@ public slots:
 	void importDigitalCoordinatesFromTxt();
 
 	void updateCurrentForm();
+	void deleteEmptyPoints();
 };
 
 #endif // PROJECTUSERINTERFACE_QT_H

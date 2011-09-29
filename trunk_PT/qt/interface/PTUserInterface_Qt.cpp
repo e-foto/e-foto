@@ -4,7 +4,7 @@
 #include <qapplication.h>
 #include <QtGui>
 #include <QMessageBox>
-
+#include "ConvertionsSystems.h"
 
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
@@ -82,6 +82,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 
+	connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
 	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 	actionView_Report->setEnabled(false);
@@ -123,7 +124,6 @@ void PTUserInterface_Qt::init()
 //	leftImageTableWidget->setDisabled();
 	pointsTableWidget->setColumnHidden(5,true);
 	rightImageTableWidget->setColumnHidden(3,true);
-
 
 	/** carregar imagem da esquerda*/
 	//updateImageTable("leftImage",leftImageString);
@@ -387,6 +387,7 @@ bool PTUserInterface_Qt::calculatePT()
 	{
 		viewReport();
 		actionView_Report->setEnabled(true);
+		selectionView->close();
 	}
 	if (!ptManager->getBundleAdjustment()->isPossibleCalculate())
 	{
@@ -399,7 +400,7 @@ bool PTUserInterface_Qt::calculatePT()
 
 void PTUserInterface_Qt::showSelectionWindow()
 {
-	QWidget *selectionView= new QWidget();
+	selectionView= new QWidget();
 	//if (selectionImagesView==NULL || selectionPointsView==NULL)
 	{
 		//qDebug("Ponteiros nulos");
@@ -439,7 +440,6 @@ void PTUserInterface_Qt::showSelectionWindow()
 	selectionView->setLayout(layout);
 
 	connect(runButton,SIGNAL(clicked()),this,SLOT(calculatePT()));
-	connect(runButton,SIGNAL(clicked()),selectionView,SLOT(close()));
 	connect(cancelButton,SIGNAL(clicked()),selectionView,SLOT(close()));
 
 	selectionView->setWindowModality(Qt::ApplicationModal);
@@ -945,4 +945,73 @@ void PTUserInterface_Qt::openImagesFlightDirectionForm()
 void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
 	ptManager->setImageFlightDirection(imageFile.toStdString().c_str(), kappa0);
+	int currentIndex=flightDirectionForm->imagesFlightDirectionCombo->currentIndex();
+	if (currentIndex==listAllImages.size()-1)
+		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(0);
+	else
+		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(currentIndex+1);
 }
+
+void PTUserInterface_Qt::exportToKml()
+{
+
+	QString fileName=QFileDialog::getSaveFileName(this,"Save File",QDir::currentPath(),"*.kml");
+	if (fileName=="")
+		return;
+
+	QFile *exported= new QFile(fileName);
+	QFileInfo file(*exported);
+	if (!file.fileName().endsWith(".kml"))
+		exported->setFileName(fileName.append(".kml"));
+
+	exported->open(QIODevice::WriteOnly);
+	exported->write(ptManager->exportBlockTokml(exported->fileName().toStdString().c_str()).c_str());
+	exported->close();
+
+/*d
+	for(int i=0;i<lista.length()-1;i++)
+		{
+		double longi=convertToDMS(lista.at(i).split("\t").at(0)).dmsToDegreeDecimal();
+		double lat=convertToDMS(lista.at(i).split("\t").at(1)).dmsToDegreeDecimal();
+		aux.append("<Placemark>\n");
+		aux.append("<name>");
+		aux+=namePoints->text();
+		aux.append(QString::number(i+1));
+		aux.append("</name>\n");
+		aux.append("<LookAt>\n");
+		aux.append( "<longitude>");
+		aux.append(QString::number(lat,'f',14));
+		aux.append("</longitude>\n");
+		aux.append( "<latitude>");
+		aux.append(QString::number(longi,'f',14));
+		aux.append("</latitude>\n");
+		aux.append( "<altitude>0</altitude>\n");
+		aux.append( "<heading>0.01795058696543714</heading>\n");
+		aux.append( "<tilt>0</tilt>\n");
+		aux.append( "<range>1463.920597456832</range>\n");
+		aux.append( "<altitudeMode>relativeToGround</altitudeMode>\n");
+		aux.append( "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>\n");
+		aux.append( "</LookAt>\n");
+		aux.append( "<styleUrl>#msn_ylw-pushpin</styleUrl>\n");
+		aux.append( "<Point>\n");
+		aux.append( "<altitudeMode>clampToGround</altitudeMode>\n");
+		aux.append( "<gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>\n");
+		aux.append( "<coordinates>");
+		aux.append(QString::number(lat,'f',14));
+		aux.append(",");
+		aux.append(QString::number(longi,'f',14));
+		aux.append(",0</coordinates>\n");
+		aux.append( "</Point>\n");
+		aux.append( "</Placemark>\n");
+	}
+
+	aux+="</Document>\n</kml>";
+	//aux.append();
+	exported->open(QIODevice::WriteOnly);
+	exported->write(aux.toStdString().c_str());
+	exported->close();
+*/
+}
+
+
+

@@ -97,7 +97,7 @@ public:
 	bool hasPreviousData();
 
 	void setImageFlightDirection(string imageFile,double flightDirection);
-
+	string exportBlockTokml(string fileName);
 protected:
 
 };
