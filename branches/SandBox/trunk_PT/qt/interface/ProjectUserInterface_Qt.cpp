@@ -2398,9 +2398,9 @@ bool ProjectUserInterface_Qt::insertDigitalCoordinates(QString coordinates)
 		EDomElement pointsXML(manager->getXml("points").c_str());
 		EDomElement point(pointsXML.elementByTagAtt("point","key",pointkey));
 		stringstream aux;
-		aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
-		aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
-		aux << "</imageCoordinates>";
+		aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
+		aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
+		aux << "</imageCoordinates>\n";
 		point.addChildAtTagName("imagesMeasurements",aux.str());
 		manager->editComponent("Point",stringToInt(pointkey),point.getContent());
 		return true;
@@ -2413,7 +2413,7 @@ bool ProjectUserInterface_Qt::availablePhotoTri()
 	EDomElement images(manager->getXml(("images")));
 	//qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
 
-	if(images.children().size()==ois.children().size())
+	if(images.children().size()<=ois.children().size())
 		return true;
 	return false;
 }
@@ -2617,16 +2617,37 @@ string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line,
 			string imagekey =fields.at(4*(i+1)).toStdString();
 			string colValue =fields.at(4*(i+1)+2).toStdString();
 			string linValue =fields.at(4*(i+1)+3).toStdString();
-			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
-			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
-			aux << "</imageCoordinates>";
+			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
+			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
+			aux << "</imageCoordinates>\n";
 		}
 
 		aux << "</imagesMeasurements>\n";
-		aux << "</point>";
+		aux << "</point>\n";
 
 	return aux.str();
 	//EDomElement newPointXml(newXml.c_str());
 
 }
 
+void ProjectUserInterface_Qt::deleteEmptyPoints()
+{
+	EDomElement points(manager->getXml("points"));
+	deque<EDomElement> pnts=(points.elementsByTagName("point"));
+
+	//stringstream allPoints;
+	//int cont=0;
+	for (int i=0; i<pnts.size();i++)
+	{
+//		points.attribute();
+		if (!pnts.at(i).hasTagName("imageCoordinates"))
+		{
+		//	allPoints << pnts.at(i).getContent();
+			//qDebug("%s",pnts.at(i).getContent().c_str()) ;
+		//	cont++;
+			manager->editComponent("point",stringToInt(pnts.at(i).attribute("key")),"");
+		}
+	}
+	//qDebug("%d",cont);
+
+}
