@@ -30,6 +30,12 @@ void ImageMatching::setStep(int sx, int sy)
 	step_y = sy;
 }
 
+void ImageMatching::setMinStd(double std)
+{
+	ncc.setMinStd(std);
+	lsm.setMinStd(std);
+}
+
 void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPointsList *repository, MatchingPointsList *mpoints)
 {
 	//

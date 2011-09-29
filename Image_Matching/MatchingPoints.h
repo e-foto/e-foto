@@ -22,6 +22,13 @@
 
 using namespace std;
 
+class stackCellQuick
+{
+public:
+	int x, y;
+	stackCellQuick *prev;
+};
+
 class MatchingPoints
 {
 public:
@@ -41,6 +48,7 @@ public:
 	MatchingPointsList() { bad_points = 0; };
 	enum saveType { saveFull, savePairs, savePairsHann, saveXYZ };
 	enum loadType { loadFull, loadPairs, loadPairsHann, loadXYZ };
+	enum sortCriteria { byLeft, byRight, by3D };
 	void clear();
 	void add(int, int, double, double, double, double, double);
 	void modify(int, int, int, double, double, double, double, double);
@@ -54,10 +62,24 @@ public:
 	int load(char *, loadType, bool append=false, int left_id=-1, int right_id=-1);
 	int size() { return list.size(); };
 	unsigned int getNumBadPoints() { return bad_points; };
+	void sortList(sortCriteria criteria);
 
 private:
 	vector <MatchingPoints> list;
 	unsigned int bad_points;
+	void Quicksort(double **, int, int);
+	void switchElements(int, int);
+	bool pop(int &, int &);
+	bool push(int, int);
+	void emptyStack();
+	stackCellQuick *stack, *aux;
+	double **array;
+	void createAuxiliaryList();
+	void deleteAuxiliaryList();
+	void updateList();
+	void copyListByLeft();
+	void copyListByRight();
+	void copyListBy3D();
 };
 
 #endif
