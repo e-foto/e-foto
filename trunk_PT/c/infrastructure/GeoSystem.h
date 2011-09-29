@@ -17,7 +17,7 @@ private:
 public:
         GeoSystem(GeoSystemEnum system=WGS84);
         GeoSystem(double a, double f, string name);
-
+		GeoSystem(string sysName);
         double getA();
         double getB();
         double getF();

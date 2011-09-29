@@ -545,7 +545,7 @@ void BundleAdjustment::updateMatAdjust()
 	}
 }
 
-/*funções para o calculo dos residuos*/
+
 Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double z, int imageId)
 {
 	Matrix result(1,2);

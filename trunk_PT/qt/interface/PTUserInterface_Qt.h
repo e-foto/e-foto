@@ -46,6 +46,7 @@ protected:
 	QStringList listImageLeft; // contem a lista das imagens que podem ser escolhidas para a leftView
 	QStringList listImageRight;// contem a lista das imagens que podem ser escolhidas para a rightView
 
+	QWidget *selectionView;
 	WindowsSelectPage *selectionImagesView;
 	WindowsSelectPage *selectionPointsView;
 
@@ -91,6 +92,7 @@ public slots:
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	void updatePoint(int, int, int);
 	//void closingPTUserInterface();
+	void exportToKml();
 
 protected slots:
 	//virtual bool confirmToClose();

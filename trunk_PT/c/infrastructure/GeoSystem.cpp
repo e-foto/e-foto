@@ -32,7 +32,45 @@ GeoSystem::GeoSystem(GeoSystemEnum system)
         setSystemName("WGS84");
         break;
     }
+}
 
+GeoSystem::GeoSystem(string sysName)
+{
+	if (sysName=="CORREGOALEGRE")
+	{
+		setEixoMenor(6378388.0);
+		setFoco(1.0/297);
+		setEixoMaior(6378388.0*(1-1.0/297));
+		setSystemName("CORREGO ALEGRE");
+	}
+	else if (sysName=="SAD69")
+	{
+		setEixoMenor(6378160.0);
+		setFoco(1/298.25);
+		setEixoMaior(6378160.0*(1-1/298.25));
+		setSystemName("SAD69");
+	}
+	else if (sysName=="SIRGAS2000")
+	{
+		setEixoMenor(6378137.0);
+		setFoco(1/298.257222101);
+		setEixoMaior(6378137.0*(1-1/298.257222101));
+		setSystemName("SIRGAS2000");
+	}
+	else if (sysName=="WGS84")
+	{
+		setEixoMenor(6378137.0);
+		setFoco(1/298.257223563);
+		setEixoMaior(6378137.0*(1-1/298.257223563));
+		setSystemName("WGS84");
+	}
+	else
+	{
+		setEixoMenor(6378137.0);
+		setFoco(1/298.257223563);
+		setEixoMaior(6378137.0*(1-1/298.257223563));
+		setSystemName("WGS84");
+	}
 }
 
 GeoSystem::GeoSystem(double a, double f, string newName)
