@@ -49,10 +49,13 @@ int main(void)
 	//
 
 	MatchingPointsList myList;
-	myList.load((char *)"lista_final.pix",MatchingPointsList::loadPairsHann, false, 16, 17);
+//	myList.load((char *)"lista_final.pix",MatchingPointsList::loadPairsHann, false, 16, 17);
+	myList.load((char *)"../Analysis/lista_final_lsm.pix",MatchingPointsList::loadPairsHann, false, 16, 17);
+//	myList.load((char *)"../Analysis/lista_final_lsm_teste.pix",MatchingPointsList::loadPairsHann, false, 16, 17);
 //	myList.listMp();
-	myList.filterBadPoints2D();
-	myList.save((char *)"lista_final_ok.pix", MatchingPointsList::savePairsHann);
+//	myList.filterBadPoints2D();
+	myList.sortList(MatchingPointsList::byLeft);
+	myList.save((char *)"lista_final_sorted.pix", MatchingPointsList::savePairsHann);
 
 	return 1;
 }
