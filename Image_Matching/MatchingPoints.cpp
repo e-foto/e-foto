@@ -236,3 +236,228 @@ int MatchingPointsList::load(char *filename, loadType type, bool append, int lef
 	return 1;
 }
 
+/************
+ * List sort *
+ *************/
+
+bool MatchingPointsList::pop(int &x, int &y)
+{
+	if(stack != NULL)
+	{
+		x = stack->x;
+		y = stack->y;
+		aux = stack;
+		stack = stack->prev;
+		delete aux;
+		return 1;
+	}    
+	else
+	{
+		return 0;
+	}
+}   
+ 
+bool MatchingPointsList::push(int x, int y)
+{
+	aux = stack;
+	stack = new stackCellQuick();
+	stack->x = x;
+	stack->y = y;
+	stack->prev = aux;
+	return 1;
+}    
+
+void MatchingPointsList::emptyStack()
+{
+	int x, y;
+	while(pop(y,x));
+}
+
+void MatchingPointsList::switchElements(int i, int j)
+{
+	double aux[3];
+	aux[0] = array[i][0];
+	aux[1] = array[i][1];
+	aux[2] = array[i][2];
+	array[i][0] = array[j][0];
+	array[i][1] = array[j][1];
+	array[i][2] = array[j][2];
+	array[j][0] = aux[0];
+	array[j][1] = aux[1];
+	array[j][2] = aux[2];
+}
+
+// Quick sort Algorithm based on:
+// http://ds4beginners.wordpress.com/2006/09/22/quick-sort/
+// http://pt.wikipedia.org/wiki/Quicksort
+// http://en.wikipedia.org/wiki/Quicksort
+// We improved the quick sort algorith changing the recursive call for stack, in order to deal with large point list
+void MatchingPointsList::Quicksort(double **a, int l, int r)
+{
+	double t;
+	double pivot[3];
+	int n = list.size();
+	int i, j;
+
+	emptyStack();
+	push(l,r);
+
+	while(pop(l,r))
+	{
+		if(l>=r)
+			continue;
+
+		i=l;
+		j=r+1;
+
+		pivot[0] = a[l][0];
+		pivot[1] = a[l][1];
+		pivot[2] = a[l][2];
+
+		while(true)
+		{
+
+			while(true)
+			{
+				i++;
+				if (i>=n)
+					break;
+
+				if (a[i][1]==pivot[1] && a[i][2]<pivot[2])
+					continue;
+
+				if (a[i][1]>=pivot[1])
+					break;
+			}
+
+			while(true)
+			{
+				j--;
+
+				if (j<0)
+					break;
+
+				if (a[j][1]==pivot[1] && a[j][2]>pivot[2])
+					continue;
+
+				if (a[j][1]<=pivot[1])
+					break;
+			}
+
+			if(i>=j)
+				break;
+
+			switchElements(i,j);
+		}
+
+		switchElements(l,j);
+
+		if (!push(j+1,r))
+			return;
+		if (!push(l,j-1))
+			return;
+	}
+}
+
+void MatchingPointsList::createAuxiliaryList()
+{
+	int n = list.size();
+
+	array = new double*[n];
+	for (int i=0; i<n; i++)
+		array[i] = new double[3];
+}
+
+void MatchingPointsList::deleteAuxiliaryList()
+{
+	int n = list.size();
+
+	for (int i=0; i<n; i++)
+		delete [] array[i];
+	delete [] array;
+}
+
+void MatchingPointsList::sortList(sortCriteria criteria)
+{
+	// Max size of signed int 2147483647
+	if (list.size() > 2147483647)
+	{
+		printf("Error: point list is too large for sorting.\n");
+		return;
+	}
+
+	int n = list.size();
+	stack = NULL;
+
+	createAuxiliaryList();
+	printf("Preparing list to be sorted ...\n");
+	switch (criteria)
+	{
+		case 0 : copyListByLeft(); break;
+		case 1 : copyListByRight(); break;
+		default : copyListBy3D(); break;
+	}
+
+	printf("Sorting %d elements ...\n",n);
+	Quicksort(array,0,n-1);
+	printf("Updating data ...\n");
+	updateList();
+	deleteAuxiliaryList();
+}
+
+void MatchingPointsList::updateList()
+{
+	vector <MatchingPoints> listaux;
+	MatchingPoints mp;
+	int pos;
+
+	for (int i=0; i<list.size(); i++)
+	{
+		pos = array[i][0];
+
+		mp.left_image_id = list.at(pos).left_image_id;
+		mp.right_image_id = list.at(pos).right_image_id;
+		mp.left_x = list.at(pos).left_x;
+		mp.left_y = list.at(pos).left_y;
+		mp.right_x = list.at(pos).right_x;
+		mp.right_y = list.at(pos).right_y;
+		mp.X = list.at(pos).X;
+		mp.Y = list.at(pos).Y;
+		mp.Z = list.at(pos).Z;
+		mp.matching_accuracy = list.at(pos).matching_accuracy;
+
+		listaux.push_back(mp);
+	}
+
+	list = listaux;
+}
+
+void MatchingPointsList::copyListByLeft()
+{
+	for (int i=0; i<list.size(); i++)
+	{
+		array[i][0] = i;
+		array[i][1] = double(list.at(i).left_x);
+		array[i][2] = double(list.at(i).left_y);
+	}
+}
+
+void MatchingPointsList::copyListByRight()
+{
+	for (int i=0; i<list.size(); i++)
+	{
+		array[i][0] = i;
+		array[i][1] = double(list.at(i).right_x);
+		array[i][2] = double(list.at(i).right_y);
+	}
+}
+
+void MatchingPointsList::copyListBy3D()
+{
+	for (int i=0; i<list.size(); i++)
+	{
+		array[i][0] = i;
+		array[i][1] = list.at(i).X;
+		array[i][2] = list.at(i).Y;
+	}
+}

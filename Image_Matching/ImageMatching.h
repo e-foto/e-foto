@@ -51,6 +51,7 @@ public:
 	void setStep(int, int);
 	void setCorrelationThreshold(double _th) { corr_th = _th; };
 	double getCoverage() { return 100.0*coverage; };
+	void setMinStd(double);
 
 private:
 	int image_depth;
