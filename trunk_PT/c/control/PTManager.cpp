@@ -25,14 +25,14 @@ PTManager::PTManager()
 	previousData= false;
 }
 
-PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor)//, Flight *flight)
+PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
 {
 	efotoManager = newManager;
 	listAllImages = images;
 	listOis = ois;
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
-	//	myFlight = flight;
+	myFlight = flight;
 	marksSaveState= true;
 	started = false;
 	status = false;
@@ -51,6 +51,13 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 			previousData= true;
 		}
 	}*/
+
+	flightScale=myFlight->getScaleDen();
+}
+
+double PTManager::getFlightScale()
+{
+	return flightScale;
 }
 
 PTManager::~PTManager()
@@ -83,7 +90,7 @@ bool PTManager::exec()
 		{
 			mySensor->putImage(listAllImages.at(i));
 			listAllImages.at(i)->setSensor(mySensor);
-			//listAllImages.at(i)->setFlight(myFlight);
+			listAllImages.at(i)->setFlight(myFlight);
 			listAllImages.at(i)->setIO(listOis.at(i));
 			listOis.at(i)->setImage(listAllImages.at(i));
 		}
@@ -483,15 +490,13 @@ Matrix PTManager::getColLin(string imageFilename)
 void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey, int col, int lin)
 {
 	Point *pnt=efotoManager->instancePoint(pointKey);
-	DigitalImageSpaceCoordinate temp= pnt->getDigitalCoordinate(imageId);
-	temp.setCol(col);
-	temp.setLin(lin);
-
-	pnt->getDigitalCoordinate(imageId).setCol(col);
+//	qDebug("Antes ponto %d:\n%s\n\n",pointKey,pnt->xmlGetData().c_str());
 	pnt->deleteDigitalCoordinate(imageId);
+	DigitalImageSpaceCoordinate temp= DigitalImageSpaceCoordinate(imageId,col,lin);
 	pnt->putDigitalCoordinate(temp);
+	//qDebug("Depois ponto %d:\n%s\n\n",pointKey,pnt->xmlGetData().c_str());
 
-	//qDebug("updateDigitalCoordinates:%dx%d %s->col: %d lin: %d",col,lin,pnt->getPointId().c_str(),pnt->getDigitalCoordinate(imageId).getCol(),pnt->getDigitalCoordinate(imageId).getLin());
+//	qDebug("updateDigitalCoordinates:%dx%d %s->col: %d lin: %d",col,lin,pnt->getPointId().c_str(),pnt->getDigitalCoordinate(imageId).getCol(),pnt->getDigitalCoordinate(imageId).getLin());
 }
 
 // Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
@@ -580,26 +585,26 @@ void PTManager::saveMarks()
 	qDebug("Chamado metodo para salvar as marcas");
 	EDomElement newXml(efotoManager->xmlGetData());
 	/*
-	for (int i=0; i<listSelectedImages.size(); i++)
-	{
-		Image *myImage= listSelectedImages.at(i);
-		for (int j = 0; j < myImage->countPoints(); j++)
-		{
-			int currentPointId = myImage->getPointAt(j)->getId();
-			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
-		}
-	}
-	efotoManager->xmlSetData(newXml.getContent());
-*/
 	for (int i=0; i<listAllImages.size(); i++)
 	{
-		Image *myImage= listAllImages.at(i);
+		Image *myImage = listAllImages.at(i);
 		for (int j = 0; j < myImage->countPoints(); j++)
 		{
 			int currentPointId = myImage->getPointAt(j)->getId();
-			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData());
+			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData().c_str());
+			qDebug("ponto %d:\n%s\n\n",currentPointId,myImage->getPointAt(j)->xmlGetData().c_str());
 		}
 	}
+	qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());*/
+
+	for (int i=0; i<listAllPoints.size(); i++)
+	{
+		int currentPointId = listAllPoints.at(i)->getId();
+		newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), listAllPoints.at(i)->xmlGetData().c_str());
+		qDebug("ponto %d:\n%s\n\n",currentPointId,listAllPoints.at(i)->xmlGetData().c_str());
+	}
+	qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+
 	efotoManager->xmlSetData(newXml.getContent());
 }
 
@@ -621,7 +626,7 @@ string PTManager::createBundleAdjustmentXml()
 	fotoTriXml << "<exteriorOrientation>\n";
 	for (int i=1;i<=oe.getRows();i++)
 	{
-		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << intToString(i) << ">\n";
+		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << intToString(i) << "\">\n";
 		fotoTriXml << "\t\t<iterations>"<< pt->getTotalIterations() <<"</iterations>\n";
 		fotoTriXml << "\t\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
 		fotoTriXml << "\t\t<parameters>\n";
@@ -637,6 +642,7 @@ string PTManager::createBundleAdjustmentXml()
 		fotoTriXml << "\t\t\t</Xa>\n";
 		fotoTriXml << "\t\t\t<L0>\n";
 		fotoTriXml << l0 << "\n</L0>\n";
+		fotoTriXml << "\t\t</parameters>\n";
 		fotoTriXml << "</imageEO>\n";
 	}
 	fotoTriXml << "</exteriorOrientation>\n";
@@ -696,12 +702,11 @@ string PTManager::exportBlockTokml(string fileName)
 	int zona=stringToInt(terrain.elementByTagName("utmFuse").toString());
 	GeoSystem sys(terrain.elementByTagName("GRS").toString());
 
-
 	stringstream aux;
 	aux << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 	aux	<< "<Document>\n<name>" << fileName <<"</name>\n";
 	aux<<"<StyleMap id=\"msn_ylw-pushpin\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin1</styleUrl>\n</Pair>\n</StyleMap>";
-	aux<<"<Style id=\"sn_ylw-pushpin\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+	aux<<"<Style id=\"sn_ylw-pushpin\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 	aux<<"<Style id=\"sh_ylw-pushpin\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 
 	{	/*QString aux="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<Document>\n<name>Imagens 0489 e 0490.kml</name>\n<Style id=\"sn_ylw-pushpin9\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin9\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin4\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin1</styleUrl>\n</Pair>\n<Pair>\n";
@@ -923,18 +928,27 @@ string PTManager::exportBlockTokml(string fileName)
 							</Style>
 						</Folder>*/
 }
-/*
+	aux << "<Folder>\n";
+	aux << "<name>" << "Projeto do e-foto"<< "</name>";
+
 	Matrix oe=getMatrixOE();
 	for (int i=0;i<listAllImages.size();i++)
 	{
+		string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
+		string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
+		string lineWidth= "1";
+		aux<<"<Style id=\"sn_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle></Style>\n";
+
+		aux<<"<StyleMap id=\"msn_ylw-pushpin" << intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>";
+
+
 		Image *img=listAllImages.at(i);
 		int width=img->getWidth();
 		int height=img->getHeight();
 
-		mySensor->getFlight(0)->getScaleDen()
+		//mySensor->getFlight(0)->getScaleDen()
 
-
-		double ert=
+		double ert=25400*1e-6*(img->getFlight()->getScaleDen())/img->getResolution();
 
 		double deltaE=(width/2)*ert;
 		double deltaN=(height/2)*ert;
@@ -946,11 +960,11 @@ string PTManager::exportBlockTokml(string fileName)
 		Matrix plh1=ConvertionsSystems::utmToGeoFran(E1,N1,0,23,GeoSystem(),'S');
 		Matrix plh2=ConvertionsSystems::utmToGeoFran(E2,N2,0,23,GeoSystem(),'S');
 
-		double lat1=-plh1.get(1,1)*180/M_PI;
-		double longi1=plh1.get(1,2)*180/M_PI;
+		double lat1=-22.9119;//-plh1.get(1,1)*180/M_PI;
+		double longi1=-43.2406;//plh1.get(1,2)*180/M_PI;
 
-		double lat2=-plh2.get(1,1)*180/M_PI;
-		double longi2=plh2.get(1,2)*180/M_PI;
+		double lat2=-22.9213;//-plh2.get(1,1)*180/M_PI;
+		double longi2=-43.2303;//plh2.get(1,2)*180/M_PI;
 
 		stringstream coord;
 		coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
@@ -962,8 +976,9 @@ string PTManager::exportBlockTokml(string fileName)
 
 //-43.24428938257282,-22.92051144799519,0 -43.22905371658371,-22.92051151088507,0 -43.22897178369649,-22.90417775351901,0 -43.24347663910251,-22.90402206203603,0 -43.24428938257282,-22.92051144799519,0
 		aux << "<Placemark>\n";
-		aux << "<name>"<< << img->getFilename() << "</name>\n";
-		aux << "<styleUrl>#msn_ylw-pushpin</styleUrl>\n";
+		aux << "<name>"<< img->getFilename() << "</name>\n";
+		aux << "<styleUrl>";
+		aux << "#msn_ylw-pushpin" <<intToString(i)<< "</styleUrl>\n";
 		aux << "<Polygon>\n";
 		aux << "<tessellate>1</tessellate>\n";
 		aux << "<outerBoundaryIs>\n";
@@ -976,7 +991,6 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << "</Polygon>\n";
 		aux << "</Placemark>\n";
 }
-*/
 
 	//qDebug("%c\t%d\t%s",latitude,zona,sys.getSystemName().c_str());
 	for(int i=0;i<listAllPoints.size();i++)
@@ -1005,7 +1019,8 @@ string PTManager::exportBlockTokml(string fileName)
 		aux <<  "<latitude>";
 		aux << doubleToString(lat);
 		aux << "</latitude>\n";
-		aux << "<altitude>0</altitude>\n";
+		aux << "<altitude>";
+		aux << doubleToString(H)<<"</altitude>\n";
 		aux << "<heading>0.01795058696543714</heading>\n";
 		aux << "<tilt>0</tilt>\n";
 		aux << "<range>1463.920597456832</range>\n";
@@ -1020,10 +1035,12 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << doubleToString(longi);
 		aux << ",";
 		aux << doubleToString(lat);
-		aux << ",0</coordinates>\n";
+		aux << ",";
+		aux << doubleToString(H) <<"</coordinates>\n";
 		aux << "</Point>\n";
 		aux << "</Placemark>\n";
 	}
+	aux << "</Folder>\n";
 	aux << "</Document>\n</kml>";
 	return aux.str();
 }

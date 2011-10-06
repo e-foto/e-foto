@@ -482,12 +482,10 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 		itemSpinBox= new QSpinBox();
 		itemSpinBox->setAlignment(Qt::AlignHCenter);
 		itemSpinBox->setButtonSymbols(QSpinBox::NoButtons);
-		//itemSpinBox->setEnabled(enable);
-		//itemSpinBox->setMinimum((int)minValue);
-		//itemSpinBox->setMaximum((int)maxValue);
-		itemSpinBox->setMaximum(10000);
+		itemSpinBox->setMaximum(999999999);
 		itemSpinBox->setValue(item->text().toInt(&ok));
-		oldValue=item->text().toDouble(&ok);
+		itemSpinBox->selectAll();
+		previousValue=item->text().toDouble(&ok);
 		currentSpinBoxRow=row;
 		currentSpinBoxColumn=col;
 		connect(itemSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
@@ -511,15 +509,17 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 		//itemDoubleSpinBox->setEnabled(enable);
 		//itemDoubleSpinBox->setMinimum((int)minValue);
 		//itemDoubleSpinBox->setMaximum((int)maxValue);
-
+		itemDoubleSpinBox->setMaximum(999999999.999999999);
 		itemDoubleSpinBox->setValue(item->text().toDouble(&ok));
-		oldValue=item->text().toDouble(&ok);
+		previousValue=item->text().toDouble(&ok);
 		currentDoubleSpinBoxRow=row;
 		currentDoubleSpinBoxColumn=col;
 		connect(itemDoubleSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
 		setCellWidget(row,col,itemDoubleSpinBox);
 
 		itemDoubleSpinBox->setFocus(Qt::OtherFocusReason);
+
+		itemDoubleSpinBox->selectAll();
 	}
 	/*
 	if (getType()=="NONE")
@@ -557,6 +557,49 @@ void ETableWidget::avaliateType(QTableWidgetItem *item)
 	}
 	*/
 }
+
+void ETableWidget::avaliateType(int row, int col)
+{
+	bool ok;
+	//int row=item->row();
+	//int col=item->column();
+	QTableWidgetItem * item=this->item(row,col);
+	if (currentSpinBoxRow !=-1 || currentSpinBoxColumn !=-1 ||currentDoubleSpinBoxColumn !=-1 || currentDoubleSpinBoxRow !=-1)
+		validateItem();
+
+	if (checkTypeds(col,"QSpinBox"))
+	{
+		itemSpinBox= new QSpinBox();
+		itemSpinBox->setAlignment(Qt::AlignHCenter);
+		itemSpinBox->setButtonSymbols(QSpinBox::NoButtons);
+		itemSpinBox->setMaximum(999999999);
+		itemSpinBox->setValue(item->text().toInt(&ok));
+		itemSpinBox->selectAll();
+		previousValue=item->text().toDouble(&ok);
+		currentSpinBoxRow=row;
+		currentSpinBoxColumn=col;
+		connect(itemSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
+		setCellWidget(row,col,itemSpinBox);
+		itemSpinBox->setFocus(Qt::OtherFocusReason);
+
+	}
+	if (checkTypeds(col,"QDoubleSpinBox"))
+	{
+		itemDoubleSpinBox= new QDoubleSpinBox();
+		itemDoubleSpinBox->setAlignment(Qt::AlignHCenter);
+		itemDoubleSpinBox->setButtonSymbols(QDoubleSpinBox::NoButtons);
+		itemDoubleSpinBox->setMaximum(999999999.999999999);
+		itemDoubleSpinBox->setValue(item->text().toDouble(&ok));
+		previousValue=item->text().toDouble(&ok);
+		currentDoubleSpinBoxRow=row;
+		currentDoubleSpinBoxColumn=col;
+		connect(itemDoubleSpinBox,SIGNAL(editingFinished()),this,SLOT(validateItem()));
+		setCellWidget(row,col,itemDoubleSpinBox);
+		itemDoubleSpinBox->setFocus(Qt::OtherFocusReason);
+		itemDoubleSpinBox->selectAll();
+	}
+}
+
 
 void ETableWidget::validateItem()
 {
@@ -624,7 +667,38 @@ QString ETableWidget::getType(int column)
 		return "NONE";
 }
 
-double ETableWidget::getOldValue()
+double ETableWidget::getPreviousValue()
 {
-	return oldValue;
+	return previousValue;
+}
+
+
+QSpinBox * ETableWidget:: getItemSpinBox()
+{
+	return itemSpinBox;
+}
+
+QDoubleSpinBox * ETableWidget::getItemDoubleSpinBox()
+{
+	return itemDoubleSpinBox;
+}
+
+int ETableWidget::getCurrentSpinBoxColumn()
+{
+	return currentSpinBoxColumn;
+}
+
+int ETableWidget::getCurrentSpinBoxRow()
+{
+	return currentSpinBoxRow;
+}
+
+int ETableWidget::getCurrentDoubleSpinBoxColumn()
+{
+	return currentDoubleSpinBoxColumn;
+}
+
+int ETableWidget::getCurrentDoubleSpinBoxRow()
+{
+	return currentDoubleSpinBoxRow;
 }

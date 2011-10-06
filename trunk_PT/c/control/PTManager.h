@@ -30,8 +30,12 @@ protected:
 	EFotoManager* efotoManager;
 	PTUserInterface* myInterface;
 
+
+
 	Sensor *mySensor;
 	Flight *myFlight;
+	double flightScale;
+	/***/
 	deque<Image*> listAllImages;
 	deque<Point*> listAllPoints;
 	deque<InteriorOrientation*> listOis;
@@ -45,7 +49,7 @@ protected:
 public:
     PTManager();
     //como as imagens contens os pontos não é necessário passar os pontos
-	PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor);//,Flight* flight);
+	PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight);
     ~PTManager();
 
     string getImagefile(int imageId);
@@ -98,7 +102,9 @@ public:
 
 	void setImageFlightDirection(string imageFile,double flightDirection);
 	string exportBlockTokml(string fileName);
-protected:
+
+
+	double getFlightScale();
 
 };
 
