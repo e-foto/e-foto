@@ -22,7 +22,7 @@ private:
 	QSpinBox *itemSpinBox;
 	int currentSpinBoxRow,currentSpinBoxColumn,currentDoubleSpinBoxRow,currentDoubleSpinBoxColumn;
 	QDoubleSpinBox *itemDoubleSpinBox;
-	double oldValue;
+	double previousValue;
 
 	QList<int> typedSpinColumns;
 	QList<int> typedDoubleSpinColumns;
@@ -45,13 +45,19 @@ public:
 	bool checkTypeds(int column,QString type);
 	QString getType(int column);
 
+	QSpinBox * getItemSpinBox();
+	QDoubleSpinBox* getItemDoubleSpinBox();
+	int getCurrentSpinBoxRow();
+	int getCurrentSpinBoxColumn();
+	int getCurrentDoubleSpinBoxRow();
+	int getCurrentDoubleSpinBoxColumn();
 
 	void clearSelection();
 	void setMode(char newMode);
 	void setDecimals(int newDecimals);
 	char getMode();
 	int getDecimals();
-	double getOldValue();
+	double getPreviousValue();
 public slots:
     void autoCopy();
 	void enableAutoCopy(int enable);
@@ -60,6 +66,7 @@ public slots:
 	void updateDecimalsValues(int decimal);
 	void selectionBackground();
 	void avaliateType(QTableWidgetItem *);
+	void avaliateType(int row, int col);
 	void validateItem();
 
 signals:

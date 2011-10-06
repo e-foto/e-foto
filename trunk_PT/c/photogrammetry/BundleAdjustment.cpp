@@ -2,6 +2,8 @@
 #include "Dms.h"
 
 #include <qdebug.h>
+#include <QTime>
+
 
 #define MAXITERATIONS 10
 #define CONVERGENCY 0.001
@@ -23,12 +25,20 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	numControlPoints=0;
 	numFotogrametricPoints=0;
 
+	zeroingCoordinatesPhotogrammetrics();
+
 	for (int i=0;i<numPoints;i++)
 	{
 		if(listPoints.at(i)->is("ControlPoint"))
+		{
+			listControlPoints.push_back(listPoints.at(i));
 			numControlPoints++;
+		}
 		else if(listPoints.at(i)->is("PhotogrammetricPoint"))
+		{
+			listPhotogrammetricPoints.push_back(listPoints.at(i));
 			numFotogrametricPoints++;
+		}
 	}
 
 	fillAnalogCoordinates();
@@ -41,7 +51,11 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
 	userInitialValues= false;
-	printAll();
+	//for (int i=0;i<listPhotogrammetricPoints.size();i++)
+		//qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
+
+	//qDebug("Numero de todos os pontos: %d",listPoints.size());
+//	printAll();
 }
 
 int BundleAdjustment::numberOfEquations()
@@ -84,11 +98,12 @@ bool BundleAdjustment::calculate()
 
 	matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
+	//P.show();
 	//bool resOk=false;
 	int changePesos=0;
 	//Matrix tempRes;
 	totalIterations=0;
-
+	QTime ptime;
 	if (numFotogrametricPoints!=0)
 	{
 
@@ -97,27 +112,65 @@ bool BundleAdjustment::calculate()
 			bool conv=false;
 			while(totalIterations<MAXITERATIONS && !conv)
 			{
+				ptime.start();
 				createA1();
+				int A1time=ptime.restart();
 				//A1.show('f',3,"A1");
+
 				createA2();
-				//A2.show('f',3,"A2");
+				A2.show('f',3,"A2");
+				int A2time=ptime.restart();
+
 				createL0();
 				//L0.show('f',3,"L0");
+				int l0time=ptime.restart();
+
 				createLb();
 				//Lb.show('f',3,"Lb");
+				int lbtime=ptime.restart();
+
 				Matrix l=Lb-L0;
+
+				ptime.start();
 				Matrix n11=getN11();
+				int n11time=ptime.restart();
 				//n11.show('f',3,"N11");
+
 				Matrix n12=getN12();
 				//n12.show('f',3,"N12");
+				int n12time=ptime.restart();
+
 				Matrix n22=getN22();
 				//n22.show('f',3,"N22");
+				int n22time=ptime.restart();
+
 				Matrix n1=getn1(l);
 				//n1.show('f',3,"n1");
+				int n1time=ptime.restart();
+
 				Matrix n2=getn2(l);
 				//n2.show('f',3,"n2");
+				int n2time=ptime.restart();
+
 				getx1(n11,n12,n22,n1,n2);
+				int x1time=ptime.restart();
+
 				getx2(n12,n22,n2);
+				int x2time=ptime.restart();
+
+				qDebug("Tempo para executar a %d iteracao",totalIterations);
+				qDebug("Para criar A1: %.3f",A1time/1000.0);
+				qDebug("Para criar A2: %.3f",A2time/1000.0);
+				qDebug("Para criar L0: %.3f",l0time/1000.0);
+				qDebug("Para criar Lb: %.3f",lbtime/1000.0);
+				qDebug("Para calcular N11: %.3f",n11time/1000.0);
+				qDebug("Para calcular N12: %.3f",n12time/1000.0);
+				qDebug("Para calcular N22: %.3f",n22time/1000.0);
+				qDebug("Para calcular n1: %.3f",n1time/1000.0);
+				qDebug("Para calcular n2: %.3f",n2time/1000.0);
+				qDebug("Para calcular x1: %.3f",x1time/1000.0);
+				qDebug("Para calcular x2: %.3f",x2time/1000.0);
+
 				//x1.show('f',10,"x1");
 				//x2.show('f',3,"x2");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
@@ -126,9 +179,7 @@ bool BundleAdjustment::calculate()
 				updateCoordFotog();
 				conv=testConverged();
 				totalIterations++;
-
 				//qDebug("iteration %d",iterations);
-
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
@@ -161,7 +212,7 @@ bool BundleAdjustment::calculate()
 				Matrix l=Lb-L0;
 				Matrix n11=getN11();
 				Matrix n1=getn1(l);
-				n11.show('f',3,"N11");
+				//n11.show('f',3,"N11");
 				x1=n11.inverse()*n1;
 				//x1.show('f',3,"x1");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
@@ -259,15 +310,16 @@ Matrix BundleAdjustment::getn2(Matrix L)
 
 Matrix BundleAdjustment::getx1(Matrix N11, Matrix N12, Matrix N22, Matrix n1, Matrix n2)
 {
+	/*
 	Matrix temp1=N12*N22.inverse();
 	Matrix temp2=temp1*N12.transpose();
 
 	Matrix temp3=temp1*n2;
 	Matrix temp4=(N11-temp2).inverse();
 	Matrix temp5=n1-temp3;
-
-	//x1=(N11-N12*N22.inverse()*N12.transpose()).inverse()*(n1-N12*N22.inverse()*n2);
-	x1=temp4*temp5;
+*/
+	x1=(N11-N12*N22.inverse()*N12.transpose()).inverse()*(n1-N12*N22.inverse()*n2);
+	//x1=temp4*temp5;
 	return x1;
 }
 
@@ -530,6 +582,15 @@ int BundleAdjustment::whereInPoints(Point *pnt)
 	return -1;//se nao achar retorna -1
 }
 
+int BundleAdjustment::whereInPhotogrammetricPoints(Point *pnt)
+{
+	for (int i=0;i<numFotogrametricPoints;i++)
+		if (pnt==listPhotogrammetricPoints.at(i))
+			return i;
+	//qDebug("Nao achou o ponto %d na lista de pontos selecionados ",pnt->getId());
+	return -1;//se nao achar retorna -1
+}
+
 void BundleAdjustment::updateMatAdjust()
 {
 	//qDebug("num images: %d",numImages);
@@ -568,24 +629,56 @@ void BundleAdjustment::getInicialsValues()
 {
 	if (numFotogrametricPoints!=0)
 	{
+
+		QTime init;
+		init.start();
 		Matrix L=createL();
+		int ltime=init.restart();
 		//L.show('f',3,"L");
+
 		Matrix M1=createM1();
+		int M1time=init.restart();
 		//M1.show('f',3,"M1");
+
 		Matrix M2=createM2();
+		int M2time=init.restart();
 		//M2.show('f',3,"M2");
+
 		Matrix m11=getM11(M1);
+		int m11time=init.restart();
+
 		Matrix m12=getM12(M1,M2);
 		//m12.show('f',3,"M12");
+		int m12time=init.restart();
 
 		Matrix m22=getM22(M2);
 		//m22.show('f',3,"M22");
+		int m22time=init.restart();
+
 		Matrix m1=getm1(M1,L);
+		int m1time=init.restart();
+
 		Matrix m2=getm2(M2,L);
+		int m2time=init.restart();
 
 		Matrix paf=getPAf(m11,m12,m22,m1,m2);
-		Matrix xypf=getXYpf(m22,m2,m12,paf);
+		int paftime=init.restart();
 
+		Matrix xypf=getXYpf(m22,m2,m12,paf);
+		int xypftime=init.restart();
+/*
+		qDebug("Tempo para executar:");
+		qDebug("Para criar L: %.3f",ltime/1000.0);
+		qDebug("Para criar M1: %.3f",M1time/1000.0);
+		qDebug("Para criar M2: %.3f",M2time/1000.0);
+		qDebug("Para calcular M11: %.3f",m11time/1000.0);
+		qDebug("Para calcular M12: %.3f",m12time/1000.0);
+		qDebug("Para calcular M22: %.3f",m22time/1000.0);
+		qDebug("Para calcular m1: %.3f",m1time/1000.0);
+		qDebug("Para calcular m2: %.3f",m2time/1000.0);
+		qDebug("Para calcular paf: %.3f",paftime/1000.0);
+		qDebug("Para calcular xypf: %.3f",xypftime/1000.0);
+*/
 		//paf.show('f',4,"paf");
 		//xypf.show('f',4,"xypf");
 		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
@@ -606,7 +699,11 @@ void BundleAdjustment::getInicialsValues()
 			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
 			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
 			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-			matAdjust.set(i+1,6,c*getMediaScale(i));
+			//matAdjust.set(i+1,6,c*getMediaScale(i));
+			qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matAdjust.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
+			//Image *img;
+			//img->getFlight()->getScale()Scale();
 		}
 	}
 	else
@@ -633,7 +730,9 @@ void BundleAdjustment::getInicialsValues()
 			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
 			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
 			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-			matAdjust.set(i+1,6,c*getMediaScale(i));
+			//matAdjust.set(i+1,6,c*getMediaScale(i));
+			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matAdjust.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
 		}
 	}
 }
@@ -841,10 +940,21 @@ void BundleAdjustment::updateCoordinatesAllPoints(Matrix xypf, double zphotogram
 			}
 	}
 }
+void BundleAdjustment::zeroingCoordinatesPhotogrammetrics()
+{
+	for (int i=0;i<listPhotogrammetricPoints.size();i++)
+	{
+		ObjectSpaceCoordinate coord = listPhotogrammetricPoints.at(i)->getObjectCoordinate();
+		coord.setX(0);
+		coord.setY(0);
+		coord.setZ(0);
+		listPhotogrammetricPoints.at(i)->setObjectCoordinate(coord);
+	}
+}
 
 double BundleAdjustment::getMediaScale(int imageIndex)
 {
-
+	/*
 	double media=0.0;
 	double normaObjeto=0.0;
 	double normaImagem=0.0;
@@ -875,8 +985,10 @@ double BundleAdjustment::getMediaScale(int imageIndex)
 		}
 	}
 	int p=numberControlPoints(listImages.at(imageIndex))+numberPhotogrammetricPoints(listImages.at(imageIndex));
-	//printf("object media %f count: %d\n",media,p);
-	return media/(p-1);
+	printf("object media %f count: %d\n",media,p);
+	*/
+
+	//return //media/(p-1);
 }
 
 // Retorna uma matriz correspondente a uma imagem na Matriz A
@@ -915,8 +1027,8 @@ void BundleAdjustment::createA1()
 
 void BundleAdjustment::createA2()
 {
+	/*
 	Matrix result(0,3*numFotogrametricPoints);
-
 	for (int i=0;i<numImages;i++)
 	{
 		int pnts=listImages.at(i)->countPoints();
@@ -944,7 +1056,43 @@ void BundleAdjustment::createA2()
 		}
 		result=result|oneImage;
 	}
-	A2=result;
+	A2=result;*/
+	Matrix result(0,3*numFotogrametricPoints);
+	int posCol=0;
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		//qDebug("rows %d:%d",i,rows);
+		Matrix oneImage(0,3*numFotogrametricPoints);
+	//	qDebug("Imagem %s",listImages.at(i)->getFilename().c_str());
+		for (int j=0;j<pnts;j++)
+		{
+			posCol=whereInPhotogrammetricPoints(getPointFrom(i,j));
+			if(posCol!=-1)// && isPhotogrammetricPoint(i,j))
+			{
+				ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
+				double x=aux.getX();
+				double y=aux.getY();
+				double z=aux.getZ();
+
+				//qDebug("\tPoint %s X:%.3f\tY:%.3f\tZ:%.3f",getPointFrom(i,j)->getPointId().c_str(),x,y,z);
+				Matrix jf=getJacobianaFotogrametric(x,y,z,i+1);
+				posCol=3*posCol+1;
+				//posLin=2*j+1;
+				//oneImage.putMatrix(jf,posLin,posCol);
+				oneImage.putMatrix(jf,posLin,posCol);
+			//	qDebug("\tPoint %s na pos [%d,%d]",getPointFrom(i,j)->getPointId().c_str(),posLin,posCol);
+				//jf.show();
+			}
+			if (whereInPoints(getPointFrom(i,j))!=-1)
+				posLin+=2;
+		}
+		result=result|oneImage;
+		//result=oneImage;
+	}
+	A2=result;//result;
 }
 
 void BundleAdjustment::createL0()

@@ -44,17 +44,20 @@ unix {
         -lhighgui \
         -lcvaux \
         -lSDL \
-        -lSDL_image
+		-lSDL_image\
+		-lgomp
     HEADERS += CommonSDLMethods.h
     SOURCES += CommonSDLMethods.cpp
+	QMAKE_CXXFLAGS += -fopenmp
+	QMAKE_LFLAGS += -fopenmp
 }
 win32 { 
     INCLUDEPATH += C:/OpenCV2.0/include/opencv
-    LIBS += "C:\OpenCV2.0\bin\libcv200.dll" \
-        "C:\OpenCV2.0\bin\libcvaux200.dll" \
-        "C:\OpenCV2.0\bin\libcxcore200.dll" \
-        "C:\OpenCV2.0\bin\libcxts200.dll" \
-        "C:\OpenCV2.0\bin\libhighgui200.dll"
+	LIBS += "C:/OpenCV2.0\bin\libcv200.dll" \
+		"C:/OpenCV2.0\bin\libcvaux200.dll" \
+		"C:/OpenCV2.0\bin\libcxcore200.dll" \
+		"C:/OpenCV2.0\bin\libcxts200.dll" \
+		"C:/OpenCV2.0\bin\libhighgui200.dll"
 }
 
 # Input
@@ -274,7 +277,6 @@ SOURCES += EFotoManager.cpp \
     SRUserInterface_Qt.cpp \
     PTUserInterface_Qt.cpp \
 	main.cpp
-
 # qt/resource/
 RESOURCES += resource.qrc
 ABOUTDIR = qt/infrastructure/

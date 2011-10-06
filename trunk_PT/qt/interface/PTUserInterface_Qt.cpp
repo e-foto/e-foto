@@ -685,6 +685,15 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 		leftView->geometries()->removePoint(pointId);
 		leftView->geometries()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
 		leftDisplay->update();
+
+		if(leftImageTableWidget->getItemSpinBox()!=NULL)
+		{
+			int colTable=leftImageTableWidget->getCurrentSpinBoxColumn();
+			if (colTable==1)
+				leftImageTableWidget->getItemSpinBox()->setValue(col);
+			else if (colTable==2)
+				leftImageTableWidget->getItemSpinBox()->setValue(lin);
+		}
 	}else if(image =="rightImage")
 	{
 		int pos=findKeyAppearances("rightImageTable", QString::number(pointKey));
@@ -698,6 +707,16 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 		rightView->geometries()->removePoint(pointId);
 		rightView->geometries()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
 		rightDisplay->update();
+
+		if(rightImageTableWidget->getItemSpinBox()!=NULL)
+		{
+			int colTable=rightImageTableWidget->getCurrentSpinBoxColumn();
+			if (colTable==1)
+				rightImageTableWidget->getItemSpinBox()->setValue(col);
+			else if (colTable==2)
+				rightImageTableWidget->getItemSpinBox()->setValue(lin);
+		}
+
 	}
 	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
 }
@@ -734,7 +753,7 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 }
 
 
-/* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface. Atualmente desabilitada
+/* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface. Atualmente abilitada
    */
 void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 {
@@ -752,18 +771,29 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 		item=leftImageTableWidget->item(tableRow,tableCol);
 		pointKey=leftImageTableWidget->item(tableRow,3)->text().toInt(&ok);
 		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
-		if ((int)leftImageTableWidget->getOldValue()==value)
+		if ((int)leftImageTableWidget->getPreviousValue()==value)
 			return;
 		if(tableCol==1)
 		{
-			//col=item->text().toInt(&ok);
+			if (value>leftView->imageSize().width())
+			{
+				value=leftImageTableWidget->getPreviousValue();
+				leftImageTableWidget->item(tableRow,tableCol)->setText(QString::number(value));
+			}
 			col=value;
 			lin=leftImageTableWidget->item(tableRow,2)->text().toInt(&ok);
+			//leftImageTableWidget->avaliateType(tableRow,2);
 		}
 		else if(tableCol==2)
 		{
+			if (value>leftView->imageSize().height())
+			{
+				value=leftImageTableWidget->getPreviousValue();
+				leftImageTableWidget->item(tableRow,tableCol)->setText(QString::number(value));
+			}
 			lin=value;//item->text().toInt(&ok);
 			col=leftImageTableWidget->item(tableRow,1)->text().toInt(&ok);
+			//leftImageTableWidget->avaliateType(tableRow+1 == leftImageTableWidget->rowCount() ? tableRow:tableRow+1,1);
 		}
 		//qDebug("updateLeftimage %dx%d",col,lin);
 		updateMark("leftImage",imageKey,pointKey,QPointF(col,lin));
@@ -777,17 +807,29 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 		item=rightImageTableWidget->item(tableRow,tableCol);
 		pointKey=rightImageTableWidget->item(tableRow,3)->text().toInt(&ok);
 		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
-		if ((int)rightImageTableWidget->getOldValue()==value)
+		if ((int)rightImageTableWidget->getPreviousValue()==value)
 			return;
 		if(tableCol==1)
 		{
+			if (value>rightView->imageSize().width())
+			{
+				value=rightImageTableWidget->getPreviousValue();
+				rightImageTableWidget->item(tableRow,tableCol)->setText(QString::number(value));
+			}
 			col=value;//item->text().toInt(&ok);
 			lin=rightImageTableWidget->item(tableRow,2)->text().toInt(&ok);
+			//rightImageTableWidget->avaliateType(tableRow,2);
 		}
 		else if(tableCol==2)
 		{
+			if (value>rightView->imageSize().height())
+			{
+				value=rightImageTableWidget->getPreviousValue();
+				rightImageTableWidget->item(tableRow,tableCol)->setText(QString::number(value));
+			}
 			lin=value;//item->text().toInt(&ok);
 			col=rightImageTableWidget->item(tableRow,1)->text().toInt(&ok);
+			//rightImageTableWidget->avaliateType( tableRow+1 == rightImageTableWidget->rowCount() ? tableRow:tableRow+1,1);
 		}
 		updateMark("rightImage",imageKey,pointKey,QPointF(col,lin));
 		rightView->moveTo(QPointF(col,lin));
