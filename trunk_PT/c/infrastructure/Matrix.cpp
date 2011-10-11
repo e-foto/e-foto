@@ -587,7 +587,7 @@ Matrix Matrix::operator +(const Matrix& Par_Matrix)
         {
             DraftResult.nw(nrows, ncols);
         }
-#pragma omp parallel for
+//#pragma omp parallel for
         for (unsigned int i=0; i<(nrows*ncols); i++)
         {
             DraftResult._Mat[i]=_Mat[i] + Par_Matrix._Mat[i];
@@ -623,7 +623,7 @@ Matrix Matrix::operator -(const Matrix& Par_Matrix)
         {
             DraftResult.nw(nrows, ncols);
         }
-		#pragma omp parallel for
+		//#pragma omp parallel for
         for (unsigned int i=0; i<(nrows*ncols); i++)
         {
             DraftResult._Mat[i]=_Mat[i] - Par_Matrix._Mat[i];
@@ -660,7 +660,7 @@ Matrix Matrix::operator *(const Matrix& Par_Matrix)
             for (unsigned int j= 1;j<=DraftResult->ncols; j++)
             {
                 double sum=0;
-				#pragma omp parallel for reduction(+:sum)
+				//#pragma omp parallel for reduction(+:sum)
                 for (unsigned int k=1; k <= ncols; k++)
                 {
                     sum+=(get(i,k)*Par_Matrix.get(k,j));
