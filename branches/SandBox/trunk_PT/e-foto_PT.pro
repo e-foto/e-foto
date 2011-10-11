@@ -44,12 +44,12 @@ unix {
         -lhighgui \
         -lcvaux \
         -lSDL \
-		-lSDL_image\
-		-lgomp
+		-lSDL_image#\
+	#	-lgomp
     HEADERS += CommonSDLMethods.h
     SOURCES += CommonSDLMethods.cpp
-	QMAKE_CXXFLAGS += -fopenmp
-	QMAKE_LFLAGS += -fopenmp
+	#QMAKE_CXXFLAGS += -fopenmp
+	#QMAKE_LFLAGS += -fopenmp
 }
 win32 { 
     INCLUDEPATH += C:/OpenCV2.0/include/opencv

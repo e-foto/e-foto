@@ -134,10 +134,10 @@ bool BundleAdjustment::calculate()
 				ptime.start();
 				Matrix n11=getN11();
 				int n11time=ptime.restart();
-				//n11.show('f',3,"N11");
+				n11.show('f',3,"N11");
 
 				Matrix n12=getN12();
-				//n12.show('f',3,"N12");
+				n12.show('f',3,"N12");
 				int n12time=ptime.restart();
 
 				Matrix n22=getN22();
@@ -154,9 +154,11 @@ bool BundleAdjustment::calculate()
 
 				getx1(n11,n12,n22,n1,n2);
 				int x1time=ptime.restart();
+				x1.show();
 
 				getx2(n12,n22,n2);
 				int x2time=ptime.restart();
+				x2.show();
 
 				qDebug("Tempo para executar a %d iteracao",totalIterations);
 				qDebug("Para criar A1: %.3f",A1time/1000.0);
@@ -1027,7 +1029,7 @@ void BundleAdjustment::createA1()
 
 void BundleAdjustment::createA2()
 {
-	/*
+
 	Matrix result(0,3*numFotogrametricPoints);
 	for (int i=0;i<numImages;i++)
 	{
@@ -1056,7 +1058,8 @@ void BundleAdjustment::createA2()
 		}
 		result=result|oneImage;
 	}
-	A2=result;*/
+	A2=result;
+	/*
 	Matrix result(0,3*numFotogrametricPoints);
 	int posCol=0;
 	for (int i=0;i<numImages;i++)
@@ -1092,7 +1095,7 @@ void BundleAdjustment::createA2()
 		result=result|oneImage;
 		//result=oneImage;
 	}
-	A2=result;//result;
+	A2=result;//result;*/
 }
 
 void BundleAdjustment::createL0()
