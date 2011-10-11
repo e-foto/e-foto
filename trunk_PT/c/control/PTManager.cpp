@@ -10,11 +10,12 @@
 #include "Dms.h"
 #include "ConvertionsSystems.h"
 
+#include <stdlib.h>
 
-//#include <qdebug.h>
 
 PTManager::PTManager()
 {
+
 	efotoManager  = NULL;
 	mySensor = NULL;
 	myFlight = NULL;
@@ -159,6 +160,7 @@ PositionMatrix PTManager::getImageDimensions(string filename)
 			dimensions.setInt(2,temp->getWidth());
 			return dimensions;
 		}
+
 	}
 }
 
@@ -582,7 +584,7 @@ deque<string> PTManager::getImagesAppearances(int pointKey)
 }
 void PTManager::saveMarks()
 {
-	qDebug("Chamado metodo para salvar as marcas");
+	//qDebug("Chamado metodo para salvar as marcas");
 	EDomElement newXml(efotoManager->xmlGetData());
 	/*
 	for (int i=0; i<listAllImages.size(); i++)
@@ -601,9 +603,9 @@ void PTManager::saveMarks()
 	{
 		int currentPointId = listAllPoints.at(i)->getId();
 		newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), listAllPoints.at(i)->xmlGetData().c_str());
-		qDebug("ponto %d:\n%s\n\n",currentPointId,listAllPoints.at(i)->xmlGetData().c_str());
+		//qDebug("ponto %d:\n%s\n\n",currentPointId,listAllPoints.at(i)->xmlGetData().c_str());
 	}
-	qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
 
 	efotoManager->xmlSetData(newXml.getContent());
 }
@@ -647,7 +649,7 @@ string PTManager::createBundleAdjustmentXml()
 	}
 	fotoTriXml << "</exteriorOrientation>\n";
 
-	qDebug("Metodo chamado create varias OEs");
+	//qDebug("Metodo chamado create varias OEs");
 	return fotoTriXml.str();
 }
 
@@ -685,8 +687,6 @@ bool PTManager::hasPreviousData()
 
 void PTManager::setImageFlightDirection(string imageFile, double flightDirection)
 {
-	//Image *img;
-//	img->setFlightDirection();
 	for (int i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)->getFilename() == imageFile)
 		{
@@ -698,273 +698,97 @@ void PTManager::setImageFlightDirection(string imageFile, double flightDirection
 string PTManager::exportBlockTokml(string fileName)
 {
 	EDomElement terrain = efotoManager->getXml("terrain");
-	char latitude = terrain.elementByTagName("Lat").attribute("direction")=="S" ? 'S':'N';
+	char hemiLatitude = terrain.elementByTagName("Lat").attribute("direction")=="S" ? 'S':'N';
 	int zona=stringToInt(terrain.elementByTagName("utmFuse").toString());
 	GeoSystem sys(terrain.elementByTagName("GRS").toString());
 
 	stringstream aux;
 	aux << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 	aux	<< "<Document>\n<name>" << fileName <<"</name>\n";
-	aux<<"<StyleMap id=\"msn_ylw-pushpin\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin1</styleUrl>\n</Pair>\n</StyleMap>";
-	aux<<"<Style id=\"sn_ylw-pushpin\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
-	aux<<"<Style id=\"sh_ylw-pushpin\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 
-	{	/*QString aux="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<Document>\n<name>Imagens 0489 e 0490.kml</name>\n<Style id=\"sn_ylw-pushpin9\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin9\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin4\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin1</styleUrl>\n</Pair>\n<Pair>\n";
-	aux.append("<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin6</styleUrl>\n</Pair>\n</StyleMap>\n<Style id=\"sh_ylw-pushpin4\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n	<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin5\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin3</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin9</styleUrl>\n</Pair>\n</StyleMap>\n<StyleMap id=\"msn_ylw-pushpin1\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin5</styleUrl>\n</Pair>\n</StyleMap>\n<Style id=\"sn_ylw-pushpin5\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n");
-	aux.append("<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin1\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin6\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin7</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin8</styleUrl>\n</Pair>\n</StyleMap>\n<StyleMap id=\"msn_ylw-pushpin\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin4</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin</styleUrl>\n</Pair>\n</StyleMap>\n<Style id=\"sh_ylw-pushpin2\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n");
-	aux.append("</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sn_ylw-pushpin2\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin7\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin0\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin10</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin1</styleUrl>\n</Pair>\n</StyleMap>\n<Style id=\"sh_ylw-pushpin10\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin3\">\n<IconStyle>\n");
-	aux.append("<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<Style id=\"sn_ylw-pushpin8\">\n<IconStyle>\n<scale>1.1</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n<LineStyle>\n<color>ffffff00</color>\n<width>2</width>\n</LineStyle>\n<PolyStyle>\n<color>ff0000aa</color>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n<Style id=\"sh_ylw-pushpin\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n<StyleMap id=\"msn_ylw-pushpin9\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin0</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin10</styleUrl>\n</Pair>\n</StyleMap>\n<Style id=\"sh_ylw-pushpin5\">\n<IconStyle>\n<scale>1.3</scale>\n");
-	aux+="<Icon>\n";
-					/*			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n
-							</Icon>\n
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>\n
-						</IconStyle>\n
-					</Style>\n
-					<StyleMap id="msn_ylw-pushpin10">\n
-						<Pair>\n
-							<key>normal</key>\n
-							<styleUrl>#sn_ylw-pushpin5</styleUrl>\n
-						</Pair>\n
-						<Pair>\n
-							<key>highlight</key>\n
-							<styleUrl>#sh_ylw-pushpin2</styleUrl>\n
-						</Pair>\n
-					</StyleMap>\n
-					<StyleMap id="msn_ylw-pushpin2">\n
-						<Pair>\n
-							<key>normal</key>\n
-							<styleUrl>#sn_ylw-pushpin2</styleUrl>\n
-						</Pair>\n
-						<Pair>\n
-							<key>highlight</key>\n
-							<styleUrl>#sh_ylw-pushpin4</styleUrl>\n
-						</Pair>\n
-					</StyleMap>\n
-					<Style id="sh_ylw-pushpin6">\n
-						<IconStyle>\n
-							<scale>1.3</scale>\n
-							<Icon>\n
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>\n
-							</Icon>\n
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>\n
-						</IconStyle>\n
-						<LineStyle>\n
-							<color>ffff0000</color>\n
-							<width>2</width>\n
-						</LineStyle>\n
-						<PolyStyle>\n
-							<color>ff0000aa</color>\n
-							<fill>0</fill>\n
-						</PolyStyle>\n
-					</Style>
-					<StyleMap id="msn_ylw-pushpin8">
-						<Pair>
-							<key>normal</key>
-							<styleUrl>#sn_ylw-pushpin6</styleUrl>
-						</Pair>
-						<Pair>
-							<key>highlight</key>
-							<styleUrl>#sh_ylw-pushpin7</styleUrl>
-						</Pair>
-					</StyleMap>
-					<Style id="sh_ylw-pushpin8">
-						<IconStyle>
-							<scale>1.3</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin0">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin10">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin7">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin1">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-						<LineStyle>
-							<color>ffff0000</color>
-							<width>2</width>
-						</LineStyle>
-						<PolyStyle>
-							<color>ff0000aa</color>
-							<fill>0</fill>
-						</PolyStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin6">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<StyleMap id="msn_ylw-pushpin3">
-						<Pair>
-							<key>normal</key>
-							<styleUrl>#sn_ylw-pushpin8</styleUrl>
-						</Pair>
-						<Pair>
-							<key>highlight</key>
-							<styleUrl>#sh_ylw-pushpin0</styleUrl>
-						</Pair>
-					</StyleMap>
-					<Style id="sh_ylw-pushpin0">
-						<IconStyle>
-							<scale>1.3</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-						<LineStyle>
-							<color>ffffff00</color>
-							<width>2</width>
-						</LineStyle>
-						<PolyStyle>
-							<color>ff0000aa</color>
-							<fill>0</fill>
-						</PolyStyle>
-					</Style>
-					<Style id="sn_ylw-pushpin4">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<StyleMap id="msn_ylw-pushpin7">
-						<Pair>
-							<key>normal</key>
-							<styleUrl>#sn_ylw-pushpin9</styleUrl>
-						</Pair>
-						<Pair>
-							<key>highlight</key>
-							<styleUrl>#sh_ylw-pushpin3</styleUrl>
-						</Pair>
-					</StyleMap>
-					<Style id="sn_ylw-pushpin3">
-						<IconStyle>
-							<scale>1.1</scale>
-							<Icon>
-								<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-							</Icon>
-							<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
-						</IconStyle>
-					</Style>
-					<Folder>
-						<name>rezende, rj</name>
-						<open>1</open>
-						<Placemark>
-							<name>&lt;font color=&quot;red&quot;&gt;Você quis dizer:&lt;/font&gt; &lt;a href=&quot;http://maps.google.com/maps?q=Resende+-+Rio+de+Janeiro,+Brasil&amp;sll=-22.7865,-45.1847&amp;sspn=3.2247,5.01253&amp;ie=UTF8&amp;v=2.2&amp;cv=6.0.2.2074&amp;hl=pt-BR&amp;oi=geospell&amp;ct=clnk&amp;cd=1&amp;geocode=FUQ_qf4df6lZ_Q&amp;split=0&amp;output=kml&amp;ge_fileext=.kml&quot;&gt;Resende - RJ, Brasil&lt;/a&gt;</name>
-							<visibility>0</visibility>
-							<Snippet maxLines="2"><![CDATA[<br/>]]></Snippet>
-							<Style>
-								<ListStyle>
-									<listItemType>check</listItemType>
-									<ItemIcon>
-										<state>open closed error fetching0 fetching1 fetching2</state>
-									</ItemIcon>
-									<bgColor>00ffffff</bgColor>
-									<maxSnippetLines>2</maxSnippetLines>
-								</ListStyle>
-							</Style>
-						</Placemark>
-						<Folder>
-							<name>&lt;div style=&quot;background-color:#FFF8DD&quot;&gt;Anúncios&lt;/div&gt;</name>
-							<visibility>0</visibility>
-							<open>1</open>
-							<Snippet maxLines="4"><![CDATA[<html><div style="background-color:#FFF8DD"><a href="http://www.google.com/aclk?sa=L&amp;ai=C8Uh1Ctq2TcL8L4HctweQp8whw4Pu3QH7t6nEBbX15poBEAEg7tyoD1DI2OiPBWBNyAEBqQJZXaBIxWmlPqoEIU_Qtb6AAETzsi7_SrOqEPbq7rwOFyCFHLu2QraeWZrgeA&amp;num=2&amp;sig=AGiWqtxw9DVs9JzcscjkBF5UV0q3h-viIQ&amp;adurl=http://www.portaldosventos.com.br">Visconde de Mauá &lt;b&gt;RJ&lt;/b&gt;</a></div><div style="background-color:#FFF8DD;color:#008000">www.portaldosventos.com.br</div><nobr><div style="background-color:#FFF8DD">Chalés c/hidro dupla panorâmica</div><div style="background-color:#FFF8DD">vista cinematográfica/café/jantar..</div></nobr></html>]]></Snippet>
-							<Style>
-								<ListStyle>
-									<listItemType>check</listItemType>
-									<ItemIcon>
-										<state>open closed error fetching0 fetching1 fetching2</state>
-									</ItemIcon>
-									<bgColor>00ffffff</bgColor>
-									<maxSnippetLines>2</maxSnippetLines>
-								</ListStyle>
-							</Style>
-						</Folder>*/
-}
-	aux << "<Folder>\n";
-	aux << "<name>" << "Projeto do e-foto"<< "</name>";
+	string controlPointIcon         = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png";
+	string photogrammetricPointIcon = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+	//string photogrammetricPointIcon = "http://marmsx.msxall.com/artgallery/ink/efoto.png";
+	string checkingPointIcon        = "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png";
+
+	string colorNormalControl="ff00ffff";
+	string colorNormalPhotogrammetric = "ff00ffff";
+	string colorNormalChecking ="ff12f580" ;//18--245-128
+
+	string colorHighLightControl="ff0000ff";
+	string colorHighLightPhotogrammetric="ff0000ff";
+	string colorHighLightChecking="ff12f580";
+
+	// Style para pontos de controle
+	aux<<"<StyleMap id=\"controlPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ControlPoint</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ControlPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
+	aux<<"<Style id=\"sn_ControlPoint\">\n<IconStyle>\n<color>"<<colorNormalControl<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< controlPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+	aux<<"<Style id=\"sh_ControlPoint\">\n<IconStyle>\n<color>"<<colorHighLightControl<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< controlPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+
+	// Style para pontos fotogrametricos
+	aux<<"<StyleMap id=\"photogrammetricPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_PhotogrammetricPoint</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_PhotogrammetricPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
+	aux<<"<Style id=\"sn_PhotogrammetricPoint\">\n<IconStyle>\n<color>"<<colorNormalPhotogrammetric<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< photogrammetricPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+	aux<<"<Style id=\"sh_PhotogrammetricPoint\">\n<IconStyle>\n<color>"<<colorHighLightPhotogrammetric<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< photogrammetricPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+
+	// Style para pontos de checking
+	aux<<"<StyleMap id=\"checkingPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_CheckingPoint</styleUrl>\n</Pair>\n<Pair>\n<key>normal</key>\n<styleUrl>#sh_CheckingPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
+	aux<<"<Style id=\"sn_CheckingPoint\">\n<IconStyle>\n<color>"<<colorNormalChecking<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+	aux<<"<Style id=\"sh_CheckingPoint\">\n<IconStyle>\n<color>"<<colorHighLightChecking<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
+
+
+
 
 	Matrix oe=getMatrixOE();
+	//oe.show();
 	for (int i=0;i<listAllImages.size();i++)
 	{
 		string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
-		string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
-		string lineWidth= "1";
-		aux<<"<Style id=\"sn_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle></Style>\n";
+		int B=random()%15;
+		int G=random()%15;
+		int R=random()%15;
 
-		aux<<"<StyleMap id=\"msn_ylw-pushpin" << intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>";
+		stringstream aux1;
 
+		aux1 << hex << "ff"<< B << G << R << B << G << R;
+		string lineColor =aux1.str();
+		qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
+		//string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
+
+		string lineWidth= "2";
+		aux<<"<StyleMap id=\"msn_ylw-pushpin" << intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>\n";
+		aux<<"<Style id=\"sn_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
+		aux<<"<Style id=\"sh_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
 
 		Image *img=listAllImages.at(i);
 		int width=img->getWidth();
 		int height=img->getHeight();
+		double Z0=oe.get(i+1,6);
+		double c=img->getSensor()->getFocalDistance();
 
-		//mySensor->getFlight(0)->getScaleDen()
+		double P1x=pt->digitalToAnalog(listOis.at(i),height/2,0).get(1,1);
+		double PPx=img->getSensor()->getPrincipalPointCoordinates().getXi();
+		double PPy=img->getSensor()->getPrincipalPointCoordinates().getEta();
+		double P2y=pt->digitalToAnalog(listOis.at(i),0,width/2).get(1,2);
 
-		double ert=25400*1e-6*(img->getFlight()->getScaleDen())/img->getResolution();
+		double deltaE=Z0*(P1x-PPx)/c;
+		double deltaN=Z0*(P2y-PPy)/c;
 
-		double deltaE=(width/2)*ert;
-		double deltaN=(height/2)*ert;
+		//qDebug("deltaE : %.3f",deltaE);
+		//qDebug("deltaN : %.3f",deltaN);
+
 		double E1=oe.get(i+1,4)-deltaE;
 		double N1=oe.get(i+1,5)+deltaN;
 		double E2=oe.get(i+1,4)+deltaE;
-		double N2=oe.get(i+1,5)+deltaN;
+		double N2=oe.get(i+1,5)-deltaN;
 
-		Matrix plh1=ConvertionsSystems::utmToGeoFran(E1,N1,0,23,GeoSystem(),'S');
-		Matrix plh2=ConvertionsSystems::utmToGeoFran(E2,N2,0,23,GeoSystem(),'S');
 
-		double lat1=-22.9119;//-plh1.get(1,1)*180/M_PI;
-		double longi1=-43.2406;//plh1.get(1,2)*180/M_PI;
+		Matrix plh1=ConvertionsSystems::utmToGeoFran(E1,N1,0,zona,GeoSystem(),hemiLatitude);
+		Matrix plh2=ConvertionsSystems::utmToGeoFran(E2,N2,0,zona,GeoSystem(),hemiLatitude);
 
-		double lat2=-22.9213;//-plh2.get(1,1)*180/M_PI;
-		double longi2=-43.2303;//plh2.get(1,2)*180/M_PI;
+		double lat1 =-plh1.get(1,1)*180/M_PI;
+		double longi1=plh1.get(1,2)*180/M_PI;
+
+		double lat2=-plh2.get(1,1)*180/M_PI;
+		double longi2=plh2.get(1,2)*180/M_PI;
 
 		stringstream coord;
 		coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
@@ -974,11 +798,11 @@ string PTManager::exportBlockTokml(string fileName)
 		coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
 		string coordenadas=coord.str();
 
-//-43.24428938257282,-22.92051144799519,0 -43.22905371658371,-22.92051151088507,0 -43.22897178369649,-22.90417775351901,0 -43.24347663910251,-22.90402206203603,0 -43.24428938257282,-22.92051144799519,0
 		aux << "<Placemark>\n";
 		aux << "<name>"<< img->getFilename() << "</name>\n";
 		aux << "<styleUrl>";
 		aux << "#msn_ylw-pushpin" <<intToString(i)<< "</styleUrl>\n";
+		/*
 		aux << "<Polygon>\n";
 		aux << "<tessellate>1</tessellate>\n";
 		aux << "<outerBoundaryIs>\n";
@@ -989,29 +813,45 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << "</LinearRing>\n";
 		aux << "</outerBoundaryIs>\n";
 		aux << "</Polygon>\n";
+		*/
+		aux << "<LineString>\n";
+		aux << "<tessellate>1</tessellate>\n";
+		aux << "<coordinates>\n";
+		aux << coordenadas << "\n";
+		aux << "</coordinates>\n";
+		aux << "</LineString>\n";
 		aux << "</Placemark>\n";
 }
 
+	aux << "<Folder>\n";
+	aux << "<name>" << "Projeto do e-foto"<< "</name>\n";
 	//qDebug("%c\t%d\t%s",latitude,zona,sys.getSystemName().c_str());
 	for(int i=0;i<listAllPoints.size();i++)
 	{
 		Point *pnt=listAllPoints.at(i);
+		string pointType;
+		if (pnt->is("PhotogrammetricPoint"))
+			pointType = "photogrammetricPoint";
+		else if (pnt->is("ControlPoint"))
+			pointType = "controlPoint";
+		else if (pnt->is("CheckingPoint"))
+			pointType = "checkingPoint";
+
 		double E=pnt->getObjectCoordinate().getX();
 		double N=pnt->getObjectCoordinate().getY();
 		double H=pnt->getObjectCoordinate().getZ();
 
-		Matrix plh=ConvertionsSystems::utmToGeoFran(E,N,H,zona,sys,latitude);
+		Matrix plh=ConvertionsSystems::utmToGeoFran(E,N,H,zona,sys,hemiLatitude);
 
 		double lat=plh.get(1,1)*180/M_PI;
 		double longi=plh.get(1,2)*180/M_PI;
 
-		lat = (latitude=='S' ? -lat:lat);
+		lat = (hemiLatitude=='S' ? -lat:lat);
 
 		aux << "<Placemark>\n";
-		aux << "<name>";
-		aux << pnt->getPointId();//namePoints->text();
-		//aux << QString::number(i+1));
-		aux << "</name>\n";
+		aux << "<name>" << pnt->getPointId() << "</name>\n";
+		aux << "<description>" << pnt->getDescription() << "</description>\n";
+		aux <<pnt->getDescription();
 		aux << "<LookAt>\n";
 		aux << "<longitude>";
 		aux << doubleToString(longi);
@@ -1027,7 +867,8 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << "<altitudeMode>relativeToGround</altitudeMode>\n";
 		aux << "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>\n";
 		aux << "</LookAt>\n";
-		aux << "<styleUrl>#msn_ylw-pushpin</styleUrl>\n";
+		//aux << "<styleUrl>#msn_ylw-pushpin</styleUrl>\n";
+		aux << "<styleUrl>#" << pointType <<"</styleUrl>\n";
 		aux << "<Point>\n";
 		aux << "<altitudeMode>clampToGround</altitudeMode>\n";
 		aux << "<gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>\n";
@@ -1042,5 +883,9 @@ string PTManager::exportBlockTokml(string fileName)
 	}
 	aux << "</Folder>\n";
 	aux << "</Document>\n</kml>";
-	return aux.str();
+	EDomElement xmlgoogle(aux.str());
+
+	return xmlgoogle.indent('\t').getContent();
+
+	//return aux.str();
 }
