@@ -5,8 +5,8 @@
 #include <QTime>
 
 
-#define MAXITERATIONS 10
-#define CONVERGENCY 0.001
+//#define MAXITERATIONS 10
+//#define CONVERGENCY 0.001
 #define MAXRESIDUO 0.0001
 
 BundleAdjustment::BundleAdjustment()
@@ -51,6 +51,7 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
 	userInitialValues= false;
+
 	//for (int i=0;i<listPhotogrammetricPoints.size();i++)
 		//qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
 
@@ -109,8 +110,8 @@ bool BundleAdjustment::calculate()
 
 		//while(!resOk)
 		//{
-			bool conv=false;
-			while(totalIterations<MAXITERATIONS && !conv)
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
 			{
 				ptime.start();
 				createA1();
@@ -118,7 +119,7 @@ bool BundleAdjustment::calculate()
 				//A1.show('f',3,"A1");
 
 				createA2();
-				A2.show('f',3,"A2");
+				//A2.show('f',3,"A2");
 				int A2time=ptime.restart();
 
 				createL0();
@@ -134,10 +135,10 @@ bool BundleAdjustment::calculate()
 				ptime.start();
 				Matrix n11=getN11();
 				int n11time=ptime.restart();
-				n11.show('f',3,"N11");
+				//n11.show('f',3,"N11");
 
 				Matrix n12=getN12();
-				n12.show('f',3,"N12");
+				//n12.show('f',3,"N12");
 				int n12time=ptime.restart();
 
 				Matrix n22=getN22();
@@ -154,11 +155,11 @@ bool BundleAdjustment::calculate()
 
 				getx1(n11,n12,n22,n1,n2);
 				int x1time=ptime.restart();
-				x1.show();
+				//x1.show();
 
 				getx2(n12,n22,n2);
 				int x2time=ptime.restart();
-				x2.show();
+				//x2.show();
 
 				qDebug("Tempo para executar a %d iteracao",totalIterations);
 				qDebug("Para criar A1: %.3f",A1time/1000.0);
@@ -173,20 +174,34 @@ bool BundleAdjustment::calculate()
 				qDebug("Para calcular x1: %.3f",x1time/1000.0);
 				qDebug("Para calcular x2: %.3f",x2time/1000.0);
 
-				//x1.show('f',10,"x1");
-				//x2.show('f',3,"x2");
+				x1.show('f',3,"x1");
+				x2.show('f',3,"x2");
+
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 				updateMatAdjust();
 				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
 				updateCoordFotog();
-				conv=testConverged();
+
+				matAdjust.show('f',5,"matAdjust Iterando");
 				totalIterations++;
-				//qDebug("iteration %d",iterations);
+				qDebug("iteration %d/%d",totalIterations,maxIterations);
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
 			//matAdjust.show('f',5,"MatAdjus depois da iteracao");
 			calculateResiduos();
+/*
 			//matRes.show('f',5,"MatRes depois da iteracao");
 			//resOk=testResiduo();
 			//if (changePesos==0)
@@ -197,7 +212,7 @@ bool BundleAdjustment::calculate()
 			//changePesos++;
 			//totalIterations+=iterations;
 			//matRes.show('f',5,"MatRes");
-		//}
+		//}*/
 	}
 	else
 	{
@@ -205,8 +220,8 @@ bool BundleAdjustment::calculate()
 		/*while(!resOk)
 		{*/
 			totalIterations=0;
-			bool conv=false;
-			while(totalIterations<MAXITERATIONS && !conv)
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
 			{
 				createA1();
 				createL0();
@@ -218,11 +233,22 @@ bool BundleAdjustment::calculate()
 				x1=n11.inverse()*n1;
 				//x1.show('f',3,"x1");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
+				totalIterations++;
+				qDebug("iteration %d",totalIterations);
 				updateMatAdjust();
 				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
-				conv=testConverged();
-				totalIterations++;
-				//qDebug("iteration %d",iterations);
 			}
 			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
@@ -702,7 +728,7 @@ void BundleAdjustment::getInicialsValues()
 			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
 			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
 			//matAdjust.set(i+1,6,c*getMediaScale(i));
-			qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
+			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
 			matAdjust.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
 			//Image *img;
 			//img->getFlight()->getScale()Scale();
@@ -1332,32 +1358,53 @@ bool BundleAdjustment::testResiduo()
 	return true;
 }
 
-bool BundleAdjustment::testConverged()
+// Se der infinito retorna -2, se der NAN retorna -1, se nao convergir retorna 0 e se convergir retorna 1
+int BundleAdjustment::testConverged()
 {
 	int rowsX1=x1.getRows();
 	int rowsX2=x2.getRows();
    // printf("testando X1");
 	for (int i=1;i<=rowsX1;i++)
 	{
-		if (fabs(x1.get(i,1)>CONVERGENCY))
+		if (isinf(fabs(x1.get(i,1))))
 		{
-			return false;
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x1.get(i,1)>convergency))
+		{
+			return 0;
 		}
 	}
 	//printf("testando X2");
 	for (int i=1;i<=rowsX2;i++)
 	{
-		if (fabs(x2.get(i,1)>CONVERGENCY))
+		if (isinf(fabs(x1.get(i,1))))
 		{
-			return false;
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x2.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x2.get(i,1)>convergency))
+		{
+			return 0;
 		}
 	}
-	return true;
+	return 1;
 }
 
 bool BundleAdjustment::isConverged()
 {
-	if(totalIterations<MAXITERATIONS)
+	if(totalIterations<=maxIterations && testConverged()==1)
 		return converged=true;
 	else
 		return converged=false;
@@ -1365,10 +1412,8 @@ bool BundleAdjustment::isConverged()
 
 void BundleAdjustment::setUserInitialValues(Matrix initialValues)
 {
-
 	matAdjust=initialValues;
 	userInitialValues= true;
-
 }
 
 void BundleAdjustment::printAll()
@@ -1424,4 +1469,24 @@ Matrix BundleAdjustment::getL0()
 Matrix BundleAdjustment::getLb()
 {
 	return Lb;
+}
+
+void BundleAdjustment::setConvergencyValue(double value)
+{
+	convergency = value;
+}
+
+void BundleAdjustment::setMaxNumberIterations(int value)
+{
+	maxIterations = value;
+}
+
+int BundleAdjustment::getMaxNumberIterations()
+{
+	return maxIterations;
+}
+
+double BundleAdjustment::getConvergencyValue()
+{
+	return convergency;
 }

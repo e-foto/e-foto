@@ -27,10 +27,13 @@ protected:
 	bool status;
 	bool marksSaveState;
 	bool previousData;
+
+	int maxIterations;
+	double metricConvergency;
+	double angularConvergency;
+
 	EFotoManager* efotoManager;
 	PTUserInterface* myInterface;
-
-
 
 	Sensor *mySensor;
 	Flight *myFlight;
@@ -77,6 +80,7 @@ public:
 
 	void selectPoints(deque<string> selectedPointsList);
 	void selectImages(deque<string> selectedImagesList);
+
 	// metodo para dar um update nas coordenadas digitais do pont
 	void updateDigitalCoordinatesPoint(int imageId,int pointKey,int col, int lin);
 	int getImageId(string imageFilename);
@@ -101,10 +105,21 @@ public:
 	bool hasPreviousData();
 
 	void setImageFlightDirection(string imageFile,double flightDirection);
+	double getLongitudinalOverlap(string imageFile);
+	double getImageFlightDirection(string imageFile);
+	bool isAvailablePoint(int imageId, int pointKey);
+
 	string exportBlockTokml(string fileName);
-
-
 	double getFlightScale();
+
+	void setMaxIteration(int iterations);
+	int getMaxIteration();
+
+	void setMetricConvergencyValue(double value);
+	double getMetricConvergencyValue();
+
+	void setAngularConvergencyValue(double value);
+	double getAngularConvergencyValue();
 
 };
 
