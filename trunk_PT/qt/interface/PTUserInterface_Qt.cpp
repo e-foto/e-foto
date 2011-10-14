@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include "ConvertionsSystems.h"
 
+
+
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
 PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
@@ -431,10 +433,47 @@ void PTUserInterface_Qt::showSelectionWindow()
 
 	buttonsLayout->addWidget(runButton);
 	buttonsLayout->addWidget(cancelButton);
+	QLabel *iterationsLabel= new QLabel("Maximun iterations");
+	QSpinBox *iterationsBox = new QSpinBox();
+	iterationsBox->setValue(ptManager->getMaxIteration());
+	iterationsBox->setRange(1,12);
+	iterationsBox->setAccelerated(true);
+	iterationsBox->setAlignment(Qt::AlignCenter);
+
+	QLabel *metricConvergencyLabel= new QLabel("Metric Convergency");
+	QDoubleSpinBox *metricConvergencyBox= new QDoubleSpinBox();
+	metricConvergencyBox->setDecimals(5);
+	metricConvergencyBox->setRange(0.00001,1.0);
+	metricConvergencyBox->setSingleStep(0.00001);
+	metricConvergencyBox->setValue(ptManager->getMetricConvergencyValue());
+	metricConvergencyBox->setAccelerated(true);
+	metricConvergencyBox->setAlignment(Qt::AlignCenter);
+
+	QLabel *angularConvergencyLabel= new QLabel("Angular Convergency");
+	QDoubleSpinBox *angularConvergencyBox= new QDoubleSpinBox();
+	angularConvergencyBox->setDecimals(5);
+	angularConvergencyBox->setRange(0.00001,1.0);
+	angularConvergencyBox->setSingleStep(0.00001);
+	angularConvergencyBox->setValue(ptManager->getAngularConvergencyValue());
+	angularConvergencyBox->setAccelerated(true);
+	angularConvergencyBox->setAlignment(Qt::AlignCenter);
+
+	QHBoxLayout *parametersLayout= new QHBoxLayout();
+	parametersLayout->addStretch();
+	parametersLayout->addWidget(iterationsBox);
+	parametersLayout->addStretch();
+	parametersLayout->addWidget(convergencyMetricBox);
+	parametersLayout->addWidget(convergencyAngularBox);
+	parametersLayout->addStretch();
+
+	connect(iterationsBox,SIGNAL(valueChanged(int)),this,SLOT(setMaxIteration(int)));
+	connect(convergencyMetricBox,SIGNAL(valueChanged(double)),this,SLOT(setConvergencyMetricValue(double)));
+	connect(convergencyAngularBox,SIGNAL(valueChanged(double)),this,SLOT(setConvergencyAngularValue(double)));
 
 	QVBoxLayout *layout= new QVBoxLayout(this);
 	layout->addWidget(selectionImagesView);
 	layout->addWidget(selectionPointsView);
+	layout->addLayout(parametersLayout);
 	layout->addLayout(buttonsLayout);
 
 	selectionView->setLayout(layout);
@@ -670,6 +709,7 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 {
 	int col=pixel.x();
 	int lin=pixel.y();
+
 	if (col<0 || lin<0 || currentPointKey<0)
 		return;
 	if (image=="leftImage")
@@ -716,7 +756,6 @@ void PTUserInterface_Qt::updateMark(string image,int imageKey, int pointKey, QPo
 			else if (colTable==2)
 				rightImageTableWidget->getItemSpinBox()->setValue(lin);
 		}
-
 	}
 	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
 }
@@ -747,9 +786,15 @@ void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 {
 	if (sender()==leftDisplay)
+	{
 		updateMark("leftImage",ptManager->getImageId(leftImageString),currentPointKey,*pixel);
+		previsionMark(currentPointKey,pixel);
+	}
 	else if (sender()==rightDisplay)
+	{
 		updateMark("rightImage",ptManager->getImageId(rightImageString),currentPointKey,*pixel);
+		previsionMark(currentPointKey,pixel);
+	}
 }
 
 
@@ -763,7 +808,6 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 	//int rowPoint=item->row();
 	int pointKey;
 	QTableWidgetItem *item;
-
 
 	if (sender()==leftImageTableWidget)
 	{
@@ -893,6 +937,8 @@ void PTUserInterface_Qt::clearAllMarks(MonoDisplay *display)
 	display->update();
 }
 
+
+// Informa em que imagens o ponto contido na linha indexRow e coluna IndexCol aparece.
 void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 {
 	bool ok;
@@ -937,17 +983,17 @@ void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 
 	if (table==leftImageTableWidget)
 	{
-		pointIdLabel->setText(QString("Point %1 is in images").arg(leftImageTableWidget->item(indexRow,0)->text()));
+	//	pointIdLabel->setText(QString("Point %1 is in images").arg(leftImageTableWidget->item(indexRow,0)->text()));
 		keyPoint=leftImageTableWidget->item(indexRow,3)->text().toInt(&ok);
 	}
 	else if (table==pointsTableWidget)
 	{
-		pointIdLabel->setText(QString("Point %1 is in images").arg(pointsTableWidget->item(indexRow,0)->text()));
+		//pointIdLabel->setText(QString("Point %1 is in images").arg(pointsTableWidget->item(indexRow,0)->text()));
 		keyPoint=pointsTableWidget->item(indexRow,5)->text().toInt(&ok);
 	}
 	else if (table==rightImageTableWidget)
 	{
-		pointIdLabel->setText(QString("Point %1 is in images").arg(rightImageTableWidget->item(indexRow,0)->text()));
+		//pointIdLabel->setText(QString("Point %1 is in images").arg(rightImageTableWidget->item(indexRow,0)->text()));
 		keyPoint=rightImageTableWidget->item(indexRow,3)->text().toInt(&ok);
 	}
 
@@ -981,6 +1027,7 @@ void PTUserInterface_Qt::openImagesFlightDirectionForm()
 
 	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
+	flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
 	flightDirectionForm->show();
 }
 
@@ -1055,5 +1102,56 @@ void PTUserInterface_Qt::exportToKml()
 */
 }
 
+// Chute GROSSEIRO do ponto homologo baseado no overlap que o usuario informa no cadastro
+void PTUserInterface_Qt::previsionMark(int pointKey, QPointF *point)
+{
+	deque<string> images=ptManager->getImagesAppearances(pointKey);
+	double newCol = 0;
+	for (int i=1;i<images.size();i++)
+	{
+		double overLap = 1.0-ptManager->getLongitudinalOverlap(images.at(i))/100.0;
+		double flightDirection = ptManager->getImageFlightDirection(images.at(i));
+		int widthImage=ptManager->getImageDimensions(images.at(i)).get(2,1);
+
+		//if (flightDirection<M_PI/2)
+		newCol=point->x()-overLap*widthImage;
+/*
+		qDebug("%.3f",overLap);
+		qDebug("%d",widthImage);
+		qDebug("%.3f",point->x());
+		qDebug("%.3f",newCol);
+*/
+	//	else
+		//	newCol=point->x()+overLap*widthImage;
+
+		if (!ptManager->isAvailablePoint(ptManager->getImageId(images.at(i)),pointKey))
+		{
+			ptManager->updateDigitalCoordinatesPoint(ptManager->getImageId(images.at(i)),pointKey,newCol,point->y());
+			if (images.at(i)==leftImageString)
+			{
+				updateMark("leftImage",ptManager->getImageId(leftImageString),pointKey,QPointF(newCol,point->y()));
+			}
+			if (images.at(i)==rightImageString)
+			{
+				updateMark("rightImage",ptManager->getImageId(rightImageString),pointKey,QPointF(newCol,point->y()));
+			}
+		}
+		point->setX(newCol);
+	}
+}
 
 
+void PTUserInterface_Qt::setMaxIteration(int iterations)
+{
+	ptManager->setMaxIteration(iterations);
+}
+
+void PTUserInterface_Qt::setConvergencyMetricValue(double value)
+{
+	ptManager->setConvergencyMetricValue(value);
+}
+
+void PTUserInterface_Qt::setConvergencyAngularValue(double value)
+{
+	ptManager->setConvergencyAngularValue(value);
+}

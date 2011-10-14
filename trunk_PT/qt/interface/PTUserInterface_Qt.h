@@ -3,7 +3,7 @@
 
 #include "ui_FotoTriForm.h"
 #include "PTUserInterface.h"
-#include "ImageView.h"
+//#include "ImageView.h"
 #include "LoadingScreen.h"
 #include "ETableWidget.h"
 #include "WindowsSelectPage.h"
@@ -37,6 +37,7 @@ protected:
 
 	int currentPointKey;
 
+	void previsionMark(int pointKey,QPointF *point);
 
 	string leftImageString;
 	string rightImageString;
@@ -53,9 +54,6 @@ protected:
 	FlightDirectionForm *flightDirectionForm;
 
     void closeEvent(QCloseEvent *event);
-
-
-
 
 private:
     void init();
@@ -93,6 +91,10 @@ public slots:
 	void updatePoint(int, int, int);
 	//void closingPTUserInterface();
 	void exportToKml();
+
+	void setMaxIteration(int iterations);
+	void setConvergencyMetricValue(double value);
+	void setConvergencyAngularValue(double value);
 
 protected slots:
 	//virtual bool confirmToClose();

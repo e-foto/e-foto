@@ -24,6 +24,8 @@ PTManager::PTManager()
 	started = false;
 	status = false;
 	previousData= false;
+	maxIterations = 6;
+	convergency = 0.001;
 }
 
 PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
@@ -52,7 +54,9 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 			previousData= true;
 		}
 	}*/
-
+	maxIterations = 6;
+	metricConvergency = 0.001;
+	angularConvergency = 0.001;
 	flightScale=myFlight->getScaleDen();
 }
 
@@ -134,6 +138,8 @@ bool PTManager::calculatePT()
 {
 	sortPointsSelected();
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
+	pt->setMaxNumberIterations(maxIterations);
+	pt->setConvergencyValue(convergency);
 	if (pt->isPossibleCalculate())
 	{
 		bool result=pt->calculate();
@@ -501,6 +507,13 @@ void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey, int col
 //	qDebug("updateDigitalCoordinates:%dx%d %s->col: %d lin: %d",col,lin,pnt->getPointId().c_str(),pnt->getDigitalCoordinate(imageId).getCol(),pnt->getDigitalCoordinate(imageId).getLin());
 }
 
+
+bool PTManager::isAvailablePoint(int imageId, int pointKey)
+{
+//	Point *pnt=efotoManager->instancePoint(pointKey);
+	return efotoManager->instancePoint(pointKey)->getDigitalCoordinate(imageId).isAvailable();
+}
+
 // Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
 int PTManager::getImageId(string imageFilename)
 {
@@ -606,7 +619,6 @@ void PTManager::saveMarks()
 		//qDebug("ponto %d:\n%s\n\n",currentPointId,listAllPoints.at(i)->xmlGetData().c_str());
 	}
 	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
-
 	efotoManager->xmlSetData(newXml.getContent());
 }
 
@@ -695,6 +707,25 @@ void PTManager::setImageFlightDirection(string imageFile, double flightDirection
 		}
 }
 
+double PTManager::getImageFlightDirection(string imageFile)
+{
+	for (int i=0;i<listAllImages.size();i++)
+		if(listAllImages.at(i)->getFilename() == imageFile)
+		{
+			//qDebug("File %s kappa0 = %.7f",imageFile.c_str(),listAllImages.at(i)->getFlightDirection());
+			return listAllImages.at(i)->getFlightDirection();
+		}
+	return -1;
+}
+
+double PTManager::getLongitudinalOverlap(string imageFile)
+{
+	for (int i=0;i<listAllImages.size();i++)
+		if(listAllImages.at(i)->getFilename() == imageFile)
+			return listAllImages.at(i)->getFlight()->getLongitudinalOverlap();
+	return -1;
+}
+
 string PTManager::exportBlockTokml(string fileName)
 {
 	EDomElement terrain = efotoManager->getXml("terrain");
@@ -706,8 +737,8 @@ string PTManager::exportBlockTokml(string fileName)
 	aux << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 	aux	<< "<Document>\n<name>" << fileName <<"</name>\n";
 
-	string controlPointIcon         = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png";
-	string photogrammetricPointIcon = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+	string controlPointIcon         = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+	string photogrammetricPointIcon = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png";
 	//string photogrammetricPointIcon = "http://marmsx.msxall.com/artgallery/ink/efoto.png";
 	string checkingPointIcon        = "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png";
 
@@ -733,8 +764,6 @@ string PTManager::exportBlockTokml(string fileName)
 	aux<<"<StyleMap id=\"checkingPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_CheckingPoint</styleUrl>\n</Pair>\n<Pair>\n<key>normal</key>\n<styleUrl>#sh_CheckingPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
 	aux<<"<Style id=\"sn_CheckingPoint\">\n<IconStyle>\n<color>"<<colorNormalChecking<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 	aux<<"<Style id=\"sh_CheckingPoint\">\n<IconStyle>\n<color>"<<colorHighLightChecking<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
-
-
 
 
 	Matrix oe=getMatrixOE();
@@ -887,5 +916,34 @@ string PTManager::exportBlockTokml(string fileName)
 
 	return xmlgoogle.indent('\t').getContent();
 
-	//return aux.str();
+}
+
+void PTManager::setMetricConvergencyValue(double value)
+{
+	metricConvergency=value;
+}
+
+double PTManager::getMetricConvergencyValue()
+{
+	return metricConvergency;
+}
+
+void PTManager::setAngularConvergencyValue(double value)
+{
+	angularConvergency=value;
+}
+
+double PTManager::getAngularConvergencyValue(double value)
+{
+	return angularConvergency;
+}
+
+void PTManager::setMaxIteration(int iterations)
+{
+	maxIterations=iterations;
+}
+
+int PTManager::getMaxIteration()
+{
+	return maxIterations;
 }

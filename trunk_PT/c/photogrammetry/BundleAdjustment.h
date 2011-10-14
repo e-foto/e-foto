@@ -35,6 +35,9 @@ protected:
     int numControlPoints;
     int numFotogrametricPoints;
 
+	int maxIterations;
+	double metricConvergency, angularConvergency;
+
 
     Matrix afp; //Matriz com resultados finais
 /* Variaveis auxiliares */
@@ -83,8 +86,11 @@ public:
     Matrix getL0();
     Matrix getLb();
     Matrix getMatRes();
- /** Matriz de rotaÃ§Åes
-  */
+
+
+
+
+
 protected:
 	Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
     int totalIterations;
@@ -195,7 +201,7 @@ public:
 	bool isCheckingPoint(int imageIndex, int pointIndex);
 	bool isConverged();
 
-	bool testConverged();
+	int testConverged();
 	bool testResiduo();
 	//
 
@@ -212,6 +218,10 @@ public:
 	double getRy(Image *img, int pointId);
 	bool getConvergencyStatus();
 	int getTotalIterations();
+	void setMaxNumberIterations(int value);
+	int getMaxNumberIterations();
+	void setConvergencyValue(double value);
+	double getConvergencyValue();
 	Matrix getMVC();
 	void calculateResiduos();
 	void calculatePeso();
