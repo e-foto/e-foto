@@ -25,7 +25,8 @@ PTManager::PTManager()
 	status = false;
 	previousData= false;
 	maxIterations = 6;
-	convergency = 0.001;
+	metricConvergency = 0.001;
+	angularConvergency = 0.001;
 }
 
 PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
@@ -139,7 +140,8 @@ bool PTManager::calculatePT()
 	sortPointsSelected();
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
 	pt->setMaxNumberIterations(maxIterations);
-	pt->setConvergencyValue(convergency);
+	pt->setMetricConvergencyValue(metricConvergency);
+	pt->setAngularConvergencyValue(angularConvergency);
 	if (pt->isPossibleCalculate())
 	{
 		bool result=pt->calculate();
@@ -933,7 +935,7 @@ void PTManager::setAngularConvergencyValue(double value)
 	angularConvergency=value;
 }
 
-double PTManager::getAngularConvergencyValue(double value)
+double PTManager::getAngularConvergencyValue()
 {
 	return angularConvergency;
 }
