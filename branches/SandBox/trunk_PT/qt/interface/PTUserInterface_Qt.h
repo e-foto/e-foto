@@ -93,8 +93,8 @@ public slots:
 	void exportToKml();
 
 	void setMaxIteration(int iterations);
-	void setConvergencyMetricValue(double value);
-	void setConvergencyAngularValue(double value);
+	void setMetricConvergencyValue(double value);
+	void setAngularConvergencyValue(double value);
 
 protected slots:
 	//virtual bool confirmToClose();
