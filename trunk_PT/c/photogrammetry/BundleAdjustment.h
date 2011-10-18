@@ -12,6 +12,11 @@
 #include "Flight.h"
 #include "InteriorOrientation.h"
 
+//EIGEN
+//#include "Core"
+//#include "Dense"
+
+
 //using namespace std;
 class BundleAdjustment
 {
@@ -220,8 +225,10 @@ public:
 	int getTotalIterations();
 	void setMaxNumberIterations(int value);
 	int getMaxNumberIterations();
-	void setConvergencyValue(double value);
-	double getConvergencyValue();
+	void setMetricConvergencyValue(double value);
+	void setAngularConvergencyValue(double value);
+	double getMetricConvergencyValue();
+	double getAngularConvergencyValue();
 	Matrix getMVC();
 	void calculateResiduos();
 	void calculatePeso();
@@ -230,7 +237,13 @@ public:
 	Matrix getSparseN11();
 
 	//imprime todas as imagens com seus pontos
-	void printAll();
+	string printAll();
+
+	/** Metodos Eigen*/
+//	Matrix convertEigenToMatrix(Eigen::MatrixXd eigen);
+//	Matrix convertVectorEigenToMatrix(Eigen::VectorXd eigen);
+//	Eigen::MatrixXd convertMatrixToEigen(Matrix mat);
+
 };
 
 #endif // BUNDLEADJUSTMENT_H

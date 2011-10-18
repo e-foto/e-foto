@@ -34,7 +34,8 @@ INCLUDEPATH += . \
     qt/formDisplay \
     qt/infrastructure \
     qt/resource \
-    sdl/infrastructure
+	sdl/infrastructure #\
+	#c/infrastructure/Eigen
 unix { 
     INCLUDEPATH += /usr/include/opencv \
         /usr/include/SDL
@@ -154,11 +155,13 @@ HEADERS += EFotoManager.h \
     DmsEdit.h \
 	WindowsSelectPage.h \
 	FlightDirectionForm.h\
+	#PhotoTriangulationParametersForm.h \
 # qt/interface/
     IOUserInterface_Qt.h \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
 	PTUserInterface_Qt.h
+
 
 
 # qt/formDisplay/
@@ -172,6 +175,7 @@ FORMS += FlightLayout.ui \
     SensorLayout.ui \
     TerrainLayout.ui \ # qt/infrastructure/
     AboutLayout.ui \
+	#PhotoTriangulationParametersForm.ui\
     LoadingScreen.ui \ # qt/interface/
     FormProject.ui \
     IOForm.ui \
@@ -211,7 +215,9 @@ SOURCES += EFotoManager.cpp \
     IOUserInterface.cpp \
     ProjectUserInterface.cpp \
     SRUserInterface.cpp \
-    PTUserInterface.cpp \ # photogrammetry/
+	PTUserInterface.cpp \
+	#PhotoTriangulationParametersForm.cpp \
+	# photogrammetry/
     AnalogFiductialMark.cpp \
     AnalogImageSpaceCoordinate.cpp \
     BundleAdjustment.cpp \
@@ -270,7 +276,8 @@ SOURCES += EFotoManager.cpp \
     ScienceSpinBox.cpp \
     SigmaForm.cpp \
 	WindowsSelectPage.cpp \
-	FlightDirectionForm.cpp\
+	FlightDirectionForm.cpp \
+	#PhotoTriangulationParametersForm.cpp \
 	 # qt/interface/
     IOUserInterface_Qt.cpp \
 	ProjectUserInterface_Qt.cpp \

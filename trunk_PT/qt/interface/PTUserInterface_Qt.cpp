@@ -460,15 +460,18 @@ void PTUserInterface_Qt::showSelectionWindow()
 
 	QHBoxLayout *parametersLayout= new QHBoxLayout();
 	parametersLayout->addStretch();
+	parametersLayout->addWidget(iterationsLabel);
 	parametersLayout->addWidget(iterationsBox);
 	parametersLayout->addStretch();
-	parametersLayout->addWidget(convergencyMetricBox);
-	parametersLayout->addWidget(convergencyAngularBox);
+	parametersLayout->addWidget(metricConvergencyLabel);
+	parametersLayout->addWidget(metricConvergencyBox);
+	parametersLayout->addWidget(angularConvergencyLabel);
+	parametersLayout->addWidget(angularConvergencyBox);
 	parametersLayout->addStretch();
 
 	connect(iterationsBox,SIGNAL(valueChanged(int)),this,SLOT(setMaxIteration(int)));
-	connect(convergencyMetricBox,SIGNAL(valueChanged(double)),this,SLOT(setConvergencyMetricValue(double)));
-	connect(convergencyAngularBox,SIGNAL(valueChanged(double)),this,SLOT(setConvergencyAngularValue(double)));
+	connect(metricConvergencyBox,SIGNAL(valueChanged(double)),this,SLOT(setMetricConvergencyValue(double)));
+	connect(angularConvergencyBox,SIGNAL(valueChanged(double)),this,SLOT(setAngularConvergencyValue(double)));
 
 	QVBoxLayout *layout= new QVBoxLayout(this);
 	layout->addWidget(selectionImagesView);
@@ -1146,12 +1149,12 @@ void PTUserInterface_Qt::setMaxIteration(int iterations)
 	ptManager->setMaxIteration(iterations);
 }
 
-void PTUserInterface_Qt::setConvergencyMetricValue(double value)
+void PTUserInterface_Qt::setMetricConvergencyValue(double value)
 {
-	ptManager->setConvergencyMetricValue(value);
+	ptManager->setMetricConvergencyValue(value);
 }
 
-void PTUserInterface_Qt::setConvergencyAngularValue(double value)
+void PTUserInterface_Qt::setAngularConvergencyValue(double value)
 {
-	ptManager->setConvergencyAngularValue(value);
+	ptManager->setAngularConvergencyValue(value);
 }
