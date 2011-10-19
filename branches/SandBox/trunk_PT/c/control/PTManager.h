@@ -47,7 +47,7 @@ protected:
 	deque<Point*> listSelectedPoints;
 
 	BundleAdjustment* pt;
-	Matrix ENH,AFP,MVC;
+	Matrix ENH,spareENH,AFP,MVC;
 
 public:
     PTManager();
@@ -120,6 +120,8 @@ public:
 
 	void setAngularConvergencyValue(double value);
 	double getAngularConvergencyValue();
+
+	void reloadPointsCoordinates();
 
 };
 
