@@ -11,11 +11,11 @@
 #include "Point.h"
 #include "Flight.h"
 #include "InteriorOrientation.h"
+#include "SparseMatrix.h"
 
 //EIGEN
 //#include "Core"
 //#include "Dense"
-
 
 //using namespace std;
 class BundleAdjustment
@@ -98,6 +98,7 @@ public:
 
 protected:
 	Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
+	Matrix inverseN22;
     int totalIterations;
 
     //Seta a matrix baseado nos angulos
@@ -234,8 +235,8 @@ public:
 	void calculatePeso();
 	void updateCoordFotog();
 
-	Matrix getSparseN11();
-
+	//Matrix getSparseN11();
+	void setInverseN22(Matrix n22);
 	//imprime todas as imagens com seus pontos
 	string printAll();
 

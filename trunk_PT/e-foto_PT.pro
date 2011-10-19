@@ -89,6 +89,7 @@ HEADERS += EFotoManager.h \
     EParser.h \
     ETreeModel.h \
     Matrix.h \
+	SparseMatrix.h \
     PositionMatrix.h \
     RectSupport.h \ # c/interface
     IOUserInterface.h \
@@ -210,6 +211,7 @@ SOURCES += EFotoManager.cpp \
     ETreeModel.cpp \
     GeoSystem.cpp \
     Matrix.cpp \
+	SparseMatrix.cpp \
     PositionMatrix.cpp \
     RectSupport.cpp \ # c/interface/
     IOUserInterface.cpp \

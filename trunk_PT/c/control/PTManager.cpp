@@ -205,6 +205,7 @@ void PTManager::setENH()
 	//int children=pointsXml.children().size();
 
 	Matrix points(listAllPoints.size(),3);
+	Matrix pointKeys(listAllPoints.size(),1);
 	//for (int i=1;i<=children;i++)
 	for (int i=0;i<listAllPoints.size();i++)
     {
@@ -215,18 +216,23 @@ void PTManager::setENH()
 		double E = p->getObjectCoordinate().getX();
 		double N = p->getObjectCoordinate().getY();
 		double H = p->getObjectCoordinate().getZ();
+
+
 		//int ini=enh.find_first_of(" ");
 		//int fim=enh.find_last_of(" ");
 		//double E=stringToDouble(enh.substr(0,ini).c_str());
 		//double N=stringToDouble(enh.substr(ini+1,fim).c_str());
 		//double H=stringToDouble(enh.substr(fim+1,enh.size()).c_str());
 		//qDebug("%d\tE=%.4f\tN=%.4f\tH=%.4f",i,E,N,H);
+		pointKeys.set(i+1,1,p->getId());
 		points.set(i+1,1,E);
 		points.set(i+1,2,N);
 		points.set(i+1,3,H);
     }
 	//	points.show('f',4);
-    ENH=points;
+	ENH=points;
+	spareENH=ENH;
+	spareENH.putMatrix(pointKeys,1,ENH.getCols()+1);
 }
 
 Matrix PTManager::getResiduos()
@@ -949,3 +955,36 @@ int PTManager::getMaxIteration()
 {
 	return maxIterations;
 }
+
+void PTManager::reloadPointsCoordinates()
+{
+	int numPoints=listAllPoints.size();
+	for (int i=0;i<numPoints;i++)
+	{
+		Point *pnt=efotoManager->instancePoint(spareENH.getInt(i+1,4));
+
+		double x=spareENH.get(i+1,1);
+		double y=spareENH.get(i+1,2);
+		double z=spareENH.get(i+1,3);
+
+		pnt->getObjectCoordinate().setX(x);
+		pnt->getObjectCoordinate().setY(y);
+		pnt->getObjectCoordinate().setZ(z);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
