@@ -480,7 +480,7 @@ bool Matrix::isZeroes()
 	for (unsigned int j = 1; j <= ncols; j++)
 	{
 		for (unsigned int i = 1; i <= nrows; i++)
-			if (get((unsigned int)i,(unsigned int)j) > 0.000001 || get((unsigned int)i,(unsigned int)j) < -0.000001)
+			if (get((unsigned int)i,(unsigned int)j) > 0.00000000001 || get((unsigned int)i,(unsigned int)j) < -0.00000000001)
 				return false;
 	}
 	return true;

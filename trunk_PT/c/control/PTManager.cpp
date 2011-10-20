@@ -107,6 +107,7 @@ bool PTManager::exec()
 			myInterface->exec();
 		}
 	}
+	photogrammetricSort();
 	return status=true;
 }
 
@@ -988,3 +989,173 @@ void PTManager::reloadPointsCoordinates()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
+*/
+void PTManager::photogrammetricSort()
+{
+	int numPoints=listAllPoints.size();
+	int numImages=listAllImages.size();
+
+	//Matrix overlapLongiTable(numImages,numImages);
+	//Matrix overlapTransTable(numImages,numImages);
+	//Matrix divisor(numImages,numImages);
+
+	Matrix overlapLongiTable(59,59);
+	Matrix overlapTransTable(59,59);
+	Matrix divisor(59,59);
+
+	//divisor.ones();
+	//overlapLongiTable.identity(listAllImages.size());
+
+	for (int i=0;i<numPoints;i++)
+	{
+		Point *pnt=listAllPoints.at(i);
+		deque<DigitalImageSpaceCoordinate> listCoord=pnt->getDigitalCoordinates();
+		//printf("%s\n",pnt->getPointId().c_str());
+		if (listCoord.size()>1)
+		{
+
+			for (int j=0;j<listCoord.size();j++)
+			{
+				DigitalImageSpaceCoordinate coord1=listCoord.at(j);
+				int imageId1=coord1.getImageId();
+				int col1=coord1.getCol();
+				int row1=coord1.getLin();
+				int width1=efotoManager->instanceImage(imageId1)->getWidth();
+
+				//printf("col %d = %.3d\n",imageId1,col1);
+				//printf("width = %d\n",width1);
+				for (int k=j+1;k<listCoord.size();k++)
+				{
+					DigitalImageSpaceCoordinate coord2=listCoord.at(k);
+					int imageId2=coord2.getImageId();
+					int col2=coord2.getCol();
+					int row2=coord2.getLin();
+					//int width2=efotoManager->instanceImage(imageId2)->getWidth();
+
+					double overlapLongi12=1.0*(col1 - col2)/width1;
+					double overlapLongi21=-overlapLongi12;
+
+					double overlapTrans12=1.0*(row1 - row2)/width1;
+					double overlapTrans21=-overlapTrans12;
+
+					//printf("overlap: [%d,%d] = %.3f \n",imageId1,imageId2,overlapLongi12);
+
+					overlapLongiTable.set(imageId1,imageId2,overlapLongiTable.get(imageId1,imageId2)+overlapLongi12);
+					overlapLongiTable.set(imageId2,imageId1,overlapLongiTable.get(imageId2,imageId1)+overlapLongi21);
+
+					overlapTransTable.set(imageId1,imageId2,overlapTransTable.get(imageId1,imageId2)+overlapTrans12);
+					overlapTransTable.set(imageId2,imageId1,overlapTransTable.get(imageId2,imageId1)+overlapTrans21);
+
+					divisor.set(imageId1,imageId2,divisor.getInt(imageId1,imageId2)+1);
+					divisor.set(imageId2,imageId1,divisor.getInt(imageId2,imageId1)+1);
+				}
+			}
+		}
+		//printf("\n\n");
+	}
+
+	for (int i=1;i<=overlapLongiTable.getRows();i++)
+	{
+		for (int j=1;j<=overlapLongiTable.getCols();j++)
+		{
+			double overlap=overlapLongiTable.get(i,j);
+			if(!isnan(overlap))
+			{
+				if (overlap<0)
+					overlapLongiTable.set(i,j,-1-overlap/divisor.get(i,j));
+				else
+					overlapLongiTable.set(i,j,1-overlap/divisor.get(i,j));
+			}
+		}
+	}
+
+	//overlapLongiTable.show('f',3,"OverlapLongiTable");
+
+	for (int i=1;i<=overlapTransTable.getRows();i++)
+	{
+		for (int j=1;j<=overlapTransTable.getCols();j++)
+		{
+			double overlap=overlapTransTable.get(i,j);
+			if(!isnan(overlap))
+			{
+				if (overlap<0)
+					overlapTransTable.set(i,j,-1-overlap/divisor.get(i,j));
+				else
+					overlapTransTable.set(i,j,1-overlap/divisor.get(i,j));
+			}
+		}
+	}
+
+	//overlapTransTable.show('f',3,"OverlapTransTable");
+
+	//deque<Image*> faixa;
+	for (int i=1;i<=overlapLongiTable.getRows();i++)
+	{
+		Image *img1=efotoManager->instanceImage(i);
+		for (int j=i+1; j<=overlapLongiTable.getCols();j++)
+		{
+			double longi=overlapLongiTable.get(i,j);
+			double trans=overlapTransTable.get(i,j);
+
+			Image *img2=efotoManager->instanceImage(j);
+			if (!isnan(longi) && !isnan(trans))
+			{
+				if (trans>0.9 || trans <-0.9)
+				{
+					if (longi>0)
+						qDebug("imagem %s esta a esquerda de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
+					if (longi<0)
+						qDebug("imagem %s esta a direita de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
+				}
+				/*
+				else if (0<trans && trans<0.9)
+				{
+					if (longi>0.9 || longi<-0.9)
+						qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
+					//if (longi<0)
+					//printf("imagem %d esta a direita de %d",i,j);
+				}
+				else if (-0.9<trans && trans <0 )
+					qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());*/
+				if (longi>0.9 || longi<-0.9)
+				{
+					if (trans>0)
+						qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
+					if (trans<0)
+						qDebug("imagem %s esta abaixo de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
+				}
+			}
+		}
+	}
+
+}
