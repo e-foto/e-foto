@@ -109,7 +109,6 @@ bool BundleAdjustment::calculate()
 	QTime ptime;
 	if (numFotogrametricPoints!=0)
 	{
-
 		//while(!resOk)
 		//{
 			int conv=0;
@@ -237,7 +236,9 @@ bool BundleAdjustment::calculate()
 				Matrix n11=getN11();
 				Matrix n1=getn1(l);
 				//n11.show('f',3,"N11");
-				x1=n11.inverse()*n1;
+#ifdef ESPARSA
+				x1=SparseMatrix(getInverseN11(n11))*n1;
+#endif
 				//x1.show('f',3,"x1");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 
@@ -289,8 +290,6 @@ Matrix BundleAdjustment::getM11(Matrix M1)
 #endif
 	//Matrix temp=M1.transpose();
 	return M1.transpose()*M1;
-
-
 }
 
 Matrix BundleAdjustment::getM12(Matrix M1, Matrix M2)
@@ -451,6 +450,17 @@ void BundleAdjustment::setInverseN22(Matrix n22)
 	}
 	//inverseN22.show('f',4,"Inversa n22 ");
 	//return n22;
+}
+Matrix BundleAdjustment::getInverseN11(Matrix n11)
+{
+	int rows=n11.getRows();
+	Matrix inverseN11=n11;
+	for (int i=1;i<rows;i+=6)
+	{
+		Matrix unit=n11.sel(i,i+5,i,i+5);
+		inverseN11.putMatrix(unit.inverse(),i,i);
+	}
+	return inverseN11;
 }
 
 /*
@@ -789,51 +799,6 @@ void BundleAdjustment::getInicialsValues()
 		//m2.show('f',3,"m2");
 		int m2time=init.restart();
 
-		/*
-		Matrix paf(6*6,1);//=getPAf(m11,m12,m22,m1,m2);
-		paf.set(1,1,666771.9695);
-		paf.set(2,1,0.6376);
-		paf.set(3,1,-50.3100);
-		paf.set(4,1,7462659.2161);
-		paf.set(5,1,-50.3541);
-		paf.set(6,1,-0.5750);
-
-		paf.set(7,1,666204.8916);
-		paf.set(8,1,0.6353);
-		paf.set(9,1,-50.2743);
-		paf.set(10,1,7462649.5105);
-		paf.set(11,1,-50.2472);
-		paf.set(12,1,-0.7564);
-
-		paf.set(13,1,);
-		paf.set(14,1,);
-		paf.set(15,1,);
-		paf.set(16,1,);
-		paf.set(17,1,);
-		paf.set(18,1,);
-
-		paf.set(19,1,);
-		paf.set(20,1,);
-		paf.set(21,1,);
-		paf.set(22,1,);
-		paf.set(23,1,);
-		paf.set(24,1,);
-
-		paf.set(25,1,);
-		paf.set(26,1,);
-		paf.set(27,1,);
-		paf.set(28,1,);
-		paf.set(29,1,);
-		paf.set(30,1,);
-
-		paf.set(31,1,);
-		paf.set(32,1,);
-		paf.set(33,1,);
-		paf.set(34,1,);
-		paf.set(35,1,);
-		paf.set(36,1,);
-
-*/
 /*
 		Matrix atotal;
 		atotal.putMatrix(m11,1,1);

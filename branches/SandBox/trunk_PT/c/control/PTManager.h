@@ -123,6 +123,9 @@ public:
 
 	void reloadPointsCoordinates();
 
+	void photogrammetricSort();
+
+
 };
 
 #endif // PTMANAGER_H

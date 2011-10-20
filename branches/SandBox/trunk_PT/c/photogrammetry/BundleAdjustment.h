@@ -237,6 +237,7 @@ public:
 
 	//Matrix getSparseN11();
 	void setInverseN22(Matrix n22);
+	Matrix getInverseN11(Matrix n11);
 	//imprime todas as imagens com seus pontos
 	string printAll();
 
