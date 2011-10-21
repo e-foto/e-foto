@@ -55,9 +55,6 @@ public:
 
 	int numberOfEquations();
 
-	//metodos para debug
-    void imprime(Matrix mat, char *id);
-
 // metodos para fototri
 
     Matrix getM11(Matrix M1);
@@ -97,7 +94,7 @@ public:
 
 
 protected:
-	Matrix A1,A2,P,Lb,L0,x1,x2,matRes;
+	Matrix A1,A2,P,Lb,L0,x1,x2,matRes,matInicialValues;
 	Matrix inverseN22;
     int totalIterations;
 
@@ -234,6 +231,9 @@ public:
 	void calculateResiduos();
 	void calculatePeso();
 	void updateCoordFotog();
+
+	Matrix getMatrixInicialValues();
+
 
 	//Matrix getSparseN11();
 	void setInverseN22(Matrix n22);
