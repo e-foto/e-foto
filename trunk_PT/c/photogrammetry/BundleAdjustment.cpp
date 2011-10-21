@@ -4,9 +4,6 @@
 #include <qdebug.h>
 #include <QTime>
 
-
-//#define MAXITERATIONS 10
-//#define CONVERGENCY 0.001
 #define MAXRESIDUO 0.0001
 #define ESPARSA
 
@@ -98,6 +95,7 @@ bool BundleAdjustment::calculate()
 	if (!userInitialValues)
 		getInicialsValues();
 
+	matAdjust=matInicialValues;
 
 	matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
@@ -120,7 +118,7 @@ bool BundleAdjustment::calculate()
 				//A1.show('f',3,"A1");
 
 				createA2();
-				//A2.show('f',3,"A2");
+				A2.show('f',3,"A2");
 				int A2time=ptime.restart();
 
 				createL0();
@@ -143,7 +141,7 @@ bool BundleAdjustment::calculate()
 				int n12time=ptime.restart();
 
 				Matrix n22=getN22();
-				//n22.show('f',3,"N22==A2^T*P*A2");
+				n22.show('f',3,"N22==A2^T*P*A2");
 				int n22time=ptime.restart();
 
 				setInverseN22(n22);
@@ -618,19 +616,6 @@ double BundleAdjustment::getKappaZero(Matrix pta,int imageId)
 	return kappa0;
 }
 
-void BundleAdjustment::imprime(Matrix mat, char *id)
-{
-	printf("%s\n",id);
-	int rows=mat.getRows();
-	int cols=mat.getCols();
-	for (int i=0;i<rows;i++)
-	{
-		for(int j=0;j<cols;j++)
-			printf("%.6f\t",mat.get(i+1,j+1));
-		printf("\n");
-	}
-}
-
 /* metodos auxialiares para buscar dados*/
 double BundleAdjustment::getdOmegax1(int imageId)
 {
@@ -764,7 +749,6 @@ void BundleAdjustment::getInicialsValues()
 {
 	if (numFotogrametricPoints!=0)
 	{
-
 		QTime init;
 		init.start();
 		Matrix L=createL();
@@ -879,7 +863,7 @@ void BundleAdjustment::getInicialsValues()
 		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
 
 		Matrix temp(numImages,6);
-		matAdjust=temp;
+		matInicialValues=temp;
 		for (int i=0;i<numImages;i++)
 		{
 			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
@@ -888,15 +872,15 @@ void BundleAdjustment::getInicialsValues()
 
 			Matrix pta=getPTA(paf,i);
 
-			matAdjust.set(i+1,1,0);
-			matAdjust.set(i+1,2,0);
+			matInicialValues.set(i+1,1,0);
+			matInicialValues.set(i+1,2,0);
 			//qDebug("Kappa0");
-			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
-			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
-			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-			matAdjust.set(i+1,6,c*getMediaScale(i));
+			matInicialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
+			matInicialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matInicialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			matInicialValues.set(i+1,6,c*getMediaScale(i));
 			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
-			matAdjust.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matInicialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
 			//Image *img;
 			//img->getFlight()->getScale()Scale();
 		}
@@ -912,22 +896,22 @@ void BundleAdjustment::getInicialsValues()
 		Matrix paf=m11.inverse()*m1;
 
 		Matrix temp(numImages,6);
-		matAdjust=temp;
+		matInicialValues=temp;
 		for (int i=0;i<numImages;i++)
 		{
 			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
 			eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
 			c=listImages.at(i)->getSensor()->getFocalDistance();
 			Matrix pta=getPTA(paf,i);
-			matAdjust.set(i+1,1,0);
-			matAdjust.set(i+1,2,0);
-			//matAdjust.set(i+1,3,getKappaZero(pta,i));
-			matAdjust.set(i+1,3,listImages.at(i)->getFlightDirection());
-			matAdjust.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
-			matAdjust.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-			//matAdjust.set(i+1,6,c*getMediaScale(i));
+			matInicialValues.set(i+1,1,0);
+			matInicialValues.set(i+1,2,0);
+			//matInicialValues.set(i+1,3,getKappaZero(pta,i));
+			matInicialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
+			matInicialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matInicialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			//matInicialValues.set(i+1,6,c*getMediaScale(i));
 			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
-			matAdjust.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matInicialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
 		}
 	}
 }
@@ -1708,9 +1692,6 @@ string BundleAdjustment::printAll()
 	return result;
 }
 
-
-
-
 Matrix BundleAdjustment::getMVC()
 {
 	//Isso Ã© feito apenas para:
@@ -1776,6 +1757,13 @@ int BundleAdjustment::getMaxNumberIterations()
 	return maxIterations;
 }
 
+Matrix BundleAdjustment::getMatrixInicialValues()
+{
+	return matInicialValues;
+}
+
+
+
 /** Metodos EIGEN */
 /*
 Matrix BundleAdjustment::convertEigenToMatrix(Eigen::MatrixXd eigen)
@@ -1817,3 +1805,4 @@ Matrix BundleAdjustment::convertVectorEigenToMatrix(Eigen::VectorXd eigen)
 	return mat;
 }
 */
+

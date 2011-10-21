@@ -125,6 +125,12 @@ public:
 
 	void photogrammetricSort();
 
+	// Retorna a coordenada aproximada EN de um ponto na imagem, desde de que a Fototri tenha sido executada com sucesso.
+	int whereInSelectedImages(Image *img);
+	int whereInImages(Image *img);
+	Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
+
+
 
 };
 
