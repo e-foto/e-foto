@@ -33,6 +33,7 @@ class MatchingPoints
 {
 public:
 	MatchingPoints();
+	int matching_id;
 	int left_image_id, right_image_id;
 	double left_x, left_y, right_x, right_y;
 	double X, Y, Z;
@@ -47,8 +48,8 @@ class MatchingPointsList
 public:
 	MatchingPointsList() { bad_points = 0; };
 	enum saveType { saveFull, savePairs, savePairsHann, saveXYZ };
-	enum loadType { loadFull, loadPairs, loadPairsHann, loadXYZ };
-	enum sortCriteria { byLeft, byRight, by3D };
+	enum loadType { loadFull, loadPairs, loadPairsHann, loadXYZ, loadidXYZ };
+	enum sortCriteria { byLeft, byRight, by3D, byGridpos };
 	void clear();
 	void add(int, int, double, double, double, double, double);
 	void modify(int, int, int, double, double, double, double, double);
@@ -63,6 +64,9 @@ public:
 	int size() { return list.size(); };
 	unsigned int getNumBadPoints() { return bad_points; };
 	void sortList(sortCriteria criteria);
+	void leftImageBoundingBox(int &, int &, int &, int &);
+	void rightImageBoundingBox(int &, int &, int &, int &);
+	void XYZboundingBox(double &, double &, double &, double &, double &, double &);
 
 private:
 	vector <MatchingPoints> list;
@@ -80,6 +84,7 @@ private:
 	void copyListByLeft();
 	void copyListByRight();
 	void copyListBy3D();
+	void boundingBox(double &, double &, double &, double &, double &, double &, int);
 };
 
 #endif

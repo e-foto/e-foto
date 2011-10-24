@@ -7,6 +7,7 @@
 MatchingPoints::MatchingPoints()
 {
 	// Clear all variables
+	matching_id = -1;
 	left_image_id = right_image_id = -1;
 	left_x = left_y = right_x = right_y = 0.0;
 	X = Y = Z = 0.0;
@@ -155,7 +156,7 @@ int MatchingPointsList::save(char *filename, saveType type)
 		return 0;
 
 	if (type == 0)
-		fprintf(fp,"Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n");
+		fprintf(fp,"Pair\tM_ID\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n");
 
 	if (type == 2)
 		fprintf(fp,"10002\t0.0\t0.0\t0.0\t0.0\n");
@@ -171,7 +172,7 @@ int MatchingPointsList::save(char *filename, saveType type)
 			case 1 : fprintf(fp,"%f\t%f\t%f\t%f\n",mp->left_x, mp->left_y, mp->right_x, mp->right_y); break;
 			case 2 : fprintf(fp,"%d\t%f\t%f\t%f\t%f\n",i, mp->left_x, mp->left_y, mp->right_x, mp->right_y); break;
 			case 3 : fprintf(fp,"%f\t%f\t%f\n",mp->X, mp->Y, mp->Z); break;
-			default: fprintf(fp,"%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",i, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
+			default: fprintf(fp,"%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",i,mp->matching_id, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
 		}
 	}
 
@@ -199,7 +200,7 @@ int MatchingPointsList::load(char *filename, loadType type, bool append, int lef
 	if (!append)
 		list.clear();
 
-	int i;
+	int i, m_id;
 	float lx, ly, rx, ry, X, Y, Z, acc;
 	lx = ly = rx = ry = X = Y = Z = acc = 0.0;
 	MatchingPoints mp;
@@ -211,9 +212,11 @@ int MatchingPointsList::load(char *filename, loadType type, bool append, int lef
 			case 1 : fscanf(fp,"%f\t%f\t%f\t%f\n",&lx, &ly, &rx, &ry); break;
 			case 2 : fscanf(fp,"%d\t%f\t%f\t%f\t%f\n",&i, &lx, &ly, &rx, &ry); break;
 			case 3 : fscanf(fp,"%f\t%f\t%f\n",&X, &Y, &Z); break;
-			default: fscanf(fp,"%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", &i, &left_id, &right_id, &lx, &ly, &rx, &ry, &X, &Y, &Z, &acc);
+			case 4 : fscanf(fp,"%d\t%f\t%f\t%f\n",&i,&X, &Y, &Z); break;
+			default: fscanf(fp,"%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", &i, &m_id, &left_id, &right_id, &lx, &ly, &rx, &ry, &X, &Y, &Z, &acc);
 		}
 
+		mp.matching_id = m_id;
 		mp.left_image_id = left_id;
 		mp.right_image_id = right_id;
 		mp.left_x = lx;
@@ -236,7 +239,74 @@ int MatchingPointsList::load(char *filename, loadType type, bool append, int lef
 	return 1;
 }
 
-/************
+/*********************
+ * List bounding box *
+ *********************/
+
+void MatchingPointsList::leftImageBoundingBox(int &xi, int &yi, int &xf, int &yf)
+{
+	double xxi, yyi, xxf, yyf, zi, zf;
+	boundingBox(xxi, yyi, xxf, yyf, zi, zf, 0);
+	xi = int(xxi);
+	yi = int(yyi);
+	xf = int(xxf);
+	yf = int(yyf);
+}
+
+void MatchingPointsList::rightImageBoundingBox(int &xi, int &yi, int &xf, int &yf)
+{
+	double xxi, yyi, xxf, yyf, zi, zf;
+	boundingBox(xxi, yyi, xxf, yyf, zi, zf, 1);
+	xi = int(xxi);
+	yi = int(yyi);
+	xf = int(xxf);
+	yf = int(yyf);
+}
+
+void MatchingPointsList::XYZboundingBox(double &xi, double &yi, double &xf, double &yf, double &zi, double &zf)
+{
+	boundingBox(xi, yi, xf, yf, zi, zf, 2);
+}
+
+void MatchingPointsList::boundingBox(double &xi, double &yi, double &xf, double &yf, double &zi, double &zf, int type)
+{
+	xi = yi = xf = yf = 0.0;
+
+	if (list.size()<1)
+		return;
+
+	double x,y,z;
+
+	switch(type)
+	{
+		case 0 : x = double(list.at(0).left_x); y = double(list.at(0).left_y); break;
+		case 1 : x = double(list.at(0).right_x); y = double(list.at(0).right_y); break;
+		default : x = list.at(0).X; y = list.at(0).Y; z = list.at(0).Z; break;
+	}
+
+	xi = xf = x;
+	yi = yf = y;
+	zi = zf = z;
+
+	for (int i=1; i<list.size(); i++)
+	{
+		switch(type)
+		{
+			case 0 : x = double(list.at(i).left_x); y = double(list.at(i).left_y); break;
+			case 1 : x = double(list.at(i).right_x); y = double(list.at(i).right_y); break;
+			default : x = list.at(i).X; y = list.at(i).Y; z = list.at(i).Z; break;
+		}
+
+		if (x < xi) xi = x;
+		if (y < yi) yi = y;
+		if (z < zi) zi = z;
+		if (x > xf) xf = x;
+		if (y > yf) yf = y;
+		if (z > zf) zf = z;
+	}
+}
+
+/*************
  * List sort *
  *************/
 
