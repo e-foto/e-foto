@@ -9,7 +9,7 @@ PointsForm :: PointsForm(QWidget *parent) : AbstractForm(parent)
 	connect( pointsTable, SIGNAL( cellClicked(int,int)), this , SLOT( emitSignal(int) ) );
 	pointsTable->setColumnHidden(0,true);
 	pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
-
+	//pointsTable->setSortingEnabled(true);
 	//connect(importButton, SIGNAL(clicked()), this ,SLOT(importFromTxt()));
 }
 
@@ -62,9 +62,10 @@ void PointsForm ::setReadOnly(bool state)
 {
 }
 
-void PointsForm :: emitSignal(int i)
+void PointsForm :: emitSignal(int row)
 {
-    emit clicked(i);
+
+	emit clicked(row);
 }
 
 bool PointsForm::isForm(string formName)

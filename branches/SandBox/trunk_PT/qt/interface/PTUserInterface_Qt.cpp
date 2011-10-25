@@ -127,6 +127,10 @@ void PTUserInterface_Qt::init()
 	pointsTableWidget->setColumnHidden(5,true);
 	rightImageTableWidget->setColumnHidden(3,true);
 
+//	pointsTableWidget->setSortingEnabled();
+	pointsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	leftImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	rightImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	/** carregar imagem da esquerda*/
 	//updateImageTable("leftImage",leftImageString);
 	leftView->loadImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
@@ -272,6 +276,7 @@ void PTUserInterface_Qt::zoomDetail()
 
 void PTUserInterface_Qt::fitView()
 {
+
 		//myImageLeftView->fitView();
 }
 
@@ -340,20 +345,23 @@ void PTUserInterface_Qt::viewReport()
 		phtgLabel->setAlignment(Qt::AlignHCenter);
 		ETableWidget *photogrammetricTable = new ETableWidget();
 		QStringList headerLabelsPoints,idsPhotogrammetric;//,leftImageIdPoints, rightImageIdPoints;
-		headerLabelsPoints<<"Id"<<"E"<<"N"<<"H";
+		headerLabelsPoints<<"Id"<<"E"<<"N"<<"H"<< QString::fromUtf8("δE") << QString::fromUtf8("δN") << QString::fromUtf8("δH");
 		Matrix pointsPhotogrametricMatrix=ptManager->getPhotogrammetricENH();
+		Matrix pointsResiduosPhotogrametricMatrix=ptManager->getResiduoPhotogrammetric();
+
 		for (int i=0;i<ids.size();i++)
 			idsPhotogrammetric << QString(ids.at(i).c_str());
-		photogrammetricTable->setColumnCount(4);
+		photogrammetricTable->setColumnCount(7);
 		photogrammetricTable->putInColumn(idsPhotogrammetric,0);
 		photogrammetricTable->putIn(pointsPhotogrametricMatrix,0,1,'f',4);
+		photogrammetricTable->putIn(pointsResiduosPhotogrametricMatrix,0,4,'f',5);
 		photogrammetricTable->setHorizontalHeaderLabels(headerLabelsPoints);
 		photogrammetricTable->resizeTable();
 		photogrammetricTable->setSortingEnabled(true);
 		phtgLayout->addWidget(phtgLabel);
 		phtgLayout->addWidget(photogrammetricTable);
 		horizontalLayout->addLayout(phtgLayout);
-		horizontalLayout->setStretchFactor(phtgLayout,3);
+		horizontalLayout->setStretchFactor(phtgLayout,7);
 	}
 	/**/
 
