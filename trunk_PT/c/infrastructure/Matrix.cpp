@@ -342,7 +342,7 @@ void Matrix::show()
     cout << endl;
 }*/
 
-void Matrix::show(char mode, int precision, char *name)
+void Matrix::show(char mode, int precision, string name)
 {
 	cout << "Matrix " << name << " ["<<nrows << 'x' << ncols << "] "<<endl;
 	if (mode=='f')

@@ -149,6 +149,16 @@ bool PTManager::calculatePT()
 	{
 		bool result=pt->calculate();
 		setMatrixAFP(pt->getAFP());
+		residuos=pt->getMatRes();
+		//residuos.show('f',4,"residuos");
+		//deque<Point*> ptlist=pt->getPhotogrammetricList();
+		/*
+		for (int i=0;i<ptlist.size();i++)
+		{
+			pt->getResiduo(ptlist.at(i)).show('f',6,ptlist.at(i)->getPointId().c_str());
+		}*/
+
+
 		return result;
 	}
 	else
@@ -237,7 +247,7 @@ void PTManager::setENH()
 
 Matrix PTManager::getResiduos()
 {
-    return pt->getMatRes();
+	return residuos;
 }
 
 Matrix PTManager::getENH()
@@ -567,6 +577,22 @@ Matrix PTManager::getPhotogrammetricENH()
 	return enh;
 }
 
+Matrix PTManager::getResiduoPhotogrammetric()
+{
+	int points=listSelectedPoints.size();
+	Matrix residuos(0,3);
+	for (int i=0;i<points;i++)
+	{
+		Point *pnt=listSelectedPoints.at(i);
+		if (pnt->is("PhotogrammetricPoint"))
+		{
+			Matrix temp=pt->getResiduo(pnt);
+			residuos=residuos|temp;
+		}
+	}
+	return residuos;
+}
+
 deque<string> PTManager::getSelectedPointIdPhotogrammetric()
 {
 	int points=listSelectedPoints.size();
@@ -750,7 +776,7 @@ string PTManager::exportBlockTokml(string fileName)
 	//string photogrammetricPointIcon = "http://marmsx.msxall.com/artgallery/ink/efoto.png";
 	string checkingPointIcon        = "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png";
 
-	string colorNormalControl="ff00ffff";
+	string colorNormalControl="ff00ff00";
 	string colorNormalPhotogrammetric = "ff00ffff";
 	string colorNormalChecking ="ff12f580" ;//18--245-128
 
@@ -787,7 +813,7 @@ string PTManager::exportBlockTokml(string fileName)
 
 		aux1 << hex << "ff"<< B << G << R << B << G << R;
 		string lineColor =aux1.str();
-		qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
+		//qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
 		//string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
 
 		string lineWidth= "2";

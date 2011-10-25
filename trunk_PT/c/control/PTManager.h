@@ -47,7 +47,7 @@ protected:
 	deque<Point*> listSelectedPoints;
 
 	BundleAdjustment* pt;
-	Matrix ENH,spareENH,AFP,MVC;
+	Matrix ENH,spareENH,AFP,MVC,residuos;
 
 public:
     PTManager();
@@ -91,6 +91,7 @@ public:
 	void sortPointsSelected();
 
 	Matrix getPhotogrammetricENH();
+	Matrix getResiduoPhotogrammetric();
 	deque<string> getSelectedPointIdPhotogrammetric();
 
 	string getFilePath(string fileName);
@@ -129,6 +130,9 @@ public:
 	int whereInSelectedImages(Image *img);
 	int whereInImages(Image *img);
 	Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
+
+
+	Matrix getPointResiduo(int pointKey);
 
 
 

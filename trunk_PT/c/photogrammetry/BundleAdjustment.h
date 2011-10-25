@@ -64,8 +64,10 @@ public:
     Matrix getm2(Matrix M2,Matrix L1);
 
     //Calculo das aproximaÃ§Åes para as coordenadas planimetricas dos pontos fotogrametricos
-    Matrix getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf);
-    //Calculo das aproximaÃ§Åes para as coordenadas Z dos pontos fotogrametricos
+	//Matrix getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf);
+	Matrix getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2);
+
+	//Calculo das aproximaÃ§Åes para as coordenadas Z dos pontos fotogrametricos
     double getZpf();
 
     Matrix getPTA(Matrix PAf,int imageId);
@@ -78,8 +80,8 @@ public:
 
     /** CÃ¡lculo dos parÃ¢metros de transformaÃ§Äo entre o espaÃ§o imagem e o espaÃ§o objeto
  para todas as imagens do bloco*/
-    Matrix getPAf(Matrix M11,Matrix M12, Matrix M22,Matrix m1, Matrix m2);
-
+	//Matrix getPAf(Matrix M11,Matrix M12, Matrix M22,Matrix m1, Matrix m2);
+	Matrix getPAf(Matrix M12,Matrix m1, Matrix xypf);
 	void setAFP();
     Matrix getAFP();
 
@@ -95,7 +97,9 @@ public:
 
 protected:
 	Matrix A1,A2,P,Lb,L0,x1,x2,matRes,matInicialValues;
-	Matrix inverseN22;
+	//Matrix n11,n12,n22,n1,n2;
+
+	Matrix inverseM11,inverseN11;
     int totalIterations;
 
     //Seta a matrix baseado nos angulos
@@ -128,8 +132,8 @@ protected:
 
 	//Matrix invertN11(Matrix N11);
 	//Matrix invertN22(Matrix N22);
-    Matrix getx1(Matrix N11,Matrix N12,Matrix N22,Matrix n1,Matrix n2);
-	Matrix getx2(Matrix N12, Matrix N22, Matrix n2);//, Matrix x1);
+	void setx1(Matrix N12,Matrix n1);
+	void setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1);
 
 	//void setx1(Matrix x1);
 	//void setx2(Matrix x2);
@@ -235,16 +239,23 @@ public:
 	Matrix getMatrixInicialValues();
 
 
-	//Matrix getSparseN11();
-	void setInverseN22(Matrix n22);
-	Matrix getInverseN11(Matrix n11);
+
+	//void setInverseN22(Matrix n22);
+	void setInverseM11(Matrix m11);
+	void setInverseN11(Matrix n11);
 	//imprime todas as imagens com seus pontos
 	string printAll();
+
+	Matrix getResiduo(Point *pnt);
+
+	deque<Point*> getPhotogrammetricList();
 
 	/** Metodos Eigen*/
 //	Matrix convertEigenToMatrix(Eigen::MatrixXd eigen);
 //	Matrix convertVectorEigenToMatrix(Eigen::VectorXd eigen);
 //	Eigen::MatrixXd convertMatrixToEigen(Matrix mat);
+
+
 
 };
 

@@ -6,6 +6,7 @@
 
 #define MAXRESIDUO 0.0001
 #define ESPARSA
+#define TIMES
 
 BundleAdjustment::BundleAdjustment()
 {
@@ -118,7 +119,7 @@ bool BundleAdjustment::calculate()
 				//A1.show('f',3,"A1");
 
 				createA2();
-				A2.show('f',3,"A2");
+				//A2.show('f',3,"A2");
 				int A2time=ptime.restart();
 
 				createL0();
@@ -136,17 +137,18 @@ bool BundleAdjustment::calculate()
 				int n11time=ptime.restart();
 				//n11.show('f',3,"N11=A1^T*P*A1");
 
+				setInverseN11(n11);
+				int invN11time=ptime.restart();
 				Matrix n12=getN12();
 				//n12.show('f',3,"N12=A1^T*P*A2");
 				int n12time=ptime.restart();
 
 				Matrix n22=getN22();
-				n22.show('f',3,"N22==A2^T*P*A2");
+				//n22.show('f',3,"N22==A2^T*P*A2");
 				int n22time=ptime.restart();
 
-				setInverseN22(n22);
-				int invN22time=ptime.restart();
-
+				//setInverseN22(n22);
+				//int invN22time=ptime.restart();
 
 				Matrix n1=getn1(l);
 				//n1.show('f',3,"n1=A1^T*P*L");
@@ -156,14 +158,17 @@ bool BundleAdjustment::calculate()
 				//n2.show('f',3,"n2==A2^T*P*L");
 				int n2time=ptime.restart();
 
-				getx1(n11,n12,n22,n1,n2);
-				int x1time=ptime.restart();
-				//x1.show();
-
-				getx2(n12,n22,n2);
+				setx2(n12,n22,n2,n1);
 				int x2time=ptime.restart();
 				//x2.show();
 
+				setx1(n12,n1);
+				int x1time=ptime.restart();
+				//x1.show();
+
+
+
+#ifdef TIMES
 				qDebug("Tempo para executar a %d iteracao",totalIterations);
 				qDebug("Para criar A1: %.3f",A1time/1000.0);
 				qDebug("Para criar A2: %.3f",A2time/1000.0);
@@ -172,12 +177,12 @@ bool BundleAdjustment::calculate()
 				qDebug("Para calcular N11: %.3f",n11time/1000.0);
 				qDebug("Para calcular N12: %.3f",n12time/1000.0);
 				qDebug("Para calcular N22: %.3f",n22time/1000.0);
-				qDebug("Para calcular inversaN22: %.3f",invN22time/1000.0);
+				qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
 				qDebug("Para calcular n1: %.3f",n1time/1000.0);
 				qDebug("Para calcular n2: %.3f",n2time/1000.0);
 				qDebug("Para calcular x1: %.3f",x1time/1000.0);
 				qDebug("Para calcular x2: %.3f",x2time/1000.0);
-
+#endif
 				//x1.show('f',3,"x1");
 				//x2.show('f',3,"x2");
 
@@ -197,7 +202,7 @@ bool BundleAdjustment::calculate()
 				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
 				updateCoordFotog();
 
-				matAdjust.show('f',5,"matAdjust Iterando");
+				//matAdjust.show('f',5,"matAdjust Iterando");
 				totalIterations++;
 				qDebug("iteration %d/%d",totalIterations,maxIterations);
 			}
@@ -234,8 +239,9 @@ bool BundleAdjustment::calculate()
 				Matrix n11=getN11();
 				Matrix n1=getn1(l);
 				//n11.show('f',3,"N11");
+				setInverseN11(n11);
 #ifdef ESPARSA
-				x1=SparseMatrix(getInverseN11(n11))*n1;
+				x1=SparseMatrix(inverseN11)*n1;
 #endif
 				//x1.show('f',3,"x1");
 				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
@@ -325,32 +331,35 @@ Matrix BundleAdjustment::getm2(Matrix M2, Matrix L1)
 #ifdef ESPARSA
 	return SparseMatrix(M2.transpose())*L1;
 #endif
-
 	return (M2.transpose())*L1;
-
 }
 
-Matrix BundleAdjustment::getPAf(Matrix M11, Matrix M12, Matrix M22, Matrix m1, Matrix m2)
+Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
 {
 
 #ifdef ESPARSA
-	SparseMatrix q1=SparseMatrix(SparseMatrix(M12)*M22.inverse());
-	return	SparseMatrix((M11-q1*M12.transpose()).inverse() )*( m1-q1*m2 );
+/*	SparseMatrix q1=SparseMatrix(SparseMatrix(M12)*M22.inverse());
+	return	SparseMatrix((M11-q1*M12.transpose()).inverse() )*( m1-q1*m2 );*/
+	SparseMatrix temp1=SparseMatrix(inverseM11);
+	return temp1*m1-SparseMatrix(temp1*M12)*xypf;
 #endif
 
-	return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.transpose()*m2 );
+//	return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.transpose()*m2 );
 	//return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.inverse()*m2 );
 }
 
 // AproximaÃ§ao inicial para as coordenadas planimetricas(XY) dos pontos fotogrametricos
-Matrix BundleAdjustment::getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf)
+Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
 {
 #ifdef ESPARSA
+	/*
 	SparseMatrix q1=SparseMatrix(M22.inverse());
-	return q1*m2-SparseMatrix(q1*M12.transpose())*paf;
+	return q1*m2-SparseMatrix(q1*M12.transpose())*paf;*/
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(M12.transpose())*inverseM11);
+	return SparseMatrix((M22-temp1*M12).inverse())*(m2-temp1*m1);
 #endif
 
-	return M22.inverse()*m2-M22.inverse()*M12.transpose()*paf;
+	//return M22.inverse()*m2-M22.inverse()*M12.transpose()*paf;
 }
 
 Matrix BundleAdjustment::getN11()
@@ -398,42 +407,31 @@ Matrix BundleAdjustment::getn2(Matrix L)
 
 }
 
-Matrix BundleAdjustment::getx1(Matrix N11, Matrix N12, Matrix N22, Matrix n1, Matrix n2)
-{
-	/*
-	Matrix temp1=N12*N22.inverse();
-	Matrix temp2=temp1*N12.transpose();
-
-	Matrix temp3=temp1*n2;
-	Matrix temp4=(N11-temp2).inverse();
-	Matrix temp5=n1-temp3;
-	x1=temp4*temp5;
-*/
-#ifdef ESPARSA
-	//SparseMatrix temp1=SparseMatrix(SparseMatrix(N12)*N22.inverse());
-	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12)*inverseN22);
-	x1=SparseMatrix( ( N11-temp1*N12.transpose() ).inverse() )*(n1-temp1*n2);
-	return x1;
-#endif
-	x1=( ( N11-N12*N22.inverse()*N12.transpose() ).inverse() )*(n1-N12*N22.inverse()*n2);
-	return x1;
-}
-
-Matrix BundleAdjustment::getx2(Matrix N12, Matrix N22, Matrix n2)//, Matrix x1)
+void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 {
 
-#ifdef ESPARSA
-	//SparseMatrix temp1=SparseMatrix(N22.inverse());
-	SparseMatrix temp1=SparseMatrix(inverseN22);
-	x2=temp1*n2-SparseMatrix(temp1*N12.transpose())*x1;
-	return x2;
-#endif
+	SparseMatrix temp1=SparseMatrix(inverseN11);
+	x1=temp1*n1-SparseMatrix(temp1*N12)*x2;
 
-	x2=N22.inverse()*n2-N22.inverse()*N12.transpose()*x1;
-	return x2;
+	//SparseMatrix temp1=SparseMatrix(inverseN11);
+	//x1=temp1*(n1-SparseMatrix(N12)*x2);
 
 }
 
+void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
+{
+
+#ifdef ESPARSA
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
+	(N22-temp1*N12).show('f',5,"N22-temp1*N12");
+
+	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+#endif
+
+	//return x2;
+}
+
+/*
 void BundleAdjustment::setInverseN22(Matrix n22)
 {
 	int rows=n22.getRows();
@@ -449,28 +447,30 @@ void BundleAdjustment::setInverseN22(Matrix n22)
 	//inverseN22.show('f',4,"Inversa n22 ");
 	//return n22;
 }
-Matrix BundleAdjustment::getInverseN11(Matrix n11)
+
+*/
+void BundleAdjustment::setInverseN11(Matrix n11)
 {
 	int rows=n11.getRows();
-	Matrix inverseN11=n11;
+	inverseN11=n11;
 	for (int i=1;i<rows;i+=6)
 	{
 		Matrix unit=n11.sel(i,i+5,i,i+5);
 		inverseN11.putMatrix(unit.inverse(),i,i);
 	}
-	return inverseN11;
 }
 
-/*
-void BundleAdjustment::setx1(Matrix X1)
+void BundleAdjustment::setInverseM11(Matrix m11)
 {
-	//x1=X1;
+	int rows=m11.getRows();
+	inverseM11=m11;
+	for (int i=1;i<rows;i+=3)
+	{
+		Matrix unit=m11.sel(i,i+2,i,i+2);
+		inverseM11.putMatrix(unit.inverse(),i,i);
+	}
 }
 
-void BundleAdjustment::setx2(Matrix X2)
-{
-	//x2=X2;
-}*/
 
 void BundleAdjustment::setRot(double omega, double phi, double kappa)
 {
@@ -767,6 +767,9 @@ void BundleAdjustment::getInicialsValues()
 		int m11time=init.restart();
 		//m11.show('f',3,"M11");
 
+		setInverseM11(m11);
+		int inverseM11time=init.restart();
+
 		Matrix m12=getM12(M1,M2);
 		//m12.show('f',3,"M12");
 		int m12time=init.restart();
@@ -840,24 +843,27 @@ void BundleAdjustment::getInicialsValues()
 			qDebug("Nao resolveu por fullPivLU");
 		}
 */
-		Matrix paf=getPAf(m11,m12,m22,m1,m2);
-		int paftime=init.restart();
-
-		Matrix xypf=getXYpf(m22,m2,m12,paf);
+		Matrix xypf=getXYpf(m12,m22,m1,m2);
 		int xypftime=init.restart();
 
+		Matrix paf=getPAf(m12,m1,xypf);
+		int paftime=init.restart();
+
+
+#ifdef TIMES
 		qDebug("Tempo para executar:");
 		qDebug("Para criar L: %.3f",ltime/1000.0);
 		qDebug("Para criar M1: %.3f",M1time/1000.0);
 		qDebug("Para criar M2: %.3f",M2time/1000.0);
 		qDebug("Para calcular M11: %.3f",m11time/1000.0);
+		qDebug("Para calcular inverseM11: %.3f",inverseM11time/1000.0);
 		qDebug("Para calcular M12: %.3f",m12time/1000.0);
 		qDebug("Para calcular M22: %.3f",m22time/1000.0);
 		qDebug("Para calcular m1: %.3f",m1time/1000.0);
 		qDebug("Para calcular m2: %.3f",m2time/1000.0);
 		qDebug("Para calcular paf: %.3f",paftime/1000.0);
 		qDebug("Para calcular xypf: %.3f",xypftime/1000.0);
-
+#endif
 		//paf.show('f',4,"parameters OE");
 		//xypf.show('f',4,"xypointFoto");
 		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
@@ -892,8 +898,9 @@ void BundleAdjustment::getInicialsValues()
 		Matrix L=createL();
 		Matrix M1=createM1();
 		Matrix m11=getM11(M1);
+		setInverseM11(m11);
 		Matrix m1=getm1(M1,L);
-		Matrix paf=m11.inverse()*m1;
+		Matrix paf=inverseM11*m1;
 
 		Matrix temp(numImages,6);
 		matInicialValues=temp;
@@ -1626,7 +1633,7 @@ int BundleAdjustment::testConverged()
 	//printf("testando X2");
 	for (int i=1;i<=rowsX2;i++)
 	{
-		if (isinf(fabs(x1.get(i,1))))
+		if (isinf(fabs(x2.get(i,1))))
 		{
 			qDebug("numero e INFINITO");
 			return -2;
@@ -1806,3 +1813,22 @@ Matrix BundleAdjustment::convertVectorEigenToMatrix(Eigen::VectorXd eigen)
 }
 */
 
+Matrix BundleAdjustment::getResiduo(Point *photogrammetricPoint)
+{
+	Matrix result(1,3);
+	int posFoto=whereInPhotogrammetricPoints(photogrammetricPoint);
+
+	if(posFoto>0)
+	{
+		result.set(1,1,getdXx2(posFoto));
+		result.set(1,2,getdYx2(posFoto));
+		result.set(1,3,getdZx2(posFoto));
+	}
+
+	return result;
+}
+
+deque<Point*> BundleAdjustment::getPhotogrammetricList()
+{
+	return listPhotogrammetricPoints;
+}
