@@ -19,7 +19,7 @@ public:
 	bool isForm(string formName);
 
 private slots:
-	void emitSignal(int i);
+	void emitSignal(int row);
 
 signals:
     //emite um sinal com o valor do atributo key da tag image
