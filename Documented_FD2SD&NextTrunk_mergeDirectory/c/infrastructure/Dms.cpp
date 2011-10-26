@@ -31,9 +31,9 @@ Dms::Dms(int degree, int minute, double second, bool signal)
 	setSeconds(second);
 }
 
-Dms::Dms(QString degree)
+Dms::Dms(QString dms)
 {
-	Dms *newDegree = stringToDms(degree);
+	Dms *newDegree = stringToDms(dms);
 	setSecondsPrecision();
 	this->setDegree(newDegree->getDegree());
 	this->setMinute(newDegree->getMinute());
@@ -263,10 +263,10 @@ Dms* Dms::degreeDecimalToDms(double degreeDecimal)
 	return this;
 }
 
-double Dms::degreeDecimalToRadiano(double oldDegree)
+double Dms::degreeDecimalToRadiano(double degreeDecimal)
 {
 	//qDebug("degree: %f radiano: %f",degree,(degree*M_PI)/180);
-	double k=(oldDegree*M_PI)/180;
+	double k=(degreeDecimal*M_PI)/180;
 	return k;
 }
 
@@ -282,7 +282,7 @@ double Dms::radianoToDegreeDecimal(double radiano)
 	return (radiano/M_PI)*180;
 }
 
-void Dms::addDegMinSecs(Dms *degMinSec1)
+void Dms::addDegMinSecs(Dms *degMinSec)
 {
 	/*int newDegree= degMinSec1->getDegree()+degMinSec2->getDegree();
 	int newMinute= degMinSec1->getMinute()+degMinSec2->getMinute();
@@ -301,7 +301,7 @@ void Dms::addDegMinSecs(Dms *degMinSec1)
 	if(newDegree>=360)
 		newDegree-=360;
 	*/
-	double sum=this->dmsToDegreeDecimal()+degMinSec1->dmsToDegreeDecimal();
+	double sum=this->dmsToDegreeDecimal()+degMinSec->dmsToDegreeDecimal();
 
 	Dms *temp=degreeDecimalToDms(sum);
 	this->setDms(*temp);
