@@ -6,8 +6,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-/** ETreeElement methods **/
-
 ETreeElement::ETreeElement()
 {
 	this->id = 0;
@@ -54,8 +52,6 @@ string ETreeElement::getDescription()
 {
 	return description;
 }
-
-/** ETreeNode methods **/
 
 ETreeNode::ETreeNode()
 {
@@ -123,8 +119,6 @@ deque<string> ETreeNode::data()
 		result.push_back(children.at(i).getDescription());
 	return result;
 }
-
-/** ETreeModel methods **/
 
 ETreeModel::ETreeModel()
 {
