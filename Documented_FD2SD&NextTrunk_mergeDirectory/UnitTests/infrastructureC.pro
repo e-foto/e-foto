@@ -1,5 +1,10 @@
 TEMPLATE = app
 TARGET =
+DESTDIR = bin
+OBJECTS_DIR = temp/obj
+MOC_DIR = temp/moc
+UI_DIR = temp/ui
+RCC_DIR = temp/rcc
 DEPENDPATH += . ../c/infrastructure
 INCLUDEPATH += . ../c/infrastructure
 
