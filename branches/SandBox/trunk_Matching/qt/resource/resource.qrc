@@ -1,0 +1,42 @@
+<RCC>
+    <qresource prefix="/image">
+        <file alias="Efotux">efotux-about.png</file>
+        <file alias="Logo">logo.png</file>
+        <file alias="None">none.png</file>
+        <file alias="Pattern">pattern.png</file>
+    </qresource>
+    <qresource prefix="/pin">
+        <file alias="Arrow">ARROW32x32.png</file>
+        <file alias="ActivatedControl">T16x16.png</file>
+        <file alias="DeactivatedControl">T16x16red.png</file>
+        <file alias="Fiductial">X16x16.png</file>
+    </qresource>
+    <qresource prefix="/icon">
+        <file>exit.png</file>
+        <file>exit2.png</file>
+        <file>export.png</file>
+        <file>exterior.png</file>
+        <file>fd.png</file>
+        <file>filesave</file>
+        <file>find.png</file>
+        <file>fit.png</file>
+        <file>grid.png</file>
+        <file>interior.ico</file>
+        <file>interior.png</file>
+        <file>mark.png</file>
+        <file>move.png</file>
+        <file>searchfind</file>
+        <file>table.png</file>
+        <file>unmark.png</file>
+        <file>WindowIcon.png</file>
+        <file>add.png</file>
+        <file>dem.png</file>
+        <file>disquette.png</file>
+        <file>match.png</file>
+        <file>remove.png</file>
+        <file>seed.png</file>
+        <file>fileopen.png</file>
+        <file>stereo.png</file>
+        <file>done.png</file>
+    </qresource>
+</RCC>
