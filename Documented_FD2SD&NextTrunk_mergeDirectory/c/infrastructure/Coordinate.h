@@ -15,7 +15,7 @@ namespace efoto {
 * \class Coordinate
 * \brief Base para as classes de coordenadas
 * \abstract A classe de Coordenadas foi definida como uma classe abstrata, então você não deve usá-la diretamente.
-* \attention Contrua apenas objetos das classes derivadas.
+* \attention Construa apenas objetos das classes derivadas.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
@@ -35,7 +35,7 @@ public:
 
 	/**
 	* \brief Método para alterar o valor que diz se a coordenada é válida.
-	* \param bool	Valor verdadeiro ou falso para o julgamento sobre a validade da coordenada.
+	* \param value	Valor verdadeiro ou falso para o julgamento sobre a validade da coordenada.
 	*/
 	void setAvailable(bool value);
 

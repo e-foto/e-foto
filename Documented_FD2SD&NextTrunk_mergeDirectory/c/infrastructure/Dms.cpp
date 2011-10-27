@@ -8,10 +8,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-/**
-  *Class to manipulate rad degree and degree decimal
-  */
-
 Dms::Dms()
 {
 	Dms(0, 0, 0.0);
@@ -194,9 +190,6 @@ int  Dms::getSecondsPrecision()
 	return secondsPrecision;
 }
 
-/**
-* Convertions
-*/
 Dms * Dms::secondsToDms(double seconds)
 {
 	double value=fabs(seconds);
@@ -316,7 +309,7 @@ void Dms::mulDegMinSecs(int factor)
 	}
 }
 
-/** If calling object is bigger than degMinSec then function returns 1
+/*  If calling object is bigger than degMinSec then function returns 1
 *   If calling object is smaller than degMinSec then function returns -1
 *   If calling object is equall degMinSec then function returns 0
 */
