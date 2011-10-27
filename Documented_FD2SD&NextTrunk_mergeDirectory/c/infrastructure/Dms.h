@@ -12,9 +12,9 @@ namespace efoto {
 * \file Dms.h
 * \class Dms
 * \brief Classe que manipula e faz conversoes entre graus minutos segundos(DMS), grau decimal e radiano
-* \attention Esta classe usa QString do Qt, logo isso sera alterado para string
+* \todo Esta classe usa QString do Qt, logo isso sera alterado para string
 * \copyright E-Foto group
-* \author Paulo Andre Batista Pupim
+* \author Paulo Pupim
 */
 class Dms
 {

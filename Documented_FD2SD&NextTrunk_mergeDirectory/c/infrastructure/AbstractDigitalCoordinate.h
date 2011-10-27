@@ -40,7 +40,7 @@ public:
 
 	/**
 	* \brief Método para alterar o valor Coluna num sistema de coordenadas (Coluna, Linha).
-	* \param newEta	Novo valor Eta.
+	* \param newCol	Novo valor de coluna.
 	*/
 	void setCol(int newCol);
 

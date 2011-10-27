@@ -1,0 +1,1834 @@
+#include "BundleAdjustment.h"
+#include "Dms.h"
+
+#include <qdebug.h>
+#include <QTime>
+
+#define MAXRESIDUO 0.0001
+#define ESPARSA
+#define TIMES
+
+BundleAdjustment::BundleAdjustment()
+{
+
+}
+
+BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints, int flightDirection)
+{
+	listImages=listSelectedImages;
+	listPoints=listSelectedPoints;
+	fliDir=flightDirection;
+
+	numImages=listImages.size();
+	numPoints=listPoints.size();
+	numControlPoints=0;
+	numFotogrametricPoints=0;
+
+	zeroingCoordinatesPhotogrammetrics();
+
+	for (int i=0;i<numPoints;i++)
+	{
+		if(listPoints.at(i)->is("ControlPoint"))
+		{
+			listControlPoints.push_back(listPoints.at(i));
+			numControlPoints++;
+		}
+		else if(listPoints.at(i)->is("PhotogrammetricPoint"))
+		{
+			listPhotogrammetricPoints.push_back(listPoints.at(i));
+			numFotogrametricPoints++;
+		}
+	}
+
+	fillAnalogCoordinates();
+	numEquations=numberOfEquations();
+	numUnknows=6*numImages+3*numFotogrametricPoints;
+
+	/** serÂ´a eliminiado em breve*/
+	c= listImages.at(0)->getSensor()->getFocalDistance();
+	xsi0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getXi();
+	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
+
+	userInitialValues= false;
+/*
+	for (int i=0;i<listPhotogrammetricPoints.size();i++)
+		qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
+
+	//qDebug("Numero de todos os pontos: %d",listPoints.size());
+	qDebug("%s",printAll().c_str());
+	*/
+}
+
+int BundleAdjustment::numberOfEquations()
+{
+	int n=0;
+	for (int i=0;i<numImages;i++)
+		n+=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+	return 2*n;
+}
+
+Point *BundleAdjustment::getPointFrom(int imageIndex, int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex);
+}
+
+void BundleAdjustment::fillAnalogCoordinates()
+{
+	for (int i=0; i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		for (int j=0;j<pnts;j++)
+		{
+			double col=getPointFrom(i,j)->getDigitalCoordinate(listImages.at(i)->getId()).getCol();
+			double lin=getPointFrom(i,j)->getDigitalCoordinate(listImages.at(i)->getId()).getLin();
+			Matrix coord=digitalToAnalog(listImages.at(i)->getIO(),lin,col);
+			AnalogImageSpaceCoordinate aux(listImages.at(i)->getId());
+			aux.setXi(coord.get(1,1));
+			aux.setEta(coord.get(1,2));
+			getPointFrom(i,j)->putAnalogCoordinate(aux);
+		}
+	}
+}
+
+//Professor Nunes mandou matar a iteraÃ§ao sobre os residuos para evitar os valores "NANs"
+bool BundleAdjustment::calculate()
+{
+	if (!userInitialValues)
+		getInicialsValues();
+
+	matAdjust=matInicialValues;
+
+	matAdjust.show('f',5,"matAdjust Inicial Values");
+	P.identity(numEquations);
+	//P.show();
+	//bool resOk=false;
+	int changePesos=0;
+	//Matrix tempRes;
+	totalIterations=0;
+	QTime ptime;
+	if (numFotogrametricPoints!=0)
+	{
+		//while(!resOk)
+		//{
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
+			{
+				ptime.start();
+				createA1();
+				int A1time=ptime.restart();
+				//A1.show('f',3,"A1");
+
+				createA2();
+				//A2.show('f',3,"A2");
+				int A2time=ptime.restart();
+
+				createL0();
+				//L0.show('f',3,"L0");
+				int l0time=ptime.restart();
+
+				createLb();
+				//Lb.show('f',3,"Lb");
+				int lbtime=ptime.restart();
+
+				Matrix l=Lb-L0;
+
+				ptime.start();
+				Matrix n11=getN11();
+				int n11time=ptime.restart();
+				//n11.show('f',3,"N11=A1^T*P*A1");
+
+				setInverseN11(n11);
+				int invN11time=ptime.restart();
+				Matrix n12=getN12();
+				//n12.show('f',3,"N12=A1^T*P*A2");
+				int n12time=ptime.restart();
+
+				Matrix n22=getN22();
+				//n22.show('f',3,"N22==A2^T*P*A2");
+				int n22time=ptime.restart();
+
+				//setInverseN22(n22);
+				//int invN22time=ptime.restart();
+
+				Matrix n1=getn1(l);
+				//n1.show('f',3,"n1=A1^T*P*L");
+				int n1time=ptime.restart();
+
+				Matrix n2=getn2(l);
+				//n2.show('f',3,"n2==A2^T*P*L");
+				int n2time=ptime.restart();
+
+				setx2(n12,n22,n2,n1);
+				int x2time=ptime.restart();
+				//x2.show();
+
+				setx1(n12,n1);
+				int x1time=ptime.restart();
+				//x1.show();
+
+
+
+#ifdef TIMES
+				qDebug("Tempo para executar a %d iteracao",totalIterations);
+				qDebug("Para criar A1: %.3f",A1time/1000.0);
+				qDebug("Para criar A2: %.3f",A2time/1000.0);
+				qDebug("Para criar L0: %.3f",l0time/1000.0);
+				qDebug("Para criar Lb: %.3f",lbtime/1000.0);
+				qDebug("Para calcular N11: %.3f",n11time/1000.0);
+				qDebug("Para calcular N12: %.3f",n12time/1000.0);
+				qDebug("Para calcular N22: %.3f",n22time/1000.0);
+				qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
+				qDebug("Para calcular n1: %.3f",n1time/1000.0);
+				qDebug("Para calcular n2: %.3f",n2time/1000.0);
+				qDebug("Para calcular x1: %.3f",x1time/1000.0);
+				qDebug("Para calcular x2: %.3f",x2time/1000.0);
+#endif
+				//x1.show('f',3,"x1");
+				//x2.show('f',3,"x2");
+
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				updateMatAdjust();
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
+				updateCoordFotog();
+
+				//matAdjust.show('f',5,"matAdjust Iterando");
+				totalIterations++;
+				qDebug("iteration %d/%d",totalIterations,maxIterations);
+			}
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
+
+			//matAdjust.show('f',5,"MatAdjus depois da iteracao");
+			calculateResiduos();
+/*
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			//resOk=testResiduo();
+			//if (changePesos==0)
+				//tempRes.resize(matRes.getRows(),1);
+			//calculatePeso();
+			//matRes=matRes-tempRes;
+			//tempRes=matRes;
+			//changePesos++;
+			//totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
+		//}*/
+	}
+	else
+	{
+		//qDebug("Sem pontos Fotogrametricos");
+		/*while(!resOk)
+		{*/
+			totalIterations=0;
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
+			{
+				createA1();
+				createL0();
+				createLb();
+				Matrix l=Lb-L0;
+				Matrix n11=getN11();
+				Matrix n1=getn1(l);
+				//n11.show('f',3,"N11");
+				setInverseN11(n11);
+#ifdef ESPARSA
+				x1=SparseMatrix(inverseN11)*n1;
+#endif
+				//x1.show('f',3,"x1");
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
+				totalIterations++;
+				qDebug("iteration %d",totalIterations);
+				updateMatAdjust();
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
+			}
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
+
+			//matAdjust.show('f',7,"MatAdjus depois da iteracao");
+			calculateResiduos();
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			//resOk=testResiduo();
+			//if (changePesos==0)
+				//tempRes.resize(matRes.getRows(),1);
+			//calculatePeso();
+			//matRes=matRes-tempRes;
+			//tempRes=matRes;
+			//changePesos++;
+			//totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
+		//}
+	}
+	//printf("Numero de troca de pesos: %d\n",changePesos);
+	calculateResiduos();
+	//matRes.show('f',8,"MatResCalculate");
+	setAFP();
+	return true;
+}
+
+
+/* metodos de calculo*/
+Matrix BundleAdjustment::getM11(Matrix M1)
+{
+#ifdef ESPARSA
+	return SparseMatrix(M1.transpose())*M1;
+#endif
+	//Matrix temp=M1.transpose();
+	return M1.transpose()*M1;
+}
+
+Matrix BundleAdjustment::getM12(Matrix M1, Matrix M2)
+{
+	//Matrix temp=M1.transpose();
+	//return temp*M2;
+#ifdef ESPARSA
+	return SparseMatrix(M1.transpose())*M2;
+#endif
+	return M1.transpose()*M2;
+}
+
+Matrix BundleAdjustment::getM22(Matrix M2)
+{
+
+#ifdef ESPARSA
+	return SparseMatrix(M2.transpose())*M2;
+#endif
+	return M2.transpose()*M2;
+
+}
+
+Matrix BundleAdjustment::getm1(Matrix M1, Matrix L1)
+{
+
+#ifdef ESPARSA
+	return SparseMatrix(M1.transpose())*L1;
+#endif
+	return (M1.transpose())*L1;
+}
+
+Matrix BundleAdjustment::getm2(Matrix M2, Matrix L1)
+{
+
+#ifdef ESPARSA
+	return SparseMatrix(M2.transpose())*L1;
+#endif
+	return (M2.transpose())*L1;
+}
+
+Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
+{
+
+#ifdef ESPARSA
+/*	SparseMatrix q1=SparseMatrix(SparseMatrix(M12)*M22.inverse());
+	return	SparseMatrix((M11-q1*M12.transpose()).inverse() )*( m1-q1*m2 );*/
+	SparseMatrix temp1=SparseMatrix(inverseM11);
+	return temp1*m1-SparseMatrix(temp1*M12)*xypf;
+#endif
+
+//	return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.transpose()*m2 );
+	//return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.inverse()*m2 );
+}
+
+// AproximaÃ§ao inicial para as coordenadas planimetricas(XY) dos pontos fotogrametricos
+Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
+{
+#ifdef ESPARSA
+	/*
+	SparseMatrix q1=SparseMatrix(M22.inverse());
+	return q1*m2-SparseMatrix(q1*M12.transpose())*paf;*/
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(M12.transpose())*inverseM11);
+	return SparseMatrix((M22-temp1*M12).inverse())*(m2-temp1*m1);
+#endif
+
+	//return M22.inverse()*m2-M22.inverse()*M12.transpose()*paf;
+}
+
+Matrix BundleAdjustment::getN11()
+{
+#ifdef ESPARSA
+	return SparseMatrix(SparseMatrix(A1.transpose())*P)*A1;
+#endif
+	return A1.transpose()*P*A1;
+}
+
+Matrix BundleAdjustment::getN12()
+{
+#ifdef ESPARSA
+	return SparseMatrix(SparseMatrix(A1.transpose())*P)*A2;
+#endif
+	return A1.transpose()*P*A2;
+}
+
+Matrix BundleAdjustment::getN22()
+{
+
+#ifdef ESPARSA
+	return SparseMatrix(A2.transpose())*A2;
+#endif
+
+	return A2.transpose()*A2;
+}
+
+Matrix BundleAdjustment::getn1(Matrix L)
+{
+
+#ifdef ESPARSA
+	return SparseMatrix(SparseMatrix(A1.transpose())*P)*L;
+#endif
+	return A1.transpose()*P*L;
+
+}
+
+Matrix BundleAdjustment::getn2(Matrix L)
+{
+#ifdef ESPARSA
+	return SparseMatrix(A2.transpose())*L;
+#endif
+	return A2.transpose()*L;
+
+}
+
+void BundleAdjustment::setx1(Matrix N12,Matrix n1)
+{
+
+	SparseMatrix temp1=SparseMatrix(inverseN11);
+	x1=temp1*n1-SparseMatrix(temp1*N12)*x2;
+
+	//SparseMatrix temp1=SparseMatrix(inverseN11);
+	//x1=temp1*(n1-SparseMatrix(N12)*x2);
+
+}
+
+void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
+{
+
+#ifdef ESPARSA
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
+	(N22-temp1*N12).show('f',5,"N22-temp1*N12");
+
+	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+#endif
+
+	//return x2;
+}
+
+/*
+void BundleAdjustment::setInverseN22(Matrix n22)
+{
+	int rows=n22.getRows();
+	inverseN22=n22;
+	//n22.show('f',4,"n22");
+	for (int i=1;i<rows;i+=3)
+	{
+		Matrix unit=n22.sel(i,i+2,i,i+2);
+		//unit.show('f',4,"unidade n22");
+		inverseN22.putMatrix(unit.inverse(),i,i);
+		//unit.inverse().show('f',4,"unidade inversa n22");
+	}
+	//inverseN22.show('f',4,"Inversa n22 ");
+	//return n22;
+}
+
+*/
+void BundleAdjustment::setInverseN11(Matrix n11)
+{
+	int rows=n11.getRows();
+	inverseN11=n11;
+	for (int i=1;i<rows;i+=6)
+	{
+		Matrix unit=n11.sel(i,i+5,i,i+5);
+		inverseN11.putMatrix(unit.inverse(),i,i);
+	}
+}
+
+void BundleAdjustment::setInverseM11(Matrix m11)
+{
+	int rows=m11.getRows();
+	inverseM11=m11;
+	for (int i=1;i<rows;i+=3)
+	{
+		Matrix unit=m11.sel(i,i+2,i,i+2);
+		inverseM11.putMatrix(unit.inverse(),i,i);
+	}
+}
+
+
+void BundleAdjustment::setRot(double omega, double phi, double kappa)
+{
+	r11=cos(phi) * cos(kappa);
+	r12=-cos(phi)*sin(kappa);
+	r13=sin(phi);
+	r21=cos(omega) * sin(kappa) + sin(omega) * sin(phi) * cos(kappa);
+	r22=cos(omega) * cos(kappa) - sin(omega) * sin(phi) * sin(kappa);
+	r23=-sin(omega) * cos(phi);
+	r31=sin(omega) * sin(kappa) - cos(omega) * sin(phi) * cos(kappa);
+	r32=sin(omega) * cos(kappa) + cos(omega) * sin(phi) * sin(kappa);
+	r33=cos(omega) * cos(phi);
+}
+
+Matrix BundleAdjustment::getCoordinatesEqColin(double X, double Y, double Z, int imageId)
+{
+	Matrix coord(1,2);
+	//double omega=matAdjust.get(imageId,1);
+	//double phi=matAdjust.get(imageId,2);
+	//double kappa=matAdjust.get(imageId,3);
+	//double X0=matAdjust.get(imageId,4);
+	//double Y0=matAdjust.get(imageId,5);
+	//double Z0=matAdjust.get(imageId,6);
+
+	double X0=getXAdjus(imageId);
+	double Y0=getYAdjus(imageId);
+	double Z0=getZAdjus(imageId);
+
+	setRot(getOmegaAdjus(imageId),getPhiAdjus(imageId),getKappaAdjus(imageId));
+
+	//qDebug("getCoordieqColLin\tomega %f phi %f kappa %f",getOmegaAdjus(imageId),getPhiAdjus(imageId),getKappaAdjus(imageId));
+	double xi=xsi0-c*(r11*(X-X0)+r21*(Y-Y0)+r31*(Z-Z0))/(r13*(X-X0)+r23*(Y-Y0)+r33*(Z-Z0));
+	double eta=eta0-c*(r12*(X-X0)+r22*(Y-Y0)+r32*(Z-Z0))/(r13*(X-X0)+r23*(Y-Y0)+r33*(Z-Z0));
+
+	coord.set(1,1,xi);
+	coord.set(1,2,eta);
+
+	return coord;
+}
+
+Matrix BundleAdjustment::getJacobianaControl(double X, double Y, double Z, int imageIndex)
+{
+	Matrix JacCtrl(2,6);
+
+	double omega=matAdjust.get(imageIndex,1);
+	double phi=matAdjust.get(imageIndex,2);
+	double kappa=matAdjust.get(imageIndex,3);
+	double X0=matAdjust.get(imageIndex,4);
+	double Y0=matAdjust.get(imageIndex,5);
+	double Z0=matAdjust.get(imageIndex,6);
+
+	//qDebug("omega %f phi %f kappa %f X0 %f Y0 %f Z0 %f",omega,phi,kappa,X0,Y0, Z0);
+
+
+	JacCtrl.set(1,1,c*cos(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*sin(phi));
+	JacCtrl.set(1,2,-c*(-sin(kappa)*cos(omega)-cos(kappa)*sin(phi)*sin(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*cos(phi)*sin(omega));
+	JacCtrl.set(1,3,-c*(-sin(kappa)*sin(omega)+cos(kappa)*sin(phi)*cos(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*cos(phi)*cos(omega));
+	JacCtrl.set(1,4,-c*((-sin(kappa)*sin(omega)+cos(kappa)*sin(phi)*cos(omega))*(Y-Y0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*(-cos(phi)*cos(omega)*(Y-Y0)-cos(phi)*sin(omega)*(Z-Z0)));
+	JacCtrl.set(1,5,-c*(-cos(kappa)*sin(phi)*(X-X0)+cos(kappa)*cos(phi)*sin(omega)*(Y-Y0)-cos(kappa)*cos(phi)*cos(omega)*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*(cos(phi)*(X-X0)+sin(phi)*sin(omega)*(Y-Y0)-sin(phi)*cos(omega)*(Z-Z0)));
+	JacCtrl.set(1,6,-c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)));
+
+	JacCtrl.set(2,1,-c*sin(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*sin(phi));
+	JacCtrl.set(2,2,-c*(-cos(kappa)*cos(omega)+sin(kappa)*sin(phi)*sin(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*cos(phi)*sin(omega));
+	JacCtrl.set(2,3,-c*(-cos(kappa)*sin(omega)-sin(kappa)*sin(phi)*cos(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*cos(phi)*cos(omega));
+	JacCtrl.set(2,4,-c*((-cos(kappa)*sin(omega)-sin(kappa)*sin(phi)*cos(omega))*(Y-Y0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*(-cos(phi)*cos(omega)*(Y-Y0)-cos(phi)*sin(omega)*(Z-Z0)));
+	JacCtrl.set(2,5,-c*(sin(kappa)*sin(phi)*(X-X0)-sin(kappa)*cos(phi)*sin(omega)*(Y-Y0)+sin(kappa)*cos(phi)*cos(omega)*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow((sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)),2)*(cos(phi)*(X-X0)+sin(phi)*sin(omega)*(Y-Y0)-sin(phi)*cos(omega)*(Z-Z0)));
+	JacCtrl.set(2,6,-c*(-cos(kappa)*cos(phi)*(X-X0)+(-sin(kappa)*cos(omega)-cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(-sin(kappa)*sin(omega)+cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0)));
+
+	return JacCtrl;
+}
+
+Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z, int imageIndex)
+{
+	Matrix JacFoto(2,3);
+
+	double omega=matAdjust.get(imageIndex,1);
+	double phi=matAdjust.get(imageIndex,2);
+	double kappa=matAdjust.get(imageIndex,3);
+	double X0=matAdjust.get(imageIndex,4);
+	double Y0=matAdjust.get(imageIndex,5);
+	double Z0=matAdjust.get(imageIndex,6);
+
+
+	JacFoto.set(1,1,-c*cos(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*sin(phi));
+	JacFoto.set(1,2,-c*(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*cos(phi)*sin(omega));
+	JacFoto.set(1,3,-c*(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(cos(kappa)*cos(phi)*(X-X0)+(sin(kappa)*cos(omega)+cos(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(sin(kappa)*sin(omega)-cos(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*cos(phi)*cos(omega));
+
+	JacFoto.set(2,1,c*sin(kappa)*cos(phi)/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*sin(phi));
+	JacFoto.set(2,2,-c*(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))-c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*cos(phi)*sin(omega));
+	JacFoto.set(2,3,-c*(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))/(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0))+c*(-sin(kappa)*cos(phi)*(X-X0)+(cos(kappa)*cos(omega)-sin(kappa)*sin(phi)*sin(omega))*(Y-Y0)+(cos(kappa)*sin(omega)+sin(kappa)*sin(phi)*cos(omega))*(Z-Z0))/pow(sin(phi)*(X-X0)-cos(phi)*sin(omega)*(Y-Y0)+cos(phi)*cos(omega)*(Z-Z0),2)*cos(phi)*cos(omega));
+
+	return JacFoto;
+}
+
+//retorna os parametros da imagem numero imageID
+Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
+{
+	Matrix result(6,1);
+	for (int i=6*imageId+1,j=1 ; i<=6*(imageId+1) ; i++,j++)
+		result.set(j,1,PAf.get(i,1));
+	return result;
+}
+
+double BundleAdjustment::getKappaZero(Matrix pta,int imageId)
+{
+	//double kappa0=0.002;
+	//mf[0]=MFX mf[1]=MFY
+
+	//coordenadas das marcas fiduciais em milimetros
+	double coluna=0.016;
+	double linha=113.0;
+
+	double mfX= pta.get(1,1) + pta.get(2,1)*coluna + pta.get(3,1)*linha;
+	double mfY= pta.get(4,1) + pta.get(5,1)*coluna + pta.get(6,1)*linha;
+
+	double Ox=(pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+	double Oy=(pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+
+	double dX=mfX-Ox;
+	double dY=mfY-Oy;
+
+	double kappa0;
+	if (fabs(dY)<1e-14 && mfX>Ox)
+		kappa0= 0;
+	else if (fabs(dY)<1e-14 && mfX<Ox)
+		kappa0= M_PI;
+	else if (fabs(dX)<1e-14 && mfY>Oy)
+		kappa0=M_PI/2;
+	else if (fabs(dX)<1e-14 && mfY<Oy)
+		kappa0= 3*M_PI/2;
+	else if (fabs(dX)>1e-14 && fabs(dY)>1e-14)
+	{
+		double alpha=atan(fabs(dY/dX));
+		if (dY > 0 && dX > 0)
+			return alpha;
+		if (dY > 0 && dX < 0)
+			return M_PI-alpha;
+		if (dY < 0 && dX < 0)
+			return M_PI+alpha;
+		if (dY < 0 && dX > 0)
+			return -alpha;
+	}
+	return kappa0;
+}
+
+/* metodos auxialiares para buscar dados*/
+double BundleAdjustment::getdOmegax1(int imageId)
+{
+	return x1.get(6*(imageId-1)+4,1);
+}
+
+double BundleAdjustment::getdPhix1(int imageId)
+{
+	return x1.get(6*(imageId-1)+5,1);
+}
+
+double BundleAdjustment::getdKappax1(int imageId)
+{
+	return x1.get(6*(imageId-1)+6,1);
+}
+
+double BundleAdjustment::getdXx1(int imageId)
+{
+	return x1.get(6*(imageId-1)+1,1);
+}
+
+double BundleAdjustment::getdYx1(int imageId)
+{
+	return x1.get(6*(imageId-1)+2,1);
+}
+
+double BundleAdjustment::getdZx1(int imageId)
+{
+	return x1.get(6*(imageId-1)+3,1);
+}
+
+double BundleAdjustment::getdXx2(int fotogrPointId)
+{
+	return x2.get(3*(fotogrPointId-1)+1,1);
+}
+
+double BundleAdjustment::getdYx2(int fotogrPointId)
+{
+	return x2.get(3*(fotogrPointId-1)+2,1);
+}
+
+double BundleAdjustment::getdZx2(int fotogrPointId)
+{
+	return x2.get(3*(fotogrPointId-1)+3,1);
+}
+
+double BundleAdjustment::getOmegaAdjus(int imageId)
+{
+	return matAdjust.get(imageId,1);
+}
+
+double BundleAdjustment::getPhiAdjus(int imageId)
+{
+	return matAdjust.get(imageId,2);
+}
+
+double BundleAdjustment::getKappaAdjus(int imageId)
+{
+	return matAdjust.get(imageId,3);
+}
+
+double BundleAdjustment::getXAdjus(int imageId)
+{
+	return matAdjust.get(imageId,4);
+}
+
+double BundleAdjustment::getYAdjus(int imageId)
+{
+	return matAdjust.get(imageId,5);
+}
+
+double BundleAdjustment::getZAdjus(int imageId)
+{
+	return matAdjust.get(imageId,6);
+}
+
+// Procura onde esta o ponto na lista de todos os pontos(ou seja na lista de pontos selecionados) e retorna o seu indice na lista
+int BundleAdjustment::whereInPoints(Point *pnt)
+{
+	for (int i=0;i<numPoints;i++)
+		if (pnt==listPoints.at(i))
+			return i;
+	//qDebug("Nao achou o ponto %d na lista de pontos selecionados ",pnt->getId());
+	return -1;//se nao achar retorna -1
+}
+
+int BundleAdjustment::whereInPhotogrammetricPoints(Point *pnt)
+{
+	for (int i=0;i<numFotogrametricPoints;i++)
+		if (pnt==listPhotogrammetricPoints.at(i))
+			return i;
+	//qDebug("Nao achou o ponto %d na lista de pontos selecionados ",pnt->getId());
+	return -1;//se nao achar retorna -1
+}
+
+void BundleAdjustment::updateMatAdjust()
+{
+	//qDebug("num images: %d",numImages);
+	for (int i=1;i<=numImages;i++)
+	{
+		//qDebug("X+dx=%.3f+%.3f\nY+dy:%.3f+%.3f\nZ+dz=%.3f+%.3f\n",getXAdjus(i),getdXx1(i),getYAdjus(i),getdYx1(i),getZAdjus(i),getdZx1(i));
+		matAdjust.set(i,1, getOmegaAdjus(i) + getdOmegax1(i) );//ajustando omega
+		matAdjust.set(i,2, getPhiAdjus(i)   + getdPhix1(i)   );//ajustando phi
+		matAdjust.set(i,3, getKappaAdjus(i) + getdKappax1(i) );//ajustando kappa
+		matAdjust.set(i,4, getXAdjus(i)     + getdXx1(i)     );//ajustando X
+		matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
+		matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
+	}
+}
+
+
+Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double z, int imageId)
+{
+	Matrix result(1,2);
+	//imprime(matAdjust,"matAdjust");
+	setRot(getOmegaAdjus(imageId),getPhiAdjus(imageId),getKappaAdjus(imageId));
+
+	//qDebug("omega %f phi %f kappa %f",getOmegaAdjus(imageId),getPhiAdjus(imageId),getKappaAdjus(imageId));
+
+	double x=getXAdjus(imageId)+(z-getZAdjus(imageId))*(r11*(xsi-xsi0)+r12*(eta-eta0)-r13*c)/(r31*(xsi-xsi0)+r32*(eta-eta0)-r33*c);
+	double y=getYAdjus(imageId)+(z-getZAdjus(imageId))*(r21*(xsi-xsi0)+r22*(eta-eta0)-r23*c)/(r31*(xsi-xsi0)+r32*(eta-eta0)-r33*c);
+	//qDebug("\nX: %f\tY: %f",x,y);
+
+	result.set(1,1,x);
+	result.set(1,2,y);
+	return result;
+}
+
+/** omega, phi, kappa, X0, Y0, Z0)*/
+void BundleAdjustment::getInicialsValues()
+{
+	if (numFotogrametricPoints!=0)
+	{
+		QTime init;
+		init.start();
+		Matrix L=createL();
+		int ltime=init.restart();
+		//L.show('f',3,"L");
+
+		Matrix M1=createM1();
+		int M1time=init.restart();
+		//M1.show('f',3,"M1");
+
+		Matrix M2=createM2();
+		int M2time=init.restart();
+		//M2.show('f',3,"M2");
+
+		Matrix m11=getM11(M1);
+		int m11time=init.restart();
+		//m11.show('f',3,"M11");
+
+		setInverseM11(m11);
+		int inverseM11time=init.restart();
+
+		Matrix m12=getM12(M1,M2);
+		//m12.show('f',3,"M12");
+		int m12time=init.restart();
+
+		Matrix m22=getM22(M2);
+		//m22.show('f',3,"M22");
+		int m22time=init.restart();
+
+		Matrix m1=getm1(M1,L);
+		//m1.show('f',3,"m1");
+		int m1time=init.restart();
+
+		Matrix m2=getm2(M2,L);
+		//m2.show('f',3,"m2");
+		int m2time=init.restart();
+
+/*
+		Matrix atotal;
+		atotal.putMatrix(m11,1,1);
+		atotal.putMatrix(m12,1,m11.getCols()+1);
+		atotal.putMatrix(m12.transpose(),m11.getRows()+1,1);
+		atotal.putMatrix(m22,m11.getRows()+1,m11.getCols()+1);
+
+		//atotal.show('f',4,"atotal");
+		Matrix mtotal=m1|m2;
+		//mtotal.show('f',4,"mtotal");
+
+		// equacao matricial da forma A*X=M . a incognita e a matriz X
+		Eigen::MatrixXd Aeig = convertMatrixToEigen(atotal);
+		Eigen::MatrixXd Meig = convertMatrixToEigen(mtotal);
+
+		Eigen::VectorXd XLUeig = Aeig.lu().solve(Meig);
+		Eigen::VectorXd XHouseHoldereig = Aeig.colPivHouseholderQr().solve(Meig);
+		Eigen::VectorXd XFullPiveig = Aeig.fullPivLu().solve(Meig);
+
+		Matrix PAFeigLU=convertVectorEigenToMatrix(XLUeig);
+		Matrix PAFeigHouseHolder=convertVectorEigenToMatrix(XHouseHoldereig);
+		Matrix PAFeigFullPivLU=convertVectorEigenToMatrix(XFullPiveig);
+
+		Matrix paf;
+		Matrix xypf;
+		if ((Aeig*XLUeig).isApprox(Meig,0.001))
+		{
+			PAFeigLU.show('f',4,"PAFLUeig");
+		}else
+		{
+			qDebug("Nao resolveu por lu");
+		}
+
+		if ((Aeig*XHouseHoldereig).isApprox(Meig,0.001))
+		{
+			PAFeigHouseHolder.show('f',4,"PAFHouseHoldereig");
+			paf=PAFeigHouseHolder.sel(1,6*numImages,1,1);
+			xypf=PAFeigHouseHolder.sel(6*numImages+1,PAFeigHouseHolder.getRows(),1,1);
+
+			//convertEigenToMatrix(XHouseHoldereig.kernel()).show('f',4,"kernelHouse");
+
+		}else
+		{
+			qDebug("Nao resolveu por houseHolder");
+		}
+
+		if ((Aeig*XFullPiveig).isApprox(Meig,0.001))
+		{
+			PAFeigFullPivLU.show('f',4,"PAFFullPiveig");
+			paf=PAFeigFullPivLU.sel(1,6*numImages,1,1);
+			xypf=PAFeigFullPivLU.sel(6*numImages+1,PAFeigFullPivLU.getRows(),1,1);
+
+		}else
+		{
+			qDebug("Nao resolveu por fullPivLU");
+		}
+*/
+		Matrix xypf=getXYpf(m12,m22,m1,m2);
+		int xypftime=init.restart();
+
+		Matrix paf=getPAf(m12,m1,xypf);
+		int paftime=init.restart();
+
+
+#ifdef TIMES
+		qDebug("Tempo para executar:");
+		qDebug("Para criar L: %.3f",ltime/1000.0);
+		qDebug("Para criar M1: %.3f",M1time/1000.0);
+		qDebug("Para criar M2: %.3f",M2time/1000.0);
+		qDebug("Para calcular M11: %.3f",m11time/1000.0);
+		qDebug("Para calcular inverseM11: %.3f",inverseM11time/1000.0);
+		qDebug("Para calcular M12: %.3f",m12time/1000.0);
+		qDebug("Para calcular M22: %.3f",m22time/1000.0);
+		qDebug("Para calcular m1: %.3f",m1time/1000.0);
+		qDebug("Para calcular m2: %.3f",m2time/1000.0);
+		qDebug("Para calcular paf: %.3f",paftime/1000.0);
+		qDebug("Para calcular xypf: %.3f",xypftime/1000.0);
+#endif
+		//paf.show('f',4,"parameters OE");
+		//xypf.show('f',4,"xypointFoto");
+		updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
+
+		Matrix temp(numImages,6);
+		matInicialValues=temp;
+		for (int i=0;i<numImages;i++)
+		{
+			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
+			eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
+			c=listImages.at(i)->getSensor()->getFocalDistance();
+
+			Matrix pta=getPTA(paf,i);
+
+			matInicialValues.set(i+1,1,0);
+			matInicialValues.set(i+1,2,0);
+			//qDebug("Kappa0");
+			matInicialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
+			matInicialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matInicialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			matInicialValues.set(i+1,6,c*getMediaScale(i));
+			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matInicialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
+			//Image *img;
+			//img->getFlight()->getScale()Scale();
+		}
+	}
+	else
+	{
+		//qDebug("initial Values: Sem pontos Fotogrametricos");
+
+		Matrix L=createL();
+		Matrix M1=createM1();
+		Matrix m11=getM11(M1);
+		setInverseM11(m11);
+		Matrix m1=getm1(M1,L);
+		Matrix paf=inverseM11*m1;
+
+		Matrix temp(numImages,6);
+		matInicialValues=temp;
+		for (int i=0;i<numImages;i++)
+		{
+			xsi0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
+			eta0=listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
+			c=listImages.at(i)->getSensor()->getFocalDistance();
+			Matrix pta=getPTA(paf,i);
+			matInicialValues.set(i+1,1,0);
+			matInicialValues.set(i+1,2,0);
+			//matInicialValues.set(i+1,3,getKappaZero(pta,i));
+			matInicialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
+			matInicialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
+			matInicialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
+			//matInicialValues.set(i+1,6,c*getMediaScale(i));
+			//qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
+			matInicialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
+		}
+	}
+}
+
+Matrix BundleAdjustment::createL()
+{
+	Matrix L(0,1);
+	for (int i=0;i<numImages;i++)
+	{
+		int numpnts=listImages.at(i)->countPoints();
+		for(int j=0;j<numpnts;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				Matrix temp(2,1);
+				if(isControlPoint(i,j))
+				{
+					temp.set(1,1,listImages.at(i)->getPointAt(j)->getObjectCoordinate().getX());
+					temp.set(2,1,listImages.at(i)->getPointAt(j)->getObjectCoordinate().getY());
+				}
+				L=L|temp;
+			}
+		}
+	}
+	//imprime(L,"Lobject");
+	return L;
+}
+
+Matrix BundleAdjustment::createM1()
+{
+	Matrix result(0,0);
+	for (int i=0;i<numImages;i++)
+	{
+		Matrix temp=imageToMatrixAnalogicalCoordenates(listImages.at(i));
+		result.putMatrix(temp,result.getRows()+1,6*i+1);
+	}
+	//imprime(result,"M1object");
+	return result;
+}
+
+Matrix BundleAdjustment::createM2()
+{
+/*
+	/* configuraÃ§ao de cada matriz B
+		 |-1  0|
+		 | 0 -1|
+
+
+	Matrix B(2,2);
+	B.set(1,1,-1);
+	B.set(2,2,-1);
+	/*
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		Matrix oneImage(2*rows,2*numFotogrametricPoints);
+		for (int j=0;j<pnts;j++)
+		{
+			if(whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				if(isPhotogrammetricPoint(i,j))
+				{
+
+					int posCol=whereInPoints(getPointFrom(i,j));
+					posCol=2*(posCol-numControlPoints)+1;
+					//qDebug("M2:Achou o ponto fotogrametrico %d",getPointFrom(i,j)->getId());
+					//	qDebug("put in i=%d j=%d",2*j+1,2*(pos-numControlPoints)+1);//2*
+					//oneImage.putMatrix(B,2*(posLin)+1,2*(posCol-numControlPoints)+1);
+					oneImage.putMatrix(B,posLin,posCol);
+				}
+				posLin+=2;
+			}
+		}
+		//oneImage.show('f',3,"OneImage");
+		result=result|oneImage;
+		//result.show('f',3,"Result");
+	}
+
+	//imprime(result,"M2object");
+	return result;*/
+
+	//Matrix result(0,3*numFotogrametricPoints);
+	Matrix result(0,2*numFotogrametricPoints);
+	Matrix B(2,2);
+	B.set(1,1,-1);
+	B.set(2,2,-1);
+	int posCol=0;
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		//qDebug("rows %d:%d",i,rows);
+		Matrix oneImage(0,2*numFotogrametricPoints);
+		//	qDebug("Imagem %s",listImages.at(i)->getFilename().c_str());
+		for (int j=0;j<pnts;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				posCol=whereInPhotogrammetricPoints(getPointFrom(i,j));
+				Matrix auxPoint(2,2*numFotogrametricPoints);
+				if(posCol!=-1)// && isPhotogrammetricPoint(i,j))
+				{
+					posCol=2*posCol+1;
+
+					auxPoint.putMatrix(B,1,posCol);
+					//auxPoint.show('f',3,"AuxPontos");
+					//	qDebug("\tPoint %s na pos [%d,%d]",getPointFrom(i,j)->getPointId().c_str(),posLin,posCol);
+					//jf.show();
+				}
+				oneImage=oneImage|auxPoint;
+				//if (whereInPoints(getPointFrom(i,j))!=-1)
+				//posLin+=2;
+			}
+		}
+		result=result|oneImage;
+		//result=oneImage;
+	}
+	return result;//result;*/
+}
+
+// Retorna uma matriz correspondente a uma imagem na matriz M
+Matrix BundleAdjustment::imageToMatrixAnalogicalCoordenates(Image *img)
+{
+	int numpnts=img->countPoints();
+
+	Matrix result(0,6);
+	for (int i=0;i<numpnts;i++)
+	{
+		/* configuraÃ§ao de cada matriz temp
+				   |1	eta xi	0	 0		0 |
+				   |0	 0	0	1	eta 	xi|
+		*/
+		if (whereInPoints(img->getPointAt(i))!=-1 && !img->getPointAt(i)->is("CheckingPoint"))
+		{
+			Matrix temp(2,6);
+			/** conversao digital to analog sera feito pela classe do Rafael em breve */
+			int lin=img->getPointAt(i)->getDigitalCoordinate(img->getId()).getLin();
+			int col=img->getPointAt(i)->getDigitalCoordinate(img->getId()).getCol();
+
+			//qDebug("object col: %d\t lin: %d",col, lin);
+			Matrix coord=digitalToAnalog(img->getIO(),lin,col);
+
+			temp.set(1,1,1);
+			temp.set(1,2,coord.get(1,2));
+			temp.set(1,3,coord.get(1,1));
+			temp.set(2,4,1);
+			temp.set(2,5,coord.get(1,2));
+			temp.set(2,6,coord.get(1,1));
+
+			result=result|temp;
+		}
+	}
+	// imprime(result,"image");
+	return result;
+}
+
+Matrix BundleAdjustment::digitalToAnalog(InteriorOrientation *oi,int linha, int coluna)
+{
+		double a0, a1, a2, b0, b1, b2;
+
+		a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
+
+		//imprime(oi->getXa(),"Xa");
+
+		Matrix result(1,2);
+		result.set(1,1, a0 + a1*coluna + a2*linha);
+		result.set(1,2, b0 + b1*coluna + b2*linha);
+		return result;
+}
+
+Matrix BundleAdjustment::analogToDigital(InteriorOrientation *oi,double xsi, double eta)
+{
+		double a0, a1, a2, b0, b1, b2;
+		a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
+		//Ideia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+		Matrix result(1,2);
+		result.setInt(1,1, (int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 ) );
+		result.setInt(1,2, (int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 ) );
+		return result;
+}
+
+int BundleAdjustment::numberControlPoints(Image *img)
+{
+	int cont=0;
+	int points=img->countPoints();
+	for (int i=0;i<points;i++)
+		if(img->getPointAt(i)->is("ControlPoint") && whereInPoints(img->getPointAt(i))!=-1)
+			cont++;
+	return cont;
+}
+
+int BundleAdjustment::numberPhotogrammetricPoints(Image *img)
+{
+	int cont=0;
+	int points=img->countPoints();
+	for (int i=0;i<points;i++)
+		if(img->getPointAt(i)->is("PhotogrammetricPoint") && whereInPoints(img->getPointAt(i))!=-1)
+			cont++;
+	return cont;
+}
+
+double BundleAdjustment::getInicialZPhotogrammetricPoints()
+{
+	double z=0;
+	int n=0;
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		for(int j=0;j<pnts;j++)
+			if(isControlPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				z+=getPointFrom(i,j)->getObjectCoordinate().getZ();
+				n++;
+			}
+	}
+	return z/=n;
+}
+// atualiza as coordenadas de todos os pontos
+void BundleAdjustment::updateCoordinatesAllPoints(Matrix xypf, double zphotogrammetric)
+{
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int n=1;
+		for(int j=0;j<pnts;j++)
+			if(isPhotogrammetricPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				ObjectSpaceCoordinate coord = getPointFrom(i,j)->getObjectCoordinate();
+				coord.setX(xypf.get(n++,1));
+				coord.setY(xypf.get(n++,1));
+				coord.setZ(zphotogrammetric);
+				getPointFrom(i,j)->setObjectCoordinate(coord);
+			}
+	}
+}
+void BundleAdjustment::zeroingCoordinatesPhotogrammetrics()
+{
+	for (int i=0;i<listPhotogrammetricPoints.size();i++)
+	{
+		ObjectSpaceCoordinate coord = listPhotogrammetricPoints.at(i)->getObjectCoordinate();
+		coord.setX(0);
+		coord.setY(0);
+		coord.setZ(0);
+		listPhotogrammetricPoints.at(i)->setObjectCoordinate(coord);
+	}
+}
+
+double BundleAdjustment::getMediaScale(int imageIndex)
+{
+	/*
+	double media=0.0;
+	double normaObjeto=0.0;
+	double normaImagem=0.0;
+
+	int pnts=listImages.at(imageIndex)->countPoints();
+
+	double xFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getX();
+	double yFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getY();
+	double zFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getZ();
+	double xiFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
+	double etaFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
+
+	for(int j=1;j<pnts;j++)
+	{
+		if (whereInPoints(getPointFrom(imageIndex,j))!=-1 && !isCheckingPoint(imageIndex,j))
+		{
+			double xCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getX();
+			double yCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getY();
+			double zCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getZ();
+
+			double xiCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
+			double etaCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
+
+			normaObjeto =sqrt(pow(xFirstPoint-xCurrentPoint,2)+pow(yFirstPoint-yCurrentPoint,2)+pow(zFirstPoint-zCurrentPoint,2));
+			normaImagem =sqrt(pow(xiFirstPoint-xiCurrentPoint,2)+pow(etaFirstPoint-etaCurrentPoint,2));
+			//printf("Objeto sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ))= %f\n",xiFirstPoint,xiCurrentPoint,etaFirstPoint,etaCurrentPoint,normaImagem);
+			media+=normaObjeto/normaImagem;
+		}
+	}
+	int p=numberControlPoints(listImages.at(imageIndex))+numberPhotogrammetricPoints(listImages.at(imageIndex));
+	printf("object media %f count: %d\n",media,p);
+	*/
+	//return //media/(p-1);
+}
+
+// Retorna uma matriz correspondente a uma imagem na Matriz A
+Matrix BundleAdjustment::imageToMatrixJacobiana(int indexImage)
+{
+	Image *img=listImages.at(indexImage);
+	int pnts=img->countPoints();
+	Matrix result(0,6);
+	for (int i=0;i<pnts;i++)
+	{
+		if(whereInPoints(img->getPointAt(i))!=-1 && !isCheckingPoint(indexImage,i))
+		{
+			ObjectSpaceCoordinate aux=img->getPointAt(i)->getObjectCoordinate();
+			double x=aux.getX();
+			double y=aux.getY();
+			double z=aux.getZ();
+			result=result|getJacobianaControl(x,y,z,indexImage+1); // esse id pode gerar inconsistencia// soluÃ§ao seria setar os ids de todas as imagens e pontos no inicio logo apos o sort de pontos
+		}
+	}
+	return result;
+}
+
+/* Retorna toda a matriz A1*/
+void BundleAdjustment::createA1()
+{
+	Matrix result;
+	int currentRows=0;
+	for (int i=0;i<numImages;i++)
+	{
+		Matrix partial=imageToMatrixJacobiana(i);
+		result.putMatrix(partial,currentRows+1,6*i+1);
+		currentRows+=partial.getRows();
+	}
+	A1=result;
+}
+
+void BundleAdjustment::createA2()
+{
+	/*
+	Matrix result(0,3*numFotogrametricPoints);
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		Matrix oneImage(2*rows,3*numFotogrametricPoints);
+		for (int j=0;j<pnts;j++)
+		{
+			if(whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
+			{
+				if(isPhotogrammetricPoint(i,j))
+				{
+					ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
+					double x=aux.getX();
+					double y=aux.getY();
+					double z=aux.getZ();
+					Matrix jf=getJacobianaFotogrametric(x,y,z,i+1);
+					int posCol=whereInPoints(listImages.at(i)->getPointAt(j));
+					posCol=3*(posCol-numControlPoints)+1;
+					oneImage.putMatrix(jf,posLin,posCol);
+				}
+				posLin+=2;
+			}
+		}
+		result=result|oneImage;
+	}
+	A2=result;*/
+
+	Matrix result(0,3*numFotogrametricPoints);
+	int posCol=0;
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		//qDebug("rows %d:%d",i,rows);
+		Matrix oneImage(0,3*numFotogrametricPoints);
+		//	qDebug("Imagem %s",listImages.at(i)->getFilename().c_str());
+		for (int j=0;j<pnts;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				posCol=whereInPhotogrammetricPoints(getPointFrom(i,j));
+				Matrix auxPoint(2,3*numFotogrametricPoints);
+				if(posCol!=-1)// && isPhotogrammetricPoint(i,j))
+				{
+					ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
+					double x=aux.getX();
+					double y=aux.getY();
+					double z=aux.getZ();
+
+					//qDebug("\tPoint %s X:%.3f\tY:%.3f\tZ:%.3f",getPointFrom(i,j)->getPointId().c_str(),x,y,z);
+					Matrix jf=getJacobianaFotogrametric(x,y,z,i+1);
+					posCol=3*posCol+1;
+
+					auxPoint.putMatrix(jf,1,posCol);
+					//auxPoint.show('f',3,"AuxPontos");
+					//	qDebug("\tPoint %s na pos [%d,%d]",getPointFrom(i,j)->getPointId().c_str(),posLin,posCol);
+					//jf.show();
+				}
+				oneImage=oneImage|auxPoint;
+				//if (whereInPoints(getPointFrom(i,j))!=-1)
+				//posLin+=2;
+			}
+		}
+		result=result|oneImage;
+		//result=oneImage;
+	}
+	A2=result;//result;*/
+}
+
+void BundleAdjustment::createL0()
+{
+	Matrix result(0,1);
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		for (int j=0;j<pnts;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
+			{
+				ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
+				double x=aux.getX();
+				double y=aux.getY();
+				double z=aux.getZ();
+				/** Pegar esse metodo na classe do Rafael, as coordenadas pela equaÃ§ao de colinearidade*/
+				Matrix coord=getCoordinatesEqColin(x,y,z,i+1);
+				result=result|(coord.transpose());
+			}
+		}
+	}
+	L0=result;
+}
+
+void BundleAdjustment::createLb()
+{
+	Matrix result(0,1);
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		for (int j=0;j<pnts;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
+			{
+				AnalogImageSpaceCoordinate aux=getPointFrom(i,j)->getAnalogCoordinate(listImages.at(i)->getId());
+				double xi=aux.getXi();
+				double eta=aux.getEta();
+				Matrix temp(2,1);
+				temp.set(1,1,xi);
+				temp.set(2,1,eta);
+				result=result|temp;
+			}
+		}
+	}
+	Lb=result;
+}
+
+
+void BundleAdjustment::calculateResiduos()
+{
+	Matrix result(0,1);
+	for (int i=0;i<numImages;i++)
+	{
+		int pnts=listImages.at(i)->countPoints();
+		for (int j=0;j<pnts;j++)
+		{
+			if (isControlPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				double x=getPointFrom(i,j)->getObjectCoordinate().getX();
+				double y=getPointFrom(i,j)->getObjectCoordinate().getY();
+				double z=getPointFrom(i,j)->getObjectCoordinate().getZ();
+				double xi=getPointFrom(i,j)->getAnalogCoordinate(listImages.at(i)->getId()).getXi();
+				double eta=getPointFrom(i,j)->getAnalogCoordinate(listImages.at(i)->getId()).getEta();
+				//qDebug("%f %f %f \t\t xi: %f eta: %f",x,y,z,xi,eta);
+
+				/** Usar classe do Rafael para isso */
+				Matrix coord=getCoordColinearTerrain(xi,eta,z,i+1);
+				double resx=x-coord.get(1,1);
+				double resy=y-coord.get(1,2);
+				// reaproveitando a matrix que nÃ£o serÃ¡ mais utilizada nesse loop;
+				coord=coord.transpose();
+				coord.set(1,1,resx);
+				coord.set(2,1,resy);
+				result=result|coord;
+			}
+		}
+	}
+	matRes=result;
+}
+
+void BundleAdjustment::calculatePeso()
+{
+	int d=1;
+	for (int i=0;i<numImages;i++)
+	{
+		int numPoints=listImages.at(i)->countPoints();
+		for (int j=0;j<numPoints;j++)
+		{
+			if (isControlPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				double p=(numEquations-numUnknows)/(pow(getRx(listImages.at(i),j+1),2));
+				P.set(d,d,p);
+				d++;
+				p=(numEquations-numUnknows)/((pow(getRy(listImages.at(i),j+1),2)));
+					P.set(d,d,p);
+				d++;
+			}
+			if (isPhotogrammetricPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				P.set(d,d,1);
+				d++;
+				P.set(d,d,1);
+				d++;
+			}
+		}
+	}
+}
+void BundleAdjustment::updateCoordFotog()
+{
+	int n=1;
+	for (int i=0;i<numPoints;i++)
+	{
+		Point *pnt=listPoints.at(i);
+		if(pnt->is("PhotogrammetricPoint")  && whereInPoints(pnt)!=-1)
+		{
+			ObjectSpaceCoordinate coord = pnt->getObjectCoordinate();
+			double x=coord.getX();
+			double y=coord.getY();
+			double z=coord.getZ();
+			//printf("%f+%f\n",x, getdXx2(n));
+
+			coord.setX(x+getdXx2(n));
+			coord.setY(y+getdYx2(n));
+			coord.setZ(z+getdZx2(n));
+
+			pnt->setObjectCoordinate(coord);
+			n++;
+		}
+	}
+}
+
+double BundleAdjustment::getRx(Image *img, int pointId)
+{
+	int base=0;
+	for(int i=1;i<img->getId();i++)
+		base+=2*numberControlPoints(img);
+	return matRes.get(base+2*(pointId-1)+1,1);
+}
+
+double BundleAdjustment::getRy(Image *img, int pointId)
+{
+	int base=0;
+	for(int i=1;i<img->getId();i++)
+		base+=2*numberControlPoints(img);
+	return matRes.get(base+2*(pointId-1)+2,1);
+}
+
+/*Metodos para aumento de performance do calculo*/
+/*
+Matrix BundleAdjustment::getSparseN11()
+{
+	Matrix result;
+	int currentRows=0;
+	for (int i=0;i<numImages;i++)
+	{
+		Matrix partial=imageToMatrixJacobiana(i);
+		//partial.transpose()*partial;
+		result.putMatrix(partial,currentRows+1,6*i+1);
+		currentRows+=partial.getRows();
+	}
+	A1=result;
+	return A1;
+}
+*/
+/* setters and getters*/
+Matrix BundleAdjustment::getMatRes()
+{
+	//matRes.show('f',8,"MatRes");
+	return matRes;
+}
+
+bool BundleAdjustment::getConvergencyStatus()
+{
+	return converged;
+}
+
+int BundleAdjustment::getTotalIterations()
+{
+	return totalIterations;
+}
+
+void BundleAdjustment::setAFP()
+{
+	//Isso Ã© feito apenas para:
+	//ExibiÃ§ao dos angulos em Graus.
+	/*
+	Matrix result(matAdjust.getRows(),matAdjust.getCols());
+	for (int i=1;i<=numImages;i++)
+	{
+		result.set(i,1,Dms::radianoToDegreeDecimal(matAdjust.get(i,1)));
+		result.set(i,2,Dms::radianoToDegreeDecimal(matAdjust.get(i,2)));
+		result.set(i,3,Dms::radianoToDegreeDecimal(matAdjust.get(i,3)));
+		result.set(i,4,matAdjust.get(i,4));
+		result.set(i,5,matAdjust.get(i,5));
+		result.set(i,6,matAdjust.get(i,6));
+	}
+	afp=result;
+	*/
+	afp=matAdjust;
+}
+
+Matrix BundleAdjustment::getAFP()
+{
+	return afp;
+}
+
+/* metodos auxiliares para teste*/
+bool BundleAdjustment::isControlPoint(int imageIndex ,int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("ControlPoint");
+}
+
+bool BundleAdjustment::isPhotogrammetricPoint(int imageIndex, int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("PhotogrammetricPoint");
+}
+
+bool BundleAdjustment::isCheckingPoint(int imageIndex, int pointIndex)
+{
+	return listImages.at(imageIndex)->getPointAt(pointIndex)->is("CheckingPoint");
+}
+
+bool BundleAdjustment::testResiduo()
+{
+	int rowsMatRes=matRes.getRows();
+	for (int i=1;i<=rowsMatRes;i++)
+	{
+		if (fabs(matRes.get(i,1)>MAXRESIDUO))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+// Se der infinito retorna -2, se der NAN retorna -1, se nao convergir retorna 0 e se convergir retorna 1
+int BundleAdjustment::testConverged()
+{
+/*
+	int rowsX1=x1.getRows();
+	int rowsX2=x2.getRows();
+   // printf("testando X1");
+	for (int i=1;i<=rowsX1;i++)
+	{
+		if (isinf(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x1.get(i,1)>convergency))
+		{
+			return 0;
+		}
+	}
+	//printf("testando X2");
+	for (int i=1;i<=rowsX2;i++)
+	{
+		if (isinf(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x2.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x2.get(i,1)>convergency))
+		{
+			return 0;
+		}
+	}
+	return 1;
+	*/
+	int rowsX1=x1.getRows();
+	int rowsX2=x2.getRows();
+   // printf("testando X1");
+	for (int i=0;i<rowsX1;i++)
+	{
+		if (isinf(fabs(x1.get(i+1,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x1.get(i+1,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (i%6<3)//Os três primeiros elementos são Xo,Yo,Zo
+		{
+			if (fabs(x1.get(i+1,1)>metricConvergency))
+				return 0;
+		}
+		else // Os três ultimos elementos são omega, phi, kappa
+		{
+			if (fabs(x1.get(i+1,1)>angularConvergency))
+				return 0;
+		}
+	}
+	//printf("testando X2");
+	for (int i=1;i<=rowsX2;i++)
+	{
+		if (isinf(fabs(x2.get(i,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x2.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x2.get(i,1)>metricConvergency))
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
+bool BundleAdjustment::isConverged()
+{
+	if(totalIterations<=maxIterations && testConverged()==1)
+		return converged=true;
+	else
+		return converged=false;
+}
+
+void BundleAdjustment::setUserInitialValues(Matrix initialValues)
+{
+	matAdjust=initialValues;
+	userInitialValues= true;
+}
+
+string BundleAdjustment::printAll()
+{
+	string result="";
+	int numImages=listImages.size();
+	for (int i=0;i<numImages;i++)
+	{
+		Image *img=listImages.at(i);
+		//printf("%s:\n",img->getFilename().c_str());
+		result+=img->getFilename().c_str();
+		result+="\n";
+		int numPoints=img->countPoints();
+		for (int j=0; j<numPoints;j++)
+		{
+			if (whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				Point *pnt=img->getPointAt(j);
+				int col=pnt->getDigitalCoordinate(img->getId()).getCol();
+				int lin=pnt->getDigitalCoordinate(img->getId()).getLin();
+				result +="\t";
+				result += pnt->getPointId().c_str();
+				result += " col: ";
+				result += intToString(col);
+				result += " lin: ";
+				result += intToString(lin);
+				result += "\n";
+			}
+			//printf("\t%s: col: %d lin %d\n",pnt->getPointId().c_str(),col,lin);
+		}
+		result += "\n";
+		//printf("\n");
+	}
+	return result;
+}
+
+Matrix BundleAdjustment::getMVC()
+{
+	//Isso Ã© feito apenas para:
+	//ExibiÃ§ao dos angulos em Graus.
+	Matrix tempX1(numImages,6);
+	for (int i=0;i<numImages;i++)
+	{
+		tempX1.set(i+1,1,Dms::radianoToDegreeDecimal(x1.get(6*i+4,1)));
+		tempX1.set(i+1,2,Dms::radianoToDegreeDecimal(x1.get(6*i+5,1)));
+		tempX1.set(i+1,3,Dms::radianoToDegreeDecimal(x1.get(6*i+6,1)));
+		tempX1.set(i+1,4,x1.get(6*i+1,1));
+		tempX1.set(i+1,5,x1.get(6*i+2,1));
+		tempX1.set(i+1,6,x1.get(6*i+3,1));
+	}
+	return tempX1;
+}
+
+bool BundleAdjustment::isPossibleCalculate()
+{
+	if (numEquations<numUnknows)
+		return false;
+	else
+		return true;
+}
+
+Matrix BundleAdjustment::getL0()
+{
+	return L0;
+}
+
+Matrix BundleAdjustment::getLb()
+{
+	return Lb;
+}
+
+void BundleAdjustment::setMetricConvergencyValue(double value)
+{
+	metricConvergency = value;
+}
+
+double BundleAdjustment::getMetricConvergencyValue()
+{
+	return metricConvergency;
+}
+
+void BundleAdjustment::setAngularConvergencyValue(double value)
+{
+	angularConvergency = value;
+}
+
+double BundleAdjustment::getAngularConvergencyValue()
+{
+	return angularConvergency;
+}
+
+void BundleAdjustment::setMaxNumberIterations(int value)
+{
+	maxIterations = value;
+}
+
+int BundleAdjustment::getMaxNumberIterations()
+{
+	return maxIterations;
+}
+
+Matrix BundleAdjustment::getMatrixInicialValues()
+{
+	return matInicialValues;
+}
+
+
+
+/** Metodos EIGEN */
+/*
+Matrix BundleAdjustment::convertEigenToMatrix(Eigen::MatrixXd eigen)
+{
+	int cols = eigen.cols();
+	int rows = eigen.rows();
+	Matrix mat(rows,cols);
+	//qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
+	for(int i=0;i<rows;i++)
+		for (int j=0;j<cols;j++)
+		{
+			mat.set(i+1,j+1,eigen(i,j));
+		}
+	return mat;
+}
+
+Eigen::MatrixXd BundleAdjustment::convertMatrixToEigen(Matrix mat)
+{
+	int cols=mat.getCols();
+	int rows=mat.getRows();
+	Eigen::MatrixXd eig(rows,cols);
+	for(int i=0;i<rows;i++)
+		for (int j=0;j<cols;j++)
+		{
+			eig(i,j)=mat.get(i+1,j+1);
+		}
+	return eig;
+}
+
+Matrix BundleAdjustment::convertVectorEigenToMatrix(Eigen::VectorXd eigen)
+{
+	//int cols = eigen.cols();
+	int rows = eigen.rows();
+	Matrix mat(rows,1);
+	//qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
+	for(int i=0;i<rows;i++)
+		mat.set(i+1,1,eigen(i,0));
+
+	return mat;
+}
+*/
+
+Matrix BundleAdjustment::getResiduo(Point *photogrammetricPoint)
+{
+	Matrix result(1,3);
+	int posFoto=whereInPhotogrammetricPoints(photogrammetricPoint);
+
+	if(posFoto>0)
+	{
+		result.set(1,1,getdXx2(posFoto));
+		result.set(1,2,getdYx2(posFoto));
+		result.set(1,3,getdZx2(posFoto));
+	}
+
+	return result;
+}
+
+deque<Point*> BundleAdjustment::getPhotogrammetricList()
+{
+	return listPhotogrammetricPoints;
+}
