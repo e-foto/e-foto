@@ -1,5 +1,5 @@
 /************************************************************************
-						AnalogImageSpaceCoordinate.cpp
+		 AnalogImageSpaceCoordinate.cpp
 **************************************************************************/
 
 #include "AnalogImageSpaceCoordinate.h"
@@ -9,12 +9,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors
-//
-
-/**
- * AnalogImageSpace's default empty constructor
- */
 AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate()
 {
 	imageId = 0;
@@ -28,9 +22,6 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate()
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId)
 {
 	imageId = myImageId;
@@ -44,9 +35,6 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId)
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
 {
 	imageId = myImageId;
@@ -60,9 +48,6 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, string myU
 	sigmaAvailable = true;
 }
 
-/**
- *
- */
 AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition)
 {
 	imageId = myImageId;
@@ -70,9 +55,6 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const Posi
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
 {
 	imageId = myImageId;
@@ -80,70 +62,36 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const Posi
 	setPositionSigmas(myPositionSigmas);
 }
 
-/**
- *
- */
 AnalogImageSpaceCoordinate::~AnalogImageSpaceCoordinate()
 {
 
 }
 
-
-
-// Private attribute accessor methods
-//
-
-/**
- * Set the value of imageId
- * @param newImageId the new value of imageId
- */
 void AnalogImageSpaceCoordinate::setImageId(int newImageId)
 {
 	imageId = newImageId;
 }
 
-/**
- * Get the value of imageId
- * @return the value of imageId
- */
 int AnalogImageSpaceCoordinate::getImageId()
 {
 	return imageId;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
 string AnalogImageSpaceCoordinate::objectType(void)
 {
 	return "AnalogImageSpaceCoordinate";
 }
 
-/**
- *
- */
 string AnalogImageSpaceCoordinate::objectAssociations(void)
 {
 	return "";
 }
 
-/**
- *
- */
 bool AnalogImageSpaceCoordinate::is(string s)
 {
 	return (s == "AnalogImageSpaceCoordinate" ? true : false);
 }
 
-// XML methods
-//
-
-/**
- *
- */
 void AnalogImageSpaceCoordinate::xmlSetData(string xml)
 {
 	EDomElement root(xml);
@@ -176,9 +124,6 @@ void AnalogImageSpaceCoordinate::xmlSetData(string xml)
 	setPositionSigmas(sigmaMatrix);
 }
 
-/**
- *
- */
 string AnalogImageSpaceCoordinate::xmlGetData()
 {
 	stringstream result;

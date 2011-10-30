@@ -49,19 +49,19 @@ public:
 
 	/**
 	* \brief Método para alterar o valor de erro (variância) na direção Xi.
-	* \param newXi	Novo valor erro para Xi.
+	* \param newSigmaXi	Novo valor erro para Xi.
 	*/
 	void setSigmaXi(double newSigmaXi);
 
 	/**
 	* \brief Método para alterar o valor de erro (variância) na direção Eta.
-	* \param newEta	Novo valor erro para Eta.
+	* \param newSigmaEta	Novo valor erro para Eta.
 	*/
 	void setSigmaEta(double newSigmaEta);
 
 	/**
 	* \brief Método para alterar o valor de erro (covariância) conjunto nas direções Xi e Eta.
-	* \param newXiEta	Novo valor erro para Xi e Eta.
+	* \param newSigmaXiEta	Novo valor erro para Xi e Eta.
 	*/
 	void setSigmaXiEta(double newSigmaXiEta);
 
@@ -96,8 +96,8 @@ public:
 	double getSigmaEta();
 
 	/**
-	* \brief Método para retornar a unidade em que a coordenada é considerada.
-	* \return string	Texto descritor da unidade de medidas considerada para a coordenada.
+	* \brief Método para retornar o valor de erro conjunto para as direções Xi e Eta.
+	* \return double	Valor de erro conjunto para as direções Xi e Eta.
 	*/
 	double getSigmaXiEta();
 
@@ -126,7 +126,7 @@ public:
 	PositionMatrix getPosition();
 
 	/**
-	* \brief Método para retornar a coordenada o erro (sigma) conhecido para a coordenada em uma matriz.
+	* \brief Método para retornar o erro (sigma) conhecido para a coordenada em uma matriz.
 	* \return Matrix	Matriz sigma com os valores de erro para o posicionamento da coordenada.
 	*/
 	Matrix getPositionSigmas();
