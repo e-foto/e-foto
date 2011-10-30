@@ -4,16 +4,16 @@ Pronto:
 ProjectHeader.h
 Terrain.h
 Flight.h
-
-
-
-Em processo:
-
 AnalogFiductialMark.h
 DigitalFiductialMark.h
 AnalogImageSpaceCoordinate.h
 DigitalImageSpaceCoordinate.h
 ObjectSpaceCoordinate.h
+
+
+
+Em processo:
+
 Point.h
 CheckingPoint.h
 ControlPoint.h
@@ -38,6 +38,9 @@ Image.h // Precisa receber merge com o que o Paulo fez.
 BundleAdjustment.h // Fica a cargo do Paulo.
 SpatialRessection.h // Precisa receber merge com o que o Rafael fez.
 ProjectiveRay.h // Fica a cargo do Rafael.
+RayTester.h // Classes novas implementadas para o motor.
+SpatialIntersection.h
+StereoPair.h
 
 */
 

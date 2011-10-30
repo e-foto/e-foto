@@ -1,7 +1,3 @@
-/*******************************************************************************
-						Point.h
-*******************************************************************************/
-
 #ifndef POINT_H
 #define POINT_H
 
@@ -17,41 +13,28 @@ namespace efoto {
 
 class Image;
 
-/******************************* Abstract Class ********************************
-Point does not have any pure virtual methods, but its author
-  defined it as an abstract class, so you should not use it directly.
-  Inherit from it instead and create only objects from the derived classes
-*******************************************************************************/
-
 /**
-* class Point
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 06/05/2009
-* @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
+* \file Point.h
+* \class Point
+* \brief Classe que agrega todas as informações que possam ser pertinentes a um ponto. Sua identificação no projeto, sua coordenada no espaço objeto e suas coordenadas projetadas sobre as imagens onde ele possa ser observado.
+* \abstract Essa é uma classe abstrata para permitir manipular os diversos tipos de pontos específicos de pontos.
+* \attention Construa apenas objetos das classes derivadas.
+* \todo Está em análise refatorar esta família de classes para permitir a transformação de tipo dos pontos sem alterar o endereço de memória destas instâncias.
+* \copyright E-Foto group
+* \authors Rafael Aguiar & Irving Badolato
 */
-
 class Point : public EObject
 {
-	//EOBJECT
-protected:
 
-	// Private attributes
-	//
+protected:
 	int id;
 	string pointId;
 	string description;
 
-	// Aggregated Objects
-	//
 	ObjectSpaceCoordinate objectCoordinate;
 	deque<DigitalImageSpaceCoordinate> digitalCoordinates;
 	deque<AnalogImageSpaceCoordinate> analogCoordinates;
 
-	// Associated Objects
-	//
 	deque<Image*> myImages;
 
 public:
