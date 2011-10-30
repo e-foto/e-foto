@@ -1,5 +1,5 @@
 /*******************************************************************************
-						DigitalImageSpaceCoordinate.cpp
+		 DigitalImageSpaceCoordinate.cpp
 **************************************************************************/
 
 #include "DigitalImageSpaceCoordinate.h"
@@ -9,12 +9,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors
-//
-
-/**
- * DigitalImageSpaceCoordinate's default empty constructor
- */
 DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate()
 {
 	imageId = 0;
@@ -25,9 +19,6 @@ DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate()
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId)
 {
 	imageId = myImageId;
@@ -38,9 +29,6 @@ DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId)
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId, int myCol, int myLin)
 {
 	imageId = myImageId;
@@ -51,9 +39,6 @@ DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId, int myCo
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition)
 {
 	imageId = myImageId;
@@ -61,68 +46,36 @@ DigitalImageSpaceCoordinate::DigitalImageSpaceCoordinate(int myImageId, const Po
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalImageSpaceCoordinate::~DigitalImageSpaceCoordinate()
 {
 
 }
 
-// Private attribute accessor methods
-//
-
-/**
- * Set the value of imageId
- * @param newImageId the new value of imageId
- */
 void DigitalImageSpaceCoordinate::setImageId(int newImageId)
 {
 	imageId = newImageId;
 }
 
-/**
- * Get the value of imageId
- * @return the value of imageId
- */
 int DigitalImageSpaceCoordinate::getImageId()
 {
 	return imageId;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
 string DigitalImageSpaceCoordinate::objectType(void)
 {
 	return "DigitalImageSpaceCoordinate";
 }
 
-/**
- *
- */
 string DigitalImageSpaceCoordinate::objectAssociations(void)
 {
 	return "";
 }
 
-/**
- *
- */
 bool DigitalImageSpaceCoordinate::is(string s)
 {
 	return (s == "DigitalImageSpaceCoordinate" ? true : false);
 }
 
-// XML methods
-//
-
-/**
- *
- */
 void DigitalImageSpaceCoordinate::xmlSetData(string xml)
 {
 	EDomElement root(xml);
@@ -144,9 +97,6 @@ void DigitalImageSpaceCoordinate::xmlSetData(string xml)
 	}
 }
 
-/**
- *
- */
 string DigitalImageSpaceCoordinate::xmlGetData()
 {
 	stringstream result;

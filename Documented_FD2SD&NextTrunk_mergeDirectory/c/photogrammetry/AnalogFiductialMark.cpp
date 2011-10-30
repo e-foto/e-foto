@@ -1,5 +1,5 @@
 /************************************************************************
-						AnalogFiductialMark.cpp
+		 AnalogFiductialMark.cpp
 **************************************************************************/
 
 #include "AnalogFiductialMark.h"
@@ -9,12 +9,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors
-//
-
-/**
- * AnalogFiductialMark's default empty constructor
- */
 AnalogFiductialMark::AnalogFiductialMark()
 {
 	id = 0;
@@ -29,9 +23,6 @@ AnalogFiductialMark::AnalogFiductialMark()
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId)
 {
 	id = myId;
@@ -46,9 +37,6 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId)
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
 {
 	id = myId;
@@ -63,9 +51,6 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, string myUnit
 	sigmaAvailable = true;
 }
 
-/**
- *
- */
 AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const PositionMatrix& myPosition)
 {
 	id = myId;
@@ -74,9 +59,6 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const Positio
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
 {
 	id = myId;
@@ -85,61 +67,31 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const Positio
 	setPositionSigmas(myPositionSigmas);
 }
 
-/**
- *
- */
 AnalogFiductialMark::~AnalogFiductialMark()
 {
 
 }
 
-
-
-// Private attribute accessor methods
-//
-
-/**
- * Set the value of id
- * @param newId the new value of id
- */
 void AnalogFiductialMark::setId(int newId)
 {
 	id = newId;
 }
 
-/**
- * Set the value of sensorId
- * @param newSensorId the new value of sensorId
- */
 void AnalogFiductialMark::setSensorId(int newSensorId)
 {
 	sensorId = newSensorId;
 }
 
-/**
- * Get the value of id
- * @return the value of id
- */
 int AnalogFiductialMark::getId()
 {
 	return id;
 }
 
-/**
- * Get the value of sensorId
- * @return the value of sensorId
- */
 int AnalogFiductialMark::getSensorId()
 {
 	return sensorId;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
 string AnalogFiductialMark::objectType(void)
 {
 	stringstream result;
@@ -147,28 +99,16 @@ string AnalogFiductialMark::objectType(void)
 	return result.str();
 }
 
-/**
- *
- */
 string AnalogFiductialMark::objectAssociations(void)
 {
 	return "";
 }
 
-/**
- *
- */
 bool AnalogFiductialMark::is(string s)
 {
 	return (s == "AnalogFiductialMark" ? true : false);
 }
 
-// XML methods
-//
-
-/**
- *
- */
 void AnalogFiductialMark::xmlSetData(string xml)
 {
 	EDomElement root(xml);
@@ -200,9 +140,6 @@ void AnalogFiductialMark::xmlSetData(string xml)
 	setPositionSigmas(sigmaMatrix);
 }
 
-/**
- *
- */
 string AnalogFiductialMark::xmlGetData()
 {
 	stringstream result;

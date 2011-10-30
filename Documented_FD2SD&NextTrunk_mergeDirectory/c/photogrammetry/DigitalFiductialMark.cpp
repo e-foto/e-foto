@@ -1,5 +1,5 @@
 /*******************************************************************************
-						DigitalFiductialMark.cpp
+		 DigitalFiductialMark.cpp
 **************************************************************************/
 
 #include "DigitalFiductialMark.h"
@@ -9,12 +9,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors
-//
-
-/**
- * DigitalFiductialMark's default empty constructor
- */
 DigitalFiductialMark::DigitalFiductialMark()
 {
 	id = 0;
@@ -26,9 +20,6 @@ DigitalFiductialMark::DigitalFiductialMark()
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId)
 {
 	id = myId;
@@ -40,9 +31,6 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId)
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, int myCol, int myLin)
 {
 	id = myId;
@@ -54,9 +42,6 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, int myCol, i
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, const PositionMatrix& myPosition)
 {
 	id = myId;
@@ -65,59 +50,31 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, const Positi
 	sigmaAvailable = false;
 }
 
-/**
- *
- */
 DigitalFiductialMark::~DigitalFiductialMark()
 {
 
 }
 
-// Private attribute accessor methods
-//
-
-/**
- * Set the value of id
- * @param newId the new value of id
- */
 void DigitalFiductialMark::setId(int newId)
 {
 	id = newId;
 }
 
-/**
- * Set the value of imageId
- * @param newImageId the new value of imageId
- */
 void DigitalFiductialMark::setImageId(int newImageId)
 {
 	imageId = newImageId;
 }
 
-/**
- * Get the value of id
- * @return the value of id
- */
 int DigitalFiductialMark::getId()
 {
 	return id;
 }
 
-/**
- * Get the value of imageId
- * @return the value of imageId
- */
 int DigitalFiductialMark::getImageId()
 {
 	return imageId;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
 string DigitalFiductialMark::objectType(void)
 {
 	stringstream result;
@@ -125,28 +82,16 @@ string DigitalFiductialMark::objectType(void)
 	return result.str();
 }
 
-/**
- *
- */
 string DigitalFiductialMark::objectAssociations(void)
 {
 	return "";
 }
 
-/**
- *
- */
 bool DigitalFiductialMark::is(string s)
 {
 	return (s == "DigitalFiductialMark" ? true : false);
 }
 
-// XML methods
-//
-
-/**
- *
- */
 void DigitalFiductialMark::xmlSetData(string xml)
 {
 	EDomElement root(xml);
@@ -165,9 +110,6 @@ void DigitalFiductialMark::xmlSetData(string xml)
 	}
 }
 
-/**
- *
- */
 string DigitalFiductialMark::xmlGetData()
 {
 	stringstream result;
