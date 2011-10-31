@@ -95,6 +95,15 @@ public:
 	 */
 	Image* instanceImage(int id);
 
+        /**
+         * This method creates an instance of the @e Point class.
+         * @param id The number of the @e Point identifier.
+         */
+        void instanceAllPoints();
+        void instanceAllIOs();
+        void instanceAllEOs();
+        void instanceAllImages();
+
 	/**
 	 * This method creates an instance of the @e Point class.
 	 * @param id The number of the @e Point identifier.

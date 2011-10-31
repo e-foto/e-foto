@@ -25,6 +25,11 @@ SpatialRessection::SpatialRessection()
 	gnssConverged = false;
 	insConverged = false;
 
+	if (myImage != NULL)
+		rt = new RayTester(myImage);
+	else
+		rt = NULL;
+
 	useDistortions = true;
 }
 
@@ -39,6 +44,11 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
 	gnssConverged = false;
 	insConverged = false;
 
+	if (myImage != NULL)
+		rt = new RayTester(myImage);
+	else
+		rt = NULL;
+
 	useDistortions = true;
 }
 
@@ -47,7 +57,11 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
  */
 SpatialRessection::~SpatialRessection()
 {
-
+	if (rt != NULL)
+	{
+		delete rt;
+		rt = NULL;
+	}
 }
 
 
@@ -421,7 +435,11 @@ string SpatialRessection::xmlGetData()
 // Other methods
 //
 
-void SpatialRessection::generateR()
+/*//////////////////////////////////////////////////////////////////////////////////////////////////
+  Aqui tem codigo da PR
+  ////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+/*void SpatialRessection::generateR()
 {
     r11 = cos(phi0) * cos(kappa0);
     r12 = -cos(phi0) * sin(kappa0);
@@ -434,6 +452,14 @@ void SpatialRessection::generateR()
     r33 = cos(omega0) * cos(phi0);
 }
 
+110627 - The R matrix is now calculated inside the RayTester class.
+
+*/
+
+/*//////////////////////////////////////////////////////////////////////////////////////////////////
+  Aqui tem codigo da PR
+  ////////////////////////////////////////////////////////////////////////////////////////////////*/
+
 void SpatialRessection::generateInitialA()
 {
     if (myImage != NULL)
@@ -445,7 +471,8 @@ void SpatialRessection::generateInitialA()
             Point* myPoint = myImage->getPoint(selectedPoints.at(i)); // Escolhi aqui o ponto que estou usando.
             AnalogImageSpaceCoordinate myCoordinate = myPoint->getAnalogCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
             if (myCoordinate.getUnit() == "") // Se essas coordenadas analógicas não existirem, acusadas pela falta de unidade...
-                myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId())); // Crio elas usando digitalToAnalog nas coordenadas digitais.
+				myCoordinate = rt->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+				//myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId())); // Crio elas usando digitalToAnalog nas coordenadas digitais.
 
 			// Distortions added.
 			//if (useDistortions)
@@ -515,24 +542,31 @@ void SpatialRessection::generateA()
     }
 }
 
+/*//////////////////////////////////////////////////////////////////////////////////////////////////
+  Aqui tem codigo da PR
+  ////////////////////////////////////////////////////////////////////////////////////////////////*/
+
 void SpatialRessection::generateL0()
 {
     if (myImage != NULL)
     {
         L0.resize(selectedPoints.size() * 2, 1);
-        double c = myImage->getSensor()->getFocalDistance();
-        double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-        double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
+		//double c = myImage->getSensor()->getFocalDistance();
+		//double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
+		//double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
 
-        generateR();
+		//generateR();
+
+		rt->setEOParameters(X0);
 
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
-            double X = myCoordinate.getX();
-            double Y = myCoordinate.getY();
-            double Z = myCoordinate.getZ();
+
+			//double X = myCoordinate.getX();
+			//double Y = myCoordinate.getY();
+			//double Z = myCoordinate.getZ();
 
 			//double L0xi = xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
 			//double L0eta = eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
@@ -546,11 +580,20 @@ void SpatialRessection::generateL0()
 			//L0.set(j,1,newXi);
 			//L0.set(j+1,1,newEta);
 
-			L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
-			L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
+			//L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
+			//L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
+
+			AnalogImageSpaceCoordinate analog = rt->objectToAnalog(myCoordinate);
+
+			L0.set(j, 1, analog.getXi());
+			L0.set(j+1, 1, analog.getEta());
         }
     }
 }
+
+/*//////////////////////////////////////////////////////////////////////////////////////////////////
+  Aqui tem codigo da PR
+  ////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 void SpatialRessection::generateLb()
 {
@@ -563,7 +606,8 @@ void SpatialRessection::generateLb()
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             AnalogImageSpaceCoordinate myCoordinate = myPoint->getAnalogCoordinate(myImage->getId());
             if (myCoordinate.getUnit() == "")
-                myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+				myCoordinate = rt->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+				//myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
 
 			// Distortions added.
 			//if (useDistortions)
@@ -592,10 +636,17 @@ void SpatialRessection::generateX0()
     kappa0 = X0.get(6,1);
 }
 
+/*//////////////////////////////////////////////////////////////////////////////////////////////////
+  Aqui tem codigo da PR
+  ////////////////////////////////////////////////////////////////////////////////////////////////*/
+
 void SpatialRessection::initialize()
 {
     if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && pointForFlightDirectionAvailable)
 	{
+		rt->setImage(myImage);
+		rt->setIOParameters(myImage->getIO()->getXa());
+
         generateInitialA();
         generateInitialL0();
         generateInitialP();
@@ -633,7 +684,8 @@ void SpatialRessection::initialize()
         phi0 = 0;
 
         // Calculating kappa0.
-        AnalogImageSpaceCoordinate fiductialCoordinate = myImage->getIO()->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+		AnalogImageSpaceCoordinate fiductialCoordinate = rt->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+		//AnalogImageSpaceCoordinate fiductialCoordinate = myImage->getIO()->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
 
 		// Distortions added.
 		//if (useDistortions)
@@ -699,7 +751,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
     {
         int iterations = 0;
 
-		Matrix X0temp, L0temp, firstA;
+        Matrix X0temp, L0temp;
         X0temp = X0;
         L0temp = L0;
 
@@ -711,8 +763,6 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 
 				generateLb();
 				generateA();
-				if (iterations == 0)
-					firstA = A;
 				generateP();
 
 				Xa = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
@@ -754,7 +804,6 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 				iterations++;
 			}
 		}
-		/*
 		else
 		{
 			generateLb();
@@ -769,7 +818,6 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 			Xa.set(6, 1, myImage->getInsKappa());
 			gnssConverged = insConverged = true;
 		}
-		*/
 
 		totalIterations = iterations;
 
@@ -779,10 +827,6 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
         L0 = L0temp;
 
         myQuality.calculate(this);
-
-		setLa(Lb + myQuality.getV());
-
-
     }
 	return gnssConverged && insConverged;
 }
