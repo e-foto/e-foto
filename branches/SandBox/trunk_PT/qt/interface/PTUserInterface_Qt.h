@@ -37,7 +37,7 @@ protected:
 
 	int currentPointKey;
 
-	void previsionMark(int pointKey,QPointF *point);
+	//void previsionMark(int pointKey,QPointF *point);
 
 	string leftImageString;
 	string rightImageString;
@@ -62,6 +62,8 @@ public:
     static PTUserInterface_Qt* instance(PTManager* ptManager);
 	void updateImageTable(QString image,string imageFilename);
     bool exec();
+
+
 
 public slots:
     void activePanMode();

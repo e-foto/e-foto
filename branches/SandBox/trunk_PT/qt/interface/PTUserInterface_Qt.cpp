@@ -128,9 +128,10 @@ void PTUserInterface_Qt::init()
 	rightImageTableWidget->setColumnHidden(3,true);
 
 //	pointsTableWidget->setSortingEnabled();
-	pointsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	leftImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	rightImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	//pointsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	//leftImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	//rightImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+
 	/** carregar imagem da esquerda*/
 	//updateImageTable("leftImage",leftImageString);
 	leftView->loadImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
@@ -288,7 +289,7 @@ void PTUserInterface_Qt::viewReport()
 	//qDebug("Vendo Report");
 	QStringList oeHeaderLabels;
 	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
-	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0"<<QString::fromUtf8("δω") << QString::fromUtf8("δφ") << QString::fromUtf8("δκ") << QString::fromUtf8("δX0") << QString::fromUtf8("δY0") << QString::fromUtf8("δZ0");
 
 
 	QString iter="Iterations: ";
@@ -313,15 +314,16 @@ void PTUserInterface_Qt::viewReport()
 	deque<string> images=selectionImagesView->getSelectedItens();
 	for (int i=0;i<images.size();i++)
 		imagesSelected << QString(images.at(i).c_str());
-	oeTable->setColumnCount(7);
+	oeTable->setColumnCount(13);
 	oeTable->putInColumn(imagesSelected,0);
 	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',4);
+	oeTable->putIn(ptManager->getMVC(),0,7,'f',5);
 	oeTable->setHorizontalHeaderLabels(oeHeaderLabels);
 	oeTable->setSortingEnabled(true);
 
 	oeLayout->addLayout(infoLayout);
 	oeLayout->addWidget(oeTable);
-
+/*
 	QVBoxLayout *mvcLayout= new QVBoxLayout();
 	QLabel *mvcLabel= new QLabel("<font size=5>MVC");
 	mvcLabel->setTextFormat(Qt::RichText);
@@ -331,9 +333,9 @@ void PTUserInterface_Qt::viewReport()
 	mvcLayout->addWidget(mvcTable);
 	oeLayout->addLayout(mvcLayout);
 	horizontalLayout->addLayout(oeLayout);
-
+*/
 	/**/
-	horizontalLayout->setStretchFactor(oeLayout,7);
+	horizontalLayout->setStretchFactor(oeLayout,13);
 	/**///tabela dos pontos fotogrametricos
 
 	deque<string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
@@ -360,8 +362,9 @@ void PTUserInterface_Qt::viewReport()
 		photogrammetricTable->setSortingEnabled(true);
 		phtgLayout->addWidget(phtgLabel);
 		phtgLayout->addWidget(photogrammetricTable);
-		horizontalLayout->addLayout(phtgLayout);
-		horizontalLayout->setStretchFactor(phtgLayout,7);
+		//horizontalLayout->addLayout(phtgLayout);
+		oeLayout->addLayout(phtgLayout);
+		//horizontalLayout->setStretchFactor(phtgLayout,7);
 	}
 	/**/
 
@@ -373,7 +376,8 @@ void PTUserInterface_Qt::viewReport()
 
 	QVBoxLayout *reportLayout= new QVBoxLayout;
 	//reportLayout->addLayout(infoLayout);
-	reportLayout->addLayout(horizontalLayout);
+	//reportLayout->addLayout(horizontalLayout);
+	reportLayout->addLayout(oeLayout);
 	reportLayout->addLayout(buttonsLayout);
 
 	resultView->setLayout(reportLayout);
@@ -411,6 +415,22 @@ bool PTUserInterface_Qt::calculatePT()
 void PTUserInterface_Qt::showSelectionWindow()
 {
 	selectionView= new QWidget();
+
+	deque<string> idsOut = ptManager->getPointsWithLesserThanOverlap(2);
+	if (idsOut.size()>0)
+	{
+		QString ids="";
+		for (int i=0;i<idsOut.size() ; i++)
+		{
+			ids+=QString::fromStdString(idsOut.at(i));
+			ids+=", ";
+		}
+		ids.chop(1);
+		QMessageBox::warning(selectionView,"Point taked out of evaluate",QString("Points with less than 2 overlaps:\n%1").arg(ids));
+	}
+
+
+
 	//if (selectionImagesView==NULL || selectionPointsView==NULL)
 	{
 		//qDebug("Ponteiros nulos");
@@ -799,12 +819,12 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 	if (sender()==leftDisplay)
 	{
 		updateMark("leftImage",ptManager->getImageId(leftImageString),currentPointKey,*pixel);
-		previsionMark(currentPointKey,pixel);
+//		previsionMark(currentPointKey,pixel);
 	}
 	else if (sender()==rightDisplay)
 	{
 		updateMark("rightImage",ptManager->getImageId(rightImageString),currentPointKey,*pixel);
-		previsionMark(currentPointKey,pixel);
+	//	previsionMark(currentPointKey,pixel);
 	}
 }
 
@@ -1067,8 +1087,7 @@ void PTUserInterface_Qt::exportToKml()
 	exported->open(QIODevice::WriteOnly);
 	exported->write(ptManager->exportBlockTokml(exported->fileName().toStdString().c_str()).c_str());
 	exported->close();
-
-/*d
+/*
 	for(int i=0;i<lista.length()-1;i++)
 		{
 		double longi=convertToDMS(lista.at(i).split("\t").at(0)).dmsToDegreeDecimal();
@@ -1113,6 +1132,7 @@ void PTUserInterface_Qt::exportToKml()
 */
 }
 
+/*
 // Chute GROSSEIRO do ponto homologo baseado no overlap que o usuario informa no cadastro
 void PTUserInterface_Qt::previsionMark(int pointKey, QPointF *point)
 {
@@ -1134,7 +1154,7 @@ void PTUserInterface_Qt::previsionMark(int pointKey, QPointF *point)
 */
 	//	else
 		//	newCol=point->x()+overLap*widthImage;
-
+/*
 		if (!ptManager->isAvailablePoint(ptManager->getImageId(images.at(i)),pointKey))
 		{
 			ptManager->updateDigitalCoordinatesPoint(ptManager->getImageId(images.at(i)),pointKey,newCol,point->y());
@@ -1150,7 +1170,7 @@ void PTUserInterface_Qt::previsionMark(int pointKey, QPointF *point)
 		point->setX(newCol);
 	}
 }
-
+*/
 
 void PTUserInterface_Qt::setMaxIteration(int iterations)
 {

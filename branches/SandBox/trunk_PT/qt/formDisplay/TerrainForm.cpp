@@ -8,9 +8,9 @@ TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 	longDmsEdit->setDmsMaximum(180,0,0,false);
 	longDmsEdit->setDmsMinimum(0,0,0,true);
 
-	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
-	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt(double)));
+	connect(minAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt()));
+	connect(maxAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt()));
+	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt()));
 }
 
 void TerrainForm::fillLatDir(string str)
@@ -145,7 +145,7 @@ void TerrainForm::setReadOnly(bool state)
 	utmFuseSpin->setReadOnly(state);
 }
 
-void TerrainForm::validatorAlt(double)
+void TerrainForm::validatorAlt()
 {
 	maxAltSpinBox->setMinimum(minAltSpinBox->value());
 	meanAltSpinBox->setMinimum(minAltSpinBox->value());
