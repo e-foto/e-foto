@@ -13,11 +13,11 @@ BundleAdjustment::BundleAdjustment()
 
 }
 
-BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints, int flightDirection)
+BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints)
 {
 	listImages=listSelectedImages;
 	listPoints=listSelectedPoints;
-	fliDir=flightDirection;
+//	fliDir=flightDirection;
 
 	numImages=listImages.size();
 	numPoints=listPoints.size();
@@ -94,7 +94,7 @@ void BundleAdjustment::fillAnalogCoordinates()
 bool BundleAdjustment::calculate()
 {
 	if (!userInitialValues)
-		getInicialsValues();
+		calculateInicialsValues();
 
 	matAdjust=matInicialValues;
 
@@ -423,8 +423,8 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 
 #ifdef ESPARSA
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
-	(N22-temp1*N12).show('f',5,"N22-temp1*N12");
-
+	//Matrix mat=(N22-temp1*N12);
+	//mat.show('f',5,"N22-temp1*N12");
 	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
 #endif
 
@@ -745,7 +745,7 @@ Matrix BundleAdjustment::getCoordColinearTerrain(double xsi, double eta, double 
 }
 
 /** omega, phi, kappa, X0, Y0, Z0)*/
-void BundleAdjustment::getInicialsValues()
+void BundleAdjustment::calculateInicialsValues()
 {
 	if (numFotogrametricPoints!=0)
 	{
@@ -1371,7 +1371,6 @@ void BundleAdjustment::createLb()
 	}
 	Lb=result;
 }
-
 
 void BundleAdjustment::calculateResiduos()
 {
