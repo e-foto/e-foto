@@ -8,7 +8,7 @@
 #include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
 #include "Dms.h"
-#include "ConvertionsSystems.h"
+
 
 #include <stdlib.h>
 
@@ -138,7 +138,7 @@ string PTManager::getImagefile(int imageId)
 bool PTManager::calculatePT()
 {
 	sortPointsSelected();
-	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints,1);
+	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints);
 	pt->setMaxNumberIterations(maxIterations);
 	pt->setMetricConvergencyValue(metricConvergency);
 	pt->setAngularConvergencyValue(angularConvergency);
@@ -413,7 +413,19 @@ BundleAdjustment* PTManager::getBundleAdjustment()
 deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
 {
 	deque<string> list;
-	if (imageFileName =="")
+	if (imageFileName =="" && cond!="")
+	{
+		int numPnts=listAllPoints.size();
+		for (int i=0; i<numPnts; i++)
+		{
+			Point *pnt=listAllPoints.at(i);
+			int appearances = getImagesAppearances(pnt->getId()).size();
+			//qDebug("num images %d",appearances);
+			if((!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint")) && appearances > 1)
+				list.push_back(pnt->getPointId());
+		}
+		return list;
+	}else if (imageFileName =="" && cond=="")
 	{
 		int numPnts=listAllPoints.size();
 		for (int i=0; i<numPnts; i++)
@@ -805,9 +817,9 @@ string PTManager::exportBlockTokml(string fileName)
 	for (int i=0;i<listAllImages.size();i++)
 	{
 		string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
-		int B=random()%15;
-		int G=random()%15;
-		int R=random()%15;
+                int B=rand()%15;
+                int G=rand()%15;
+                int R=rand()%15;
 
 		stringstream aux1;
 
@@ -886,22 +898,44 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << "</coordinates>\n";
 		aux << "</LineString>\n";
 		aux << "</Placemark>\n";
-}
+	}
 
-	aux << "<Folder>\n";
-	aux << "<name>" << "Projeto do e-foto"<< "</name>\n";
+	string controlPoint="";
+	string photogrammetricPoint="";
+	string checkingPoint="";
+
 	//qDebug("%c\t%d\t%s",latitude,zona,sys.getSystemName().c_str());
 	for(int i=0;i<listAllPoints.size();i++)
 	{
 		Point *pnt=listAllPoints.at(i);
 		string pointType;
 		if (pnt->is("PhotogrammetricPoint"))
-			pointType = "photogrammetricPoint";
+			photogrammetricPoint += pointToKml(pnt,zona,sys,hemiLatitude,"photogrammetricPoint");
 		else if (pnt->is("ControlPoint"))
-			pointType = "controlPoint";
+			controlPoint += pointToKml(pnt,zona,sys,hemiLatitude,"controlPoint");
 		else if (pnt->is("CheckingPoint"))
-			pointType = "checkingPoint";
+			checkingPoint += pointToKml(pnt,zona,sys,hemiLatitude, "checkingPoint");
+	}
 
+	aux << "<Folder>\n";
+	aux << "<name>" << "Control Points"<< "</name>\n";
+	aux << controlPoint;
+	aux << "</Folder>\n";
+
+	aux << "<Folder>\n";
+	aux << "<name>" << "Photogrammetric Points"<< "</name>\n";
+	aux << photogrammetricPoint;
+	aux << "</Folder>\n";
+
+	aux << "<Folder>\n";
+	aux << "<name>" << "Checking Points"<< "</name>\n";
+	aux << checkingPoint;
+	aux << "</Folder>\n";
+
+
+	aux << "</Document>\n</kml>";
+
+/*
 		double E=pnt->getObjectCoordinate().getX();
 		double N=pnt->getObjectCoordinate().getY();
 		double H=pnt->getObjectCoordinate().getZ();
@@ -945,14 +979,69 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << doubleToString(H) <<"</coordinates>\n";
 		aux << "</Point>\n";
 		aux << "</Placemark>\n";
-	}
+	}*/
+	/*aux << "<Folder>\n";
+	aux << "<name>" << "Projeto do e-foto"<< "</name>\n";
+
+
 	aux << "</Folder>\n";
-	aux << "</Document>\n</kml>";
+	aux << "</Document>\n</kml>";*/
+
 	EDomElement xmlgoogle(aux.str());
 
 	return xmlgoogle.indent('\t').getContent();
 
 }
+
+string PTManager::pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType)
+{
+	stringstream pointString;
+	double E=pnt->getObjectCoordinate().getX();
+	double N=pnt->getObjectCoordinate().getY();
+	double H=pnt->getObjectCoordinate().getZ();
+
+	Matrix plh=ConvertionsSystems::utmToGeoFran(E,N,H,zona,sys,hemiLatitude);
+
+	double lat=plh.get(1,1)*180/M_PI;
+	double longi=plh.get(1,2)*180/M_PI;
+
+	lat = (hemiLatitude=='S' ? -lat:lat);
+
+	pointString << "<Placemark>\n";
+	pointString << "<name>" << pnt->getPointId() << "</name>\n";
+	pointString << "<description>" << pnt->getDescription() << "</description>\n";
+	pointString << "<LookAt>\n";
+	pointString << "<longitude>";
+	pointString << doubleToString(longi);
+	pointString << "</longitude>\n";
+	pointString <<  "<latitude>";
+	pointString << doubleToString(lat);
+	pointString << "</latitude>\n";
+	pointString << "<altitude>";
+	pointString << doubleToString(H)<<"</altitude>\n";
+	pointString << "<heading>0.01795058696543714</heading>\n";
+	pointString << "<tilt>0</tilt>\n";
+	pointString << "<range>1463.920597456832</range>\n";
+	pointString << "<altitudeMode>relativeToGround</altitudeMode>\n";
+	pointString << "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>\n";
+	pointString << "</LookAt>\n";
+	pointString << "<styleUrl>#" << pointType <<"</styleUrl>\n";
+	pointString << "<Point>\n";
+	pointString << "<altitudeMode>clampToGround</altitudeMode>\n";
+	pointString << "<gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>\n";
+	pointString << "<coordinates>";
+	pointString << doubleToString(longi);
+	pointString << ",";
+	pointString << doubleToString(lat);
+	pointString << ",";
+	pointString << doubleToString(H) <<"</coordinates>\n";
+	pointString << "</Point>\n";
+	pointString << "</Placemark>\n";
+
+	return pointString.str();
+
+}
+
 
 void PTManager::setMetricConvergencyValue(double value)
 {
@@ -1049,7 +1138,7 @@ void PTManager::reloadPointsCoordinates()
 */
 void PTManager::photogrammetricSort()
 {
-	pt->getInicialsValues();
+	pt->calculateInicialsValues();
 	Matrix oe=pt->getMatrixInicialValues();
 	for (int i=0;i<listAllPoints.size();i++)
 	{
@@ -1132,141 +1221,15 @@ int PTManager::whereInImages(Image *img)
 	return -1;
 }
 
-/*
-int numPoints=listAllPoints.size();
-int numImages=listAllImages.size();
-
-//Matrix overlapLongiTable(numImages,numImages);
-//Matrix overlapTransTable(numImages,numImages);
-//Matrix divisor(numImages,numImages);
-
-Matrix overlapLongiTable(59,59);
-Matrix overlapTransTable(59,59);
-Matrix divisor(59,59);
-
-//divisor.ones();
-//overlapLongiTable.identity(listAllImages.size());
-
-for (int i=0;i<numPoints;i++)
+deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
 {
-	Point *pnt=listAllPoints.at(i);
-	deque<DigitalImageSpaceCoordinate> listCoord=pnt->getDigitalCoordinates();
-	//printf("%s\n",pnt->getPointId().c_str());
-	if (listCoord.size()>1)
+	deque<string> ids;
+	int numPoints=listAllPoints.size();
+	for (int i=0;i<numPoints;i++)
 	{
-
-		for (int j=0;j<listCoord.size();j++)
-		{
-			DigitalImageSpaceCoordinate coord1=listCoord.at(j);
-			int imageId1=coord1.getImageId();
-			int col1=coord1.getCol();
-			int row1=coord1.getLin();
-			int width1=efotoManager->instanceImage(imageId1)->getWidth();
-
-			//printf("col %d = %.3d\n",imageId1,col1);
-			//printf("width = %d\n",width1);
-			for (int k=j+1;k<listCoord.size();k++)
-			{
-				DigitalImageSpaceCoordinate coord2=listCoord.at(k);
-				int imageId2=coord2.getImageId();
-				int col2=coord2.getCol();
-				int row2=coord2.getLin();
-				//int width2=efotoManager->instanceImage(imageId2)->getWidth();
-
-				double overlapLongi12=1.0*(col1 - col2)/width1;
-				double overlapLongi21=-overlapLongi12;
-
-				double overlapTrans12=1.0*(row1 - row2)/width1;
-				double overlapTrans21=-overlapTrans12;
-
-				//printf("overlap: [%d,%d] = %.3f \n",imageId1,imageId2,overlapLongi12);
-
-				overlapLongiTable.set(imageId1,imageId2,overlapLongiTable.get(imageId1,imageId2)+overlapLongi12);
-				overlapLongiTable.set(imageId2,imageId1,overlapLongiTable.get(imageId2,imageId1)+overlapLongi21);
-
-				overlapTransTable.set(imageId1,imageId2,overlapTransTable.get(imageId1,imageId2)+overlapTrans12);
-				overlapTransTable.set(imageId2,imageId1,overlapTransTable.get(imageId2,imageId1)+overlapTrans21);
-
-				divisor.set(imageId1,imageId2,divisor.getInt(imageId1,imageId2)+1);
-				divisor.set(imageId2,imageId1,divisor.getInt(imageId2,imageId1)+1);
-			}
-		}
+		Point * pnt=listAllPoints.at(i);
+		if (getImagesAppearances(pnt->getId()).size() < overlap)
+			ids.push_back(pnt->getPointId());
 	}
-	//printf("\n\n");
+	return ids;
 }
-
-for (int i=1;i<=overlapLongiTable.getRows();i++)
-{
-	for (int j=1;j<=overlapLongiTable.getCols();j++)
-	{
-		double overlap=overlapLongiTable.get(i,j);
-		if(!isnan(overlap))
-		{
-			if (overlap<0)
-				overlapLongiTable.set(i,j,-1-overlap/divisor.get(i,j));
-			else
-				overlapLongiTable.set(i,j,1-overlap/divisor.get(i,j));
-		}
-	}
-}
-
-//overlapLongiTable.show('f',3,"OverlapLongiTable");
-
-for (int i=1;i<=overlapTransTable.getRows();i++)
-{
-	for (int j=1;j<=overlapTransTable.getCols();j++)
-	{
-		double overlap=overlapTransTable.get(i,j);
-		if(!isnan(overlap))
-		{
-			if (overlap<0)
-				overlapTransTable.set(i,j,-1-overlap/divisor.get(i,j));
-			else
-				overlapTransTable.set(i,j,1-overlap/divisor.get(i,j));
-		}
-	}
-}
-
-//overlapTransTable.show('f',3,"OverlapTransTable");
-
-//deque<Image*> faixa;
-for (int i=1;i<=overlapLongiTable.getRows();i++)
-{
-	Image *img1=efotoManager->instanceImage(i);
-	for (int j=i+1; j<=overlapLongiTable.getCols();j++)
-	{
-		double longi=overlapLongiTable.get(i,j);
-		double trans=overlapTransTable.get(i,j);
-
-		Image *img2=efotoManager->instanceImage(j);
-		if (!isnan(longi) && !isnan(trans))
-		{
-			if (trans>0.9 || trans <-0.9)
-			{
-				if (longi>0)
-					qDebug("imagem %s esta a esquerda de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
-				if (longi<0)
-					qDebug("imagem %s esta a direita de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
-			}
-			/*
-			else if (0<trans && trans<0.9)
-			{
-				if (longi>0.9 || longi<-0.9)
-					qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
-				//if (longi<0)
-				//printf("imagem %d esta a direita de %d",i,j);
-			}
-			else if (-0.9<trans && trans <0 )
-				qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());*/
-			/*
-			if (longi>0.9 || longi<-0.9)
-			{
-				if (trans>0)
-					qDebug("imagem %s esta acima de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
-				if (trans<0)
-					qDebug("imagem %s esta abaixo de %s\n",img1->getFilename().c_str(),img2->getFilename().c_str());
-			}
-		}
-	}
-}
-*/

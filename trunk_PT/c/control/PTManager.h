@@ -2,9 +2,9 @@
 #define PTMANAGER_H
 
 #include "EObject.h"
-#include <deque>
 #include "BundleAdjustment.h"
 #include "Matrix.h"
+#include "ConvertionsSystems.h"
 #include <QStringList>
 #include <deque>
 
@@ -75,7 +75,7 @@ public:
 
 	deque<string> getStringKeysPoints(string imageFileName="");
 	deque<string> getStringTypePoints(string imageFileName="");
-	deque<string> getStringIdPoints(string imageFileName="",string cond="");
+	deque<string> getStringIdPoints(string imageFileName="",string cond1="");
 	deque<string> getStringImages();
 
 	void selectPoints(deque<string> selectedPointsList);
@@ -111,6 +111,7 @@ public:
 	bool isAvailablePoint(int imageId, int pointKey);
 
 	string exportBlockTokml(string fileName);
+	string pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType);
 	double getFlightScale();
 
 	void setMaxIteration(int iterations);
@@ -134,6 +135,7 @@ public:
 
 	Matrix getPointResiduo(int pointKey);
 
+	deque<string> getPointsWithLesserThanOverlap(int overlap);
 
 
 };
