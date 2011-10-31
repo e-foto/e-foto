@@ -114,6 +114,10 @@ HEADERS += \
     MatchingPoints.h \
     DemGrid.h \
     Terrain.h \
+    ProjectiveRay.h \
+    RayTester.h \
+    SpatialIntersection.h \
+    StereoPair.h \
 # c/xml_definitions/
     XMLAerial.h \
     XMLFlight.h \
@@ -241,6 +245,10 @@ SOURCES += \
     MatchingPoints.cpp \
     DemGrid.cpp \
     Terrain.cpp \
+    ProjectiveRay.cpp \
+    RayTester.cpp \
+    SpatialIntersection.cpp \
+    StereoPair.cpp \
 # c/xml_definitions/
     XMLAerial.cpp \
     XMLFlight.cpp \

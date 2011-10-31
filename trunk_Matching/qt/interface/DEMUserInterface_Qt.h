@@ -5,6 +5,7 @@
 #include "DEMUserInterface.h"
 #include "ImageView.h"
 #include "LoadingScreen.h"
+#include "Matrix.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -37,6 +38,8 @@ public:
 	// Other Methods
 	//
 	bool exec();
+        Matrix * loadImage(char *filename, double sample=1.0);
+        int saveImage(char *filename, Matrix *I);
 
 };
 

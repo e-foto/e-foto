@@ -10,6 +10,7 @@
 
 #include <QApplication>
 
+
 // Constructors and destructor
 //
 
@@ -129,6 +130,74 @@ Image* EFotoManager::instanceImage(int id)
 	return newImage;
 }
 
+void EFotoManager::instanceAllImages()
+{
+        EDomElement root(xmlData);
+        deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
+        for (unsigned int i = 0 ;i < xmlAllImages.size();i++)
+        {
+                qApp->processEvents();
+                if (xmlAllImages.at(i).getContent().compare("") == 0)
+                        continue;
+                bool notAvailable = true;
+                for (unsigned int j = 0; j < images.size() && notAvailable; j++)
+                    if (images.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(i).attribute("key")))
+                                notAvailable = false;
+                if (notAvailable)
+                {
+                        Image* newImage = new Image();
+                        newImage->xmlSetData(xmlAllImages.at(i).getContent());
+                        images.push_back(newImage);
+                }
+        }
+}
+
+/**
+ *
+ */
+void EFotoManager::instanceAllPoints()
+{
+        EDomElement root(xmlData);
+        deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
+
+        for (unsigned int i = 0; i < xmlAllPoint.size(); i++)
+        {
+                qApp->processEvents();
+                if (xmlAllPoint.at(i).getContent().compare("") == 0)
+                        continue;
+
+                // Evita reinstaciar pontos que ja estejam disponiveis
+                bool notAvailable = true;
+                for (unsigned int j = 0; j < points.size() && notAvailable; j++)
+                        if (points.at(j)->getId() == Conversion::stringToInt(xmlAllPoint.at(i).attribute("key")))
+                                notAvailable = false;
+                if (notAvailable)
+                {
+                        if (xmlAllPoint.at(i).attribute("type").compare("control") == 0)
+                        {
+                                ControlPoint* newPoint = new ControlPoint();
+                                newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+                                points.push_back(newPoint);
+                                //return (Point*) newPoint;
+                        }
+                        if (xmlAllPoint.at(i).attribute("type").compare("checking") == 0)
+                        {
+                                CheckingPoint* newPoint = new CheckingPoint();
+                                newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+                                points.push_back(newPoint);
+                                //return (Point*) newPoint;
+                        }
+                        if (xmlAllPoint.at(i).attribute("type").compare("photogrammetric") == 0)
+                        {
+                                PhotogrammetricPoint* newPoint = new PhotogrammetricPoint();
+                                newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+                                points.push_back(newPoint);
+                                //return (Point*) newPoint;
+                        }
+                }
+        }
+}
+
 /**
  *
  */
@@ -185,6 +254,32 @@ InteriorOrientation* EFotoManager::instanceIO(int imageId)
 	return newIO;
 }
 
+void EFotoManager::instanceAllIOs()
+{
+        EDomElement root(xmlData);
+        deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
+        for (unsigned int i = 0 ;i < xmlAllIOs.size();i++)
+        {
+                qApp->processEvents();
+                if (xmlAllIOs.at(i).getContent().compare("") == 0)
+                        continue;
+                bool notAvailable = true;
+                for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
+                        if (IOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key")))
+                                notAvailable = false;
+                //InteriorOrientation *pkj;
+                //pkj->getImageId()
+                if (notAvailable)
+                {
+                        InteriorOrientation* newIO = new InteriorOrientation();
+                        newIO->setImage(image(Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key"))));
+                        newIO->xmlSetData(xmlAllIOs.at(i).getContent());
+                        newIO->setImage(NULL);
+                        IOs.push_back(newIO);
+                }
+        }
+}
+
 /**
  *
  */
@@ -205,6 +300,32 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 		return (ExteriorOrientation*) newEO;
 	}
 	return NULL;
+}
+
+void EFotoManager::instanceAllEOs()
+{
+        EDomElement root(xmlData);
+        deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
+        for (unsigned int i = 0 ;i < xmlAllEOs.size();i++)
+        {
+                qApp->processEvents();
+                if (xmlAllEOs.at(i).getContent().compare("") == 0)
+                        continue;
+                bool notAvailable = true;
+                for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
+                        if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key")))
+                                notAvailable = false;
+                //InteriorOrientation *pkj;
+                //pkj->getImageId()
+                if (notAvailable)
+                {
+                        SpatialRessection* newEO = new SpatialRessection(); // SpatialRessection vai virar ExteriorOrientation em breve.
+                        newEO->setImage(image(Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key"))));
+                        newEO->xmlSetData(xmlAllEOs.at(i).getContent());
+                        newEO->setImage(NULL);
+                        EOs.push_back(newEO);
+                }
+        }
 }
 
 /**
@@ -696,7 +817,11 @@ bool EFotoManager::execDEM()
 
         nextModule = 2;
 
-        dem = new DEMManager(this);
+        instanceAllImages();
+        instanceAllPoints();
+        instanceAllEOs();
+
+        dem = new DEMManager(this, images, EOs);
 
         result = dem->exec();
 
@@ -705,7 +830,21 @@ bool EFotoManager::execDEM()
 
 void EFotoManager::stopDEM()
 {
-        delete dem;
+    delete dem;
+    dem = NULL;
+    //deleteSensor(images.at(0)->getSensorId());
+    int numPoints=points.size();
+    int numImages=images.size();
+
+    for (int i=0;i<numPoints;i++)
+    {
+            deletePoint(points.at(0)->getId());
+    }
+    for (int i=0;i<numImages;i++)
+    {
+            deleteIO(images.at(0)->getId());
+            deleteImage(images.at(0)->getId());
+    }
 }
 
 /**

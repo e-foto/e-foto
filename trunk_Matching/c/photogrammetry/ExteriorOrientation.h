@@ -45,6 +45,7 @@ public:
     string objectType(void);
     string objectAssociations(void);
 
+
 };
 
 #endif //EXTERIORORIENTATION_H
