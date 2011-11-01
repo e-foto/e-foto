@@ -2471,7 +2471,7 @@ void ProjectUserInterface_Qt::updateCurrentForm()
 void ProjectUserInterface_Qt::importPointsFromTxt2()
 {
 	//primeiro arquivo
-	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+        QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import ENH file"),".","*.txt");
 	if(importFileName=="")
 		return;
 	QFile *importFile = new QFile(importFileName);
@@ -2489,7 +2489,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt2()
 	importFile->close();
 
 	//segundo arquivo
-	QString importFileName2 = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
+        QString importFileName2 = QFileDialog::getOpenFileName(this,tr("Open Import Digital File"),".","*.txt");
 	if(importFileName2=="")
 		return;
 	QFile *importFile2 = new QFile(importFileName2);
@@ -2506,7 +2506,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt2()
 	}
 	importFile2->close();
 
-	// Procura e concatena o ponto `as suas coordenadas digitais nas imagens
+        // Procura e concatena o ponto as suas coordenadas digitais nas imagens
 	int cont=0;
 	for (int i=0;i<pointsList.size();i++ )
 	{
@@ -2515,7 +2515,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt2()
 		for (int j=0;j<pointsList2.size() && cont!=-1;j++)
 		{
 			QStringList fieldsDigital= pointsList2.at(j).split("\t");
-			qDebug()<<fieldsDigital;
+                        //qDebug()<<fieldsDigital;
 			QString gcpIdFieldDigital = fieldsDigital.at(1);
 			if(gcpIdField.compare(gcpIdFieldDigital)==0)
 			{
@@ -2527,6 +2527,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt2()
 				cont++;
 			}
 		}
+
 	}
 	//for (int i=0;i<pointsList.size();i++ )
 	//qDebug()<< "Lista " << pointsList.at(0);
