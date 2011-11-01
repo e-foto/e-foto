@@ -420,9 +420,10 @@ deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
 		{
 			Point *pnt=listAllPoints.at(i);
 			int appearances = getImagesAppearances(pnt->getId()).size();
-			//qDebug("num images %d",appearances);
-			if((!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint")) && appearances > 1)
-				list.push_back(pnt->getPointId());
+                        if (pnt->is("PhotogrammetricPoint") && appearances < 2)
+                            continue;
+                        if(!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint") && (pnt->is("PhotogrammetricPoint") && appearances > 1))
+                            list.push_back(pnt->getPointId());
 		}
 		return list;
 	}else if (imageFileName =="" && cond=="")
@@ -1227,9 +1228,10 @@ deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
 	int numPoints=listAllPoints.size();
 	for (int i=0;i<numPoints;i++)
 	{
-		Point * pnt=listAllPoints.at(i);
-		if (getImagesAppearances(pnt->getId()).size() < overlap)
-			ids.push_back(pnt->getPointId());
+                Point * pnt=listAllPoints.at(i);
+                if(pnt->is("PhotogrammetricPoint"))
+                    if (getImagesAppearances(pnt->getId()).size() < overlap)
+                    ids.push_back(pnt->getPointId());
 	}
 	return ids;
 }
