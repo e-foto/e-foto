@@ -29,6 +29,7 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     img2 = NULL;
     listAllImages = images;
     listEOs = eos;
+    setListPoint();
 }
 
 DEMManager::~DEMManager()
@@ -58,16 +59,15 @@ bool DEMManager::exec()
     {
         if (manager->getInterfaceType().compare("Qt") == 0)
         {
-            //myInterface = new IOUserInterface_Qt(this);
             myInterface = DEMUserInterface_Qt::instance(this);
         }
         connectImagePoints();
-        createInitialSeeds();
         started = true;
         if (myInterface != NULL)
         {
             myInterface->exec();
             getPairs();
+            createInitialSeeds();
         }
     }
     return status;
@@ -78,12 +78,16 @@ void DEMManager::returnProject()
     manager->reloadProject();
 }
 
-void DEMManager::getPairs()
+void DEMManager::setListPoint()
 {
-    //for (int i=0; i < manager->EOs.size())
-    printf("Images: %d\n",listAllImages.size());
-    printf("EO: %d\n",listEOs.size());
-
+        EDomElement xmlPoints(manager->getXml("points"));
+        deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+        for(int i=0;i<allPoints.size();i++)
+        {
+            Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
+                if (point != NULL)// && !point->is("CheckingPoint"))
+                        listAllPoints.push_back(point);
+        }
 }
 
 bool DEMManager::connectImagePoints()
@@ -118,8 +122,30 @@ bool DEMManager::connectImagePoints()
                 return true;
         }
         return false;
-        printf("Ok\n");
 }
+
+void DEMManager::getPairs()
+{
+    //
+    // List Pairs description (0 - N-1):
+    //
+    // num = left + no_imgs*right // Encoding
+    // left = num % no_imgs // Decoding
+    // right =  num / no_imgs // Decoding
+
+    //for (int i=0; i < manager->EOs.size())
+ //   printf("Images: %d\n",listAllImages.size());
+//    printf("EO: %d\n",listEOs.size());
+
+    // Criado na mão!! 0-1 e 1-2
+    listPairs.clear();
+    listPairs.push_back(3);
+    listPairs.push_back(7);
+}
+
+/*
+ * Seeds
+ **/
 
 void DEMManager::createInitialSeeds()
 {
@@ -128,13 +154,29 @@ void DEMManager::createInitialSeeds()
 
     MatchingPoints mp;
     Point *p;
+    Image *img;
+    int no_imgs;
     deque<DigitalImageSpaceCoordinate> Dic;
 
     printf("Pontos: %d\n",listAllPoints.size());
     for (int i=0; i<listAllPoints.size(); i++)
     {
         p = listAllPoints.at(i);
-        printf("Ponto %d, imagens: %d\n",i,p->countImages());
+        no_imgs = p->countImages();
+
+        if (no_imgs < 2)
+            continue;
+
+        printf("Ponto %d, imagens: %d - ",i,no_imgs);
+
+        for (int j=0; j<no_imgs; j++)
+        {
+            img = p->getImageAt(j);
+            printf("%d ",img->getId());
+        }
+
+        printf("\n");
+
 //        Dic = p->getDigitalCoordinate(listAllImages.at(i));
 
 
