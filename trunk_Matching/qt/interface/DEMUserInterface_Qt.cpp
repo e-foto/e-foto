@@ -1,12 +1,12 @@
 #include "DEMUserInterface_Qt.h"
 
+#include <qdesktopwidget.h>
 #include <qapplication.h>
 #include <qvariant.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
-
 
 DEMUserInterface_Qt* DEMUserInterface_Qt::demInst = NULL;
 
@@ -56,6 +56,15 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
 
         setWindowState(this->windowState());
+
+        // Center window
+        QDesktopWidget *desktop = QApplication::desktop();
+        int Cx,Cy;
+        QRect rect = geometry();
+        Cx = (desktop->width() - rect.width())/2;
+        Cy = (desktop->height() - rect.height())/2;
+        move(Cx,Cy);
+
 	qApp->processEvents();
 	init();
 }

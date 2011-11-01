@@ -27,7 +27,9 @@ class DEMManager
         EFotoManager* manager;
         deque<Image*> listAllImages;
         deque<Point*> listAllPoints;
+        deque<int> listPairs;
         deque<ExteriorOrientation*> listEOs;
+        void setListPoint();
         bool connectImagePoints();
         ImageMatching im;
         Matrix *img1, *img2;
