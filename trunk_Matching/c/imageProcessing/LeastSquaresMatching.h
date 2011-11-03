@@ -41,6 +41,7 @@ public:
 	void setMaxIterations(int _its) { max_iterations = _its; };
 	void getNextPosition(double *, double *, int, int);
 	void setConvergenceLimits(double _shift, double _scale, double _shear) { limit_shift_values = _shift; limit_scale_values = _scale; limit_shear_values = _shear; };
+        void setMaxDistance(double _max) { max_distance = _max; };
 
 private:
 	void imgGradient(Matrix *);

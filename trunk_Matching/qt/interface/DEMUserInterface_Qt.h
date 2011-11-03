@@ -29,6 +29,7 @@ protected:
 
 protected slots:
 	virtual void languageChange();
+        void onDemExtractionClicked();
 
 private:
         void init();
@@ -40,6 +41,9 @@ public:
 	bool exec();
         Matrix * loadImage(char *filename, double sample=1.0);
         int saveImage(char *filename, Matrix *I);
+        void addImagePair(char *);
+        void setStatus(char *);
+        void setProgress(int);
 
 };
 

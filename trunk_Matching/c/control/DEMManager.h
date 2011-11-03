@@ -21,6 +21,8 @@ class DEMManager
 {
 	// Private Attributes
 	//
+        int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
+        double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std;
 	bool started;
 	bool status;
         DEMUserInterface* myInterface;
@@ -29,13 +31,14 @@ class DEMManager
         deque<Point*> listAllPoints;
         deque<int> listPairs;
         deque<ExteriorOrientation*> listEOs;
+        Image * getImage(int);
         void setListPoint();
         bool connectImagePoints();
-        ImageMatching im;
-        Matrix *img1, *img2;
         MatchingPointsList seeds, pairs;
+        void getImagesId(int, int&, int&);
         void resamplePoints(MatchingPointsList *list, double resample);
         void createInitialSeeds();
+        void extractDEMPair(int);
 
 public:
 
@@ -55,6 +58,11 @@ public:
         bool exec();
         void returnProject();
         void getPairs();
+        void extractDEM(int);
+        void setAutoExtractionSettings(int, int, int, int);
+        void setNCCSettings(int, int, double, double);
+        void setLSMSettings(int, int, double, double, int, double, double, double);
+        void setProgress(int);
 
 };
 

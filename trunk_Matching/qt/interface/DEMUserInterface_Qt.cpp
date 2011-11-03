@@ -54,6 +54,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         this->manager = manager;
 
         QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+        QObject::connect(demButton, SIGNAL(clicked()), this, SLOT(onDemExtractionClicked()));
 
         setWindowState(this->windowState());
 
@@ -124,6 +125,37 @@ bool DEMUserInterface_Qt::exec()
     return true;
 }
 
+void DEMUserInterface_Qt::addImagePair(char *item)
+{
+    QString text = QString::fromAscii(item);
+    comboBox5->addItem(text);
+}
+
+void DEMUserInterface_Qt::setStatus(char *txt)
+{
+    workLabel->setText(QString::fromAscii(txt));
+}
+
+void DEMUserInterface_Qt::setProgress(int progress)
+{
+    if (progress < 0) progress = 0;
+    if (progress > 100) progress = 100;
+
+    progressBar->setValue(progress);
+}
+
+/*
+ * Image matching
+ **/
+
+void DEMUserInterface_Qt::onDemExtractionClicked()
+{
+    manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value());
+    manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value());
+    manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
+    manager->extractDEM(comboBox5->currentIndex());
+}
+
 /*
  * Image dealing
  **/
@@ -131,7 +163,7 @@ bool DEMUserInterface_Qt::exec()
 Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
 {
         int levels=256;
-
+        printf("filename: %s\n",filename);
         QImage img;
         img.load(filename);
 
@@ -142,15 +174,18 @@ Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
 
         Matrix *I = new Matrix(height, width);
 
+        progressBar->setValue(0);
         for (unsigned int i=1; i<=height; i++)
         {
                 for (unsigned int j=1; j<=width; j++)
                 {
                         pixel = img.pixel((j-1)*step,(i-1)*step);
 //			pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140;
-                        pixel = pixel & 0xFF;
+                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
+//                        pixel = pixel & 0xFF;
                         I->set(i, j, pixel/double(levels-1));
                 }
+                progressBar->setValue((100*i)/height);
         }
 
         return I;
