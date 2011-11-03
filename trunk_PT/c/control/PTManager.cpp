@@ -9,9 +9,7 @@
 #include "SensorWithFiducialMarks.h"
 #include "Dms.h"
 
-
 #include <stdlib.h>
-
 
 PTManager::PTManager()
 {
@@ -420,10 +418,10 @@ deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
 		{
 			Point *pnt=listAllPoints.at(i);
 			int appearances = getImagesAppearances(pnt->getId()).size();
-                        if (pnt->is("PhotogrammetricPoint") && appearances < 2)
-                            continue;
-                        if(!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint") && (pnt->is("PhotogrammetricPoint") && appearances > 1))
-                            list.push_back(pnt->getPointId());
+			if (pnt->is("PhotogrammetricPoint") && appearances < 2)
+				continue;
+			if(!pnt->is("CheckingPoint") || (pnt->is("CheckingPoint") && cond!="noCheckingPoint"))
+					list.push_back(pnt->getPointId());
 		}
 		return list;
 	}else if (imageFileName =="" && cond=="")
@@ -933,63 +931,9 @@ string PTManager::exportBlockTokml(string fileName)
 	aux << checkingPoint;
 	aux << "</Folder>\n";
 
-
 	aux << "</Document>\n</kml>";
 
-/*
-		double E=pnt->getObjectCoordinate().getX();
-		double N=pnt->getObjectCoordinate().getY();
-		double H=pnt->getObjectCoordinate().getZ();
-
-		Matrix plh=ConvertionsSystems::utmToGeoFran(E,N,H,zona,sys,hemiLatitude);
-
-		double lat=plh.get(1,1)*180/M_PI;
-		double longi=plh.get(1,2)*180/M_PI;
-
-		lat = (hemiLatitude=='S' ? -lat:lat);
-
-		aux << "<Placemark>\n";
-		aux << "<name>" << pnt->getPointId() << "</name>\n";
-		aux << "<description>" << pnt->getDescription() << "</description>\n";
-		aux <<pnt->getDescription();
-		aux << "<LookAt>\n";
-		aux << "<longitude>";
-		aux << doubleToString(longi);
-		aux << "</longitude>\n";
-		aux <<  "<latitude>";
-		aux << doubleToString(lat);
-		aux << "</latitude>\n";
-		aux << "<altitude>";
-		aux << doubleToString(H)<<"</altitude>\n";
-		aux << "<heading>0.01795058696543714</heading>\n";
-		aux << "<tilt>0</tilt>\n";
-		aux << "<range>1463.920597456832</range>\n";
-		aux << "<altitudeMode>relativeToGround</altitudeMode>\n";
-		aux << "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>\n";
-		aux << "</LookAt>\n";
-		//aux << "<styleUrl>#msn_ylw-pushpin</styleUrl>\n";
-		aux << "<styleUrl>#" << pointType <<"</styleUrl>\n";
-		aux << "<Point>\n";
-		aux << "<altitudeMode>clampToGround</altitudeMode>\n";
-		aux << "<gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>\n";
-		aux << "<coordinates>";
-		aux << doubleToString(longi);
-		aux << ",";
-		aux << doubleToString(lat);
-		aux << ",";
-		aux << doubleToString(H) <<"</coordinates>\n";
-		aux << "</Point>\n";
-		aux << "</Placemark>\n";
-	}*/
-	/*aux << "<Folder>\n";
-	aux << "<name>" << "Projeto do e-foto"<< "</name>\n";
-
-
-	aux << "</Folder>\n";
-	aux << "</Document>\n</kml>";*/
-
 	EDomElement xmlgoogle(aux.str());
-
 	return xmlgoogle.indent('\t').getContent();
 
 }
@@ -1092,49 +1036,6 @@ void PTManager::reloadPointsCoordinates()
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
 */
 void PTManager::photogrammetricSort()
@@ -1228,10 +1129,10 @@ deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
 	int numPoints=listAllPoints.size();
 	for (int i=0;i<numPoints;i++)
 	{
-                Point * pnt=listAllPoints.at(i);
-                if(pnt->is("PhotogrammetricPoint"))
-                    if (getImagesAppearances(pnt->getId()).size() < overlap)
-                    ids.push_back(pnt->getPointId());
+		Point * pnt=listAllPoints.at(i);
+		if(pnt->is("PhotogrammetricPoint"))
+			if (getImagesAppearances(pnt->getId()).size() < overlap)
+				ids.push_back(pnt->getPointId());
 	}
 	return ids;
 }
