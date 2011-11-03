@@ -27,6 +27,17 @@ int main( int argc, char ** argv )
     efoto.connect(&efoto, SIGNAL(lastWindowClosed()), &efoto, SLOT(quit()));
 */
 	//LoadingScreen::instance().show();
+/*
+	Matrix mat(3,3);
+	for (int i=1;i<4;i++)
+	{
+		for (int j=1;j<4;j++)
+		mat.set(i,j,rand()*255);
+	}
+	Matrix iden;
+	iden.identity(3);
+	(mat&iden).triang().reduction().show('g',8,"teste");
+*/
 	qApp->processEvents();
     EFotoManager manager;
     manager.setInterfaceType("Qt");

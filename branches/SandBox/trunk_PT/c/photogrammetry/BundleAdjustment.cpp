@@ -4,6 +4,10 @@
 #include <qdebug.h>
 #include <QTime>
 
+
+#define FRANC
+//#define PAULO
+
 #define MAXRESIDUO 0.0001
 #define ESPARSA
 #define TIMES
@@ -143,21 +147,21 @@ bool BundleAdjustment::calculate()
 				//n12.show('f',3,"N12=A1^T*P*A2");
 				int n12time=ptime.restart();
 
-				Matrix n22=getN22();
+				/*Matrix*/ n22=getN22();
 				//n22.show('f',3,"N22==A2^T*P*A2");
 				int n22time=ptime.restart();
 
-				//setInverseN22(n22);
+				setInverseN22(n22);
 				//int invN22time=ptime.restart();
 
-				Matrix n1=getn1(l);
+				/*Matrix*/ n1=getn1(l);
 				//n1.show('f',3,"n1=A1^T*P*L");
 				int n1time=ptime.restart();
 
-				Matrix n2=getn2(l);
+				/*Matrix*/ n2=getn2(l);
 				//n2.show('f',3,"n2==A2^T*P*L");
 				int n2time=ptime.restart();
-
+#ifdef PAULO
 				setx2(n12,n22,n2,n1);
 				int x2time=ptime.restart();
 				//x2.show();
@@ -165,8 +169,18 @@ bool BundleAdjustment::calculate()
 				setx1(n12,n1);
 				int x1time=ptime.restart();
 				//x1.show();
+#endif
 
+#ifdef FRANC
 
+				setx1(n12,n1);
+				int x1time=ptime.restart();
+
+				setx2(n12,n22,n2,n1);
+				int x2time=ptime.restart();
+				//x2.show();
+
+#endif
 
 #ifdef TIMES
 				qDebug("Tempo para executar a %d iteracao",totalIterations);
@@ -284,7 +298,6 @@ bool BundleAdjustment::calculate()
 	setAFP();
 	return true;
 }
-
 
 /* metodos de calculo*/
 Matrix BundleAdjustment::getM11(Matrix M1)
@@ -410,9 +423,18 @@ Matrix BundleAdjustment::getn2(Matrix L)
 void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 {
 
+#ifdef PAULO
 	SparseMatrix temp1=SparseMatrix(inverseN11);
 	x1=temp1*n1-SparseMatrix(temp1*N12)*x2;
+#endif
 
+#ifdef FRANC
+
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(n12)*inverseN22);
+	//Matrix mat=(N22-temp1*N12);
+	//mat.show('f',5,"N22-temp1*N12");
+	x2=SparseMatrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
+#endif
 	//SparseMatrix temp1=SparseMatrix(inverseN11);
 	//x1=temp1*(n1-SparseMatrix(N12)*x2);
 
@@ -421,13 +443,25 @@ void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 {
 
+	/*
 #ifdef ESPARSA
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
 	//Matrix mat=(N22-temp1*N12);
 	//mat.show('f',5,"N22-temp1*N12");
 	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
 #endif
+*/
+#ifdef PAULO
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
+	//Matrix mat=(N22-temp1*N12);
+	//mat.show('f',5,"N22-temp1*N12");
+	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+#endif
 
+#ifdef FRANC
+	SparseMatrix temp1=SparseMatrix(inverseN22);
+	x1=temp1*n2-SparseMatrix(temp1*n12.transpose())*x1;
+#endif
 	//return x2;
 }
 
@@ -456,6 +490,17 @@ void BundleAdjustment::setInverseN11(Matrix n11)
 	for (int i=1;i<rows;i+=6)
 	{
 		Matrix unit=n11.sel(i,i+5,i,i+5);
+		inverseN11.putMatrix(unit.inverse(),i,i);
+	}
+}
+
+void BundleAdjustment::setInverseN22(Matrix n22)
+{
+	int rows=n11.getRows();
+	inverseN11=n11;
+	for (int i=1;i<rows;i+=3)
+	{
+		Matrix unit=n11.sel(i,i+2,i,i+2);
 		inverseN11.putMatrix(unit.inverse(),i,i);
 	}
 }
