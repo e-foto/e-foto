@@ -12,6 +12,7 @@
 #include "LeastSquaresMatching.h"
 #include "RadiometricTransformation.h"
 #include "MatchingPoints.h"
+#include "DEMManager.h"
 
 /**
 * class ImageMatching
@@ -35,9 +36,10 @@ class ImageMatching
 {
 
 public:
+        ImageMatching();
+        ImageMatching(DEMManager *_dm) { manager = _dm; };
 	enum matmet { NCC, LSM };
 	enum eadmod { Equalization, HistMatching };
-	ImageMatching();
 	void setMatchingMethod();
 	LeastSquaresMatching* getLSM() { return &lsm; };
 	NormalizedCrossCorrelation* getNCC() { return &ncc; };
@@ -73,6 +75,7 @@ private:
 	bool push(int,int,int,int);
 	void emptyStack();
 	void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy);
+        DEMManager *manager;
 };
 
 #endif
