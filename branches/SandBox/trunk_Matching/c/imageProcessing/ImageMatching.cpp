@@ -252,7 +252,8 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 		// Calculate coverage
 		num_visited += 1.0;
 		coverage = num_visited/max_size;
-		printf("%.2f %%\r",coverage*100);
+                //printf("%.2f %%\r",coverage*100);
+                manager->setProgress(coverage*100);
 	}
 }
 
