@@ -78,6 +78,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(zoomToolButton,SIGNAL(clicked()),this,SLOT(zoomDetail()));
 	connect(saveMarksButton,SIGNAL(clicked()),this,SLOT(saveMarks()));
 	connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
+	connect(markToolButton,SIGNAL(clicked()),this,SLOT(addPoint()));
+	connect(insertPointInButton,SIGNAL(clicked(bool)),this,SLOT(toggleInsertPointMode(bool)));
 
 	connect(leftDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
 	connect(rightDisplay,SIGNAL(mouseClicked(QPointF*)),this,SLOT(imageClicked(QPointF*)));
@@ -205,28 +207,15 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 
 bool PTUserInterface_Qt::exec()
 {
-	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
+//	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
+	/*
 	deque<string>  ids  = ptManager->getStringIdPoints();
 	deque<string> types = ptManager->getStringTypePoints();
 	deque<string> keys  = ptManager->getStringKeysPoints();
-	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";
+	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";*/
 
 	updateImageTable("leftImage",leftImageString);
-
-	Matrix pointsMatrix=ptManager->getENH();
-	for (int i=0;i<ids.size();i++)
-	{
-		idPoints << QString(ids.at(i).c_str());
-		typePoints << QString(types.at(i).c_str());
-		keysPoints << QString(keys.at(i).c_str());
-	}
-	pointsTableWidget->putInColumn(idPoints,0);
-	pointsTableWidget->putInColumn(typePoints,1);
-	pointsTableWidget->putIn(pointsMatrix,0,2,'f',3);
-	pointsTableWidget->putInColumn(keysPoints,5);
-	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
-	pointsTableWidget->resizeTable();
-
+	updatePointsTable();
 	updateImageTable("rightImage",rightImageString);
 
 	//connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
@@ -626,6 +615,28 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 	}
 }
 
+void PTUserInterface_Qt::updatePointsTable()
+{
+	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;
+	deque<string>  ids  = ptManager->getStringIdPoints();
+	deque<string> types = ptManager->getStringTypePoints();
+	deque<string> keys  = ptManager->getStringKeysPoints();
+	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";
+
+	Matrix pointsMatrix=ptManager->getENH();
+	for (int i=0;i<ids.size();i++)
+	{
+		idPoints << QString(ids.at(i).c_str());
+		typePoints << QString(types.at(i).c_str());
+		keysPoints << QString(keys.at(i).c_str());
+	}
+	pointsTableWidget->putInColumn(idPoints,0);
+	pointsTableWidget->putInColumn(typePoints,1);
+	pointsTableWidget->putIn(pointsMatrix,0,2,'f',3);
+	pointsTableWidget->putInColumn(keysPoints,5);
+	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
+	pointsTableWidget->resizeTable();
+}
 //Seleciona em todas as tabelas onde o ponto aparece
 void PTUserInterface_Qt::selectAllAppearances(int tableRow)
 {
@@ -818,11 +829,27 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 {
 	if (sender()==leftDisplay)
 	{
+		if (insertionMode)
+		{
+			// Verificar se point esta na tabela da direita pelas pointkey; isPointIn(rightImageTableWidget,currentPointKey)
+			// Se estiver
+			// continua normalmente;
+			// senao
+			// conecte o ponto corrente na imagem da direita
+		}
 		updateMark("leftImage",ptManager->getImageId(leftImageString),currentPointKey,*pixel);
 //		previsionMark(currentPointKey,pixel);
 	}
 	else if (sender()==rightDisplay)
 	{
+		if (insertionMode)
+		{
+		// Verificar se point esta na tabela da direita pelas pointkey ; isPointIn(leftImageTableWidget,currentPointKey)
+		// Se estiver
+		// continua normalmente;
+		// senao
+		// conecte o ponto corrente na imagem da esquerda
+		}
 		updateMark("rightImage",ptManager->getImageId(rightImageString),currentPointKey,*pixel);
 	//	previsionMark(currentPointKey,pixel);
 	}
@@ -1186,3 +1213,39 @@ void PTUserInterface_Qt::setAngularConvergencyValue(double value)
 {
 	ptManager->setAngularConvergencyValue(value);
 }
+
+void PTUserInterface_Qt::addPoint()
+{
+	ptManager->createNewPoint();
+	ptManager->setENH();
+	ptManager->reloadPointsCoordinates();
+	updatePointsTable();
+}
+
+void PTUserInterface_Qt::insertPointIn(int imageKey)
+{
+
+	connectPointinImage(currentPointKey,imageKey);
+	updateImageTable("leftImage",leftImageString);
+	updateImageTable("rightImage",rightImageString);
+
+}
+
+void PTUserInterface_Qt::toggleInsertPointMode(bool newInsertionMode)
+{
+	insertionMode=newInsertionMode;
+}
+
+int PTUserInterface_Qt::isPointIn(QTableWidget *table, int pointkey)
+{
+	int rows=table->rowCount();
+	bool ok;
+	for (int i=0;i<rows;i++)
+	{
+		int key=table->item(i,4)->text().toInt(&ok);
+		if (pointkey==key)
+			return i;
+	}
+	return -1;
+}
+

@@ -870,3 +870,39 @@ bool EFotoManager::exec(string filename)
 
 	return true;
 }
+
+int EFotoManager::getFreeImageId()
+{
+
+	int result = 0;
+	//if (manager != NULL)
+	{
+		deque<EDomElement> images = EDomElement(getXml("images")).children();
+		result = 1;
+		for (int i = images.size()-1; i >= 0; i--)
+		{
+			if (stringToInt(images.at(i).attribute("key")) >= result)
+				result = stringToInt(images.at(i).attribute("key"))+1;
+		}
+		return result;
+	}
+	//return result;
+}
+
+int EFotoManager::getFreePointId()
+{
+
+	int result = 0;
+	//if (manager != NULL)
+	{
+		deque<EDomElement> points = EDomElement(getXml("points")).children();
+		result = 1;
+		for (int i = points.size()-1; i >= 0; i--)
+		{
+			if (stringToInt(points.at(i).attribute("key")) >= result)
+				result = stringToInt(points.at(i).attribute("key"))+1;
+		}
+		return result;
+	}
+	//return result;
+}
