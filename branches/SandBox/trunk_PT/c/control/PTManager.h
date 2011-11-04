@@ -137,6 +137,7 @@ public:
 
 	deque<string> getPointsWithLesserThanOverlap(int overlap);
 
+	void createNewPoint();
 
 };
 
