@@ -1136,3 +1136,26 @@ deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
 	}
 	return ids;
 }
+
+
+void PTManager::createNewPoint()
+{
+	string text = "";
+
+	int currentItemId = efotoManager->getFreePointId();
+	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"photogrammetric\">\n";
+	text += "<pointId>PF" + intToString(currentItemId) + "</pointId>\n";
+	text += "<description></description>\n";
+	text += "<spatialCoordinates uom=\"#m\">\n";
+	text += "<gml:pos>0.0 0.0 0.0</gml:pos>\n";
+	text += "<sigma>Not Available</sigma>\n";
+	text += "</spatialCoordinates>\n";
+	text += "</point>";
+
+	EDomElement xml(efotoManager->xmlGetData());
+	xml.addChildAtTagName("points",text);
+
+	efotoManager->xmlSetData(xml.getContent());
+	listAllPoints.push_back(efotoManager->instancePoint(currentItemId));
+
+}

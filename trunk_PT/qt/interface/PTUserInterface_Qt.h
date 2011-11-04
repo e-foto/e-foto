@@ -36,6 +36,7 @@ protected:
 	PTManager *ptManager;
 
 	int currentPointKey;
+	bool insertionMode;
 
 	//void previsionMark(int pointKey,QPointF *point);
 
@@ -79,6 +80,7 @@ public slots:
 	void setFlightDirection(QString imageFile, double kappa0);
 
 	void updateImagesList(QString imageFilename);
+	void updatePointsTable();
 	void selectAllAppearances(int index);
 	void showImagesAppearances(int indexRow,int indexCol);
 	int findKeyAppearances(QString table, QString searched);
@@ -97,6 +99,11 @@ public slots:
 	void setMaxIteration(int iterations);
 	void setMetricConvergencyValue(double value);
 	void setAngularConvergencyValue(double value);
+
+	void addPoint();
+	void insertPointIn();
+	void toggleInsertPointMode(bool newInsertionMode);
+	int isPointIn(QTableWidget *table, int pointkey);
 
 protected slots:
 	//virtual bool confirmToClose();

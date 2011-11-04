@@ -401,8 +401,9 @@ int ProjectManager::getImageId(string imageName)
     return -1;
 }
 
+
 int ProjectManager::getFreeImageId()
-{
+{	/*
 	int result = 0;
 	if (manager != NULL)
 	{
@@ -415,11 +416,13 @@ int ProjectManager::getFreeImageId()
 		}
 		return result;
 	}
-	return result;
+	return result;*/
+	return manager->getFreeImageId();
 }
 
 int ProjectManager::getFreePointId()
 {
+	/*
 	int result = 0;
 	if (manager != NULL)
 	{
@@ -432,7 +435,9 @@ int ProjectManager::getFreePointId()
 		}
 		return result;
 	}
-	return result;
+	return result;*/
+
+	return manager->getFreePointId();
 }
 
 bool ProjectManager::startModule(string module, int image)

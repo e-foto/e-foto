@@ -302,6 +302,11 @@ public:
 	// executa fotoTri
         bool execPT();
         void stopPT();
+	/**
+	  *
+	  */
+	int getFreeImageId();
+	int getFreePointId();
 
 };
 
