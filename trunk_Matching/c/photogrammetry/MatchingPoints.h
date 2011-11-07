@@ -59,8 +59,8 @@ public:
 	void listMp();
 	void listMp(int);
 	MatchingPoints* get(int);
-	int save(char *, saveType);
-	int load(char *, loadType, bool append=false, int left_id=-1, int right_id=-1);
+	int save(char *, int);
+	int load(char *, int, bool append=false, int left_id=-1, int right_id=-1);
 	int size() { return list.size(); };
 	unsigned int getNumBadPoints() { return bad_points; };
 	void sortList(sortCriteria criteria);
