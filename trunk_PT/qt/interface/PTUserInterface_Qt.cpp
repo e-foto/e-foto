@@ -6,8 +6,6 @@
 #include <QMessageBox>
 #include "ConvertionsSystems.h"
 
-
-
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
 PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
@@ -90,6 +88,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 	actionView_Report->setEnabled(false);
+	insertionMode=false;
 
 	qApp->processEvents();
 	init();
@@ -119,6 +118,8 @@ void PTUserInterface_Qt::init()
 	currentPointKey =-1;
 	leftImageString = images.at(0);
 	rightImageString= images.at(1);
+	leftImageKey = ptManager->getImageId(leftImageString);
+	rightImageKey = ptManager->getImageId(rightImageString);
 
 	leftImageComboBox->addItems(listImageLeft);
 	rightImageComboBox->addItems(listImageRight);
@@ -216,6 +217,7 @@ bool PTUserInterface_Qt::exec()
 
 	updateImageTable("leftImage",leftImageString);
 	updatePointsTable();
+	pointsTableWidget->resizeTable();
 	updateImageTable("rightImage",rightImageString);
 
 	//connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
@@ -519,6 +521,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 	if(sender()==leftImageComboBox)
 	{
 		leftImageString=imageFilename.toStdString().c_str();
+		leftImageKey = ptManager->getImageId(leftImageString);
 		QString currentRightImage=rightImageComboBox->currentText();
 		rightImageComboBox->blockSignals(true);
 		rightImageComboBox->clear();
@@ -532,7 +535,8 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 	}
 	else if(sender()==rightImageComboBox)
 	{
-		rightImageString= imageFilename.toStdString().c_str();
+		rightImageString = imageFilename.toStdString().c_str();
+		rightImageKey = ptManager->getImageId(rightImageString);
 		QString currentLefttImage=leftImageComboBox->currentText();
 		leftImageComboBox->blockSignals(true);
 		leftImageComboBox->clear();
@@ -547,7 +551,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 }
 
 //Atualiza a tabela de imagens
-void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
+void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename, bool move)
 {
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
@@ -581,7 +585,8 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 			int lin =leftImageTableWidget->item(pos,2)->text().toInt(&ok);
 			//qDebug("left image coord %dx%d",col,lin);
 			QPointF pixel(col,lin);
-			leftView->moveTo(pixel);
+			if (move)
+				leftView->moveTo(pixel);
 			leftDisplay->update();
 		}
 		leftImageTableWidget->setSortingEnabled(true);
@@ -608,7 +613,8 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename)
 			int lin =rightImageTableWidget->item(pos,2)->text().toInt(&ok);
 			//qDebug("right image coord %dx%d",col,lin);
 			QPointF pixel(col,lin);
-			rightView->moveTo(pixel);
+			if(move)
+				rightView->moveTo(pixel);
 			rightDisplay->update();
 		}
 		rightImageTableWidget->setSortingEnabled(true);
@@ -635,7 +641,7 @@ void PTUserInterface_Qt::updatePointsTable()
 	pointsTableWidget->putIn(pointsMatrix,0,2,'f',3);
 	pointsTableWidget->putInColumn(keysPoints,5);
 	pointsTableWidget->setHorizontalHeaderLabels(headerLabelsPoints);
-	pointsTableWidget->resizeTable();
+	//pointsTableWidget->resizeTable();
 }
 //Seleciona em todas as tabelas onde o ponto aparece
 void PTUserInterface_Qt::selectAllAppearances(int tableRow)
@@ -831,27 +837,32 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 	{
 		if (insertionMode)
 		{
-			// Verificar se point esta na tabela da direita pelas pointkey; isPointIn(rightImageTableWidget,currentPointKey)
-			// Se estiver
-			// continua normalmente;
-			// senao
-			// conecte o ponto corrente na imagem da direita
+			if(isPointIn(leftImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da direita pelas pointkey
+			{
+				ptManager->connectPointInImage(currentPointKey,leftImageKey);
+				updateImageTable("leftImage",leftImageString,false);
+				//conecte o ponto corrente na imagem da direita
+			}
 		}
 		updateMark("leftImage",ptManager->getImageId(leftImageString),currentPointKey,*pixel);
 //		previsionMark(currentPointKey,pixel);
+		//leftView->moveTo(*pixel);
 	}
 	else if (sender()==rightDisplay)
 	{
 		if (insertionMode)
 		{
-		// Verificar se point esta na tabela da direita pelas pointkey ; isPointIn(leftImageTableWidget,currentPointKey)
-		// Se estiver
-		// continua normalmente;
-		// senao
-		// conecte o ponto corrente na imagem da esquerda
+
+			if(isPointIn(rightImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da esquerda pelas pointkey
+			{
+			 //conecte o ponto corrente na imagem da esquerda
+				ptManager->connectPointInImage(currentPointKey,rightImageKey);
+				updateImageTable("rightImage",rightImageString,false);
+			}
 		}
 		updateMark("rightImage",ptManager->getImageId(rightImageString),currentPointKey,*pixel);
-	//	previsionMark(currentPointKey,pixel);
+		//rightView->moveTo(*pixel);
+		//	previsionMark(currentPointKey,pixel);
 	}
 }
 
@@ -1222,28 +1233,35 @@ void PTUserInterface_Qt::addPoint()
 	updatePointsTable();
 }
 
+/*
 void PTUserInterface_Qt::insertPointIn(int imageKey)
 {
 
-	connectPointinImage(currentPointKey,imageKey);
+	connectPointInImage(currentPointKey,imageKey);
 	updateImageTable("leftImage",leftImageString);
 	updateImageTable("rightImage",rightImageString);
-
 }
+*/
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool newInsertionMode)
 {
 	insertionMode=newInsertionMode;
+/*	if (insertionMode)
+		qDebug("modo de insercao ativado");
+	else
+		qDebug("modo de insercao DESativado");
+		*/
 }
 
-int PTUserInterface_Qt::isPointIn(QTableWidget *table, int pointkey)
+//Retorna a posicao do ponto na tabela se o ponto nao estiver retorna -1
+int PTUserInterface_Qt::isPointIn(QTableWidget *table, int pointKey)
 {
 	int rows=table->rowCount();
 	bool ok;
 	for (int i=0;i<rows;i++)
 	{
-		int key=table->item(i,4)->text().toInt(&ok);
-		if (pointkey==key)
+		int key=table->item(i,3)->text().toInt(&ok);
+		if (key==pointKey)
 			return i;
 	}
 	return -1;

@@ -5,8 +5,8 @@
 #include <QTime>
 
 
-#define FRANC
-//#define PAULO
+//#define FRANC
+#define PAULO
 
 #define MAXRESIDUO 0.0001
 #define ESPARSA
@@ -497,11 +497,11 @@ void BundleAdjustment::setInverseN11(Matrix n11)
 void BundleAdjustment::setInverseN22(Matrix n22)
 {
 	int rows=n11.getRows();
-	inverseN11=n11;
+	inverseN22=n22;
 	for (int i=1;i<rows;i+=3)
 	{
-		Matrix unit=n11.sel(i,i+2,i,i+2);
-		inverseN11.putMatrix(unit.inverse(),i,i);
+		Matrix unit=n22.sel(i,i+2,i,i+2);
+		inverseN22.putMatrix(unit.inverse(),i,i);
 	}
 }
 

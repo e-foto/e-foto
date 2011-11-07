@@ -35,13 +35,12 @@ protected:
 	ETableWidget *tableImageRight;
 	PTManager *ptManager;
 
-	int currentPointKey;
+	int currentPointKey,leftImageKey,rightImageKey;
 	bool insertionMode;
 
 	//void previsionMark(int pointKey,QPointF *point);
 
-	string leftImageString;
-	string rightImageString;
+	string leftImageString, rightImageString;
 	QStringList listAllImages;// contem os file name das imagens
 	QStringList listAllPoints;// contem os ids dos pontos
 
@@ -61,7 +60,7 @@ private:
 
 public:
     static PTUserInterface_Qt* instance(PTManager* ptManager);
-	void updateImageTable(QString image,string imageFilename);
+	void updateImageTable(QString image,string imageFilename, bool move=true);
     bool exec();
 
 
@@ -101,7 +100,7 @@ public slots:
 	void setAngularConvergencyValue(double value);
 
 	void addPoint();
-	void insertPointIn();
+	//void insertPointIn(int imageKey);
 	void toggleInsertPointMode(bool newInsertionMode);
 	int isPointIn(QTableWidget *table, int pointkey);
 

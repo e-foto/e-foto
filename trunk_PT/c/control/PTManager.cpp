@@ -163,6 +163,7 @@ bool PTManager::calculatePT()
 		return false;
 }
 
+/*
 PositionMatrix PTManager::getImageDimensions(string filename)
 {
 	for (int i=0;i<listAllImages.size();i++)
@@ -182,7 +183,7 @@ PositionMatrix PTManager::getImageDimensions(string filename)
 
 	}
 }
-
+*/
 void PTManager::setMatrixAFP(Matrix afp)
 {
 	Matrix result(afp.getRows(),afp.getCols());
@@ -319,6 +320,19 @@ string PTManager::getFilePath(string fileName)
 		}
 	return "";
 }
+
+string PTManager::getFilePath(int imageKey)
+{
+	int numImages=listAllImages.size();
+	for (int i=0;i<numImages;i++)
+		if(listAllImages.at(i)->getId()==imageKey)
+		{
+			string file = listAllImages.at(i)->getFilepath() + "/" + listAllImages.at(i)->getFilename();
+			return file;
+		}
+	return "";
+}
+
 
 deque<string> PTManager::getStringTypePoints(string imageFileName)
 {
@@ -522,6 +536,37 @@ Matrix PTManager::getColLin(string imageFilename)
 		}
 	}
 }
+
+Matrix PTManager::getColLin(int imageKey)
+{
+	int numImages= listAllImages.size();
+	//qDebug("lista de imagens %d",listAllImages.size());
+	for (int i=0;i<numImages;i++)
+	{
+		//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
+		//qDebug("Antes %s",imageFileName.c_str());
+		if(listAllImages.at(i)->getId() == imageKey)
+		{
+			//qDebug("Achou %s",imageFileName.c_str());
+			Image *temp=listAllImages.at(i);
+			int numpnts=temp->countPoints();
+			Matrix result(numpnts,2);
+			for (int j=0;j<numpnts;j++)
+			{
+				DigitalImageSpaceCoordinate coord=temp->getPointAt(j)->getDigitalCoordinate(temp->getId());
+				//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
+				result.setInt(j+1,1,coord.getCol());
+				result.setInt(j+1,2,coord.getLin());
+			}
+			return result;
+		}
+	}
+}
+
+
+
+
+
 
 //Faz um update das coordenadas digitais do ponto 'pointKey' na imagem 'imageKey'
 void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey, int col, int lin)
@@ -1159,3 +1204,17 @@ void PTManager::createNewPoint()
 	listAllPoints.push_back(efotoManager->instancePoint(currentItemId));
 
 }
+
+void PTManager::connectPointInImage(int pointKey, int imageKey)
+{
+	Point* point = efotoManager->instancePoint(pointKey);
+	Image* image = efotoManager->instanceImage(imageKey);
+	point->putImage(image);
+	image->putPoint(point);
+	image->sortPoints();
+
+}
+
+
+
+
