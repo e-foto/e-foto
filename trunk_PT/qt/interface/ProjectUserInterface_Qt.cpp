@@ -2652,3 +2652,82 @@ void ProjectUserInterface_Qt::deleteEmptyPoints()
 	//qDebug("%d",cont);
 
 }
+
+void ProjectUserInterface_Qt::exportDigitalCoordinates()
+{
+	QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
+	if (fileSaveName=="")
+		return;
+	QFile *exportFileName= new QFile(fileSaveName);
+	exportFileName->setFileName(fileSaveName);
+	exportFileName->open(QIODevice::WriteOnly);
+
+	EDomElement points(manager->getXml("points").c_str());
+
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+//	QPushButton cancelButton("Cancel");
+	loading.setRange(0,points.children().size());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+//	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+//	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Exporting Points"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	for (int i=1; i<=points.children().size(); i++)
+	{
+		loading.setFormat(tr("Point %v/%m : %p%"));
+		loading.setValue(i);
+		exportFileName->write(edomDigitalCoordinatesPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+	}
+	loadWidget->close();
+	exportFileName->close();
+}
+
+/** This function convert a EDomElement children Point in a line *.txt point format
+	*/
+string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement points)
+{
+	stringstream aux;
+	stringstream stdev;
+	QString gmlpos=points.elementByTagName("imagesMeasurements").toString().c_str();
+
+
+	aux << points.attribute(("imageCoordinates","image_key",).toString().c_str()<< "\t";
+	//aux << points.attribute("type")<< "\t";
+
+	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
+
+	Matrix stdevMatrix;
+	stdevMatrix.xmlSetData(points.elementByTagName("mml:matrix").getContent());
+
+	if (points.hasTagName("mml:matrix"))
+	{
+		   /*
+		   aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
+		   aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
+		   aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
+		   */
+	   aux << "\t" << stdevMatrix.get(1,1) <<"\t";
+	   aux << stdevMatrix.get(2,2) <<"\t";
+	   aux << stdevMatrix.get(3,3);
+	}
+	aux <<"\n";
+	string result=aux.str();
+	//qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
+
+	//qDebug("stdev:%s",stdev.str().c_str());
+	//qDebug("result:%s",result.c_str());
+
+	return result.c_str();
+}
+
+
+
+}

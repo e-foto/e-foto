@@ -70,6 +70,7 @@ public:
 	Matrix getMVC();
 
 	Matrix getColLin(string imageFilename);
+	Matrix getColLin(int imageKey);
 	bool connectImagePoints();
 	void setListPoint();
 
@@ -83,8 +84,10 @@ public:
 
 	// metodo para dar um update nas coordenadas digitais do pont
 	void updateDigitalCoordinatesPoint(int imageId,int pointKey,int col, int lin);
+
 	int getImageId(string imageFilename);
-	PositionMatrix getImageDimensions(string filename);
+
+	//PositionMatrix getImageDimensions(string filename);
 
 
 	BundleAdjustment* getBundleAdjustment();
@@ -95,6 +98,8 @@ public:
 	deque<string> getSelectedPointIdPhotogrammetric();
 
 	string getFilePath(string fileName);
+	string getFilePath(int imageKey);
+
 	void saveResults();
 	void saveBundleAdjustment();
 	void saveMarks();
@@ -106,8 +111,12 @@ public:
 	bool hasPreviousData();
 
 	void setImageFlightDirection(string imageFile,double flightDirection);
+	void setImageFlightDirection(int imageKey,double flightDirection);
+
 	double getLongitudinalOverlap(string imageFile);
+	double getLongitudinalOverlap(int imageKey);
 	double getImageFlightDirection(string imageFile);
+	double getImageFlightDirection(int imageKey);
 	bool isAvailablePoint(int imageId, int pointKey);
 
 	string exportBlockTokml(string fileName);
@@ -132,12 +141,12 @@ public:
 	int whereInImages(Image *img);
 	Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
 
-
 	Matrix getPointResiduo(int pointKey);
 
 	deque<string> getPointsWithLesserThanOverlap(int overlap);
 
 	void createNewPoint();
+	void connectPointInImage(int pointKey, int imageKey);
 
 };
 
