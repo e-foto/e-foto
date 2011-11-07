@@ -22,7 +22,7 @@ class DEMManager
 	// Private Attributes
 	//
         int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
-        double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std;
+        double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
 	bool started;
 	bool status;
         DEMUserInterface* myInterface;
@@ -39,6 +39,7 @@ class DEMManager
         void resamplePoints(MatchingPointsList *list, double resample);
         void createInitialSeeds();
         void extractDEMPair(int);
+        void calcPointsXYZ();
 
 public:
 
@@ -59,10 +60,14 @@ public:
         void returnProject();
         void getPairs();
         void extractDEM(int);
-        void setAutoExtractionSettings(int, int, int, int);
+        void setAutoExtractionSettings(int, int, int, int, double);
         void setNCCSettings(int, int, double, double);
         void setLSMSettings(int, int, double, double, int, double, double, double);
         void setProgress(int);
+        void saveDem(char *, int);
+        void saveDemGrid(char *, int);
+        void loadDem(char *, int);
+        void interpolateDem();
 
 };
 

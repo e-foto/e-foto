@@ -11,6 +11,8 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QStandardItemModel>
+#include <QFileDialog>
+#include <QMessageBox>
 
 class DEMUserInterface_Qt : public QWidget, public Ui::DEMInterface, public DEMUserInterface
 {
@@ -30,6 +32,10 @@ protected:
 protected slots:
 	virtual void languageChange();
         void onDemExtractionClicked();
+        void onDemLoadClicked();
+        void onDemSaveClicked();
+        void onDemGridSaveClicked();
+        void onDemGridClicked();
 
 private:
         void init();
@@ -43,8 +49,8 @@ public:
         int saveImage(char *filename, Matrix *I);
         void addImagePair(char *);
         void setStatus(char *);
+        void setAutoExtInfo(int, int , double, double);
         void setProgress(int);
-
 };
 
 #endif // DEMUSERINTERFACE_QT_H

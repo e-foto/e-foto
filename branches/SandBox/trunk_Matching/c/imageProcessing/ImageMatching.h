@@ -24,6 +24,8 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
+class DEMManager;
+
 class stackCell
 {
 public:
@@ -37,7 +39,7 @@ class ImageMatching
 
 public:
         ImageMatching();
-        ImageMatching(DEMManager *_dm) { manager = _dm; };
+        ImageMatching(DEMManager *);
 	enum matmet { NCC, LSM };
 	enum eadmod { Equalization, HistMatching };
 	void setMatchingMethod();
@@ -76,6 +78,7 @@ private:
 	void emptyStack();
 	void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy);
         DEMManager *manager;
+        void init();
 };
 
 #endif
