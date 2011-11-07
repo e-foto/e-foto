@@ -2,14 +2,26 @@
 
 ImageMatching::ImageMatching()
 {
-	matching_method = LSM;
-	radiometric_mode = HistMatching;
-	perform_readiometric = true;
-	image_depth = 256;
-	matching_xi = matching_xf = matching_yi = matching_yf = 0;
-	step_x = step_y = 3;
-	corr_th = 0.7;
-	stack = aux = NULL;
+        init();
+}
+
+ImageMatching::ImageMatching(DEMManager *_man)
+{
+        init();
+        manager = _man;
+}
+
+void ImageMatching::init()
+{
+        matching_method = LSM;
+        radiometric_mode = HistMatching;
+        perform_readiometric = true;
+        image_depth = 256;
+        matching_xi = matching_xf = matching_yi = matching_yf = 0;
+        step_x = step_y = 3;
+        corr_th = 0.7;
+        stack = aux = NULL;
+        manager = NULL;
 }
 
 void ImageMatching::setMatchingLimits(int xi, int xf, int yi, int yf)
@@ -55,7 +67,6 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 		if (radiometric_mode == HistMatching)
 			rt.histmatching(img1, img2, image_depth);
 	}
-
 
 	//
 	// Step 2 - Evaluate and fix matching limits
@@ -121,8 +132,8 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 		// Step 5 - Perform Region Growing
 		//
 
-		if (curr_left_id == left_image_id && curr_right_id == right_image_id)
-			region_growing(img1,img2,mpoints,lx,ly,rx,ry);
+                if (curr_left_id == left_image_id && curr_right_id == right_image_id)
+                        region_growing(img1,img2,mpoints,lx,ly,rx,ry);
 	}
 
 
@@ -186,7 +197,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 {
 	int i,j,lsm_flag;
 	int lx, ly, rx, ry;
-	double new_x, new_y, next_x, next_y, p;
+        double new_x, new_y, p;
 	
 	emptyStack();
 	push(x,y,sx,sy);
@@ -252,8 +263,10 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 		// Calculate coverage
 		num_visited += 1.0;
 		coverage = num_visited/max_size;
-                //printf("%.2f %%\r",coverage*100);
-                manager->setProgress(coverage*100);
+                if (manager == NULL)
+                    printf("%.2f %%\r",coverage*100);
+                else
+                    manager->setProgress(int(coverage*100));
 	}
 }
 

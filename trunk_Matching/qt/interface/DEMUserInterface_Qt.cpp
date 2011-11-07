@@ -55,6 +55,10 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 
         QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
         QObject::connect(demButton, SIGNAL(clicked()), this, SLOT(onDemExtractionClicked()));
+        QObject::connect(saveButton2, SIGNAL(clicked()), this, SLOT(onDemSaveClicked()));
+        QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onDemGridSaveClicked()));
+        QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
+        QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
 
         setWindowState(this->windowState());
 
@@ -65,6 +69,9 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         Cx = (desktop->width() - rect.width())/2;
         Cy = (desktop->height() - rect.height())/2;
         move(Cx,Cy);
+
+        // Set tab 0 as initial page
+        tabWidget->setCurrentIndex(0);
 
 	qApp->processEvents();
 	init();
@@ -142,6 +149,69 @@ void DEMUserInterface_Qt::setProgress(int progress)
     if (progress > 100) progress = 100;
 
     progressBar->setValue(progress);
+    qApp->processEvents();
+}
+
+void DEMUserInterface_Qt::setAutoExtInfo(int nseeds, int nmatch, double min, double max)
+{
+    seedPointsLabel->setText(QString::number(nseeds));
+    automaticPointsLabel->setText(QString::number(nmatch));
+    autoMinZLabel->setText(QString::number(min,'f',2));
+    autoMaxZLabel->setText(QString::number(max,'f',2));
+}
+
+void DEMUserInterface_Qt::onDemSaveClicked()
+{
+    // File open dialog
+    QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), ".", tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)"));
+    if (filename=="")
+        return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Save DEM
+    manager->saveDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
+}
+
+void DEMUserInterface_Qt::onDemGridSaveClicked()
+{
+    // File open dialog
+    QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), ".", tr("DEM Grid (*.dsm);; All files (*.*)"));
+    if (filename=="")
+        return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Save DEM
+    manager->saveDem((char *)filename.toStdString().c_str(), comboBox9->currentIndex());
+}
+
+void DEMUserInterface_Qt::onDemLoadClicked()
+{
+    // File open dialog
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), ".", tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)")) ;
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Load DEM
+    manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
+}
+
+void DEMUserInterface_Qt::onDemGridClicked()
+{
+
 }
 
 /*
@@ -150,7 +220,7 @@ void DEMUserInterface_Qt::setProgress(int progress)
 
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
-    manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value());
+    manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value(), doubleSpinBox0->value());
     manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value());
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
     manager->extractDEM(comboBox5->currentIndex());

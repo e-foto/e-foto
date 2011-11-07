@@ -147,7 +147,7 @@ void MatchingPointsList::listMp(int pos)
 	printf("%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",pos, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
 }
 
-int MatchingPointsList::save(char *filename, saveType type)
+int MatchingPointsList::save(char *filename, int type)
 {
 	FILE *fp;
 	fp = fopen(filename,"wt");
@@ -184,7 +184,7 @@ int MatchingPointsList::save(char *filename, saveType type)
 	return 1;
 }
 
-int MatchingPointsList::load(char *filename, loadType type, bool append, int left_id, int right_id)
+int MatchingPointsList::load(char *filename, int type, bool append, int left_id, int right_id)
 {
 	FILE *fp;
 	fp = fopen(filename,"rt");

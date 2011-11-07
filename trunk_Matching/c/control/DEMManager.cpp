@@ -176,12 +176,13 @@ void DEMManager::getImagesId(int pos, int &left, int &right)
     right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
-void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, int _rgy)
+void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, int _rgy, double downs)
 {
     rad_cor = _rad_cor;
     match_method = _match_method;
     rgx = _rgx;
     rgy = _rgy;
+    downsample = 1.0/downs;
 
 //    ncc_temp, ncc_sw;
 //    double ncc_th, ncc_std;
@@ -206,6 +207,12 @@ void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th, doub
     lsm_shift = _lsm_shift;
     lsm_shear = _lsm_shear;
     lsm_scale = _lsm_scale;
+}
+
+void DEMManager::setProgress(int progress)
+{
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->setProgress(progress);
 }
 
 /*
@@ -244,11 +251,51 @@ void DEMManager::createInitialSeeds()
             seeds.add(left_id, right_id, double(left_dic.getCol()), double(left_dic.getLin()), double(right_dic.getCol()), double(right_dic.getLin()), 0.0);
         }
     }
+
+    // Update informations
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->setAutoExtInfo(seeds.size(),0,0.0,0.0);
+}
+
+/*
+ * DEM I/O operations
+ **/
+
+void DEMManager::saveDem(char * filename, int fileType)
+{
+    pairs.save(filename,fileType);
+}
+
+void DEMManager::saveDemGrid(char * filename, int fileType)
+{
+//    pairs.save(filename,fileType);
+}
+
+void DEMManager::loadDem(char * filename, int fileType)
+{
+    pairs.clear();
+    pairs.load(filename,fileType);
+
+    // Update info
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    double Xi, Yi, Zi, Xf, Yf, Zf;
+    pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
 }
 
 /*
  * DEM extraction
  **/
+
+void DEMManager::calcPointsXYZ()
+{
+    // Calculate pair list XYZ coordinates
+    MatchingPoints *mp;
+    for (int i=0; i<seeds.size(); i++)
+    {
+        mp = seeds.get(i+1);
+    }
+}
 
 void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
 {
@@ -265,14 +312,34 @@ void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
 
 void DEMManager::extractDEM(int option)
 {
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+
+    // Downsample seeds
+    resamplePoints(&seeds,downsample);
+
+    // Clear matching list
+    pairs.clear();
+
     if (option==0)
     {
         for (int i=0; i<listPairs.size(); i++)
-            extractDEMPair(i);;
+            extractDEMPair(i);
     }
     else
         extractDEMPair(option-1);
 
+    // Upsample seeds
+    resamplePoints(&seeds,1.0/downsample);
+    resamplePoints(&pairs,1.0/downsample);
+
+    // Convert points to 3D
+    calcPointsXYZ();
+
+    double Xi, Yi, Zi, Xf, Yf, Zf;
+    pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    dui->setStatus((char *)"Done");
+    dui->progressBar->setValue(0);
+    dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
 
 }
 
@@ -290,15 +357,14 @@ void DEMManager::extractDEMPair(int pair)
     //
     // Load images
     //
-    double sample=1.0;
     Matrix *img1 = NULL, *img2 = NULL;
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     dui->setStatus((char *)"Loading left image ...");
     string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
-    img1 = dui->loadImage((char *)filename.c_str(), sample);
+    img1 = dui->loadImage((char *)filename.c_str(), downsample);
     dui->setStatus((char *)"Loading right image ...");
     filename = getImage(right_id)->getFilepath() + "/" + getImage(right_id)->getFilename();
-    img2 = dui->loadImage((char *)filename.c_str(), sample);
+    img2 = dui->loadImage((char *)filename.c_str(), downsample);
 
     if (img1 == NULL || img2 == NULL)
         return;
@@ -319,7 +385,7 @@ void DEMManager::extractDEMPair(int pair)
         std = ncc_std;
     }
 
-    ImageMatching im;
+    ImageMatching im(this);
     im.setImagesIds(left_id,right_id);
     im.setCorrelationThreshold(corr_th);
     im.setPerformRadiometric(rad_cor > 0);
