@@ -73,6 +73,11 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         // Set tab 0 as initial page
         tabWidget->setCurrentIndex(0);
 
+        // Block some operations
+        saveButton->setEnabled(false);
+        saveButton2->setEnabled(false);
+        interButton->setEnabled(false);
+
 	qApp->processEvents();
 	init();
 }
@@ -160,6 +165,14 @@ void DEMUserInterface_Qt::setAutoExtInfo(int nseeds, int nmatch, double min, dou
     autoMaxZLabel->setText(QString::number(max,'f',2));
 }
 
+void DEMUserInterface_Qt::setBoundingBox(double Xi, double Yi, double Xf, double Yf)
+{
+    XilineEdit->setText(QString::number(Xi,'f',2));
+    YilineEdit->setText(QString::number(Yi,'f',2));
+    XflineEdit->setText(QString::number(Xf,'f',2));
+    YflineEdit->setText(QString::number(Yf,'f',2));
+}
+
 void DEMUserInterface_Qt::onDemSaveClicked()
 {
     // File open dialog
@@ -207,11 +220,54 @@ void DEMUserInterface_Qt::onDemLoadClicked()
 
     // Load DEM
     manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
+
+    // Enable options
+    saveButton2->setEnabled(true);
+    interButton->setEnabled(true);
 }
 
 void DEMUserInterface_Qt::onDemGridClicked()
 {
+    if (!checkBoundingBox())
+        return;
 
+    // Perform interpolation
+    manager->interpolateGrid(comboBox0->currentIndex(), comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex());
+
+    // Enable options
+    saveButton->setEnabled(true);
+}
+
+void DEMUserInterface_Qt::setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height)
+{
+    XiLabel->setText(QString::number(Xi,'f',2));
+    YiLabel->setText(QString::number(Yi,'f',2));
+    XfLabel->setText(QString::number(Xf,'f',2));
+    YfLabel->setText(QString::number(Yf,'f',2));
+    gridMinZLabel->setText(QString::number(Zi,'f',2));
+    gridMaxZLabel->setText(QString::number(Zf,'f',2));
+    XiLabel_2->setText(QString::number(res_x,'f',2));
+    YiLabel_2->setText(QString::number(res_y,'f',2));
+    XiLabel_3->setText(QString::number(width));
+    YiLabel_3->setText(QString::number(height));
+}
+
+int DEMUserInterface_Qt::checkBoundingBox()
+{
+    double Xi, Yi, Xf, Yf;
+
+    Xi = XilineEdit->text().toDouble();
+    Xf = XflineEdit->text().toDouble();
+    Yi = YilineEdit->text().toDouble();
+    Yf = YflineEdit->text().toDouble();
+
+    if (Xi >= Xf || Yi >= Yf)
+    {
+        QMessageBox::critical(this,"Error","Error: grid bounding box has inconsistent values !");
+        return 0;
+    }
+
+    return 1;
 }
 
 /*
@@ -224,6 +280,10 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
     manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value());
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
     manager->extractDEM(comboBox5->currentIndex());
+
+    // Enable options
+    saveButton2->setEnabled(true);
+    interButton->setEnabled(true);
 }
 
 /*

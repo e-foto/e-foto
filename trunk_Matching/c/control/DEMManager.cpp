@@ -27,12 +27,14 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     status = false;
     listAllImages = images;
     listEOs = eos;
+    grid = NULL;
     setListPoint();
 }
 
 DEMManager::~DEMManager()
 {
-
+    if (grid != NULL)
+        delete grid;
 }
 
 // Association Methods
@@ -268,7 +270,7 @@ void DEMManager::saveDem(char * filename, int fileType)
 
 void DEMManager::saveDemGrid(char * filename, int fileType)
 {
-//    pairs.save(filename,fileType);
+    grid->saveDem(filename,fileType);
 }
 
 void DEMManager::loadDem(char * filename, int fileType)
@@ -276,16 +278,49 @@ void DEMManager::loadDem(char * filename, int fileType)
     pairs.clear();
     pairs.load(filename,fileType);
 
+    // If file type is 2D (option 1 or 2), must calculate 3D coords
+    calcPointsXYZ();
+
     // Update info
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
+    dui->setBoundingBox(Xi, Yi, Xf, Yf);
 }
 
 /*
  * DEM extraction
  **/
+
+void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight)
+{
+    double Zi, Zf;
+
+    if (garea == 0)
+        pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+
+    if (grid != NULL)
+        delete grid;
+
+    grid = new DemGrid(Xi,Yi,Xf,Yf,res_x,res_y);
+    grid->setPointList(&pairs);
+
+    switch (method)
+    {
+        case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
+        case 2: grid->interpolateTrendSurface(tsurface); break;
+        case 3: grid->interpolateNearestPoint(); break;
+        default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
+    }
+
+    // Update info
+    double min, max;
+    int w = grid->getWidth(), h = grid->getHeight();
+    grid->getMinMax(min,max);
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->setGridData(Xi,Yi,Xf,Yf,min,max,res_x,res_y,w,h);
+}
 
 void DEMManager::calcPointsXYZ()
 {
