@@ -13,6 +13,7 @@
 #include "Matrix.h"
 #include "ImageMatching.h"
 #include "MatchingPoints.h"
+#include "DemGrid.h"
 
 class DEMUserInterface;
 class EFotoManager;
@@ -40,6 +41,7 @@ class DEMManager
         void createInitialSeeds();
         void extractDEMPair(int);
         void calcPointsXYZ();
+        DemGrid *grid;
 
 public:
 
@@ -67,7 +69,7 @@ public:
         void saveDem(char *, int);
         void saveDemGrid(char *, int);
         void loadDem(char *, int);
-        void interpolateDem();
+        void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
 
 };
 
