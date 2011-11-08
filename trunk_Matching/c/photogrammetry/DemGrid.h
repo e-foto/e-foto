@@ -33,8 +33,8 @@ class DemGrid
 public:
 	DemGrid(double, double, double, double, double, double);
 	enum saveMode { efotoDEM, ascii };
-	void saveDem(char *, saveMode);
-	void loadDem(char *, saveMode);
+        void saveDem(char *, int);
+        void loadDem(char *, int);
 	void createNewGrid(double, double, double, double, double, double);
 	void changeGridResolution(double, double);
 	void interpolateNearestPoint();
@@ -49,6 +49,8 @@ public:
 	double getHeight(double col, double row);
 	Matrix *getDemImage(double min=0.0, double max=0.0);
 	Matrix &getDem();
+        int getWidth() { return dem_width; };
+        int getHeight() { return dem_height; };
 
 private:
 	Matrix DEM;

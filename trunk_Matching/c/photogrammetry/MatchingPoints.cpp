@@ -6,12 +6,12 @@
 
 MatchingPoints::MatchingPoints()
 {
-	// Clear all variables
-	matching_id = -1;
-	left_image_id = right_image_id = -1;
-	left_x = left_y = right_x = right_y = 0.0;
-	X = Y = Z = 0.0;
-	matching_accuracy = 0.0;
+        // Clear all variables
+        matching_id = -1;
+        left_image_id = right_image_id = -1;
+        left_x = left_y = right_x = right_y = 0.0;
+        X = Y = Z = 0.0;
+        matching_accuracy = 0.0;
 }
 
 
@@ -149,17 +149,16 @@ void MatchingPointsList::listMp(int pos)
 
 int MatchingPointsList::save(char *filename, int type)
 {
-	FILE *fp;
-	fp = fopen(filename,"wt");
+        ofstream outfile(filename);
 
-	if (!fp)
+        if (outfile.fail())
 		return 0;
 
 	if (type == 0)
-		fprintf(fp,"Pair\tM_ID\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n");
+                outfile << "Pair\tM_ID\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
 
 	if (type == 2)
-		fprintf(fp,"10002\t0.0\t0.0\t0.0\t0.0\n");
+                outfile << "10002\t0.0\t0.0\t0.0\t0.0\n";
 
 	MatchingPoints *mp;
 
@@ -169,52 +168,52 @@ int MatchingPointsList::save(char *filename, int type)
 
 		switch (type)
 		{
-			case 1 : fprintf(fp,"%f\t%f\t%f\t%f\n",mp->left_x, mp->left_y, mp->right_x, mp->right_y); break;
-			case 2 : fprintf(fp,"%d\t%f\t%f\t%f\t%f\n",i, mp->left_x, mp->left_y, mp->right_x, mp->right_y); break;
-			case 3 : fprintf(fp,"%f\t%f\t%f\n",mp->X, mp->Y, mp->Z); break;
-			default: fprintf(fp,"%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",i,mp->matching_id, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
+                        case 1 : outfile << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\n"; break;
+                        case 2 : outfile << i << "\t" << mp->left_x << "\t" <<  mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\n"; break;
+                        case 3 : outfile << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\n"; break;
+                        case 4 : outfile << i << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\n"; break;
+                        default: outfile << i << "\t" << mp->matching_id << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << "\n";
 		}
 	}
 
 	if (type == 2)
-		fprintf(fp,"-99\t0.0\t0.0\t0.0\t0.0\n");
+                outfile << "-99\t0.0\t0.0\t0.0\t0.0\n";
 
-	fclose(fp);
+        outfile.close();
 
 	return 1;
 }
 
 int MatchingPointsList::load(char *filename, int type, bool append, int left_id, int right_id)
 {
-	FILE *fp;
-	fp = fopen(filename,"rt");
+        ifstream infile(filename);
 
-	if (!fp)
+        if (infile.fail())
 		return 0;
 
 	char line[255];
 	if (type == 0 || type == 2)
-		fgets(line,255,fp);
+                infile.getline(line,256);
 
 	// Clear list
 	if (!append)
 		list.clear();
 
-	int i, m_id;
-	float lx, ly, rx, ry, X, Y, Z, acc;
+        int i, m_id=-1;
+        double lx, ly, rx, ry, X, Y, Z, acc;
 	lx = ly = rx = ry = X = Y = Z = acc = 0.0;
 	MatchingPoints mp;
 
-	while (!feof(fp))
+        while (!infile.eof())
 	{
-		switch (type)
-		{
-			case 1 : fscanf(fp,"%f\t%f\t%f\t%f\n",&lx, &ly, &rx, &ry); break;
-			case 2 : fscanf(fp,"%d\t%f\t%f\t%f\t%f\n",&i, &lx, &ly, &rx, &ry); break;
-			case 3 : fscanf(fp,"%f\t%f\t%f\n",&X, &Y, &Z); break;
-			case 4 : fscanf(fp,"%d\t%f\t%f\t%f\n",&i,&X, &Y, &Z); break;
-			default: fscanf(fp,"%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", &i, &m_id, &left_id, &right_id, &lx, &ly, &rx, &ry, &X, &Y, &Z, &acc);
-		}
+                switch (type)
+                {
+                        case 1 : infile >> lx >> ly >> rx >> ry; break;
+                        case 2 : infile >> i >> lx >> ly >> rx >> ry; break;
+                        case 3 : infile >> X >> Y >> Z; break;
+                        case 4 : infile >> i >> X >> Y >> Z; break;
+                        default: infile >> i >> m_id >> left_id >> right_id >> lx >> ly >> rx >> ry >> X >> Y >> Z >> acc;
+                }
 
 		mp.matching_id = m_id;
 		mp.left_image_id = left_id;
@@ -228,13 +227,13 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 		mp.Z = Z;
 		mp.matching_accuracy = acc;
 
-		list.push_back(mp);
+                list.push_back(mp);
 	}
 
 	if (type == 2)
 		list.pop_back();
 
-	fclose(fp);
+        infile.close();
 
 	return 1;
 }

@@ -1500,13 +1500,6 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="lineEdit1">
-                <property name="text">
-                 <string>1.0</string>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_28">
                 <property name="text">
@@ -1529,6 +1522,19 @@
                   <string>Linear decrease</string>
                  </property>
                 </item>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QDoubleSpinBox" name="doubleSpinBox16">
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
+                </property>
                </widget>
               </item>
              </layout>
@@ -1589,7 +1595,12 @@
            </item>
            <item>
             <property name="text">
-             <string>ASCII 3D points</string>
+             <string>ASCII 3D points (no index)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ASCII 3D points (index)</string>
             </property>
            </item>
           </widget>

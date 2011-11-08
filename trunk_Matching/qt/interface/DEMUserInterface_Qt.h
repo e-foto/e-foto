@@ -28,6 +28,7 @@ protected:
         ~DEMUserInterface_Qt();
         DEMManager *manager;
 	void closeEvent(QCloseEvent *e);
+        int checkBoundingBox();
 
 protected slots:
 	virtual void languageChange();
@@ -50,6 +51,8 @@ public:
         void addImagePair(char *);
         void setStatus(char *);
         void setAutoExtInfo(int, int , double, double);
+        void setBoundingBox(double Xi, double Yi, double Xf, double Yf);
+        void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
         void setProgress(int);
 };
 
