@@ -670,7 +670,7 @@ void ProjectUserInterface_Qt::executeSR()
 
 void ProjectUserInterface_Qt::executeFT()
 {
-	bool ok;
+        //bool ok;
 	/*
 	QStringList items;
 	deque<string> strItems = manager->listImages();
@@ -2198,14 +2198,18 @@ void ProjectUserInterface_Qt::exportPointsToTxt()
 	loading.setMinimumSize(300,30);
 	loadWidget->show();
 
-	for (int i=1; i<=points.children().size(); i++)
+	deque<EDomElement> point=points.elementsByTagName("point");
+	for (int i=0; i<point.size(); i++)
 	{
 		loading.setFormat(tr("Point %v/%m : %p%"));
 		loading.setValue(i);
-		exportFileName->write(edomPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+		exportFileName->write(edomPointToTxt(point.at(i)).data());
 	}
 	loadWidget->close();
 	exportFileName->close();
+
+	exportDigitalCoordinates();
+
 }
 
 /** This function convert a EDomElement children Point in a line *.txt point format
@@ -2449,23 +2453,25 @@ bool ProjectUserInterface_Qt::availableOE()
 */
 void ProjectUserInterface_Qt::updateCurrentForm()
 {
-	if(currentForm!=NULL)
-		if (currentForm== &headerForm)
-			viewHeader();
-		else if (currentForm==&terrainForm)
-			viewTerrain();
-		else if (currentForm==&sensorForm)
-			viewSensor(currentItemId);
-		else if (currentForm==&flightForm)
-			viewFlight(currentItemId);
-		else if (currentForm==&imagesForm)
-			viewImages();
-		else if (currentForm==&imageForm)
-			viewImage(currentItemId);
-		else if (currentForm==&pointsForm)
-			viewPoints();
-		else if (currentForm==&pointForm)
-			viewPoint(currentItemId);
+    if(currentForm!=NULL)
+    {
+        if (currentForm== &headerForm)
+            viewHeader();
+        else if (currentForm==&terrainForm)
+            viewTerrain();
+        else if (currentForm==&sensorForm)
+            viewSensor(currentItemId);
+        else if (currentForm==&flightForm)
+            viewFlight(currentItemId);
+        else if (currentForm==&imagesForm)
+            viewImages();
+        else if (currentForm==&imageForm)
+            viewImage(currentItemId);
+        else if (currentForm==&pointsForm)
+            viewPoints();
+        else if (currentForm==&pointForm)
+            viewPoint(currentItemId);
+    }
 }
 
 void ProjectUserInterface_Qt::importPointsFromTxt2()
@@ -2679,12 +2685,12 @@ void ProjectUserInterface_Qt::exportDigitalCoordinates()
 	loadWidget->setWindowTitle(tr("Exporting Points"));
 	loading.setMinimumSize(300,30);
 	loadWidget->show();
-
-	for (int i=1; i<=points.children().size(); i++)
+	deque<EDomElement> point=points.elementsByTagName("point");
+	for (int i=0; i<point.size(); i++)
 	{
 		loading.setFormat(tr("Point %v/%m : %p%"));
 		loading.setValue(i);
-		exportFileName->write(edomDigitalCoordinatesPointToTxt(points.elementByTagAtt("point","key",intToString(i))).data() );
+		exportFileName->write(edomDigitalCoordinatesPointToTxt(point.at(i)).data());
 	}
 	loadWidget->close();
 	exportFileName->close();
@@ -2692,42 +2698,29 @@ void ProjectUserInterface_Qt::exportDigitalCoordinates()
 
 /** This function convert a EDomElement children Point in a line *.txt point format
 	*/
+
 string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement points)
 {
 	stringstream aux;
-	stringstream stdev;
-	QString gmlpos=points.elementByTagName("imagesMeasurements").toString().c_str();
+	deque<EDomElement> digitalCoordinates=points.elementsByTagName("imageCoordinates");
 
+	string pointId=points.elementByTagName("pointId").toString();
+	EDomElement ede;
+	QString gmlpos;
 
-	aux << points.attribute(("imageCoordinates","image_key",).toString().c_str()<< "\t";
-	//aux << points.attribute("type")<< "\t";
-
-	aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
-
-	Matrix stdevMatrix;
-	stdevMatrix.xmlSetData(points.elementByTagName("mml:matrix").getContent());
-
-	if (points.hasTagName("mml:matrix"))
+	for (int i=0; i<digitalCoordinates.size();i++)
 	{
-		   /*
-		   aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
-		   aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
-		   aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
-		   */
-	   aux << "\t" << stdevMatrix.get(1,1) <<"\t";
-	   aux << stdevMatrix.get(2,2) <<"\t";
-	   aux << stdevMatrix.get(3,3);
+		ede=digitalCoordinates.at(i);
+		gmlpos=ede.elementByTagName("gml:pos").toString().c_str();
+		string col = (gmlpos.split(" ").at(0)).toStdString();
+		string lin = (gmlpos.split(" ").at(1)).toStdString();
+		aux << ede.attribute("image_key") << "\t" << pointId << "\t" << col << "\t" << lin <<"\n";
 	}
-	aux <<"\n";
+
 	string result=aux.str();
-	//qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
-
-	//qDebug("stdev:%s",stdev.str().c_str());
-	//qDebug("result:%s",result.c_str());
-
 	return result.c_str();
 }
 
 
 
-}
+

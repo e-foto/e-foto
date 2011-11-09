@@ -158,6 +158,10 @@ public slots:
 
 	void updateCurrentForm();
 	void deleteEmptyPoints();
+
+
+	void exportDigitalCoordinates();
+	string edomDigitalCoordinatesPointToTxt(EDomElement points);
 };
 
 #endif // PROJECTUSERINTERFACE_QT_H

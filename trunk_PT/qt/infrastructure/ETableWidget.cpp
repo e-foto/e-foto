@@ -13,7 +13,7 @@
 #define MIN(a,b) (a<b) ? a : b
 
 
-ETableWidget::ETableWidget(QWidget *parent):QTableWidget(parent)
+ETableWidget::ETableWidget(QWidget *parent): QTableWidget(parent)
 {
 	//io= new Matrix(1,1);
 	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
@@ -34,8 +34,8 @@ ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *paren
 {
     //setTableData(values,mode,precision);
 
-	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
-	installEventFilter(this);
+    currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
+    installEventFilter(this);
     connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
     enableAutoCopy();
     setMode(mode);
