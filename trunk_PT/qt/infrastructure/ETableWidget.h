@@ -14,8 +14,9 @@
 class ETableWidget: public QTableWidget
 {
     Q_OBJECT
+
 private:
-    Matrix *io;
+        Matrix *io;
 	char mode;
 	int decimals;
 	QString type;
@@ -30,12 +31,12 @@ private:
 public:
 	ETableWidget(QWidget *parent=0);
 	ETableWidget(Matrix values,char mode='e',int precision=6,QWidget *parent=0);
-    void setTableData(Matrix values,char mode='e',int precision=6);
-    void setTableData(EDomElement xml,char mode='e',int precision=6);
-    void setTableData(string xmlString,char mode='e',int precision=6);
+        void setTableData(Matrix values,char mode='e',int precision=6);
+        void setTableData(EDomElement xml,char mode='e',int precision=6);
+        void setTableData(string xmlString,char mode='e',int precision=6);
 	void setVerticalHeadersLabelsHtml(QStringList list);
 	void resizeTable();
-    void enableAutoCopy(bool enable=true);
+        void enableAutoCopy(bool enable=true);
 	void putIn(Matrix input, int row, int column,char mode='e',int precision=6);
 	void putInColumn(QStringList list, int column);
 	void putInRow(QStringList list,int row);
@@ -59,7 +60,7 @@ public:
 	int getDecimals();
 	double getPreviousValue();
 public slots:
-    void autoCopy();
+        void autoCopy();
 	void enableAutoCopy(int enable);
 	void updateTableValues(char mode, int precision);
 	void updateModoValues(int modo);
@@ -70,7 +71,7 @@ public slots:
 	void validateItem();
 
 signals:
-    void focusReceived();
+        void focusReceived();
 	void validatedItem(int, int, int);
 	void validatedItem(int, int, double);
 
