@@ -10,6 +10,8 @@
 #include "StereoService.h"
 #include "FlightDirectionForm.h"
 
+class PointMark;
+
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
 	Q_OBJECT
@@ -53,6 +55,8 @@ protected:
 
 	FlightDirectionForm *flightDirectionForm;
 
+	QList<PointMark*> undoStack;
+
     void closeEvent(QCloseEvent *event);
 
 private:
@@ -77,16 +81,22 @@ public slots:
 	bool calculatePT();
 	void openImagesFlightDirectionForm();
 	void setFlightDirection(QString imageFile, double kappa0);
+	void setCurrentPointKey(int newPointKey);
 
-	void updateImagesList(QString imageFilename);
+        //void selectAllAppearances(int index);
+        //int findKeyAppearances(QString table, QString searched);
+        //void showImagesAppearances(int indexRow,int indexCol);
+
+        void updateImagesList(QString imageFilename);
 	void updatePointsTable();
-	void selectAllAppearances(int index);
-	void showImagesAppearances(int indexRow,int indexCol);
-	int findKeyAppearances(QString table, QString searched);
+	void selectAllAppearances(int pointKey);
+        int findKeyAppearances(ETableWidget *table, int pointKey);
+	void showImagesAppearances(int pointKey);
+
 
 	void imageClicked(QPointF* pixel);
 	void updateCoordinatesInfo(QPointF* pixel);
-	void updateMark(string image,int imageKey, int pointKey, QPointF pixel);
+        void updateMark(MonoDisplay *display,int imageKey, int pointKey, QPointF pixel);
 
 	void markAllpoints(MonoDisplay *display);
 	void clearAllMarks(MonoDisplay *display);
@@ -102,10 +112,38 @@ public slots:
 	void addPoint();
 	//void insertPointIn(int imageKey);
 	void toggleInsertPointMode(bool newInsertionMode);
-	int isPointIn(QTableWidget *table, int pointkey);
+        //int isPointIn(ETableWidget *table, int pointkey);
+
+        void tableClicked(QTableWidgetItem* item);
 
 protected slots:
+	void undoMark();
+	void putInStack(int oldCol,int oldLin,int pointKey, int imageKey, QString PointId);
+
 	//virtual bool confirmToClose();
+};
+
+class PointMark
+{
+protected:
+	QPointF *digitalCoordinate;
+	QString pointId;
+	int keyPoint;
+	int keyImage;
+
+public:
+	PointMark(QPointF coord,int keypoint ,int keyimage,QString id="PointId");
+	void setDigitalCoordinate(QPointF newCoord);
+	void setPointId(QString newPointId);
+	void setKeyPoint(int newKeyPoint);
+	void setKeyImage(int newKeyImage);
+
+	QPointF* getDigitalCoordinate();
+	QString getPointId();
+	int getKeyPoint();
+	int getKeyImage();
+	QString toString();
+
 };
 
 

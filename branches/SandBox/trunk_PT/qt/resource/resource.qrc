@@ -10,6 +10,10 @@
         <file alias="ActivatedControl">T16x16.png</file>
         <file alias="DeactivatedControl">T16x16red.png</file>
         <file alias="Fiductial">X16x16.png</file>
+        <file alias="FotoTriangulacao">X16x16_Amarelo.png</file>
+        <file alias="FotoTriangulacao">cursor.bmp</file>
+        <file alias="FotoTriangulacao">cursorMask.bmp</file>
+        <file alias="FotoTriangulacao">glcursor.png</file>
     </qresource>
     <qresource prefix="/icon">
         <file>exit.png</file>

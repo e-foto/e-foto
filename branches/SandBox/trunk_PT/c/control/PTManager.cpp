@@ -244,11 +244,12 @@ void PTManager::setENH()
 	spareENH.putMatrix(pointKeys,1,ENH.getCols()+1);
 }
 
+/*
 Matrix PTManager::getResiduos()
 {
 	return residuos;
 }
-
+*/
 Matrix PTManager::getENH()
 {
     return ENH;
@@ -420,6 +421,12 @@ BundleAdjustment* PTManager::getBundleAdjustment()
 {
 	return pt;
 }
+
+string PTManager::getPointId(int pointKey)
+{
+    return efotoManager->instancePoint(pointKey)->getPointId();
+}
+
 
 // retorna uma lista com os ids dos pontos
 deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
