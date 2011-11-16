@@ -184,14 +184,63 @@ int MatchingPointsList::save(char *filename, int type)
 	return 1;
 }
 
+int MatchingPointsList::strTokensCount(char * array)
+{
+    char * token;
+    int tokens=0;
+
+    token = strtok(array," \t");
+
+    while (token != NULL || tokens > 20)
+    {
+        tokens++;
+        token = strtok(NULL," \t");
+    }
+
+    return tokens;
+}
+
+bool MatchingPointsList::checkFile(char *filename, int type)
+{
+    char line[256];
+    int tokens, exp_tokens;
+
+    // Get number of expected tokens
+    switch (type)
+    {
+        case 1: exp_tokens = 4; break;
+        case 2: exp_tokens = 5; break;
+        case 3: exp_tokens = 3; break;
+        case 4: exp_tokens = 4; break;
+        default: exp_tokens = 12; break;
+    }
+
+    // Check file
+    ifstream infile(filename);
+
+    infile.getline(line,256);
+    infile.getline(line,256); // Take the second line
+
+    // Check the number of tokens
+    tokens = strTokensCount(line);
+
+    infile.close();
+
+    return (tokens == exp_tokens);
+}
+
 int MatchingPointsList::load(char *filename, int type, bool append, int left_id, int right_id)
 {
+        // Check file before loading
+        if (!checkFile(filename,type))
+            return -1;
+
         ifstream infile(filename);
 
         if (infile.fail())
 		return 0;
 
-	char line[255];
+        char line[256];
 	if (type == 0 || type == 2)
                 infile.getline(line,256);
 
@@ -212,7 +261,7 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
                         case 2 : infile >> i >> lx >> ly >> rx >> ry; break;
                         case 3 : infile >> X >> Y >> Z; break;
                         case 4 : infile >> i >> X >> Y >> Z; break;
-                        default: infile >> i >> m_id >> left_id >> right_id >> lx >> ly >> rx >> ry >> X >> Y >> Z >> acc;
+                        default: infile >> i >> m_id >> left_id >> right_id >> lx >> ly >> rx >> ry >> X >> Y >> Z >> acc; break;
                 }
 
 		mp.matching_id = m_id;
@@ -231,7 +280,7 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 	}
 
 	if (type == 2)
-		list.pop_back();
+                list.pop_back();
 
         infile.close();
 
