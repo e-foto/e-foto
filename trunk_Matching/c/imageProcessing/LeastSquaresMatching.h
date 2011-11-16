@@ -42,6 +42,8 @@ public:
 	void getNextPosition(double *, double *, int, int);
 	void setConvergenceLimits(double _shift, double _scale, double _shear) { limit_shift_values = _shift; limit_scale_values = _scale; limit_shear_values = _shear; };
         void setMaxDistance(double _max) { max_distance = _max; };
+        void setOverIt(bool ovit) { over_it = ovit; };
+        void setOverItDist(double ovitd) { over_it_distance = ovitd; };
 
 private:
 	void imgGradient(Matrix *);
@@ -51,6 +53,8 @@ private:
 	int template_center_x, template_center_y, matching_window_center_x, matching_window_center_y;
 	double best_p, limit_shift_values, limit_scale_values, limit_shear_values, acceptance_correlation, acceptance_error_ellipse;
 	double best_x, best_y;
+        double over_it_distance;
+        bool over_it;
 	int max_iterations, max_distance;
 	void gradient(Matrix *, Matrix *);
 	void prewitt(Matrix *, Matrix *);

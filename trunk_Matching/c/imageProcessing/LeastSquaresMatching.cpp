@@ -16,6 +16,8 @@ LeastSquaresMatching::LeastSquaresMatching()
 	acceptance_correlation = 0.7;
 	acceptance_error_ellipse = 5; // Std for a0 and b0 arrays
 	gradient_filter = Gradient;
+        over_it = true;
+        over_it_distance = 0.5;
 }
 
 /*
@@ -28,6 +30,9 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	// Save original template size
 	int ori_template_width = template_width;
 	int ori_template_height = template_height;
+
+        // Clear best correlation
+        best_p = 0.0;
 
 	// Check template std - low std, give up
 	// If low, try to increase window size by 2
@@ -126,10 +131,11 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	NMy = My;
 
 	// LSM
-	int pos;
-	best_p = 0.0;
+        int pos, iterations=0;
 	for (int it=0; it < max_iterations; it++)
 	{
+                iterations++;
+
 		// New tesselation for matching window
 		for (int l=-1; l <= template_height; l++)
 		{
@@ -192,6 +198,9 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 		t = (A.transpose()*A).inverse();
 		t = t*(A.transpose()*c);
 
+                // Copy matrix tesselation
+                M = M1;
+
 		// Check for limit shift values - convergence
 		if ((fabs(t.get(1,1)) < limit_shift_values) && (fabs(t.get(4,1)) < limit_shift_values))
 			break;
@@ -223,11 +232,8 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 			return -2; // Diverged !
 		}
 
-		// Copy matrix tesselation
-		M = M1;
-
 		// If max iterations achieved, report bad result
-		if (it == max_iterations - 1 && (t.get(1,1) > 0.5 || t.get(4,1) > 0.5))
+                if (it >= max_iterations - 1 && (t.get(1,1) > over_it_distance || t.get(4,1) > over_it_distance || ~(over_it)))
 		{
 			template_width = ori_template_width;
 			template_height = ori_template_height;

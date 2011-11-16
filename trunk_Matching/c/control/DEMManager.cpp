@@ -199,7 +199,7 @@ void DEMManager::setNCCSettings(int _ncc_temp, int _ncc_sw, double _ncc_th, doub
     ncc_std = _ncc_std;
 }
 
-void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th, double _lsm_std, int _lsm_dist, double _lsm_shift, double _lsm_shear, double _lsm_scale)
+void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th, double _lsm_std, int _lsm_dist, double _lsm_shift, double _lsm_shear, double _lsm_scale, int over, double over_dist)
 {
     lsm_temp = _lsm_temp;
     lsm_it = _lsm_it;
@@ -209,6 +209,8 @@ void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th, doub
     lsm_shift = _lsm_shift;
     lsm_shear = _lsm_shear;
     lsm_scale = _lsm_scale;
+    over_it = over;
+    over_it_dist = over_dist;
 }
 
 void DEMManager::setProgress(int progress)
@@ -273,13 +275,15 @@ void DEMManager::saveDemGrid(char * filename, int fileType)
     grid->saveDem(filename,fileType);
 }
 
-void DEMManager::loadDem(char * filename, int fileType)
+int DEMManager::loadDem(char * filename, int fileType)
 {
     pairs.clear();
-    pairs.load(filename,fileType);
+    if (pairs.load(filename,fileType) != 1)
+        return 0;
 
     // If file type is 2D (option 1 or 2), must calculate 3D coords
-    calcPointsXYZ();
+    if (fileType == 1 || fileType == 2)
+        calcPointsXYZ();
 
     // Update info
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
@@ -287,6 +291,8 @@ void DEMManager::loadDem(char * filename, int fileType)
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
     dui->setBoundingBox(Xi, Yi, Xf, Yf);
+
+    return 1;
 }
 
 /*
@@ -326,9 +332,26 @@ void DEMManager::calcPointsXYZ()
 {
     // Calculate pair list XYZ coordinates
     MatchingPoints *mp;
-    for (int i=0; i<seeds.size(); i++)
+    SpatialIntersection spc_inter;
+    Image *left, *right;
+    ObjectSpaceCoordinate object;
+// Contem erro!!
+    for (int i=0; i<pairs.size(); i++)
     {
-        mp = seeds.get(i+1);
+        mp = pairs.get(i+1);
+
+        left = listAllImages.at(mp->left_image_id - 1);
+        sp.setLeftImage(left);
+        right = listAllImages.at(mp->right_image_id - 1);
+        sp.setRightImage(right);
+
+        spc_inter.setStereoPair(&sp);
+
+        object = spc_inter.calculateIntersection(mp->left_x, mp->left_y, mp->right_x, mp->right_y);
+
+        mp->X = object.getX();
+        mp->Y = object.getY();
+        mp->Z = object.getZ();
     }
 }
 
@@ -433,6 +456,8 @@ void DEMManager::extractDEMPair(int pair)
     im.getLSM()->setMaxIterations(lsm_it);
     im.getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
     im.getLSM()->setMaxDistance(lsm_dist);
+    im.getLSM()->setOverIt(over_it);
+    im.getLSM()->setOverItDist(over_it_dist);
 
     im.performImageMatching(img1, img2, &seeds, &pairs);
 

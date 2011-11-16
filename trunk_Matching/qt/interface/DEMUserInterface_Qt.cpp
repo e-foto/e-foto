@@ -59,6 +59,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onDemGridSaveClicked()));
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
         QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
+        QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
 
         setWindowState(this->windowState());
 
@@ -219,7 +220,11 @@ void DEMUserInterface_Qt::onDemLoadClicked()
     dir.setCurrent(dir.absolutePath());
 
     // Load DEM
-    manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
+    if (!manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
+    {
+        QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
+        return;
+    }
 
     // Enable options
     saveButton2->setEnabled(true);
@@ -236,6 +241,11 @@ void DEMUserInterface_Qt::onDemGridClicked()
 
     // Enable options
     saveButton->setEnabled(true);
+}
+
+void DEMUserInterface_Qt::onLSMCheckChanged(int state)
+{
+    doubleSpinBox17->setEnabled(state);
 }
 
 void DEMUserInterface_Qt::setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height)
@@ -277,7 +287,7 @@ int DEMUserInterface_Qt::checkBoundingBox()
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
     manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value(), doubleSpinBox0->value());
-    manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value());
+    manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
     manager->extractDEM(comboBox5->currentIndex());
 
@@ -293,7 +303,7 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
 Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
 {
         int levels=256;
-        printf("filename: %s\n",filename);
+
         QImage img;
         img.load(filename);
 

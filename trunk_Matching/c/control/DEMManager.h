@@ -14,6 +14,7 @@
 #include "ImageMatching.h"
 #include "MatchingPoints.h"
 #include "DemGrid.h"
+#include "SpatialIntersection.h"
 
 class DEMUserInterface;
 class EFotoManager;
@@ -26,6 +27,8 @@ class DEMManager
         double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
 	bool started;
 	bool status;
+        bool over_it;
+        double over_it_dist;
         DEMUserInterface* myInterface;
         EFotoManager* manager;
         deque<Image*> listAllImages;
@@ -42,6 +45,7 @@ class DEMManager
         void extractDEMPair(int);
         void calcPointsXYZ();
         DemGrid *grid;
+        StereoPair sp;
 
 public:
 
@@ -64,11 +68,11 @@ public:
         void extractDEM(int);
         void setAutoExtractionSettings(int, int, int, int, double);
         void setNCCSettings(int, int, double, double);
-        void setLSMSettings(int, int, double, double, int, double, double, double);
+        void setLSMSettings(int, int, double, double, int, double, double, double, int, double);
         void setProgress(int);
         void saveDem(char *, int);
         void saveDemGrid(char *, int);
-        void loadDem(char *, int);
+        int loadDem(char *, int);
         void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
 
 };
