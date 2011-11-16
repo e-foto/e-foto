@@ -37,6 +37,7 @@ protected slots:
         void onDemSaveClicked();
         void onDemGridSaveClicked();
         void onDemGridClicked();
+        void onLSMCheckChanged(int);
 
 private:
         void init();

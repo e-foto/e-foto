@@ -17,6 +17,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <vector>
 #include <stdlib.h>
@@ -88,6 +89,8 @@ private:
 	void copyListByRight();
 	void copyListBy3D();
 	void boundingBox(double &, double &, double &, double &, double &, double &, int);
+        bool checkFile(char *, int);
+        int strTokensCount(char *);
 };
 
 #endif

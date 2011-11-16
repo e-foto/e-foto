@@ -241,7 +241,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 		{
 			lsm_flag = lsm.searchHomologous(img1, img2, double(lx), double(ly), double(rx), double(ry));
 			p = lsm.getBestP();
-			if (p < corr_th || lsm_flag < 1)
+                        if (p < corr_th || lsm_flag < 1)
 				continue;
 
 			new_x = lsm.getBestX();
