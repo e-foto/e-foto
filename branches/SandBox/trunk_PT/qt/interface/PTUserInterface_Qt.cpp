@@ -247,7 +247,7 @@ bool PTUserInterface_Qt::exec()
 	//selectAllAppearances(0);
 	//showImagesAppearances(0,0);
 
-	setCurrentPointKey(pointsTableWidget->item(0,3)->text().toInt(&ok));
+	setCurrentPointKey(pointsTableWidget->item(0,5)->text().toInt(&ok));
 	//selectAllAppearances(currentPointKey);
 	//showImagesAppearances();
 	this->show();
@@ -1320,10 +1320,11 @@ void PTUserInterface_Qt::setCurrentPointKey(int newPointKey)
 
 void PTUserInterface_Qt::addPoint()
 {
-	ptManager->createNewPoint();
+	int idNewPoint = ptManager->createNewPoint();
 	ptManager->setENH();
 	ptManager->reloadPointsCoordinates();
 	updatePointsTable();
+	setCurrentPointKey(idNewPoint);
 }
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool newInsertionMode)

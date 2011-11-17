@@ -5,8 +5,8 @@
 #include <QTime>
 
 
-//#define FRANC
-#define PAULO
+#define FRANC
+//#define PAULO
 
 #define MAXRESIDUO 0.0001
 #define ESPARSA
@@ -137,13 +137,12 @@ bool BundleAdjustment::calculate()
 				Matrix l=Lb-L0;
 
 				ptime.start();
-				Matrix n11=getN11();
+				/*Matrix*/ n11=getN11();
 				int n11time=ptime.restart();
 				//n11.show('f',3,"N11=A1^T*P*A1");
 
-				setInverseN11(n11);
-				int invN11time=ptime.restart();
-				Matrix n12=getN12();
+
+				/*Matrix*/ n12=getN12();
 				//n12.show('f',3,"N12=A1^T*P*A2");
 				int n12time=ptime.restart();
 
@@ -151,7 +150,7 @@ bool BundleAdjustment::calculate()
 				//n22.show('f',3,"N22==A2^T*P*A2");
 				int n22time=ptime.restart();
 
-				setInverseN22(n22);
+
 				//int invN22time=ptime.restart();
 
 				/*Matrix*/ n1=getn1(l);
@@ -162,6 +161,8 @@ bool BundleAdjustment::calculate()
 				//n2.show('f',3,"n2==A2^T*P*L");
 				int n2time=ptime.restart();
 #ifdef PAULO
+				setInverseN11(n11);
+				int invN11time=ptime.restart();
 				setx2(n12,n22,n2,n1);
 				int x2time=ptime.restart();
 				//x2.show();
@@ -173,6 +174,8 @@ bool BundleAdjustment::calculate()
 
 #ifdef FRANC
 
+				setInverseN22(n22);
+				int invN22time=ptime.restart();
 				setx1(n12,n1);
 				int x1time=ptime.restart();
 
@@ -191,7 +194,13 @@ bool BundleAdjustment::calculate()
 				qDebug("Para calcular N11: %.3f",n11time/1000.0);
 				qDebug("Para calcular N12: %.3f",n12time/1000.0);
 				qDebug("Para calcular N22: %.3f",n22time/1000.0);
+#ifdef PAULO
 				qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
+#endif
+
+#ifdef FRANC
+				qDebug("Para calcular inversaN11: %.3f",invN22time/1000.0);
+#endif
 				qDebug("Para calcular n1: %.3f",n1time/1000.0);
 				qDebug("Para calcular n2: %.3f",n2time/1000.0);
 				qDebug("Para calcular x1: %.3f",x1time/1000.0);
@@ -429,11 +438,10 @@ void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 #endif
 
 #ifdef FRANC
-
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(n12)*inverseN22);
 	//Matrix mat=(N22-temp1*N12);
 	//mat.show('f',5,"N22-temp1*N12");
-	x2=SparseMatrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
+	x1=SparseMatrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
 #endif
 	//SparseMatrix temp1=SparseMatrix(inverseN11);
 	//x1=temp1*(n1-SparseMatrix(N12)*x2);
@@ -460,7 +468,7 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 
 #ifdef FRANC
 	SparseMatrix temp1=SparseMatrix(inverseN22);
-	x1=temp1*n2-SparseMatrix(temp1*n12.transpose())*x1;
+	x2=temp1*n2-SparseMatrix(temp1*n12.transpose())*x1;
 #endif
 	//return x2;
 }
@@ -496,7 +504,7 @@ void BundleAdjustment::setInverseN11(Matrix n11)
 
 void BundleAdjustment::setInverseN22(Matrix n22)
 {
-	int rows=n11.getRows();
+	int rows=n22.getRows();
 	inverseN22=n22;
 	for (int i=1;i<rows;i+=3)
 	{

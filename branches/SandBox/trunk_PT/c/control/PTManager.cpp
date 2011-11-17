@@ -826,7 +826,7 @@ double PTManager::getLongitudinalOverlap(string imageFile)
 string PTManager::exportBlockTokml(string fileName)
 {
 	EDomElement terrain = efotoManager->getXml("terrain");
-	char hemiLatitude = terrain.elementByTagName("Lat").attribute("direction")=="S" ? 'S':'N';
+	int hemiLatitude = terrain.elementByTagName("Lat").attribute("direction")=="S" ? -1:1;
 	int zona=stringToInt(terrain.elementByTagName("utmFuse").toString());
 	GeoSystem sys(terrain.elementByTagName("GRS").toString());
 
@@ -906,9 +906,8 @@ string PTManager::exportBlockTokml(string fileName)
 		double E2=oe.get(i+1,4)+deltaE;
 		double N2=oe.get(i+1,5)-deltaN;
 
-
-		Matrix plh1=ConvertionsSystems::utmToGeoFran(E1,N1,0,zona,GeoSystem(),hemiLatitude);
-		Matrix plh2=ConvertionsSystems::utmToGeoFran(E2,N2,0,zona,GeoSystem(),hemiLatitude);
+		Matrix plh1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,GeoSystem());
+		Matrix plh2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,GeoSystem());
 
 		double lat1 = plh1.get(1,1)*180/M_PI;
 		lat1 = (hemiLatitude =='S'? -lat1 : lat1);
@@ -961,11 +960,11 @@ string PTManager::exportBlockTokml(string fileName)
 		Point *pnt=listAllPoints.at(i);
 		string pointType;
 		if (pnt->is("PhotogrammetricPoint"))
-			photogrammetricPoint += pointToKml(pnt,zona,sys,hemiLatitude,"photogrammetricPoint");
+			photogrammetricPoint += pointToKml(pnt,zona,hemiLatitude,sys,"photogrammetricPoint");
 		else if (pnt->is("ControlPoint"))
-			controlPoint += pointToKml(pnt,zona,sys,hemiLatitude,"controlPoint");
+			controlPoint += pointToKml(pnt,zona,hemiLatitude,sys,"controlPoint");
 		else if (pnt->is("CheckingPoint"))
-			checkingPoint += pointToKml(pnt,zona,sys,hemiLatitude, "checkingPoint");
+			checkingPoint += pointToKml(pnt,zona,hemiLatitude,sys, "checkingPoint");
 	}
 
 	aux << "<Folder>\n";
@@ -990,19 +989,20 @@ string PTManager::exportBlockTokml(string fileName)
 
 }
 
-string PTManager::pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType)
+//string PTManager::pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType)
+string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSystem sys,string pointType)
 {
 	stringstream pointString;
 	double E=pnt->getObjectCoordinate().getX();
 	double N=pnt->getObjectCoordinate().getY();
 	double H=pnt->getObjectCoordinate().getZ();
 
-	Matrix plh=ConvertionsSystems::utmToGeoFran(E,N,H,zona,sys,hemiLatitude);
+	Matrix plh=ConvertionsSystems::utmToGeo(E,N,zona,hemiLatitude,sys);
 
 	double lat=plh.get(1,1)*180/M_PI;
 	double longi=plh.get(1,2)*180/M_PI;
 
-	lat = (hemiLatitude=='S' ? -lat:lat);
+	//lat = (hemiLatitude=='S' ? -lat:lat);
 
 	pointString << "<Placemark>\n";
 	pointString << "<name>" << pnt->getPointId() << "</name>\n";
@@ -1088,8 +1088,79 @@ void PTManager::reloadPointsCoordinates()
 
 }
 
+// Retorna a posiçao de 'img' no deque de imagens selecionadas, se nao estiver retorna -1
+int PTManager::whereInSelectedImages(Image *img)
+{
+	for (int i=0;i<listSelectedImages.size();i++)
+	{
+		if (listSelectedImages.at(i)==img)
+			return i;
+	}
+	return -1;
+}
+
+// Retorna a posiçao de 'img' no deque de imagens, se nao estiver retorna -1
+int PTManager::whereInImages(Image *img)
+{
+	for (int i=0;i<listAllImages.size();i++)
+	{
+		if (listAllImages.at(i)==img)
+			return i;
+	}
+	return -1;
+}
+
+deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
+{
+	deque<string> ids;
+	int numPoints=listAllPoints.size();
+	for (int i=0;i<numPoints;i++)
+	{
+		Point * pnt=listAllPoints.at(i);
+		if(pnt->is("PhotogrammetricPoint"))
+			if (getImagesAppearances(pnt->getId()).size() < overlap)
+				ids.push_back(pnt->getPointId());
+	}
+	return ids;
+}
+
+int PTManager::createNewPoint()
+{
+	string text = "";
+
+	int currentItemId = efotoManager->getFreePointId();
+	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"photogrammetric\">\n";
+	text += "<pointId>PF" + intToString(currentItemId) + "</pointId>\n";
+	text += "<description>Photogrammetric point created in Phototriangulation</description>\n";
+	text += "<spatialCoordinates uom=\"#m\">\n";
+	text += "<gml:pos>0.0 0.0 0.0</gml:pos>\n";
+	text += "<sigma>Not Available</sigma>\n";
+	text += "</spatialCoordinates>\n";
+	text += "</point>";
+
+	EDomElement xml(efotoManager->xmlGetData());
+	xml.addChildAtTagName("points",text);
+
+	efotoManager->xmlSetData(xml.getContent());
+	listAllPoints.push_back(efotoManager->instancePoint(currentItemId));
+
+	return currentItemId;
+
+}
+void PTManager::connectPointInImage(int pointKey, int imageKey)
+{
+	Point* point = efotoManager->instancePoint(pointKey);
+	Image* image = efotoManager->instanceImage(imageKey);
+	point->putImage(image);
+	image->putPoint(point);
+	image->sortPoints();
+
+}
+
+
 /** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
 */
+/*
 void PTManager::photogrammetricSort()
 {
 	pt->calculateInicialsValues();
@@ -1145,83 +1216,12 @@ Matrix PTManager::digitalToEN(Image *img,int col, int row,Matrix oe)
 	double lat2 = plh2.get(1,1)*180/M_PI;
 	lat2 = (hemiLatitude =='S'? -lat2 : lat2);
 	double longi2 =plh2.get(1,2)*180/M_PI;*/
+	/*
 	Matrix result(1,2);
 	result.set(1,1,E1);
 	result.set(1,2,N1);
-	qDebug("imagem 1 ponto 1, col: %d \tlin:%d",col,row);
+	//qDebug("imagem 1 ponto 1, col: %d \tlin:%d",col,row);
 	result.show('f',4,"Matrix EN");
 	return result;
 }
-
-// Retorna a posiçao de 'img' no deque de imagens selecionadas, se nao estiver retorna -1
-int PTManager::whereInSelectedImages(Image *img)
-{
-	for (int i=0;i<listSelectedImages.size();i++)
-	{
-		if (listSelectedImages.at(i)==img)
-			return i;
-	}
-	return -1;
-}
-
-// Retorna a posiçao de 'img' no deque de imagens, se nao estiver retorna -1
-int PTManager::whereInImages(Image *img)
-{
-	for (int i=0;i<listAllImages.size();i++)
-	{
-		if (listAllImages.at(i)==img)
-			return i;
-	}
-	return -1;
-}
-
-deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
-{
-	deque<string> ids;
-	int numPoints=listAllPoints.size();
-	for (int i=0;i<numPoints;i++)
-	{
-		Point * pnt=listAllPoints.at(i);
-		if(pnt->is("PhotogrammetricPoint"))
-			if (getImagesAppearances(pnt->getId()).size() < overlap)
-				ids.push_back(pnt->getPointId());
-	}
-	return ids;
-}
-
-
-void PTManager::createNewPoint()
-{
-	string text = "";
-
-	int currentItemId = efotoManager->getFreePointId();
-	text += "<point key=\"" + intToString(currentItemId) + "\" type=\"photogrammetric\">\n";
-	text += "<pointId>PF" + intToString(currentItemId) + "</pointId>\n";
-	text += "<description></description>\n";
-	text += "<spatialCoordinates uom=\"#m\">\n";
-	text += "<gml:pos>0.0 0.0 0.0</gml:pos>\n";
-	text += "<sigma>Not Available</sigma>\n";
-	text += "</spatialCoordinates>\n";
-	text += "</point>";
-
-	EDomElement xml(efotoManager->xmlGetData());
-	xml.addChildAtTagName("points",text);
-
-	efotoManager->xmlSetData(xml.getContent());
-	listAllPoints.push_back(efotoManager->instancePoint(currentItemId));
-
-}
-
-void PTManager::connectPointInImage(int pointKey, int imageKey)
-{
-	Point* point = efotoManager->instancePoint(pointKey);
-	Image* image = efotoManager->instanceImage(imageKey);
-	point->putImage(image);
-	image->putPoint(point);
-	image->sortPoints();
-
-}
-
-
-
-
+*/
