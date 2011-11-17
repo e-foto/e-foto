@@ -38,5 +38,6 @@
         <file>fileopen.png</file>
         <file>stereo.png</file>
         <file>done.png</file>
+        <file>abort.png</file>
     </qresource>
 </RCC>

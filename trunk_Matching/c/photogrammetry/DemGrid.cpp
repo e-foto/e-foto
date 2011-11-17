@@ -1,6 +1,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include "DemGrid.h"
+#include "DEMManager.h"
 
 /**
 * class DemGrid
@@ -17,6 +18,7 @@ DemGrid::DemGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, 
 	point_list = NULL;
 	mpg = NULL;
 	createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
+        manager = NULL;
 }
 
 void DemGrid::createNewGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y)
@@ -189,6 +191,8 @@ void DemGrid::interpolateNearestPoint()
 
 			DEM.set(y, x, Z);
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 	gettimeofday(&end,NULL);
 
@@ -296,6 +300,8 @@ void DemGrid::interpolateTrendSurface(int mode)
 				case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 
 	gettimeofday(&end,NULL);
@@ -369,6 +375,8 @@ void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 			else
 				DEM.set(y,x,0.0);
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 
 	gettimeofday(&end,NULL);
@@ -519,6 +527,8 @@ void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 				case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 
 	gettimeofday(&end,NULL);

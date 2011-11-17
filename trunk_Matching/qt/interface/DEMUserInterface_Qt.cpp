@@ -60,6 +60,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
         QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
         QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
+        QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
 
         setWindowState(this->windowState());
 
@@ -78,6 +79,8 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         saveButton->setEnabled(false);
         saveButton2->setEnabled(false);
         interButton->setEnabled(false);
+
+        allow_close = true;
 
 	qApp->processEvents();
 	init();
@@ -124,6 +127,12 @@ void DEMUserInterface_Qt::init()
 
 void DEMUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
+        if (!allow_close)
+        {
+            e->ignore();
+            return;
+        }
+
 	LoadingScreen::instance().show();
 	qApp->processEvents();
         //delete(myImageView);
@@ -136,6 +145,49 @@ bool DEMUserInterface_Qt::exec()
     show();
     LoadingScreen::instance().close();
     return true;
+}
+
+void DEMUserInterface_Qt::onAbortClicked()
+{
+    // Abort clicked
+}
+
+void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
+{
+    histProgressBar1->setValue(hist[0]);
+    histProgressBar2->setValue(hist[1]);
+    histProgressBar3->setValue(hist[2]);
+    histProgressBar4->setValue(hist[3]);
+    histProgressBar5->setValue(hist[4]);
+    histProgressBar6->setValue(hist[5]);
+}
+
+void DEMUserInterface_Qt::disableOptions()
+{
+    tab->setDisabled(true);
+    tab_2->setDisabled(true);
+    tab_3->setDisabled(true);
+    tab_4->setDisabled(true);
+    tab_5->setDisabled(true);
+    tab_7->setDisabled(true);
+    groupBox_7->setDisabled(true);
+    groupBox_11->setDisabled(true);
+    groupBox_12->setDisabled(true);
+    doneButton->setDisabled(true);
+}
+
+void DEMUserInterface_Qt::enableOptions()
+{
+    tab->setEnabled(true);
+    tab_2->setEnabled(true);
+    tab_3->setEnabled(true);
+    tab_4->setEnabled(true);
+    tab_5->setEnabled(true);
+    tab_7->setEnabled(true);
+    groupBox_7->setEnabled(true);
+    groupBox_11->setEnabled(true);
+    groupBox_12->setEnabled(true);
+    doneButton->setEnabled(true);
 }
 
 void DEMUserInterface_Qt::addImagePair(char *item)
@@ -203,7 +255,7 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
     dir.setCurrent(dir.absolutePath());
 
     // Save DEM
-    manager->saveDem((char *)filename.toStdString().c_str(), comboBox9->currentIndex());
+    manager->saveDemGrid((char *)filename.toStdString().c_str(), comboBox9->currentIndex());
 }
 
 void DEMUserInterface_Qt::onDemLoadClicked()
