@@ -38,9 +38,12 @@ protected slots:
         void onDemGridSaveClicked();
         void onDemGridClicked();
         void onLSMCheckChanged(int);
+        void onAbortClicked();
 
 private:
         void init();
+        void close();
+        bool allow_close;
 
 public:
         static DEMUserInterface_Qt* instance(DEMManager* manager);
@@ -55,6 +58,10 @@ public:
         void setBoundingBox(double Xi, double Yi, double Xf, double Yf);
         void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
         void setProgress(int);
+        void setMathcingHistogram(int *);
+        void setAllowClose(bool _b) { allow_close = _b; };
+        void disableOptions();
+        void enableOptions();
 };
 
 #endif // DEMUSERINTERFACE_QT_H

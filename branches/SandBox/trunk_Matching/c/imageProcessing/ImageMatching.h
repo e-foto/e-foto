@@ -12,7 +12,7 @@
 #include "LeastSquaresMatching.h"
 #include "RadiometricTransformation.h"
 #include "MatchingPoints.h"
-#include "DEMManager.h"
+
 
 /**
 * class ImageMatching
