@@ -27,11 +27,14 @@
 
 using namespace std;
 
+class DEMManager;
+
 class DemGrid
 {
 
 public:
 	DemGrid(double, double, double, double, double, double);
+        void linkManager(DEMManager *_man) { manager = _man; };
 	enum saveMode { efotoDEM, ascii };
         void saveDem(char *, int);
         void loadDem(char *, int);
@@ -65,6 +68,7 @@ private:
 	void saveDemAscii(char *);
 	double getAsciiParameter(ifstream *, string);
 	void loadDemAscii(char *);
+        DEMManager* manager;
 
 };
 

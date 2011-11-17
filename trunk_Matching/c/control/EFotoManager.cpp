@@ -819,7 +819,23 @@ bool EFotoManager::execDEM()
 
         instanceAllImages();
         instanceAllPoints();
-        instanceAllEOs();
+
+        for (int i = images.size() - 1; i >=0; i--)
+        {
+            Image* img = images.at(i);
+            Sensor* sensor = instanceSensor(img->getSensorId());
+            InteriorOrientation* imgIO = instanceIO(img->getId());
+            SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
+
+            img->setSensor(sensor);
+            img->setIO(imgIO);
+            img->setEO(imgEO);
+
+            if (imgIO == NULL && imgEO == NULL)
+            {
+                deleteImage(img->getId());
+            }
+        }
 
         dem = new DEMManager(this, images, EOs);
 

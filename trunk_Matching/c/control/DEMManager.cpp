@@ -303,6 +303,12 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 {
     double Zi, Zf;
 
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->setStatus((char *)"Interpolating grid ...");
+
+    dui->setEnabled(false);
+    dui->setAllowClose(false);
+
     if (garea == 0)
         pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
 
@@ -310,6 +316,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
         delete grid;
 
     grid = new DemGrid(Xi,Yi,Xf,Yf,res_x,res_y);
+    grid->linkManager(this);
     grid->setPointList(&pairs);
 
     switch (method)
@@ -323,9 +330,14 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     // Update info
     double min, max;
     int w = grid->getWidth(), h = grid->getHeight();
+    dui->setStatus((char *)"Done");
+    dui->progressBar->setValue(0);
     grid->getMinMax(min,max);
-    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
     dui->setGridData(Xi,Yi,Xf,Yf,min,max,res_x,res_y,w,h);
+
+    dui->setEnabled(true);
+    dui->setAllowClose(true);
 }
 
 void DEMManager::calcPointsXYZ()
@@ -335,11 +347,10 @@ void DEMManager::calcPointsXYZ()
     SpatialIntersection spc_inter;
     Image *left, *right;
     ObjectSpaceCoordinate object;
-// Contem erro!!
+
     for (int i=0; i<pairs.size(); i++)
     {
         mp = pairs.get(i+1);
-
         left = listAllImages.at(mp->left_image_id - 1);
         sp.setLeftImage(left);
         right = listAllImages.at(mp->right_image_id - 1);
@@ -347,7 +358,7 @@ void DEMManager::calcPointsXYZ()
 
         spc_inter.setStereoPair(&sp);
 
-        object = spc_inter.calculateIntersection(mp->left_x, mp->left_y, mp->right_x, mp->right_y);
+        object = spc_inter.calculateIntersection(int(mp->left_x), int(mp->left_y), int(mp->right_x), int(mp->right_y));
 
         mp->X = object.getX();
         mp->Y = object.getY();
@@ -371,6 +382,8 @@ void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
 void DEMManager::extractDEM(int option)
 {
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->disableOptions();
+    dui->setAllowClose(false);
 
     // Downsample seeds
     resamplePoints(&seeds,downsample);
@@ -393,12 +406,34 @@ void DEMManager::extractDEM(int option)
     // Convert points to 3D
     calcPointsXYZ();
 
+    // Update info
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     dui->setStatus((char *)"Done");
     dui->progressBar->setValue(0);
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
+    dui->setBoundingBox(Xi, Yi, Xf, Yf);
 
+    // Create histogram
+    MatchingPoints *mp;
+    int hist[6] = {0,0,0,0,0,0};
+    int p;
+
+    for (int i=1; i<=pairs.size(); i++)
+    {
+        mp = pairs.get(i);
+        p = 10 - int(mp->matching_accuracy*10);
+        if (p>5) p=5;
+        hist[p] += 1;
+    }
+
+    for (int i=0; i<6; i++)
+        hist[i] = (100*hist[i])/pairs.size();
+
+    dui->setMathcingHistogram(hist);
+
+    dui->setAllowClose(true);
+    dui->enableOptions();
 }
 
 void DEMManager::extractDEMPair(int pair)

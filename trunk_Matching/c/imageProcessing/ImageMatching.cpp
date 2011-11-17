@@ -1,4 +1,5 @@
 #include "ImageMatching.h"
+#include "DEMManager.h"
 
 ImageMatching::ImageMatching()
 {
