@@ -22,8 +22,8 @@ class InteriorOrientation;
 /**
   * \file PTManager.h
   * \class PTMannager
-  * \brief Classe responsavel por gerenciar a interface e o calculo da fototriangulação fornecendo metodos basicos a interface, e fazendo a ligação entre o calculo e a interface
-  * \author Paulo André Batista Pupim
+  * \brief Classe responsavel por gerenciar a interface e o calculo da fototriangulaÃ§Ã£o fornecendo metodos basicos a interface, e fazendo a ligaÃ§Ã£o entre o calculo e a interface
+  * \author Paulo AndrÃ© Batista Pupim
 */
 class PTManager
 {
@@ -57,7 +57,7 @@ protected:
 public:
     /**
     * \brief Construtor basico da classe
-    * \attention Não use-o em sua totalidade
+    * \attention NÃ£o use-o em sua totalidade
     */
     PTManager();
 
@@ -65,9 +65,9 @@ public:
     * \brief Construtor completo da classe para gerenciamento total
     * \param newManager : Gerente geral do software e-foto
     * \param images : Lista com todos os objetos Image cadastrados no projeto atual
-    * \param ois : Lista com todos os objetos InteriorOrientation, necessário para o calculo da fototriangulação
-    * \param sensor : Objeto Sensor, necessário para o calculo da fototriangulação
-    * \param flight : Objeto Flight, necessário para o calculo da fototriangulação
+    * \param ois : Lista com todos os objetos InteriorOrientation, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
+    * \param sensor : Objeto Sensor, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
+    * \param flight : Objeto Flight, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
     */
     PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight);
 
@@ -84,27 +84,27 @@ public:
     string getImagefile(int imageId);
 
     /**
-    * \brief Metodo que altera a interface com o usuário
-    * \param newInterface : Nova intefrace com o usuário
-    * \attention Atualmente só existe a interface com o usuário utilizando o QT4
+    * \brief Metodo que altera a interface com o usuÃ¡rio
+    * \param newInterface : Nova intefrace com o usuÃ¡rio
+    * \attention Atualmente sÃ³ existe a interface com o usuÃ¡rio utilizando o QT4
     */
     void setInterface(PTUserInterface* newInterface);
 
     /**
-    * \brief Metodo que retorna um ponteiro para a interface com o usuário atual
-    * \return PTUserInterface : interface com o usuário
+    * \brief Metodo que retorna um ponteiro para a interface com o usuÃ¡rio atual
+    * \return PTUserInterface : interface com o usuÃ¡rio
     */
     PTUserInterface* getInterface();
 
     /**
-    * \brief Metodo que reune os parametros necessários para o calculo da fototriangulação e o executa através da classe BundleAdjustment em seguida alterando os atributos de classe com os resultados obtidos
-    * \return bool : Informa se o calculo foi bem sucedido ou não;
+    * \brief Metodo que reune os parametros necessÃ¡rios para o calculo da fototriangulaÃ§Ã£o e o executa atravÃ©s da classe BundleAdjustment em seguida alterando os atributos de classe com os resultados obtidos
+    * \return bool : Informa se o calculo foi bem sucedido ou nÃ£o;
     */
     bool calculatePT();
 
     /**
-    * \brief Metodo que toma as medidas necessarias e dispara a execução da interface com o usuário
-    * \return bool : informa se a execuçao foi bem sucedida ou não
+    * \brief Metodo que toma as medidas necessarias e dispara a execuÃ§Ã£o da interface com o usuÃ¡rio
+    * \return bool : informa se a execuÃ§ao foi bem sucedida ou nÃ£o
     */
     bool exec();
 
@@ -114,14 +114,14 @@ public:
     void returnProject();
 
     /**
-    * \brief Metodo que altera a matriz com os resultados das orientações exteriores
-    * \param afp : Matriz com os parametros das orientações exteriores das imagens
+    * \brief Metodo que altera a matriz com os resultados das orientaÃ§Ãµes exteriores
+    * \param afp : Matriz com os parametros das orientaÃ§Ãµes exteriores das imagens
     */
     void setMatrixAFP(Matrix afp);
 
     /**
-    * \brief Metodo que retorna a matriz com os parametros das orientações exteriores
-    * \return Matrix : Matrix com os parametros, onde cada linha representa uma imagem e a sequencia dos parametros é : omega, phi, kappa, X0, Y0, Z0
+    * \brief Metodo que retorna a matriz com os parametros das orientaÃ§Ãµes exteriores
+    * \return Matrix : Matrix com os parametros, onde cada linha representa uma imagem e a sequencia dos parametros Ã© : omega, phi, kappa, X0, Y0, Z0
     */
     Matrix getMatrixOE();
 
@@ -136,15 +136,15 @@ public:
     Matrix getENH();
 
     /**
-    * \brief Metodo que retorna a matriz dos residuos dos parametros das orientações exteriores
-    * \return Matrix : Matrix com os residuos parametros, onde cada linha representa uma imagem e a sequencia dos parametros é : delta omega,delta phi, delta kappa, delta X0, delta Y0, delta Z0
+    * \brief Metodo que retorna a matriz dos residuos dos parametros das orientaÃ§Ãµes exteriores
+    * \return Matrix : Matrix com os residuos parametros, onde cada linha representa uma imagem e a sequencia dos parametros Ã© : delta omega,delta phi, delta kappa, delta X0, delta Y0, delta Z0
     */
     Matrix getMVC();
 
     /**
     * \brief Metodo que retorna as coordenadas digitais dos pontos contidos na imagem especificada
     * \param imageFilename : nome do arquivo de imagem
-    * \return Matrix : Matriz com as coordenadas digitais da imagem onde cada linha é a cooordenada de um ponto na sequencia: coluna , linha
+    * \return Matrix : Matriz com as coordenadas digitais da imagem onde cada linha Ã© a cooordenada de um ponto na sequencia: coluna , linha
     * \attention Esse metodo pode falhar se o projeto tiver duas imagens em diretorios diferentes com o mesmo nome de arquivo.
     */
     Matrix getColLin(string imageFilename);
@@ -153,14 +153,14 @@ public:
     * \overload getColLin
     * \brief Metodo que retorna as coordenadas digitais dos pontos contidos na imagem especificada
     * \param imageKey : key da imagem no projeto
-    * \return Matrix : Matriz com as coordenadas digitais da imagem onde cada linha é a cooordenada de um ponto na sequencia: coluna , linha
-    * \attention Esse metodo é totalmente seguro, pois é baseado na key da imagem que é unica independente do caminho
+    * \return Matrix : Matriz com as coordenadas digitais da imagem onde cada linha Ã© a cooordenada de um ponto na sequencia: coluna , linha
+    * \attention Esse metodo Ã© totalmente seguro, pois Ã© baseado na key da imagem que Ã© unica independente do caminho
     */
     Matrix getColLin(int imageKey);
 
     /**
-    * \brief Metodo que faz as ligações entre todas as imagens e seus respectivos pontos, ou seja, vincula ponto a imagem e vice-versa
-    * \return bool : Informa se a operaçao foi bem sucedida ou não
+    * \brief Metodo que faz as ligaÃ§Ãµes entre todas as imagens e seus respectivos pontos, ou seja, vincula ponto a imagem e vice-versa
+    * \return bool : Informa se a operaÃ§ao foi bem sucedida ou nÃ£o
     */
     bool connectImagePoints();
 
@@ -172,22 +172,22 @@ public:
 
     /**
     * \brief Metodo auxiliar que retorna uma lista de key dos pontos contidos na imagem especificada
-    * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno será uma lista com as key de todos os pontos no projeto
+    * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com as key de todos os pontos no projeto
     * \return deque<string> : Lista com as keys dos pontos
     */
     deque<string> getStringKeysPoints(string imageFileName="");
 
     /**
     * \brief Metodo auxiliar que retorna uma lista com os tipos dos pontos contidos na imagem especificada
-    * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno será uma lista com os tipos de todos os pontos no projeto
+    * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com os tipos de todos os pontos no projeto
     * \return deque<string> : Lista com os tipos dos pontos
     */
     deque<string> getStringTypePoints(string imageFileName="");
 
     /**
     * \brief Metodo auxiliar que retorna uma lista dos ids dos pontos contidos na imagem especificada
-    * \param imageFileName  : Nome do arquivo de imagem, se uma string vazia for passada, o retorno será uma lista com os ids de todos os pontos dependendo do \param cond1
-    * \param cond1 : Indica a condiçao de seleçao dos pontos. Atualmente só existe a condição "noCheckingPoint" que exclui os ids dos pontos de checking
+    * \param imageFileName  : Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com os ids de todos os pontos dependendo do \param cond1
+    * \param cond1 : Indica a condiÃ§ao de seleÃ§ao dos pontos. Atualmente sÃ³ existe a condiÃ§Ã£o "noCheckingPoint" que exclui os ids dos pontos de checking
     * \return deque<string> : Lista com os ids dos pontos
     */
     deque<string> getStringIdPoints(string imageFileName="",string cond1="");
@@ -199,13 +199,13 @@ public:
     deque<string> getStringImages();
 
     /**
-    * \brief Metodo que altera a lista de pontos selecionados para a execução do calculo da fototriangulação
+    * \brief Metodo que altera a lista de pontos selecionados para a execuÃ§Ã£o do calculo da fototriangulaÃ§Ã£o
     * \param selectedPointsList : lista com os ids dos pontos selecionados
     */
     void selectPoints(deque<string> selectedPointsList);
 
     /**
-    * \brief Metodo que altera a lista de imagens selecionadas para a execução do calculo da fototriangulação
+    * \brief Metodo que altera a lista de imagens selecionadas para a execuÃ§Ã£o do calculo da fototriangulaÃ§Ã£o
     * \param selectedImagesList : lista com os nomes dos arquivos de imagens selecionadas
     */
     void selectImages(deque<string> selectedImagesList);
@@ -235,32 +235,32 @@ public:
     string getPointId(int pointKey);
 
     /**
-    * \brief Metodo que retorna o objeto usado para o calculo da fototriangulação
-    * \return BundleAdjustment : Objeto usado para calcular a fototriangulação
-    * \attention Não use esse metodo antes de disparar o metodo de calculo
+    * \brief Metodo que retorna o objeto usado para o calculo da fototriangulaÃ§Ã£o
+    * \return BundleAdjustment : Objeto usado para calcular a fototriangulaÃ§Ã£o
+    * \attention NÃ£o use esse metodo antes de disparar o metodo de calculo
     */
     BundleAdjustment* getBundleAdjustment();
 
     /**
-    * \brief Metodo usado para organizar a lista de pontos selecionados, de forma que todos os pontos de controle sempre fiquem antes dos pontos fotogramétricos
+    * \brief Metodo usado para organizar a lista de pontos selecionados, de forma que todos os pontos de controle sempre fiquem antes dos pontos fotogramÃ©tricos
     */
     void sortPointsSelected();
 
     /**
-    * \brief Metodo auxiliar para retornar as coordenadas ENH apenas dos pontos fotogramétricos que estiverem na lista de pontos selecionados
-    * \return Matrix : Matriz com as coordenadas dos pontos fotogramétricos
+    * \brief Metodo auxiliar para retornar as coordenadas ENH apenas dos pontos fotogramÃ©tricos que estiverem na lista de pontos selecionados
+    * \return Matrix : Matriz com as coordenadas dos pontos fotogramÃ©tricos
     */
     Matrix getPhotogrammetricENH();
 
     /**
-    * \brief Metodo que retorna os residuos das coordenadas ENH dos pontos fotogramétricos selecionados
+    * \brief Metodo que retorna os residuos das coordenadas ENH dos pontos fotogramÃ©tricos selecionados
     * \return Matrix : Matriz com os residuos das coordenadas ENH
     */
     Matrix getResiduoPhotogrammetric();
 
     /**
-    * \brief Metodo auxiliar que retorna uma lista com os ids dos pontos fotogramétricos selecionados
-    * \return deque<string> : Lista com os ids dos pontos fotogramétricos
+    * \brief Metodo auxiliar que retorna uma lista com os ids dos pontos fotogramÃ©tricos selecionados
+    * \return deque<string> : Lista com os ids dos pontos fotogramÃ©tricos
     */
     deque<string> getSelectedPointIdPhotogrammetric();
 
@@ -277,40 +277,40 @@ public:
     * \brief Metodo que retorna o caminho do arquivo da imagem especificado
     * \param imageKey : key da imagem no projeto
     * \return string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
-    * \attention Esse metodo é totalmente seguro, pois é baseado na key da imagem que é unica.
+    * \attention Esse metodo Ã© totalmente seguro, pois Ã© baseado na key da imagem que Ã© unica.
     */
     string getFilePath(int imageKey);
 
 	/**
-	* \brief Metodo responsavel por salvar, no xml corrente, tanto as marcaçoes de linha e coluna como os resultados da fototriangulaçao
+	* \brief Metodo responsavel por salvar, no xml corrente, tanto as marcaÃ§oes de linha e coluna como os resultados da fototriangulaÃ§ao
 	*/
     void saveResults();
 
 	/**
-	* \brief Metodo responsavel por salvar, no xml corrente, os resulados da fototriangulaçao
+	* \brief Metodo responsavel por salvar, no xml corrente, os resulados da fototriangulaÃ§ao
 	*/
     void saveBundleAdjustment();
 
 	/**
-	* \brief Metodo responsavel por salvar, no xml corrente, as maraçoes de linha e coluna
+	* \brief Metodo responsavel por salvar, no xml corrente, as maraÃ§oes de linha e coluna
 	*/
     void saveMarks();
 
 	/**
-	* \brief Metodo para alterar o estado atual das marcas, isto e, se houve mudança nos valores de linha e coluna de algum ponto
-	* \param marksState : Informa se houve mudanças nas marcas
+	* \brief Metodo para alterar o estado atual das marcas, isto e, se houve mudanÃ§a nos valores de linha e coluna de algum ponto
+	* \param marksState : Informa se houve mudanÃ§as nas marcas
 	*/
     void setMarksSavedState(bool marksState);
 
 	/**
 	* \brief Metodo para retornar o estado atual das marcas
-	* \return bool: Indica se houve mudanças
+	* \return bool: Indica se houve mudanÃ§as
 	*/
     bool getMarksSavedState();
 
 	/**
-	* \brief Cria um texto em xml contendo tudo que for pertinente a fototriangulaçao
-	* \return string : Texto em xml com os resultados entre outros valores da fototriangulaçao
+	* \brief Cria um texto em xml contendo tudo que for pertinente a fototriangulaÃ§ao
+	* \return string : Texto em xml com os resultados entre outros valores da fototriangulaÃ§ao
 	*/
 	string createBundleAdjustmentXml();
 
@@ -322,190 +322,186 @@ public:
     deque<string> getImagesAppearances(int pointKey);
 
 	/**
-	* \brief Carrega os dados da fototriangulaçao, se houver, feita anteriormente
-	* \param fotoTriData : Texto xml contendo os dados da fototriangulaçao
+	* \brief Carrega os dados da fototriangulaÃ§ao, se houver, feita anteriormente
+	* \param fotoTriData : Texto xml contendo os dados da fototriangulaÃ§ao
 	* \attention Ainda em desenvolvimento
 	*/
 	void loadFotoTriData(string fotoTriData);
 
 	/**
-	* \brief Metodo que checa se foi feita uma fototriangulaçao anteriormente
-	* \return bool : Informa se uma fototriangulaçao foi feita anteriormente
+	* \brief Metodo que checa se foi feita uma fototriangulaÃ§ao anteriormente
+	* \return bool : Informa se uma fototriangulaÃ§ao foi feita anteriormente
 	*/
 	bool hasPreviousData();
 
 	/**
-	* \brief Metodo que altera o valor do angulo(kappa0) da direçao de voo na imagem
+	* \brief Metodo que altera o valor do angulo(kappa0) da direÃ§ao de voo na imagem
 	* \param imagefile : Nome do arquivo de imagem
-	* \param flightDirection : Valor da direçao de voo em radianos
+	* \param flightDirection : Valor da direÃ§ao de voo em radianos
 	*/
     void setImageFlightDirection(string imageFile,double flightDirection);
 
 	/**
 	* \overload setImageFlightDirection
-	* \brief Metodo que altera o valor do angulo(kappa0) da direçao de voo na imagem
+	* \brief Metodo que altera o valor do angulo(kappa0) da direÃ§ao de voo na imagem
 	* \param imageKey : Key da imagem
-	* \param flightDirection : Valor da direçao de voo em radianos
+	* \param flightDirection : Valor da direÃ§ao de voo em radianos
 	*/
 	void setImageFlightDirection(int imageKey,double flightDirection);
 
 	/**
-	* \brief Metodo que retorna o valor da superposiçao longitudinal do voo ao qual a imagem pertence.
+	* \brief Metodo que retorna o valor da superposiÃ§ao longitudinal do voo ao qual a imagem pertence.
 	* \param imagefile : Nome do arquivo da imagem
-	* \return double : valor da superposiçao em porcentagem
+	* \return double : valor da superposiÃ§ao em porcentagem
 	*/
     double getLongitudinalOverlap(string imageFile);
 
 	/**
 	* \overload getLongitudinalOverlap
-	* \brief Metodo que retorna o valor da superposiçao longitudinal do voo ao qual a imagem pertence.
+	* \brief Metodo que retorna o valor da superposiÃ§ao longitudinal do voo ao qual a imagem pertence.
 	* \param imageKey : Key da imagem
-	* \return double : valor da superposiçao em porcentagem
+	* \return double : valor da superposiÃ§ao em porcentagem
 	*/
 	double getLongitudinalOverlap(int imageKey);
 
 	/**
-	* \brief Metodo que retorna o valor do angulo(kappa0) da direçao de voo
+	* \brief Metodo que retorna o valor do angulo(kappa0) da direÃ§ao de voo
 	* \param imageFile : Nome do arquivo de imagem
-	* \return double : Valor do angulo da direçao de voo em radianos
+	* \return double : Valor do angulo da direÃ§ao de voo em radianos
 	*/
 	double getImageFlightDirection(string imageFile);
 
 	/**
-	* \brief Metodo que retorna o valor do angulo(kappa0) da direçao de voo
+	* \brief Metodo que retorna o valor do angulo(kappa0) da direÃ§ao de voo
 	* \param imageKey : Key da imagem
-	* \return double : Valor do angulo da direçao de voo em radianos
+	* \return double : Valor do angulo da direÃ§ao de voo em radianos
 	*/
 	double getImageFlightDirection(int imageKey);
 
 	/**
-	* \brief Metodo que informa se o ponto esta disponivel
-	* \param
-	* \return
+	* \brief Metodo que informa se o ponto esta disponivel segundo a classe de ponto
+	* \param imageId : Key da imagem
+	* \param pointKey: Key do ponto
+	* \return bool : Informa se o ponto está disponivel ou não
 	*/
 	bool isAvailablePoint(int imageId, int pointKey);
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo que retorna uma string dos pontos e imagens que foram processadas numa fototriangulaçao, num formato xml que o GoogleEarth interprete
+	* \param fileName : Nome do arquivo em que o xml será salvo
+	* \return string : xml(*.kml) dos pontos e imagens
 	*/
     string exportBlockTokml(string fileName);
 
 	/**
-	* \brief
-	* \param
-	* \return
+	* \brief Metodo auxiliar que retorna uma string correspondente a um ponto xml interpretavel pelo GoogleEarth
+	* \param       pnt    : Objeto Point
+	* \param      zona    : Zona na qual o ponto se encontra
+	* \param hemiLatitude : Valor inteiro que representa o hemisfério SUL=-1 ou hemisfério NORTE=+1
+	* \param      sys     : Sistema geodesico
+	* \param   pointType  : Texto que informa que tipo de ponto é, controle fotogramétrico ou de checking
+	* \return    string   : Texto com o xml correspondente a um lugar(placemark) no GoogleEarth
 	*/
-    string pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType);
+	//string pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType);
+	string pointToKml(Point *pnt, int zona,int hemiLatitude, GeoSystem sys ,string pointType);
 
 	/**
-	* \brief
-	* \return
+	* \brief Metodo auxiliar que retorna o valor da escala de voo
+	* \return double : Valor do denominador da escala de voo
 	*/
 	double getFlightScale();
 
 	/**
-	* \brief
-	* \param
+	* \brief Metodo que altera o valor maximos de iterações de calculo da fototriangulação
+	* \param iterations : Numero máximo de iterações
 	*/
     void setMaxIteration(int iterations);
 
 	/**
-	* \brief
-	* \return
+	* \brief Metodo que retorna o valor máximo de iterações para o calculo da fototrianguulação
+	* \return int : Número máximo de iterações
 	*/
     int getMaxIteration();
 
 	/**
-	* \brief
-	* \param
+	* \brief Metodo que altera o valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
+	* \param value : Valor da convergencia em metros
 	*/
     void setMetricConvergencyValue(double value);
 
 	/**
-	* \brief
-	* \return
+	* \brief Metodo que o valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
+	* \return double : Valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
 	*/
 	double getMetricConvergencyValue();
 
 	/**
-	* \brief
-	* \param
+	* \brief Metodo que altera o valor da convergencia dos parametros omega phi e kappa de cada imagem.
+	* \param value : Valor da convergencia em radianos
 	*/
     void setAngularConvergencyValue(double value);
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo que altera o valor da convergencia dos parametros omega phi e kappa de cada imagem.
+	* \return double : Valor da convergencia em radianos
 	*/
 	double getAngularConvergencyValue();
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo auxiliar que recarrega/reseta os valores das coordenadas ENH dos objetos Point
 	*/
     void reloadPointsCoordinates();
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
-	*/
-    void photogrammetricSort();
-
-    // Retorna a coordenada aproximada EN de um ponto na imagem, desde de que a Fototri tenha sido executada com sucesso.
-	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo auxiliar que informa a posiçao/índice da imagem fornecida na lista de imagens selecionadas
+	* \param img  : Obejto imagem
+	* \return int : Posiçao da imagem na lista de imagens selecionadas
 	*/
 	int whereInSelectedImages(Image *img);
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo auxiliar que informa a posiçao/índice da imagem fornecida na lista de todas as imagens
+	* \param img  : Obejto imagem
+	* \return int : Posiçao da imagem na lista de todas as imagens
 	*/
 	int whereInImages(Image *img);
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
-	*/
-	Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
-
-	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
-	*/
-    Matrix getPointResiduo(int pointKey);
-
-	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo auxiliar que retorna uma lista dos ids dos pontos fotogramétricos com uma sobreposiçao(numero de imagens em que o ponto aparece) menor que a especificada
+	* \param overlap: Valor inteiro no qual o valor de superposiçõ es não alcance
+	* \return deque<string> : lista com os Ids dos pontos
 	*/
     deque<string> getPointsWithLesserThanOverlap(int overlap);
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
-	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \brief Metodo auxiliar que cria e instancia um novo objeto Point e adiciona ao xml do projeto
+	* \return int : Retorna a key do ponto criado
 	*/
-    void createNewPoint();
+	int createNewPoint();
 
 	/**
-	* \brief Metodo que retorna o Id de um ponto
+	* \brief Metodo que conecta vincula um ponto a uma imagem e vice-versa
 	* \param pointKey: Key do ponto no projeto
-	* \return string : id do ponto
+	* \param imageKey: Key da imagem no projeto
 	*/
     void connectPointInImage(int pointKey, int imageKey);
 
+
+/*
+	/**
+	* \brief
+	* \param pointKey: Key do ponto no projeto
+	* \return Matrix :
+	*/
+	//Matrix getPointResiduo(int pointKey);
+/*
+	void photogrammetricSort();
+	/**
+	* \brief Metodo que transformas
+	* \param
+	* \return Matrix :
+	*/
+	//Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
 };
 
 #endif // PTMANAGER_H
