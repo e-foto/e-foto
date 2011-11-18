@@ -94,13 +94,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	actionView_Report->setEnabled(false);
 	insertionMode=false;
 
-
+	actionCalculateFotoTri->setEnabled(false);
+	calculateFotoTriToolButton->setEnabled(false);
 
 	qApp->processEvents();
+	//qDebug("Construtor");
 	init();
 
-
-	//undoStack.clear();
 }
 
 PTUserInterface_Qt::~PTUserInterface_Qt()
@@ -110,6 +110,7 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 
 void PTUserInterface_Qt::init()
 {
+	//qDebug("INIT");
 	deque<string> images =ptManager->getStringImages();
 	deque<string> points =ptManager->getStringIdPoints();
 	for (int i=0;i<images.size();i++)
@@ -143,38 +144,12 @@ void PTUserInterface_Qt::init()
 	rightImageTableWidget->verticalHeader()->hide();
 	pointsTableWidget->verticalHeader()->hide();
 
-
-
-//	pointsTableWidget->setSortingEnabled();
-	//pointsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	//leftImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	//rightImageTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-
-	/** carregar imagem da esquerda*/
-	//updateImageTable("leftImage",leftImageString);
-	leftView->loadImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
-
-	/** carregar imagem da direita*/
-	//updateImageTable("rightImage",rightImageString);
-	rightView->loadImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
-
-	mark.load("../X16x16.png");
-
 	connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 	connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 
-        //connect(leftImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
-        //connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
-        //connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(selectAllAppearances(int)));
-
-        connect(leftImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
-        connect(rightImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
-        connect(pointsTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
-
-
-        //connect(leftImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
-        //connect(rightImageTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
-        //connect(pointsTableWidget,SIGNAL(cellClicked(int,int)),this, SLOT(showImagesAppearances(int,int)));
+	connect(leftImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
+	connect(rightImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
+	connect(pointsTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
 
 	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
 	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,int)));
@@ -188,6 +163,7 @@ void PTUserInterface_Qt::init()
 
 	// Se tiver sido calculado antes habilita o botão
 	viewReportToolButton->setEnabled(ptManager->hasPreviousData());
+
 //	connect(new QKeySequence())
 }
 
@@ -212,16 +188,11 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 
 	LoadingScreen::instance().show();
 	qApp->processEvents();
-        //delete(myImageRightView);
-		//delete(myImageLeftView);
 
 	listAllImages.clear();
 	listAllPoints.clear();
 	listImageLeft.clear();
 	listImageRight.clear();
-
-	//delete selectionImagesView;
-	//delete selectionPointsView;
 
 	ptManager->returnProject();
 	QMainWindow::closeEvent(event);
@@ -230,6 +201,7 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 bool PTUserInterface_Qt::exec()
 {
 	bool ok;
+	//qDebug("EXEC");
 //	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
 	/*
 	deque<string>  ids  = ptManager->getStringIdPoints();
@@ -237,19 +209,22 @@ bool PTUserInterface_Qt::exec()
 	deque<string> keys  = ptManager->getStringKeysPoints();
 	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";*/
 
-	updateImageTable("leftImage",leftImageString);
+	/** carregar imagem da esquerda*/
+	leftView->loadImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
+
+	/** carregar imagem da direita*/
+	rightView->loadImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
+	mark.load("../X16x16.png");
+
+	updateImageTable(leftImageTableWidget, leftImageString);
 	updatePointsTable();
 	pointsTableWidget->resizeTable();
-	updateImageTable("rightImage",rightImageString);
+	updateImageTable(rightImageTableWidget, rightImageString);
 
-	//connect(leftImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
-	//connect(rightImageTableWidget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(updatePoint(QTableWidgetItem*)));
-	//selectAllAppearances(0);
-	//showImagesAppearances(0,0);
+	markAllpoints(leftDisplay);
+	markAllpoints(rightDisplay);
 
 	setCurrentPointKey(pointsTableWidget->item(0,5)->text().toInt(&ok));
-	//selectAllAppearances(currentPointKey);
-	//showImagesAppearances();
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
@@ -557,7 +532,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		rightImageComboBox->blockSignals(false);
 		leftView->loadImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
 		leftDisplay->update();
-		updateImageTable("leftImage",leftImageString);
+		updateImageTable(leftImageTableWidget,leftImageString);
 	}
 	else if(sender()==rightImageComboBox)
 	{
@@ -572,13 +547,14 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		leftImageComboBox->blockSignals(false);
 		rightView->loadImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
 		rightDisplay->update();
-		updateImageTable("rightImage",rightImageString);
+		updateImageTable(rightImageTableWidget,rightImageString);
 	}
 }
 
 //Atualiza a tabela de imagens
-void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename, bool move)
+void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string imageFilename, bool move)
 {
+	/*
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
 	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
@@ -590,7 +566,7 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename, b
 	}
 	Matrix imageColLin= ptManager->getColLin(imageFilename);
 	//qDebug()<< "keys " <<imageFilename << " : "<<keysImagePoints;
-	if(image=="leftImage")
+	if(imageTable=="leftImage")
 	{
 		leftImageTableWidget->setSortingEnabled(false);
 		leftImageTableWidget->clearContents();
@@ -645,6 +621,58 @@ void PTUserInterface_Qt::updateImageTable(QString image, string imageFilename, b
 		}
 		rightImageTableWidget->setSortingEnabled(true);
 	}
+	*/
+
+	bool ok;
+	QStringList idImagesPoints, keysImagePoints;
+	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
+	deque<string> keysPoints = ptManager->getStringKeysPoints(imageFilename);
+	for (int i=0;i<imagesPoints.size();i++)
+	{
+		idImagesPoints << QString(imagesPoints.at(i).c_str());
+		keysImagePoints << QString(keysPoints.at(i).c_str());
+	}
+	Matrix imageColLin= ptManager->getColLin(imageFilename);
+	//qDebug()<< "keys " <<imageFilename << " : "<<keysImagePoints;
+	//if(imageTable=="leftImage")
+	//{
+		imageTable->setSortingEnabled(false);
+		imageTable->clearContents();
+		imageTable->setRowCount(0);
+		imageTable->putInColumn(idImagesPoints,0);
+		imageTable->putIn(imageColLin,0,1,'f',0);//,"QSpinBox",true,0,dim.getInt(1,1),dim.getInt(1,2));
+		imageTable->putInColumn(keysImagePoints,3);
+
+		int pos=findKeyAppearances(imageTable,currentPointKey);
+		if (pos >=0)
+		{
+			imageTable->selectRow(pos);
+
+			int col =imageTable->item(pos,1)->text().toInt(&ok);
+			int lin =imageTable->item(pos,2)->text().toInt(&ok);
+			QPointF pixel(col,lin);
+
+			//qDebug("left image coord %dx%d",col,lin);
+			if (imageTable==leftImageTableWidget)
+			{
+				clearAllMarks(leftDisplay);
+				markAllpoints(leftDisplay);
+				//qDebug("mark all left");
+				if (move)
+					leftView->moveTo(pixel);
+				leftDisplay->update();
+			}
+			else
+			{
+				clearAllMarks(rightDisplay);
+				markAllpoints(rightDisplay);
+				//qDebug("mark all right");
+				if (move)
+					rightView->moveTo(pixel);
+				rightDisplay->update();
+			}
+		}
+		imageTable->setSortingEnabled(true);
 }
 
 void PTUserInterface_Qt::updatePointsTable()
@@ -1021,14 +1049,14 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 	{
 		if (insertionMode)
 		{
-                        if(findKeyAppearances(leftImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da direita pelas pointkey
+			if(findKeyAppearances(leftImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da direita pelas pointkey
 			{
 				ptManager->connectPointInImage(currentPointKey,leftImageKey);
-				updateImageTable("leftImage",leftImageString,false);
+				updateImageTable(leftImageTableWidget,leftImageString,false);
 				//conecte o ponto corrente na imagem da direita
 			}
 		}
-                updateMark(leftDisplay,ptManager->getImageId(leftImageString),currentPointKey,*pixel);
+		updateMark(leftDisplay,ptManager->getImageId(leftImageString),currentPointKey,*pixel);
 		//leftView->moveTo(*pixel);
 	}
 	else if (sender()==rightDisplay)
@@ -1036,16 +1064,16 @@ void PTUserInterface_Qt::imageClicked(QPointF *pixel)
 		if (insertionMode)
 		{
 
-                        if(findKeyAppearances(rightImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da esquerda pelas pointkey
+			if(findKeyAppearances(rightImageTableWidget,currentPointKey)==-1)// Verificar se point nao esta na tabela da esquerda pelas pointkey
 			{
 			 //conecte o ponto corrente na imagem da esquerda
 				ptManager->connectPointInImage(currentPointKey,rightImageKey);
-				updateImageTable("rightImage",rightImageString,false);
+				updateImageTable(rightImageTableWidget,rightImageString,false);
 			}
 		}
-                updateMark(rightDisplay,ptManager->getImageId(rightImageString),currentPointKey,*pixel);
+		updateMark(rightDisplay,ptManager->getImageId(rightImageString),currentPointKey,*pixel);
 		//rightView->moveTo(*pixel);
-		//	previsionMark(currentPointKey,pixel);
+		//previsionMark(currentPointKey,pixel);
 	}
 }
 
@@ -1155,7 +1183,7 @@ void PTUserInterface_Qt::markAllpoints(MonoDisplay *display)
 			col=leftImageTableWidget->item(i,1)->text().toInt(&ok);
 			lin=leftImageTableWidget->item(i,2)->text().toInt(&ok);
 			//colocar as marcas no display
-                        int pos=findKeyAppearances(leftImageTableWidget, leftImageTableWidget->item(i,3)->text().toInt(&ok));
+			int pos=findKeyAppearances(leftImageTableWidget, leftImageTableWidget->item(i,3)->text().toInt(&ok));
 			if (pos >=0)
 			{
 				QPointF pixel(col,lin);
@@ -1172,7 +1200,7 @@ void PTUserInterface_Qt::markAllpoints(MonoDisplay *display)
 			col=rightImageTableWidget->item(i,1)->text().toInt(&ok);
 			lin=rightImageTableWidget->item(i,2)->text().toInt(&ok);
 			//colocar as marcas no display
-                        int pos=findKeyAppearances(rightImageTableWidget, rightImageTableWidget->item(i,3)->text().toInt(&ok));
+			int pos=findKeyAppearances(rightImageTableWidget, rightImageTableWidget->item(i,3)->text().toInt(&ok));
 			if (pos >=0)
 			{
 				QPointF pixel(col,lin);
@@ -1223,12 +1251,21 @@ void PTUserInterface_Qt::openImagesFlightDirectionForm()
 
 void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
-	ptManager->setImageFlightDirection(imageFile.toStdString().c_str(), kappa0);
+	int imageKey = ptManager->getImageId(imageFile.toStdString().c_str());
+	ptManager->setImageFlightDirection(imageKey, kappa0);
+
 	int currentIndex=flightDirectionForm->imagesFlightDirectionCombo->currentIndex();
+
 	if (currentIndex==listAllImages.size()-1)
-		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(0);
+		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(listAllImages.size()-1);
 	else
 		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(currentIndex+1);
+
+	if (ptManager->allKappaSet())
+	{
+		actionCalculateFotoTri->setEnabled(true);
+		calculateFotoTriToolButton->setEnabled(true);
+	}
 }
 
 void PTUserInterface_Qt::exportToKml()
@@ -1327,9 +1364,9 @@ void PTUserInterface_Qt::addPoint()
 	setCurrentPointKey(idNewPoint);
 }
 
-void PTUserInterface_Qt::toggleInsertPointMode(bool newInsertionMode)
+void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)
 {
-	insertionMode=newInsertionMode;
+	this->insertionMode=insertionMode;
 	if (insertionMode)
 		insertPointInButton->setStatusTip("Insertion mode ON");
 	else
@@ -1375,17 +1412,16 @@ void PTUserInterface_Qt::undoMark()
 		if (currentPointKey==mark->getKeyPoint())
 		{
                         if (findKeyAppearances(leftImageTableWidget,mark->getKeyPoint())!=-1)
-				updateImageTable("leftImage",leftImageString);
+				updateImageTable(leftImageTableWidget,leftImageString);
                         if (findKeyAppearances(rightImageTableWidget,mark->getKeyPoint())!=-1)
-				updateImageTable("rightImage",rightImageString);
+				updateImageTable(rightImageTableWidget,rightImageString);
 		}
 		else
 		{
-                        if (findKeyAppearances(leftImageTableWidget,mark->getKeyPoint())!=-1)
-				updateImageTable("leftImage",leftImageString);
-                        if (findKeyAppearances(rightImageTableWidget,mark->getKeyPoint())!=-1)
-				updateImageTable("rightImage",rightImageString);
-
+			if (findKeyAppearances(leftImageTableWidget,mark->getKeyPoint())!=-1)
+				updateImageTable(leftImageTableWidget,leftImageString);
+			if (findKeyAppearances(rightImageTableWidget,mark->getKeyPoint())!=-1)
+				updateImageTable(rightImageTableWidget,rightImageString);
 			setCurrentPointKey(mark->getKeyPoint());
 		}
 

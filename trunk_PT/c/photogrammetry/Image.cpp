@@ -24,6 +24,7 @@ Image::Image(int myId, int mySensorId)
 {
     id = myId;
     sensorId = mySensorId;
+	flightDirection = 3*M_PI;
 }
 
 /**
