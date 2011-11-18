@@ -120,9 +120,10 @@ public:
     void setMatrixAFP(Matrix afp);
 
     /**
-    * \brief Metodo que retorna a matriz com os parametros das orientaÃ§Ãµes exteriores
-    * \return Matrix : Matrix com os parametros, onde cada linha representa uma imagem e a sequencia dos parametros Ã© : omega, phi, kappa, X0, Y0, Z0
-    */
+	* \brief Metodo que retorna a matriz com os parametros das orientaçoes exteriores
+	* \return Matrix : Matrix com os parametros, onde cada linha representa uma imagem e a sequencia dos parametros e : omega, phi, kappa, X0, Y0, Z0
+	* \attention Se o calculo da classe BundleAdjusment nao tiver sido disparado, o retorna sera uma matriz 1x1, com o valor zero
+	*/
     Matrix getMatrixOE();
 
     /**
@@ -352,7 +353,7 @@ public:
 	/**
 	* \brief Metodo que retorna o valor da superposiÃ§ao longitudinal do voo ao qual a imagem pertence.
 	* \param imagefile : Nome do arquivo da imagem
-	* \return double : valor da superposiÃ§ao em porcentagem
+	* \return double : valor da superposiçao em porcentagem
 	*/
     double getLongitudinalOverlap(string imageFile);
 
@@ -486,6 +487,11 @@ public:
 	*/
     void connectPointInImage(int pointKey, int imageKey);
 
+	/**
+	* \brief Metodo auxiliar que informa se todos os kappas zeros foram informados pelo usuario
+	* \return bool : Informa se todos os kappas forma medidos para o calculo da fototriangulaçao
+	*/
+	bool allKappaSet();
 
 /*
 	/**
