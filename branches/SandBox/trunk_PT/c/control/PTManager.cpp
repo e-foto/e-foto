@@ -202,6 +202,10 @@ void PTManager::setMatrixAFP(Matrix afp)
 
 Matrix PTManager::getMatrixOE()
 {
+	if (pt==NULL)
+	{
+		return Matrix(0,0);
+	}
 	return AFP;
 }
 
@@ -695,28 +699,16 @@ deque<string> PTManager::getImagesAppearances(int pointKey)
 void PTManager::saveMarks()
 {
 	//qDebug("Chamado metodo para salvar as marcas");
-	EDomElement newXml(efotoManager->xmlGetData());
-	/*
-	for (int i=0; i<listAllImages.size(); i++)
-	{
-		Image *myImage = listAllImages.at(i);
-		for (int j = 0; j < myImage->countPoints(); j++)
-		{
-			int currentPointId = myImage->getPointAt(j)->getId();
-			newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), myImage->getPointAt(j)->xmlGetData().c_str());
-			qDebug("ponto %d:\n%s\n\n",currentPointId,myImage->getPointAt(j)->xmlGetData().c_str());
-		}
-	}
-	qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());*/
-
+	string points="<points>\n";
 	for (int i=0; i<listAllPoints.size(); i++)
-	{
-		int currentPointId = listAllPoints.at(i)->getId();
-		newXml.replaceChildByTagAtt("point", "key", intToString(currentPointId), listAllPoints.at(i)->xmlGetData().c_str());
-		//qDebug("ponto %d:\n%s\n\n",currentPointId,listAllPoints.at(i)->xmlGetData().c_str());
-	}
-	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+		points += listAllPoints.at(i)->xmlGetData().c_str();
+	points+="</points>\n";
+
+	EDomElement newXml(efotoManager->xmlGetData());
+	newXml.replaceChildByTagName("points",points);
 	efotoManager->xmlSetData(newXml.getContent());
+
+	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
 }
 
 void PTManager::saveBundleAdjustment()
@@ -800,9 +792,17 @@ void PTManager::setImageFlightDirection(string imageFile, double flightDirection
 		if(listAllImages.at(i)->getFilename() == imageFile)
 		{
 			listAllImages.at(i)->setFlightDirection(flightDirection);
-			qDebug("File %s kappa0 = %.7f",imageFile.c_str(),flightDirection);
+			//qDebug("File %s kappa0 = %.7f",imageFile.c_str(),flightDirection);
 		}
 }
+
+void PTManager::setImageFlightDirection(int imageKey, double flightDirection)
+{
+	Image *img =efotoManager->instanceImage(imageKey);
+	if (img!=NULL)
+		img->setFlightDirection(flightDirection);
+}
+
 
 double PTManager::getImageFlightDirection(string imageFile)
 {
@@ -814,6 +814,17 @@ double PTManager::getImageFlightDirection(string imageFile)
 		}
 	return -1;
 }
+
+double PTManager::getImageFlightDirection(int imageKey)
+{
+	Image *img =efotoManager->instanceImage(imageKey);
+	if (img!=NULL)
+		return img->getFlightDirection();
+
+	return 3*M_PI;
+}
+
+
 
 double PTManager::getLongitudinalOverlap(string imageFile)
 {
@@ -865,71 +876,88 @@ string PTManager::exportBlockTokml(string fileName)
 
 	Matrix oe=getMatrixOE();
 	//oe.show();
-	for (int i=0;i<listAllImages.size();i++)
+	if (oe.getCols()>1 )
 	{
-		string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
-                int B=rand()%15;
-                int G=rand()%15;
-                int R=rand()%15;
+		int B=0;
+		int G=0;
+		int R=0;
+		for (int i=0;i<listAllImages.size();i++)
+		{
+			string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
+			switch (i%3)
+			{
+				case 0:	B=rand()%15;
+						break;
+				case 1: G=rand()%15;
+						break;
+				case 2: R=rand()%15;
+						break;
+				default :	B=rand()%15;
+							G=rand()%15;
+							R=rand()%15;
+						break;
+			}
 
-		stringstream aux1;
+			stringstream aux1;
 
-		aux1 << hex << "ff"<< B << G << R << B << G << R;
-		string lineColor =aux1.str();
-		//qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
-		//string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
+			aux1 << hex << "ff"<< B << G << R << B << G << R;
 
-		string lineWidth= "2";
-		aux<<"<StyleMap id=\"msn_ylw-pushpin" << intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>\n";
-		aux<<"<Style id=\"sn_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
-		aux<<"<Style id=\"sh_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
 
-		Image *img=listAllImages.at(i);
-		int width=img->getWidth();
-		int height=img->getHeight();
-		double Z0=oe.get(i+1,6);
-		double c=img->getSensor()->getFocalDistance();
+			string lineColor =aux1.str();
+			//qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
+			//string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
 
-		double P1x=pt->digitalToAnalog(listOis.at(i),height/2,0).get(1,1);
-		double PPx=img->getSensor()->getPrincipalPointCoordinates().getXi();
-		double PPy=img->getSensor()->getPrincipalPointCoordinates().getEta();
-		double P2y=pt->digitalToAnalog(listOis.at(i),0,width/2).get(1,2);
+			string lineWidth= "2";
+			aux<<"<StyleMap id=\"msn_ylw-pushpin" << intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin"<<intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>\n";
+			aux<<"<Style id=\"sn_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
+			aux<<"<Style id=\"sh_ylw-pushpin"<<intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
 
-		double deltaE=Z0*(P1x-PPx)/c;
-		double deltaN=Z0*(P2y-PPy)/c;
+			Image *img=listAllImages.at(i);
+			int width=img->getWidth();
+			int height=img->getHeight();
+			double Z0=oe.get(i+1,6);
+			double c=img->getSensor()->getFocalDistance();
 
-		//qDebug("deltaE : %.3f",deltaE);
-		//qDebug("deltaN : %.3f",deltaN);
+			double P1x=pt->digitalToAnalog(listOis.at(i),height/2,0).get(1,1);
+			double PPx=img->getSensor()->getPrincipalPointCoordinates().getXi();
+			double PPy=img->getSensor()->getPrincipalPointCoordinates().getEta();
+			double P2y=pt->digitalToAnalog(listOis.at(i),0,width/2).get(1,2);
 
-		double E1=oe.get(i+1,4)-deltaE;
-		double N1=oe.get(i+1,5)+deltaN;
-		double E2=oe.get(i+1,4)+deltaE;
-		double N2=oe.get(i+1,5)-deltaN;
+			double deltaE=Z0*(P1x-PPx)/c;
+			double deltaN=Z0*(P2y-PPy)/c;
 
-		Matrix plh1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,GeoSystem());
-		Matrix plh2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,GeoSystem());
+			//qDebug("deltaE : %.3f",deltaE);
+			//qDebug("deltaN : %.3f",deltaN);
 
-		double lat1 = plh1.get(1,1)*180/M_PI;
-		lat1 = (hemiLatitude =='S'? -lat1 : lat1);
-		double longi1 = plh1.get(1,2)*180/M_PI;
+			double E1=oe.get(i+1,4)-deltaE;
+			double N1=oe.get(i+1,5)+deltaN;
+			double E2=oe.get(i+1,4)+deltaE;
+			double N2=oe.get(i+1,5)-deltaN;
 
-		double lat2 = plh2.get(1,1)*180/M_PI;
-		lat2 = (hemiLatitude =='S'? -lat2 : lat2);
-		double longi2 =plh2.get(1,2)*180/M_PI;
+			Matrix plh1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,GeoSystem());
+			Matrix plh2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,GeoSystem());
 
-		stringstream coord;
-		coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
-		coord << doubleToString(longi2) << "," <<doubleToString(lat1) << ",0 ";
-		coord << doubleToString(longi2) << "," <<doubleToString(lat2) << ",0 ";
-		coord << doubleToString(longi1) << "," <<doubleToString(lat2) << ",0 ";
-		coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
-		string coordenadas=coord.str();
+			double lat1 = plh1.get(1,1)*180/M_PI;
+			lat1 = (hemiLatitude =='S'? -lat1 : lat1);
+			double longi1 = plh1.get(1,2)*180/M_PI;
 
-		aux << "<Placemark>\n";
-		aux << "<name>"<< img->getFilename() << "</name>\n";
-		aux << "<styleUrl>";
-		aux << "#msn_ylw-pushpin" <<intToString(i)<< "</styleUrl>\n";
-		/*
+			double lat2 = plh2.get(1,1)*180/M_PI;
+			lat2 = (hemiLatitude =='S'? -lat2 : lat2);
+			double longi2 =plh2.get(1,2)*180/M_PI;
+
+			stringstream coord;
+			coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
+			coord << doubleToString(longi2) << "," <<doubleToString(lat1) << ",0 ";
+			coord << doubleToString(longi2) << "," <<doubleToString(lat2) << ",0 ";
+			coord << doubleToString(longi1) << "," <<doubleToString(lat2) << ",0 ";
+			coord << doubleToString(longi1) << "," <<doubleToString(lat1) << ",0 ";
+			string coordenadas=coord.str();
+
+			aux << "<Placemark>\n";
+			aux << "<name>"<< img->getFilename() << "</name>\n";
+			aux << "<styleUrl>";
+			aux << "#msn_ylw-pushpin" <<intToString(i)<< "</styleUrl>\n";
+			/*
 		aux << "<Polygon>\n";
 		aux << "<tessellate>1</tessellate>\n";
 		aux << "<outerBoundaryIs>\n";
@@ -941,13 +969,14 @@ string PTManager::exportBlockTokml(string fileName)
 		aux << "</outerBoundaryIs>\n";
 		aux << "</Polygon>\n";
 		*/
-		aux << "<LineString>\n";
-		aux << "<tessellate>1</tessellate>\n";
-		aux << "<coordinates>\n";
-		aux << coordenadas << "\n";
-		aux << "</coordinates>\n";
-		aux << "</LineString>\n";
-		aux << "</Placemark>\n";
+			aux << "<LineString>\n";
+			aux << "<tessellate>1</tessellate>\n";
+			aux << "<coordinates>\n";
+			aux << coordenadas << "\n";
+			aux << "</coordinates>\n";
+			aux << "</LineString>\n";
+			aux << "</Placemark>\n";
+		}
 	}
 
 	string controlPoint="";
@@ -958,7 +987,7 @@ string PTManager::exportBlockTokml(string fileName)
 	for(int i=0;i<listAllPoints.size();i++)
 	{
 		Point *pnt=listAllPoints.at(i);
-		string pointType;
+		//string pointType;
 		if (pnt->is("PhotogrammetricPoint"))
 			photogrammetricPoint += pointToKml(pnt,zona,hemiLatitude,sys,"photogrammetricPoint");
 		else if (pnt->is("ControlPoint"))
@@ -966,6 +995,9 @@ string PTManager::exportBlockTokml(string fileName)
 		else if (pnt->is("CheckingPoint"))
 			checkingPoint += pointToKml(pnt,zona,hemiLatitude,sys, "checkingPoint");
 	}
+
+	aux << "<Folder>\n";
+	aux << "<name>" << EDomElement(efotoManager->getXml("projectHeader")).elementByTagName("name").toString() << "</name>\n";
 
 	aux << "<Folder>\n";
 	aux << "<name>" << "Control Points"<< "</name>\n";
@@ -982,6 +1014,8 @@ string PTManager::exportBlockTokml(string fileName)
 	aux << checkingPoint;
 	aux << "</Folder>\n";
 
+
+	aux << "</Folder>\n";
 	aux << "</Document>\n</kml>";
 
 	EDomElement xmlgoogle(aux.str());
@@ -1157,6 +1191,17 @@ void PTManager::connectPointInImage(int pointKey, int imageKey)
 
 }
 
+bool PTManager::allKappaSet()
+{
+	int nImages= listAllImages.size();
+	for (int i=0;i<nImages;i++)
+	{
+		Image *img=listAllImages.at(i);
+		if (img->getFlightDirection()>=2.5*M_PI)
+			return false;
+	}
+	return true;
+}
 
 /** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
 */
