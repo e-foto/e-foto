@@ -306,7 +306,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     dui->setStatus((char *)"Interpolating grid ...");
 
-    dui->setEnabled(false);
+    dui->disableOptions();
     dui->setAllowClose(false);
 
     if (garea == 0)
@@ -336,8 +336,8 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
     dui->setGridData(Xi,Yi,Xf,Yf,min,max,res_x,res_y,w,h);
 
-    dui->setEnabled(true);
     dui->setAllowClose(true);
+    dui->enableOptions();
 }
 
 void DEMManager::calcPointsXYZ()
