@@ -48,6 +48,7 @@ int main( int argc, char ** argv )
 	(mat&iden).triang().reduction().show('g',8,"teste");
 */
 
+	/*
     GeoSystem sys(WGS84);
 
 	double phi = -80*M_PI/180;
@@ -150,7 +151,7 @@ int main( int argc, char ** argv )
 
 	qDebug("Diferenças Final: %.10f\t%.10f\t%.10f\t%d\t%d",E-Ei,N-Ni,H-Hi,zona-zonai,hemi-hemii);
 
-
+*/
     qApp->processEvents();
     EFotoManager manager;
     manager.setInterfaceType("Qt");
