@@ -32,14 +32,15 @@ public:
 	string name;
 	string description;
 	int type;
-	int outline_color;
-	int fill_color;
+	int outline_color, fill_color, fill_transparency;
+	int line_type;
 };
 
 // One point
 class DemFeaturePoints
 {
 public:
+	DemFeaturePoints() { X = Y = Z = 0.0; };
 	double X, Y, Z;
 };
 
@@ -47,7 +48,9 @@ public:
 class DemFeature
 {
 public:
+	DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; };
 	int feature_class, feature_type, layer;
+	double perimeter, area;
 	string name, description;
 	DemFeaturePoints centroid;
 	bool flag_calc_centroid;
@@ -61,9 +64,11 @@ private:
 	int loadFeatSp165(char *filename, bool append);
 	void convertClassesIdsFomSp165();
 	void createClassesFromSp165();
-	void calculateCentroids();
+	void calculateFeaturesAttributes();
+	void calculateFeatureAttributes(int featid);
 	void calculateCentroid(int featid);
-	int sp_version;
+	void calculatePerimeter(int featid);
+	void calculateArea(int featid);
 	int selected_feat, selected_pt;
 	vector <DemFeature> features;
 	vector <FeatureClass> feature_classes;
