@@ -439,12 +439,9 @@ void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 
 #ifdef FRANC
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(n12)*inverseN22);
-	//Matrix mat=(N22-temp1*N12);
-	//mat.show('f',5,"N22-temp1*N12");
-	x1=SparseMatrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
+	//x1=SparseMatrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
+	x1=SparseMatrix((n11-temp1*n12.transpose()).osuInverse())*(n1-temp1*n2);
 #endif
-	//SparseMatrix temp1=SparseMatrix(inverseN11);
-	//x1=temp1*(n1-SparseMatrix(N12)*x2);
 
 }
 
@@ -463,7 +460,8 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
 	//Matrix mat=(N22-temp1*N12);
 	//mat.show('f',5,"N22-temp1*N12");
-	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+	//x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+	x2=SparseMatrix((N22-temp1*N12).osuInverse())*(n2-temp1*n1);
 #endif
 
 #ifdef FRANC
