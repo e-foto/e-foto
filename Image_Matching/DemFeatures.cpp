@@ -6,11 +6,6 @@
 
 DemFeatures::DemFeatures()
 {
-	// Stereoplotter version
-	// 0- SP 1.65
-	// 1- This version
-	sp_version = 1;
-
 	// No feature and point selected
 	selected_feat = -1;
 	selected_pt = -1;
@@ -68,7 +63,7 @@ int DemFeatures::addNewFeature(string name, string fdesc, int fclass, int ftype,
 	df.feature_class = fclass;
 	df.feature_type = ftype;
 	df.layer = layer;
-	
+
 	features.push_back(df);
 
 	return features.size();
@@ -92,13 +87,17 @@ int DemFeatures::addNewPoint(int featid, double X, double Y, double Z)
 	if (featid < 1 || featid > features.size())
 		return 0;
 
+	// If feature is point, no more than 1 point is allowed
+	if (features.at(featid-1).points.size() > 0 && features.at(featid-1).feature_type == 1)
+		return 0;
+
 	DemFeaturePoints dfp;
 	dfp.X = X;
 	dfp.Y = Y;
 	dfp.Z = Z;
 	
 	features.at(featid-1).points.push_back(dfp);
-	calculateCentroid(featid);
+	calculateFeatureAttributes(featid);
 
 	return features.at(featid-1).points.size();
 }
@@ -117,7 +116,7 @@ void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, doubl
 	features.at(featid-1).points.at(pointid-1).Y = Y;
 	features.at(featid-1).points.at(pointid-1).Z = Z;
 
-	calculateCentroid(featid);
+	calculateFeatureAttributes(featid);
 }
 
 int DemFeatures::deletePoint(int featid, int pointid)
@@ -132,7 +131,7 @@ int DemFeatures::deletePoint(int featid, int pointid)
 
 	features.at(featid-1).points.erase(features.at(featid-1).points.begin()+pointid-1);
 
-	calculateCentroid(featid);
+	calculateFeatureAttributes(featid);
 }
 
 void DemFeatures::setName(int featid, string _name)
@@ -266,7 +265,7 @@ void DemFeatures::setFeatureClass(int classid, FeatureClass fc)
 // Arithmetic functions
 //
 
-void DemFeatures::calculateCentroids()
+void DemFeatures::calculateFeaturesAttributes()
 {
 	for (int i=0; i<features.size(); i++)
 	{
@@ -275,9 +274,22 @@ void DemFeatures::calculateCentroids()
 			continue;
 
 		calculateCentroid(i+1);
+		calculatePerimeter(i+1);
+		calculateArea(i+1);
 	}
 }
 
+void DemFeatures::calculateFeatureAttributes(int featid)
+{
+	if (featid < 1 || featid > features.size())
+		return;
+
+	calculateCentroid(featid);
+	calculatePerimeter(featid);
+	calculateArea(featid);
+}
+
+// Calculate the average
 void DemFeatures::calculateCentroid(int featid)
 {
 	if (featid < 1 || featid > features.size())
@@ -298,6 +310,83 @@ void DemFeatures::calculateCentroid(int featid)
 	df->centroid.Y = CY/double(df->points.size());
 	df->centroid.Z = CZ/double(df->points.size());
 	df->flag_calc_centroid = true;
+}
+
+void DemFeatures::calculatePerimeter(int featid)
+{
+	if (featid < 1 || featid > features.size())
+		return;
+
+	DemFeature *df =  &features.at(featid-1);
+	double RX, RY, RZ, perimeter = 0.0;
+
+	for (int k=0; k<df->points.size()-1; k++)
+	{
+		RX = df->points.at(k+1).X - df->points.at(k).X;
+		RY = df->points.at(k+1).Y - df->points.at(k).Y;
+		RZ = df->points.at(k+1).Z - df->points.at(k).Z;
+		perimeter += sqrt(pow(RX,2) + pow(RY,2) + pow(RZ,2)); 
+	}
+
+	// Add the closing line to the polygon
+	int last_pt = df->points.size() - 1;
+	if (df->feature_type == 3 && df->points.size() > 2)
+	{
+		RX = df->points.at(0).X - df->points.at(last_pt).X;
+		RY = df->points.at(0).Y - df->points.at(last_pt).Y;
+		RZ = df->points.at(0).Z - df->points.at(last_pt).Z;
+		perimeter += sqrt(pow(RX,2) + pow(RY,2) + pow(RZ,2)); 
+	}
+
+	df->perimeter = perimeter;
+}
+
+void DemFeatures::calculateArea(int featid)
+{
+	if (featid < 1 || featid > features.size())
+		return;
+
+	DemFeature *df =  &features.at(featid-1);
+
+	// Calculate area only for polygons
+	if (df->feature_type < 3)
+	{
+		df->area = 0.0;
+		return;
+	}
+
+	// Calculate normal vector
+	double NX, NY, NZ, X1, Y1, Z1, X2, Y2, Z2, VX, VY, VZ;
+	int num_points = df->points.size();
+	NX = NY = NZ = VX = VY = VZ = 0.0;
+	for (int i=0; i<num_points; i++)
+	{
+		X1 = df->points.at(i).X;
+		Y1 = df->points.at(i).Y;
+		Z1 = df->points.at(i).Z;
+		X2 = df->points.at((i+1) % num_points).X;
+		Y2 = df->points.at((i+1) % num_points).Y;
+		Z2 = df->points.at((i+1) % num_points).Z;
+		NX += Y1*Z2 - Y2*Z1;
+		NY += - (Z2*X1 - Z1*X2);
+		NZ += X1*Y2 - X2*Y1;
+	}
+
+	// Calculate area
+	for (int i=0; i<num_points; i++)
+	{
+		X1 = df->points.at(i).X;
+		Y1 = df->points.at(i).Y;
+		Z1 = df->points.at(i).Z;
+		X2 = df->points.at((i+1) % num_points).X;
+		Y2 = df->points.at((i+1) % num_points).Y;
+		Z2 = df->points.at((i+1) % num_points).Z;
+		VX += X1-X2;
+		VY += Y1-Y2;
+		VZ += Z1-Z2;
+	}
+
+	df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2));
 }
 
 // Return 0, if feature list is empty
@@ -393,6 +482,8 @@ void DemFeatures::createClassesFromSp165()
 	// Undefined
 	fc.type = 0;
 	fc.description = "";
+	fc.fill_transparency = 0xFFFFFF;
+	fc.line_type = 1;
 	fc.outline_color = 0;
 	fc.fill_color = 0;
 	fc.name = "Undefined";
@@ -506,7 +597,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	// Create empty features
 //	arq.seekg (0, ios::beg);
 	DemFeature df;
-	df.layer = 0;
+	df.layer = 1;
 	df.description = "";
 	df.flag_calc_centroid = false;
 	while (!arq.fail())
@@ -599,11 +690,8 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
 	arq.close();
 
-	// Set StereoPlotter version as 1.65
-	sp_version = 0;
-
 	// Calculate centroids
-	calculateCentroids();
+	calculateFeaturesAttributes();
 
 	// Create classes from SP 1.65
 	createClassesFromSp165();
@@ -638,6 +726,8 @@ void DemFeatures::showFeatures(bool full=false)
 				printf("  %f, %f, %f\n",df.points.at(k).X, df.points.at(k).Y, df.points.at(k).Z);
 		}
 		printf(" Centroid: %f, %f, %f\n",df.centroid.X, df.centroid.Y, df.centroid.Z);
+		printf(" Perimeter: %f\n",df.perimeter);
+		printf(" Area: %f\n",df.area);
 	}
 }
 
