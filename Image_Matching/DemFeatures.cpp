@@ -80,26 +80,54 @@ int DemFeatures::deleteFeature(int featid)
 	return 1;
 }
 
-// Returns point id - 0, if feature_id is invalid
-int DemFeatures::addNewPoint(int featid, double X, double Y, double Z)
+int DemFeatures::copyFeature(int featid, double shift=0.0)
 {
 	// Check if feature is valid
 	if (featid < 1 || featid > features.size())
 		return 0;
 
+	DemFeature df;
+	df = features.at(featid-1);
+
+	// Add shift to NE direction
+	for (int i=0; i<df.points.size(); i++)
+	{
+		df.points.at(i).X +=  shift;
+		df.points.at(i).Y +=  shift;
+	}
+
+	features.push_back(df);
+
+	return features.size();
+}
+
+// Returns point id - 0, if feature_id is invalid
+void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, double Z)
+{
+	// Check if feature is valid
+	if (featid < 1 || featid > features.size())
+		return;
+
 	// If feature is point, no more than 1 point is allowed
 	if (features.at(featid-1).points.size() > 0 && features.at(featid-1).feature_type == 1)
-		return 0;
+		return;
+
+	// If point id is invalid, return
+	if (pointid < 1)
+		return;
 
 	DemFeaturePoints dfp;
 	dfp.X = X;
 	dfp.Y = Y;
 	dfp.Z = Z;
-	
-	features.at(featid-1).points.push_back(dfp);
-	calculateFeatureAttributes(featid);
 
-	return features.at(featid-1).points.size();
+	// Insert point
+	if (pointid > features.at(featid-1).points.size())
+		features.at(featid-1).points.push_back(dfp);
+	else
+		features.at(featid-1).points.insert(features.at(featid-1).points.begin()+pointid-1, dfp);
+
+	calculateFeatureAttributes(featid);
 }
 
 void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, double Z)
