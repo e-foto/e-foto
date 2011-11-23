@@ -15,6 +15,10 @@ int main(void)
 	df.setDescription(8, "Rua do bairro do Maracanã");
 //	df.deleteFeature(7); // Ok
 //	df.deletePoint(8,7); // Ok
+//	df.addNewPoint(8,8,10.0,20.0,30.0); // Ok
+//	df.copyFeature(6); // Ok
+//	df.addNewPoint(9,2,1.0,2.0,3.0); // Ok, work independently
+	df.copyFeature(7,1.0);
 	df.showFeatures(true);
 //	df.showClasses(); // Ok
 //	printf("Nearest feature: %d\n",df.getNearestFeature(681102.3714, 7465262.5574, 21.76));

@@ -87,7 +87,8 @@ public:
 	void setSelectedPoint(int _pt) { selected_pt = _pt; };
 	int addNewFeature(string name, string fdesc, int fclass, int ftype, int layer); // Returns feature id
 	int deleteFeature(int featid);
-	int addNewPoint(int featid, double X, double Y, double Z); // Returns point id
+	int copyFeature(int featid, double shift);
+	void addNewPoint(int featid, int pointid, double X, double Y, double Z); // Returns point id
 	void updatePoint(int featid, int pointid, double X, double Y, double Z);
 	int deletePoint(int featid, int pointid);
 	void setName(int featid, string _name);
