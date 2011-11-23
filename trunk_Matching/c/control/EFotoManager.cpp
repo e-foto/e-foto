@@ -7,6 +7,7 @@
 #include "SRManager.h"
 #include "ProjectManager.h"
 #include "DEMManager.h"
+#include "OrthoManager.h"
 
 #include <QApplication>
 
@@ -863,6 +864,57 @@ void EFotoManager::stopDEM()
     }
 }
 
+bool EFotoManager::execOrtho()
+{
+        bool result;
+
+        nextModule = 2;
+
+        instanceAllImages();
+
+        for (int i = images.size() - 1; i >=0; i--)
+        {
+            Image* img = images.at(i);
+            Sensor* sensor = instanceSensor(img->getSensorId());
+            InteriorOrientation* imgIO = instanceIO(img->getId());
+            SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
+
+            img->setSensor(sensor);
+            img->setIO(imgIO);
+            img->setEO(imgEO);
+
+            if (imgIO == NULL && imgEO == NULL)
+            {
+                deleteImage(img->getId());
+            }
+        }
+
+        ortho = new OrthoManager(this, images, EOs);
+
+        result = ortho->exec();
+
+        return result;
+}
+
+void EFotoManager::stopOrtho()
+{
+    delete ortho;
+    ortho = NULL;
+    //deleteSensor(images.at(0)->getSensorId());
+    int numPoints=points.size();
+    int numImages=images.size();
+
+    for (int i=0;i<numPoints;i++)
+    {
+            deletePoint(points.at(0)->getId());
+    }
+    for (int i=0;i<numImages;i++)
+    {
+            deleteIO(images.at(0)->getId());
+            deleteImage(images.at(0)->getId());
+    }
+}
+
 /**
  *
  */
@@ -893,6 +945,10 @@ bool EFotoManager::exec(string filename)
                 case 6:
                         savedState = true;
                         execDEM();
+                        break;
+                case 7:
+                        savedState = true;
+                        execOrtho();
                         break;
 		default:
 			nextModule = 0;

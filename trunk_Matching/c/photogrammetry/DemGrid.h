@@ -54,6 +54,7 @@ public:
 	Matrix &getDem();
         int getWidth() { return dem_width; };
         int getHeight() { return dem_height; };
+        void printData();
 
 private:
 	Matrix DEM;
@@ -62,7 +63,6 @@ private:
 	int dem_width, dem_height;
 	MatchingPointsList *point_list;
 	MatchingPointsGrid *mpg;
-	void printData();
 	void saveDemEfoto(char *);
 	void loadDemEfoto(char *);
 	void saveDemAscii(char *);

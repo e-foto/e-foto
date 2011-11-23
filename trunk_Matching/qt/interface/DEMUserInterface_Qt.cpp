@@ -244,7 +244,7 @@ void DEMUserInterface_Qt::onDemSaveClicked()
 
 void DEMUserInterface_Qt::onDemGridSaveClicked()
 {
-    // File open dialog
+    // File save dialog
     QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), ".", tr("DEM Grid (*.dsm);; All files (*.*)"));
     if (filename=="")
         return;

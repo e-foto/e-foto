@@ -59,6 +59,7 @@ HEADERS += \
     IOManager.h \
     ProjectManager.h \
     DEMManager.h \
+    OrthoManager.h \
     SRManager.h \
 # c/imageDisplay/
     AbstractSWidget.h \
@@ -87,6 +88,7 @@ HEADERS += \
     ProjectUserInterface.h \
     SRUserInterface.h \
     DEMUserInterface.h \
+    OrthoUserInterface.h \
 # c/photogrammetry/
     AnalogFiductialMark.h \
     AnalogImageSpaceCoordinate.h \
@@ -157,6 +159,7 @@ HEADERS += \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
     DEMUserInterface_Qt.h \
+    OrthoUserInterface_Qt.h \
 # c/imageProcessing
     NormalizedCrossCorrelation.h \
     RadiometricTransformation.h \
@@ -181,7 +184,8 @@ FORMS += \
     IOForm.ui \
     SRForm.ui \
     EfotoViewer.ui \
-    DemExtraction.ui
+    DemExtraction.ui \
+    OrthoForm.ui
 
 
 SOURCES += \
@@ -190,6 +194,7 @@ SOURCES += \
     IOManager.cpp \
     ProjectManager.cpp \
     DEMManager.cpp \
+    OrthoManager.cpp \
     SRManager.cpp \
  # c/imageDisplay/
     AbstractSWidget.cpp \
@@ -218,6 +223,7 @@ SOURCES += \
     ProjectUserInterface.cpp \
     SRUserInterface.cpp \
     DEMUserInterface.cpp \
+    OrthoUserInterface.cpp \
 # photogrammetry/
     AnalogFiductialMark.cpp \
     AnalogImageSpaceCoordinate.cpp \
@@ -288,6 +294,7 @@ SOURCES += \
     ProjectUserInterface_Qt.cpp \
     SRUserInterface_Qt.cpp \
     DEMUserInterface_Qt.cpp \
+    OrthoUserInterface_Qt.cpp \
 # imageProcessing
     NormalizedCrossCorrelation.cpp \
     RadiometricTransformation.cpp \
