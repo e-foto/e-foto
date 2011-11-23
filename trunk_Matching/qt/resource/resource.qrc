@@ -40,5 +40,6 @@
         <file>done.png</file>
         <file>abort.png</file>
         <file>edit.png</file>
+        <file>ortho.png</file>
     </qresource>
 </RCC>

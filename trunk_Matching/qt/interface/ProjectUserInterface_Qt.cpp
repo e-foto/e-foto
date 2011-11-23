@@ -41,6 +41,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
         this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
         this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
         this->connect(actionDEMExtraction, SIGNAL(triggered()), this, SLOT(executeDEM()));
+        this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 	this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 	this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 	this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
@@ -657,6 +658,17 @@ void ProjectUserInterface_Qt::executeDEM()
         qApp->processEvents();
         this->close();
         manager->startModule("DEM-Extraction",0);
+        changeModule = false;
+}
+
+void ProjectUserInterface_Qt::executeOrtho()
+{
+        changeModule = true;
+        confirmToClose();
+        LoadingScreen::instance().show();
+        qApp->processEvents();
+        this->close();
+        manager->startModule("Ortho-rectification",0);
         changeModule = false;
 }
 

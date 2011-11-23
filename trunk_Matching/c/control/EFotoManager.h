@@ -24,6 +24,7 @@ class IOManager;
 class SRManager;
 class ProjectManager;
 class DEMManager;
+class OrthoManager;
 
 /**
   * class EFotoManager
@@ -50,6 +51,7 @@ class EFotoManager
 	IOManager* interiorOrientation;
 	SRManager* spatialRessection;
         DEMManager* dem;
+        OrthoManager* ortho;
 
 	Terrain* theTerrain;
 	deque<Sensor*> sensors;
@@ -296,11 +298,18 @@ public:
         void stopSR(int id);
 
         /**
-         * This method starts the SR module.
+         * This method starts the DEM module.
          * @param id An image identifier.
          */
         bool execDEM();
         void stopDEM();
+
+        /**
+         * This method starts the Ortho module.
+         * @param id An image identifier.
+         */
+        bool execOrtho();
+        void stopOrtho();
 
 	/**
 	 * This method starts the main execution loop.

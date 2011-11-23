@@ -94,6 +94,7 @@ public slots:
         virtual void executeIO();
         virtual void executeSR();
         virtual void executeDEM();
+        virtual void executeOrtho();
 	virtual void processTreeClick(QModelIndex);
 	virtual void exportSPFile();
 

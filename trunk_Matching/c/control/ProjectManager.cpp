@@ -442,6 +442,8 @@ bool ProjectManager::startModule(string module, int image)
             manager->setNextModule(4);
         else if (module.compare("DEM-Extraction") == 0)
             manager->setNextModule(6);
+        else if (module.compare("Ortho-rectification") == 0)
+            manager->setNextModule(7);
 
         manager->setNextImage(image);
 		manager->exec();

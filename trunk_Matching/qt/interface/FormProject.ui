@@ -115,6 +115,7 @@
     <addaction name="actionSpatial_resection"/>
     <addaction name="actionExport_Stereo"/>
     <addaction name="actionDEMExtraction"/>
+    <addaction name="actionOrtho_rectification"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -347,6 +348,11 @@
   <action name="actionDEMExtraction">
    <property name="text">
     <string>DEM-Extraction</string>
+   </property>
+  </action>
+  <action name="actionOrtho_rectification">
+   <property name="text">
+    <string>Ortho-rectification</string>
    </property>
   </action>
  </widget>
