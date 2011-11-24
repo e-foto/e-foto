@@ -66,6 +66,29 @@ void DemGrid::getMinMax(double &min, double &max)
 	}
 }
 
+double DemGrid::getMeanZ()
+{
+    double meanZ = 0.0, Z;
+    unsigned int count=0;
+
+    for (unsigned int i=1; i<dem_height; i++)
+    {
+            for (unsigned int j=1; j<dem_width; j++)
+            {
+                    Z = DEM.get(i,j);
+
+                    // If hole, continue
+                    if (Z - 0.0 < 0.000000000000000001)
+                        continue;
+
+                    meanZ += Z;
+                    count++;
+            }
+    }
+
+    return meanZ/double(count);
+}
+
 double DemGrid::getHeightXY(double X, double Y)
 {
 	// Calculate col,row - double
@@ -130,6 +153,12 @@ Matrix & DemGrid::getDem()
 	Matrix *m = new Matrix(DEM.getRows(),DEM.getCols());
 	*m = DEM;
 	return *m;
+}
+
+void DemGrid::getXYAt(int col, int row, double &X, double &Y)
+{
+        X = res_x * (double(col) - 1.0) + Xi;
+        Y = res_y * (double(row) - 1.0) + Yi;
 }
 
 /***********************************************

@@ -48,6 +48,7 @@ public:
 	double getElapsedTime() { return elap_time; };
 	void cutGrid(double min, double max, bool fromList);
 	void getMinMax(double &, double &);
+        double getMeanZ();
 	double getHeightXY(double X, double Y);
 	double getHeight(double col, double row);
 	Matrix *getDemImage(double min=0.0, double max=0.0);
@@ -55,6 +56,8 @@ public:
         int getWidth() { return dem_width; };
         int getHeight() { return dem_height; };
         void printData();
+        void getXYAt(int, int, double &, double &);
+        void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
 
 private:
 	Matrix DEM;

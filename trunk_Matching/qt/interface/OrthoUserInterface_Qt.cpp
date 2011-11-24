@@ -60,6 +60,9 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 
         setWindowState(this->windowState());
 
+        // Set flags
+        dem_load_flag = 0;
+
         // Center window
         QDesktopWidget *desktop = QApplication::desktop();
         int Cx,Cy;
@@ -155,19 +158,41 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
 
     // Add file to line edit
     lineEdit->setText(filename);
+
+    // Load DEM
+    dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toStdString().c_str(),comboBox2->currentIndex());
+
+    // Report error
+    if (!dem_load_flag)
+    {
+        QMessageBox::critical(this,"Error","Invalid DEM file format.");
+        return;
+    }
 }
 
 void OrthoUserInterface_Qt::onOrthoClicked()
 {
     // Ortho clicked
 
-    if (lineEdit->text() == "")
+    if (!dem_load_flag)
     {
         QMessageBox::critical(this,"Error","Please, load a DEM first.");
         return;
     }
 
-    manager->orthoRectification((char *)lineEdit->text().toStdString().c_str(),comboBox2->currentIndex());
+    // Save dialog
+    // File open dialog
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), ".", tr("E-FOTO Orthoimage (*.ort);; All files (*.*)")) ;
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
 }
 
 void OrthoUserInterface_Qt::disableOptions()
@@ -209,4 +234,61 @@ void OrthoUserInterface_Qt::setProgress(int progress)
 
     progressBar->setValue(progress);
     qApp->processEvents();
+}
+
+/*
+ * Image dealing
+ **/
+
+Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
+{
+        int levels=256;
+
+        QImage img;
+        img.load(filename);
+
+        int step = int(1.0/sample);
+        int width = int(img.width()*sample);
+        int height = int(img.height()*sample);
+        int pixel;
+
+        Matrix *I = new Matrix(height, width);
+
+        progressBar->setValue(0);
+        for (unsigned int i=1; i<=height; i++)
+        {
+                for (unsigned int j=1; j<=width; j++)
+                {
+                        pixel = img.pixel((j-1)*step,(i-1)*step);
+//			pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140;
+                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
+//                        pixel = pixel & 0xFF;
+                        I->set(i, j, pixel/double(levels-1));
+                }
+                progressBar->setValue((100*i)/height);
+        }
+
+        return I;
+}
+
+int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
+{
+        int levels = 256;
+
+        QImage img(I->getCols(), I->getRows(), QImage::Format_RGB32); // Qt4
+
+        int pixel;
+        for (unsigned int i=1; i<=img.height(); i++)
+        {
+                for (unsigned int j=1; j<=img.width(); j++)
+                {
+                        pixel = round(I->get(i,j)*double(levels-1));
+                        pixel = (pixel << 16) + (pixel << 8) + pixel;
+                        img.setPixel(j-1, i-1, pixel);
+                }
+        }
+
+        img.save(filename,"BMP");
+
+        return 1;
 }

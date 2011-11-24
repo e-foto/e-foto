@@ -2200,6 +2200,53 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>comboBox3</tabstop>
+  <tabstop>comboBox4</tabstop>
+  <tabstop>spinBox1</tabstop>
+  <tabstop>spinBox2</tabstop>
+  <tabstop>doubleSpinBox0</tabstop>
+  <tabstop>comboBox5</tabstop>
+  <tabstop>spinBox3</tabstop>
+  <tabstop>spinBox4</tabstop>
+  <tabstop>doubleSpinBox5</tabstop>
+  <tabstop>doubleSpinBox6</tabstop>
+  <tabstop>spinBox7</tabstop>
+  <tabstop>doubleSpinBox8</tabstop>
+  <tabstop>doubleSpinBox9</tabstop>
+  <tabstop>doubleSpinBox10</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>doubleSpinBox17</tabstop>
+  <tabstop>spinBox11</tabstop>
+  <tabstop>spinBox12</tabstop>
+  <tabstop>doubleSpinBox13</tabstop>
+  <tabstop>doubleSpinBox14</tabstop>
+  <tabstop>comboBox0</tabstop>
+  <tabstop>comboBox1</tabstop>
+  <tabstop>comboBox2_2</tabstop>
+  <tabstop>XilineEdit</tabstop>
+  <tabstop>YilineEdit</tabstop>
+  <tabstop>XflineEdit</tabstop>
+  <tabstop>YflineEdit</tabstop>
+  <tabstop>doubleSpinBox_8</tabstop>
+  <tabstop>doubleSpinBox_9</tabstop>
+  <tabstop>comboBox6</tabstop>
+  <tabstop>doubleSpinBox15</tabstop>
+  <tabstop>doubleSpinBox16</tabstop>
+  <tabstop>comboBox7</tabstop>
+  <tabstop>comboBox8</tabstop>
+  <tabstop>comboBox9</tabstop>
+  <tabstop>seedsButton</tabstop>
+  <tabstop>stereoButton</tabstop>
+  <tabstop>loadButton</tabstop>
+  <tabstop>demButton</tabstop>
+  <tabstop>saveButton2</tabstop>
+  <tabstop>interButton</tabstop>
+  <tabstop>saveButton</tabstop>
+  <tabstop>abortButton</tabstop>
+  <tabstop>doneButton</tabstop>
+ </tabstops>
  <resources>
   <include location="../resource/resource.qrc"/>
  </resources>
