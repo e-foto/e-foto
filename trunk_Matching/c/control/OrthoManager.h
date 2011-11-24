@@ -13,6 +13,7 @@
 #include "Matrix.h"
 #include "DemGrid.h"
 #include "SpatialIntersection.h"
+#include "Orthorectification.h"
 
 class OrthoUserInterface;
 class EFotoManager;
@@ -29,6 +30,9 @@ class OrthoManager
         deque<ExteriorOrientation*> listEOs;
         DemGrid *grid;
         void addImagesToForm();
+        Orthorectification *ortho;
+        void runOrthoIndividual(int);
+        StereoPair sp;
 
 public:
 
@@ -49,7 +53,7 @@ public:
         void returnProject();
         void setProgress(int);
         int loadDemGrid(char * filename, int fileType);
-        int orthoRectification(char * filename, int fileType);
+        int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
 
 };
 

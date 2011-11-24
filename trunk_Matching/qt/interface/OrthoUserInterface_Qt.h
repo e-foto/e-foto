@@ -28,6 +28,7 @@ protected:
         ~OrthoUserInterface_Qt();
         OrthoManager *manager;
 	void closeEvent(QCloseEvent *e);
+        int dem_load_flag;
 
 protected slots:
 	virtual void languageChange();
@@ -44,6 +45,8 @@ public:
         static OrthoUserInterface_Qt* instance(OrthoManager* manager);
 	// Other Methods
 	//
+        Matrix * loadImage(char *filename, double sample=1.0);
+        int saveImage(char *filename, Matrix *I);
 	bool exec();
         void setProgress(int);
         void setAllowClose(bool _b) { allow_close = _b; };

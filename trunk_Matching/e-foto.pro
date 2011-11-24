@@ -94,6 +94,7 @@ HEADERS += \
     AnalogImageSpaceCoordinate.h \
     CheckingPoint.h \
     ControlPoint.h \
+    DemGrid.h \
     DigitalFiductialMark.h \
     DigitalImageSpaceCoordinate.h \
     EOQuality.h \
@@ -103,7 +104,10 @@ HEADERS += \
     Image.h \
     InteriorOrientation.h \
     IOQuality.h \
+    MatchingPoints.h \
+    MatchingPointsGrid.h \
     ObjectSpaceCoordinate.h \
+    Orthorectification.h \
     PhotogrammetricPoint.h \
     Point.h \
     ProjectHeader.h \
@@ -112,9 +116,6 @@ HEADERS += \
     SensorWithKnowDimensions.h \
     SensorWithKnowParameters.h \
     SpatialRessection.h \
-    MatchingPointsGrid.h \
-    MatchingPoints.h \
-    DemGrid.h \
     Terrain.h \
     ProjectiveRay.h \
     RayTester.h \
@@ -229,6 +230,7 @@ SOURCES += \
     AnalogImageSpaceCoordinate.cpp \
     CheckingPoint.cpp \
     ControlPoint.cpp \
+    DemGrid.cpp \
     DigitalFiductialMark.cpp \
     DigitalImageSpaceCoordinate.cpp \
     EOQuality.cpp \
@@ -238,7 +240,10 @@ SOURCES += \
     Image.cpp \
     InteriorOrientation.cpp \
     IOQuality.cpp \
+    MatchingPoints.cpp \
+    MatchingPointsGrid.cpp \
     ObjectSpaceCoordinate.cpp \
+    Orthorectification.cpp \
     PhotogrammetricPoint.cpp \
     Point.cpp \
     ProjectHeader.cpp \
@@ -247,9 +252,6 @@ SOURCES += \
     SensorWithKnowDimensions.cpp \
     SensorWithKnowParameters.cpp \
     SpatialRessection.cpp \
-    MatchingPointsGrid.cpp \
-    MatchingPoints.cpp \
-    DemGrid.cpp \
     Terrain.cpp \
     ProjectiveRay.cpp \
     RayTester.cpp \
