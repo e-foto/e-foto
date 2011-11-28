@@ -794,6 +794,11 @@ public:
 	*/
 	deque<Point*> getPhotogrammetricList();
 
+        /**
+        * \brief Metodo que checa se o usuario colocou para todas as imagens todos os parametros da orinentação exterior como valores iniciais
+        * \return bool : Informa se todas as imagens tem valores iniciais para o calculo dos parametros de orientaçao exterior
+        */
+        bool hasAllImagesInitialValues();
 };
 
 #endif // BUNDLEADJUSTMENT_H

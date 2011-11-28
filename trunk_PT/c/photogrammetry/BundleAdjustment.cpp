@@ -53,7 +53,8 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	xsi0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getXi();
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
-	userInitialValues= false;
+        userInitialValues = hasAllImagesInitialValues();
+        //userInitialValues= false;
 /*
 	for (int i=0;i<listPhotogrammetricPoints.size();i++)
 		qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
@@ -98,11 +99,30 @@ void BundleAdjustment::fillAnalogCoordinates()
 bool BundleAdjustment::calculate()
 {
 	if (!userInitialValues)
-		calculateInicialsValues();
+        {
+            calculateInicialsValues();
+            matInicialValues.show('f',5,"mat Inicial Values");
+            for (int i=0;i<listImages.size();i++)
+            {
+                Image *img=listImages.at(i);
+                if(img->isInsAvailable() && img->getInsType()=="Initial")
+                {
+                    matInicialValues.set(i+1,1,img->getInsOmega());
+                    matInicialValues.set(i+1,2,img->getInsPhi());
+                    matInicialValues.set(i+1,3,img->getInsKappa());
+                }
+                if(img->isGnssAvailable() && img->getGnssType()=="Initial")
+                {
+                    matInicialValues.set(i+1,4,img->getGnssX0());
+                    matInicialValues.set(i+1,5,img->getGnssY0());
+                    matInicialValues.set(i+1,6,img->getGnssZ0());
+                }
+            }
+        }
 
-	matAdjust=matInicialValues;
+        matAdjust=matInicialValues;
 
-	matAdjust.show('f',5,"matAdjust Inicial Values");
+        matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
 	//P.show();
 	//bool resOk=false;
@@ -1881,4 +1901,21 @@ Matrix BundleAdjustment::getResiduo(Point *photogrammetricPoint)
 deque<Point*> BundleAdjustment::getPhotogrammetricList()
 {
 	return listPhotogrammetricPoints;
+}
+
+bool BundleAdjustment::hasAllImagesInitialValues()
+{
+    for (int i=0;i<listImages.size();i++)
+    {
+        Image *img=listImages.at(i);
+        if(!img->isInsAvailable());
+            return false;
+        if(!img->isGnssAvailable());
+            return false;
+        if(img->getInsType()!="Initial")
+            return false;
+        if(img->getGnssType()!="Initial")
+            return false;
+    }
+    return true;
 }

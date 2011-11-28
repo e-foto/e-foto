@@ -2577,6 +2577,7 @@ void ProjectUserInterface_Qt::importPointsFromTxt2()
 */
 string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line, string typePoint)
 {
+        bool ok;
 	stringstream aux;
 	string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
 	QStringList fields= point.split("\t");
@@ -2622,9 +2623,13 @@ string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line,
 		for(int i=0;i<numImagesInPoint;i++)
 		{
 			string imagekey =fields.at(4*(i+1)).toStdString();
-			string colValue =fields.at(4*(i+1)+2).toStdString();
-			string linValue =fields.at(4*(i+1)+3).toStdString();
-			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
+                        //string colValue =(fields.at(4*(i+1)+2).toInt(&ok)).toStdString();
+                        //string linValue =fields.at(4*(i+1)+3).toStdString();
+
+                        int colValue =(fields.at(4*(i+1)+2)).toInt(&ok);
+                        int linValue =(fields.at(4*(i+1)+3)).toInt(&ok);
+
+                        aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
 			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
 			aux << "</imageCoordinates>\n";
 		}
@@ -2661,7 +2666,7 @@ void ProjectUserInterface_Qt::deleteEmptyPoints()
 
 void ProjectUserInterface_Qt::exportDigitalCoordinates()
 {
-	QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
+        QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export Digital Coordinates"),".","*.txt");
 	if (fileSaveName=="")
 		return;
 	QFile *exportFileName= new QFile(fileSaveName);
@@ -2707,13 +2712,15 @@ string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement poi
 	string pointId=points.elementByTagName("pointId").toString();
 	EDomElement ede;
 	QString gmlpos;
-
+        bool ok;
 	for (int i=0; i<digitalCoordinates.size();i++)
 	{
 		ede=digitalCoordinates.at(i);
 		gmlpos=ede.elementByTagName("gml:pos").toString().c_str();
-		string col = (gmlpos.split(" ").at(0)).toStdString();
-		string lin = (gmlpos.split(" ").at(1)).toStdString();
+                //string col = (gmlpos.split(" ").at(0)).toStdString();
+                //string lin = (gmlpos.split(" ").at(1)).toStdString();
+                int col = (int)(gmlpos.split(" ").at(0)).toDouble(&ok);
+                int lin = (int)(gmlpos.split(" ").at(1)).toDouble(&ok);
 		aux << ede.attribute("image_key") << "\t" << pointId << "\t" << col << "\t" << lin <<"\n";
 	}
 

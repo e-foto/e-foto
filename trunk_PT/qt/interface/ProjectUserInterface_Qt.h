@@ -81,7 +81,7 @@ public:
 	string pointTxtToXml(QString point, int key, int line, string typePoint="control");
 	string edomPointToTxt(EDomElement points);
 
-	string pointTxtToXml2(QString point, int key, int line, string typePoint="control");
+        string pointTxtToXml2(QString point, int key, int line, string typePoint="photogrammetric");
 
 
 
