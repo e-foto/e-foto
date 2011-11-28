@@ -28,6 +28,10 @@ ImageForm :: ImageForm(QWidget *parent):AbstractForm(parent)
 	//Aqui o campo de Flight_ID esta sendo escondido
 	label_6->setVisible(false);
 	flightIdComboBox->setVisible(false);
+
+        omegaDmsEdit->setDmsEditMode(DEG);
+        phiDmsEdit->setDmsEditMode(DEG);
+        kappaDmsEdit->setDmsEditMode(DEG);
 }
 
 void ImageForm::fillvalues(string values)
@@ -106,10 +110,11 @@ void ImageForm::fillvalues(string values)
 	if (ede.elementByTagName("INS").getContent() == "")
 	{
 		insTypeComboBox->setCurrentIndex(0);
+
 		omegaDmsEdit->getDmsValue()->stringToDms("0 0 0");
 		phiDmsEdit->getDmsValue()->stringToDms("0 0 0");
 		kappaDmsEdit->getDmsValue()->stringToDms("0 0 0");
-		omegaDmsEdit->updateValue();
+                omegaDmsEdit->updateValue();
 		phiDmsEdit->updateValue();
 		kappaDmsEdit->updateValue();
 		insSigmaController->fillValues("Not Available");
@@ -123,12 +128,22 @@ void ImageForm::fillvalues(string values)
 			insTypeComboBox->setCurrentIndex(1);
 		else
 			insTypeComboBox->setCurrentIndex(2);
-		omegaDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("omega").toDouble());
-		phiDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("phi").toDouble());
-		kappaDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("kappa").toDouble());
+                /*omegaDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("omega").toDouble());
+                phiDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("phi").toDouble());
+                kappaDmsEdit->getDmsValue()->radianoToDms(ede.elementByTagName("INS").elementByTagName("kappa").toDouble());
 		omegaDmsEdit->updateValue();
 		phiDmsEdit->updateValue();
-		kappaDmsEdit->updateValue();
+                kappaDmsEdit->updateValue();*/
+//setText(locale().toString(text().toDouble(&ok)+1))
+                //omegaDmsEdit->setText(QString::number(Dms::radianoToDegreeDecimal(ede.elementByTagName("INS").elementByTagName("omega").toDouble())));
+                omegaDmsEdit->setText(locale().toString(Dms::radianoToDegreeDecimal(ede.elementByTagName("INS").elementByTagName("omega").toDouble())));
+                phiDmsEdit->setText(locale().toString(Dms::radianoToDegreeDecimal(ede.elementByTagName("INS").elementByTagName("phi").toDouble())));
+                kappaDmsEdit->setText(locale().toString(Dms::radianoToDegreeDecimal(ede.elementByTagName("INS").elementByTagName("kappa").toDouble())));
+                omegaDmsEdit->updateValue();
+                phiDmsEdit->updateValue();
+                kappaDmsEdit->updateValue();
+
+
 		insSigmaController->fillValues(ede.elementByTagName("INS").elementByTagName("sigma").getContent());
 		activeINS = true;
 	}
@@ -295,6 +310,9 @@ void ImageForm::cleanForm()
 	filePathLine->clear();
 	heightLine->clear();
 	widthLine->clear();
+
+        gnssGroup->setChecked(false);
+        insGroup->setChecked(false);
 }
 
 void ImageForm::setFormLocale(QLocale locale)
