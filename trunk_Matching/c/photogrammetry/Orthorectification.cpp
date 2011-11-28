@@ -31,13 +31,33 @@ void Orthorectification::changeGridResolution(double _res_x, double _res_y)
 	createNewGrid(Xi, Yi, Xf, Yf, _res_x, _res_y);
 }
 
+double Orthorectification::getOrthoimagePixel(double X, double Y)
+{
+    int col, lin;
+
+    col = int(1.0 + (X-Xi)/res_x);
+    lin = int(1.0 + (Y-Yi)/res_y);
+
+    return getOrthoimagePixel(col, lin);
+}
+
 // Always remember: values from 0-1
 double Orthorectification::getOrthoimagePixel(int col, int row)
 {
 	if (col < 1 || row < 1 || col > ortho_width || row > ortho_height)
 		return -1.0;
 
-	return orthoimage.get(col, row);
+        return orthoimage.get(row, col);
+}
+
+void Orthorectification::setOrthoimagePixel(double X, double Y, double val)
+{
+    int col, lin;
+
+    col = int(1.0 + (X-Xi)/res_x);
+    lin = int(1.0 + (Y-Yi)/res_y);
+
+    setOrthoimagePixel(col, lin, val);
 }
 
 // Always remember: values from 0-1
@@ -49,7 +69,7 @@ void Orthorectification::setOrthoimagePixel(int col, int row, double val)
 	if (val < 0.0) val = 0.0;
 	if (val > 1.0) val - 1.0;
 
-	orthoimage.set(col, row, val);
+        orthoimage.set(row, col, val);
 }
 
 void Orthorectification::getXYAt(int col, int row, double &X, double &Y)
@@ -106,6 +126,7 @@ void Orthorectification::saveOrthoEfoto(char * filename)
 
 	// Write header
 	double header[8];
+        unsigned int header_size_bytes = 64;
 	header[0] = Xi;
 	header[1] = Yi;
 	header[2] = Xf;
@@ -115,22 +136,26 @@ void Orthorectification::saveOrthoEfoto(char * filename)
 	header[6] = double(ortho_width);
 	header[7] = double(ortho_height);
 
-	fwrite(&header, 1, sizeof(double)*8, fp);
+        fwrite(&header, 1, header_size_bytes, fp);
 
 	// Write DEM
 	int p=0;
-	char *data = new char[ortho_width*ortho_height];
+        unsigned int dem_size = ortho_width*ortho_height;
+        unsigned int dem_size_bytes = dem_size * 8;
+        double *data = new double[dem_size];
 
 	for (int i=1; i<=ortho_height; i++)
 	{
 		for (int j=1; j<=ortho_width; j++)
 		{
-			data[p] = (char) orthoimage.get(i,j)*255.0;
+                        data[p] = orthoimage.get(i,j);
 			p++;
 		}
 	}
 
-	fwrite(data, 1, sizeof(char)*ortho_width*ortho_height, fp);
+        fwrite(data, 1, dem_size_bytes, fp);
+
+        fclose(fp);
 
 	delete data;
 }
@@ -143,7 +168,8 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 
 	// Read header
 	double header[8];
-	fread(&header, 1, sizeof(double)*8, fp);
+        unsigned int header_size_bytes = 64;
+        fread(&header, 1, header_size_bytes, fp);
 
 	Xi = header[0];
 	Yi = header[1];
@@ -156,18 +182,22 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 
 	// Read DEM
 	orthoimage.resize(ortho_height, ortho_width);
-	char *data = new char[ortho_width*ortho_height];
+        unsigned int file_size = ortho_width*ortho_height;
+        unsigned int file_size_bytes = file_size*8;
+        double *data = new double[file_size];
 	int p=0;
-	fread(data, 1, sizeof(char)*ortho_width*ortho_height, fp);
+        fread(data, 1, file_size_bytes, fp);
 
 	for (int i=1; i<=ortho_height; i++)
 	{
 		for (int j=1; j<=ortho_width; j++)
 		{
-			orthoimage.set(i,j,double(data[p])/255.0);
+                        orthoimage.set(i, j ,data[p]);
 			p++;
 		}
 	}
+
+        fclose(fp);
 
 	delete data;
 

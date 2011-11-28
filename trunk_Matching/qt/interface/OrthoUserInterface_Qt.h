@@ -45,10 +45,11 @@ public:
         static OrthoUserInterface_Qt* instance(OrthoManager* manager);
 	// Other Methods
 	//
-        Matrix * loadImage(char *filename, double sample=1.0);
+        Matrix* loadImage(char *filename, double sample=1.0);
         int saveImage(char *filename, Matrix *I);
 	bool exec();
         void setProgress(int);
+        void setCurrentWork(string msg);
         void setAllowClose(bool _b) { allow_close = _b; };
         void disableOptions();
         void enableOptions();

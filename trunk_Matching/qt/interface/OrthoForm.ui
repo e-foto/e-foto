@@ -13,11 +13,11 @@
   <property name="windowTitle">
    <string>Ortho-rectification</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -200,7 +200,7 @@
        </item>
       </layout>
      </item>
-     <item>
+     <item row="1" column="0">
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -213,9 +213,9 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+     <item row="2" column="0">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -228,7 +228,7 @@
          </property>
         </spacer>
        </item>
-       <item>
+       <item row="0" column="1">
         <widget class="QPushButton" name="orthoButton">
          <property name="toolTip">
           <string>Run ortho-rectification</string>
@@ -248,7 +248,7 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="2">
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -261,7 +261,7 @@
          </property>
         </spacer>
        </item>
-       <item>
+       <item row="0" column="3">
         <widget class="QPushButton" name="abortButton">
          <property name="toolTip">
           <string>Abort current operation</string>
@@ -281,7 +281,7 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="4">
         <widget class="QPushButton" name="doneButton">
          <property name="toolTip">
           <string>Exit / done</string>
@@ -301,7 +301,7 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="5">
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -316,7 +316,7 @@
        </item>
       </layout>
      </item>
-     <item>
+     <item row="3" column="0">
       <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -329,16 +329,30 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
+     <item row="4" column="0">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Current work:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="workLabel">
+         <property name="text">
+          <string>None</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Progress:</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="1">
         <widget class="QProgressBar" name="progressBar">
          <property name="value">
           <number>0</number>
