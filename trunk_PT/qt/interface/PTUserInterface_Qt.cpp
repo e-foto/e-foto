@@ -456,7 +456,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 	QLabel *iterationsLabel= new QLabel("Maximun iterations");
 	QSpinBox *iterationsBox = new QSpinBox();
 	iterationsBox->setValue(ptManager->getMaxIteration());
-	iterationsBox->setRange(1,12);
+        iterationsBox->setRange(1,99);
 	iterationsBox->setAccelerated(true);
 	iterationsBox->setAlignment(Qt::AlignCenter);
 
