@@ -12,7 +12,7 @@
 #include "ExteriorOrientation.h"
 #include "Matrix.h"
 #include "DemGrid.h"
-#include "SpatialIntersection.h"
+#include "ProjectiveRay.h"
 #include "Orthorectification.h"
 
 class OrthoUserInterface;
@@ -32,7 +32,8 @@ class OrthoManager
         void addImagesToForm();
         Orthorectification *ortho;
         void runOrthoIndividual(int);
-        StereoPair sp;
+        void runAllOrthoTogheter();
+        bool flag_cancel;
 
 public:
 
@@ -54,6 +55,7 @@ public:
         void setProgress(int);
         int loadDemGrid(char * filename, int fileType);
         int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
+        void setFlagCancel() { flag_cancel = true; };
 
 };
 
