@@ -40,8 +40,12 @@ public:
 	int getWidth() { return ortho_width; };
 	int getHeight() { return ortho_height; };
 	double getOrthoimagePixel(int, int);
+        double getOrthoimagePixel(double, double);
 	void setOrthoimagePixel(int, int, double);
+        void setOrthoimagePixel(double, double, double);
 	void getXYAt(int, int, double &, double &);
+        double getGridResX() { return res_x; };
+        double getGridResY() { return res_y; };
 
 };
 

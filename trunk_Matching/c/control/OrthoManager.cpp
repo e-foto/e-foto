@@ -29,6 +29,7 @@ OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<Ext
     listEOs = eos;
     grid = NULL;
     ortho = NULL;
+    flag_cancel = false;
 }
 
 OrthoManager::~OrthoManager()
@@ -101,6 +102,122 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
     return 1;
 }
 
+void OrthoManager::runAllOrthoTogheter()
+{
+    // List of all centers
+    vector <int> Cx;
+    vector <int> Cy;
+    vector <int> img_width;
+    vector <int> img_height;
+    vector <Matrix> images;
+    vector <ProjectiveRay> pr;
+
+    // Get image centers in pixels
+    Image *img;
+    int w,h;
+    double best_dist_inital=0.0;
+    for (int i=0; i<listAllImages.size(); i++)
+    {
+        img = listAllImages.at(i);
+        w = img->getWidth();
+        h = img->getHeight();
+        img_width.push_back(w);
+        img_height.push_back(h);
+        Cx.push_back(w/2);
+        Cy.push_back(h/2);
+        if (w>best_dist_inital)
+            best_dist_inital = double(w);
+    }
+
+    best_dist_inital *= best_dist_inital;
+
+//    left = listAllImages.at(image - 1);
+//    ProjectiveRay pr(left);
+
+    //
+    // Load image as matrix
+    //
+    OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+    string filename, strimg;
+    Matrix img_m;
+
+    for (int i=0; i<listAllImages.size(); i++)
+    {
+        if (flag_cancel)
+            return;
+
+        // Create projective rays
+        img = listAllImages.at(i);
+        pr.push_back(ProjectiveRay(img));
+
+        // Load image as matrix
+        strimg = Conversion::intToString(i+1);
+        oui->setCurrentWork("Loading image "+strimg);
+        filename = img->getFilepath() + "/" + img->getFilename();
+        img_m = *oui->loadImage((char *)filename.c_str(),1.0);
+        images.push_back(img_m);
+    }
+
+    //
+    // Run Ortho
+    //
+    AnalogImageSpaceCoordinate analog_coord;
+    DigitalImageSpaceCoordinate digital_coord;
+    double meanZ = grid->getMeanZ(), Z;
+    double Xi, Yi, Xf, Yf, res_x, res_y, best_dist, dist, pixel;
+    int lin, col, best_lin, best_col, best_img;
+
+    grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+    res_x = ortho->getGridResX();
+    res_y = ortho->getGridResY();
+
+    oui->setProgress(0);
+    oui->setCurrentWork("Calculating ortho-rectification for all images");
+    for (double Y=Yi; Y<Yf; Y+=res_y)
+    {
+        for (double X=Xi; X<Xf; X+=res_x)
+        {
+            if (flag_cancel)
+                return;
+
+            // Get X, Y, Z coordinates
+            Z = grid->getHeightXY(X, Y);
+            if (Z-0.0 < 0.00000000000000001)
+                Z = meanZ;
+
+            best_img = -1;
+            best_dist = best_dist_inital;
+            for (int k=0; k<listAllImages.size(); k++)
+            {
+                analog_coord = pr.at(k).objectToAnalog(X, Y, Z);
+                digital_coord = pr.at(k).analogToDigital(analog_coord);
+                lin = digital_coord.getLin()+1;
+                col = digital_coord.getCol()+1;
+
+                if (lin < 1 || col < 1 || lin > img_height.at(k) || col > img_width.at(k))
+                    continue;
+
+                // Calculate distance to the center
+                dist = sqrt(pow(col - Cx.at(k),2) + pow(lin - Cy.at(k),2));
+
+                if (dist < best_dist)
+                {
+                    best_dist = dist;
+                    best_img = k;
+                    best_lin = lin;
+                    best_col = col;
+                }
+            }
+
+            (best_img == -1) ? pixel = 0.0 : pixel = images.at(best_img).get(best_lin, best_col);
+            ortho->setOrthoimagePixel(X, Y, pixel);
+        }
+       oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
+    }
+
+    images.clear();
+}
+
 void OrthoManager::runOrthoIndividual(int image)
 {
     if (image < 1 || image > listAllImages.size())
@@ -111,37 +228,93 @@ void OrthoManager::runOrthoIndividual(int image)
     unsigned int img_width, img_height;
     img_width = img->getWidth();
     img_height = img->getHeight();
-/*
+
     // 3D coordinates
-    SpatialIntersection spc_inter;
-    Image *left;
-    ObjectSpaceCoordinate object;
-    left = listAllImages.at(image - 1);
-    sp.setLeftImage(left);
-    sp.setRightImage(left); // Ok, left is used as a pair
-    spc_inter.setStereoPair(&sp);
-*/
+    AnalogImageSpaceCoordinate analog_coord;
+    DigitalImageSpaceCoordinate digital_coord;
+    ProjectiveRay pr(img);
+
+    //
     // Calculate image bounding box (check whole DEM where is inside image)
-    double meanZ = grid->getMeanZ();
+    //
+    double meanZ = grid->getMeanZ(), Z;
     double Xi, Yi, Xf, Yf, res_x, res_y;
-    double Xi2, Yi2, Xf2, Yf2;
-    Xi2 = Xf; Yi2 = Yf; Xf2 = Xi; Yf2 = Yi;
+    double Xi_img, Yi_img, Xf_img, Yf_img;
+    OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+    int lin, col;
 
     grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
-    for (double Y=0; Y<Yf; Y+=res_y)
-    {
-        for (double X=0; X<Xf; X+=res_x)
-        {
-  //          object = spc_inter.getLeftSpatialResection(X, Y, meanZ);
+    Xi_img = Xf; Yi_img = Yf; Xf_img = Xi; Yf_img = Yi;
+    oui->setProgress(0);
+    string strimg = Conversion::intToString(image);
+    oui->setCurrentWork("Calculating DEM bounding box for image "+strimg);
 
+    for (double Y=Yi; Y<Yf; Y+=res_y)
+    {
+        for (double X=Xi; X<Xf; X+=res_x)
+        {
+            if (flag_cancel)
+                return;
+
+            Z = grid->getHeightXY(X, Y);
+            if (Z-0.0 < 0.00000000000000001) Z = meanZ;
+
+            analog_coord = pr.objectToAnalog(X, Y, Z);
+            digital_coord = pr.analogToDigital(analog_coord);
+            lin = digital_coord.getLin();
+            col = digital_coord.getCol();
+
+            if (lin < 0 || col < 0 || lin >= img_height || col >= img_width)
+                continue;
+
+            if (X<Xi_img) Xi_img = X;
+            if (X>Xf_img) Xf_img = X;
+            if (Y<Yi_img) Yi_img = Y;
+            if (Y>Yf_img) Yf_img = Y;
         }
+       oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
     }
 
+    //
     // Load image as matrix
-    OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+    //
+    oui->setCurrentWork("Loading image "+strimg);
     string filename = img->getFilepath() + "/" + img->getFilename();
-    oui->loadImage((char *)filename.c_str(),1.0);
+    Matrix *img_matrix = oui->loadImage((char *)filename.c_str(),1.0);
 
+    //
+    // Run Ortho
+    //
+    res_x = ortho->getGridResX();
+    res_y = ortho->getGridResY();
+    ortho->createNewGrid(Xi_img, Yi_img, Xf_img, Yf_img, res_x, res_y);
+    oui->setProgress(0);
+    oui->setCurrentWork("Calculating ortho-rectification for image "+strimg);
+
+    for (double Y=Yi_img; Y<Yf_img; Y+=res_y)
+    {
+        for (double X=Xi_img; X<Xf_img; X+=res_x)
+        {
+            if (flag_cancel)
+                return;
+
+            Z = grid->getHeightXY(X, Y);
+            if (Z-0.0 < 0.00000000000000001) Z = meanZ;
+
+            analog_coord = pr.objectToAnalog(X, Y, Z);
+            digital_coord = pr.analogToDigital(analog_coord);
+            lin = digital_coord.getLin()+1;
+            col = digital_coord.getCol()+1;
+
+            if (lin < 1 || col < 1 || lin > img_height || col > img_width)
+                continue;
+
+            ortho->setOrthoimagePixel(X, Y, img_matrix->get(lin,col));
+        }
+       oui->setProgress(int(100.0*((Y-Yi_img)/(Yf_img-Yi_img-1))));
+    }
+
+    delete img_matrix;
 }
 
 int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
@@ -152,21 +325,61 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 
     double Xi, Yi, Xf, Yf, res_x, res_y;
     grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
-
     ortho = new Orthorectification(Xi, Yi, Xf, Yf, user_res_x, user_res_y);
-/*
+    flag_cancel = false;
+
     if (option == 0)
-        runOrthoAllTogheter();
+    {
+        runAllOrthoTogheter();
+
+        if (flag_cancel)
+        {
+            flag_cancel = false;
+            return -1;
+        }
+
+        ortho->saveOrtho(filename, 0);
+    }
 
     if (option == 1)
     {
+        string base_fname(filename);
+        string ext(".ort");
+        size_t expos = base_fname.find(ext);
+        if (expos != -1)
+            base_fname = base_fname.substr(0,expos);
+        base_fname = base_fname + "_";
+        string fname;
+
         for (int i=1; i<=listAllImages.size(); i++)
+        {
             runOrthoIndividual(i);
+            fname = base_fname + Conversion::intToString(i) + ext;
+
+            if (flag_cancel)
+            {
+                flag_cancel = false;
+                return -1;
+            }
+
+            ortho->saveOrtho((char *)fname.c_str(),0);
+        }
     }
-*/
+
     if (option > 1)
+    {
         runOrthoIndividual(option-1);
 
+        if (flag_cancel)
+        {
+            flag_cancel = false;
+            return -1;
+        }
+
+        ortho->saveOrtho(filename, 0);
+    }
+
+    return 1;
 }
 
 void OrthoManager::returnProject()

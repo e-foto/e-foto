@@ -141,6 +141,10 @@ bool OrthoUserInterface_Qt::exec()
 void OrthoUserInterface_Qt::onAbortClicked()
 {
     // Abort clicked
+    manager->setFlagCancel();
+    workLabel->setText("Canceled");
+    progressBar->setValue(0);
+    enableOptions();
 }
 
 void OrthoUserInterface_Qt::onLoadDemClicked()
@@ -192,39 +196,33 @@ void OrthoUserInterface_Qt::onOrthoClicked()
     QDir dir(filename.left(i));
     dir.setCurrent(dir.absolutePath());
 
+    disableOptions();
+    setAllowClose(false);
     manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+    setAllowClose(true);
+    enableOptions();
 }
 
 void OrthoUserInterface_Qt::disableOptions()
 {
-/*
-    tab->setDisabled(true);
-    tab_2->setDisabled(true);
-    tab_3->setDisabled(true);
-    tab_4->setDisabled(true);
-    tab_5->setDisabled(true);
-    tab_7->setDisabled(true);
-    groupBox_7->setDisabled(true);
-    groupBox_11->setDisabled(true);
-    groupBox_12->setDisabled(true);
-    doneButton->setDisabled(true);
-*/
+    comboBox->setEnabled(false);
+    comboBox2->setEnabled(false);
+    lineEdit->setEnabled(false);
+    doubleSpinBox1->setEnabled(false);
+    doubleSpinBox2->setEnabled(false);
+    orthoButton->setEnabled(false);
+    doneButton->setEnabled(false);
 }
 
 void OrthoUserInterface_Qt::enableOptions()
 {
-/*
-    tab->setEnabled(true);
-    tab_2->setEnabled(true);
-    tab_3->setEnabled(true);
-    tab_4->setEnabled(true);
-    tab_5->setEnabled(true);
-    tab_7->setEnabled(true);
-    groupBox_7->setEnabled(true);
-    groupBox_11->setEnabled(true);
-    groupBox_12->setEnabled(true);
+    comboBox->setEnabled(true);
+    comboBox2->setEnabled(true);
+    lineEdit->setEnabled(true);
+    doubleSpinBox1->setEnabled(true);
+    doubleSpinBox2->setEnabled(true);
+    orthoButton->setEnabled(true);
     doneButton->setEnabled(true);
-*/
 }
 
 void OrthoUserInterface_Qt::setProgress(int progress)
@@ -234,6 +232,12 @@ void OrthoUserInterface_Qt::setProgress(int progress)
 
     progressBar->setValue(progress);
     qApp->processEvents();
+}
+
+void OrthoUserInterface_Qt::setCurrentWork(string msg)
+{
+    QString qmsg = QString::fromStdString(msg);
+    workLabel->setText(qmsg);
 }
 
 /*

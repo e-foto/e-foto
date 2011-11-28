@@ -96,7 +96,7 @@ double DemGrid::getHeightXY(double X, double Y)
 	col = 1.0 + (X-Xi)/res_x;
 	row = 1.0 + (Y-Yi)/res_y;
 
-	return getHeight(col,row);
+        return getHeight(row, col);
 }
 
 double DemGrid::getHeight(double col, double row)
@@ -104,13 +104,14 @@ double DemGrid::getHeight(double col, double row)
 	// Check limits
 	if (col<1.0) col = 1.0;
 	if (row<1.0) row = 1.0;
-	if (col>double(dem_width)) col = double(dem_width);
-	if (row>double(dem_height)) row = double(dem_height);
+        if (col>=double(dem_width)) col = double(dem_width) - 1;
+        if (row>=double(dem_height)) row = double(dem_height) - 1;
 
 	// Calculate Z using bilinear interpolation
 	double Z;
-	int col_i = floor(col), row_i = floor(row);
+        int col_i = floor(col), row_i = floor(row);
 	double delta_x = col - col_i, delta_y = row - row_i;
+
 	Z = DEM.get(row_i,col_i)*(1-delta_x)*(1-delta_y) + DEM.get(row_i,col_i+1)*delta_x*(1-delta_y) + DEM.get(row_i+1,col_i)*(1-delta_x)*delta_y + DEM.get(row_i+1,col_i+1)*delta_x*delta_y;
 
 	return Z;
@@ -662,11 +663,12 @@ void DemGrid::saveDemEfoto(char * filename)
 	header[6] = double(dem_width);
 	header[7] = double(dem_height);
 
-	fwrite(&header, 1, sizeof(double)*8, fp);
+        fwrite(&header, 1, 8*8, fp);
 
 	// Write DEM
 	int p=0;
-	double *data = new double[dem_width*dem_height];
+        unsigned int file_size = dem_width*dem_height;
+        double *data = new double[file_size];
 
 	for (int i=1; i<=dem_height; i++)
 	{
@@ -677,7 +679,9 @@ void DemGrid::saveDemEfoto(char * filename)
 		}
 	}
 
-	fwrite(data, 1, sizeof(double)*dem_width*dem_height, fp);
+        fwrite(data, 1, file_size*8, fp);
+
+        fclose(fp);
 
 	delete data;
 }
@@ -703,9 +707,10 @@ void DemGrid::loadDemEfoto(char * filename)
 
 	// Read DEM
 	DEM.resize(dem_height, dem_width);
-	double *data = new double[dem_width*dem_height];
+        unsigned int file_size = dem_width*dem_height;
+        double *data = new double[file_size];
 	int p=0;
-	fread(data, 1, sizeof(double)*dem_width*dem_height, fp);
+        fread(data, 1, dem_width*dem_height*8, fp);
 
 	for (int i=1; i<=dem_height; i++)
 	{
@@ -715,6 +720,8 @@ void DemGrid::loadDemEfoto(char * filename)
 			p++;
 		}
 	}
+
+        fclose(fp);
 
 	delete data;
 
@@ -741,7 +748,7 @@ void DemGrid::saveDemAscii(char * filename)
 		{
 			X = Xi + (j-1)*res_x;
 			Y = Yi + (i-1)*res_y;
-                        outfile << X << "\t" << Y << "\t" << DEM.get(i,j) << "\n";
+                        outfile << setw(13) << setprecision(5) << X << "\t" << Y << "\t" << DEM.get(i,j) << "\n";
 		}
 	}
 
