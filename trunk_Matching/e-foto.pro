@@ -59,6 +59,7 @@ HEADERS += \
     IOManager.h \
     ProjectManager.h \
     DEMManager.h \
+    SPManager.h \
     OrthoManager.h \
     SRManager.h \
 # c/imageDisplay/
@@ -88,6 +89,7 @@ HEADERS += \
     ProjectUserInterface.h \
     SRUserInterface.h \
     DEMUserInterface.h \
+    SPUserInterface.h \
     OrthoUserInterface.h \
 # c/photogrammetry/
     AnalogFiductialMark.h \
@@ -145,6 +147,15 @@ HEADERS += \
 # qt/imageDisplay
     ImageView.h \
     SWidgetQt.h \
+    GeometryResource.h \
+    RasterResource.h \
+    SingleDisplay.h \
+    StereoDisplay.h \
+    SingleScene.h \
+    StereoScene.h \
+    SingleTools.h \
+    StereoTools.h \
+    #PhotoTools.h \
 # qt/infrastructure/
     AboutForm.h \
     LoadingScreen.h \
@@ -160,6 +171,7 @@ HEADERS += \
     ProjectUserInterface_Qt.h \
     SRUserInterface_Qt.h \
     DEMUserInterface_Qt.h \
+    SPUserInterface_Qt.h \
     OrthoUserInterface_Qt.h \
 # c/imageProcessing
     NormalizedCrossCorrelation.h \
@@ -195,6 +207,7 @@ SOURCES += \
     IOManager.cpp \
     ProjectManager.cpp \
     DEMManager.cpp \
+    SPManager.cpp \
     OrthoManager.cpp \
     SRManager.cpp \
  # c/imageDisplay/
@@ -224,6 +237,7 @@ SOURCES += \
     ProjectUserInterface.cpp \
     SRUserInterface.cpp \
     DEMUserInterface.cpp \
+    SPUserInterface.cpp \
     OrthoUserInterface.cpp \
 # photogrammetry/
     AnalogFiductialMark.cpp \
@@ -280,6 +294,15 @@ SOURCES += \
 # qt/imageDisplay/
     ImageView.cpp \
     SWidgetQt.cpp \
+    GeometryResource.cpp \
+    RasterResource.cpp \
+    SingleDisplay.cpp \
+    StereoDisplay.cpp \
+    SingleScene.cpp \
+    StereoScene.cpp \
+    SingleTools.cpp \
+    StereoTools.cpp \
+    #PhotoTools.cpp \
 # qt/infrastructure/
     AboutForm.cpp \
     LoadingScreen.cpp \
@@ -296,6 +319,7 @@ SOURCES += \
     ProjectUserInterface_Qt.cpp \
     SRUserInterface_Qt.cpp \
     DEMUserInterface_Qt.cpp \
+    SPUserInterface_Qt.cpp \
     OrthoUserInterface_Qt.cpp \
 # imageProcessing
     NormalizedCrossCorrelation.cpp \
