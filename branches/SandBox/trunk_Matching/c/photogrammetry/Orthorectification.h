@@ -24,7 +24,8 @@ class Orthorectification
 {
 private:
 	Matrix orthoimage;
-	double Xi, Yi, Xf, Yf, res_x, res_y;
+        double Xi, Yi, Xf, Yf, res_x, res_y;
+        int color_depth, no_bands, coord_system, spheroid, datum;
 	int ortho_width, ortho_height;
 	void saveOrthoEfoto(char * filename);
 	void loadOrthoEfoto(char * filename);
@@ -46,6 +47,16 @@ public:
 	void getXYAt(int, int, double &, double &);
         double getGridResX() { return res_x; };
         double getGridResY() { return res_y; };
+        void setColorDepth(int _cd) { color_depth = _cd; };
+        int getColorDepth() { return color_depth; };
+        void setNumberOfBands(int _nb) { no_bands = _nb; };
+        int getNumberOfBands() { return no_bands; };
+        void setCoordinateSystem(int _cs) { coord_system = _cs; };
+        int getCoordinateSystem() { return coord_system; };
+        void setSpheroid(int _sp) { spheroid = _sp; };
+        int getSpheroid() { return spheroid; };
+        void setDatum(int _dt) { datum = _dt; };
+        int getDatum() { return datum; };
 
 };
 

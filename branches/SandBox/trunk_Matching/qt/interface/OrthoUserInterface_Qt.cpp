@@ -186,7 +186,7 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 
     // Save dialog
     // File open dialog
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), ".", tr("E-FOTO Orthoimage (*.ort);; All files (*.*)")) ;
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), ".", tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)")) ;
     // if no file name written, return
     if (filename=="")
             return;
@@ -243,7 +243,7 @@ void OrthoUserInterface_Qt::setCurrentWork(string msg)
 /*
  * Image dealing
  **/
-
+#include <qdebug.h>
 Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
 {
         int levels=256;
@@ -264,10 +264,11 @@ Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
                 for (unsigned int j=1; j<=width; j++)
                 {
                         pixel = img.pixel((j-1)*step,(i-1)*step);
-//			pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140;
-                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
-//                        pixel = pixel & 0xFF;
-                        I->set(i, j, pixel/double(levels-1));
+//	  		pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140; // Color to gray 8-bit
+//                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3; // Simple color to gray 8-bit
+//                        pixel = pixel & 0xFF; // Gray 24-bit to 8-bit
+//                        I->set(i, j, pixel/double(levels-1));
+                        I->set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
                 }
                 progressBar->setValue((100*i)/height);
         }
@@ -286,8 +287,10 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
         {
                 for (unsigned int j=1; j<=img.width(); j++)
                 {
-                        pixel = round(I->get(i,j)*double(levels-1));
-                        pixel = (pixel << 16) + (pixel << 8) + pixel;
+//                        pixel = round(I->get(i,j)*double(levels-1));
+//                        pixel = (pixel << 16) + (pixel << 8) + pixel; // Gray to color 24-bit
+                        pixel = int(I->get(i,j)*double(0xFFFFFF));
+
                         img.setPixel(j-1, i-1, pixel);
                 }
         }
