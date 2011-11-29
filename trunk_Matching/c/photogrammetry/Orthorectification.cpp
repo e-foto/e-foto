@@ -5,6 +5,12 @@
  **/
 Orthorectification::Orthorectification(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y)
 {
+        // Default values
+        color_depth = 8;
+        no_bands = 1;
+        coord_system = 0;
+        spheroid = 0;
+        datum = 0;
 	createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
 
@@ -92,6 +98,8 @@ void Orthorectification::printData()
 	printf(" Xi: %f\n Yi: %f\n Xf: %f\n Yf: %f\n",Xi,Yi,Xf,Yf);
 	printf(" Resolution X: %f\n Resolution Y: %f\n",res_x,res_y);
 	printf(" GRID width: %d\n GRID height: %d\n",ortho_width,ortho_height);
+        printf(" Image color depth: %d\ Number of bands: %d",color_depth,no_bands);
+        printf(" Coordinate system: %d\n Spheroid: %d\n Datum: %d\n",coord_system, spheroid, datum);
 	printf("Sample Ortho data:\n");
 
 	int w,h;
@@ -125,8 +133,8 @@ void Orthorectification::saveOrthoEfoto(char * filename)
 	fp = fopen(filename,"wb");
 
 	// Write header
-	double header[8];
-        unsigned int header_size_bytes = 64;
+        double header[13];
+        unsigned int header_size_bytes = 13 * 8;
 	header[0] = Xi;
 	header[1] = Yi;
 	header[2] = Xf;
@@ -135,6 +143,11 @@ void Orthorectification::saveOrthoEfoto(char * filename)
 	header[5] = res_y;
 	header[6] = double(ortho_width);
 	header[7] = double(ortho_height);
+        header[8] = double(color_depth);
+        header[9] = double(no_bands);
+        header[10] = double(coord_system);
+        header[11] = double(spheroid);
+        header[12] = double(datum);
 
         fwrite(&header, 1, header_size_bytes, fp);
 
@@ -167,8 +180,8 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 	fp = fopen(filename,"rb");
 
 	// Read header
-	double header[8];
-        unsigned int header_size_bytes = 64;
+        double header[13];
+        unsigned int header_size_bytes = 13 * 8;
         fread(&header, 1, header_size_bytes, fp);
 
 	Xi = header[0];
@@ -179,6 +192,11 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 	res_x = header[5];
 	ortho_width = int(header[6]);
 	ortho_height = int(header[7]);
+        color_depth = int(header[8]);
+        no_bands = int(header[9]);
+        coord_system = int(header[10]);
+        spheroid = int(header[11]);
+        datum = int(header[12]);
 
 	// Read DEM
 	orthoimage.resize(ortho_height, ortho_width);

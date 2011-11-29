@@ -25,6 +25,8 @@ EFotoManager::EFotoManager()
 	project = NULL;
 	interiorOrientation = NULL;
 	spatialRessection = NULL;
+        dem = NULL;
+        ortho = NULL;
 	theTerrain = NULL;
 	nextModule = 1;
 }
@@ -700,10 +702,14 @@ bool EFotoManager::reloadProject()
 		if (spatialRessection != NULL)
 		{
 			stopSR(spatialRessection->getId());
-		}
+                }
                 if (dem != NULL)
                 {
                         stopDEM();
+                }
+                if (ortho != NULL)
+                {
+                        stopOrtho();
                 }
 		return project->reload();
 	}
@@ -832,7 +838,7 @@ bool EFotoManager::execDEM()
             img->setIO(imgIO);
             img->setEO(imgEO);
 
-            if (imgIO == NULL && imgEO == NULL)
+            if (imgIO == NULL || imgEO == NULL)
             {
                 deleteImage(img->getId());
             }
@@ -883,7 +889,7 @@ bool EFotoManager::execOrtho()
             img->setIO(imgIO);
             img->setEO(imgEO);
 
-            if (imgIO == NULL && imgEO == NULL)
+            if (imgIO == NULL || imgEO == NULL)
             {
                 deleteImage(img->getId());
             }
