@@ -25,6 +25,7 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     this->manager = manager;
     started = false;
     status = false;
+    cancel_flag = false;
     listAllImages = images;
     listEOs = eos;
     grid = NULL;
@@ -219,6 +220,12 @@ void DEMManager::setProgress(int progress)
     dui->setProgress(progress);
 }
 
+void DEMManager::setCancel()
+{
+    cancel_flag = true;
+    im->setCancel();
+}
+
 /*
  * Seeds
  **/
@@ -379,22 +386,30 @@ void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
         }
 }
 
-void DEMManager::extractDEM(int option)
+void DEMManager::extractDEM(int option, bool clearMList)
 {
+    cancel_flag = false;
+
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     dui->disableOptions();
     dui->setAllowClose(false);
 
-    // Downsample seeds
-    resamplePoints(&seeds,downsample);
+    // Clear list, if selected
+    if (clearMList)
+        pairs.clear();
 
-    // Clear matching list
-    pairs.clear();
+    // Downsample seeds and matching points lists
+    resamplePoints(&seeds,downsample);
+    resamplePoints(&pairs,downsample);
 
     if (option==0)
     {
         for (int i=0; i<listPairs.size(); i++)
+        {
             extractDEMPair(i);
+            if (cancel_flag)
+                break;
+        }
     }
     else
         extractDEMPair(option-1);
@@ -478,23 +493,24 @@ void DEMManager::extractDEMPair(int pair)
         std = ncc_std;
     }
 
-    ImageMatching im(this);
-    im.setImagesIds(left_id,right_id);
-    im.setCorrelationThreshold(corr_th);
-    im.setPerformRadiometric(rad_cor > 0);
-    im.setMatchingMethod(match_method);
-    im.setRadiometricMode(rad_cor-1);
-    im.setMinStd(std);
-    im.getNCC()->setTemplate(ncc_temp);
-    im.getNCC()->setSearchWindow(ncc_sw);
-    im.getLSM()->setTemplate(lsm_temp);
-    im.getLSM()->setMaxIterations(lsm_it);
-    im.getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
-    im.getLSM()->setMaxDistance(lsm_dist);
-    im.getLSM()->setOverIt(over_it);
-    im.getLSM()->setOverItDist(over_it_dist);
+    im = new ImageMatching(this);
+    im->setImagesIds(left_id,right_id);
+    im->setCorrelationThreshold(corr_th);
+    im->setPerformRadiometric(rad_cor > 0);
+    im->setMatchingMethod(match_method);
+    im->setRadiometricMode(rad_cor-1);
+    im->setMinStd(std);
+    im->getNCC()->setTemplate(ncc_temp);
+    im->getNCC()->setSearchWindow(ncc_sw);
+    im->getLSM()->setTemplate(lsm_temp);
+    im->getLSM()->setMaxIterations(lsm_it);
+    im->getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
+    im->getLSM()->setMaxDistance(lsm_dist);
+    im->getLSM()->setOverIt(over_it);
+    im->getLSM()->setOverItDist(over_it_dist);
 
-    im.performImageMatching(img1, img2, &seeds, &pairs);
+    im->performImageMatching(img1, img2, &seeds, &pairs);
 
     delete img1, img2;
+    delete im;
 }

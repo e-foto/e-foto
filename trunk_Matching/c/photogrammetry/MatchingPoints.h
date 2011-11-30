@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include "Matrix.h"
 
 using namespace std;
 
@@ -71,6 +72,7 @@ public:
 	void leftImageBoundingBox(int &, int &, int &, int &);
 	void rightImageBoundingBox(int &, int &, int &, int &);
 	void XYZboundingBox(double &, double &, double &, double &, double &, double &);
+        Matrix *getDemImage(double res_x, double res_y);
 
 private:
 	vector <MatchingPoints> list;

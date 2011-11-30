@@ -23,6 +23,7 @@ void ImageMatching::init()
         corr_th = 0.7;
         stack = aux = NULL;
         manager = NULL;
+        cancel_flag = false;
 }
 
 void ImageMatching::setMatchingLimits(int xi, int xf, int yi, int yf)
@@ -51,6 +52,8 @@ void ImageMatching::setMinStd(double std)
 
 void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPointsList *repository, MatchingPointsList *mpoints)
 {
+        cancel_flag = false;
+
 	//
 	// Step 1 - Radiometric Tranformation
 	//
@@ -95,12 +98,12 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	smatching_yi = 1 + border;
 	smatching_yf =  simg_height - border;
 
-
 	//
 	// Step 3 - Create Region Growing map
 	//
 	int map_width = img_width/step_x, map_height = img_height/step_y;
 	map.resize(map_height, map_width);
+        fillMap(mpoints);
 
 	//
 	// Step 4 - Read seed repository
@@ -134,18 +137,45 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 		//
 
                 if (curr_left_id == left_image_id && curr_right_id == right_image_id)
+                {
                         region_growing(img1,img2,mpoints,lx,ly,rx,ry);
+                        if (cancel_flag)
+                            return;
+                }
 	}
-
 
 	//
 	// Step 6 - Eliminate bad points using statistics
 	//
 
 	// Default values: sigma_x=3, sigma_y=1.5
-	mpoints->filterBadPoints2D();
+        mpoints->filterBadPoints2D();
 }
 
+/*
+ * Fill map using matching list, if this is the 2nd or greater running time
+ **/
+void ImageMatching::fillMap(MatchingPointsList * mpoints)
+{
+    MatchingPoints *mp;
+    int i, j, lx, ly;
+
+    for (int f=1; f<=mpoints->size(); f++)
+    {
+        mp = mpoints->get(f);
+
+        if (left_image_id != mp->left_image_id || right_image_id != mp->right_image_id)
+            continue;
+
+        lx = (int) mp->left_x;
+        ly = (int) mp->left_y;
+
+        i = (ly/step_y) + 1;
+        j = (lx/step_x) + 1;
+
+        map.set(i,j,1.0);
+    }
+}
 
 /****************************
  * Region Growing functions *
@@ -268,6 +298,9 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                     printf("%.2f %%\r",coverage*100);
                 else
                     manager->setProgress(int(coverage*100));
+
+                if (cancel_flag)
+                    return;
 	}
 }
 

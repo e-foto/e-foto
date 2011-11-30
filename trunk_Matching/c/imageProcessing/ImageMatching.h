@@ -56,12 +56,14 @@ public:
 	void setCorrelationThreshold(double _th) { corr_th = _th; };
 	double getCoverage() { return 100.0*coverage; };
 	void setMinStd(double);
+        void setCancel() { cancel_flag = true; };
 
 private:
 	int image_depth;
 	double coverage, max_size, num_visited;
 	double corr_th;
 	bool perform_readiometric, radiometric_mode;
+        bool cancel_flag;
 	int matching_xi, matching_yi, matching_xf, matching_yf;
 	int smatching_xi, smatching_yi, smatching_xf, smatching_yf;
 	int left_image_id, right_image_id;
@@ -79,6 +81,7 @@ private:
 	void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy);
         DEMManager *manager;
         void init();
+        void fillMap(MatchingPointsList *);
 };
 
 #endif

@@ -579,3 +579,46 @@ void MatchingPointsList::copyListBy3D()
 		array[i][2] = list.at(i).Y;
 	}
 }
+
+/******************
+ * Generate image *
+ ******************/
+
+Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
+{
+        double Xi, Yi, Xf, Yf, Zi, Zf;
+        XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+
+        int dem_width, dem_height;
+
+        // Calculate image size
+        dem_width = (res_x + (Xf-Xi)) / res_x;
+        dem_height = (res_y + (Yf-Yi)) / res_y;
+
+        Matrix *img = new Matrix(dem_height,dem_width);
+
+        // Convert DEM to image - (0.0 to 1.0)
+        MatchingPoints mp;
+        double X,Y,Z;
+        int i,j;
+        for (int k=0; k<list.size(); k++)
+        {
+            mp = list.at(k);
+            X = mp.X;
+            Y = mp.Y;
+            Z = mp.Z;
+
+            if (Z - 0.0 < 0.000000000000001)
+                continue;
+
+            i = 1 + int((Y-Yi)*res_y);
+            j = 1 + int((X-Xi)*res_x);
+
+            if (i<1 || j<1 || i>dem_height || j>dem_width)
+                continue;
+
+            img->set(i,j,1.0);
+        }
+
+        return img;
+}

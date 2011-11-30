@@ -150,6 +150,9 @@ bool DEMUserInterface_Qt::exec()
 void DEMUserInterface_Qt::onAbortClicked()
 {
     // Abort clicked
+    manager->setCancel();
+    enableOptions();
+    setAllowClose(true);
 }
 
 void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
@@ -341,7 +344,7 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
     manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value(), doubleSpinBox0->value());
     manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
-    manager->extractDEM(comboBox5->currentIndex());
+    manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
 
     // Enable options
     saveButton2->setEnabled(true);
