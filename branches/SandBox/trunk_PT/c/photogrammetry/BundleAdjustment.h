@@ -799,6 +799,10 @@ public:
         * \return bool : Informa se todas as imagens tem valores iniciais para o calculo dos parametros de orientaçao exterior
         */
         bool hasAllImagesInitialValues();
+
+
+
+	int whereInImages(Image *img);
 };
 
 #endif // BUNDLEADJUSTMENT_H
