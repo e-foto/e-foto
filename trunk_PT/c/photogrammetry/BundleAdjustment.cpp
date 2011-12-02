@@ -10,7 +10,7 @@
 
 #define MAXRESIDUO 0.0001
 #define ESPARSA
-#define TIMES
+//#define TIMES
 
 BundleAdjustment::BundleAdjustment()
 {
@@ -125,17 +125,19 @@ bool BundleAdjustment::calculate()
         matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
 	//P.show();
-	//bool resOk=false;
+	bool resOk=false;
 	int changePesos=0;
-	//Matrix tempRes;
+	Matrix tempRes;
 	totalIterations=0;
+
 	QTime ptime;
 	if (numFotogrametricPoints!=0)
 	{
-		//while(!resOk)
+		//while(!resOk && totalIterations<maxIterations)
 		//{
 			int conv=0;
 			while(totalIterations<maxIterations && conv!=1)
+			//while(convIterations<maxIterations && conv!=1)
 			{
 				ptime.start();
 				createA1();
@@ -253,18 +255,19 @@ bool BundleAdjustment::calculate()
 
 			//matAdjust.show('f',5,"MatAdjus depois da iteracao");
 			calculateResiduos();
-/*
+
 			//matRes.show('f',5,"MatRes depois da iteracao");
-			//resOk=testResiduo();
-			//if (changePesos==0)
-				//tempRes.resize(matRes.getRows(),1);
-			//calculatePeso();
-			//matRes=matRes-tempRes;
-			//tempRes=matRes;
-			//changePesos++;
+			/*
+			resOk=testResiduo();
+			if (changePesos==0)
+				tempRes.resize(matRes.getRows(),1);
+			calculatePeso();
+			matRes=matRes-tempRes;
+			tempRes=matRes;
+			changePesos++;
 			//totalIterations+=iterations;
 			//matRes.show('f',5,"MatRes");
-		//}*/
+		}*/
 	}
 	else
 	{
@@ -321,9 +324,9 @@ bool BundleAdjustment::calculate()
 			//matRes.show('f',5,"MatRes");
 		//}
 	}
-	//printf("Numero de troca de pesos: %d\n",changePesos);
+	printf("Numero de troca de pesos: %d\n",changePesos);
 	calculateResiduos();
-	//matRes.show('f',8,"MatResCalculate");
+	matRes.show('f',8,"MatResCalculate");
 	setAFP();
 	return true;
 }
@@ -1324,43 +1327,13 @@ void BundleAdjustment::createA1()
 
 void BundleAdjustment::createA2()
 {
-	/*
-	Matrix result(0,3*numFotogrametricPoints);
-	for (int i=0;i<numImages;i++)
-	{
-		int pnts=listImages.at(i)->countPoints();
-		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
-		int posLin=1;
-		Matrix oneImage(2*rows,3*numFotogrametricPoints);
-		for (int j=0;j<pnts;j++)
-		{
-			if(whereInPoints(getPointFrom(i,j))!=-1 && !isCheckingPoint(i,j))
-			{
-				if(isPhotogrammetricPoint(i,j))
-				{
-					ObjectSpaceCoordinate aux=getPointFrom(i,j)->getObjectCoordinate();
-					double x=aux.getX();
-					double y=aux.getY();
-					double z=aux.getZ();
-					Matrix jf=getJacobianaFotogrametric(x,y,z,i+1);
-					int posCol=whereInPoints(listImages.at(i)->getPointAt(j));
-					posCol=3*(posCol-numControlPoints)+1;
-					oneImage.putMatrix(jf,posLin,posCol);
-				}
-				posLin+=2;
-			}
-		}
-		result=result|oneImage;
-	}
-	A2=result;*/
-
 	Matrix result(0,3*numFotogrametricPoints);
 	int posCol=0;
 	for (int i=0;i<numImages;i++)
 	{
 		int pnts=listImages.at(i)->countPoints();
-		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
-		int posLin=1;
+		//int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		//int posLin=1;
 		//qDebug("rows %d:%d",i,rows);
 		Matrix oneImage(0,3*numFotogrametricPoints);
 		//	qDebug("Imagem %s",listImages.at(i)->getFilename().c_str());
@@ -1465,6 +1438,7 @@ void BundleAdjustment::calculateResiduos()
 				double resx=x-coord.get(1,1);
 				double resy=y-coord.get(1,2);
 				// reaproveitando a matrix que nÃ£o serÃ¡ mais utilizada nesse loop;
+				qDebug("Residuo x de %s[%d,%d]\nResx= %.9f\tResy=%.9f\n",getPointFrom(i,j)->getPointId().c_str(),i,j,resx,resy);
 				coord=coord.transpose();
 				coord.set(1,1,resx);
 				coord.set(2,1,resy);
@@ -1485,10 +1459,10 @@ void BundleAdjustment::calculatePeso()
 		{
 			if (isControlPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
 			{
-				double p=(numEquations-numUnknows)/(pow(getRx(listImages.at(i),j+1),2));
+				double p=(numEquations-numUnknows)/(pow(getRx(listImages.at(i),j),2));
 				P.set(d,d,p);
 				d++;
-				p=(numEquations-numUnknows)/((pow(getRy(listImages.at(i),j+1),2)));
+				p=(numEquations-numUnknows)/((pow(getRy(listImages.at(i),j),2)));
 					P.set(d,d,p);
 				d++;
 			}
@@ -1526,20 +1500,32 @@ void BundleAdjustment::updateCoordFotog()
 	}
 }
 
-double BundleAdjustment::getRx(Image *img, int pointId)
+double BundleAdjustment::getRx(Image *img, int pointIndex)
 {
-	int base=0;
-	for(int i=1;i<img->getId();i++)
-		base+=2*numberControlPoints(img);
-	return matRes.get(base+2*(pointId-1)+1,1);
+	int base=1;
+	int pos=whereInImages(img);
+	for(int i=0;i<pos;i++)
+		base+=2*numberControlPoints(listImages.at(i));
+	return matRes.get(base+2*(pointIndex),1);
 }
 
-double BundleAdjustment::getRy(Image *img, int pointId)
+double BundleAdjustment::getRy(Image *img, int pointIndex)
 {
-	int base=0;
-	for(int i=1;i<img->getId();i++)
-		base+=2*numberControlPoints(img);
-	return matRes.get(base+2*(pointId-1)+2,1);
+	int base=1;
+	int pos=whereInImages(img);
+	for(int i=0;i<pos;i++)
+		base+=2*numberControlPoints(listImages.at(i));
+	return matRes.get(base+2*(pointIndex)+1,1);
+}
+
+int BundleAdjustment::whereInImages(Image *img)
+{
+	for (int i=0;i<numImages;i++)
+	{
+		if(listImages.at(i)==img)
+			return i;
+	}
+	return -1;
 }
 
 /*Metodos para aumento de performance do calculo*/
