@@ -120,7 +120,7 @@ bool BundleAdjustment::calculate()
             }
         }
 
-        matAdjust=matInicialValues;
+	matAdjust=matInicialValues;
 
 	matAdjust.show('f',5,"matAdjust Inicial Values");
 	P.identity(numEquations);
