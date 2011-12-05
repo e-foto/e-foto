@@ -1203,6 +1203,16 @@ bool PTManager::allKappaSet()
 	return true;
 }
 
+Matrix PTManager::getDigitalCoordinate(int imageKey, int pointKey)
+{
+	Matrix result(1,2);
+	Point *pnt=efotoManager->instancePoint(pointKey);
+	DigitalImageSpaceCoordinate coord=pnt->getDigitalCoordinate(imageKey);
+	result.set(1,1,coord.getCol());
+	result.set(1,2,coord.getLin());
+	return result;
+}
+
 /** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
 */
 /*
