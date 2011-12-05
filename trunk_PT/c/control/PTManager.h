@@ -493,6 +493,14 @@ public:
 	*/
 	bool allKappaSet();
 
+	/**
+	* \brief Metodo que retorna o valor de linha e coluna do ponto na imagem
+	* \param pointKey : key do ponto
+	* \param imageKey : key da imagem
+	* \return Matrix : Matrix[1x2] contendo os valores coluna e linha do ponto na imagem
+	*/
+	Matrix getDigitalCoordinate(int imageKey,int  pointKey);
+
 /*
 	/**
 	* \brief

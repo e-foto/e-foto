@@ -96,6 +96,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 
 	actionCalculateFotoTri->setEnabled(false);
 	calculateFotoTriToolButton->setEnabled(false);
+	imagesPointTreeWidget->setColumnHidden(3,true);
 
 	qApp->processEvents();
 	//qDebug("Construtor");
@@ -891,31 +892,31 @@ void PTUserInterface_Qt::showImagesAppearances(int indexRow, int indexCol)
 
 void PTUserInterface_Qt::selectAllAppearances(int pointKey)
 {
-        int indexLeftSearched,indexRightSearched, indexPointsSearched;
+	int indexLeftSearched,indexRightSearched, indexPointsSearched;
 
-        indexLeftSearched = findKeyAppearances(leftImageTableWidget,pointKey);
-        indexPointsSearched = findKeyAppearances(pointsTableWidget, pointKey);
-        indexRightSearched = findKeyAppearances(rightImageTableWidget, pointKey);
+	indexLeftSearched = findKeyAppearances(leftImageTableWidget,pointKey);
+	indexPointsSearched = findKeyAppearances(pointsTableWidget, pointKey);
+	indexRightSearched = findKeyAppearances(rightImageTableWidget, pointKey);
 
-        leftImageTableWidget->clearSelection();
-        pointsTableWidget->clearSelection();
-        rightImageTableWidget->clearSelection();
+	leftImageTableWidget->clearSelection();
+	pointsTableWidget->clearSelection();
+	rightImageTableWidget->clearSelection();
 
-        if (indexLeftSearched>=0)
-        {
-                leftImageTableWidget->selectRow(indexLeftSearched);
-                leftImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexLeftSearched,3,indexLeftSearched,3),false);
-        }
-        if (indexPointsSearched>=0)
-        {
-                pointsTableWidget->selectRow(indexPointsSearched);
-                pointsTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexPointsSearched,5,indexPointsSearched,5),false);
-        }
-        if (indexRightSearched>=0)
-        {
-                rightImageTableWidget->selectRow(indexRightSearched);
-                rightImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexRightSearched,3,indexRightSearched,3),false);
-        }
+	if (indexLeftSearched>=0)
+	{
+		leftImageTableWidget->selectRow(indexLeftSearched);
+		leftImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexLeftSearched,3,indexLeftSearched,3),false);
+	}
+	if (indexPointsSearched>=0)
+	{
+		pointsTableWidget->selectRow(indexPointsSearched);
+		pointsTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexPointsSearched,5,indexPointsSearched,5),false);
+	}
+	if (indexRightSearched>=0)
+	{
+		rightImageTableWidget->selectRow(indexRightSearched);
+		rightImageTableWidget->setRangeSelected(QTableWidgetSelectionRange(indexRightSearched,3,indexRightSearched,3),false);
+	}
 
 }
 
@@ -923,37 +924,37 @@ void PTUserInterface_Qt::selectAllAppearances(int pointKey)
 int PTUserInterface_Qt::findKeyAppearances(ETableWidget *table, int searchedPointKey)
 {
 	bool ok;
-        int rows,key;
+	int rows,key;
 	if (table == leftImageTableWidget)
 	{
-            rows=leftImageTableWidget->rowCount();
-            for (int i=0;i<rows;i++)
-            {
-                key=leftImageTableWidget->item(i,3)->text().toInt(&ok);
-                if(key==searchedPointKey)
-                        return i;
-            }
-            return -1;
+		rows=leftImageTableWidget->rowCount();
+		for (int i=0;i<rows;i++)
+		{
+			key=leftImageTableWidget->item(i,3)->text().toInt(&ok);
+			if(key==searchedPointKey)
+				return i;
+		}
+		return -1;
 	}else if (table == pointsTableWidget)
 	{
-            rows=pointsTableWidget->rowCount();
-            for (int i=0;i<rows;i++)
-            {
-                key=pointsTableWidget->item(i,5)->text().toInt(&ok);
-                if(key==searchedPointKey)
-                        return i;
-            }
-            return -1;
+		rows=pointsTableWidget->rowCount();
+		for (int i=0;i<rows;i++)
+		{
+			key=pointsTableWidget->item(i,5)->text().toInt(&ok);
+			if(key==searchedPointKey)
+				return i;
+		}
+		return -1;
 	}else if (table == rightImageTableWidget)
 	{
-            rows=rightImageTableWidget->rowCount();
-            for (int i=0;i<rows;i++)
-            {
-                key=rightImageTableWidget->item(i,3)->text().toInt(&ok);
-                if(key==searchedPointKey)
-                        return i;
-            }
-            return -1;
+		rows=rightImageTableWidget->rowCount();
+		for (int i=0;i<rows;i++)
+		{
+			key=rightImageTableWidget->item(i,3)->text().toInt(&ok);
+			if(key==searchedPointKey)
+				return i;
+		}
+		return -1;
 	}
 }
 
@@ -966,9 +967,9 @@ void PTUserInterface_Qt::updateMark(MonoDisplay *display, int imageKey, int poin
 	if (col<0 || lin<0 || currentPointKey<0)
 		return;
 
-        if (display==leftDisplay)
+	if (display==leftDisplay)
 	{
-                int pos=findKeyAppearances(leftImageTableWidget, pointKey);
+		int pos=findKeyAppearances(leftImageTableWidget, pointKey);
 		if(pos<0 || col>leftView->imageSize().width() || lin>leftView->imageSize().height())
 			return;
 		saveMarksButton->setEnabled(true);
@@ -991,9 +992,9 @@ void PTUserInterface_Qt::updateMark(MonoDisplay *display, int imageKey, int poin
 			else if (colTable==2)
 				leftImageTableWidget->getItemSpinBox()->setValue(lin);
 		}
-        }else if(display == rightDisplay)
+	}else if(display == rightDisplay)
 	{
-                int pos=findKeyAppearances(rightImageTableWidget, pointKey);
+		int pos=findKeyAppearances(rightImageTableWidget, pointKey);
 		if(pos<0 || col>rightView->imageSize().width() || lin>rightView->imageSize().height())
 			return;
 		saveMarksButton->setEnabled(true);
@@ -1209,6 +1210,7 @@ void PTUserInterface_Qt::markAllpoints(MonoDisplay *display)
 			}
 		}
 	}
+
 }
 
 void PTUserInterface_Qt::clearAllMarks(MonoDisplay *display)
@@ -1219,16 +1221,31 @@ void PTUserInterface_Qt::clearAllMarks(MonoDisplay *display)
 
 void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 {
-        deque<string> appearances=ptManager->getImagesAppearances(pointKey);
-        imagesPointListWidget->clear();
+	imagesPointTreeWidget->clear();
+	deque<string> appearances=ptManager->getImagesAppearances(pointKey);
+	if (appearances.size()==0)
+		return;
 
-        QStringList lista;
-        for(int i=0;i<appearances.size();i++)
-                lista.append(QString::fromStdString(appearances.at(i)));
-        imagesPointListWidget->addItems(lista);
+	QList<QTreeWidgetItem*> treelist;
+	for(int i=0;i<appearances.size();i++)
+	{
+		QString imageKey= QString::number(ptManager->getImageId(appearances.at(i)));
+		Matrix coord=ptManager->getDigitalCoordinate(ptManager->getImageId(appearances.at(i)),pointKey);
+		QStringList stringList;
+		stringList << QString::fromStdString(appearances.at(i)) << QString::number(coord.get(1,1))<< QString::number(coord.get(1,2)) << imageKey;
+		QTreeWidgetItem *item=new QTreeWidgetItem(stringList);
+		item->setTextAlignment(0,Qt::AlignCenter);
+		item->setTextAlignment(1,Qt::AlignCenter);
+		item->setTextAlignment(2,Qt::AlignCenter);
+		treelist.push_back(item);
+	}
 
-        pointIdLabel->setText(QString("Point %1 is in images").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
+	imagesPointTreeWidget->addTopLevelItems(treelist);
+	imagesPointTreeWidget->resizeColumnToContents(1);
+	imagesPointTreeWidget->resizeColumnToContents(0);
+	imagesPointTreeWidget->resizeColumnToContents(2);
 
+	pointIdLabel->setText(QString("Point %1 is in images").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
 }
 
 void PTUserInterface_Qt::saveMarks()
