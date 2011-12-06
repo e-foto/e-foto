@@ -7,6 +7,8 @@
 #include "RasterResource.h"
 #include "GeometryResource.h"
 
+class Matrix;
+
 class AbstractScene: public QObject
 {
 protected:
@@ -56,6 +58,7 @@ public:
 	bool createImage(QSize size, QColor color = QColor(Qt::transparent));
 	bool loadImage(QString filepath);
 	bool loadImage(QImage image);
+        bool loadImage(Matrix* image, bool isGrayscale = true);
 	bool saveImage(QString filepath, QString format);
 	void transformImage(double H[9]);
 

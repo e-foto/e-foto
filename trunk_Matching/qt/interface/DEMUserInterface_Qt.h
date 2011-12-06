@@ -6,6 +6,7 @@
 #include "ImageView.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
+#include "ImageViewers.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -39,6 +40,9 @@ protected slots:
         void onDemGridClicked();
         void onLSMCheckChanged(int);
         void onAbortClicked();
+        void onGridAreaLimitsStateChanged(int);
+        void onInterStateChanged(int);
+        void onShowImageStateChanged(int);
 
 private:
         void init();
@@ -60,6 +64,7 @@ public:
         void setProgress(int);
         void setMathcingHistogram(int *);
         void setAllowClose(bool _b) { allow_close = _b; };
+        void showImage(Matrix* image, bool isGrayscale = true);
         void disableOptions();
         void enableOptions();
 };

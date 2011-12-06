@@ -4,46 +4,6 @@
 #include "ProjectUserInterface_Qt.h"
 #include "CommonMethods.h"
 
-
-EFotoViewer::EFotoViewer(QWidget* parent) : QMainWindow(parent)
-{
-    setupUi(this);
-    sd = new SingleDisplay(this);
-    setCentralWidget(sd);
-    tool = new SingleToolsBar(sd, this);
-    addToolBar(Qt::TopToolBarArea,tool);
-    statusBar()->addWidget(tool->getInfo());
-    this->showMaximized();
-}
-
-void EFotoViewer::closeEvent(QCloseEvent *)
-{
-    delete tool;
-    delete sd;
-}
-
-void EFotoViewer::loadImage(QString filename)
-{
-    SingleScene* ss = (SingleScene*) sd->getCurrentScene();
-    ss->loadImage(filename);
-    sd->fitView();
-}
-
-void EFotoViewer::blockOpen()
-{
-    tool->setOpenVisible(false);
-}
-
-void EFotoViewer::blockSave()
-{
-    tool->setSaveVisible(false);
-}
-
-void EFotoViewer::blockMark()
-{
-    tool->setMarkVisible(false);
-}
-
 ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 {
 	setupUi(this);
@@ -63,7 +23,7 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 	lastPath = ".";
 
         connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
-        connect(viewButton,SIGNAL(clicked()),this,SLOT(startEFotoView()));
+        connect(viewButton,SIGNAL(clicked()),this,SLOT(startSingleViewer()));
 	connect(fileNameLine,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
 
 	//Aqui o campo de Flight_ID esta sendo escondido
@@ -276,14 +236,14 @@ QString ImageForm::loadImageFile()
 		return fileNameLine->text();
 }
 
-void ImageForm::startEFotoView()
+void ImageForm::startSingleViewer()
 {
-    EFotoViewer* ev = new EFotoViewer(this);
-    ev->loadImage(filePathLine->text() + "/" + fileNameLine->text());
-    ev->blockOpen();
-    ev->blockSave();
-    ev->blockMark();
-    ev->show();
+    SingleViewer* sv = new SingleViewer(this);
+    sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
+    sv->blockOpen();
+    sv->blockSave();
+    sv->blockMark();
+    sv->show();
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)

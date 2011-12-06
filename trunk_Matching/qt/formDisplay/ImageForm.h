@@ -2,32 +2,12 @@
 #define IMAGEFORM_H
 
 #include "ui_ImageLayout.h"
-#include "ui_EfotoViewer.h"
 #include "AbstractForm.h"
 #include "SigmaForm.h"
 #include "EDom.h"
-#include <QMainWindow>
-#include "SingleDisplay.h"
+#include "ImageViewers.h"
 
 class ProjectUserInterface_Qt;
-
-class EFotoViewer : public QMainWindow, public Ui::EVMainWindow
-{
-    Q_OBJECT
-
-    SingleDisplay* sd;
-    SingleToolsBar* tool;
-    void closeEvent(QCloseEvent *);
-
-public:
-    EFotoViewer(QWidget *parent=0);
-
-public slots:
-    void loadImage(QString filename);
-    void blockOpen();
-    void blockSave();
-    void blockMark();
-};
 
 class ImageForm : public AbstractForm, public Ui::ImageView
 {
@@ -53,7 +33,7 @@ public:
 
 private slots:
     QString loadImageFile();
-    void startEFotoView();
+    void startSingleViewer();
     void metadataVisibleChanged(QString);
 
 private:

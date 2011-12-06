@@ -28,29 +28,6 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         : QWidget(parent, fl)
 {	
 	setupUi(this);
-/*
-	actionSet_mark->setCheckable(true);
-	actionMove->setCheckable(true);
-	actionZoom->setCheckable(true);
-	QActionGroup *group = new QActionGroup(this);
-	group->addAction(actionSet_mark);
-	group->addAction(actionMove);
-	group->addAction(actionZoom);
-	group->setExclusive(true);
-	actionActive_grid->setCheckable(true);
-	actionView_report->setEnabled(false);
-	actionInterior_orientation->setEnabled(false);
-	table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-	QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
-	QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
-	QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-	QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-	QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-	QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
-        if (manager->interiorDone())
-                actionView_report->setEnabled(true);
-*/
         this->manager = manager;
 
         QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -61,6 +38,9 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
         QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
         QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
+        QObject::connect(comboBox2_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onGridAreaLimitsStateChanged(int)));
+        QObject::connect(comboBox1, SIGNAL(currentIndexChanged(int)), this, SLOT(onInterStateChanged(int)));
+        QObject::connect(checkBox_3, SIGNAL(stateChanged(int)), this, SLOT(onShowImageStateChanged(int)));
 
         setWindowState(this->windowState());
 
@@ -79,6 +59,11 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         saveButton->setEnabled(false);
         saveButton2->setEnabled(false);
         interButton->setEnabled(false);
+
+        // Set initial states
+        onGridAreaLimitsStateChanged(0);
+        onInterStateChanged(0);
+        manager->setShowImage(checkBox_3->isChecked());
 
         allow_close = true;
 
@@ -163,6 +148,15 @@ void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
     histProgressBar4->setValue(hist[3]);
     histProgressBar5->setValue(hist[4]);
     histProgressBar6->setValue(hist[5]);
+}
+
+void DEMUserInterface_Qt::showImage(Matrix* image, bool isGrayscale)
+{
+    SingleViewer* sv = new SingleViewer(this);
+    sv->loadImage(image, isGrayscale);
+    sv->blockOpen();
+    sv->blockMark();
+    sv->show();
 }
 
 void DEMUserInterface_Qt::disableOptions()
@@ -333,6 +327,34 @@ int DEMUserInterface_Qt::checkBoundingBox()
     }
 
     return 1;
+}
+
+void DEMUserInterface_Qt::onInterStateChanged(int opt)
+{
+    bool ena1 = (opt == 1 || opt == 2);
+    bool ena2 = (opt == 1 || opt == 0);
+
+    groupBox_5->setEnabled(ena1);
+    groupBox_4->setEnabled(ena2);
+}
+
+void DEMUserInterface_Qt::onGridAreaLimitsStateChanged(int opt)
+{
+    bool enable = (opt == 1);
+
+    XilineEdit->setEnabled(enable);
+    XflineEdit->setEnabled(enable);
+    YilineEdit->setEnabled(enable);
+    YflineEdit->setEnabled(enable);
+    label_53->setEnabled(enable);
+    label_54->setEnabled(enable);
+    label_55->setEnabled(enable);
+    label_56->setEnabled(enable);
+}
+
+void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
+{
+    manager->setShowImage(opt);
 }
 
 /*

@@ -146,6 +146,7 @@ HEADERS += \
     TerrainForm.h \
 # qt/imageDisplay
     ImageView.h \
+    ImageViewers.h \
     SWidgetQt.h \
     GeometryResource.h \
     RasterResource.h \
@@ -293,6 +294,7 @@ SOURCES += \
     TerrainForm.cpp \
 # qt/imageDisplay/
     ImageView.cpp \
+    ImageViewers.cpp \
     SWidgetQt.cpp \
     GeometryResource.cpp \
     RasterResource.cpp \

@@ -30,7 +30,7 @@ RasterResource::RasterResource(QString filepath)
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h));
+                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	}
 }
 
@@ -86,7 +86,7 @@ bool RasterResource::load(QImage image)
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h));
+                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	}
 	return _isValid;
 }
@@ -124,7 +124,7 @@ bool RasterResource::load(QString filepath)
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h));
+                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	}
 	return _isValid;
 }
@@ -203,12 +203,12 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			// Um recorte final vai garantir a posição corretamente alinhada e o targetSize pedido
 			QRect finalCut(((imageCut.topLeft() - QPointF(rectToCut.topLeft())) * scale).toPoint(), targetSize);
 
-			result = img->copy(rectToCut).scaled(newTargetSize,Qt::KeepAspectRatioByExpanding).copy(finalCut);
+                        result = img->copy(rectToCut).scaled(newTargetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation).copy(finalCut);
 		}
 		else if (scale > 0.5)
 		{
 			// Corta e reduz a imagem a partir do primeiro nível da pirâmide. Este é o caso mais simples
-			result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding);
+                        result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation);
 		}
 		else
 		{
@@ -225,7 +225,7 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			// Troca a imagem pela imagem do nível correto, seleciona o novo corte e recorta.
 			img = _pyramid[l];
 			rectToCut = imageCut.toRect();
-			result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding);
+                        result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation);
 		}
 	}
 	result.setDotsPerMeterX(3780);
