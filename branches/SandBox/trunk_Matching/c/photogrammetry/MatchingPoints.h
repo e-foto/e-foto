@@ -27,6 +27,13 @@
 
 using namespace std;
 
+class MPImagePairs
+{
+public:
+    int img1, img2;
+    double Xi, Xf, Yi, Yf;
+};
+
 class stackCellQuick
 {
 public:
@@ -93,6 +100,10 @@ private:
 	void boundingBox(double &, double &, double &, double &, double &, double &, int);
         bool checkFile(char *, int);
         int strTokensCount(char *);
+        int checkImagePairs(int left, int right, bool add=false);
+        void identImagePairs();
+        vector <MPImagePairs> MPImagePairsList;
+
 };
 
 #endif
