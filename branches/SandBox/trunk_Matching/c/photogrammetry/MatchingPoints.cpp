@@ -617,7 +617,7 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
             if (i<1 || j<1 || i>dem_height || j>dem_width)
                 continue;
 
-            img->set(i,j,1.0);
+            img->set(dem_height - i + 1,j,1.0);
         }
 
         return img;
