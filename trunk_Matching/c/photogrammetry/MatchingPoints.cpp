@@ -584,6 +584,70 @@ void MatchingPointsList::copyListBy3D()
  * Generate image *
  ******************/
 
+int MatchingPointsList::checkImagePairs(int left, int right, bool add)
+{
+    MPImagePairs MPI;
+    for (int i=0; i< MPImagePairsList.size(); i++)
+    {
+        MPI = MPImagePairsList.at(i);
+        if (MPI.img1 == left && MPI.img2 == right)
+            return i;
+    }
+
+    if (!add)
+        return -1;
+
+    // If new, add it
+    MPI.img1 = left;
+    MPI.img2 = right;
+    MPI.Xf = MPI.Xf = MPI.Yi = MPI.Yf = 0.0;
+    MPImagePairsList.push_back(MPI);
+
+    return MPImagePairsList.size()-1;
+}
+
+void MatchingPointsList::identImagePairs()
+{
+    MatchingPoints mp;
+    int left, right;
+    double X,Y,Z;
+
+    MPImagePairsList.clear();
+
+    // Check pairs
+    for (int k=0; k<list.size(); k++)
+    {
+        mp = list.at(k);
+
+        left = mp.left_image_id;
+        right = mp.right_image_id;
+
+        checkImagePairs(left, right, true);
+    }
+
+    // Calculate bounding box for each pair
+    int p;
+    MPImagePairs * MPI;
+    for (int k=0; k<list.size(); k++)
+    {
+        mp = list.at(k);
+        X = mp.X;
+        Y = mp.Y;
+
+        left = mp.left_image_id;
+        right = mp.right_image_id;
+
+        p = checkImagePairs(left, right);
+
+        MPI = &MPImagePairsList.at(p);
+
+        if (X < MPI->Xi || int(MPI->Xi) == 0) MPI->Xi=X;
+        if (X > MPI->Xf || int(MPI->Xf) == 0) MPI->Xf=X;
+        if (Y < MPI->Yi || int(MPI->Yi) == 0) MPI->Yi=Y;
+        if (Y > MPI->Yf || int(MPI->Yf) == 0) MPI->Yf=Y;
+    }
+}
+
 Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
 {
         double Xi, Yi, Xf, Yf, Zi, Zf;
@@ -591,16 +655,22 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
 
         int dem_width, dem_height;
 
+        double pixel_point = double(0xFFFF00)/double(0xFFFFFF);
+        double pixel_border = double(0xFFFFFF)/double(0xFFFFFF);
+
         // Calculate image size
         dem_width = (res_x + (Xf-Xi)) / res_x;
         dem_height = (res_y + (Yf-Yi)) / res_y;
 
         Matrix *img = new Matrix(dem_height,dem_width);
 
-        // Convert DEM to image - (0.0 to 1.0)
+        // Identify the pairs and their bounding boxes
+        identImagePairs();
+
+        // Convert DEM to image - (Color 0.0 to 1.0)
         MatchingPoints mp;
         double X,Y,Z;
-        int i,j;
+        int i,j, left, right, p;
         for (int k=0; k<list.size(); k++)
         {
             mp = list.at(k);
@@ -611,13 +681,39 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
             if (Z - 0.0 < 0.000000000000001)
                 continue;
 
+            left = mp.left_image_id;
+            right = mp.right_image_id;
+            p = checkImagePairs(left, right);
+
             i = 1 + int((Y-Yi)*res_y);
             j = 1 + int((X-Xi)*res_x);
 
             if (i<1 || j<1 || i>dem_height || j>dem_width)
                 continue;
 
-            img->set(dem_height - i + 1,j,1.0);
+            img->set(dem_height-i+1,j,pixel_point);
+        }
+
+        // Add bounding box
+        int xi_bb, xf_bb, yi_bb, yf_bb;
+        for (int k=0; k<MPImagePairsList.size(); k++)
+        {
+            xi_bb = 1 + int((MPImagePairsList.at(k).Xi-Xi)*res_x);
+            xf_bb = 1 + int((MPImagePairsList.at(k).Xf-Xi)*res_x);
+            yi_bb = 1 + int((MPImagePairsList.at(k).Yi-Yi)*res_y);
+            yf_bb = 1 + int((MPImagePairsList.at(k).Yf-Yi)*res_y);
+
+            for (j=xi_bb; j<=xf_bb; j++)
+            {
+                img->set(dem_height-yi_bb+1,j,pixel_border);
+                img->set(dem_height-yf_bb+1,j,pixel_border);
+            }
+
+            for (i=yi_bb; i<=yf_bb; i++)
+            {
+                img->set(dem_height-i+1,xi_bb,pixel_border);
+                img->set(dem_height-i+1,xf_bb,pixel_border);
+            }
         }
 
         return img;

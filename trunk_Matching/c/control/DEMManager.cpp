@@ -304,7 +304,7 @@ int DEMManager::loadDem(char * filename, int fileType)
     if (isShowImage)
     {
         Matrix * img = pairs.getDemImage(1.0, 1.0);
-        dui->showImage(img, 1);
+        dui->showImage(img, 0);
         //dui->saveImage((char *)"teste_img.bmp",img);
         delete img;
     }
