@@ -1,6 +1,6 @@
 #include "SingleScene.h"
 #include <math.h>
-
+#include "Matrix.h"
 
 
 SingleScene::SingleScene(QObject* parent, QString filepath):
@@ -175,6 +175,34 @@ bool SingleScene::loadImage(QImage image)
 	else
 		delete(rsrc);
 	return false;
+}
+
+bool SingleScene::loadImage(Matrix *image, bool isGrayscale)
+{
+    // Transforma a matrix em QImage
+    QImage img(image->getCols(), image->getRows(), QImage::Format_ARGB32);
+    unsigned int pixel;
+
+    // Convert Matrix to QImage
+    for (int i=1; i<=image->getRows(); i++)
+    {
+        for (int j=1; j<=image->getCols(); j++)
+        {
+            if (isGrayscale)
+            {
+                pixel = int(image->get(i,j)*255.0);
+                pixel = (pixel << 16) + (pixel << 8) + pixel;
+            }
+            else
+                pixel = int(image->get(i,j)*double(0xFFFFFF));
+
+            pixel = pixel | 0XFF000000;
+            img.setPixel(j-1, i-1, pixel);
+        }
+    }
+
+    // Procede o load por QImage;
+    loadImage(img);
 }
 
 QSize SingleScene::imageSize()

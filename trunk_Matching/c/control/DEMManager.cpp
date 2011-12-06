@@ -29,6 +29,7 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     listAllImages = images;
     listEOs = eos;
     grid = NULL;
+    isShowImage = false;
     setListPoint();
 }
 
@@ -299,6 +300,15 @@ int DEMManager::loadDem(char * filename, int fileType)
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
     dui->setBoundingBox(Xi, Yi, Xf, Yf);
 
+    // Show image, if selected
+    if (isShowImage)
+    {
+        Matrix * img = pairs.getDemImage(1.0, 1.0);
+        dui->showImage(img, 1);
+        //dui->saveImage((char *)"teste_img.bmp",img);
+        delete img;
+    }
+
     return 1;
 }
 
@@ -345,6 +355,15 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
     dui->setAllowClose(true);
     dui->enableOptions();
+
+    // Show image, if selected
+    if (isShowImage)
+    {
+        Matrix * img = grid->getDemImage();
+        dui->showImage(img, 1);
+        delete img;
+    }
+
 }
 
 void DEMManager::calcPointsXYZ()

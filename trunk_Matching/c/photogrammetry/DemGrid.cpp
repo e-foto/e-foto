@@ -128,20 +128,20 @@ Matrix * DemGrid::getDemImage(double min, double max)
 		return NULL;
 	}
 
-	Matrix *img = new Matrix(dem_height,dem_width);
+        Matrix *img = new Matrix(dem_height, dem_width);
 
 	// Convert DEM to image - (0.0 to 1.0)
 	double gray, Z, deltaZ = max-min;
-	for (unsigned int i=1; i<dem_height; i++)
+        for (unsigned int i=1; i<=dem_height; i++)
 	{
-		for (unsigned int j=1; j<dem_width; j++)
+                for (unsigned int j=1; j<=dem_width; j++)
 		{
 			Z = DEM.get(i,j);
 			gray = (Z-min)/deltaZ;
 			if (gray < 0.0) gray = 0.0;
 			if (gray > 1.0) gray = 1.0;
 			// Change 180 degrees from spatial coordinate system to image
-			img->set(dem_height-i+1,j,gray);
+                        img->set(dem_height-i+1,j,gray);
 		}
 	}
 
