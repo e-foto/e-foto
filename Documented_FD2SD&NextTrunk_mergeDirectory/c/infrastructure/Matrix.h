@@ -366,6 +366,7 @@ public:
 	 * @return Matrix	Matriz inversa.
 	 */
 	Matrix inverse();
+	Matrix inverse2();
 
 	/**
 	 * Método para computar a transposta da matriz em escopo.
