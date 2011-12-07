@@ -643,6 +643,78 @@ void Matrix::xmlSetData(string xml)
 			set(i + 1, j + 1, matCols.at(j).toDouble());
 	}
 }
+/*
+void ajusta(float dado[numPontos][3], float matrix[2+1][2*(2+1)], float vector[2+1], float c[2+1])
+{
+	int i,j,k;
+	float element;
+
+	//preenchendo a matriz
+	for(k=0;k<numPontos;k++)
+	{
+		for(i=0;i<(2+1);i++)
+		{
+			vector[i]+=dado[k][1]*pow(dado[k][0],i)/pow(dado[k][2],2);
+			for(j=0;j<(2+1);j++)
+				matrix[i][j]+=pow(dado[k][0],(i+j))/pow(dado[k][2],2);
+		}
+	}
+	//inversão da matriz
+
+	for(i=0;i<2+1;i++) //definindo a linha a trabalhar
+	{
+		element=(matrix[i][i]);
+		for(j=0;j<(2*(2+1));j++)
+		{
+			matrix[i][j]=(matrix[i][j])/element; //normalizando a linha
+		}
+		for(k=0;k<(2+1);k++)
+		{
+			if(k!=i)
+			{
+				element=matrix[k][i];
+				for(j=0;j<(2*(2+1));j++)
+				{
+					matrix[k][j]=(matrix[k][j])-(element*(matrix[i][j]));
+				}
+			}
+		}
+	}
+	for(i=0;i<(2+1);i++)
+		for(j=0;j<(2+1);j++)
+			c[i]+=matrix[i][j+2+1]*vector[j];
+}
+*/
+Matrix Matrix::inverse2()
+{
+	Matrix Inv = *this;
+	double element;
+	if (nrows != ncols)
+		cerr << "Error detected by the inversion algorithm." << endl << "Matrix must  be square."<< endl;
+	else
+	{
+		for(int i = 1; i<=nrows; i++) //definindo a linha a trabalhar
+		{
+			element = Inv.get(i,i);
+			for(int j = 1; j<=ncols; j++)
+			{
+				Inv.set(i,j,Inv.get(i,j)/element); //normalizando a linha
+			}
+			for(int k = 1; k<=nrows; k++)
+			{
+				if(k != i)
+				{
+					element = Inv.get(k,i);
+					for(int j = 1; j<=ncols; j++)
+					{
+						Inv.set(k,j,Inv.get(k,j)-(element*Inv.get(i,j)));
+					}
+				}
+			}
+		}
+	}
+	return Inv;
+}
 
 Matrix Matrix::inverse()
 {

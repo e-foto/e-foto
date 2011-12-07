@@ -18,14 +18,14 @@ HEADERS += ../c/infrastructure/AbstractAnalogCoordinate.h \
 		   ../c/infrastructure/EDomValidator.h \
 		   ../c/infrastructure/EObject.h \
 		   ../c/infrastructure/ETreeModel.h \
-		   ../c/infrastructure/GeoSystem.h \
+		   #../c/infrastructure/GeoSystem.h \
 		   ../c/infrastructure/Matrix.h \
 		   ../c/infrastructure/PositionMatrix.h \
 		   ../c/infrastructure/RectSupport.h \
 		   ../c/infrastructure/SparseMatrix.h \
 		   ../c/photogrammetry/AnalogFiductialMark.h \
 		   ../c/photogrammetry/AnalogImageSpaceCoordinate.h \
-		   ../c/photogrammetry/BundleAdjustment.h \
+		   #../c/photogrammetry/BundleAdjustment.h \
 		   ../c/photogrammetry/CheckingPoint.h \
 		   ../c/photogrammetry/ControlPoint.h \
 		   ../c/photogrammetry/DigitalFiductialMark.h \
@@ -41,7 +41,7 @@ HEADERS += ../c/infrastructure/AbstractAnalogCoordinate.h \
 		   ../c/photogrammetry/PhotogrammetricPoint.h \
 		   ../c/photogrammetry/Point.h \
 		   ../c/photogrammetry/ProjectHeader.h \
-		   ../c/photogrammetry/ProjectiveRay.h \
+		   #../c/photogrammetry/ProjectiveRay.h \
 		   ../c/photogrammetry/Sensor.h \
 		   ../c/photogrammetry/SensorWithFiducialMarks.h \
 		   ../c/photogrammetry/SensorWithKnowDimensions.h \
@@ -64,7 +64,7 @@ SOURCES += ../c/infrastructure/AbstractAnalogCoordinate.cpp \
 		   ../c/infrastructure/SparseMatrix.cpp \
 		   ../c/photogrammetry/AnalogFiductialMark.cpp \
 		   ../c/photogrammetry/AnalogImageSpaceCoordinate.cpp \
-		   ../c/photogrammetry/BundleAdjustment.cpp \
+		   #../c/photogrammetry/BundleAdjustment.cpp \
 		   ../c/photogrammetry/CheckingPoint.cpp \
 		   ../c/photogrammetry/ControlPoint.cpp \
 		   ../c/photogrammetry/DigitalFiductialMark.cpp \
@@ -80,7 +80,7 @@ SOURCES += ../c/infrastructure/AbstractAnalogCoordinate.cpp \
 		   ../c/photogrammetry/PhotogrammetricPoint.cpp \
 		   ../c/photogrammetry/Point.cpp \
 		   ../c/photogrammetry/ProjectHeader.cpp \
-		   ../c/photogrammetry/ProjectiveRay.cpp \
+		   #../c/photogrammetry/ProjectiveRay.cpp \
 		   ../c/photogrammetry/Sensor.cpp \
 		   ../c/photogrammetry/SensorWithFiducialMarks.cpp \
 		   ../c/photogrammetry/SensorWithKnowDimensions.cpp \
