@@ -155,12 +155,14 @@ int MatchingPointsList::save(char *filename, int type)
 		return 0;
 
 	if (type == 0)
-                outfile << "Pair\tM_ID\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
+                outfile << "Pair\tM_ID\tL_ID\tR_ID\tL_x\tL_y\tR_x\tR_y\tX\tY\tZ\tAcc\n";
 
 	if (type == 2)
                 outfile << "10002\t0.0\t0.0\t0.0\t0.0\n";
 
 	MatchingPoints *mp;
+
+        outfile << fixed << setprecision(5);
 
 	for (int i=1; i<=list.size(); i++)
 	{
@@ -655,8 +657,13 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
 
         int dem_width, dem_height;
 
-        double pixel_point = double(0xFFFF00)/double(0xFFFFFF);
-        double pixel_border = double(0xFFFFFF)/double(0xFFFFFF);
+        // Color code:
+        // uint 00 RR GG BB
+        // Converted to double 0.0 - 1.0
+
+        // Black bg
+        double pixel_point = double(0xFFFF00)/double(0xFFFFFF); // Yellow
+        double pixel_border = double(0xFFFFFF)/double(0xFFFFFF); // White
 
         // Calculate image size
         dem_width = (res_x + (Xf-Xi)) / res_x;
@@ -691,7 +698,8 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
             if (i<1 || j<1 || i>dem_height || j>dem_width)
                 continue;
 
-            img->set(dem_height-i+1,j,pixel_point);
+            //img->set(dem_height-i+1,j,pixel_point);
+            drawCross(img, dem_height-i+1, j, pixel_point);
         }
 
         // Add bounding box
@@ -717,4 +725,22 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
         }
 
         return img;
+}
+
+void MatchingPointsList::drawCross(Matrix * img, int i, int j, double color)
+{
+    // Cross radius
+    int r=2;
+
+    for (int n=i-r; n<=i+r; n++)
+    {
+        if (n>0 && n<=img->getRows())
+            img->set(n,j,color);
+    }
+
+    for (int m=j-r; m<=j+r; m++)
+    {
+        if (m>0 && m<=img->getCols())
+            img->set(i,m,color);
+    }
 }
