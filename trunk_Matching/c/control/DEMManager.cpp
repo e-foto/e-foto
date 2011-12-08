@@ -320,6 +320,8 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 {
     double Zi, Zf;
 
+    cancel_flag = false;
+
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     dui->setStatus((char *)"Interpolating grid ...");
 
@@ -357,7 +359,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     dui->enableOptions();
 
     // Show image, if selected
-    if (isShowImage)
+    if (isShowImage && !cancel_flag)
     {
         Matrix * img = grid->getDemImage();
         dui->showImage(img, 1);
@@ -470,7 +472,7 @@ void DEMManager::extractDEM(int option, bool clearMList)
     dui->enableOptions();
 
     // Show image, if selected
-    if (isShowImage)
+    if (isShowImage && !cancel_flag)
     {
         Matrix * img = pairs.getDemImage(1.0, 1.0);
         dui->showImage(img, 0);
