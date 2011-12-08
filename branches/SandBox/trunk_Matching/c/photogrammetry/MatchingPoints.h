@@ -103,6 +103,7 @@ private:
         int checkImagePairs(int left, int right, bool add=false);
         void identImagePairs();
         vector <MPImagePairs> MPImagePairsList;
+        void drawCross(Matrix *, int, int, double);
 
 };
 
