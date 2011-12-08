@@ -21,6 +21,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include "MatchingPoints.h"
 #include "MatchingPointsGrid.h"
 #include "Matrix.h"

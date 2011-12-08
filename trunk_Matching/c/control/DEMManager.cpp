@@ -468,6 +468,14 @@ void DEMManager::extractDEM(int option, bool clearMList)
 
     dui->setAllowClose(true);
     dui->enableOptions();
+
+    // Show image, if selected
+    if (isShowImage)
+    {
+        Matrix * img = pairs.getDemImage(1.0, 1.0);
+        dui->showImage(img, 0);
+        delete img;
+    }
 }
 
 void DEMManager::extractDEMPair(int pair)

@@ -211,16 +211,16 @@ void DEMUserInterface_Qt::setAutoExtInfo(int nseeds, int nmatch, double min, dou
 {
     seedPointsLabel->setText(QString::number(nseeds));
     automaticPointsLabel->setText(QString::number(nmatch));
-    autoMinZLabel->setText(QString::number(min,'f',2));
-    autoMaxZLabel->setText(QString::number(max,'f',2));
+    autoMinZLabel->setText(QString::number(min,'f',5));
+    autoMaxZLabel->setText(QString::number(max,'f',5));
 }
 
 void DEMUserInterface_Qt::setBoundingBox(double Xi, double Yi, double Xf, double Yf)
 {
-    XilineEdit->setText(QString::number(Xi,'f',2));
-    YilineEdit->setText(QString::number(Yi,'f',2));
-    XflineEdit->setText(QString::number(Xf,'f',2));
-    YflineEdit->setText(QString::number(Yf,'f',2));
+    XilineEdit->setText(QString::number(Xi,'f',5));
+    YilineEdit->setText(QString::number(Yi,'f',5));
+    XflineEdit->setText(QString::number(Xf,'f',5));
+    YflineEdit->setText(QString::number(Yf,'f',5));
 }
 
 void DEMUserInterface_Qt::onDemSaveClicked()
@@ -242,7 +242,12 @@ void DEMUserInterface_Qt::onDemSaveClicked()
 void DEMUserInterface_Qt::onDemGridSaveClicked()
 {
     // File save dialog
-    QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), ".", tr("DEM Grid (*.dsm);; All files (*.*)"));
+    QString filename;
+
+    if (comboBox9->currentIndex() == 0)
+        filename = QFileDialog::getSaveFileName(this, tr("Save file"), ".", tr("DEM Grid (*.dsm);; All files (*.*)"));
+    else
+        filename = QFileDialog::getSaveFileName(this, tr("Save file"), ".", tr("ASCII DEM Grid (*.txt);; All files (*.*)"));
     if (filename=="")
         return;
 

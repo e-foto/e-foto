@@ -735,6 +735,7 @@ void DemGrid::saveDemAscii(char * filename)
 	// Write header
         outfile << "-= EFOTO DEM GRID DATA =-\n\n";
         outfile << "Header info:\n";
+        outfile << fixed << setprecision(5);
         outfile << "Xi=" << Xi << "\nYi=" << Yi << "\nXf=" << Xf << "\nYf=" << Yf << "\n";
         outfile << "Res_X=" << res_x << "\nRes_Y=" << res_y << "\n";
         outfile << "Width=" << dem_width << "\nHeight=" << dem_height << "\n";
@@ -748,7 +749,7 @@ void DemGrid::saveDemAscii(char * filename)
 		{
 			X = Xi + (j-1)*res_x;
 			Y = Yi + (i-1)*res_y;
-                        outfile << setw(13) << setprecision(5) << X << "\t" << Y << "\t" << DEM.get(i,j) << "\n";
+                        outfile << X << "\t" << Y << "\t" << DEM.get(i,j) << "\n";
 		}
 	}
 
