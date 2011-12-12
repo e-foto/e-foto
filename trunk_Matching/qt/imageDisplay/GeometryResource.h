@@ -11,13 +11,37 @@ enum DefaultMark {
 NoMark, RedMark, GreenMark, BlueMark, CyanMark, MagentaMark, YellowMark, DarkRedMark, DarkGreenMark, DarkBlueMark, DarkCyanMark, DarkMagentaMark, DarkYellowMark, BlackMark, WhiteMark, GrayMark, BlackAndWhiteMark
 };
 
+class SymbolsResource
+{
+public:
+	static QImage getBackGround(QColor color, QSize size = QSize(24,24), QPoint pointedIn = QPoint(-2, -2), QColor pointColor = QColor(255,255,255,255), unsigned int pointWeigth = 2);
+	static QImage getCross(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
+	static QImage getBordedCross(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
+	static QImage getX(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
+	static QImage getBordedX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
+
+	static QImage getTriangle(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+	static QImage getCircle(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+	static QImage getSquare(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+
+	static QImage getOpenHand();
+	static QImage getClosedHand();
+	static QImage getPointingHand();
+	static QImage getUpArrow();
+	static QImage getDownArrow();
+	static QImage getLeftArrow();
+	static QImage getRightArrow();
+	static QImage getMagnifyGlass(QString text = "");
+	static QImage getText(QString text = "", bool bottom = true);
+};
+
 class Marker : public QImage
 {
 public:
 	Marker(const QImage &image2Mark);
 	Marker(DefaultMark defaultMarkType);
 
-        QImage toQImage();
+	QImage toQImage();
 };
 
 class Coord : public QPointF
