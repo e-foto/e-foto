@@ -23,6 +23,7 @@ protected:
 	QList< StereoTool* > _tool;
 
 	QPointF _mouseScreenPos;
+	QCursor _cursor;
 
 	void initializeGL();
 	void paintGL();
@@ -46,7 +47,8 @@ public:
 
 	void updateMousePosition();
 	QPointF getMouseScreenPosition();
-	void setGLCursor(Cursor cursor);
+	void setGLCursor(QCursor cursor);
+	QCursor getGLCursor();
 	void setGLBackground(QImage bg);
 
 	void setActivatedTool(StereoTool* tool, bool active = true);
@@ -77,7 +79,8 @@ public:
 	QPointF getRightCursorOffset();
 	void setLeftCursorOffset(QPointF offset);
 	void setRightCursorOffset(QPointF offset);
-	void setCursor(Cursor newCursor);
+	void setCursor(QCursor newCursor);
+	QCursor getCursor();
 
 	double getCurrentZ();
 	void setCurrentZ(double z);

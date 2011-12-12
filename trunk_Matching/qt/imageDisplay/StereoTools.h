@@ -98,6 +98,7 @@ public:
 
 class InfoStereoTool : public StereoTool, public QLabel
 {
+	QCursor currentCursor;
 public:
 	InfoStereoTool(StereoDisplay* display);
 	~InfoStereoTool();

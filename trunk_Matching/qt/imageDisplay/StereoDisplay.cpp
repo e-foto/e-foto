@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QWheelEvent>
 
+#define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
+
 
 // GL Display class
 GLDisplay::GLDisplay(StereoDisplay *parent):
@@ -22,8 +24,8 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
 	setAttribute(Qt::WA_Hover, true);
 	installEventFilter(this);
 
-	Cursor cursor(NoCursor);
-	setCursor(cursor.toQCursor());
+	QCursor cursor(NOCURSOR);
+	setCursor(cursor);
 }
 
 GLDisplay::~GLDisplay()
@@ -44,17 +46,33 @@ void GLDisplay::updateMousePosition()
 	_mouseScreenPos = mapFromGlobal(QCursor::pos());
 }
 
-void GLDisplay::setGLCursor(Cursor cursor)
+void GLDisplay::setGLCursor(QCursor cursor)
 {
 	if (ctexture != NULL && glIsTexture((GLuint)ctexture))
 		glDeleteTextures(1, (GLuint*)(&ctexture));
-	QImage cursorImage(cursor.toQImage());
+	_cursor = cursor;
+	QImage cursorImage(cursor.pixmap().toImage());
+	if (cursorImage.isNull())
+	{
+		ctexture = NULL;
+		return;
+	}
 	cursorImage = QGLWidget::convertToGLFormat(cursorImage);
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures( 1, (GLuint*)(&ctexture) );
 	glBindTexture( GL_TEXTURE_2D, (GLuint)ctexture );
 	glTexImage2D( GL_TEXTURE_2D, 0, 4, cursorImage.width(), cursorImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, cursorImage.bits());
 	glDisable(GL_TEXTURE_2D);
+}
+
+QCursor GLDisplay::getGLCursor()
+{
+	if (ctexture != NULL)
+	{
+		return _cursor;
+	}
+	else
+		return QCursor();
 }
 
 void GLDisplay::setGLBackground(QImage bg)
@@ -89,8 +107,8 @@ void GLDisplay::initializeGL()
 
 	glClearColor(0, 0, 0, 0);
 
-	setGLCursor(NoCursor);
-	setGLBackground(QImage(":/cursors/BlackBG"));
+	setGLCursor(NOCURSOR);
+	//setGLBackground(QImage(":/cursors/BlackBG"));
 	_GLDisplayUpdate = true;
 }
 
@@ -493,9 +511,14 @@ void StereoDisplay::setRightCursorOffset(QPointF offset)
 	rightCursorOffset_ = offset;
 }
 
-void StereoDisplay::setCursor(Cursor newCursor)
+void StereoDisplay::setCursor(QCursor newCursor)
 {
 	glDisplay_->setGLCursor(newCursor);
+}
+
+QCursor StereoDisplay::getCursor()
+{
+	return glDisplay_->getGLCursor();
 }
 
 double StereoDisplay::getCurrentZ()
