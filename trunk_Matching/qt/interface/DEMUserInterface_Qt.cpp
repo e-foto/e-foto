@@ -41,6 +41,8 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(comboBox2_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onGridAreaLimitsStateChanged(int)));
         QObject::connect(comboBox1, SIGNAL(currentIndexChanged(int)), this, SLOT(onInterStateChanged(int)));
         QObject::connect(checkBox_3, SIGNAL(stateChanged(int)), this, SLOT(onShowImageStateChanged(int)));
+        QObject::connect(seedsButton, SIGNAL(clicked()), this, SLOT(onSeedsEditorClicked()));
+        QObject::connect(stereoButton, SIGNAL(clicked()), this, SLOT(onStereoplotterClicked()));
 
         setWindowState(this->windowState());
 
@@ -433,4 +435,18 @@ int DEMUserInterface_Qt::saveImage(char *filename, Matrix *I)
         img.save(filename,"BMP");
 
         return 1;
+}
+
+/*
+ * Call other interfaces
+ */
+
+void DEMUserInterface_Qt::onSeedsEditorClicked()
+{
+    QMessageBox::warning(this,"Warning","Sorry, not implemented");
+}
+
+void DEMUserInterface_Qt::onStereoplotterClicked()
+{
+    QMessageBox::warning(this,"Warning","Sorry, not implemented");
 }
