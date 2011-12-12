@@ -41,5 +41,21 @@
         <file>abort.png</file>
         <file>edit.png</file>
         <file>ortho.png</file>
+        <file alias="markIcon">markIcon.png</file>
+        <file alias="moveIcon">moveIcon.png</file>
+        <file alias="zoomIcon">zoomIcon.png</file>
+        <file alias="detailIcon">detailviewIcon.png</file>
+        <file alias="overIcon">overviewIcon.png</file>
+        <file alias="UpArrow">UpArrowCursor.png</file>
+        <file alias="PointingHand">PointingHandCursor.png</file>
+        <file alias="ClosedHand">ClosedHandCursor.png</file>
+        <file alias="OpenHand">OpenHandCursor.png</file>
+        <file alias="Magnify">MagnifyCursor.png</file>
+        <file alias="aliasingIcon">AliasingIcon.png</file>
+        <file>equalmoveIcon.png</file>
+        <file>equalzoomIcon.png</file>
+        <file>fitrightIcon.png</file>
+        <file>fitleftIcon.png</file>
+        <file>fitbothIcon.png</file>
     </qresource>
 </RCC>

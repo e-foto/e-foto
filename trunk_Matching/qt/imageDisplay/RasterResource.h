@@ -11,9 +11,11 @@ protected:
 	QSize _imageDim;
 	int _levels;
 	bool _isValid;
+	bool _useSmoothIn;
+	bool _useSmoothOut;
 
 public:
-	RasterResource(QString filepath);
+	RasterResource(QString filepath, bool withSmoothIn = false, bool withSmoothOut = true);
 	~RasterResource();
 
 	bool load(QImage image);
@@ -29,7 +31,8 @@ public:
 	QPointF center();
 
 	QImage getImageCut(QSize targetSize, QRectF imageCut);
-	void  transformImage(double H[9]);
+	void useSmoothIn(bool useSmooth);
+	void transformImage(double H[9]);
 };
 
 #endif // RASTERRESOURCE_H

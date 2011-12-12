@@ -3,6 +3,8 @@
 #include <QFileDialog>
 #include "StereoDisplay.h"
 
+#define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
+
 void StereoTool::paintEvent(const QPaintEvent& event)
 {
 	QPainter painter(_display->getRealDisplay());
@@ -374,12 +376,13 @@ void InfoStereoTool::paintEvent(const QPaintEvent &event)
 
 void InfoStereoTool::enterEvent(const QHoverEvent& event)
 {
-	_display->setCursor(WhiteCursor);
+	_display->setCursor(currentCursor);
 }
 
 void InfoStereoTool::leaveEvent(const QHoverEvent& event)
 {
-	_display->setCursor(NoCursor);
+	currentCursor = _display->getCursor();
+	_display->setCursor(NOCURSOR);
 }
 
 void InfoStereoTool::moveEvent(const QHoverEvent& event)

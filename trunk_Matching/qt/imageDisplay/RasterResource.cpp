@@ -3,12 +3,14 @@
 
 #include <QDebug>
 
-RasterResource::RasterResource(QString filepath)
+RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmoothOut)
 {
 	// Abrir a imagem e testar se é válida
 	QImage* srcImage = new QImage();
 	_isValid = srcImage->load(filepath);
 	_levels = 0;
+	_useSmoothIn = withSmoothIn;
+	_useSmoothOut = withSmoothOut;
 	if (!_isValid)
 		return;
 
@@ -23,14 +25,13 @@ RasterResource::RasterResource(QString filepath)
 	_pyramid[0] = new QImage(srcImage->convertToFormat(QImage::Format_ARGB32));
 	delete(srcImage);
 
-
 	// Construindo imagens
 	for(int l = 1; l < _levels; l++)
 	{
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::KeepAspectRatioByExpanding, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
 	}
 }
 
@@ -41,6 +42,11 @@ RasterResource::~RasterResource()
 	for(int l = 0; l < _levels; l++)
 		delete(_pyramid[l]);
 	free(_pyramid);
+}
+
+void RasterResource::useSmoothIn(bool useSmooth)
+{
+	_useSmoothIn = useSmooth;
 }
 
 void RasterResource::transformImage(double H[9])
@@ -86,7 +92,7 @@ bool RasterResource::load(QImage image)
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
 	}
 	return _isValid;
 }
@@ -124,7 +130,7 @@ bool RasterResource::load(QString filepath)
 		// Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
-                _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
 	}
 	return _isValid;
 }
@@ -203,12 +209,12 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			// Um recorte final vai garantir a posição corretamente alinhada e o targetSize pedido
 			QRect finalCut(((imageCut.topLeft() - QPointF(rectToCut.topLeft())) * scale).toPoint(), targetSize);
 
-                        result = img->copy(rectToCut).scaled(newTargetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation).copy(finalCut);
+			result = img->copy(rectToCut).scaled(newTargetSize,Qt::KeepAspectRatioByExpanding, _useSmoothIn ? Qt::SmoothTransformation : Qt::FastTransformation).copy(finalCut);
 		}
 		else if (scale > 0.5)
 		{
 			// Corta e reduz a imagem a partir do primeiro nível da pirâmide. Este é o caso mais simples
-                        result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation);
+			result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation);
 		}
 		else
 		{
@@ -225,7 +231,7 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			// Troca a imagem pela imagem do nível correto, seleciona o novo corte e recorta.
 			img = _pyramid[l];
 			rectToCut = imageCut.toRect();
-                        result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding,Qt::SmoothTransformation);
+			result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation);
 		}
 	}
 	result.setDotsPerMeterX(3780);

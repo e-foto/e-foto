@@ -9,25 +9,7 @@
 
 enum DisplayMode {IntermediatedScreen, TopViewScreen, MostDetailedScreen};
 
-enum DefaultCursor {
-NoCursor, RedCursor, GreenCursor, BlueCursor, CyanCursor, MagentaCursor, YellowCursor, DarkRedCursor, DarkGreenCursor, DarkBlueCursor, DarkCyanCursor, DarkMagentaCursor, DarkYellowCursor, BlackCursor, WhiteCursor, GrayCursor, BlackAndWhiteCursor
-};
-
 class AbstractScene;
-
-class Cursor : public QCursor
-{
-public:
-	Cursor(const QImage &image2Cursor, QPoint offset = QPoint(-1, -1));
-	Cursor(DefaultCursor defaultCursorType);
-        Cursor& noCursor();
-	Cursor& toCross(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
-	Cursor& toCross(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
-	Cursor& toX(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
-	Cursor& toX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
-	QCursor toQCursor();
-	QImage toQImage();
-};
 
 class SingleDisplay : public QWidget
 {
@@ -43,6 +25,7 @@ protected:
 	//bool _onMove;
 	bool _cloneScale;
 	QPointF _mouseLastPos;
+	bool _onPainting;
 
 	void paintEvent(QPaintEvent *e);
 	void resizeEvent(QResizeEvent *);
@@ -64,9 +47,11 @@ public:
 	SingleDisplay* getDetailDisplay();
 
 	void updateMousePosition();
+	bool positionIsVisible(QPointF);
 	QPointF getLastMousePosition();
 	QPointF getPosition(QPoint screenPosition);
 	QPointF getMouseScreenPosition();
+	bool painting();
 
 	void setCurrentScene(AbstractScene*);
 	AbstractScene* getCurrentScene();
@@ -75,7 +60,7 @@ public:
 	virtual void pan(int dx, int dy);
 	virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);
 
-	void setDetailZoom(double zoomFactor);
+	//void setDetailZoom(double zoomFactor);
 	void updateAll();
 	void updateDetail();
 	void updateDetail(QPointF* newMousePosition, bool emitClicked = false);

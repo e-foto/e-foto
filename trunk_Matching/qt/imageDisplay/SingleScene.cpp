@@ -8,10 +8,12 @@ SingleScene::SingleScene(QObject* parent, QString filepath):
 	viewpoint_(0,0),
 	viewportSize_(800,600)
 {
+	detailZoom_ = 4.0;
 	if (filepath.isEmpty())
 	{
 		rasterRsrc_ = NULL;
-		minScale_ = maxScale_ = 1;
+		minScale_ = 1;
+		maxScale_ = 8;
 	}
 	else
 	{
@@ -24,7 +26,7 @@ SingleScene::SingleScene(QObject* parent, QString filepath):
 			return;
 		}
 		minScale_ = 1;
-		maxScale_ = 16;
+		maxScale_ = 8;
 		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 	}
 }
@@ -54,6 +56,12 @@ unsigned int SingleScene::getHeight()
 	return 0;
 }
 
+void SingleScene::useSmooth(bool useSmooth)
+{
+	if (rasterRsrc_ && rasterRsrc_->isValid())
+		rasterRsrc_->useSmoothIn(useSmooth);
+}
+
 void SingleScene::centerContent()
 {
 	viewpoint_ = rasterRsrc_->center();
@@ -62,11 +70,33 @@ void SingleScene::centerContent()
 void SingleScene::moveTo(QPointF pos)
 {
 	viewpoint_ = pos;
+	if (rasterRsrc_ && rasterRsrc_->isValid())
+	{
+		if (viewpoint_.x() > rasterRsrc_->width())
+			viewpoint_.setX(rasterRsrc_->width());
+		if (viewpoint_.x() < 0)
+			viewpoint_.setX(0);
+		if (viewpoint_.y() > rasterRsrc_->height())
+			viewpoint_.setY(rasterRsrc_->height());
+		if (viewpoint_.y() < 0)
+			viewpoint_.setY(0);
+	}
 }
 
 void SingleScene::pan(QPointF dPos)
 {
 	viewpoint_ += dPos;
+	if (rasterRsrc_ && rasterRsrc_->isValid())
+	{
+		if (viewpoint_.x() > rasterRsrc_->width())
+			viewpoint_.setX(rasterRsrc_->width());
+		if (viewpoint_.x() < 0)
+			viewpoint_.setX(0);
+		if (viewpoint_.y() > rasterRsrc_->height())
+			viewpoint_.setY(rasterRsrc_->height());
+		if (viewpoint_.y() < 0)
+			viewpoint_.setY(0);
+	}
 }
 
 void SingleScene::scaleTo(double newScale, QPointF at)
@@ -100,7 +130,7 @@ void SingleScene::zoom(double zoomFactor, QPointF at)
 void SingleScene::setViewport(QSize viewportSize)
 {
 	viewportSize_ = viewportSize;
-	setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), 16);
+	setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 	limitScale();
 }
 
@@ -123,7 +153,7 @@ bool SingleScene::createImage(QSize size, QColor color)
 		rasterRsrc_ = rsrc;
 		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 		scale_ = 1;
-		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), 16);
+		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 		return true;
 	}
 	else
@@ -150,7 +180,7 @@ bool SingleScene::loadImage(QString filepath)
 		rasterRsrc_ = rsrc;
 		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 		scale_ = 1;
-		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), 16);
+		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 		return true;
 	}
 	else
@@ -169,7 +199,7 @@ bool SingleScene::loadImage(QImage image)
 		rasterRsrc_ = rsrc;
 		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 		scale_ = 1;
-		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), 16);
+		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 		return true;
 	}
 	else
@@ -179,30 +209,30 @@ bool SingleScene::loadImage(QImage image)
 
 bool SingleScene::loadImage(Matrix *image, bool isGrayscale)
 {
-    // Transforma a matrix em QImage
-    QImage img(image->getCols(), image->getRows(), QImage::Format_ARGB32);
-    unsigned int pixel;
+	// Transforma a matrix em QImage
+	QImage img(image->getCols(), image->getRows(), QImage::Format_ARGB32);
+	unsigned int pixel;
 
-    // Convert Matrix to QImage
-    for (int i=1; i<=image->getRows(); i++)
-    {
-        for (int j=1; j<=image->getCols(); j++)
-        {
-            if (isGrayscale)
-            {
-                pixel = int(image->get(i,j)*255.0);
-                pixel = (pixel << 16) + (pixel << 8) + pixel;
-            }
-            else
-                pixel = int(image->get(i,j)*double(0xFFFFFF));
+	// Convert Matrix to QImage
+	for (int i=1; i<=image->getRows(); i++)
+	{
+		for (int j=1; j<=image->getCols(); j++)
+		{
+			if (isGrayscale)
+			{
+				pixel = int(image->get(i,j)*255.0);
+				pixel = (pixel << 16) + (pixel << 8) + pixel;
+			}
+			else
+				pixel = int(image->get(i,j)*double(0xFFFFFF));
 
-            pixel = pixel | 0XFF000000;
-            img.setPixel(j-1, i-1, pixel);
-        }
-    }
+			pixel = pixel | 0XFF000000;
+			img.setPixel(j-1, i-1, pixel);
+		}
+	}
 
-    // Procede o load por QImage;
-    loadImage(img);
+	// Procede o load por QImage;
+	loadImage(img);
 }
 
 QSize SingleScene::imageSize()
@@ -216,6 +246,16 @@ void SingleScene::setLimitScale(double minScale, double maxScale)
 {
 	minScale_ = minScale;
 	maxScale_ = maxScale;
+}
+
+double SingleScene::getMinScale()
+{
+	return minScale_;
+}
+
+double SingleScene::getMaxScale()
+{
+	return maxScale_;
 }
 
 void SingleScene::limitScale()
@@ -279,15 +319,19 @@ QImage SingleScene::getThumb(QSize targetSize, QRect* rect)
 	QSize newTargetSize = rasterRsrc_->size();
 	newTargetSize.scale(targetSize,Qt::KeepAspectRatio);
 
-	double scale = newTargetSize.width()/(double)rasterRsrc_->size().width();
-
-	QRect viewedRect(((viewpoint_-QPointF(rect->width()/(scale_*2.0), rect->height()/(scale_*2.0)))*scale).toPoint(), ((scale*QRectF(*rect).size())/scale_).toSize());
+	double scale = thumbScale_ = newTargetSize.width()/(double)rasterRsrc_->size().width();
 
 	QImage result( geometryRsrc_.draw( rasterRsrc_->getImageCut(newTargetSize, imageCut), newTargetSize, imageCut.center(), scale));
-	QPainter painter(&result);
-	painter.setPen(QPen(QColor(Qt::yellow)));
-	painter.drawRect(viewedRect);
-	painter.end();
+
+	if (rect)
+	{
+		QRect viewedRect(((viewpoint_-QPointF(rect->width()/(scale_*2.0), rect->height()/(scale_*2.0)))*scale).toPoint(), ((scale*QRectF(*rect).size())/scale_).toSize());
+		QPainter painter(&result);
+		painter.setPen(QPen(QColor(Qt::yellow)));
+		painter.drawRect(viewedRect);
+		painter.end();
+		*rect = viewedRect;
+	}
 	return result;
 }
 
@@ -303,6 +347,8 @@ QImage SingleScene::getDetail(QSize targetSize, QPointF point, double zoom)
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(point);
 
+	detailViewpoint_ = point;
+
 	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, point, zoom);
 }
 
@@ -314,6 +360,26 @@ bool SingleScene::isValid()
 double SingleScene::getScale()
 {
 	return scale_;
+}
+
+double SingleScene::getThumbScale()
+{
+	return thumbScale_;
+}
+
+QPointF SingleScene::getDetailedPoint()
+{
+	return detailViewpoint_;
+}
+
+double SingleScene::getDetailZoom()
+{
+	return detailZoom_;
+}
+
+void SingleScene::setDetailZoom(double zoom)
+{
+	detailZoom_ = zoom;
 }
 
 RasterResource* SingleScene::rasters(int &rastersCount)

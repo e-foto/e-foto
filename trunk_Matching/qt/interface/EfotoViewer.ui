@@ -30,23 +30,6 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_as"/>
-   </widget>
-   <widget class="QMenu" name="menu_Image">
-    <property name="title">
-     <string>&amp;Image</string>
-    </property>
-    <addaction name="actionMove"/>
-    <addaction name="actionZoom"/>
-   </widget>
-   <addaction name="menu_File"/>
-   <addaction name="menu_Image"/>
   </widget>
   <action name="actionZoom">
    <property name="checkable">

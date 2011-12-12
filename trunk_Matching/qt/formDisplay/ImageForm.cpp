@@ -22,8 +22,8 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 	metadataGroup->setVisible(false);
 	lastPath = ".";
 
-        connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
-        connect(viewButton,SIGNAL(clicked()),this,SLOT(startSingleViewer()));
+	connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
+	connect(viewButton,SIGNAL(clicked()),this,SLOT(startSingleViewer()));
 	connect(fileNameLine,SIGNAL(textChanged(QString)),this,SLOT(metadataVisibleChanged(QString)));
 
 	//Aqui o campo de Flight_ID esta sendo escondido
@@ -238,12 +238,22 @@ QString ImageForm::loadImageFile()
 
 void ImageForm::startSingleViewer()
 {
-    SingleViewer* sv = new SingleViewer(this);
-    sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
-    sv->blockOpen();
-    sv->blockSave();
-    sv->blockMark();
-    sv->show();
+	SingleViewer* sv = new SingleViewer(this);
+	sv->blockOpen();
+	sv->blockSave();
+	sv->blockMark();
+	sv->show();
+	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
+
+	SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
+	v->show();
+	v->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
+	v->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
+
+	StereoViewer* s = new StereoViewer(this);
+	s->show();
+	s->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
+	s->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)

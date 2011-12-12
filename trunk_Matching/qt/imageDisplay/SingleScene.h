@@ -47,8 +47,10 @@ protected:
 	double scale_;
 	double maxScale_;
 	double minScale_;
+	double thumbScale_;
+	double detailZoom_;
+	QPointF detailViewpoint_;
 	QSize viewportSize_;
-	void setLimitScale(double minScale, double maxScale);
 	void limitScale();
 
 public:
@@ -58,7 +60,7 @@ public:
 	bool createImage(QSize size, QColor color = QColor(Qt::transparent));
 	bool loadImage(QString filepath);
 	bool loadImage(QImage image);
-        bool loadImage(Matrix* image, bool isGrayscale = true);
+	bool loadImage(Matrix* image, bool isGrayscale = true);
 	bool saveImage(QString filepath, QString format);
 	void transformImage(double H[9]);
 
@@ -71,12 +73,25 @@ public:
 	void scaleTo(double newScale, QPointF at = QPointF(-1,-1));
 	void zoom(double zoomFactor, QPointF at = QPointF(-1,-1));
 	void setViewport(QSize viewportSize);
+	void setLimitScale(double minScale, double maxScale);
+	double getMinScale();
+	double getMaxScale();
 
 	bool isValid();
+
 	double getScale();
 	QPointF getViewpoint();
+
+	double getThumbScale();
+
+	QPointF getDetailedPoint();
+	double getDetailZoom();
+	void setDetailZoom(double zoom);
+
 	unsigned int getWidth();
 	unsigned int getHeight();
+
+	void useSmooth(bool useSmooth);
 
 	QImage getFrame(QSize targetSize);
 	QImage getFrame(QSize targetSize, double scale);
