@@ -1,6 +1,163 @@
 #include "GeometryResource.h"
 #include "SingleDisplay.h"
 
+QImage SymbolsResource::getBackGround(QColor color, QSize size, QPoint pointedIn, QColor pointColor, unsigned int pointWeigth)
+{
+	QImage img(size, QImage::Format_ARGB32);
+	img.fill(color.rgba());
+
+	// Falta colocar um ponto sobre o background se necessário
+
+	return img;
+}
+
+QImage SymbolsResource::getCross(QColor color, QSize size, unsigned int weigth)
+{
+	QImage img(size, QImage::Format_ARGB32);
+	img.fill(QColor(0,0,0,0).rgba());
+	int hotX = size.width() / 2;
+	int hotY = size.height() / 2;
+
+	QPainter painter(&img);
+	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
+	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
+	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
+	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
+	painter.end();
+
+	return img;
+}
+
+QImage SymbolsResource::getBordedCross(QColor colorBrush, QColor colorPen, QSize size, unsigned int weigth)
+{
+	QImage img(size, QImage::Format_ARGB32);
+	img.fill(QColor(0,0,0,0).rgba());
+	int hotX = size.width() / 2;
+	int hotY = size.height() / 2;
+
+	QPainter painter(&img);
+	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
+	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
+	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
+	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, colorPen);
+
+	painter.fillRect(weigth%2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
+	painter.fillRect(size.width()/2+(weigth+1)/2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
+	painter.fillRect(hotX-weigth/2+1, weigth%2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
+	painter.fillRect(hotX-weigth/2+1, size.height()/2+(weigth+1)/2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
+	painter.end();
+
+	return img;
+}
+
+QImage SymbolsResource::getX(QColor color, QSize size, unsigned int weigth)
+{
+	QImage img = SymbolsResource::getCross(color, size, weigth);
+	int hotX = size.width() / 2;
+	int hotY = size.height() / 2;
+
+	QTransform transf;
+	img = img.transformed(transf.translate(-hotX,-hotY).rotate(45).translate(hotX,hotY),Qt::SmoothTransformation);
+
+	return img;
+}
+
+QImage SymbolsResource::getBordedX(QColor colorBrush, QColor colorPen, QSize size, unsigned int weigth)
+{
+	QImage img = SymbolsResource::getBordedCross(colorBrush, colorPen, size, weigth);
+	int hotX = size.width() / 2;
+	int hotY = size.height() / 2;
+
+	QTransform transf;
+	img = img.transformed(transf.translate(-hotX,-hotY).rotate(45).translate(hotX,hotY),Qt::SmoothTransformation);
+
+	return img;
+}
+
+QImage SymbolsResource::getTriangle(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+{
+}
+
+QImage SymbolsResource::getCircle(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+{
+}
+
+QImage SymbolsResource::getSquare(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+{
+}
+
+QImage SymbolsResource::getOpenHand()
+{
+	return QImage(":/icon/OpenHand");
+}
+
+QImage SymbolsResource::getClosedHand()
+{
+	return QImage(":/icon/ClosedHand");
+}
+
+QImage SymbolsResource::getPointingHand()
+{
+	return QImage(":/icon/PointingHand");
+}
+
+QImage SymbolsResource::getUpArrow()
+{
+	return QImage(":/icon/UpArrow");
+}
+
+QImage SymbolsResource::getDownArrow()
+{
+	QImage img(":/icon/UpArrow");
+	QTransform transf;
+	img = img.transformed(transf.translate(-img.width()/2,-img.height()/2).rotate(180).translate(img.width()/2,img.height()/2),Qt::SmoothTransformation);
+	return img;
+}
+
+QImage SymbolsResource::getLeftArrow()
+{
+	QImage img(":/icon/UpArrow");
+	QTransform transf;
+	img = img.transformed(transf.translate(-img.width()/2,-img.height()/2).rotate(-90).translate(img.width()/2,img.height()/2),Qt::SmoothTransformation);
+	return img;
+}
+
+QImage SymbolsResource::getRightArrow()
+{
+	QImage img(":/icon/UpArrow");
+	QTransform transf;
+	img = img.transformed(transf.translate(-img.width()/2,-img.height()/2).rotate(90).translate(img.width()/2,img.height()/2),Qt::SmoothTransformation);
+	return img;
+}
+
+QImage SymbolsResource::getMagnifyGlass(QString text)
+{
+	QImage mag(":/icon/Magnify");
+	if (text.isEmpty())
+		return mag;
+	QPainter painter(&mag);
+	painter.setPen(QPen(Qt::black));
+	painter.drawText(1,21,10,10,Qt::AlignCenter,text);
+	painter.end();
+	return mag;
+}
+
+QImage SymbolsResource::getText(QString text, bool bottom)
+{
+	QImage txt(QSize(64,64), QImage::Format_ARGB32);
+	txt.fill(QColor(0,0,0,0).rgba());
+	QPainter painter(&txt);
+	painter.setPen(QPen(Qt::yellow));
+	if (bottom)
+		painter.drawText(0,52,text);
+	else
+		painter.drawText(0,0,text);
+	painter.end();
+	return txt;
+}
+
+
+
 Marker::Marker(const QImage &image2Mark) :
 	QImage(image2Mark)
 {
@@ -11,9 +168,9 @@ Marker::Marker(DefaultMark defaultMarkType)
 	switch (defaultMarkType)
 	{
 	case NoMark:
-                *this = Cursor(this->toQImage()).noCursor().toQImage();
+				*this = Marker(SymbolsResource::getBackGround(QColor(0,0,0,0)));
 		break;
-                /*
+	/*
 	case RedMark:
 		*this = QImage(":/cursors/RedMark");
 		break;
@@ -62,16 +219,16 @@ Marker::Marker(DefaultMark defaultMarkType)
 	case BlackAndWhiteMark:
 		*this = QImage(":/cursors/BlackAndWhiteMark");
 		break;
-                */
-        default:
-                *this = Cursor(this->toQImage()).toX(QColor(0,255,0)).toQImage();
-                break;
+				*/
+	default:
+		*this = Marker(SymbolsResource::getBordedX(QColor(255,255,255,255),QColor(0,0,0,255)));
+		break;
 	}
 }
 
 QImage Marker::toQImage()
 {
-        return *this;
+	return *this;
 }
 
 

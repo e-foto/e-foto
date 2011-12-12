@@ -1,23 +1,55 @@
 #include "SingleTools.h"
 #include "SingleDisplay.h"
 
+#include "math.h"
+
 #include <QFileDialog>
+
+#define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
 
 void SingleTool::paintEvent(const QPaintEvent& event)
 {
 	QPainter painter(_display);
-	painter.setPen(QPen(Qt::yellow));
+	painter.setRenderHint(QPainter::Antialiasing);
+
 	if (_autoPan != QPointF(0,0))
 	{
 		// Draw autoMove feedback
-		painter.drawLine(_lastMousePosition, _lastMousePosition - _autoPan*5*_display->getCurrentScene()->getScale());
+		QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
+
+		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+		painter.drawPoint(_lastMousePosition);
+
+		painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
+		painter.drawLine(_lastMousePosition, endArrow);
+
+		if (_autoPan != QPointF(0,0))
+		{
+			double tangent = atan2(_autoPan.y(), _autoPan.x());
+			QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
+			QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
+			QVector<QPoint> arrow;
+			arrow.append(pa);
+			arrow.append(endArrow);
+			arrow.append(endArrow);
+			arrow.append(pb);
+
+			painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+			painter.drawLines(arrow);
+		}
 	}
 	else if (_scale > 0)
 	{
 		// Draw scaleBar feedback
 		QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
+
+		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+		painter.drawPoint(_fixedPoint);
+
+		painter.setPen(QPen(QBrush(Qt::yellow), 2));
 		painter.drawLine(_fixedPoint, endBar);
-		painter.drawText(endBar, QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
+		painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
+		painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
 	}
 	painter.end();
 }
@@ -38,19 +70,28 @@ void SingleTool::moveEvent(const QHoverEvent& event)
 
 void SingleTool::mousePressed(const QMouseEvent &event)
 {
-	// Prepair move reference
-	_lastMousePosition = event.pos();
+	_currentCursor = _display->cursor();
 
 	// Prepair to zoom default (scaleBar).
 	if (event.buttons() & Qt::MidButton)
 	{
 		_fixedPoint = event.pos();
 		_scale = _display->getCurrentScene()->getScale();
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getLeftArrow())));
 	}
+	// Prepair move reference
+	else if (event.buttons() & Qt::RightButton)
+	{
+		_display->setCursor(QCursor(NOCURSOR));
+	}
+	_lastMousePosition = event.pos();
 }
 
 void SingleTool::mouseReleased(const QMouseEvent &event)
 {
+	if (_autoPan != QPoint(0,0) || _scale != -1)
+		_display->setCursor(_currentCursor);
+
 	// Stop move default (autoMove).
 	_autoPan = QPoint(0,0);
 
@@ -65,22 +106,24 @@ void SingleTool::mouseMoved(const QMouseEvent &event)
 	// Make zoom default (scaleBar).
 	if (event.buttons() & Qt::MidButton)
 	{
-		//Aqui pode entrar um feedback de scale
-
 		int diff = event.pos().y() - _fixedPoint.y();
 		double newScale = (_scale*100 - diff)/100;
 		_display->getCurrentScene()->scaleTo(newScale, _display->getPosition(_fixedPoint));
+		if (event.pos().x() < _fixedPoint.x())
+			_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getRightArrow())));
+		else
+			_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getLeftArrow())));
 		_display->updateAll();
+		actualizeScaleSpin(_display->getCurrentScene()->getScale());
 	}
 
 	// Make move default (autoMove).
 	if (event.buttons() & Qt::RightButton)
 	{
-		//Aqui pode entrar um feedback de autoMove
-
 		double scale = _display->getCurrentScene()->getScale();
 		QPointF diff = event.posF() - _lastMousePosition;
 		_autoPan = -(diff/(5*scale));
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getText(QString::fromUtf8("Auto")))));//,_autoPan.y() < 0))));
 	}
 }
 
@@ -97,8 +140,18 @@ void SingleTool::autoMove()
 	// Execute move default (autoMove).
 	if (_autoPan != QPointF(0,0))
 	{
-		_display->getCurrentScene()->pan(_autoPan);
+		_display->getCurrentScene()->pan(-_autoPan);
 		_display->updateAll();
+	}
+}
+
+void SingleTool::actualizeScaleSpin(double scale)
+{
+	if (_scaleSpin)
+	{
+		_scaleSpin->blockSignals(true);
+		_scaleSpin->setValue(scale*100);
+		_scaleSpin->blockSignals(false);
 	}
 }
 
@@ -120,7 +173,12 @@ void ZoomTool::paintEvent(const QPaintEvent& event)
 	{
 		QRect rubber(_fixedPoint, _display->getMouseScreenPosition().toPoint());
 		if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8)
+		{
+			_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass("-"))));
 			return;
+		}
+		else
+			_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass("+"))));
 		QPainter painter(_display);
 		painter.setPen(QPen(Qt::yellow));
 		painter.drawRect(QRect(_fixedPoint,_display->getMouseScreenPosition().toPoint()));
@@ -148,6 +206,7 @@ void ZoomTool::mousePressed(const QMouseEvent & event)
 	{
 		_fixedPoint = event.pos();
 		_onRubberBand = true;
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass("-"))));
 		return;
 	}
 	SingleTool::mousePressed(event);
@@ -169,6 +228,8 @@ void ZoomTool::mouseReleased(const QMouseEvent & event)
 			_display->getCurrentScene()->zoom(wscale < hscale ? wscale : hscale);
 		}
 		_onRubberBand = false;
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
+		actualizeScaleSpin(_display->getCurrentScene()->getScale());
 	}
 	SingleTool::mouseReleased(event);
 }
@@ -187,25 +248,11 @@ void ZoomTool::mouseMoved(const QMouseEvent & event)
 void ZoomTool::mouseDblClicked(const QMouseEvent & event)
 {
 	_display->fitView();
+	actualizeScaleSpin(_display->getCurrentScene()->getScale());
 }
 
 //void ZoomTool::wheelEvent(const QWheelEvent & event)
 //{
-	/* // Old style zoom
-	int numDegrees = event.delta() / 8.0;
-	int numSteps = numDegrees / 15.0;
-	if (event.orientation() == Qt::Vertical)
-	{
-		double zoomStep;
-		if (numSteps>0)
-			zoomStep = 1.044273782; // 1*2^(1÷(2^4))
-		else if (numSteps<0)
-			zoomStep = 0.957603281; // 1/2^(1÷(2^4))
-		for (int i = 0; i<abs(numSteps);i++)
-			_display->getCurrentScene()->zoom(zoomStep, _display->getPosition(event.pos()));
-		_display->updateAll();
-	}
-	*/
 //}
 
 
@@ -231,13 +278,18 @@ MoveTool::~MoveTool()
 //{
 //}
 
-//void MoveTool::mousePressed(const QMouseEvent & event)
-//{
-//}
+void MoveTool::mousePressed(const QMouseEvent & event)
+{
+	if (event.buttons() & Qt::LeftButton)
+		_display->setCursor(QPixmap::fromImage(SymbolsResource::getClosedHand()));
+	SingleTool::mousePressed(event);
+}
 
-//void MoveTool::mouseReleased(const QMouseEvent & event)
-//{
-//}
+void MoveTool::mouseReleased(const QMouseEvent & event)
+{
+	_display->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+	SingleTool::mouseReleased(event);
+}
 
 void MoveTool::mouseMoved(const QMouseEvent & event)
 {
@@ -296,7 +348,7 @@ void MarkTool::mousePressed(const QMouseEvent & event)
 		if (local.x() >= 0 && local.y() >= 0 && local.x() <= _display->getCurrentScene()->getWidth() && local.y() <= _display->getCurrentScene()->getHeight())
 		{
 			int geometriesCount;
-			_display->getCurrentScene()->geometries(geometriesCount)->addPoint(local, "PQP", &mark);
+			_display->getCurrentScene()->geometries(geometriesCount)->addPoint(local, "Point", &mark);
 			_display->getCurrentScene()->geometries(geometriesCount)->setLinkPointsMode(0);
 			_display->update();
 		}
@@ -349,7 +401,7 @@ void InfoTool::moveEvent(const QHoverEvent& event)
 
 	// Inform mouse updated position
 	QPointF p = _display->getLastMousePosition();
-        QString info = QString::number(p.x()) + QString(" x ") + QString::number(p.y());
+		QString info = QString::number(p.x()) + QString(" x ") + QString::number(p.y());
 	_infoLabel.setText(info);
 }
 
@@ -383,10 +435,34 @@ QLabel* InfoTool::getInfoLabel()
 OverTool::OverTool(SingleDisplay* display) :
 	SingleTool(display)
 {
+	_onMove = false;
+	_over = _display->getOverDisplay();
+	_over->setHidden(true);
+	_over->setActivatedTool(this);
+	_overDock = new QDockWidget("Overview");
+	_overDock->setWidget(_over);
+	_overDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 }
 
 OverTool::~OverTool()
 {
+}
+
+QDockWidget* OverTool::getOverDock()
+{
+	return _overDock;
+}
+
+bool OverTool::overIsVisible()
+{
+	return _overDock->isVisible();
+}
+
+void OverTool::setOverVisible(bool status)
+{
+	if (status && !_overDock->isVisible())
+		_overDock->show();
+	_overDock->setHidden(!status);
 }
 
 void OverTool::paintEvent(const QPaintEvent& event)
@@ -403,18 +479,57 @@ void OverTool::leaveEvent(const QHoverEvent& event)
 
 void OverTool::moveEvent(const QHoverEvent& event)
 {
+	_over->updateMousePosition();
+	if (_display->positionIsVisible(_over->getLastMousePosition()))
+	{
+		if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getPointingHand()))
+			_over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+	}
+	else
+	{
+		if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getOpenHand()))
+			_over->setCursor(QPixmap::fromImage(SymbolsResource::getPointingHand()));
+	}
 }
 
 void OverTool::mousePressed(const QMouseEvent & event)
 {
+	if (event.buttons() & Qt::LeftButton)
+	{
+		_over->updateMousePosition();
+		if (_display->positionIsVisible(_over->getLastMousePosition()))
+		{
+			_onMove = true;
+			_lastPos = _over->getLastMousePosition();
+			_over->setCursor(QPixmap::fromImage(SymbolsResource::getClosedHand()));
+		}
+		else
+		{
+			_display->getCurrentScene()->moveTo(_over->getLastMousePosition());
+			_over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+			_display->updateAll();
+		}
+	}
 }
 
 void OverTool::mouseReleased(const QMouseEvent & event)
 {
+	_onMove = false;
+	_over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
 }
 
 void OverTool::mouseMoved(const QMouseEvent & event)
 {
+	if (event.buttons() & Qt::LeftButton)
+	{
+		if (_onMove)
+		{
+			_over->updateMousePosition();
+			_display->getCurrentScene()->pan(_over->getLastMousePosition() - _lastPos);
+			_display->updateAll();
+			_lastPos = _over->getLastMousePosition();
+		}
+	}
 }
 
 void OverTool::mouseDblClicked(const QMouseEvent & event)
@@ -423,6 +538,24 @@ void OverTool::mouseDblClicked(const QMouseEvent & event)
 
 void OverTool::wheelEvent(const QWheelEvent & event)
 {
+	_over->updateMousePosition();
+	if (!(_onMove) && (_display->positionIsVisible(_over->getLastMousePosition())))
+	{
+		int numDegrees = event.delta() / 8.0;
+		int numSteps = numDegrees / 15.0;
+		if (event.orientation() == Qt::Vertical)
+		{
+			double zoomStep;
+			if (numSteps>0)
+				zoomStep = 1.044273782; // 1*2^(1÷(2^4))
+			else if (numSteps<0)
+				zoomStep = 0.957603281; // 1/2^(1÷(2^4))
+			for (int i = 0; i<abs(numSteps);i++)
+				_display->getCurrentScene()->zoom(zoomStep, _over->getLastMousePosition());
+			_display->updateAll();
+			actualizeScaleSpin(_display->getCurrentScene()->getScale());
+		}
+	}
 }
 
 
@@ -430,14 +563,46 @@ void OverTool::wheelEvent(const QWheelEvent & event)
 NearTool::NearTool(SingleDisplay* display) :
 	SingleTool(display)
 {
+	_near = _display->getDetailDisplay();
+	_near->setHidden(true);
+	_near->setActivatedTool(this);
+	_nearDock = new QDockWidget("Detailview");
+	_nearDock->setWidget(_near);
+	_nearDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 }
 
 NearTool::~NearTool()
 {
 }
 
+QDockWidget* NearTool::getNearDock()
+{
+	return _nearDock;
+}
+
+bool NearTool::nearIsVisible()
+{
+	return _nearDock->isVisible();
+}
+
+void NearTool::setNearVisible(bool status)
+{
+	if (status && !_nearDock->isVisible())
+		_nearDock->show();
+	_nearDock->setHidden(!status);
+}
+
 void NearTool::paintEvent(const QPaintEvent& event)
 {
+	if (_near->painting())
+	{
+		QPainter painter(_near);
+		QPixmap ico(_display->cursor().pixmap());
+		QRect reg(QPoint(),ico.size());
+		reg.moveCenter(QPoint(_near->width()/2, _near->height()/2));
+		painter.drawPixmap(reg,ico);
+		painter.end();
+	}
 }
 
 void NearTool::enterEvent(const QHoverEvent& event)
@@ -450,6 +615,7 @@ void NearTool::leaveEvent(const QHoverEvent& event)
 
 void NearTool::moveEvent(const QHoverEvent& event)
 {
+	_display->updateDetail();
 }
 
 void NearTool::mousePressed(const QMouseEvent & event)
@@ -479,18 +645,45 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	zoom(display),
 	move(display),
 	mark(display),
+	near(display),
+	over(display),
 	info(display)
 {
 	_display = display;
 	_display->setActivatedTool(&info);
-	resize(380, 28);
+	//resize(580, 28);
 
-	setZoomTool = new QAction("Zoom", this);
-	setMoveTool = new QAction("Move", this);
-	setMarkTool = new QAction("Mark", this);
-	setFitView = new QAction("FitView", this);
-	openImage = new QAction("Open", this);
-	saveImage = new QAction("Save", this);
+	setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),"Zoom", this);
+	setMoveTool = new QAction(QIcon(":/icon/moveIcon"),"Move", this);
+	setMarkTool = new QAction(QIcon(":/icon/markIcon"),"Mark", this);
+	setFitView = new QAction(QIcon(":/icon/fit.png"),"FitView", this);
+	showOverview = new QAction(QIcon(":/icon/overIcon"),"Overview", this);
+	showNearview = new QAction(QIcon(":/icon/detailIcon"),"Nearview", this);
+	useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),"Antialias", this);
+	openImage = new QAction(QIcon(":/icon/fileopen.png"),"Open", this);
+	saveImage = new QAction(QIcon(":/icon/disquette.png"),"Save", this);
+
+	scaleSpinBox = new QDoubleSpinBox(this);
+	scaleSpinBox->setSuffix(" %");
+	scaleSpinBox->setDecimals(0);
+	scaleSpinBox->setRange(0,800);
+	scaleSpinBox->setSingleStep(0);
+	scaleSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	connect(scaleSpinBox,SIGNAL(editingFinished()),this,SLOT(rescaleDisplay()));
+
+	zoom.setScaleSpin(scaleSpinBox);
+	move.setScaleSpin(scaleSpinBox);
+	mark.setScaleSpin(scaleSpinBox);
+	near.setScaleSpin(scaleSpinBox);
+	over.setScaleSpin(scaleSpinBox);
+	info.setScaleSpin(scaleSpinBox);
+
+	detailComboBox = new QComboBox(this);
+	detailComboBox->addItems(QString("1x 2x 4x 8x").split(" "));
+	detailComboBox->setCurrentIndex(1);
+	SingleScene* scene = (SingleScene*)_display->getCurrentScene();
+	scene->setDetailZoom(2.0);
+	connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
 
 	addAction(openImage);
 	addAction(saveImage);
@@ -500,12 +693,24 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	addAction(setZoomTool);
 	addSeparator();
 	addAction(setFitView);
-        //addSeparator();
-        //addWidget(info.getInfoLabel());
+	addSeparator();
+	addWidget(scaleSpinBox);
+	addAction(useAntialias);
+	addSeparator();
+	addAction(showOverview);
+	addAction(showNearview);
+	addWidget(detailComboBox);
 
 	setZoomTool->setCheckable(true);
 	setMoveTool->setCheckable(true);
 	setMarkTool->setCheckable(true);
+	showOverview->setCheckable(true);
+	showNearview->setCheckable(true);
+	useAntialias->setCheckable(true);
+	showOverview->setChecked(true);
+	showNearview->setChecked(true);
+
+	_display->setActivatedTool(&near);
 
 	QActionGroup* navegation = new QActionGroup(this);
 	navegation->addAction(setZoomTool);
@@ -513,13 +718,8 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	navegation->addAction(setMarkTool);
 	navegation->setExclusive(true);
 
-	QActionGroup* loadAndSave = new QActionGroup(this);
-	loadAndSave->addAction(openImage);
-	loadAndSave->addAction(saveImage);
-	//loadAndSave->setVisible(false);
-
 	connect(this, SIGNAL(actionTriggered(QAction*)), this, SLOT(executeAction(QAction*)));
-        setMoveTool->trigger();
+	setMoveTool->trigger();
 }
 
 void SingleToolsBar::deactivateAllExclusiveTools()
@@ -531,22 +731,32 @@ void SingleToolsBar::deactivateAllExclusiveTools()
 
 void  SingleToolsBar::setOpenVisible(bool status)
 {
-    openImage->setVisible(status);
+	openImage->setVisible(status);
 }
 
 void  SingleToolsBar::setSaveVisible(bool status)
 {
-    saveImage->setVisible(status);
+	saveImage->setVisible(status);
 }
 
 void  SingleToolsBar::setMarkVisible(bool status)
 {
-    setMarkTool->setVisible(status);
+	setMarkTool->setVisible(status);
 }
 
 QLabel* SingleToolsBar::getInfo()
 {
-    return info.getInfoLabel();
+	return info.getInfoLabel();
+}
+
+QDockWidget* SingleToolsBar::getOverview()
+{
+	return over.getOverDock();
+}
+
+QDockWidget* SingleToolsBar::getNearview()
+{
+	return near.getNearDock();
 }
 
 void SingleToolsBar::executeAction(QAction *action)
@@ -555,24 +765,44 @@ void SingleToolsBar::executeAction(QAction *action)
 	{
 		deactivateAllExclusiveTools();
 		_display->setActivatedTool(&zoom);
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
 	}
 	if (action ==  setMoveTool )
 	{
 		deactivateAllExclusiveTools();
 		_display->setActivatedTool(&move);
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
 	}
 	if (action ==  setMarkTool )
 	{
 		deactivateAllExclusiveTools();
 		_display->setActivatedTool(&mark);
+		_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255)))));
 	}
 	if (action ==  setFitView )
 	{
 		_display->fitView();
+		info.actualizeScaleSpin(_display->getCurrentScene()->getScale());
+	}
+	if (action ==  showOverview )
+	{
+		over.setOverVisible(!over.overIsVisible());
+	}
+	if (action ==  showNearview )
+	{
+		near.setNearVisible(!near.nearIsVisible());
+		_display->setActivatedTool(&near, near.nearIsVisible());
+		detailComboBox->setEnabled(near.nearIsVisible());
+	}
+	if (action == useAntialias)
+	{
+		SingleScene* scene = (SingleScene*)_display->getCurrentScene();
+		scene->useSmooth(useAntialias->isChecked());
+		_display->updateAll();
 	}
 	if (action ==  openImage )
 	{
-		QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".", "*.bmp");
+		QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".", "*.bmp *.png *.tif *.ppm *.jpg");
 		if (!filename.isEmpty())
 		{
 			SingleScene* scene = (SingleScene*)_display->getCurrentScene();
@@ -582,5 +812,364 @@ void SingleToolsBar::executeAction(QAction *action)
 	}
 	if (action ==  saveImage )
 	{
+	}
+}
+
+void SingleToolsBar::rescaleDisplay()
+{
+	int diff = _display->getCurrentScene()->getScale()*100 - scaleSpinBox->value();
+	if (diff)
+	{
+		_display->getCurrentScene()->scaleTo(scaleSpinBox->value()/100);
+		_display->updateAll();
+		info.actualizeScaleSpin(_display->getCurrentScene()->getScale());
+	}
+}
+
+void SingleToolsBar::changeDetailZoom(int nz)
+{
+	SingleScene* scene = (SingleScene*)_display->getCurrentScene();
+	switch (nz){
+	case 0:
+		scene->setDetailZoom(1.0);
+		break;
+	case 1:
+		scene->setDetailZoom(2.0);
+		break;
+	case 2:
+		scene->setDetailZoom(4.0);
+		break;
+	case 3:
+		scene->setDetailZoom(8.0);
+		break;
+	default :
+		scene->setDetailZoom(2.0);
+		break;
+	}
+}
+
+
+
+
+
+
+SeparatedStereoToolsBar::SeparatedStereoToolsBar(SingleDisplay *leftDisplay, SingleDisplay *rightDisplay, QWidget *parent) :
+	QToolBar(parent),
+	leftZoom(leftDisplay),
+	leftMove(leftDisplay),
+	leftMark(leftDisplay),
+	leftNear(leftDisplay),
+	leftOver(leftDisplay),
+	leftInfo(leftDisplay),
+	rightZoom(rightDisplay),
+	rightMove(rightDisplay),
+	rightMark(rightDisplay),
+	rightNear(rightDisplay),
+	rightOver(rightDisplay),
+	rightInfo(rightDisplay)
+{
+	_leftDisplay = leftDisplay;
+	_rightDisplay = rightDisplay;
+	_leftDisplay->setActivatedTool(&leftInfo);
+	_rightDisplay->setActivatedTool(&rightInfo);
+
+	setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),"Zoom", this);
+	setMoveTool = new QAction(QIcon(":/icon/moveIcon"),"Move", this);
+	setMarkTool = new QAction(QIcon(":/icon/markIcon"),"Mark", this);
+	setFitLeftView = new QAction(QIcon(":/icon/fitleftIcon.png"),"Fit Left", this);
+	setFitRightView = new QAction(QIcon(":/icon/fitrightIcon.png"),"Fit Right", this);
+	setFitBothView = new QAction(QIcon(":/icon/fitbothIcon.png"),"Fit Both", this);
+	showOverview = new QAction(QIcon(":/icon/overIcon"),"Overview", this);
+	showNearview = new QAction(QIcon(":/icon/detailIcon"),"Nearview", this);
+	useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),"Antialias", this);
+	openLeftImage = new QAction(QIcon(":/icon/fileopen.png"),"Open Left", this);
+	openRightImage = new QAction(QIcon(":/icon/fileopen.png"),"Open Left", this);
+	saveLeftImage = new QAction(QIcon(":/icon/disquette.png"),"Save Left", this);
+	saveRightImage = new QAction(QIcon(":/icon/disquette.png"),"Save Right", this);
+	setEqualMovements = new QAction(QIcon(":/icon/equalmoveIcon.png"),"Equal Movements", this);
+	setEqualScales = new QAction(QIcon(":/icon/equalzoomIcon.png"),"Equal Scales", this);
+
+	scaleLeftSpinBox = new QDoubleSpinBox(this);
+	scaleLeftSpinBox->setSuffix(" %");
+	scaleLeftSpinBox->setDecimals(0);
+	scaleLeftSpinBox->setRange(0,800);
+	scaleLeftSpinBox->setSingleStep(0);
+	scaleLeftSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	connect(scaleLeftSpinBox,SIGNAL(editingFinished()),this,SLOT(rescaleLeftDisplay()));
+
+	scaleRightSpinBox = new QDoubleSpinBox(this);
+	scaleRightSpinBox->setSuffix(" %");
+	scaleRightSpinBox->setDecimals(0);
+	scaleRightSpinBox->setRange(0,800);
+	scaleRightSpinBox->setSingleStep(0);
+	scaleRightSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	connect(scaleRightSpinBox,SIGNAL(editingFinished()),this,SLOT(rescaleRightDisplay()));
+
+	leftZoom.setScaleSpin(scaleLeftSpinBox);
+	leftMove.setScaleSpin(scaleLeftSpinBox);
+	leftMark.setScaleSpin(scaleLeftSpinBox);
+	leftNear.setScaleSpin(scaleLeftSpinBox);
+	leftOver.setScaleSpin(scaleLeftSpinBox);
+	leftInfo.setScaleSpin(scaleLeftSpinBox);
+	rightZoom.setScaleSpin(scaleRightSpinBox);
+	rightMove.setScaleSpin(scaleRightSpinBox);
+	rightMark.setScaleSpin(scaleRightSpinBox);
+	rightNear.setScaleSpin(scaleRightSpinBox);
+	rightOver.setScaleSpin(scaleRightSpinBox);
+	rightInfo.setScaleSpin(scaleRightSpinBox);
+
+	detailComboBox = new QComboBox(this);
+	detailComboBox->addItems(QString("1x 2x 4x 8x").split(" "));
+	detailComboBox->setCurrentIndex(1);
+	SingleScene* leftScene = (SingleScene*)_leftDisplay->getCurrentScene();
+	leftScene->setDetailZoom(2.0);
+	SingleScene* rightScene = (SingleScene*)_rightDisplay->getCurrentScene();
+	rightScene->setDetailZoom(2.0);
+	connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
+
+	addAction(openLeftImage);
+	addAction(openRightImage);
+	addAction(saveLeftImage);
+	addAction(saveRightImage);
+	addSeparator();
+	addAction(setMarkTool);
+	addAction(setMoveTool);
+	addAction(setZoomTool);
+	addSeparator();
+	addAction(setFitLeftView);
+	addAction(setFitRightView);
+	addAction(setFitBothView);
+	addSeparator();
+	addWidget(scaleLeftSpinBox);
+	addAction(setEqualScales);
+	addWidget(scaleRightSpinBox);
+	addAction(useAntialias);
+	addAction(setEqualMovements);
+	addSeparator();
+	addAction(showOverview);
+	addAction(showNearview);
+	addWidget(detailComboBox);
+
+	setZoomTool->setCheckable(true);
+	setMoveTool->setCheckable(true);
+	setMarkTool->setCheckable(true);
+	showOverview->setCheckable(true);
+	showNearview->setCheckable(true);
+	useAntialias->setCheckable(true);
+	setEqualMovements->setCheckable(true);
+	setEqualScales->setCheckable(true);
+	showOverview->setChecked(true);
+	showNearview->setChecked(true);
+
+	_leftDisplay->setActivatedTool(&leftNear);
+	_rightDisplay->setActivatedTool(&rightNear);
+
+	QActionGroup* navegation = new QActionGroup(this);
+	navegation->addAction(setZoomTool);
+	navegation->addAction(setMoveTool);
+	navegation->addAction(setMarkTool);
+	navegation->setExclusive(true);
+
+	connect(this, SIGNAL(actionTriggered(QAction*)), this, SLOT(executeAction(QAction*)));
+	setMoveTool->trigger();
+}
+
+void SeparatedStereoToolsBar::deactivateAllExclusiveTools()
+{
+	_leftDisplay->setActivatedTool(&leftMove, false);
+	_leftDisplay->setActivatedTool(&leftMark, false);
+	_leftDisplay->setActivatedTool(&leftZoom, false);
+	_rightDisplay->setActivatedTool(&rightMove, false);
+	_rightDisplay->setActivatedTool(&rightMark, false);
+	_rightDisplay->setActivatedTool(&rightZoom, false);
+}
+
+void  SeparatedStereoToolsBar::setOpenVisible(bool status)
+{
+	openLeftImage->setVisible(status);
+	openRightImage->setVisible(status);
+}
+
+void  SeparatedStereoToolsBar::setSaveVisible(bool status)
+{
+	saveLeftImage->setVisible(status);
+	saveRightImage->setVisible(status);
+}
+
+void  SeparatedStereoToolsBar::setMarkVisible(bool status)
+{
+	setMarkTool->setVisible(status);
+}
+
+QLabel* SeparatedStereoToolsBar::getLeftInfo()
+{
+	return leftInfo.getInfoLabel();
+}
+
+QLabel* SeparatedStereoToolsBar::getRightInfo()
+{
+	return rightInfo.getInfoLabel();
+}
+
+QDockWidget* SeparatedStereoToolsBar::getLeftOverview()
+{
+	return leftOver.getOverDock();
+}
+
+QDockWidget* SeparatedStereoToolsBar::getRightOverview()
+{
+	return rightOver.getOverDock();
+}
+
+QDockWidget* SeparatedStereoToolsBar::getLeftNearview()
+{
+	return leftNear.getNearDock();
+}
+
+QDockWidget* SeparatedStereoToolsBar::getRightNearview()
+{
+	return rightNear.getNearDock();
+}
+
+void SeparatedStereoToolsBar::executeAction(QAction *action)
+{
+	if (action ==  setZoomTool )
+	{
+		deactivateAllExclusiveTools();
+		_leftDisplay->setActivatedTool(&leftZoom);
+		_leftDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
+		_rightDisplay->setActivatedTool(&rightZoom);
+		_rightDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
+	}
+	if (action ==  setMoveTool )
+	{
+		deactivateAllExclusiveTools();
+		_leftDisplay->setActivatedTool(&leftMove);
+		_leftDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
+		_rightDisplay->setActivatedTool(&rightMove);
+		_rightDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
+	}
+	if (action ==  setMarkTool )
+	{
+		deactivateAllExclusiveTools();
+		_leftDisplay->setActivatedTool(&leftMark);
+		_leftDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255)))));
+		_rightDisplay->setActivatedTool(&rightMark);
+		_rightDisplay->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255)))));
+	}
+	if (action ==  setFitLeftView )
+	{
+		_leftDisplay->fitView();
+		leftInfo.actualizeScaleSpin(_leftDisplay->getCurrentScene()->getScale());
+	}
+	if (action ==  setFitRightView )
+	{
+		_rightDisplay->fitView();
+		rightInfo.actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
+	}
+	if (action ==  setFitBothView )
+	{
+		_leftDisplay->fitView();
+		_rightDisplay->fitView();
+		leftInfo.actualizeScaleSpin(_leftDisplay->getCurrentScene()->getScale());
+		rightInfo.actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
+	}
+	if (action ==  showOverview )
+	{
+		leftOver.setOverVisible(!leftOver.overIsVisible());
+		rightOver.setOverVisible(!rightOver.overIsVisible());
+	}
+	if (action ==  showNearview )
+	{
+		leftNear.setNearVisible(!leftNear.nearIsVisible());
+		rightNear.setNearVisible(!rightNear.nearIsVisible());
+		_leftDisplay->setActivatedTool(&leftNear, leftNear.nearIsVisible());
+		_rightDisplay->setActivatedTool(&rightNear, rightNear.nearIsVisible());
+		detailComboBox->setEnabled(leftNear.nearIsVisible());
+	}
+	if (action == useAntialias)
+	{
+		SingleScene* leftScene = (SingleScene*)_leftDisplay->getCurrentScene();
+		SingleScene* rightScene = (SingleScene*)_rightDisplay->getCurrentScene();
+		leftScene->useSmooth(useAntialias->isChecked());
+		rightScene->useSmooth(useAntialias->isChecked());
+		_leftDisplay->updateAll();
+		_rightDisplay->updateAll();
+	}
+	if (action ==  openLeftImage )
+	{
+		QString filename = QFileDialog::getOpenFileName(0, "Open Left Image", ".", "*.bmp *.png *.tif *.ppm *.jpg");
+		if (!filename.isEmpty())
+		{
+			SingleScene* scene = (SingleScene*)_leftDisplay->getCurrentScene();
+			scene->loadImage(filename);
+			_leftDisplay->updateAll();
+		}
+	}
+	if (action ==  openRightImage )
+	{
+		QString filename = QFileDialog::getOpenFileName(0, "Open Right Image", ".", "*.bmp *.png *.tif *.ppm *.jpg");
+		if (!filename.isEmpty())
+		{
+			SingleScene* scene = (SingleScene*)_rightDisplay->getCurrentScene();
+			scene->loadImage(filename);
+			_rightDisplay->updateAll();
+		}
+	}
+	if (action ==  saveLeftImage )
+	{
+	}
+	if (action ==  saveRightImage )
+	{
+	}
+}
+
+void SeparatedStereoToolsBar::rescaleLeftDisplay()
+{
+	int diff = _leftDisplay->getCurrentScene()->getScale()*100 - scaleLeftSpinBox->value();
+	if (diff)
+	{
+		_leftDisplay->getCurrentScene()->scaleTo(scaleLeftSpinBox->value()/100);
+		_leftDisplay->updateAll();
+		leftInfo.actualizeScaleSpin(_leftDisplay->getCurrentScene()->getScale());
+	}
+}
+
+void SeparatedStereoToolsBar::rescaleRightDisplay()
+{
+	int diff = _rightDisplay->getCurrentScene()->getScale()*100 - scaleRightSpinBox->value();
+	if (diff)
+	{
+		_rightDisplay->getCurrentScene()->scaleTo(scaleRightSpinBox->value()/100);
+		_rightDisplay->updateAll();
+		rightInfo.actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
+	}
+}
+
+void SeparatedStereoToolsBar::changeDetailZoom(int nz)
+{
+	SingleScene* leftScene = (SingleScene*)_leftDisplay->getCurrentScene();
+	SingleScene* rightScene = (SingleScene*)_rightDisplay->getCurrentScene();
+	switch (nz){
+	case 0:
+		leftScene->setDetailZoom(1.0);
+		rightScene->setDetailZoom(1.0);
+		break;
+	case 1:
+		leftScene->setDetailZoom(2.0);
+		rightScene->setDetailZoom(2.0);
+		break;
+	case 2:
+		leftScene->setDetailZoom(4.0);
+		rightScene->setDetailZoom(4.0);
+		break;
+	case 3:
+		leftScene->setDetailZoom(8.0);
+		rightScene->setDetailZoom(8.0);
+		break;
+	default :
+		leftScene->setDetailZoom(2.0);
+		rightScene->setDetailZoom(2.0);
+		break;
 	}
 }

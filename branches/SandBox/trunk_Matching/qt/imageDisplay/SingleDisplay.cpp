@@ -8,184 +8,6 @@
 
 #include <math.h>
 
-
-
-Cursor::Cursor(const QImage &image2Cursor, QPoint offset) :
-	QCursor(QPixmap::fromImage(image2Cursor), offset.x(), offset.y())
-{
-}
-
-Cursor& Cursor::noCursor()
-{
-    QSize size(16,16);
-    QImage img(size, QImage::Format_ARGB32);
-    img.fill(QColor(0,0,0,0).rgba());
-    int hotX = size.width() / 2;
-    int hotY = size.height() / 2;
-
-    return *this = Cursor(img, QPoint(hotX, hotY));
-}
-
-Cursor& Cursor::toCross(QColor color, QSize size, unsigned int weigth)
-{
-	QImage img(size, QImage::Format_ARGB32);
-	img.fill(QColor(0,0,0,0).rgba());
-	int hotX = size.width() / 2;
-	int hotY = size.height() / 2;
-
-	QPainter painter(&img);
-	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
-	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
-	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
-	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
-	painter.end();
-
-	return *this = Cursor(img, QPoint(hotX, hotY));
-}
-
-Cursor& Cursor::toCross(QColor colorBrush, QColor colorPen, QSize size, unsigned int weigth)
-{
-	QImage img(size, QImage::Format_ARGB32);
-	img.fill(QColor(0,0,0,0).rgba());
-	int hotX = size.width() / 2;
-	int hotY = size.height() / 2;
-
-	QPainter painter(&img);
-	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
-	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
-	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
-	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, colorPen);
-
-	painter.fillRect(weigth%2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
-	painter.fillRect(size.width()/2+(weigth+1)/2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
-	painter.fillRect(hotX-weigth/2+1, weigth%2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
-	painter.fillRect(hotX-weigth/2+1, size.height()/2+(weigth+1)/2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
-	painter.end();
-
-	return *this = Cursor(img, QPoint(hotX, hotY));
-}
-
-Cursor& Cursor::toX(QColor color, QSize size, unsigned int weigth)
-{
-	QImage img(size, QImage::Format_ARGB32);
-	img.fill(QColor(0,0,0,0).rgba());
-	int hotX = size.width() / 2;
-	int hotY = size.height() / 2;
-
-	QPainter painter(&img);
-	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
-	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
-	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
-	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
-	painter.end();
-
-	QTransform transf;
-	img = img.transformed(transf.translate(-hotX,-hotY).rotate(45).translate(hotX,hotY),Qt::SmoothTransformation);
-
-	return *this = Cursor(img, QPoint(hotX, hotY));
-}
-
-Cursor& Cursor::toX(QColor colorBrush, QColor colorPen, QSize size, unsigned int weigth)
-{
-	QImage img(size, QImage::Format_ARGB32);
-	img.fill(QColor(0,0,0,0).rgba());
-	int hotX = size.width() / 2;
-	int hotY = size.height() / 2;
-
-	QPainter painter(&img);
-	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
-	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
-	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
-	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, colorPen);
-
-	painter.fillRect(weigth%2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
-	painter.fillRect(size.width()/2+(weigth+1)/2+1, hotY-weigth/2+1, size.width()/2-(weigth+1)/2-2, weigth-2, colorBrush);
-	painter.fillRect(hotX-weigth/2+1, weigth%2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
-	painter.fillRect(hotX-weigth/2+1, size.height()/2+(weigth+1)/2+1, weigth-2, size.height()/2-(weigth+1)/2-2, colorBrush);
-	painter.end();
-
-	QTransform transf;
-	img = img.transformed(transf.translate(-hotX,-hotY).rotate(45).translate(hotX,hotY),Qt::SmoothTransformation);
-
-	return *this = Cursor(img, QPoint(hotX, hotY));
-}
-
-Cursor::Cursor(DefaultCursor defaultCursorType)
-{
-	switch (defaultCursorType)
-	{
-	case NoCursor:
-                *this = Cursor(*this).noCursor();
-		break;
-        /*case RedCursor:
-                *this = Cursor().toCross();
-		break;
-	case GreenCursor:
-		*this = QImage(":/cursors/GreenCursor");
-		break;
-	case BlueCursor:
-		*this = QImage(":/cursors/BlueCursor");
-		break;
-	case CyanCursor:
-		*this = QImage(":/cursors/CyanCursor");
-		break;
-	case MagentaCursor:
-		*this = QImage(":/cursors/MagentaCursor");
-		break;
-	case YellowCursor:
-		*this = QImage(":/cursors/YellowCursor");
-		break;
-	case DarkRedCursor:
-		*this = QImage(":/cursors/DarkRedCursor");
-		break;
-	case DarkGreenCursor:
-		*this = QImage(":/cursors/DarkGreenCursor");
-		break;
-	case DarkBlueCursor:
-		*this = QImage(":/cursors/DarkBlueCursor");
-		break;
-	case DarkCyanCursor:
-		*this = QImage(":/cursors/DarkCyanCursor");
-		break;
-	case DarkMagentaCursor:
-		*this = QImage(":/cursors/DarkMagentaCursor");
-		break;
-	case DarkYellowCursor:
-		*this = QImage(":/cursors/DarkYellowCursor");
-		break;
-	case BlackCursor:
-		*this = QImage(":/cursors/BlackCursor");
-		break;
-	case WhiteCursor:
-		*this = QImage(":/cursors/WhiteCursor");
-		break;
-	case GrayCursor:
-		*this = QImage(":/cursors/GrayCursor");
-		break;
-	case BlackAndWhiteCursor:
-		*this = QImage(":/cursors/BlackAndWhiteCursor");
-		break;
-                */
-                default:
-                *this = Cursor(*this).toCross(QColor(255,255,255));
-                break;
-	}
-}
-
-QCursor Cursor::toQCursor()
-{
-	return QCursor(pixmap(), hotSpot().x(), hotSpot().y());
-}
-
-QImage Cursor::toQImage()
-{
-	return pixmap().toImage();
-}
-
-
-
-
-
 SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
 	QWidget(parent)
 {
@@ -196,6 +18,7 @@ SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
 	_displayMode = IntermediatedScreen;
 	//_onMove = false;
 	_cloneScale = true;
+	_onPainting = false;
 	_over = NULL;
 	_detail = NULL;
 	setMinimumSize(150,150);
@@ -203,8 +26,8 @@ SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
 	setAttribute(Qt::WA_Hover, true);
 	installEventFilter(this);
 
-	Cursor cursor(BlackAndWhiteCursor);
-	setCursor(cursor.toQCursor());
+	//Cursor cursor(BlackAndWhiteCursor);
+	//setCursor(cursor.toQCursor());
 }
 
 SingleDisplay::~SingleDisplay()
@@ -215,12 +38,38 @@ void SingleDisplay::updateMousePosition()
 	_mouseLastPos = mapFromGlobal(QCursor::pos());
 }
 
+bool SingleDisplay::positionIsVisible(QPointF pos)
+{
+	QPointF screenPos;
+	SingleScene* currentScene = (SingleScene*)_currentScene;
+	if (_displayMode == TopViewScreen)
+		screenPos = (pos - QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0))*currentScene->getThumbScale() + QPointF(width()/2, height()/2);
+	else
+		screenPos = (pos - _currentScene->getViewpoint())*_currentScene->getScale() + QPointF(width()/2, height()/2);
+
+	if (screenPos.x() >= 0 && screenPos.y() >= 0 && screenPos.x() <= width() && screenPos.y() <= height())
+		return true;
+	else
+		return false;
+}
+
 QPointF SingleDisplay::getLastMousePosition()
 {
 	QPointF diffTocenter(_mouseLastPos.x() - size().width() / 2, _mouseLastPos.y() - size().height() / 2);
 	double scale;
-	scale = _currentScene->getScale();
-	return _currentScene->getViewpoint() + diffTocenter / scale;
+	SingleScene* currentScene = (SingleScene*)_currentScene;
+	QPointF mousePos;
+	if (_displayMode == TopViewScreen)
+	{
+		scale = currentScene->getThumbScale();
+		mousePos = QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0) + diffTocenter / scale;
+	}
+	else
+	{
+		scale = _currentScene->getScale();
+		mousePos = _currentScene->getViewpoint() + diffTocenter / scale;
+	}
+	return mousePos;
 }
 
 QPointF SingleDisplay::getPosition(QPoint screenPosition)
@@ -236,6 +85,11 @@ QPointF SingleDisplay::getMouseScreenPosition()
 	return _mouseLastPos;
 }
 
+bool SingleDisplay::painting()
+{
+	return _onPainting;
+}
+
 void SingleDisplay::setCurrentScene(AbstractScene *newScene)
 {
 	_currentScene = newScene;
@@ -249,7 +103,7 @@ AbstractScene* SingleDisplay::getCurrentScene()
 
 SingleDisplay* SingleDisplay::getOverDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(this);
+	SingleDisplay* result = new SingleDisplay(0);
 	result->setOverviewMode(this);
 	_over = result;
 	return result;
@@ -257,7 +111,7 @@ SingleDisplay* SingleDisplay::getOverDisplay()
 
 SingleDisplay* SingleDisplay::getDetailDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(this);
+	SingleDisplay* result = new SingleDisplay(0);
 	result->setDetailMode(this);
 	_detail = result;
 	return result;
@@ -265,11 +119,12 @@ SingleDisplay* SingleDisplay::getDetailDisplay()
 
 void SingleDisplay::fitView()
 {
+	_currentScene->setViewport(size());
 	double wscale = width() / (double)_currentScene->getWidth();
 	double hscale = height() / (double)_currentScene->getHeight();
 	_currentScene->scaleTo(wscale < hscale ? wscale : hscale);
 	_currentScene->centerContent();
-	update();
+	updateAll();
 }
 
 void SingleDisplay::pan(int dx, int dy)
@@ -280,12 +135,12 @@ void SingleDisplay::zoom(double zoomFactor, QPoint* atPoint)
 {
 }
 
-void SingleDisplay::setDetailZoom(double zoomFactor)
-{
-	if (_detail)
-		_detail->zoom(zoomFactor);
-	updateDetail();
-}
+//void SingleDisplay::setDetailZoom(double zoomFactor)
+//{
+	//if (_detail)
+		//_detail->zoom(zoomFactor);
+	//updateDetail();
+//}
 
 void SingleDisplay::setCloneScale(bool status)
 {
@@ -325,12 +180,14 @@ void SingleDisplay::setOverviewMode(SingleDisplay *display)
 {
 	_displayMode = TopViewScreen;
 	_detail = display;
+	_currentScene = _detail->getCurrentScene();
 }
 
 void SingleDisplay::setDetailMode(SingleDisplay *display)
 {
 	_displayMode = MostDetailedScreen;
 	_over = display;
+	_currentScene = _over->getCurrentScene();
 }
 
 void SingleDisplay::setActivatedTool(SingleTool *tool, bool active)
@@ -348,10 +205,11 @@ void SingleDisplay::setActivatedTool(SingleTool *tool, bool active)
 
 void SingleDisplay::paintEvent(QPaintEvent *e)
 {
+	_onPainting = true;
 	if (_displayMode == IntermediatedScreen)
 	{
 		QPainter painter(this);
-		painter.fillRect(rect(),QBrush(QImage(":/cursors/DarkBG")));
+		painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
 		if (_currentScene->isValid())
 		{
 			QRect target = rect();
@@ -360,13 +218,23 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 				_detail->update();
 			if (_over)
 				_over->update();
+			/*
+			if (_detail && _detail->isVisible())// && _showDetailArea)
+			{
+				SingleScene* currentScene = (SingleScene*)_currentScene;
+				//QRect viewedRect(((viewpoint_-QPointF(rect->width()/(scale_*2.0), rect->height()/(scale_*2.0)))*scale).toPoint(), ((scale*QRectF(*rect).size())/scale_).toSize());
+				QRect detailedRect(((currentScene->getDetailedPoint() -QPointF(_detail->width()/(currentScene->getDetailZoom()*currentScene->getScale()*2.0), _detail->height()/(currentScene->getDetailZoom()*currentScene->getScale()*2.0)))*currentScene->getScale()).toPoint(), ((currentScene->getScale()*QSizeF(_detail->size()))/(currentScene->getScale()*currentScene->getDetailZoom())).toSize());
+				painter.setPen(QPen(QColor(Qt::yellow)));
+				painter.drawRect(detailedRect);
+			}
+			*/
 		}
-		painter.end();
+		//painter.end();
 	}
 	else if (_displayMode == TopViewScreen)
 	{
 		QPainter painter(this);
-		painter.fillRect(rect(),QBrush(QImage(":/cursors/DarkBG")));
+		painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
 		AbstractScene* currentScene;
 		if (_detail && (currentScene = _detail->getCurrentScene()) && currentScene->isValid())
 		{
@@ -381,13 +249,14 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 	else if (_displayMode == MostDetailedScreen)
 	{
 		QPainter painter(this);
-		painter.fillRect(rect(),QBrush(QImage(":/cursors/DarkBG")));
-		AbstractScene* currentScene;
-		if (_over && (currentScene = _over->getCurrentScene()) && currentScene->isValid())
+		painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
+		SingleScene* currentScene;
+		if (_over && (currentScene = (SingleScene*)_over->getCurrentScene()) && currentScene->isValid())
 		{
 			QRect target = rect();
 			QSize targetSize = target.size();
-			double zoom = ceil(currentScene->getScale()*4.0);
+			//double zoom = ceil(currentScene->getScale()*currentScene->getDetailZoom());
+			double zoom = currentScene->getScale()*currentScene->getDetailZoom();
 
 			QImage detail = currentScene->getDetail(targetSize, _over->getLastMousePosition(), zoom);
 			painter.drawImage(0, 0, detail);
@@ -400,6 +269,7 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 	{
 		_tool.at(i)->paintEvent(*e);
 	}
+	_onPainting = false;
 }
 
 void SingleDisplay::resizeEvent(QResizeEvent *e)
