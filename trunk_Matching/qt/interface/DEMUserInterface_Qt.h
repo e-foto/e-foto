@@ -43,6 +43,8 @@ protected slots:
         void onGridAreaLimitsStateChanged(int);
         void onInterStateChanged(int);
         void onShowImageStateChanged(int);
+        void onSeedsEditorClicked();
+        void onStereoplotterClicked();
 
 private:
         void init();
