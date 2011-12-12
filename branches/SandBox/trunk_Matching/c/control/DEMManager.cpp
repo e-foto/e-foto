@@ -29,6 +29,7 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     listAllImages = images;
     listEOs = eos;
     grid = NULL;
+    im = NULL;
     isShowImage = false;
     setListPoint();
 }
@@ -224,7 +225,9 @@ void DEMManager::setProgress(int progress)
 void DEMManager::setCancel()
 {
     cancel_flag = true;
-    im->setCancel();
+
+    if (im != NULL)
+        im->setCancel();
 }
 
 /*
