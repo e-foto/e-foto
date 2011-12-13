@@ -222,3 +222,20 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 //	printData();
 }
 
+/*
+ * Return ortho-image
+ **/
+
+Matrix * Orthorectification::getOrthoImage()
+{
+    Matrix *img = new Matrix(ortho_height, ortho_width);
+
+    // Invert image
+    for (int i=1; i<= ortho_height; i++)
+    {
+        for (int j=1; j<= ortho_width; j++)
+            img->set(i, j, orthoimage.get(ortho_height-i+1, j));
+    }
+
+    return img;
+}

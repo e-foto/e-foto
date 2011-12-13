@@ -43,6 +43,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(checkBox_3, SIGNAL(stateChanged(int)), this, SLOT(onShowImageStateChanged(int)));
         QObject::connect(seedsButton, SIGNAL(clicked()), this, SLOT(onSeedsEditorClicked()));
         QObject::connect(stereoButton, SIGNAL(clicked()), this, SLOT(onStereoplotterClicked()));
+        QObject::connect(comboBox4, SIGNAL(currentIndexChanged(int)), this, SLOT(onMatchingMethodChanged(int)));
 
         setWindowState(this->windowState());
 
@@ -57,10 +58,12 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         // Set tab 0 as initial page
         tabWidget->setCurrentIndex(0);
 
-        // Block some operations
+        // Block some options
         saveButton->setEnabled(false);
         saveButton2->setEnabled(false);
         interButton->setEnabled(false);
+        tabWidget->setTabEnabled(4, false);
+        onMatchingMethodChanged(comboBox4->currentIndex());
 
         // Set initial states
         onGridAreaLimitsStateChanged(0);
@@ -118,6 +121,24 @@ void DEMUserInterface_Qt::closeEvent(QCloseEvent *e)
         {
             e->ignore();
             return;
+        }
+
+        if (manager->isDemUnsaved())
+        {
+            if (QMessageBox::warning(this, "Unsaved work","A DEM was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
+            {
+                e->ignore();
+                return;
+            }
+        }
+
+        if (manager->isGridUnsaved())
+        {
+            if (QMessageBox::warning(this, "Unsaved work","An interpolated DEM was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
+            {
+                e->ignore();
+                return;
+            }
         }
 
 	LoadingScreen::instance().show();
@@ -282,9 +303,21 @@ void DEMUserInterface_Qt::onDemLoadClicked()
         return;
     }
 
+    enableAfterDEM();
+}
+
+void DEMUserInterface_Qt::enableAfterDEM()
+{
     // Enable options
     saveButton2->setEnabled(true);
     interButton->setEnabled(true);
+    tabWidget->setTabEnabled(4, true);
+}
+
+void DEMUserInterface_Qt::enableAfterGrid()
+{
+    // Enable options
+    saveButton->setEnabled(true);
 }
 
 void DEMUserInterface_Qt::onDemGridClicked()
@@ -295,13 +328,21 @@ void DEMUserInterface_Qt::onDemGridClicked()
     // Perform interpolation
     manager->interpolateGrid(comboBox0->currentIndex(), comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex());
 
-    // Enable options
-    saveButton->setEnabled(true);
+    if (manager->cancelFlag())
+        return;
+
+    enableAfterGrid();
 }
 
 void DEMUserInterface_Qt::onLSMCheckChanged(int state)
 {
     doubleSpinBox17->setEnabled(state);
+}
+
+void DEMUserInterface_Qt::onMatchingMethodChanged(int opt)
+{
+    tabWidget->setTabEnabled(3, opt==0); // Cross-correlation
+    tabWidget->setTabEnabled(2, opt==1); // LSM
 }
 
 void DEMUserInterface_Qt::setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height)
@@ -375,9 +416,10 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
     manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
 
-    // Enable options
-    saveButton2->setEnabled(true);
-    interButton->setEnabled(true);
+    if (manager->cancelFlag())
+        return;
+
+    enableAfterDEM();
 }
 
 /*
