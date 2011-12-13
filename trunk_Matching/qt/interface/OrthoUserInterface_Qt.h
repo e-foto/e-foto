@@ -6,6 +6,7 @@
 #include "ImageView.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
+#include "ImageViewers.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -35,6 +36,7 @@ protected slots:
         void onAbortClicked();
         void onLoadDemClicked();
         void onOrthoClicked();
+        void onShowImageChanged(int);
 
 private:
         void init();
@@ -53,6 +55,7 @@ public:
         void setAllowClose(bool _b) { allow_close = _b; };
         void disableOptions();
         void enableOptions();
+        void showImage(Matrix* image, bool isGrayscale = true);
 };
 
 #endif // ORTHOUSERINTERFACE_QT_H

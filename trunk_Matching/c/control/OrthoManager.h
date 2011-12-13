@@ -34,6 +34,7 @@ class OrthoManager
         void runOrthoIndividual(int);
         void runAllOrthoTogheter();
         bool flag_cancel;
+        bool show_image;
 
 public:
 
@@ -56,6 +57,7 @@ public:
         int loadDemGrid(char * filename, int fileType);
         int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
         void setFlagCancel() { flag_cancel = true; };
+        void setShowImage(bool _shw) { show_image = _shw; };
 
 };
 

@@ -132,14 +132,23 @@ Matrix * DemGrid::getDemImage(double min, double max)
 
 	// Convert DEM to image - (0.0 to 1.0)
 	double gray, Z, deltaZ = max-min;
+        double p1 = 1.0/255.0, p2 = 1-p1;
         for (unsigned int i=1; i<=dem_height; i++)
 	{
                 for (unsigned int j=1; j<=dem_width; j++)
 		{
 			Z = DEM.get(i,j);
-			gray = (Z-min)/deltaZ;
-			if (gray < 0.0) gray = 0.0;
-			if (gray > 1.0) gray = 1.0;
+
+                        // If values inside Zmin and Zmax
+                        if (fabs(Z - 0.0) < 0.000000000000001)
+                            gray = 0.0;
+                        else
+                            gray = p2*((Z-min)/deltaZ) + p1;
+
+                        // Else
+                        if (Z < min) gray = p1;
+                        if (Z > max) gray = 1.0;
+
 			// Change 180 degrees from spatial coordinate system to image
                         img->set(dem_height-i+1,j,gray);
 		}

@@ -30,6 +30,7 @@ OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<Ext
     grid = NULL;
     ortho = NULL;
     flag_cancel = false;
+    show_image = false;
 }
 
 OrthoManager::~OrthoManager()
@@ -98,6 +99,14 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
     OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
     oui->doubleSpinBox1->setValue(res_x);
     oui->doubleSpinBox2->setValue(res_y);
+
+    // Display results
+    if (show_image)
+    {
+        Matrix * img = grid->getDemImage();
+        oui->showImage(img, 1);
+        delete img;
+    }
 
     return 1;
 }
@@ -377,6 +386,15 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
         }
 
         ortho->saveOrtho(filename, 0);
+    }
+
+    // Display results
+    if (show_image)
+    {
+        OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+        Matrix * img = ortho->getOrthoImage();
+        oui->showImage(img, 1);
+        delete img;
     }
 
     return 1;
