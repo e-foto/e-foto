@@ -30,6 +30,8 @@ class DEMManager
 	bool status;
         bool over_it;
         bool cancel_flag;
+        bool dem_unsaved;
+        bool grid_unsaved;
         double over_it_dist;
         DEMUserInterface* myInterface;
         EFotoManager* manager;
@@ -79,6 +81,9 @@ public:
         void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
         void setCancel();
         void setShowImage(int _state) { isShowImage = _state; };
+        bool cancelFlag() { return cancel_flag; };
+        bool isDemUnsaved() { return dem_unsaved; };
+        bool isGridUnsaved() { return grid_unsaved; };
 
 };
 

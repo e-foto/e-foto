@@ -31,6 +31,8 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     grid = NULL;
     im = NULL;
     isShowImage = false;
+    dem_unsaved = false;
+    grid_unsaved = false;
     setListPoint();
 }
 
@@ -279,11 +281,13 @@ void DEMManager::createInitialSeeds()
 void DEMManager::saveDem(char * filename, int fileType)
 {
     pairs.save(filename,fileType);
+    dem_unsaved = false;
 }
 
 void DEMManager::saveDemGrid(char * filename, int fileType)
 {
     grid->saveDem(filename,fileType);
+    grid_unsaved = false;
 }
 
 int DEMManager::loadDem(char * filename, int fileType)
@@ -311,6 +315,8 @@ int DEMManager::loadDem(char * filename, int fileType)
         //dui->saveImage((char *)"teste_img.bmp",img);
         delete img;
     }
+
+    dem_unsaved = false;
 
     return 1;
 }
@@ -360,6 +366,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
     dui->setAllowClose(true);
     dui->enableOptions();
+    grid_unsaved = true;
 
     // Show image, if selected
     if (isShowImage && !cancel_flag)
@@ -368,7 +375,6 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
         dui->showImage(img, 1);
         delete img;
     }
-
 }
 
 void DEMManager::calcPointsXYZ()
@@ -473,6 +479,7 @@ void DEMManager::extractDEM(int option, bool clearMList)
 
     dui->setAllowClose(true);
     dui->enableOptions();
+    dem_unsaved = true;
 
     // Show image, if selected
     if (isShowImage && !cancel_flag)

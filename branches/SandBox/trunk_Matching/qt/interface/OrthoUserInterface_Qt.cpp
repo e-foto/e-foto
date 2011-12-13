@@ -57,6 +57,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
         QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
         QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
         QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
+        QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
 
         setWindowState(this->windowState());
 
@@ -72,6 +73,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
         move(Cx,Cy);
 
         allow_close = true;
+        onShowImageChanged(checkBox->isChecked());
 
 	qApp->processEvents();
 	init();
@@ -240,6 +242,11 @@ void OrthoUserInterface_Qt::setCurrentWork(string msg)
     workLabel->setText(qmsg);
 }
 
+void OrthoUserInterface_Qt::onShowImageChanged(int opt)
+{
+    manager->setShowImage(opt);
+}
+
 /*
  * Image dealing
  **/
@@ -298,4 +305,13 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
         img.save(filename,"BMP");
 
         return 1;
+}
+
+void OrthoUserInterface_Qt::showImage(Matrix* image, bool isGrayscale)
+{
+    SingleViewer* sv = new SingleViewer(this);
+    sv->loadImage(image, isGrayscale);
+    sv->blockOpen();
+    sv->blockMark();
+    sv->show();
 }

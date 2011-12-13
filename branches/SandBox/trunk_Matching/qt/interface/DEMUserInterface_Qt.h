@@ -45,6 +45,9 @@ protected slots:
         void onShowImageStateChanged(int);
         void onSeedsEditorClicked();
         void onStereoplotterClicked();
+        void onMatchingMethodChanged(int);
+        void enableAfterDEM();
+        void enableAfterGrid();
 
 private:
         void init();

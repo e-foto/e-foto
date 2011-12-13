@@ -48,7 +48,7 @@ public:
 	void setPointList(MatchingPointsList *);
 	double getElapsedTime() { return elap_time; };
 	void cutGrid(double min, double max, bool fromList);
-	void getMinMax(double &, double &);
+        void getMinMax(double &, double &); // Return Min Z and Max Z
         double getMeanZ();
 	double getHeightXY(double X, double Y);
 	double getHeight(double col, double row);
