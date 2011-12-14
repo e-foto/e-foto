@@ -178,7 +178,8 @@ HEADERS += \
     NormalizedCrossCorrelation.h \
     RadiometricTransformation.h \
     LeastSquaresMatching.h \
-    ImageMatching.h
+    ImageMatching.h \
+    Interpolation.h
 
 FORMS += \
 # qt/formDisplay/
@@ -327,7 +328,8 @@ SOURCES += \
     NormalizedCrossCorrelation.cpp \
     RadiometricTransformation.cpp \
     LeastSquaresMatching.cpp \
-    ImageMatching.cpp
+    ImageMatching.cpp \
+    Interpolation.cpp
 
 # qt/resource/
 RESOURCES += resource.qrc

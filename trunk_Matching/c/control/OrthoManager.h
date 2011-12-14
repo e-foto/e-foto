@@ -14,6 +14,7 @@
 #include "DemGrid.h"
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
+#include "Interpolation.h"
 
 class OrthoUserInterface;
 class EFotoManager;
@@ -35,6 +36,7 @@ class OrthoManager
         void runAllOrthoTogheter();
         bool flag_cancel;
         bool show_image;
+        int inter_method;
 
 public:
 
@@ -58,6 +60,7 @@ public:
         int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
         void setFlagCancel() { flag_cancel = true; };
         void setShowImage(bool _shw) { show_image = _shw; };
+        void setInterMethod(int _mth) { inter_method = _mth; };
 
 };
 

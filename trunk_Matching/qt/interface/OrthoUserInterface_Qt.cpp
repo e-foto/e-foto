@@ -200,9 +200,11 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 
     disableOptions();
     setAllowClose(false);
+    manager->setInterMethod(comboBox4->currentIndex());
     manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
     setAllowClose(true);
     enableOptions();
+    setCurrentWork("Done");
 }
 
 void OrthoUserInterface_Qt::disableOptions()
