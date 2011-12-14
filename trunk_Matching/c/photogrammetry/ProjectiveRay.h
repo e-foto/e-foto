@@ -57,6 +57,7 @@ public:
 	AnalogImageSpaceCoordinate digitalToAnalog(DigitalImageSpaceCoordinate myDigitalCoordinate);
 	PositionMatrix digitalToAnalog(const PositionMatrix& myDigitalPositions);
 	DigitalImageSpaceCoordinate analogToDigital(double xi, double eta);
+        void analogToDigital(double xi, double eta, double &x, double &y);
 	DigitalImageSpaceCoordinate analogToDigital(AnalogImageSpaceCoordinate myAnalogCoordinate);
 	PositionMatrix analogToDigital(const PositionMatrix& myAnalogPositions);
 
