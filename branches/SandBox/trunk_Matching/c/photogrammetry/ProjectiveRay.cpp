@@ -236,6 +236,27 @@ DigitalImageSpaceCoordinate ProjectiveRay::analogToDigital(double xi, double eta
 	}
 }
 
+void ProjectiveRay::analogToDigital(double xi, double eta, double &x, double &y)
+{
+        if (myImage != NULL && myImage->getIO() != NULL)
+        {
+                DigitalImageSpaceCoordinate result;
+
+                Matrix Xa = myImage->getIO()->getXa();
+                double a0, a1, a2, b0, b1, b2;
+                a0 = Xa.get(1,1);
+                a1 = Xa.get(2,1);
+                a2 = Xa.get(3,1);
+                b0 = Xa.get(4,1);
+                b1 = Xa.get(5,1);
+                b2 = Xa.get(6,1);
+
+                // From Silveira, M.T. - Master Thesis - UERJ, Geomatica 2005
+                x = ((b2*xi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2));
+                y = ((a1*eta - a1*b0 - b1*xi + b1*a0) / (a1*b2 - b1*a2));
+        }
+}
+
 DigitalImageSpaceCoordinate ProjectiveRay::analogToDigital(AnalogImageSpaceCoordinate myAnalogCoordinate)
 {
 	return analogToDigital(myAnalogCoordinate.getXi(), myAnalogCoordinate.getEta());
