@@ -492,3 +492,9 @@ void DEMUserInterface_Qt::onStereoplotterClicked()
 {
     QMessageBox::warning(this,"Warning","Sorry, not implemented");
 }
+
+void DEMUserInterface_Qt::showErrorMessage(QString msg)
+{
+    QMessageBox::critical(this, "Error",msg);
+    doneButton->click();
+}
