@@ -71,7 +71,11 @@ bool DEMManager::exec()
         if (myInterface != NULL)
         {
             myInterface->exec();
-            getPairs();
+            if (!getPairs())
+            {
+                returnProject();
+                return status;
+            }
             createInitialSeeds();
         }
     }
@@ -140,7 +144,7 @@ bool DEMManager::connectImagePoints()
         return false;
 }
 
-void DEMManager::getPairs()
+int DEMManager::getPairs()
 {
     //
     // List Pairs description (0 - N-1):
@@ -148,21 +152,114 @@ void DEMManager::getPairs()
     // num = left + no_imgs*right // Encoding
     // left = num % no_imgs // Decoding
     // right =  num / no_imgs // Decoding
+    //  Image ID ranges from 1-N
 
-    // Criado na mão!! 0-1 e 1-2
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+
+    if (listAllImages.size() < 2)
+    {
+        dui->showErrorMessage("Not enough images to run this application");
+        return 0;
+    }
+
+    // Clear list
     listPairs.clear();
-    listPairs.push_back(3);
-    listPairs.push_back(7);
 
+    Image *img;
+    double X1, Y1, X2, Y2, R, dist, best_dist, bX2, bY2, overlap, align_ang, kappa;
+    int p1, p2, best_img, img_code;
+    Matrix Xa;
+
+    // Calculate Image Radius
+    ObjectSpaceCoordinate osc;
+    img = listAllImages.at(0);
+    ProjectiveRay pr(img);
+    Xa = img->getEO()->getXa();
+    X1 = Xa.get(1,1);
+    Y1 = Xa.get(2,1);
+    p1 = img->getWidth();
+    p2 = img->getHeight()/2;
+    osc = pr.digitalToObject(p1,p2,img->getHeight(),false);
+    X2 = osc.getX();
+    Y2 = osc.getY();
+    R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+
+    for (int i=0; i<listAllImages.size()-1; i++)
+    {
+        // Get base image center
+        img = listAllImages.at(i);
+        Xa = img->getEO()->getXa();
+        X1 = Xa.get(1,1);
+        Y1 = Xa.get(2,1);
+        kappa = fabs(Xa.get(6,1));
+        if (kappa > M_PI)
+            kappa = M_PI - kappa;
+
+        best_dist = 10e100;
+
+        // Calculate the shortest image center
+        for (int j=i+1; j<listAllImages.size(); j++)
+        {
+            if (i==j)
+                continue;
+            img = listAllImages.at(j);
+            Xa = img->getEO()->getXa();
+            X2 = Xa.get(1,1);
+            Y2 = Xa.get(2,1);
+
+            // Calculate dist
+            dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+
+            if (dist < best_dist)
+            {
+                best_dist = dist;
+                best_img = j;
+                bX2 = X2;
+                bY2 = Y2;
+            }
+        }
+
+        // Check images overlapping
+        overlap = 100*(2*R-best_dist)/(2*R);
+
+        if (overlap < 60.0 || overlap > 100.0)
+            continue;
+
+        // Check images alignment and kappa
+        align_ang = fabs(atan((Y2-Y1)/(X2-X1)));
+        if (fabs(align_ang - kappa) > 0.785398)
+            continue;
+
+        // Add images to list
+        img_code = i + listAllImages.size()*best_img;
+        listPairs.push_back(img_code);
+    }
+
+    if (listPairs.size() < 1)
+    {
+        dui->showErrorMessage("Not enough pairs to run this application");
+        return 0;
+    }
+
+    addPairsToInterface();
+
+    return 1;
+}
+
+void DEMManager::addPairsToInterface()
+{
     // Add pairs to the interface
     int left_id, right_id;
+    string str_left, str_right;
     stringstream txt;
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     for (int i=0; i<listPairs.size(); i++)
     {
         getImagesId(i,left_id,right_id);
+        str_left = listAllImages.at(left_id-1)->getImageId();
+        str_right = listAllImages.at(right_id-1)->getImageId();
         txt.str(""); // Clear stream
-        txt << "Images " << left_id << " and " << right_id;
+        txt << "Images " << str_left << " and " << str_right;
         dui->addImagePair((char *)txt.str().c_str());
     }
     dui->setStatus((char *)"None");
