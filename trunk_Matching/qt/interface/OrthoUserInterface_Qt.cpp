@@ -317,3 +317,9 @@ void OrthoUserInterface_Qt::showImage(Matrix* image, bool isGrayscale)
     sv->blockMark();
     sv->show();
 }
+
+void OrthoUserInterface_Qt::showErrorMessage(QString msg)
+{
+    QMessageBox::critical(this, "Error",msg);
+    doneButton->click();
+}

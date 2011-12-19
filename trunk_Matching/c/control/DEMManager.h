@@ -44,6 +44,7 @@ class DEMManager
         bool connectImagePoints();
         MatchingPointsList seeds, pairs;
         void getImagesId(int, int&, int&);
+        void addPairsToInterface();
         void resamplePoints(MatchingPointsList *list, double resample);
         void createInitialSeeds();
         void extractDEMPair(int);
@@ -69,7 +70,7 @@ public:
 	//
         bool exec();
         void returnProject();
-        void getPairs();
+        int getPairs();
         void extractDEM(int, bool);
         void setAutoExtractionSettings(int, int, int, int, double);
         void setNCCSettings(int, int, double, double);

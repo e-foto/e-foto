@@ -92,6 +92,7 @@ public:
     unsigned int getHeight();
     string getFilename();
     string getFilepath();
+    string getImageId();
 	bool isGnssAvailable();
 	bool isInsAvailable();
 	double getGnssX0();

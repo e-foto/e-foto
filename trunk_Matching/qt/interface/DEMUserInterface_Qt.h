@@ -72,6 +72,7 @@ public:
         void showImage(Matrix* image, bool isGrayscale = true);
         void disableOptions();
         void enableOptions();
+        void showErrorMessage(QString msg);
 };
 
 #endif // DEMUSERINTERFACE_QT_H

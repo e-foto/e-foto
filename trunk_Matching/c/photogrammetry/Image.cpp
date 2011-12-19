@@ -199,6 +199,15 @@ string Image::getFilepath()
     return filepath;
 }
 
+/**
+ * Get the value of image ID
+ * @return the value of image ID
+ */
+string Image::getImageId()
+{
+    return imageId;
+}
+
 bool Image::isGnssAvailable()
 {
 	return gnssAvailable;

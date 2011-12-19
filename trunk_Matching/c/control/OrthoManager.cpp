@@ -74,6 +74,15 @@ bool OrthoManager::exec()
             addImagesToForm();
         }
     }
+
+    if (listAllImages.size() < 1)
+    {
+        OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+        oui->showErrorMessage("There is no image to run this application");
+        returnProject();
+    }
+
+
     return status;
 }
 
@@ -82,7 +91,7 @@ void OrthoManager::addImagesToForm()
     OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 
     for (int i=1; i<=listAllImages.size(); i++)
-            oui->comboBox->addItem("Image "+QString::number(i));
+        oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
 }
 
 int OrthoManager::loadDemGrid(char * filename, int fileType)
@@ -173,6 +182,7 @@ void OrthoManager::runAllOrthoTogheter()
     //
     AnalogImageSpaceCoordinate analog_coord;
     Interpolation interp;
+    interp.setMode(1); // Color
     double meanZ = grid->getMeanZ(), Z;
     double Xi, Yi, Xf, Yf, res_x, res_y, best_dist, dist, pixel;
     double lin, col, best_lin, best_col;
@@ -300,6 +310,7 @@ void OrthoManager::runOrthoIndividual(int image)
     oui->setCurrentWork("Calculating ortho-rectification for image "+strimg);
     double pixel;
     Interpolation interp;
+    interp.setMode(1); // Color
 
     for (double Y=Yi_img; Y<Yf_img; Y+=res_y)
     {

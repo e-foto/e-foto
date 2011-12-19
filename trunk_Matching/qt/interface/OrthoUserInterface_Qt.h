@@ -56,6 +56,7 @@ public:
         void disableOptions();
         void enableOptions();
         void showImage(Matrix* image, bool isGrayscale = true);
+        void showErrorMessage(QString msg);
 };
 
 #endif // ORTHOUSERINTERFACE_QT_H
