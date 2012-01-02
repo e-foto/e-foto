@@ -56,28 +56,35 @@ public:
 class Geometry
 {
 	int type_;
+	int key_; // num futuro breve serão feitas alterações para que essa key seja unsigned int
 	QList<Coord> points_;
 public:
 	Geometry();
 	Geometry(const Geometry &other);
-	static Geometry createPoint(QPointF coord, QString label, Marker* mark = NULL);
-	static Geometry createLine(QList<Coord> coords);
-	static Geometry createPolygon(QList<Coord> coords);
+	static Geometry createPoint(QPointF coord, int pointKey, QString label = "", Marker* mark = NULL);
+	static Geometry createLine(QList<Coord> coords, int lineKey);
+	static Geometry createPolygon(QList<Coord> coords, int polygonKey);
 	int type() const;
+	int key() const;
 	QList<Coord> listPoints() const;
-	void changePoint(unsigned int key, Coord);
 };
 
 class GeometryResource
 {
 	QList<Geometry> geometries_;
 	int linkPointsMode;
+
+	unsigned int nextPointkey_;
+
 public:
 	GeometryResource();
-	void addPoint(QPointF location, QString label, Marker* mark = NULL);
-	void movePoint(unsigned int key, QPointF location);
+	void insertPoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
 	void clear();
 	QImage draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale);
+
+	unsigned int generatePointKey();
+	bool hasPoint(unsigned int key);
+	int indexOfPoint(unsigned int key);
 
 	void setLinkPointsMode(int mode);
 };

@@ -238,3 +238,25 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 	result.setDotsPerMeterY(3780);
 	return result;
 }
+
+QColor RasterResource::getColor(QPoint at)
+{
+	if (_isValid && at.x() >= 0 && at.y() >= 0 && at.x() < width() -1 && at.y() < height() - 1)
+		return QColor(_pyramid[0]->pixel(at));
+	else
+		return QColor();
+}
+
+unsigned int RasterResource::getGrayColor(QPointF at, bool linear)
+{
+	unsigned int result = 0;
+	if (_isValid && at.x() >= 0 && at.y() >= 0 && at.x() < width() -1 && at.y() < height() - 1)
+	{
+		if (linear)
+		{
+			// adicionar a parte linear aqui depois.
+		}
+		else result = qGray(_pyramid[0]->pixel((int)floor(at.x()),(int)floor(at.y())));
+	}
+	return result;
+}

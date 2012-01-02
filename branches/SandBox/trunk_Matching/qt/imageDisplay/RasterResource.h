@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QImage>
+#include <QColor>
 
 class RasterResource
 {
@@ -31,6 +32,8 @@ public:
 	QPointF center();
 
 	QImage getImageCut(QSize targetSize, QRectF imageCut);
+	QColor getColor(QPoint at);
+	unsigned int getGrayColor(QPointF at, bool linear = false);
 	void useSmoothIn(bool useSmooth);
 	void transformImage(double H[9]);
 };

@@ -106,7 +106,8 @@ void SingleScene::scaleTo(double newScale, QPointF at)
 
 	limitScale();
 
-	if (at == QPointF(-1,-1) || rasterRsrc_ == NULL)
+	//if (at == QPoint(-1,-1) || rasterRsrc_ == NULL)
+	if (at.x() < 0 || at.y() < 0 || rasterRsrc_ == NULL)
 		return;
 	if (!((at.x() >= 0 && at.x() <= rasterRsrc_->width()) && (at.y() >= 0 && at.y() <= rasterRsrc_->height())))
 		at = rasterRsrc_->center();
@@ -178,7 +179,7 @@ bool SingleScene::loadImage(QString filepath)
 		if (rasterRsrc_)
 			delete(rasterRsrc_);
 		rasterRsrc_ = rsrc;
-		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
+		detailViewpoint_ = viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 		scale_ = 1;
 		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 		return true;
@@ -197,7 +198,7 @@ bool SingleScene::loadImage(QImage image)
 		if (rasterRsrc_)
 			delete(rasterRsrc_);
 		rasterRsrc_ = rsrc;
-		viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
+		detailViewpoint_ = viewpoint_ = QPointF(rasterRsrc_->center().toPoint());
 		scale_ = 1;
 		setLimitScale(viewportSize_.width()/(double)getWidth() < viewportSize_.height()/(double)getHeight() ? viewportSize_.width()/(double)getWidth() : viewportSize_.height()/(double)getHeight(), getMaxScale());
 		return true;
@@ -293,6 +294,32 @@ QImage SingleScene::getFrame(QSize targetSize)
 	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale_);
 }
 
+QImage SingleScene::getFrame(QSize targetSize, QSize rectSize)
+{
+	if (!rasterRsrc_)
+		return QImage();
+
+	QRectF imageCut;
+	QSizeF newSize;
+	newSize.setWidth(targetSize.width()/scale_);
+	newSize.setHeight(targetSize.height()/scale_);
+	imageCut.setSize(newSize);
+	imageCut.moveCenter(viewpoint_);
+
+	QImage result(geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, viewpoint_, scale_));
+
+	QPointF detailTopLeft = (detailViewpoint_ - QPointF(rectSize.width()/(detailZoom_*scale_*2.0), rectSize.height()/(detailZoom_*scale_*2.0)));
+	QPointF toScreen = (detailTopLeft - viewpoint_)*scale_ + QPointF(targetSize.width()/2, targetSize.height()/2);
+	QRect detailedRect( toScreen.toPoint(), ((scale_*QSizeF(rectSize))/(scale_*detailZoom_)).toSize());
+
+	QPainter painter(&result);
+	painter.setPen(QPen(QColor(Qt::yellow)));
+	painter.drawRect(detailedRect);
+	painter.end();
+
+	return result;
+}
+
 QImage SingleScene::getFrame(QSize targetSize, double scale)
 {
 	if (!rasterRsrc_)
@@ -347,9 +374,23 @@ QImage SingleScene::getDetail(QSize targetSize, QPointF point, double zoom)
 	imageCut.setSize(newSize);
 	imageCut.moveCenter(point);
 
-	detailViewpoint_ = point;
+	//detailViewpoint_ = point;
 
 	return geometryRsrc_.draw(rasterRsrc_->getImageCut(targetSize, imageCut),targetSize, point, zoom);
+}
+
+QColor SingleScene::getColor(QPoint at)
+{
+	if (!rasterRsrc_)
+		return QColor();
+	return rasterRsrc_->getColor(at);
+}
+
+unsigned int SingleScene::getGrayColor(QPointF at, bool linear)
+{
+	if (!rasterRsrc_)
+		return 0;
+	return rasterRsrc_->getGrayColor(at, linear);
 }
 
 bool SingleScene::isValid()
@@ -372,6 +413,11 @@ QPointF SingleScene::getDetailedPoint()
 	return detailViewpoint_;
 }
 
+void SingleScene::setDetailedPoint(QPointF point)
+{
+	detailViewpoint_ = point;
+}
+
 double SingleScene::getDetailZoom()
 {
 	return detailZoom_;
@@ -391,5 +437,19 @@ RasterResource* SingleScene::rasters(int &rastersCount)
 GeometryResource* SingleScene::geometries(int &geometriesCount)
 {
 	geometriesCount = 1;
+	return &geometryRsrc_;
+}
+
+RasterResource* SingleScene::raster(int at)
+{
+	// Num futuro em que existam vários rasterResources associados a uma cena o at será o indice do raster buscado na cena
+	// O código -1 poderá ser usado para indicar o raster corrente
+	return rasterRsrc_;
+}
+
+GeometryResource* SingleScene::geometry(int at)
+{
+	// Num futuro em que existam vários geometryResources associados a uma cena o at será o indice do geometry buscado na cena
+	// O código -1 poderá ser usado para indicar o geometry corrente
 	return &geometryRsrc_;
 }
