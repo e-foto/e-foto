@@ -332,11 +332,10 @@ void MarkStereoTool::mousePressed(const QMouseEvent & event)
 		if ((lLocal.x() >= 0 && lLocal.y() >= 0 && lLocal.x() <= _display->getCurrentScene()->getLeftScene()->getWidth() && lLocal.y() <= _display->getCurrentScene()->getLeftScene()->getHeight())
 			&& (rLocal.x() >= 0 && rLocal.y() >= 0 && rLocal.x() <= _display->getCurrentScene()->getRightScene()->getWidth() && rLocal.y() <= _display->getCurrentScene()->getRightScene()->getHeight()))
 		{
-			int geometriesCount;
-			_display->getCurrentScene()->getLeftScene()->geometries(geometriesCount)->addPoint(lLocal, "PQP", &mark);
-			_display->getCurrentScene()->getRightScene()->geometries(geometriesCount)->addPoint(rLocal, "PQP", &mark);
-			_display->getCurrentScene()->getLeftScene()->geometries(geometriesCount)->setLinkPointsMode(0);
-			_display->getCurrentScene()->getRightScene()->geometries(geometriesCount)->setLinkPointsMode(0);
+			//_display->getCurrentScene()->getLeftScene()->geometry()->addPoint(lLocal, "Point", &mark);
+			//_display->getCurrentScene()->getRightScene()->geometry()->addPoint(rLocal, "Point", &mark);
+			//_display->getCurrentScene()->getLeftScene()->geometry()->setLinkPointsMode(0);
+			//_display->getCurrentScene()->getRightScene()->geometry()->setLinkPointsMode(0);
 			_display->updateAll();
 		}
 	}

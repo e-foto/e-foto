@@ -18,6 +18,8 @@ SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
 	_displayMode = IntermediatedScreen;
 	//_onMove = false;
 	_cloneScale = true;
+	_showDetailArea = false;
+	_blockShowDetailArea = false;
 	_onPainting = false;
 	_over = NULL;
 	_detail = NULL;
@@ -40,17 +42,34 @@ void SingleDisplay::updateMousePosition()
 
 bool SingleDisplay::positionIsVisible(QPointF pos)
 {
+	/*
 	QPointF screenPos;
 	SingleScene* currentScene = (SingleScene*)_currentScene;
 	if (_displayMode == TopViewScreen)
 		screenPos = (pos - QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0))*currentScene->getThumbScale() + QPointF(width()/2, height()/2);
 	else
 		screenPos = (pos - _currentScene->getViewpoint())*_currentScene->getScale() + QPointF(width()/2, height()/2);
+		*/
 
+	QPointF screenPos = screenPosition(pos);
 	if (screenPos.x() >= 0 && screenPos.y() >= 0 && screenPos.x() <= width() && screenPos.y() <= height())
 		return true;
 	else
 		return false;
+}
+
+QPointF SingleDisplay::screenPosition(QPointF pos)
+{
+	QPointF screenPos;
+	SingleScene* currentScene = (SingleScene*)_currentScene;
+	if (_displayMode == TopViewScreen)
+		screenPos = (pos - QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0))*currentScene->getThumbScale() + QPointF(width()/2, height()/2);
+	else if (_displayMode == MostDetailedScreen)
+		screenPos = (pos - currentScene->getDetailedPoint())*currentScene->getScale()*currentScene->getDetailZoom() + QPointF(width()/2, height()/2);
+	else
+		screenPos = (pos - _currentScene->getViewpoint())*_currentScene->getScale() + QPointF(width()/2, height()/2);
+
+	return screenPos;
 }
 
 QPointF SingleDisplay::getLastMousePosition()
@@ -63,6 +82,11 @@ QPointF SingleDisplay::getLastMousePosition()
 	{
 		scale = currentScene->getThumbScale();
 		mousePos = QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0) + diffTocenter / scale;
+	}
+	else if (_displayMode == MostDetailedScreen)
+	{
+		scale = currentScene->getScale()*currentScene->getDetailZoom();
+		mousePos = currentScene->getDetailedPoint() + diffTocenter / scale;
 	}
 	else
 	{
@@ -88,6 +112,21 @@ QPointF SingleDisplay::getMouseScreenPosition()
 bool SingleDisplay::painting()
 {
 	return _onPainting;
+}
+
+bool SingleDisplay::showDetailedArea()
+{
+	return _showDetailArea;
+}
+
+void SingleDisplay::setShowDetailedArea(bool status)
+{
+	_showDetailArea = status;
+}
+
+void SingleDisplay::blockShowDetailedArea(bool status)
+{
+	_blockShowDetailArea = status;
 }
 
 void SingleDisplay::setCurrentScene(AbstractScene *newScene)
@@ -190,6 +229,11 @@ void SingleDisplay::setDetailMode(SingleDisplay *display)
 	_currentScene = _over->getCurrentScene();
 }
 
+DisplayMode SingleDisplay::getDisplayMode()
+{
+	return _displayMode;
+}
+
 void SingleDisplay::setActivatedTool(SingleTool *tool, bool active)
 {
 	for (int i = _tool.size() - 1; i >=  0; i--)
@@ -213,11 +257,16 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 		if (_currentScene->isValid())
 		{
 			QRect target = rect();
-			painter.drawImage(0, 0,_currentScene->getFrame(target.size()));
+
+			if (_showDetailArea && !_blockShowDetailArea && _detail && _detail->isVisible())
+				painter.drawImage(0, 0,_currentScene->getFrame(target.size(), _detail->size()));
+			else
+				painter.drawImage(0, 0,_currentScene->getFrame(target.size()));
 			if (_detail)
 				_detail->update();
 			if (_over)
 				_over->update();
+
 			/*
 			if (_detail && _detail->isVisible())// && _showDetailArea)
 			{
@@ -242,7 +291,9 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 			QSize targetSize = target.size();
 
 			QImage thumb = currentScene->getThumb(targetSize,&(_detail->rect()));
-			painter.drawImage((targetSize.width()-thumb.width())/2, (targetSize.height()-thumb.height())/2, thumb);
+                        // Aqui vai ser preciso rever o método getThumb para que ele retorne exatamente o _detail_>rect()
+                        painter.drawImage((targetSize.width()-thumb.width())/2, (targetSize.height()-thumb.height())/2, thumb);
+                        //painter.drawImage(0, 0, thumb);
 		}
 		painter.end();
 	}
@@ -258,8 +309,19 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 			//double zoom = ceil(currentScene->getScale()*currentScene->getDetailZoom());
 			double zoom = currentScene->getScale()*currentScene->getDetailZoom();
 
-			QImage detail = currentScene->getDetail(targetSize, _over->getLastMousePosition(), zoom);
+			//QImage detail = currentScene->getDetail(targetSize, _over->getLastMousePosition(), zoom);
+			QImage detail = currentScene->getDetail(targetSize, currentScene->getDetailedPoint(), zoom);
 			painter.drawImage(0, 0, detail);
+
+			/*
+			if (!_over->showDetailedArea())
+			{
+				QPixmap ico(_over->cursor().pixmap());
+				QRect reg(QPoint(),ico.size());
+				reg.moveCenter(QPoint(width()/2, height()/2));
+				painter.drawPixmap(reg,ico);
+			}
+			*/
 		}
 		painter.end();
 	}
@@ -274,8 +336,16 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 
 void SingleDisplay::resizeEvent(QResizeEvent *e)
 {
+	if (!_currentScene || !_currentScene->isValid())
+		return;
+
 	_currentScene->setViewport(e->size());
 	updateAll();
+
+	for (int i = 0; i < _tool.size(); i++)
+	{
+		_tool.at(i)->resizeEvent(*e);
+	}
 }
 
 bool SingleDisplay::eventFilter(QObject *o, QEvent *e)

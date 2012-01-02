@@ -200,7 +200,8 @@ FORMS += \
     SRForm.ui \
     EfotoViewer.ui \
     DemExtraction.ui \
-    OrthoForm.ui
+    OrthoForm.ui \
+    SeedEditor.ui
 
 
 SOURCES += \
