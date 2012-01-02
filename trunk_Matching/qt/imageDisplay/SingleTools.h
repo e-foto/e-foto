@@ -26,11 +26,12 @@ class SingleTool : public QObject
 	Q_OBJECT
 
 public:
-	SingleTool(SingleDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL;
-										connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); }
+	SingleTool(SingleDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _posLabel = NULL; _propagateMoveTo = _propagateScaleTo = NULL;
+										connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); setImageMode(); _actualizePosLabel = true; }
 	virtual ~SingleTool() {}
 
 	virtual void paintEvent(const QPaintEvent& event);
+	virtual void resizeEvent(const QResizeEvent& event);
 	virtual void enterEvent(const QHoverEvent& event);
 	virtual void leaveEvent(const QHoverEvent& event);
 	virtual void moveEvent(const QHoverEvent& event);
@@ -40,19 +41,47 @@ public:
 	virtual void mouseDblClicked(const QMouseEvent& event);
 	virtual void wheelEvent(const QWheelEvent& event);
 
+	void setImageMode();
+	void setOrtoImageMode(double xi, double dx, double yi, double dy);
+	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
+
+	void setScaleSpin(QDoubleSpinBox* scaleSpin) {_scaleSpin = scaleSpin;}
+	void setPosLabel(QLabel* label) {_posLabel = label;}
+	void actualizeScaleSpin(double scale);
+	void actualizePosLabel(SingleDisplay* display, bool force = false);
+
+	void propagateMove(QPointF desloc);
+	void propagateScale(double scale, QPoint at, int movementMode = 0);
+
 public slots:
 	void autoMove();
-	void setScaleSpin(QDoubleSpinBox* scaleSpin) {_scaleSpin = scaleSpin;}
-	void actualizeScaleSpin(double scale);
+	void propagateMoveTo(SingleTool* tool = NULL) {_propagateMoveTo = tool;}
+	void propagateScaleTo(SingleTool* tool = NULL) {_propagateScaleTo = tool;}
 
 protected:
 	SingleDisplay* _display;
+	SingleTool* _propagateMoveTo;
+	SingleTool* _propagateScaleTo;
+
 	QPointF _autoPan;
 	QPoint _lastMousePosition;
+	QPointF _fixedPointOnImage;
 	QPoint _fixedPoint;
 	double _scale;
+
 	QCursor _currentCursor;
 	QDoubleSpinBox* _scaleSpin;
+	QLabel* _posLabel;
+	bool _actualizePosLabel;
+
+	bool _printZ;
+	bool _invertY;
+	double _xi;
+	double _yi;
+	double _zi;
+	double _dx;
+	double _dy;
+	double _dz;
 };
 
 class ZoomTool : public SingleTool
@@ -62,6 +91,7 @@ public:
 	ZoomTool(SingleDisplay* display);
 	~ZoomTool();
 	void paintEvent(const QPaintEvent& event);
+	//void resizeEvent(const QResizeEvent &event);
 	//void enterEvent(const QHoverEvent& event);
 	//void leaveEvent(const QHoverEvent& event);
 	//void moveEvent(const QHoverEvent& event);
@@ -78,6 +108,7 @@ public:
 	MoveTool(SingleDisplay* display);
 	~MoveTool();
 	//void paintEvent(const QPaintEvent& event);
+	//void resizeEvent(const QResizeEvent &event);
 	//void enterEvent(const QHoverEvent& event);
 	//void leaveEvent(const QHoverEvent& event);
 	//void moveEvent(const QHoverEvent& event);
@@ -90,11 +121,28 @@ public:
 
 class MarkTool : public SingleTool
 {
+	Q_OBJECT
+
 	Marker mark;
+
+	//QList< MarkListener* > _listeners;
+	int nextMarkItem;
+	bool onlyEmitClickedMode;
+
 public:
 	MarkTool(SingleDisplay* display);
 	~MarkTool();
+
+	void changeMarker(Marker marker);
+	Marker* getMarker();
+
+	void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
+	void editMark(int key, QPointF location, Marker* marker = NULL);
+	void editMark(int key, QPointF location, QString label, Marker* marker = NULL);
+	void clear();
+
 	//void paintEvent(const QPaintEvent& event);
+	//void resizeEvent(const QResizeEvent &event);
 	//void enterEvent(const QHoverEvent& event);
 	//void leaveEvent(const QHoverEvent& event);
 	//void moveEvent(const QHoverEvent& event);
@@ -103,15 +151,25 @@ public:
 	//void mouseMoved(const QMouseEvent & event);
 	//void mouseDblClicked(const QMouseEvent & event);
 	//void wheelEvent(const QWheelEvent& event);
+
+	void setToOnlyEmitClickedMode();
+	void setToAutoCreateMarkFrom(unsigned int start);
+	void putClickOn(QPointF& pos);
+	//void setListener(MarkListener* listener, bool active = true);
+
+signals:
+	void clicked(QPointF);
 };
 
+/*
 class InfoTool : public SingleTool
 {
-	QLabel _infoLabel;
 public:
 	InfoTool(SingleDisplay* display);
 	~InfoTool();
+
 	void paintEvent(const QPaintEvent& event);
+	void resizeEvent(const QResizeEvent &event);
 	void enterEvent(const QHoverEvent& event);
 	void leaveEvent(const QHoverEvent& event);
 	void moveEvent(const QHoverEvent& event);
@@ -120,8 +178,8 @@ public:
 	void mouseMoved(const QMouseEvent & event);
 	void mouseDblClicked(const QMouseEvent & event);
 	void wheelEvent(const QWheelEvent& event);
-	QLabel* getInfoLabel();
 };
+*/
 
 class OverTool : public SingleTool
 {
@@ -138,6 +196,7 @@ public:
 	void setOverVisible(bool status);
 
 	void paintEvent(const QPaintEvent& event);
+	void resizeEvent(const QResizeEvent &event);
 	void enterEvent(const QHoverEvent& event);
 	void leaveEvent(const QHoverEvent& event);
 	void moveEvent(const QHoverEvent& event);
@@ -153,6 +212,8 @@ class NearTool : public SingleTool
 	QDockWidget* _nearDock;
 	SingleDisplay* _near;
 	//QPointF _lastPos;
+	MarkTool* _marker;
+	bool _cursorIsVisible;
 public:
 	NearTool(SingleDisplay* display);
 	~NearTool();
@@ -161,7 +222,12 @@ public:
 	bool nearIsVisible();
 	void setNearVisible(bool status);
 
+	void setMarker(MarkTool* marker);
+	void setNearCursor(QCursor cursor);
+	//void setActivatedToolOnNear(SingleTool* tool, bool activate = true);
+
 	void paintEvent(const QPaintEvent& event);
+	void resizeEvent(const QResizeEvent &event);
 	void enterEvent(const QHoverEvent& event);
 	void leaveEvent(const QHoverEvent& event);
 	void moveEvent(const QHoverEvent& event);
@@ -178,6 +244,8 @@ class SingleToolsBar : public QToolBar
 
 protected:
 	SingleDisplay* _display;
+	QLabel* _infoLabel;
+	SingleTool* currentTool;
 
 public:
 	SingleToolsBar(SingleDisplay* display, QWidget* parent);
@@ -189,6 +257,7 @@ public:
 	QAction* showOverview;
 	QAction* showNearview;
 	QAction* useAntialias;
+	QAction* useFixedNearview;
 	QAction* openImage;
 	QAction* saveImage;
 	QDoubleSpinBox* scaleSpinBox;
@@ -197,11 +266,10 @@ public:
 	ZoomTool zoom;
 	MoveTool move;
 	MarkTool mark;
-	NearTool near;
+        NearTool near_;
 	OverTool over;
-	InfoTool info;
+	//InfoTool info;
 
-	void deactivateAllExclusiveTools();
 	void setOpenVisible(bool status);
 	void setSaveVisible(bool status);
 	void setMarkVisible(bool status);
@@ -211,8 +279,14 @@ public:
 
 public slots:
 	void executeAction(QAction *action);
+
 	void rescaleDisplay();
 	void changeDetailZoom(int nz);
+
+	void setImageMode();
+	void setOrtoImageMode(double xi, double dx, double yi, double dy);
+	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
+
 };
 
 class SeparatedStereoToolsBar : public QToolBar
@@ -222,6 +296,10 @@ class SeparatedStereoToolsBar : public QToolBar
 protected:
 	SingleDisplay* _leftDisplay;
 	SingleDisplay* _rightDisplay;
+	QLabel* _leftInfoLabel;
+	QLabel* _rightInfoLabel;
+	SingleTool* currentLeftTool;
+	SingleTool* currentRightTool;
 
 public:
 	SeparatedStereoToolsBar(SingleDisplay* leftDisplay, SingleDisplay* rightDisplay, QWidget* parent);
@@ -250,15 +328,14 @@ public:
 	MarkTool leftMark;
 	NearTool leftNear;
 	OverTool leftOver;
-	InfoTool leftInfo;
+	//InfoTool leftInfo;
 	ZoomTool rightZoom;
 	MoveTool rightMove;
 	MarkTool rightMark;
 	NearTool rightNear;
 	OverTool rightOver;
-	InfoTool rightInfo;
+	//InfoTool rightInfo;
 
-	void deactivateAllExclusiveTools();
 	void setOpenVisible(bool status);
 	void setSaveVisible(bool status);
 	void setMarkVisible(bool status);

@@ -24,6 +24,8 @@ protected:
 
 	//bool _onMove;
 	bool _cloneScale;
+	bool _showDetailArea;
+	bool _blockShowDetailArea;
 	QPointF _mouseLastPos;
 	bool _onPainting;
 
@@ -48,10 +50,15 @@ public:
 
 	void updateMousePosition();
 	bool positionIsVisible(QPointF);
+	QPointF screenPosition(QPointF);
 	QPointF getLastMousePosition();
 	QPointF getPosition(QPoint screenPosition);
 	QPointF getMouseScreenPosition();
 	bool painting();
+
+	bool showDetailedArea();
+	void setShowDetailedArea(bool status);
+	void blockShowDetailedArea(bool status);
 
 	void setCurrentScene(AbstractScene*);
 	AbstractScene* getCurrentScene();
@@ -67,6 +74,7 @@ public:
 
 	void setOverviewMode(SingleDisplay* display);
 	void setDetailMode(SingleDisplay* display);
+	DisplayMode getDisplayMode();
 	void setActivatedTool(SingleTool* tool, bool active = true);
 
 public slots:

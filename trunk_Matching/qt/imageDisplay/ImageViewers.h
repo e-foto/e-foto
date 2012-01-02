@@ -25,6 +25,11 @@ public slots:
 	void blockOpen();
 	void blockSave();
 	void blockMark();
+
+	void setImageMode();
+	void setOrtoImageMode(double xi, double dx, double yi, double dy);
+	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
+
 };
 
 class SeparatedStereoViewer : public QMainWindow
@@ -40,6 +45,11 @@ class SeparatedStereoViewer : public QMainWindow
 
 public:
 	SeparatedStereoViewer(QWidget *parent=0);
+	SingleDisplay* getLeftDisplay() {return leftDisplay;}
+	SingleDisplay* getRightDisplay() {return rightDisplay;}
+	MarkTool& getLeftMarker() {return (tool->leftMark);}
+	MarkTool& getRightMarker() {return (tool->rightMark);}
+	SeparatedStereoToolsBar* getToolBar() {return tool;}
 
 public slots:
 	void loadLeftImage(QString filename);

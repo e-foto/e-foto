@@ -2,6 +2,7 @@
 #define DEMUSERINTERFACE_QT_H
 
 #include "ui_DemExtraction.h"
+#include "ui_SeedEditor.h"
 #include "DEMUserInterface.h"
 #include "ImageView.h"
 #include "LoadingScreen.h"
@@ -15,6 +16,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+class SeedEditorUserInterface_Qt;
+
 class DEMUserInterface_Qt : public QWidget, public Ui::DEMInterface, public DEMUserInterface
 {
 	Q_OBJECT
@@ -25,6 +28,7 @@ public slots:
 
 protected:
         static DEMUserInterface_Qt* demInst;
+        SeedEditorUserInterface_Qt* sed;
         DEMUserInterface_Qt(DEMManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
         ~DEMUserInterface_Qt();
         DEMManager *manager;
@@ -73,6 +77,25 @@ public:
         void disableOptions();
         void enableOptions();
         void showErrorMessage(QString msg);
+};
+
+class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
+{
+    Q_OBJECT
+    DEMManager *manager;
+    SeparatedStereoViewer* viewer;
+
+    void closeEvent(QCloseEvent *);
+
+public:
+    SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);
+
+public slots:
+    void imageClicked(QPointF);
+    void updateImagesList(QString);
+
+signals:
+    void closed(bool);
 };
 
 #endif // DEMUSERINTERFACE_QT_H

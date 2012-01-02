@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IOMainWindow</class>
- <widget class="QMainWindow" name="IOMainWindow">
+ <class>SeedWindow</class>
+ <widget class="QMainWindow" name="SeedWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,72 +17,8 @@
    <iconset resource="../resource/resource.qrc">
     <normaloff>:/icon/WindowIcon.png</normaloff>:/icon/WindowIcon.png</iconset>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout"/>
-  </widget>
+  <widget class="QWidget" name="centralwidget"/>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>820</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionSet_mark"/>
-    <addaction name="actionMove"/>
-    <addaction name="actionZoom"/>
-    <addaction name="separator"/>
-    <addaction name="actionFit_view"/>
-    <addaction name="actionActive_grid"/>
-   </widget>
-   <widget class="QMenu" name="menuExecute">
-    <property name="title">
-     <string>&amp;Execute</string>
-    </property>
-    <addaction name="actionInterior_orientation"/>
-    <addaction name="actionView_report"/>
-   </widget>
-   <addaction name="menuView"/>
-   <addaction name="menuExecute"/>
-  </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="mouseTracking">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <property name="layoutDirection">
-    <enum>Qt::LeftToRight</enum>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionSet_mark"/>
-   <addaction name="actionMove"/>
-   <addaction name="actionZoom"/>
-   <addaction name="separator"/>
-   <addaction name="actionFit_view"/>
-   <addaction name="actionActive_grid"/>
-   <addaction name="separator"/>
-   <addaction name="actionInterior_orientation"/>
-   <addaction name="actionView_report"/>
-  </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="contextMenuPolicy">
     <enum>Qt::NoContextMenu</enum>
@@ -105,8 +41,18 @@
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QGridLayout">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QComboBox" name="comboBox1"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox2"/>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QTableView" name="table1"/>
      </item>
     </layout>

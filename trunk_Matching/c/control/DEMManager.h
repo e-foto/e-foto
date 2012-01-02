@@ -49,6 +49,9 @@ class DEMManager
         void createInitialSeeds();
         void extractDEMPair(int);
         void calcPointsXYZ();
+        double fixAngle(double angle);
+        double getAngleBetweenImages(double X1, double Y1, double X2, double Y2);
+        bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
         ImageMatching *im;
         DemGrid *grid;
         StereoPair sp;

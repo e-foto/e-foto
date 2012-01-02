@@ -144,6 +144,58 @@ bool DEMManager::connectImagePoints()
         return false;
 }
 
+/*
+ * Pair detection / Angle functions
+ */
+double DEMManager::fixAngle(double angle)
+{
+        bool negative = angle < 0.0;
+
+        // Positive signal
+        angle = fabs(angle);
+
+        // Bring angle to the first lap
+        if (angle > 2*M_PI)
+        {
+                int laps = floor(angle/(2*M_PI));
+                angle = angle - laps*(2*M_PI);
+        }
+
+        if (negative)
+                angle = 2*M_PI - angle;
+
+        return angle;
+}
+
+double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double Y2)
+{
+        double delta_X = X2 - X1;
+        double delta_Y = Y2 - Y1;
+
+        if (delta_X - 0.0 < 0.0000000000001)
+        {
+                if (delta_Y > 0.0)
+                        return M_PI/2.0;
+                else
+                        return 3*M_PI/2.0;
+        }
+
+        return fixAngle(atan(delta_Y/delta_X));
+}
+
+bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolerance)
+{
+        angle1 = fixAngle(angle1);
+        angle2 = fixAngle(angle2);
+
+        double distance = fabs(angle1 - angle2);
+
+        if (distance > M_PI)
+            distance = 2*M_PI - distance;
+
+        return (distance < tolerance || fabs(M_PI - distance) < tolerance);
+}
+
 int DEMManager::getPairs()
 {
     //
@@ -192,8 +244,6 @@ int DEMManager::getPairs()
         X1 = Xa.get(1,1);
         Y1 = Xa.get(2,1);
         kappa = fabs(Xa.get(6,1));
-        if (kappa > M_PI)
-            kappa = M_PI - kappa;
 
         best_dist = 10e100;
 
@@ -226,8 +276,9 @@ int DEMManager::getPairs()
             continue;
 
         // Check images alignment and kappa
-        align_ang = fabs(atan((Y2-Y1)/(X2-X1)));
-        if (fabs(align_ang - kappa) > 0.785398)
+        align_ang = getAngleBetweenImages(X1, Y1, bX2, bY2);
+
+        if (!checkAnglesAlligned(align_ang, kappa, 0.174532925)) // 10 Degrees
             continue;
 
         // Add images to list
@@ -650,3 +701,10 @@ void DEMManager::extractDEMPair(int pair)
     delete img1, img2;
     delete im;
 }
+
+/*
+ *
+ *  SEEDS EDITOR
+ *
+ */
+

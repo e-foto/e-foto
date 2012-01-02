@@ -18,6 +18,10 @@ SingleViewer::SingleViewer(QWidget* parent) : QMainWindow(parent)
 
 void SingleViewer::closeEvent(QCloseEvent *)
 {
+	if (tool->showNearview->isChecked())
+		tool->showNearview->trigger();
+	if (tool->showOverview->isChecked())
+		tool->showOverview->trigger();
 	delete tool;
 	delete sd;
 }
@@ -56,6 +60,23 @@ void SingleViewer::blockSave()
 void SingleViewer::blockMark()
 {
 	tool->setMarkVisible(false);
+	tool->mark.setToOnlyEmitClickedMode();
+        tool->near_.setNearCursor(QCursor(Qt::ArrowCursor));
+}
+
+void SingleViewer::setImageMode()
+{
+	tool->setImageMode();
+}
+
+void SingleViewer::setOrtoImageMode(double xi, double dx, double yi, double dy)
+{
+	tool->setOrtoImageMode(xi, dx, yi, dy);
+}
+
+void SingleViewer::setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz)
+{
+	tool->setElevationImageMode(xi, dx, yi, dy, zi, dz);
 }
 
 
@@ -94,6 +115,10 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 
 void SeparatedStereoViewer::closeEvent(QCloseEvent *)
 {
+	if (tool->showNearview->isChecked())
+		tool->showNearview->trigger();
+	if (tool->showOverview->isChecked())
+		tool->showOverview->trigger();
 	delete tool;
 	delete leftDisplay;
 	delete rightDisplay;
@@ -103,42 +128,42 @@ void SeparatedStereoViewer::loadLeftImage(QString filename)
 {
 	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
 	ss->loadImage(filename);
-	tool->setFitLeftView->trigger();
+	//tool->setFitLeftView->trigger();
 }
 
 void SeparatedStereoViewer::loadRightImage(QString filename)
 {
 	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
 	ss->loadImage(filename);
-	tool->setFitRightView->trigger();
+	//tool->setFitRightView->trigger();
 }
 
 void SeparatedStereoViewer::loadLeftImage(QImage *image)
 {
 	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
 	ss->loadImage(*image);
-	tool->setFitLeftView->trigger();
+	//tool->setFitLeftView->trigger();
 }
 
 void SeparatedStereoViewer::loadRightImage(QImage *image)
 {
 	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
 	ss->loadImage(*image);
-	tool->setFitRightView->trigger();
+	//tool->setFitRightView->trigger();
 }
 
 void SeparatedStereoViewer::loadLeftImage(Matrix *image, bool isGrayscale)
 {
 	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
 	ss->loadImage(image, isGrayscale);
-	tool->setFitLeftView->trigger();
+	//tool->setFitLeftView->trigger();
 }
 
 void SeparatedStereoViewer::loadRightImage(Matrix *image, bool isGrayscale)
 {
 	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
 	ss->loadImage(image, isGrayscale);
-	tool->setFitRightView->trigger();
+	//tool->setFitRightView->trigger();
 }
 
 void SeparatedStereoViewer::blockOpen()

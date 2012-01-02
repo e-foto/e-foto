@@ -253,29 +253,33 @@ Geometry::Geometry(const Geometry &other)
 {
 	points_ = other.listPoints();
 	type_ = other.type();
+	key_ = other.key();
 }
 
-Geometry Geometry::createPoint(QPointF coord, QString label, Marker *mark)
+Geometry Geometry::createPoint(QPointF coord, int pointKey, QString label, Marker *mark)
 {
 	Geometry result;
 	result.type_ = 1;
 	result.points_.append(Coord(coord, label, mark));
+	result.key_ = pointKey;
 	return result;
 }
 
-Geometry Geometry::createLine(QList<Coord> coords)
+Geometry Geometry::createLine(QList<Coord> coords, int lineKey)
 {
 	Geometry result;
 	result.type_ = 2;
 	result.points_.append(coords);
+	result.key_ = lineKey;
 	return result;
 }
 
-Geometry Geometry::createPolygon(QList<Coord> coords)
+Geometry Geometry::createPolygon(QList<Coord> coords, int polygonKey)
 {
 	Geometry result;
 	result.type_ = 3;
 	result.points_.append(coords);
+	result.key_ = polygonKey;
 	return result;
 }
 
@@ -284,31 +288,49 @@ int Geometry::type() const
 	return type_;
 }
 
+int Geometry::key() const
+{
+	return key_;
+}
+
 QList<Coord> Geometry::listPoints() const
 {
 	return points_;
 }
 
-void Geometry::changePoint(unsigned int key, Coord newCoord)
-{
-	points_.replace(key, newCoord);
-}
-
 GeometryResource::GeometryResource()
 {
 	linkPointsMode = 4;
+	nextPointkey_ = 1;
 }
 
-void GeometryResource::addPoint(QPointF location, QString label, Marker* mark)
+void GeometryResource::insertPoint(QPointF location, int pointKey, QString label, Marker* mark)
 {
-	geometries_.append(Geometry::createPoint(location, label, mark));
-}
-
-void GeometryResource::movePoint(unsigned int key, QPointF location)
-{
-	Geometry point = geometries_.at(key);
-	point.changePoint(0,Coord(location,point.listPoints().at(0).label_,point.listPoints().at(0).marker_));
-	geometries_.replace(key,point);
+	if (pointKey == 0)
+	{
+		int key = generatePointKey();
+		geometries_.append(Geometry::createPoint(location, key, label, mark));
+		if (nextPointkey_ <= key)
+			nextPointkey_ = key++;
+	}
+	/*
+	else if (!hasPoint(*pointKey))
+		geometries_.append(Geometry::createPoint(location, *pointKey, label, mark));
+	else
+		geometries_.replace( indexOfPoint(*pointKey), Geometry::createPoint(location, *pointKey, label, mark));
+	*/
+	else
+	{
+		int key = pointKey;
+		for (int i = geometries_.size()-1; i >= 0; i--)
+		{
+			if (geometries_.at(i).key() == key)
+				geometries_.removeAt(i);
+		}
+		geometries_.append(Geometry::createPoint(location, key, label, mark));
+		if (nextPointkey_ <= key)
+			nextPointkey_ = key++;
+	}
 }
 
 void GeometryResource::clear()
@@ -339,6 +361,7 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
 			}
 		}
 	}
+	/*
 	if (linkPointsMode)
 	{
 		for (int i = 0; i<geometries_.size();i += 1+linkPointsMode)
@@ -378,7 +401,27 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
 			}
 		}
 	}
+	*/
 	painter.end();
+	return result;
+}
+
+unsigned int GeometryResource::generatePointKey()
+{
+	return nextPointkey_;
+}
+
+bool GeometryResource::hasPoint(unsigned int key)
+{
+	return -1 != indexOfPoint(key);
+}
+
+int GeometryResource::indexOfPoint(unsigned int key)
+{
+	int result = -1;
+	for (int i = 0; i < geometries_.size(); i++)
+		if (geometries_.at(i).key() == key)
+			result = i;
 	return result;
 }
 

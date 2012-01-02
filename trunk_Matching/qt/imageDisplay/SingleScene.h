@@ -29,12 +29,17 @@ public:
 	virtual unsigned int getHeight() = 0;
 
 	virtual QImage getFrame(QSize targetSize) = 0;
+	virtual QImage getFrame(QSize targetSize, QSize rectSize) = 0;
 	virtual QImage getFrame(QSize targetSize, double scale) = 0;
 	virtual QImage getThumb(QSize targetSize, QRect* rect = NULL) = 0;
 	virtual QImage getDetail(QSize targetSize, QPointF point, double zoom) = 0;
+	virtual QColor getColor(QPoint at) = 0;
+	virtual unsigned int getGrayColor(QPointF at, bool linear = false) = 0;
 
 	virtual RasterResource* rasters(int &rastersCount) = 0;
 	virtual GeometryResource* geometries(int &geometriesCount) = 0;
+	virtual RasterResource* raster(int at = -1) = 0;
+	virtual GeometryResource* geometry(int at = -1) = 0;
 };
 
 class SingleScene: public AbstractScene
@@ -85,6 +90,7 @@ public:
 	double getThumbScale();
 
 	QPointF getDetailedPoint();
+	void setDetailedPoint(QPointF point);
 	double getDetailZoom();
 	void setDetailZoom(double zoom);
 
@@ -94,12 +100,17 @@ public:
 	void useSmooth(bool useSmooth);
 
 	QImage getFrame(QSize targetSize);
+	QImage getFrame(QSize targetSize, QSize rectSize);
 	QImage getFrame(QSize targetSize, double scale);
 	QImage getThumb(QSize targetSize, QRect* rect = NULL);
 	QImage getDetail(QSize targetSize, QPointF point, double zoom);
+	QColor getColor(QPoint at);
+	unsigned int getGrayColor(QPointF at, bool linear = false);
 
 	RasterResource* rasters(int &rastersCount);
 	GeometryResource* geometries(int &geometriesCount);
+	RasterResource* raster(int at = -1);
+	GeometryResource* geometry(int at = -1);
 };
 
 #endif // SINGLESCENE_H

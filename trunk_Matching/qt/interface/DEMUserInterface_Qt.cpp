@@ -12,7 +12,7 @@ DEMUserInterface_Qt* DEMUserInterface_Qt::demInst = NULL;
 
 DEMUserInterface_Qt* DEMUserInterface_Qt::instance(DEMManager* manager)
 {
-        if (demInst = NULL)
+        if (demInst != NULL)
 	{
                 delete demInst;
                 demInst = NULL;
@@ -46,6 +46,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(comboBox4, SIGNAL(currentIndexChanged(int)), this, SLOT(onMatchingMethodChanged(int)));
 
         setWindowState(this->windowState());
+        sed = NULL;
 
         // Center window
         QDesktopWidget *desktop = QApplication::desktop();
@@ -78,6 +79,8 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 
 DEMUserInterface_Qt::~DEMUserInterface_Qt()
 {
+    if (sed)
+        delete sed;
 	// no need to delete child widgets, Qt does it all for us
 }
 
@@ -485,7 +488,12 @@ int DEMUserInterface_Qt::saveImage(char *filename, Matrix *I)
 
 void DEMUserInterface_Qt::onSeedsEditorClicked()
 {
-    QMessageBox::warning(this,"Warning","Sorry, not implemented");
+    if (sed)
+        delete sed;
+    sed = new SeedEditorUserInterface_Qt(manager, this);
+    this->setHidden(true);
+    connect(sed,SIGNAL(closed(bool)),this,SLOT(show()));
+    sed->showMaximized();
 }
 
 void DEMUserInterface_Qt::onStereoplotterClicked()
@@ -497,4 +505,88 @@ void DEMUserInterface_Qt::showErrorMessage(QString msg)
 {
     QMessageBox::critical(this, "Error",msg);
     doneButton->click();
+}
+
+SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWidget *parent) :
+    QMainWindow(parent)
+{
+    setupUi(this);
+    this->manager = manager;
+
+    viewer = new SeparatedStereoViewer(0);
+    viewer->blockOpen();
+    viewer->blockSave();
+
+    viewer->getLeftMarker().setToOnlyEmitClickedMode(); // Pluges para que o novo display funcione
+    viewer->getRightMarker().setToOnlyEmitClickedMode();
+    connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+    connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+
+    Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+    viewer->getLeftMarker().changeMarker(mark);
+    viewer->getRightMarker().changeMarker(mark);
+
+    viewer->loadLeftImage("/home/marts/EFOTO/Develop/data_and_images/1997_016_300dpi.bmp");
+    viewer->loadRightImage("/home/marts/EFOTO/Develop/data_and_images/1997_017_300dpi.bmp");
+
+    setCentralWidget(viewer);
+
+    SeparatedStereoToolsBar* tool = viewer->getToolBar();
+    QAction* loadSeeds = new QAction("Load Seeds", tool);
+    tool->addSeparator();
+    tool->addAction(loadSeeds);
+    //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
+
+    /*
+    deque<string> images = ptManager->getStringImages(); // Busca os nomes das imagens
+    deque<string> points = manager->getStringIdPoints();
+    for (int i=0;i<images.size();i++)
+    {
+            QString img=images.at(i).c_str();
+            listAllImages << img;
+            if (i!=1)
+                    listImageLeft << img;
+            if (i!=0)
+                    listImageRight << img;
+    }
+    for (int i=0;i<images.size();i++)
+            listAllPoints << QString(points.at(i).c_str());
+
+    currentPointKey =-1;
+    leftImageString = images.at(0);
+    rightImageString= images.at(1);
+    leftImageKey = ptManager->getImageId(leftImageString);
+    rightImageKey = ptManager->getImageId(rightImageString);
+
+    leftImageComboBox->addItems(listImageLeft);
+    rightImageComboBox->addItems(listImageRight);
+//QTableWidget
+    //Esconde as colunas das keys
+    leftImageTableWidget->setColumnHidden(3,true);
+//	leftImageTableWidget->setDisabled();
+    pointsTableWidget->setColumnHidden(5,true);
+    rightImageTableWidget->setColumnHidden(3,true);
+
+    leftImageTableWidget->verticalHeader()->hide();
+    rightImageTableWidget->verticalHeader()->hide();
+    pointsTableWidget->verticalHeader()->hide();
+
+    connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
+    connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
+    */
+}
+
+void SeedEditorUserInterface_Qt::closeEvent(QCloseEvent *)
+{
+    emit closed(true);
+}
+
+void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
+{
+
+}
+
+void SeedEditorUserInterface_Qt::updateImagesList(QString s)
+{
+
 }
