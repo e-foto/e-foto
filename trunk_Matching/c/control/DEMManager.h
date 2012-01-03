@@ -88,6 +88,9 @@ public:
         bool cancelFlag() { return cancel_flag; };
         bool isDemUnsaved() { return dem_unsaved; };
         bool isGridUnsaved() { return grid_unsaved; };
+        void getPointList(MatchingPointsList &sd, MatchingPointsList &pr);
+        deque<Image*> getImages() { return listAllImages; };
+        deque<int> getImagesPairs() { return listPairs; };
 
 };
 
