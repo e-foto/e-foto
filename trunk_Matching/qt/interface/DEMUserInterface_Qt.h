@@ -8,7 +8,7 @@
 #include "LoadingScreen.h"
 #include "Matrix.h"
 #include "ImageViewers.h"
-
+#include "MatchingPoints.h"
 #include <QPoint>
 #include <QGridLayout>
 #include <QPushButton>
@@ -84,7 +84,9 @@ class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
     Q_OBJECT
     DEMManager *manager;
     SeparatedStereoViewer* viewer;
-
+    MatchingPointsList seeds, pairs;
+    void updateData(int i);
+    void addPairs();
     void closeEvent(QCloseEvent *);
 
 public:
@@ -93,6 +95,9 @@ public:
 public slots:
     void imageClicked(QPointF);
     void updateImagesList(QString);
+    void saveSeeds();
+    void loadSeeds();
+    void onComboBox1Changed(int index);
 
 signals:
     void closed(bool);

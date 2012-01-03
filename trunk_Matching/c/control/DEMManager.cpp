@@ -702,9 +702,8 @@ void DEMManager::extractDEMPair(int pair)
     delete im;
 }
 
-/*
- *
- *  SEEDS EDITOR
- *
- */
-
+void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
+{
+    sd = seeds;
+    pr = pairs;
+}
