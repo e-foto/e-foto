@@ -507,6 +507,12 @@ void DEMUserInterface_Qt::showErrorMessage(QString msg)
     doneButton->click();
 }
 
+/**************************
+ *                        *
+ *  Seeds Editor Manager  *
+ *                        *
+ **************************/
+
 SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWidget *parent) :
     QMainWindow(parent)
 {
@@ -521,21 +527,15 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     viewer->getRightMarker().setToOnlyEmitClickedMode();
     connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
     connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+    connect(saveButton,SIGNAL(clicked()),this,SLOT(saveSeeds()));
+    connect(loadButton,SIGNAL(clicked()),this,SLOT(loadSeeds()));
+    connect(comboBox1,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboBox1Changed(int)));
 
     Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
     viewer->getLeftMarker().changeMarker(mark);
     viewer->getRightMarker().changeMarker(mark);
 
-    viewer->loadLeftImage("/home/marts/EFOTO/Develop/data_and_images/1997_016_300dpi.bmp");
-    viewer->loadRightImage("/home/marts/EFOTO/Develop/data_and_images/1997_017_300dpi.bmp");
-
     setCentralWidget(viewer);
-
-    SeparatedStereoToolsBar* tool = viewer->getToolBar();
-    QAction* loadSeeds = new QAction("Load Seeds", tool);
-    tool->addSeparator();
-    tool->addAction(loadSeeds);
-    //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
 
     /*
     deque<string> images = ptManager->getStringImages(); // Busca os nomes das imagens
@@ -574,6 +574,11 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
     connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
     */
+
+    // Copy seed and pair lists
+    manager->getPointList(seeds,pairs);
+    addPairs();
+    updateData(0);
 }
 
 void SeedEditorUserInterface_Qt::closeEvent(QCloseEvent *)
@@ -589,4 +594,172 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 void SeedEditorUserInterface_Qt::updateImagesList(QString s)
 {
 
+}
+
+void SeedEditorUserInterface_Qt::addPairs()
+{
+    deque<int> listPairs = manager->getImagesPairs();
+    deque<Image*> listAllImages = manager->getImages();
+
+    // Add pairs to the interface
+    int left_id, right_id;
+    int no_imgs = listAllImages.size();
+    string str_left, str_right;
+    stringstream txt;
+
+    for (int i=0; i<listPairs.size(); i++)
+    {
+        // Decode
+        left_id = 1 + (listPairs.at(i) % no_imgs);
+        right_id = 1 + (listPairs.at(i) / no_imgs);
+        str_left = listAllImages.at(left_id-1)->getImageId();
+        str_right = listAllImages.at(right_id-1)->getImageId();
+        txt.str(""); // Clear stream
+        txt << "Images " << str_left << " and " << str_right;
+        comboBox1->addItem(QString::fromAscii((char *)txt.str().c_str()));
+    }
+}
+
+void SeedEditorUserInterface_Qt::saveSeeds()
+{
+    QString filename;
+
+    filename = QFileDialog::getSaveFileName(this, tr("Save seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
+    if (filename=="")
+        return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Save seeds
+    seeds.save((char *)filename.toStdString().c_str(), 0);
+}
+
+void SeedEditorUserInterface_Qt::loadSeeds()
+{
+    QString filename;
+
+    filename = QFileDialog::getOpenFileName(this, tr("Load seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
+    if (filename=="")
+        return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Load seeds
+    seeds.load((char *)filename.toStdString().c_str(), 0);
+
+    // Update data
+    updateData(comboBox1->currentIndex());
+}
+
+void SeedEditorUserInterface_Qt::onComboBox1Changed(int index)
+{
+    updateData(index);
+}
+
+void SeedEditorUserInterface_Qt::updateData(int i)
+{
+    //
+    // Update current images
+    //
+    deque<int> listPairs = manager->getImagesPairs();
+    deque<Image*> listAllImages = manager->getImages();
+
+    // Decode
+    int left_id, right_id;
+    int no_imgs = listAllImages.size();
+    left_id = 1 + (listPairs.at(i) % no_imgs);
+    right_id = 1 + (listPairs.at(i) / no_imgs);
+
+    //
+    // Update Images
+    //
+    string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
+    string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
+
+    viewer->loadLeftImage(QString::fromStdString(left_file));
+    viewer->loadRightImage(QString::fromStdString(right_file));
+
+    //
+    //  Clear marks
+    //
+    viewer->getLeftDisplay()->getCurrentScene()->geometry()->clear();
+    viewer->getRightDisplay()->getCurrentScene()->geometry()->clear();
+
+    //
+    // Update table and seed points on image
+    //
+    MatchingPoints *mp;
+    QTableWidgetItem *newItem;
+    int p=0;
+    QPointF left_coord, right_coord;
+
+    tableWidget->setRowCount(0);
+
+    Marker *mark_seeds = new Marker(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2));
+
+    for (int i=0; i<seeds.size(); i++)
+    {
+        mp = seeds.get(i+1);
+
+        if (mp->left_image_id != left_id || mp->right_image_id != right_id)
+            continue;
+
+        // Image points
+        left_coord.setX(double(mp->left_x));
+        left_coord.setY(double(mp->left_y));
+        right_coord.setX(double(mp->right_x));
+        right_coord.setY(double(mp->right_y));
+        viewer->getLeftMarker().insertMark(left_coord, i+1, QString::number(i+1), mark_seeds);
+        viewer->getRightMarker().insertMark(right_coord, i+1, QString::number(i+1), mark_seeds);
+
+        // Table
+        tableWidget->insertRow(p);
+
+        newItem = new QTableWidgetItem(tr("%1").arg(i+1));
+        tableWidget->setItem(p, 0, newItem);
+        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x));
+        tableWidget->setItem(p, 1, newItem);
+        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x));
+        tableWidget->setItem(p, 2, newItem);
+        newItem = new QTableWidgetItem(tr("%1").arg(mp->right_x));
+        tableWidget->setItem(p, 3, newItem);
+        newItem = new QTableWidgetItem(tr("%1").arg(mp->right_y));
+        tableWidget->setItem(p, 4, newItem);
+
+        p++;
+    }
+
+    //
+    // Add matching points, if selected
+    //
+    if (checkBox->isChecked())
+    {
+        Marker *mark_pairs = new Marker(SymbolsResource::getX(Qt::red, QSize(24, 24),2));
+
+        for (int i=0; i<pairs.size(); i++)
+        {
+            mp = pairs.get(i+1);
+
+            if (mp->left_image_id != left_id || mp->right_image_id != right_id)
+                continue;
+
+            left_coord.setX(double(mp->left_x));
+            left_coord.setY(double(mp->left_y));
+            right_coord.setX(double(mp->right_x));
+            right_coord.setY(double(mp->right_y));
+            viewer->getLeftMarker().insertMark(left_coord, i+1, "", mark_pairs);
+            viewer->getRightMarker().insertMark(right_coord, i+1, "", mark_pairs);
+        }
+    }
+
+    //
+    // Update viewer
+    //
+    viewer->update();
 }
