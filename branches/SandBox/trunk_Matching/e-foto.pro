@@ -174,6 +174,7 @@ HEADERS += \
     DEMUserInterface_Qt.h \
     SPUserInterface_Qt.h \
     OrthoUserInterface_Qt.h \
+    ProgressWindow_Qt.h \
 # c/imageProcessing
     NormalizedCrossCorrelation.h \
     RadiometricTransformation.h \
@@ -201,8 +202,8 @@ FORMS += \
     EfotoViewer.ui \
     DemExtraction.ui \
     OrthoForm.ui \
-    SeedEditor.ui
-
+    SeedEditor.ui \
+    ProgressWindow.ui
 
 SOURCES += \
  # c/control/
@@ -325,6 +326,7 @@ SOURCES += \
     DEMUserInterface_Qt.cpp \
     SPUserInterface_Qt.cpp \
     OrthoUserInterface_Qt.cpp \
+    ProgressWindow_Qt.cpp \
 # imageProcessing
     NormalizedCrossCorrelation.cpp \
     RadiometricTransformation.cpp \

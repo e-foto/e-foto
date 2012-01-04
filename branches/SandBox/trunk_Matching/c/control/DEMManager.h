@@ -39,6 +39,7 @@ class DEMManager
         deque<Point*> listAllPoints;
         deque<int> listPairs;
         deque<ExteriorOrientation*> listEOs;
+        void updateNoSeeds();
         Image * getImage(int);
         void setListPoint();
         bool connectImagePoints();
@@ -91,6 +92,7 @@ public:
         void getPointList(MatchingPointsList &sd, MatchingPointsList &pr);
         deque<Image*> getImages() { return listAllImages; };
         deque<int> getImagesPairs() { return listPairs; };
+        void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); };
 
 };
 

@@ -241,6 +241,11 @@ void DEMUserInterface_Qt::setAutoExtInfo(int nseeds, int nmatch, double min, dou
     autoMaxZLabel->setText(QString::number(max,'f',5));
 }
 
+void DEMUserInterface_Qt::updateSeedsLabel(int nseeds)
+{
+    seedPointsLabel->setText(QString::number(nseeds));
+}
+
 void DEMUserInterface_Qt::setBoundingBox(double Xi, double Yi, double Xf, double Yf)
 {
     XilineEdit->setText(QString::number(Xi,'f',5));
@@ -529,7 +534,12 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
     connect(saveButton,SIGNAL(clicked()),this,SLOT(saveSeeds()));
     connect(loadButton,SIGNAL(clicked()),this,SLOT(loadSeeds()));
+    connect(addButton,SIGNAL(clicked()),this,SLOT(onAddButtonClicked()));
+    connect(removeButton,SIGNAL(clicked()),this,SLOT(onRemoveButtonClicked()));
+    connect(okButton,SIGNAL(clicked()),this,SLOT(closeOk()));
+    connect(cancelButton,SIGNAL(clicked()),this,SLOT(close()));
     connect(comboBox1,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboBox1Changed(int)));
+    connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
 
     Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
     viewer->getLeftMarker().changeMarker(mark);
@@ -537,45 +547,12 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 
     setCentralWidget(viewer);
 
-    /*
-    deque<string> images = ptManager->getStringImages(); // Busca os nomes das imagens
-    deque<string> points = manager->getStringIdPoints();
-    for (int i=0;i<images.size();i++)
-    {
-            QString img=images.at(i).c_str();
-            listAllImages << img;
-            if (i!=1)
-                    listImageLeft << img;
-            if (i!=0)
-                    listImageRight << img;
-    }
-    for (int i=0;i<images.size();i++)
-            listAllPoints << QString(points.at(i).c_str());
-
-    currentPointKey =-1;
-    leftImageString = images.at(0);
-    rightImageString= images.at(1);
-    leftImageKey = ptManager->getImageId(leftImageString);
-    rightImageKey = ptManager->getImageId(rightImageString);
-
-    leftImageComboBox->addItems(listImageLeft);
-    rightImageComboBox->addItems(listImageRight);
-//QTableWidget
-    //Esconde as colunas das keys
-    leftImageTableWidget->setColumnHidden(3,true);
-//	leftImageTableWidget->setDisabled();
-    pointsTableWidget->setColumnHidden(5,true);
-    rightImageTableWidget->setColumnHidden(3,true);
-
-    leftImageTableWidget->verticalHeader()->hide();
-    rightImageTableWidget->verticalHeader()->hide();
-    pointsTableWidget->verticalHeader()->hide();
-
-    connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
-    connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
-    */
+    // Create image marks
+    mark_seeds = new Marker(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2));
+    mark_pairs = new Marker(SymbolsResource::getX(Qt::red, QSize(24, 24),2));
 
     // Copy seed and pair lists
+    pw.setAllowClose(false);
     manager->getPointList(seeds,pairs);
     addPairs();
     updateData(0);
@@ -594,6 +571,63 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 void SeedEditorUserInterface_Qt::updateImagesList(QString s)
 {
 
+}
+
+void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
+{
+    int i = comboBox1->currentIndex();
+
+    deque<int> listPairs = manager->getImagesPairs();
+    deque<Image*> listAllImages = manager->getImages();
+
+    // Decode
+    int no_imgs = listAllImages.size();
+    left_id = 1 + (listPairs.at(i) % no_imgs);
+    right_id = 1 + (listPairs.at(i) / no_imgs);
+}
+
+void SeedEditorUserInterface_Qt::onAddButtonClicked()
+{
+    // Add new line
+    int p = tableWidget->rowCount();
+    QTableWidgetItem *newItem;
+
+    tableWidget->insertRow(p);
+
+    newItem = new QTableWidgetItem(tr("%1").arg(seeds.size()+1));
+    tableWidget->setItem(p, 0, newItem);
+    newItem = new QTableWidgetItem("");
+    tableWidget->setItem(p, 1, newItem);
+    newItem = new QTableWidgetItem("");
+    tableWidget->setItem(p, 2, newItem);
+    newItem = new QTableWidgetItem("");
+    tableWidget->setItem(p, 3, newItem);
+    newItem = new QTableWidgetItem("");
+    tableWidget->setItem(p, 4, newItem);
+
+    // Add new object to the seeds
+    MatchingPoints mp;
+    int left_id, right_id;
+    getImagesIds(left_id, right_id);
+    seeds.add(left_id, right_id, -1.0, -1.0, -1.0, -1.0, 0.0);
+}
+
+void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
+{
+
+}
+
+void SeedEditorUserInterface_Qt::onCheckBoxChanged(int state)
+{
+    updateData(comboBox1->currentIndex());
+}
+
+void SeedEditorUserInterface_Qt::closeOk()
+{
+    // Copy new seed list to manager
+    manager->overwriteSeedsList(seeds);
+
+    close();
 }
 
 void SeedEditorUserInterface_Qt::addPairs()
@@ -667,14 +701,9 @@ void SeedEditorUserInterface_Qt::updateData(int i)
     //
     // Update current images
     //
-    deque<int> listPairs = manager->getImagesPairs();
     deque<Image*> listAllImages = manager->getImages();
-
-    // Decode
     int left_id, right_id;
-    int no_imgs = listAllImages.size();
-    left_id = 1 + (listPairs.at(i) % no_imgs);
-    right_id = 1 + (listPairs.at(i) / no_imgs);
+    getImagesIds(left_id, right_id);
 
     //
     // Update Images
@@ -692,16 +721,44 @@ void SeedEditorUserInterface_Qt::updateData(int i)
     viewer->getRightDisplay()->getCurrentScene()->geometry()->clear();
 
     //
-    // Update table and seed points on image
+    // Add matching points, if selected
     //
     MatchingPoints *mp;
-    QTableWidgetItem *newItem;
-    int p=0;
     QPointF left_coord, right_coord;
 
-    tableWidget->setRowCount(0);
+    if (checkBox->isChecked() && pairs.size() > 0)
+    {
+        pw.setDescription("Loading matching points");
+        pw.show();
 
-    Marker *mark_seeds = new Marker(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2));
+        for (int i=0; i<pairs.size(); i++)
+        {
+            pw.setProgress(100*(i+1)/pairs.size());
+            qApp->processEvents();
+
+            mp = pairs.get(i+1);
+
+            if (mp->left_image_id != left_id || mp->right_image_id != right_id)
+                continue;
+
+            left_coord.setX(double(mp->left_x));
+            left_coord.setY(double(mp->left_y));
+            right_coord.setX(double(mp->right_x));
+            right_coord.setY(double(mp->right_y));
+            viewer->getLeftMarker().insertMark(left_coord, i+1, "", mark_pairs);
+            viewer->getRightMarker().insertMark(right_coord, i+1, "", mark_pairs);
+        }
+
+        pw.hide();
+    }
+
+
+    //
+    // Update table and seed points on image
+    //
+    QTableWidgetItem *newItem;
+    int p=0;
+    tableWidget->setRowCount(0);
 
     for (int i=0; i<seeds.size(); i++)
     {
@@ -733,29 +790,6 @@ void SeedEditorUserInterface_Qt::updateData(int i)
         tableWidget->setItem(p, 4, newItem);
 
         p++;
-    }
-
-    //
-    // Add matching points, if selected
-    //
-    if (checkBox->isChecked())
-    {
-        Marker *mark_pairs = new Marker(SymbolsResource::getX(Qt::red, QSize(24, 24),2));
-
-        for (int i=0; i<pairs.size(); i++)
-        {
-            mp = pairs.get(i+1);
-
-            if (mp->left_image_id != left_id || mp->right_image_id != right_id)
-                continue;
-
-            left_coord.setX(double(mp->left_x));
-            left_coord.setY(double(mp->left_y));
-            right_coord.setX(double(mp->right_x));
-            right_coord.setY(double(mp->right_y));
-            viewer->getLeftMarker().insertMark(left_coord, i+1, "", mark_pairs);
-            viewer->getRightMarker().insertMark(right_coord, i+1, "", mark_pairs);
-        }
     }
 
     //
