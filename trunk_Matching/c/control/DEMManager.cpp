@@ -144,6 +144,12 @@ bool DEMManager::connectImagePoints()
         return false;
 }
 
+void DEMManager::updateNoSeeds()
+{
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+    dui->updateSeedsLabel(seeds.size());
+}
+
 /*
  * Pair detection / Angle functions
  */
