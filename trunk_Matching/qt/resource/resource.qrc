@@ -57,5 +57,6 @@
         <file>fitrightIcon.png</file>
         <file>fitleftIcon.png</file>
         <file>fitbothIcon.png</file>
+        <file>cancel.png</file>
     </qresource>
 </RCC>

@@ -9,6 +9,7 @@
 #include "Matrix.h"
 #include "ImageViewers.h"
 #include "MatchingPoints.h"
+#include "ProgressWindow_Qt.h"
 #include <QPoint>
 #include <QGridLayout>
 #include <QPushButton>
@@ -68,6 +69,7 @@ public:
         void addImagePair(char *);
         void setStatus(char *);
         void setAutoExtInfo(int, int , double, double);
+        void updateSeedsLabel(int nseeds);
         void setBoundingBox(double Xi, double Yi, double Xf, double Yf);
         void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
         void setProgress(int);
@@ -85,6 +87,9 @@ class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
     DEMManager *manager;
     SeparatedStereoViewer* viewer;
     MatchingPointsList seeds, pairs;
+    Marker *mark_seeds, *mark_pairs;
+    ProgressWindow pw;
+    void getImagesIds(int &left_id, int &right_id);
     void updateData(int i);
     void addPairs();
     void closeEvent(QCloseEvent *);
@@ -97,7 +102,11 @@ public slots:
     void updateImagesList(QString);
     void saveSeeds();
     void loadSeeds();
+    void onAddButtonClicked();
+    void onRemoveButtonClicked();
+    void closeOk();
     void onComboBox1Changed(int index);
+    void onCheckBoxChanged(int state);
 
 signals:
     void closed(bool);

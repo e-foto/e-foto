@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Ortho-rectification</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resource/resource.qrc">
+    <normaloff>:/icon/WindowIcon.png</normaloff>:/icon/WindowIcon.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_4">
