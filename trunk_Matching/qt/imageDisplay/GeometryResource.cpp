@@ -333,6 +333,16 @@ void GeometryResource::insertPoint(QPointF location, int pointKey, QString label
 	}
 }
 
+void GeometryResource::deletePoint(int pointKey)
+{
+    int key = pointKey;
+    for (int i = geometries_.size()-1; i >= 0; i--)
+    {
+            if (geometries_.at(i).key() == key)
+                    geometries_.removeAt(i);
+    }
+}
+
 void GeometryResource::clear()
 {
 	geometries_.clear();

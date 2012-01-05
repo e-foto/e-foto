@@ -550,6 +550,11 @@ void MarkTool::editMark(int key, QPointF location, QString label, Marker *marker
 	//_display->getCurrentScene()->geometry()->editPoint(key, location, label, marker == NULL ? &mark : marker);
 }
 
+void MarkTool::deleteMark(int key)
+{
+    _display->getCurrentScene()->geometry()->deletePoint(key);
+}
+
 void MarkTool::clear()
 {
 	_display->getCurrentScene()->geometry()->clear();
