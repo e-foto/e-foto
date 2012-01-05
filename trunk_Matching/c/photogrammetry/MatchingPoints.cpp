@@ -582,6 +582,20 @@ void MatchingPointsList::copyListBy3D()
 	}
 }
 
+/*
+ * This function check if there are unmeasured pairs
+ */
+bool MatchingPointsList::hasEmptyPairs()
+{
+    for (int i=0; i<list.size(); i++)
+    {
+        if (list.at(i).left_x < 0.1 || list.at(i).left_y < 0.1 || list.at(i).right_x < 0.1 || list.at(i).right_y < 0.1)
+            return true;
+    }
+
+    return false;
+}
+
 /******************
  * Generate image *
  ******************/

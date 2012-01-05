@@ -80,6 +80,7 @@ public:
 	void rightImageBoundingBox(int &, int &, int &, int &);
 	void XYZboundingBox(double &, double &, double &, double &, double &, double &);
         Matrix *getDemImage(double res_x, double res_y);
+        bool hasEmptyPairs();
 
 private:
 	vector <MatchingPoints> list;
