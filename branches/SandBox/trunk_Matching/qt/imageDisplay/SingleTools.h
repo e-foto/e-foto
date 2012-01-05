@@ -139,6 +139,7 @@ public:
 	void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
 	void editMark(int key, QPointF location, Marker* marker = NULL);
 	void editMark(int key, QPointF location, QString label, Marker* marker = NULL);
+        void deleteMark(int key);
 	void clear();
 
 	//void paintEvent(const QPaintEvent& event);

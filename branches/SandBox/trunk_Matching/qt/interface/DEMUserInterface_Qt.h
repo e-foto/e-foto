@@ -16,6 +16,7 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QList>
 
 class SeedEditorUserInterface_Qt;
 
@@ -83,6 +84,7 @@ public:
 
 class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
 {
+private:
     Q_OBJECT
     DEMManager *manager;
     SeparatedStereoViewer* viewer;
@@ -93,13 +95,19 @@ class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
     void updateData(int i);
     void addPairs();
     void closeEvent(QCloseEvent *);
+    void addMatchingPoints();
+    void addSeedsAndTable();
+    int findKey(int seed_id);
+    vector<int> sel_seeds;
+    void checkSelectedSeeds();
+    int no_seeds, no_pairs; // Number for each pair, not the total
+    int last_row_clicked;
 
 public:
     SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);
 
 public slots:
     void imageClicked(QPointF);
-    void updateImagesList(QString);
     void saveSeeds();
     void loadSeeds();
     void onAddButtonClicked();
@@ -107,6 +115,7 @@ public slots:
     void closeOk();
     void onComboBox1Changed(int index);
     void onCheckBoxChanged(int state);
+    void onTableClicked(int row, int col);
 
 signals:
     void closed(bool);

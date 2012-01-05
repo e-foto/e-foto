@@ -79,6 +79,7 @@ class GeometryResource
 public:
 	GeometryResource();
 	void insertPoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
+        void deletePoint(int pointKey);
 	void clear();
 	QImage draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale);
 
