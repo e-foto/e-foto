@@ -541,8 +541,9 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     connect(comboBox1,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboBox1Changed(int)));
     connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
     connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
+    connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
 
-    Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+    Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Create marks
     viewer->getLeftMarker().changeMarker(mark);
     viewer->getRightMarker().changeMarker(mark);
 
@@ -560,8 +561,6 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 
     // Empty list of selected seeds
     sel_seeds.clear();
-
-    last_row_clicked = -1;
 }
 
 void SeedEditorUserInterface_Qt::closeEvent(QCloseEvent *)
@@ -631,20 +630,23 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 
 void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
 {
-    if (last_row_clicked != -1)
-    {
-        if (row == last_row_clicked)
-            tableWidget->clearSelection();
-    }
-
     checkSelectedSeeds();
 
-    last_row_clicked = -1;
+    if (sel_seeds.size() != 1)
+        return;
 
-    if (sel_seeds.size() == 1)
-    {
-        last_row_clicked = sel_seeds.at(0);
-    }
+    // Center coordinates
+    double x,y;
+
+    x = tableWidget->item(sel_seeds.at(0),1)->text().toDouble();
+    y = tableWidget->item(sel_seeds.at(0),2)->text().toDouble();
+    viewer->getLeftDisplay()->getCurrentScene()->moveTo(QPointF(x,y));
+
+    x = tableWidget->item(sel_seeds.at(0),3)->text().toDouble();
+    y = tableWidget->item(sel_seeds.at(0),4)->text().toDouble();
+    viewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(x,y));
+
+    viewer->update();
 }
 
 void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
@@ -715,16 +717,20 @@ void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
     for (int i=sel_seeds.size()-1; i>=0; i--)
     {
         seed_id = tableWidget->item(sel_seeds.at(i),0)->text().toInt();
-printf("%d ",seed_id);
+
         seeds.remove(seed_id);
     }
-printf("\n");
+
     // Update Seed Marks and Table
     addSeedsAndTable();
 
     viewer->update();
 }
 
+/*
+ * This function creates a list with all indexes selected on the table
+ * Returns: sel_seed vector updated
+ */
 void SeedEditorUserInterface_Qt::checkSelectedSeeds()
 {
     QList<QTableWidgetItem *> selected;
@@ -733,6 +739,28 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
     int no_pairs = selected.size()/cols;
 
     sel_seeds.clear();
+
+    if (no_pairs < 1)
+        return;
+
+    // Qt table bug
+    // Multiple selection from line 0, selected by shift key,
+    // create a list full of 0s
+    bool flag=false;
+    for (int i=0; i<no_pairs; i++)
+    {
+        if (selected.at(i)->row() != 0)
+            break;
+        flag = true;
+    }
+
+    // Add manually indexes, to fix this bug
+    if (flag)
+    {
+        for (int i=0; i<no_pairs; i++)
+            sel_seeds.push_back(i);
+        return;
+    }
 
     for (int i=0; i<no_pairs*cols; i+=cols)
         sel_seeds.push_back(selected.at(i)->row());
@@ -755,7 +783,7 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
 
 void SeedEditorUserInterface_Qt::onCheckBoxChanged(int state)
 {
-    updateData(comboBox1->currentIndex());
+    updateMarks();
 }
 
 void SeedEditorUserInterface_Qt::closeOk()
@@ -773,6 +801,9 @@ void SeedEditorUserInterface_Qt::closeOk()
     close();
 }
 
+/*
+ * Add new table row
+ */
 void SeedEditorUserInterface_Qt::addPairs()
 {
     deque<int> listPairs = manager->getImagesPairs();
@@ -839,6 +870,9 @@ void SeedEditorUserInterface_Qt::onComboBox1Changed(int index)
     updateData(index);
 }
 
+/*
+ * Add matching points to the viewer
+ */
 void SeedEditorUserInterface_Qt::addMatchingPoints()
 {
     MatchingPoints *mp;
@@ -876,6 +910,10 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
     pairsLabel->setText(QString::number(no_pairs)+"/"+QString::number(pairs.size()));
 }
 
+/*
+ * Add seed points to the viewer
+ * Update seeds table
+ */
 void SeedEditorUserInterface_Qt::addSeedsAndTable()
 {
     MatchingPoints *mp;
@@ -913,7 +951,7 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
         newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x));
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 1, newItem);
-        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x));
+        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_y));
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 2, newItem);
         newItem = new QTableWidgetItem(tr("%1").arg(mp->right_x));
@@ -930,24 +968,8 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
     seedsLabel->setText(QString::number(no_seeds)+"/"+QString::number(seeds.size())+"  ");
 }
 
-void SeedEditorUserInterface_Qt::updateData(int i)
+void SeedEditorUserInterface_Qt::updateMarks()
 {
-    //
-    // Update current images
-    //
-    deque<Image*> listAllImages = manager->getImages();
-    int left_id, right_id;
-    getImagesIds(left_id, right_id);
-
-    //
-    // Update Images
-    //
-    string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
-    string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
-
-    viewer->loadLeftImage(QString::fromStdString(left_file));
-    viewer->loadRightImage(QString::fromStdString(right_file));
-
     //
     //  Clear marks
     //
@@ -973,4 +995,28 @@ void SeedEditorUserInterface_Qt::updateData(int i)
     // Update viewer
     //
     viewer->update();
+}
+
+void SeedEditorUserInterface_Qt::updateData(int i)
+{
+    //
+    // Update current images
+    //
+    deque<Image*> listAllImages = manager->getImages();
+    int left_id, right_id;
+    getImagesIds(left_id, right_id);
+
+    //
+    // Update Images
+    //
+    string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
+    string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
+
+    viewer->loadLeftImage(QString::fromStdString(left_file));
+    viewer->loadRightImage(QString::fromStdString(right_file));
+
+    //
+    // Update marks
+    //
+    updateMarks();
 }
