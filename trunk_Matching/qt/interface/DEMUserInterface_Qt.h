@@ -92,6 +92,7 @@ private:
     Marker *mark_seeds, *mark_pairs;
     ProgressWindow pw;
     void getImagesIds(int &left_id, int &right_id);
+    void updateMarks();
     void updateData(int i);
     void addPairs();
     void closeEvent(QCloseEvent *);
@@ -101,7 +102,6 @@ private:
     vector<int> sel_seeds;
     void checkSelectedSeeds();
     int no_seeds, no_pairs; // Number for each pair, not the total
-    int last_row_clicked;
 
 public:
     SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);

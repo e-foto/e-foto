@@ -57,7 +57,6 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	//
 	// Step 1 - Radiometric Tranformation
 	//
-
 	if (perform_readiometric)
 	{
 		// Histogram equalization
@@ -75,7 +74,6 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	//
 	// Step 2 - Evaluate and fix matching limits
 	//
-
 	int border = 30;
 	img_width = img1->getCols();
 	img_height = img1->getRows();
@@ -135,7 +133,6 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 		//
 		// Step 5 - Perform Region Growing
 		//
-
                 if (curr_left_id == left_image_id && curr_right_id == right_image_id)
                 {
                         region_growing(img1,img2,mpoints,lx,ly,rx,ry);
@@ -245,7 +242,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 			continue;
 
 		// Check if visited
-		if (map.get(i,j) != 0)
+                if (int(map.get(i,j)) != 0)
 			continue;
 
 		// Choose correlation method
