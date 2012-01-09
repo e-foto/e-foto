@@ -257,6 +257,8 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 
         while (!infile.eof())
 	{
+                lx = X = -1.0;
+
                 switch (type)
                 {
                         case 1 : infile >> lx >> ly >> rx >> ry; break;
@@ -277,6 +279,10 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 		mp.Y = Y;
 		mp.Z = Z;
 		mp.matching_accuracy = acc;
+
+                // Check reading error
+                if (int(X) == -1 && int(lx) == -1)
+                    break;
 
                 list.push_back(mp);
 	}
