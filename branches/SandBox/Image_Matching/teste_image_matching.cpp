@@ -72,37 +72,42 @@ void resamplePoints(MatchingPointsList *list, double resample)
 int main(void)
 {
 	printf("Loading images ...\n");
-	Matrix img1 = loadImage("/home/marts/EFOTO/Develop/data_and_images/138_7623.bmp",0.25);
-	Matrix img2 = loadImage("/home/marts/EFOTO/Develop/data_and_images/138_7624.bmp",0.25);
-//	Matrix img1 = loadImage("/home/marts/EFOTO/Develop/data_and_images/1997_016_300dpi.bmp");
-//	Matrix img2 = loadImage("/home/marts/EFOTO/Develop/data_and_images/1997_017_300dpi.bmp");
+//	Matrix img1 = loadImage("/home/marts/EFOTO/Develop/data_and_images/138_7623.bmp",0.25);
+//	Matrix img2 = loadImage("/home/marts/EFOTO/Develop/data_and_images/138_7624.bmp",0.25);
+	Matrix img1 = loadImage("/home/marts/EFOTO/Develop/data_and_images/1997_016_300dpi.bmp",0.25);
+	Matrix img2 = loadImage("/home/marts/EFOTO/Develop/data_and_images/1997_017_300dpi.bmp",0.25);
 //	Matrix img1 = loadImage("../1997_016_300dpi.bmp");
 //	Matrix img2 = loadImage("../1997_017_300dpi.bmp");
 
 	MatchingPointsList rep, pairs;
-
+/*
 	// Seeds for Itaipava 23-24 - Image coordinates
 	rep.add(23, 24, 6057.0, 5311.0, 2310.0, 5120.0, 0.0);
 	rep.add(23, 24, 6979.0, 4470.0, 6013.0, 4291.0, 0.0);
 	rep.add(23, 24, 10931.0, 7103.0, 7224.0, 6886.0, 0.0);
 	rep.add(23, 24, 8530.0, 1963.0, 4618.0, 1778.0, 0.0);
 	resamplePoints(&rep,0.25);
-
-/*	// Seeds for Maracana 16-17
+*/
+/*
+	// Seeds for Maracana 16-17
 	rep.add(16, 17, 1796.0, 1064.0, 764.0, 1044.0, 0.0);
 	rep.add(16, 17, 1801.0, 1328.0, 814.0, 1310.0, 0.0);
 	rep.add(16, 17, 2155.0, 1339.0, 1173.0, 1317.0, 0.0);
 	rep.add(16, 17, 1852.0, 1325.0, 865.0, 1306.0, 0.0);
 	rep.add(16, 17, 1305.0, 452.0, 296.0, 426.0, 0.0);
 	rep.add(16, 17, 2083.0, 2482.0, 1096.0, 2455.0, 0.0);
-
-//	rep.load((char *)"maracana_pairs_refined.pix", MatchingPointsList::loadPairs, false, 16, 17);
-//	rep.listMp();
 */
+//	rep.load((char *)"maracana_pairs_refined.pix", MatchingPointsList::loadPairs, false, 16, 17);
+	rep.load((char *)"/home/marts/Documentos/e-foto/eppsHomePage/Seeds_ok.txt", MatchingPointsList::loadFull, false, 16, 17);
+	rep.remove(14);
+	rep.remove(13);
+//	rep.listMp();
+	resamplePoints(&rep,0.25);
 
 	ImageMatching im;
-	im.setImagesIds(23,24); // Itaipava
+//	im.setImagesIds(23,24); // Itaipava
 //	im.setImagesIds(16,17); // Maracana
+	im.setImagesIds(1,2); // Maracana from file
 	im.setCorrelationThreshold(0.60);
 	printf("Performing radiometric correction ...\n");
 	im.setPerformRadiometric(true);
@@ -120,12 +125,12 @@ int main(void)
 	printf("Start searching ...\n");
 	im.performImageMatching(&img1, &img2, &rep, &pairs);
 	printf("Coverage: %f %%\n",im.getCoverage());
-	resamplePoints(&pairs,4.0);
+//	resamplePoints(&pairs,4.0);
 
 //	pairs.save((char *)"lista_final.pix", MatchingPointsList::saveFull);
-	pairs.save((char *)"lista_final.pix", MatchingPointsList::savePairsHann);
+//	pairs.save((char *)"lista_final.pix", MatchingPointsList::savePairsHann);
 
-/*	// Write on image
+	// Write on image
 	int x,y;
 	MatchingPoints mp;
 	for (int i=1; i<=pairs.size(); i++)
@@ -143,7 +148,7 @@ int main(void)
 
 	saveImage((char *)"saidaL.bmp", &img1);
 	saveImage((char *)"saidaR.bmp", &img2);
-*/
+
 	return 1;
 }
 

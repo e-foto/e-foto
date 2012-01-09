@@ -13,9 +13,11 @@ HEADERS += Matrix.h \
 	LeastSquaresMatching.h \
 	ImageMatching.h \
 	MatchingPoints.h \
-	AutoSeeds.h
+	MatchingPoints.h \
+	AutoSeeds.h \
+	DemGrid.h
 
-SOURCES	+= teste_autoseeds.cpp \
+SOURCES	+= teste_image_matching.cpp \
 	Matrix.cpp \
 	RectSupport.cpp \
 	PositionMatrix.cpp \
@@ -26,13 +28,16 @@ SOURCES	+= teste_autoseeds.cpp \
 	LeastSquaresMatching.cpp \
 	ImageMatching.cpp \
 	MatchingPoints.cpp \
-	AutoSeeds.cpp
+	MatchingPointsGrid.cpp \
+	AutoSeeds.cpp \
+	DemGrid.cpp
 
 # teste_autoseeds.cpp \
 # teste_image_matching.cpp \
 # teste_lsm.cpp \
 # teste_ncc.cpp \
 # teste_radiometric_images.cpp \
+# teste_inter_grid.cpp \
 
 unix {
   UI_DIR = .ui
