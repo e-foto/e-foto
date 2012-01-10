@@ -56,7 +56,9 @@ public:
 	void setCorrelationThreshold(double _th) { corr_th = _th; };
 	double getCoverage() { return 100.0*coverage; };
 	void setMinStd(double);
+        void setElimanteBadPoints(bool _el) { elim_bad_pts = _el; };
         void setCancel() { cancel_flag = true; };
+        Matrix & getMap() { return map; };
 
 private:
 	int image_depth;
@@ -82,6 +84,7 @@ private:
         DEMManager *manager;
         void init();
         void fillMap(MatchingPointsList *);
+        bool elim_bad_pts;
 };
 
 #endif

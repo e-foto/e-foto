@@ -458,7 +458,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_23">
        <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout_9">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="0" column="0">
@@ -659,11 +659,22 @@
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox_2">
-           <property name="text">
-            <string>Clear matching list</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_9">
+           <item>
+            <widget class="QCheckBox" name="checkBox_4">
+             <property name="text">
+              <string>Eliminate bad points</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_2">
+             <property name="text">
+              <string>Clear matching list</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -925,7 +936,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.650000000000000</double>
+             <double>0.600000000000000</double>
             </property>
            </widget>
           </item>
@@ -967,7 +978,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.150000000000000</double>
+             <double>0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -1771,7 +1782,7 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="singleStep">
-                 <double>0.010000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                 <property name="value">
                  <double>1.000000000000000</double>

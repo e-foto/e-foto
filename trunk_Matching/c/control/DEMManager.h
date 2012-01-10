@@ -32,6 +32,7 @@ class DEMManager
         bool cancel_flag;
         bool dem_unsaved;
         bool grid_unsaved;
+        bool elim_bad_pts;
         double over_it_dist;
         DEMUserInterface* myInterface;
         EFotoManager* manager;
@@ -75,7 +76,7 @@ public:
         bool exec();
         void returnProject();
         int getPairs();
-        void extractDEM(int, bool);
+        int extractDEM(int, bool);
         void setAutoExtractionSettings(int, int, int, int, double);
         void setNCCSettings(int, int, double, double);
         void setLSMSettings(int, int, double, double, int, double, double, double, int, double);
@@ -86,6 +87,7 @@ public:
         void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
         void setCancel();
         void setShowImage(int _state) { isShowImage = _state; };
+        void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; };
         bool cancelFlag() { return cancel_flag; };
         bool isDemUnsaved() { return dem_unsaved; };
         bool isGridUnsaved() { return grid_unsaved; };
