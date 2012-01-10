@@ -33,6 +33,7 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     isShowImage = false;
     dem_unsaved = false;
     grid_unsaved = false;
+    elim_bad_pts = false;
     setListPoint();
 }
 
@@ -216,7 +217,7 @@ int DEMManager::getPairs()
 
     if (listAllImages.size() < 2)
     {
-        dui->showErrorMessage("Not enough images to run this application");
+        dui->showFatalErrorMessage("Not enough images to run this application", true);
         return 0;
     }
 
@@ -294,7 +295,7 @@ int DEMManager::getPairs()
 
     if (listPairs.size() < 1)
     {
-        dui->showErrorMessage("Not enough pairs to run this application");
+        dui->showFatalErrorMessage("Not enough pairs to run this application", true);
         return 0;
     }
 
@@ -570,7 +571,7 @@ void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
         }
 }
 
-void DEMManager::extractDEM(int option, bool clearMList)
+int DEMManager::extractDEM(int option, bool clearMList)
 {
     cancel_flag = false;
 
@@ -586,6 +587,7 @@ void DEMManager::extractDEM(int option, bool clearMList)
     resamplePoints(&seeds,downsample);
     resamplePoints(&pairs,downsample);
 
+    // Extract all pairs
     if (option==0)
     {
         for (int i=0; i<listPairs.size(); i++)
@@ -595,7 +597,7 @@ void DEMManager::extractDEM(int option, bool clearMList)
                 break;
         }
     }
-    else
+    else // Or just one pair
         extractDEMPair(option-1);
 
     // Upsample seeds
@@ -618,22 +620,30 @@ void DEMManager::extractDEM(int option, bool clearMList)
     int hist[6] = {0,0,0,0,0,0};
     int p;
 
-    for (int i=1; i<=pairs.size(); i++)
-    {
-        mp = pairs.get(i);
-        p = 10 - int(mp->matching_accuracy*10);
-        if (p>5) p=5;
-        hist[p] += 1;
-    }
-
-    for (int i=0; i<6; i++)
-        hist[i] = (100*hist[i])/pairs.size();
-
-    dui->setMathcingHistogram(hist);
-
     dui->setAllowClose(true);
     dui->enableOptions();
-    dem_unsaved = true;
+
+    if (pairs.size() > 0)
+    {
+        for (int i=1; i<=pairs.size(); i++)
+        {
+            mp = pairs.get(i);
+            p = 10 - int(mp->matching_accuracy*10);
+            if (p>5) p=5;
+            hist[p] += 1;
+        }
+
+        for (int i=0; i<6; i++)
+            hist[i] = (100*hist[i])/pairs.size();
+
+        dui->setMathcingHistogram(hist);
+        dem_unsaved = true;
+    }
+    else
+    {
+        dui->showErrorMessage("Could not find any pair");
+        return 0;
+    }
 
     // Show image, if selected
     if (isShowImage && !cancel_flag)
@@ -642,6 +652,8 @@ void DEMManager::extractDEM(int option, bool clearMList)
         dui->showImage(img, 0);
         delete img;
     }
+
+    return 1;
 }
 
 void DEMManager::extractDEMPair(int pair)
@@ -693,6 +705,7 @@ void DEMManager::extractDEMPair(int pair)
     im->setMatchingMethod(match_method);
     im->setRadiometricMode(rad_cor-1);
     im->setMinStd(std);
+    im->setElimanteBadPoints(elim_bad_pts);
     im->getNCC()->setTemplate(ncc_temp);
     im->getNCC()->setSearchWindow(ncc_sw);
     im->getLSM()->setTemplate(lsm_temp);
@@ -703,6 +716,7 @@ void DEMManager::extractDEMPair(int pair)
     im->getLSM()->setOverItDist(over_it_dist);
 
     im->performImageMatching(img1, img2, &seeds, &pairs);
+//  dui->saveImage((char *)"Map.bmp",&im->getMap());
 
     delete img1, img2;
     delete im;

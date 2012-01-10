@@ -24,6 +24,7 @@ void ImageMatching::init()
         stack = aux = NULL;
         manager = NULL;
         cancel_flag = false;
+        elim_bad_pts = false;
 }
 
 void ImageMatching::setMatchingLimits(int xi, int xf, int yi, int yf)
@@ -99,7 +100,7 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	//
 	// Step 3 - Create Region Growing map
 	//
-	int map_width = img_width/step_x, map_height = img_height/step_y;
+        int map_width = 1 + (img_width/step_x), map_height = 1 + (img_height/step_y);
 	map.resize(map_height, map_width);
         fillMap(mpoints);
 
@@ -146,7 +147,8 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	//
 
 	// Default values: sigma_x=3, sigma_y=1.5
-        mpoints->filterBadPoints2D();
+        if (elim_bad_pts)
+            mpoints->filterBadPoints2D();
 }
 
 /*
@@ -232,6 +234,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 
 	while(pop(lx,ly,rx,ry))
 	{
+                // Map coordinates
 		i = (ly/step_y) + 1;
 		j = (lx/step_x) + 1;
 
@@ -286,7 +289,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 		mpoints->add(left_image_id, right_image_id, double(lx-1), double(ly-1), new_x-1.0, new_y-1.0, p);
 
 		// Set visited
-		map.set(i,j,1.0);
+                map.set(i,j,1.0);
 
 		// Calculate coverage
 		num_visited += 1.0;
