@@ -419,15 +419,14 @@ void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
 
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
+    manager->setEliminateBadPoints(checkBox_4->isChecked());
     manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value(), doubleSpinBox0->value());
     manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
     manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
-    manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
+    int DEMflag = manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
 
-    if (manager->cancelFlag())
-        return;
-
-    enableAfterDEM();
+    if (!manager->cancelFlag() && DEMflag)
+        enableAfterDEM();
 }
 
 /*
@@ -454,9 +453,7 @@ Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
                 for (unsigned int j=1; j<=width; j++)
                 {
                         pixel = img.pixel((j-1)*step,(i-1)*step);
-//			pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140;
                         pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
-//                        pixel = pixel & 0xFF;
                         I->set(i, j, pixel/double(levels-1));
                 }
                 progressBar->setValue((100*i)/height);
@@ -506,10 +503,12 @@ void DEMUserInterface_Qt::onStereoplotterClicked()
     QMessageBox::warning(this,"Warning","Sorry, not implemented");
 }
 
-void DEMUserInterface_Qt::showErrorMessage(QString msg)
+void DEMUserInterface_Qt::showFatalErrorMessage(QString msg, bool abort=true)
 {
     QMessageBox::critical(this, "Error",msg);
-    doneButton->click();
+
+    if (abort)
+        doneButton->click();
 }
 
 /**************************
@@ -628,6 +627,9 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
     }
 }
 
+/*
+ * Control table events
+ */
 void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
 {
     checkSelectedSeeds();
@@ -636,15 +638,19 @@ void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
         return;
 
     // Center coordinates
-    double x,y;
+    double x1,y1, x2, y2;
 
-    x = tableWidget->item(sel_seeds.at(0),1)->text().toDouble();
-    y = tableWidget->item(sel_seeds.at(0),2)->text().toDouble();
-    viewer->getLeftDisplay()->getCurrentScene()->moveTo(QPointF(x,y));
+    x1 = tableWidget->item(sel_seeds.at(0),1)->text().toDouble();
+    y1 = tableWidget->item(sel_seeds.at(0),2)->text().toDouble();
+    x2 = tableWidget->item(sel_seeds.at(0),3)->text().toDouble();
+    y2 = tableWidget->item(sel_seeds.at(0),4)->text().toDouble();
 
-    x = tableWidget->item(sel_seeds.at(0),3)->text().toDouble();
-    y = tableWidget->item(sel_seeds.at(0),4)->text().toDouble();
-    viewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(x,y));
+    // Check if current seed pair was not measured
+    if (int(x1) == 0 || int(y1) == 0 || int(x2) == 0 || int(y2) == 0 )
+        return;
+
+    viewer->getLeftDisplay()->getCurrentScene()->moveTo(QPointF(x1,y1));
+    viewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(x2,y2));
 
     viewer->update();
 }

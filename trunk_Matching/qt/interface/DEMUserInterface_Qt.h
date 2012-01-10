@@ -79,7 +79,8 @@ public:
         void showImage(Matrix* image, bool isGrayscale = true);
         void disableOptions();
         void enableOptions();
-        void showErrorMessage(QString msg);
+        void showFatalErrorMessage(QString msg, bool abort);
+        void showErrorMessage(QString msg) { showFatalErrorMessage(msg, false); };
 };
 
 class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
