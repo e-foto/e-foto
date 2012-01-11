@@ -64,6 +64,7 @@ public:
 	enum sortCriteria { byLeft, byRight, by3D, byGridpos };
         void clear() { list.clear(); };
 	void add(int, int, double, double, double, double, double);
+        void add(double, double, double);
 	void modify(int, int, int, double, double, double, double, double);
 	void modify(int, double, double, double);
 	void remove(int);
