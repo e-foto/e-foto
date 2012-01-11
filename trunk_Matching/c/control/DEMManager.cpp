@@ -30,10 +30,12 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
     listEOs = eos;
     grid = NULL;
     im = NULL;
+    df = NULL;
     isShowImage = false;
     dem_unsaved = false;
     grid_unsaved = false;
     elim_bad_pts = false;
+    bb_empty = true;
     setListPoint();
 }
 
@@ -387,6 +389,22 @@ void DEMManager::setCancel()
         im->setCancel();
 }
 
+void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
+{
+    if (bb_empty)
+    {
+        bb_Xi = Xi; bb_Xf = Xf;
+        bb_Yi = Yi; bb_Yf = Yf;
+        bb_empty = false;
+        return;
+    }
+
+    if (Xi < bb_Xi) bb_Xi = Xi;
+    if (Xf < bb_Xf) bb_Xf = Xf;
+    if (Yi < bb_Yi) bb_Yi = Yi;
+    if (Yf < bb_Yf) bb_Yf = Yf;
+}
+
 /*
  * Seeds
  **/
@@ -476,11 +494,51 @@ int DEMManager::loadDem(char * filename, int fileType)
     return 1;
 }
 
+int DEMManager::loadDemFeature(char *filename)
+{
+    if (df != NULL)
+        delete df;
+
+    df = new DemFeatures();
+
+    // Stereoplotter 1.65, mode = 0
+    // Append = false
+    bool dfFlag = df->loadFeatures(filename, 0, false);
+
+    DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+
+    if (!dfFlag)
+    {
+        dui->showErrorMessage("Bad file type !");
+        return 0;
+    }
+
+    // Update info
+    MatchingPointsList tmpList;
+    df->addFeaturesToPairList(&tmpList, false);
+
+    if (tmpList.size() < 1)
+    {
+        dui->showErrorMessage("No point or line found !");
+        return 0;
+    }
+
+    double Xi, Yi, Zi, Xf, Yf, Zf;
+    tmpList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    updateBoundingBox(Xi, Yi, Xf, Yf);
+    dui->setStatus((char *)"Done");
+    dui->progressBar->setValue(0);
+    dui->setManualExtInfo(seeds.size(),Zi,Zf);
+    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
+
+    return 1;
+}
+
 /*
  * DEM extraction
  **/
 
-void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight)
+void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
 {
     double Zi, Zf;
 
@@ -500,7 +558,24 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
     grid = new DemGrid(Xi,Yi,Xf,Yf,res_x,res_y);
     grid->linkManager(this);
-    grid->setPointList(&pairs);
+
+    // Grid source:
+    // 0- Automatic extraction
+    // 1- Stereoplotter points and lines
+    // 2- Both
+    MatchingPointsList modPairs;
+
+    // Copy of automatic extraction
+    if (gridSource != 1)
+        modPairs = pairs;
+
+    if (gridSource !=0)
+    {
+        if (df != NULL)
+            df->addFeaturesToPairList(&modPairs, false);
+    }
+
+    grid->setPointList(&modPairs);
 
     switch (method)
     {
@@ -610,10 +685,11 @@ int DEMManager::extractDEM(int option, bool clearMList)
     // Update info
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    updateBoundingBox(Xi, Yi, Xf, Yf);
     dui->setStatus((char *)"Done");
     dui->progressBar->setValue(0);
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
-    dui->setBoundingBox(Xi, Yi, Xf, Yf);
+    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
 
     // Create histogram
     MatchingPoints *mp;

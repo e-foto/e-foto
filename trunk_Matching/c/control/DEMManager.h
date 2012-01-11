@@ -15,6 +15,7 @@
 #include "MatchingPoints.h"
 #include "DemGrid.h"
 #include "SpatialIntersection.h"
+#include "DemFeatures.h"
 
 class DEMUserInterface;
 class EFotoManager;
@@ -23,6 +24,9 @@ class DEMManager
 {
 	// Private Attributes
 	//
+        double bb_Xi, bb_Yi, bb_Xf, bb_Yf;
+        bool bb_empty;
+        void updateBoundingBox(double Xi, double Yi, double Xf, double Yf);
         int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
         double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
         bool isShowImage;
@@ -56,6 +60,7 @@ class DEMManager
         bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
         ImageMatching *im;
         DemGrid *grid;
+        DemFeatures *df;
         StereoPair sp;
 
 public:
@@ -84,7 +89,7 @@ public:
         void saveDem(char *, int);
         void saveDemGrid(char *, int);
         int loadDem(char *, int);
-        void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
+        void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource);
         void setCancel();
         void setShowImage(int _state) { isShowImage = _state; };
         void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; };
@@ -95,6 +100,7 @@ public:
         deque<Image*> getImages() { return listAllImages; };
         deque<int> getImagesPairs() { return listPairs; };
         void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); };
+        int loadDemFeature(char * filename);
 
 };
 

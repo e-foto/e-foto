@@ -96,6 +96,7 @@ HEADERS += \
     AnalogImageSpaceCoordinate.h \
     CheckingPoint.h \
     ControlPoint.h \
+    DemFeatures.h \
     DemGrid.h \
     DigitalFiductialMark.h \
     DigitalImageSpaceCoordinate.h \
@@ -248,6 +249,7 @@ SOURCES += \
     AnalogImageSpaceCoordinate.cpp \
     CheckingPoint.cpp \
     ControlPoint.cpp \
+    DemFeatures.cpp \
     DemGrid.cpp \
     DigitalFiductialMark.cpp \
     DigitalImageSpaceCoordinate.cpp \

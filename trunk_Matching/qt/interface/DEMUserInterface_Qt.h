@@ -36,6 +36,7 @@ protected:
         DEMManager *manager;
 	void closeEvent(QCloseEvent *e);
         int checkBoundingBox();
+        int demSource;
 
 protected slots:
 	virtual void languageChange();
@@ -52,7 +53,7 @@ protected slots:
         void onSeedsEditorClicked();
         void onStereoplotterClicked();
         void onMatchingMethodChanged(int);
-        void enableAfterDEM();
+        void enableAfterDEM(int sender);
         void enableAfterGrid();
 
 private:
@@ -70,6 +71,7 @@ public:
         void addImagePair(char *);
         void setStatus(char *);
         void setAutoExtInfo(int, int , double, double);
+        void setManualExtInfo(int, double, double);
         void updateSeedsLabel(int nseeds);
         void setBoundingBox(double Xi, double Yi, double Xf, double Yf);
         void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
