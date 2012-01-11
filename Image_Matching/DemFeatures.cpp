@@ -24,6 +24,12 @@ FeatureClass * DemFeatures::getFeatureClass(int classid)
 	return &feature_classes.at(classid-1);
 }
 
+/*
+ * Feature type:
+ * 1- Point
+ * 2- Line
+ * 3- Polygon
+ */
 string DemFeatures::getFeatureTypeName(int ftype)
 {
 	switch (ftype)
@@ -770,5 +776,27 @@ void DemFeatures::showClasses()
 		printf(" Description: %s\n",feature_classes.at(i).description.c_str());
 		printf(" Outline color: %06X\n",feature_classes.at(i).outline_color);
 		printf(" Fill color: %06X\n",feature_classes.at(i).fill_color);
+	}
+}
+
+/*
+ * This function converts points and lines to pair list
+ * usePolygons enable using polygons too
+ * The pair list is not cleared !
+ */
+void DemFeatures::addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygons = false)
+{
+	// Search for features
+	for (int f=0; f<features.size(); f++)
+	{
+		DemFeature *df =  &features.at(f);
+
+		if (!usePolygons && df->feature_type == 3)
+			continue;
+
+		// Add point
+		for (int k=0; k<df->points.size(); k++)
+			mpl->add(df->points.at(k).X, df->points.at(k).Y, df->points.at(k).Z);
+
 	}
 }
