@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "MatchingPoints.h"
 
 /**
 * class DemFeatures
@@ -107,6 +108,7 @@ public:
 	int addFeatureClass(FeatureClass fc); // Return class id
 	void setFeatureClass(int classid, FeatureClass fc);
 	int getNearestFeature(double X, double Y, double Z);
+	void addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygons);
 };
 
 #endif

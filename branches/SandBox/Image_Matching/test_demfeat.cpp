@@ -1,11 +1,14 @@
 #include "DemFeatures.cpp"
+#include "MatchingPoints.cpp"
 
 int main(void)
 {
 	DemFeatures df;
+	MatchingPointsList mpl;
 
 //	printf("Feature type: %s\n",df.getFeatureTypeName(2).c_str());
-	df.loadFeatures((char *)"/home/marts/EFOTO/Develop/data_and_images/UERJ_FEATURES.txt",1);
+//	df.loadFeatures((char *)"/home/marts/EFOTO/Develop/data_and_images/UERJ_FEATURES.txt",1);
+	df.loadFeatures((char *)"/home/marcelo/projects/e-foto/Old E-FOTO/Database/FEICOES_UERJ_OK_4.txt",1);
 //	df.getFeature(8).description = "Rua do bairro do Maracanã"; // Ok, read only
 //	df.showFeatures(true);
 
@@ -23,6 +26,9 @@ int main(void)
 //	df.showClasses(); // Ok
 //	printf("Nearest feature: %d\n",df.getNearestFeature(681102.3714, 7465262.5574, 21.76));
 //	printf("Nearest feature: %d\n",df.getNearestFeature(680828.2934, 7465382.5400, 13.69));
+
+	df.addFeaturesToPairList(&mpl,true);
+	mpl.listMp();
 
 	return 1;
 }
