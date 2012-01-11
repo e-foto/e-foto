@@ -33,6 +33,16 @@ void MatchingPointsList::add(int left_id, int right_id, double lx, double ly, do
 	list.push_back(mp);
 }
 
+void MatchingPointsList::add(double X, double Y, double Z)
+{
+        MatchingPoints mp;
+        mp.X = X;
+        mp.Y = Y;
+        mp.Z = Z;
+
+        list.push_back(mp);
+}
+
 // List ranges from 1 to size
 void MatchingPointsList::modify(int pos, int left_id, int right_id, double lx, double ly, double rx, double ry, double acc)
 {

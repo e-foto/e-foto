@@ -73,6 +73,9 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 
         allow_close = true;
 
+        comboBox0->setEnabled(false);
+        demSource = 0;
+
 	qApp->processEvents();
 	init();
 }
@@ -241,6 +244,13 @@ void DEMUserInterface_Qt::setAutoExtInfo(int nseeds, int nmatch, double min, dou
     autoMaxZLabel->setText(QString::number(max,'f',5));
 }
 
+void DEMUserInterface_Qt::setManualExtInfo(int npts, double min, double max)
+{
+    manualPointsLabel->setText(QString::number(npts));
+    manualMinZLabel->setText(QString::number(min,'f',5));
+    manualMaxZLabel->setText(QString::number(max,'f',5));
+}
+
 void DEMUserInterface_Qt::updateSeedsLabel(int nseeds)
 {
     seedPointsLabel->setText(QString::number(nseeds));
@@ -311,15 +321,25 @@ void DEMUserInterface_Qt::onDemLoadClicked()
         return;
     }
 
-    enableAfterDEM();
+    enableAfterDEM(1);
 }
 
-void DEMUserInterface_Qt::enableAfterDEM()
+void DEMUserInterface_Qt::enableAfterDEM(int sender)
 {
     // Enable options
     saveButton2->setEnabled(true);
     interButton->setEnabled(true);
     tabWidget->setTabEnabled(4, true);
+
+    demSource = demSource | sender;
+
+    if (demSource < 3)
+    {
+        if (sender == 2)
+            comboBox0->setCurrentIndex(1);
+    }
+    else
+        comboBox0->setEnabled(true);
 }
 
 void DEMUserInterface_Qt::enableAfterGrid()
@@ -334,7 +354,7 @@ void DEMUserInterface_Qt::onDemGridClicked()
         return;
 
     // Perform interpolation
-    manager->interpolateGrid(comboBox0->currentIndex(), comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex());
+    manager->interpolateGrid(comboBox0->currentIndex(), comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex(), comboBox0->currentIndex());
 
     if (manager->cancelFlag())
         return;
@@ -426,7 +446,7 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
     int DEMflag = manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
 
     if (!manager->cancelFlag() && DEMflag)
-        enableAfterDEM();
+        enableAfterDEM(1);
 }
 
 /*
@@ -500,7 +520,19 @@ void DEMUserInterface_Qt::onSeedsEditorClicked()
 
 void DEMUserInterface_Qt::onStereoplotterClicked()
 {
-    QMessageBox::warning(this,"Warning","Sorry, not implemented");
+    // File open dialog
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Stereoplotter file"), ".", tr("Stereoplotter file (*.txt);; All files (*.*)")) ;
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    if (manager->loadDemFeature((char *) filename.toStdString().c_str()))
+        enableAfterDEM(2);
 }
 
 void DEMUserInterface_Qt::showFatalErrorMessage(QString msg, bool abort=true)
