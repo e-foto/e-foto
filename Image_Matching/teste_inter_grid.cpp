@@ -58,13 +58,19 @@ int saveImage(char *filename, Matrix *I)
 int main(void)
 {
 	MatchingPointsList myList;
-	myList.load((char *)"../Analysis/uerj_3d_points.txt",MatchingPointsList::loadidXYZ, false, 16, 17);
+//	if(!myList.load((char *)"../Analysis/uerj_3d_points.txt",MatchingPointsList::loadidXYZ, false, 16, 17))
+	if (!myList.load((char *)"/home/marts/Documentos/e-foto/eppsHomePage/Seeds.txt",MatchingPointsList::loadFull, false, 1, 2))
+	{
+		printf("Points file not found.\n");
+		return 0;
+	}
 
 	DemGrid dg(680466.54795, 7464269.15739, 681360.02541, 7465947.83362, 1.0, 1.0);
 	dg.setPointList(&myList);
 //	dg.interpolateNearestPoint();
 //	dg.interpolateTrendSurface(3);
-	dg.interpolateMovingAverage(0.5, 5.0, 0);
+//	dg.interpolateMovingAverage(0.5, 5.0, 0);
+	dg.interpolateMovingAverage(0.5, 1000.0, 0);
 //	dg.interpolateMovingSurface(0.5, 5.0, 0, 3);
 //	dg.cutGrid(0.0,100.0); // User set min and max height
 	dg.cutGrid(1.0,1.0,true); // Set min and max height from 3D point list

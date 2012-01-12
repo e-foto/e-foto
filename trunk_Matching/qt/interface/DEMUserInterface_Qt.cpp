@@ -64,6 +64,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         saveButton2->setEnabled(false);
         interButton->setEnabled(false);
         tabWidget->setTabEnabled(4, false);
+        tabWidget->setTabEnabled(6, false);
         onMatchingMethodChanged(comboBox4->currentIndex());
 
         // Set initial states
@@ -346,6 +347,7 @@ void DEMUserInterface_Qt::enableAfterGrid()
 {
     // Enable options
     saveButton->setEnabled(true);
+    tabWidget->setTabEnabled(6,true);
 }
 
 void DEMUserInterface_Qt::onDemGridClicked()
@@ -360,6 +362,25 @@ void DEMUserInterface_Qt::onDemGridClicked()
         return;
 
     enableAfterGrid();
+}
+
+void DEMUserInterface_Qt::setElapsedTime(double t)
+{
+    int hms = int(t);
+    int h = hms/3600;
+    hms -= 3600 * h;
+    int m = hms/60;
+    hms -= 60 * m;
+    double s = double(hms);
+    s = s + (t-floor(t));
+
+    QString str_time;
+
+    if (h>0) str_time = QString::number(h) + " hours, ";
+    if (h>0 || m>0) str_time += QString::number(m) + " minutes, ";
+    str_time += QString::number(s) + " seconds.";
+
+    timeLabel->setText(str_time);
 }
 
 void DEMUserInterface_Qt::onLSMCheckChanged(int state)
@@ -727,6 +748,7 @@ void SeedEditorUserInterface_Qt::onAddButtonClicked()
     int left_id, right_id;
     getImagesIds(left_id, right_id);
     seeds.add(left_id, right_id, -1.0, -1.0, -1.0, -1.0, 0.0);
+
 }
 
 void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
@@ -755,7 +777,6 @@ void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
     for (int i=sel_seeds.size()-1; i>=0; i--)
     {
         seed_id = tableWidget->item(sel_seeds.at(i),0)->text().toInt();
-
         seeds.remove(seed_id);
     }
 
@@ -785,12 +806,15 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
     // Multiple selection from line 0, selected by shift key,
     // create a list full of 0s
     bool flag=false;
+    bool stack_0 = 0, stack_1 = 0;
     for (int i=0; i<no_pairs; i++)
     {
-        if (selected.at(i)->row() != 0)
-            break;
-        flag = true;
+        if (selected.at(i)->row() == 0)
+            stack_0++;
+        if (selected.at(i)->row() == 1)
+            stack_1++;
     }
+    flag = (stack_0 > 1 || stack_1 > 1);
 
     // Add manually indexes, to fix this bug
     if (flag)

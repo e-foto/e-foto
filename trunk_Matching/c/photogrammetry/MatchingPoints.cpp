@@ -19,6 +19,23 @@ MatchingPoints::MatchingPoints()
  * Matching Points List *
  ************************/
 
+void MatchingPointsList::add(int left_id, int right_id, double lx, double ly, double rx, double ry, double X, double Y, double Z, double acc)
+{
+        MatchingPoints mp;
+        mp.left_image_id = left_id;
+        mp.right_image_id = right_id;
+        mp.left_x = lx;
+        mp.left_y = ly;
+        mp.right_x = rx;
+        mp.right_y = ry;
+        mp.X = X;
+        mp.Y = Y;
+        mp.Z = Z;
+        mp.matching_accuracy = acc;
+
+        list.push_back(mp);
+}
+
 void MatchingPointsList::add(int left_id, int right_id, double lx, double ly, double rx, double ry, double acc)
 {
 	MatchingPoints mp;
