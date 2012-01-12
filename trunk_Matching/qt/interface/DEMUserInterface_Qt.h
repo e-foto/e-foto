@@ -83,6 +83,7 @@ public:
         void enableOptions();
         void showFatalErrorMessage(QString msg, bool abort);
         void showErrorMessage(QString msg) { showFatalErrorMessage(msg, false); };
+        void setElapsedTime(double t);
 };
 
 class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow

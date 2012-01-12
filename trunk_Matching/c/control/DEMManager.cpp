@@ -416,6 +416,7 @@ void DEMManager::createInitialSeeds()
 
     Point *p;
     int no_imgs_pt, left_id, right_id;
+    double X, Y, Z;
     DigitalImageSpaceCoordinate left_dic, right_dic;
 
     for (int i=0; i<listAllPoints.size(); i++)
@@ -437,8 +438,11 @@ void DEMManager::createInitialSeeds()
 
             left_dic = p->getDigitalCoordinate(left_id);
             right_dic = p->getDigitalCoordinate(right_id);
+            X = p->getObjectCoordinate().getX();
+            Y = p->getObjectCoordinate().getY();
+            Z = p->getObjectCoordinate().getZ();
 
-            seeds.add(left_id, right_id, double(left_dic.getCol()), double(left_dic.getLin()), double(right_dic.getCol()), double(right_dic.getLin()), 0.0);
+            seeds.add(left_id, right_id, double(left_dic.getCol()), double(left_dic.getLin()), double(right_dic.getCol()), double(right_dic.getLin()), X, Y, Z, 0.0);
         }
     }
 
@@ -597,6 +601,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     dui->setAllowClose(true);
     dui->enableOptions();
     grid_unsaved = true;
+    dui->setElapsedTime(grid->getElapsedTime());
 
     // Show image, if selected
     if (isShowImage && !cancel_flag)
