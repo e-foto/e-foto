@@ -93,7 +93,7 @@ private:
     DEMManager *manager;
     SeparatedStereoViewer* viewer;
     MatchingPointsList seeds, pairs;
-    Marker *mark_seeds, *mark_pairs;
+    Marker *mark_seeds, *mark_pairs, *mark_empty;
     ProgressWindow pw;
     void getImagesIds(int &left_id, int &right_id);
     void updateMarks();
