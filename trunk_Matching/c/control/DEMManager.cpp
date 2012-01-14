@@ -554,15 +554,6 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     dui->disableOptions();
     dui->setAllowClose(false);
 
-    if (garea == 0)
-        pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
-
-    if (grid != NULL)
-        delete grid;
-
-    grid = new DemGrid(Xi,Yi,Xf,Yf,res_x,res_y);
-    grid->linkManager(this);
-
     // Grid source:
     // 0- Automatic extraction
     // 1- Stereoplotter points and lines
@@ -578,6 +569,15 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
         if (df != NULL)
             df->addFeaturesToPairList(&modPairs, false);
     }
+
+    if (garea == 0)
+        modPairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+
+    if (grid != NULL)
+        delete grid;
+
+    grid = new DemGrid(Xi,Yi,Xf,Yf,res_x,res_y);
+    grid->linkManager(this);
 
     grid->setPointList(&modPairs);
 
