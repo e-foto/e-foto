@@ -595,15 +595,16 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
     connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
 
-    Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Create marks
+    Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
     viewer->getLeftMarker().changeMarker(mark);
     viewer->getRightMarker().changeMarker(mark);
 
     setCentralWidget(viewer);
 
     // Create image marks
-    mark_seeds = new Marker(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2));
-    mark_pairs = new Marker(SymbolsResource::getX(Qt::red, QSize(24, 24),2));
+    mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
+    mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
+    mark_empty = new Marker(SymbolsResource::getText(""));
 
     // Copy seed and pair lists
     pw.setAllowClose(false);
@@ -724,21 +725,21 @@ void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
 void SeedEditorUserInterface_Qt::onAddButtonClicked()
 {
     // Add new line
-    int p = tableWidget->rowCount();
+    int key = tableWidget->rowCount();
     QTableWidgetItem *newItem;
 
-    tableWidget->insertRow(p);
+    tableWidget->insertRow(key);
 
     newItem = new QTableWidgetItem(tr("%1").arg(seeds.size()+1));
-    tableWidget->setItem(p, 0, newItem);
+    tableWidget->setItem(key, 0, newItem);
     newItem = new QTableWidgetItem("");
-    tableWidget->setItem(p, 1, newItem);
+    tableWidget->setItem(key, 1, newItem);
     newItem = new QTableWidgetItem("");
-    tableWidget->setItem(p, 2, newItem);
+    tableWidget->setItem(key, 2, newItem);
     newItem = new QTableWidgetItem("");
-    tableWidget->setItem(p, 3, newItem);
+    tableWidget->setItem(key, 3, newItem);
     newItem = new QTableWidgetItem("");
-    tableWidget->setItem(p, 4, newItem);
+    tableWidget->setItem(key, 4, newItem);
 
     tableWidget->clearSelection();
     tableWidget->setCurrentItem(newItem);
@@ -749,6 +750,11 @@ void SeedEditorUserInterface_Qt::onAddButtonClicked()
     getImagesIds(left_id, right_id);
     seeds.add(left_id, right_id, -1.0, -1.0, -1.0, -1.0, 0.0);
 
+    // Add empty points to image pair
+    viewer->getLeftMarker().insertMark(QPointF(-1,-1), key, "", mark_empty);
+    viewer->getRightMarker().insertMark(QPointF(-1,-1), key, "", mark_empty);
+
+    no_seeds++;
 }
 
 void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
@@ -806,22 +812,17 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
     // Multiple selection from line 0, selected by shift key,
     // create a list full of 0s
     bool flag=false;
-    bool stack_0 = 0, stack_1 = 0;
-    for (int i=0; i<no_pairs; i++)
+    if (no_pairs > 1)
     {
-        if (selected.at(i)->row() == 0)
-            stack_0++;
-        if (selected.at(i)->row() == 1)
-            stack_1++;
+        if (selected.at(0)->row() == selected.at(1*cols)->row())
+            flag = true;
     }
-    flag = (stack_0 > 1 || stack_1 > 1);
 
     // Add manually indexes, to fix this bug
     if (flag)
     {
         for (int i=0; i<no_pairs; i++)
-            sel_seeds.push_back(i);
-        return;
+            sel_seeds.push_back(i+selected.at(0)->row());
     }
 
     for (int i=0; i<no_pairs*cols; i+=cols)
@@ -864,7 +865,7 @@ void SeedEditorUserInterface_Qt::closeOk()
 }
 
 /*
- * Add new table row
+ * Create pair list
  */
 void SeedEditorUserInterface_Qt::addPairs()
 {
@@ -1001,8 +1002,16 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
         left_coord.setY(double(mp->left_y));
         right_coord.setX(double(mp->right_x));
         right_coord.setY(double(mp->right_y));
-        viewer->getLeftMarker().insertMark(left_coord, key, QString::number(i+1), mark_seeds);
-        viewer->getRightMarker().insertMark(right_coord, key, QString::number(i+1), mark_seeds);
+
+        if (mp->left_x > 0 || mp->left_y > 0)
+            viewer->getLeftMarker().insertMark(left_coord, key, QString::number(i+1), mark_seeds);
+        else
+            viewer->getLeftMarker().insertMark(left_coord, key, "", mark_empty);
+
+        if (mp->right_x > 0 || mp->right_y > 0)
+            viewer->getRightMarker().insertMark(right_coord, key, QString::number(i+1), mark_seeds);
+        else
+            viewer->getRightMarker().insertMark(right_coord, key, "", mark_empty);
 
         // Table
         tableWidget->insertRow(no_seeds);
@@ -1010,16 +1019,19 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
         newItem = new QTableWidgetItem(tr("%1").arg(i+1));
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 0, newItem);
-        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x));
+
+        // Write only if point was measured
+        (mp->left_x > 0 || mp->left_y > 0) ? newItem = new QTableWidgetItem(tr("%1").arg(mp->left_x)) : newItem = new QTableWidgetItem("");
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 1, newItem);
-        newItem = new QTableWidgetItem(tr("%1").arg(mp->left_y));
+        (mp->left_x > 0 || mp->left_y > 0) ? newItem = new QTableWidgetItem(tr("%1").arg(mp->left_y)) : newItem = new QTableWidgetItem("");
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 2, newItem);
-        newItem = new QTableWidgetItem(tr("%1").arg(mp->right_x));
+
+        (mp->right_x > 0 || mp->right_y > 0) ? newItem = new QTableWidgetItem(tr("%1").arg(mp->right_x)) : newItem = new QTableWidgetItem("");
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 3, newItem);
-        newItem = new QTableWidgetItem(tr("%1").arg(mp->right_y));
+        (mp->right_x > 0 || mp->right_y > 0) ? newItem = new QTableWidgetItem(tr("%1").arg(mp->right_y)) : newItem = new QTableWidgetItem("");
         newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         tableWidget->setItem(no_seeds, 4, newItem);
 

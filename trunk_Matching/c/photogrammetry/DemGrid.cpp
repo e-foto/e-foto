@@ -171,6 +171,54 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
         Y = res_y * (double(row) - 1.0) + Yi;
 }
 
+/*
+ * INTERPOOLATION DECISION METHOD
+ */
+
+void DemGrid::interpolateNearestPoint()
+{
+    (chooseBestInterpolationMathod() == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+}
+
+void DemGrid::interpolateTrendSurface(int mode)
+{
+    // No difference between fast and normal methods
+    interpolateTrendSurfaceFast(mode);
+}
+
+void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
+{
+    (chooseBestInterpolationMathod() == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
+}
+
+void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
+{
+    (chooseBestInterpolationMathod() == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
+}
+
+/*
+ * 0- Normal
+ * 1- Fast
+ */
+int DemGrid::chooseBestInterpolationMathod()
+{
+    int no_points = point_list->size();
+
+    if (no_points < 1000)
+        return 0;
+
+    int area = dem_width * dem_height;
+    double density = double(no_points)/double(area);
+    if (density < 1)
+        density = 1;
+
+    int no_its_normal = no_points*no_points;
+    int no_its_fast = int(area * density);
+
+    return (no_its_normal > no_its_fast);
+}
+
+
 /***********************************************
  *                                             *
  * 3D Point INTERPOLATION using fast structure *
@@ -187,7 +235,7 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
 
 // Best performance
 // Time function found at: http://forum.clubedohardware.com.br/milisegundos-c/282275?s=bbcb5f6ff12025b9a8227a5a37e4ccfc&amp;
-void DemGrid::interpolateNearestPoint()
+void DemGrid::interpolateNearestPointFast()
 {
 	if (point_list == NULL)
 	{
@@ -245,7 +293,7 @@ void DemGrid::interpolateNearestPoint()
 }
 
 // This interpolation method does not use the fast structure
-void DemGrid::interpolateTrendSurface(int mode)
+void DemGrid::interpolateTrendSurfaceFast(int mode)
 {
 	if (point_list == NULL)
 	{
@@ -353,7 +401,7 @@ void DemGrid::interpolateTrendSurface(int mode)
 }
 
 // Using fast structure
-void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
+void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 {
 	if (point_list == NULL)
 	{
@@ -430,7 +478,7 @@ void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 }
 
 // Using fast structure
-void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
+void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mode2)
 {
 	if (point_list == NULL)
 	{
@@ -842,16 +890,10 @@ void DemGrid::loadDemAscii(char * filename)
 
 /********************************************************
  * Interpolation functions without using fast structure *
- * -= Only for tests and comparissons =-                *
+ *                                                      *
  ********************************************************/
 
-// If you want to compare the performance, please uncomment some function and check the
-// corresponding function above
-
-/*
-// Without structure - Used to compare times
-// Time function found at: http://forum.clubedohardware.com.br/milisegundos-c/282275?s=bbcb5f6ff12025b9a8227a5a37e4ccfc&amp;
-void DemGrid::interpolateNearestPoint()
+void DemGrid::interpolateNearestPointNormal()
 {
 	if (point_list == NULL)
 	{
@@ -891,6 +933,8 @@ void DemGrid::interpolateNearestPoint()
 			}
 			DEM.set(y, x, Z);
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 	gettimeofday(&end,NULL);
 
@@ -900,9 +944,8 @@ void DemGrid::interpolateNearestPoint()
 
 	printf("Elapsed time: %.6f\n",etime);
 }
-*/
-/*
-void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
+
+void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 {
 	// Mode 0 = inverse distance
 	// Mode 1 = linear decrease
@@ -947,6 +990,8 @@ void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 			else
 				DEM.set(y,x,0.0);
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 
 	gettimeofday(&end,NULL);
@@ -957,9 +1002,8 @@ void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 
 	printf("Elapsed time: %.6f\n",etime);
 }
-*/
-/*
-void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
+
+void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int mode2)
 {
 	// Mode - For moving Average
 	// 0 = inverse distance
@@ -1094,6 +1138,8 @@ void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 				case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
 		}
+                if (manager!=NULL)
+                    manager->setProgress((100*y)/DEM.getRows());
 	}
 
 	gettimeofday(&end,NULL);
@@ -1104,4 +1150,3 @@ void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 
 	printf("Elapsed time: %.6f\n",etime);
 }
-*/
