@@ -1947,7 +1947,11 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_24">
        <item row="0" column="0">
-        <widget class="QTextEdit" name="textEdit"/>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_23">
