@@ -177,7 +177,7 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
 
 void DemGrid::interpolateNearestPoint()
 {
-    (chooseBestInterpolationMathod() == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+    (chooseBestInterpolationMathod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
 }
 
 void DemGrid::interpolateTrendSurface(int mode)
@@ -188,19 +188,21 @@ void DemGrid::interpolateTrendSurface(int mode)
 
 void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 {
-    (chooseBestInterpolationMathod() == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
+    double nf = (n/res_x)*(n/res_y);
+    (chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
 }
 
 void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 {
-    (chooseBestInterpolationMathod() == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
+    double nf = (n/res_x)*(n/res_y);
+    (chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
 }
 
 /*
  * 0- Normal
  * 1- Fast
  */
-int DemGrid::chooseBestInterpolationMathod()
+int DemGrid::chooseBestInterpolationMathod(double nf)
 {
     int no_points = point_list->size();
 
@@ -213,7 +215,7 @@ int DemGrid::chooseBestInterpolationMathod()
         density = 1;
 
     int no_its_normal = no_points*no_points;
-    int no_its_fast = int(area * density);
+    int no_its_fast = int(area * density*nf);
 
     return (no_its_normal > no_its_fast);
 }
@@ -1149,4 +1151,109 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
 	elap_time = double(etime);
 
 	printf("Elapsed time: %.6f\n",etime);
+}
+
+/***************
+ *             *
+ * DEM QUALITY *
+ *             *
+ ***************/
+
+string DemGrid::calculateDemQuality(MatchingPointsList mpl)
+{
+    stringstream txt;
+
+    MatchingPoints *mp;
+    double Z, Zgrid;
+    int list_size = mpl.size();
+    Matrix Zerr(list_size,1);
+    double Zerror;
+
+    txt << "E-FOTO DEM Quality\n\n";
+    txt << "Number of testing points: " << list_size << "\n\n";
+
+    // Calculate whole errors
+    txt << "Whole set:\n";
+    for (int i=0; i<list_size; i++)
+    {
+        mp = mpl.get(i+1);
+
+        Z = mp->Z;
+        Zgrid = getHeightXY(mp->X, mp->Y);
+
+        // -1.0 is a DEM hole flag
+        if (Zgrid - 0.0 < 0.0000000000000001)
+        {
+            Zerror = -1.0;
+            txt << "Point " << i+1 << ": Not used\n";
+        }
+        else
+        {
+            Zerror = fabs(Z-Zgrid);
+            txt << "Point " << i+1 << ": " << Zerror << "\n";
+        }
+
+        Zerr.set(i+1,1,Zerror);
+    }
+
+    bool flag=true;
+    int pts_used = mpl.size();
+    double Zmean, Zstd;
+
+    while (flag && pts_used > 2)
+    {
+        // Calculate useful points mean
+        Zmean = 0.0;
+        pts_used = 0;
+        for (int i=1; i <= list_size; i++)
+        {
+            if (int(Zerr.get(i,1)) == -1)
+                continue;
+
+            pts_used++;
+            Zmean += Zerr.get(i,1);
+        }
+        Zmean /= double(pts_used);
+
+        // Calculate STD
+        Zstd = 0.0;
+        for (int i=1; i <= list_size; i++)
+        {
+            if (int(Zerr.get(i,1)) == -1)
+                continue;
+
+            Zstd += pow(Zerr.get(i,1) - Zmean, 2);
+        }
+        Zstd = sqrt(Zstd/(pts_used));
+
+        // Eliminate outliers
+        flag = false;
+        for (int i=1; i <= list_size; i++)
+        {
+            if (int(Zerr.get(i,1)) == -1)
+                continue;
+
+            if (Zerr.get(i,1) > Zmean + 3.0*Zstd || Zerr.get(i,1) < Zmean - 3.0*Zstd)
+            {
+                flag = true;
+                Zerr.set(i,1,-1.0);
+            }
+        }
+    }
+
+    // Show final results
+    txt << "\nFinal set:\n";
+    for (int i=1; i <= list_size; i++)
+    {
+        if (int(Zerr.get(i,1)) == -1)
+            continue;
+
+        txt << "Point " << i << ": " << Zerr.get(i,1) << "\n";
+    }
+
+    txt << "\nPoints used: " << pts_used << "\n";
+    txt << "Z error average: " << Zmean << "\n";
+    txt << "Z error standard deviation: " << Zstd << "\n\n";
+
+    return txt.str();
 }

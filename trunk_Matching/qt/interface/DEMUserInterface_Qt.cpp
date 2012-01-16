@@ -44,6 +44,8 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(seedsButton, SIGNAL(clicked()), this, SLOT(onSeedsEditorClicked()));
         QObject::connect(stereoButton, SIGNAL(clicked()), this, SLOT(onStereoplotterClicked()));
         QObject::connect(comboBox4, SIGNAL(currentIndexChanged(int)), this, SLOT(onMatchingMethodChanged(int)));
+        QObject::connect(loadPtsButton, SIGNAL(clicked()), this, SLOT(onLoadPtsButtonClicked()));
+        QObject::connect(saveQButton, SIGNAL(clicked()), this, SLOT(onSavePtsButtonClicked()));
 
         setWindowState(this->windowState());
         sed = NULL;
@@ -452,6 +454,42 @@ void DEMUserInterface_Qt::onGridAreaLimitsStateChanged(int opt)
 void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
 {
     manager->setShowImage(opt);
+}
+
+void DEMUserInterface_Qt::onLoadPtsButtonClicked()
+{
+    // File open dialog
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toStdString().c_str())));
+}
+
+void DEMUserInterface_Qt::onSavePtsButtonClicked()
+{
+    // File open dialog
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save DEM quality"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    ofstream outfile(filename.toStdString().c_str());
+
+    outfile << textEdit->toPlainText().toStdString();
+
+    outfile.close();
 }
 
 /*

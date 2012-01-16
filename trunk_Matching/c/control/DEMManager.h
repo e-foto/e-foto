@@ -16,6 +16,7 @@
 #include "DemGrid.h"
 #include "SpatialIntersection.h"
 #include "DemFeatures.h"
+#include <string>
 
 class DEMUserInterface;
 class EFotoManager;
@@ -101,6 +102,7 @@ public:
         deque<int> getImagesPairs() { return listPairs; };
         void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); };
         int loadDemFeature(char * filename);
+        string getDemQuality(char * filename);
 
 };
 

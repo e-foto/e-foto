@@ -800,3 +800,11 @@ void DemFeatures::addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygon
 
 	}
 }
+
+/*
+ * This function creates a polygon map (label image)
+ */
+void DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y)
+{
+
+}

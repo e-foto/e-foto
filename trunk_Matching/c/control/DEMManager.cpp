@@ -808,3 +808,13 @@ void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
     sd = seeds;
     pr = pairs;
 }
+
+string DEMManager::getDemQuality(char *filename)
+{
+    MatchingPointsList mpl;
+
+    if (!mpl.load(filename, MatchingPointsList::loadXYZ))
+        return "";
+
+    return grid->calculateDemQuality(mpl);
+}

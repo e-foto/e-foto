@@ -59,6 +59,7 @@ public:
         void printData();
         void getXYAt(int, int, double &, double &);
         void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
+        string calculateDemQuality(MatchingPointsList mpl);
 
 private:
 	Matrix DEM;
@@ -85,7 +86,7 @@ private:
         void interpolateMovingAverageNormal(double, double, int);
         void interpolateMovingSurfaceNormal(double, double, int, int);
 
-        int chooseBestInterpolationMathod();
+        int chooseBestInterpolationMathod(double nf);
 };
 
 #endif

@@ -55,6 +55,8 @@ protected slots:
         void onMatchingMethodChanged(int);
         void enableAfterDEM(int sender);
         void enableAfterGrid();
+        void onLoadPtsButtonClicked();
+        void onSavePtsButtonClicked();
 
 private:
         void init();

@@ -13,6 +13,7 @@
 #include <fstream>
 #include <vector>
 #include "MatchingPoints.h"
+#include "Matrix.h"
 
 /**
 * class DemFeatures
@@ -73,6 +74,7 @@ private:
 	int selected_feat, selected_pt;
 	vector <DemFeature> features;
 	vector <FeatureClass> feature_classes;
+        Matrix polygonMap;
 
 public:
 	DemFeatures();
@@ -109,6 +111,7 @@ public:
 	void setFeatureClass(int classid, FeatureClass fc);
 	int getNearestFeature(double X, double Y, double Z);
 	void addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygons);
+        void createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y);
 };
 
 #endif
