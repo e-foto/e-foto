@@ -469,7 +469,7 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
     QDir dir(filename.left(i));
     dir.setCurrent(dir.absolutePath());
 
-    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toStdString().c_str())));
+    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toStdString().c_str(), comboBox->currentIndex())));
 }
 
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
