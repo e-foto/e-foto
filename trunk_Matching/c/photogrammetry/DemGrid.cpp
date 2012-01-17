@@ -1201,7 +1201,7 @@ string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     txt << "Number of testing points: " << list_size << "\n\n";
 
     // Calculate whole errors
-    txt << "Whole set:\n";
+    txt << "Whole set Z error:\n";
     for (int i=0; i<list_size; i++)
     {
         mp = mpl.get(i+1);
@@ -1270,7 +1270,7 @@ string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     }
 
     // Show final results
-    txt << "\nFinal set:\n";
+    txt << "\nFinal set Z error:\n";
     for (int i=1; i <= list_size; i++)
     {
         if (int(Zerr.get(i,1)) == -1)
