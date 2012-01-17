@@ -816,11 +816,24 @@ void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
     pr = pairs;
 }
 
-string DEMManager::getDemQuality(char *filename)
+string DEMManager::getDemQuality(char *filename, int option)
 {
     MatchingPointsList mpl;
+    DemFeatures df2;
 
-    if (!mpl.load(filename, MatchingPointsList::loadXYZ))
+    if (option == 0)
+    {
+        if (!mpl.load(filename, MatchingPointsList::loadXYZ))
+            return "";
+    }
+    else
+    {
+        if (!df2.loadFeatures(filename, 0, false))
+            return "";
+        df2.addFeaturesToPairList(&mpl, true);
+    }
+
+    if (mpl.size() < 1)
         return "";
 
     return grid->calculateDemQuality(mpl);
