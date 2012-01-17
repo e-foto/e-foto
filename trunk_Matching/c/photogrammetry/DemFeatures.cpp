@@ -802,9 +802,197 @@ void DemFeatures::addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygon
 }
 
 /*
- * This function creates a polygon map (label image)
+ * This function creates a polygon map
  */
-void DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y)
+Matrix DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y)
 {
+    Matrix polyMap;
 
+    // Calculate DEM size
+    int dem_width, dem_height;
+    dem_width = int(1.0 + floor((Xf - Xi) / res_x));
+    dem_height = int(1.0 + floor((Yf - Yi) / res_y));
+
+    polyMap.resize(dem_height, dem_width);
+
+    for (int i=1; i<=features.size(); i++)
+        addPolygonToMap(i, &polyMap, Xi, Yi, res_x, res_y);
+
+    return polyMap;
+}
+
+void DemFeatures::addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi, double res_x, double res_y)
+{
+    Matrix polMap = mapPolygon(feat_id, res_x, res_y);
+
+    double fXi, fXf, fYi, fYf;
+    calculateBoundingBox(feat_id, fXi, fYi, fXf, fYf);
+
+    double offset_X = fXi - Xi;
+    double offset_Y = fYi - Yi;
+
+    double X, Y;
+    int row, col;
+    for (int i=1; i<=polMap.getRows(); i++)
+    {
+        for (int j=1; j<=polMap.getCols(); j++)
+        {
+            if (polMap.get(i,j) - 0.0 < 0.000000000001)
+                continue;
+
+            // Get poly map coords
+            X = fXi + j;
+            Y = fYi + i;
+
+            // Get main map row, col
+            col = 1 + floor((X-Xi)/res_x);
+            row = 1 + floor((Y-Yi)/res_y);
+
+            if (col < 1 || row < 1 || col > map->getCols() || row > map->getRows())
+                continue;
+
+            if (polMap.get(i,j) > map->get(row,col))
+                map->set(row,col,polMap.get(i,j));
+        }
+    }
+}
+
+Matrix DemFeatures::mapPolygon(int feat_id, double res_x, double res_y)
+{
+    Matrix pmap;
+
+    if (feat_id < 1 || feat_id > features.size())
+        return pmap;
+
+    // Only polygons
+    if (features.at(feat_id-1).feature_type !=3)
+        return pmap;
+
+    // Calculate bounding box
+    double Xi, Xf, Yi, Yf;
+    calculateBoundingBox(feat_id, Xi, Yi, Xf, Yf);
+    double D0 = sqrt(pow(Xf-Xi,2) + pow(Yf-Yi,2));
+
+    // Resize map
+    int pmap_width = int(1.0 + floor((Xf - Xi) / res_x));
+    int pmap_height = int(1.0 + floor((Yf - Yi) / res_y));
+    pmap.resize(pmap_height, pmap_width);
+
+    // Map
+    double X,Y;
+    for (int i=0; i<pmap_height; i++)
+    {
+        for (int j=0; j<pmap_width; j++)
+        {
+            X = Xi + j;
+            Y = Yi + i;
+
+            if (!(isInside(feat_id, X, Y)))
+                continue;
+
+            pmap.set(i, j, interpolateXYPolygon(feat_id, X, Y, D0));
+        }
+    }
+}
+
+// Moving average
+double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double D0 = -1.0)
+{
+    if (feat_id < 1 || feat_id > features.size())
+        return 0.0;
+
+    // Calculate D0, if not given
+    if (D0 < 0.0)
+    {
+        double Xi, Yi, Xf, Yf, delta_X, delta_Y;
+        calculateBoundingBox(feat_id, Xi, Yi, Xf, Yf);
+        delta_X = Xf-Xi;
+        delta_Y = Yf-Yi;
+        D0 = sqrt(delta_X*delta_X + delta_Y*delta_Y);
+    }
+
+    DemFeature *df =  &features.at(feat_id-1);
+    int n = df->points.size();
+
+    // Calculate weights
+    double d, D, sum1, sum2, weight;
+    sum1=0.0;
+    sum2=0.0;
+    for (unsigned int i=0; i < df->points.size(); i++)
+    {
+        D = sqrt(pow(X - df->points.at(i).X,2) + pow(Y - df->points.at(i).Y,2));
+        if (D < D0)
+        {
+            d = D/D0;
+            weight = (1/pow(d,n))-1;
+//            weight = 1 - pow(d,n);
+            sum1 += weight*df->points.at(i).Z;
+            sum2 += weight;
+        }
+    }
+
+    if (sum2 > 0.00000000000000000001)
+        return sum1/sum2;
+
+    return 0.0;
+}
+
+void DemFeatures::calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf)
+{
+    if (feat_id < 1 || feat_id > features.size())
+        return;
+
+    DemFeature df =  features.at(feat_id-1);
+    int n = df.points.size();
+
+    if (n < 3)
+        return;
+
+    Xi = Xf = df.points.at(0).X;
+    Yi = Yf = df.points.at(0).Y;
+
+    for (int i=1; i<n; i++)
+    {
+        if (df.points.at(i).X < Xi) Xi = df.points.at(i).X;
+        if (df.points.at(i).Y < Yi) Yi = df.points.at(i).Y;
+        if (df.points.at(i).X > Xf) Xf = df.points.at(i).X;
+        if (df.points.at(i).Y > Yf) Yf = df.points.at(i).Y;
+    }
+}
+
+/*
+ * Check if a given point is inside a polygon
+ */
+double DemFeatures::angle2D(double X1, double Y1, double X2, double Y2)
+{
+    double dtheta,theta1,theta2;
+
+    theta1 = atan2(Y1,X1);
+    theta2 = atan2(Y2,X2);
+    dtheta = theta2 - theta1;
+    while (dtheta > M_PI)
+            dtheta -= M_PI*2;
+    while (dtheta < -M_PI)
+            dtheta += M_PI*2;
+
+    return dtheta;
+}
+
+bool DemFeatures::isInside(int feat_id, double X, double Y)
+{
+    if (feat_id < 1 || feat_id > features.size())
+        return false;
+
+    double angle=0.0;
+    DemFeature df =  features.at(feat_id-1);
+    int n = df.points.size();
+
+    // Calculate
+    for (unsigned int i=0; i<n; i++)
+        angle += angle2D(df.points.at(i).X - X, df.points.at(i).Y - Y, df.points.at((i+1)%n).X - X, df.points.at((i+1)%n).Y - Y);
+
+    if (fabs(angle) < M_PI)
+            return false;
+
+    return true;
 }

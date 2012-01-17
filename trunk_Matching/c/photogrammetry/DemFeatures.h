@@ -71,6 +71,9 @@ private:
 	void calculateCentroid(int featid);
 	void calculatePerimeter(int featid);
 	void calculateArea(int featid);
+        void addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi, double res_x, double res_y);
+        Matrix mapPolygon(int feat_id, double res_x, double res_y);
+        double angle2D(double X1, double Y1, double X2, double Y2);
 	int selected_feat, selected_pt;
 	vector <DemFeature> features;
 	vector <FeatureClass> feature_classes;
@@ -111,7 +114,10 @@ public:
 	void setFeatureClass(int classid, FeatureClass fc);
 	int getNearestFeature(double X, double Y, double Z);
 	void addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygons);
-        void createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y);
+        Matrix createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y);
+        bool isInside(int feat_id, double X, double Y);
+        void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
+        double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
 };
 
 #endif
