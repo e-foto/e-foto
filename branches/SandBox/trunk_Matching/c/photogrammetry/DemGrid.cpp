@@ -245,6 +245,10 @@ void DemGrid::interpolateNearestPointFast()
 		return;
 	}
 
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
+
 	// Create faster structure to deal with the cloud of points
 	// As NP must find a point, even in a hole.
 	// Holes decreases performance. So, we increase the sctructure reolution
@@ -302,6 +306,10 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 		printf("Error! No point list linked.\n");
 		return;
 	}
+
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
 
 	// Mode:
 	// 0 - Plane
@@ -411,6 +419,10 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 		return;
 	}
 
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
+
 	// Mode 0 = inverse distance
 	// Mode 1 = linear decrease
 	double Px, Py, d, D, sum1, sum2, weight;
@@ -487,6 +499,10 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 		printf("Error! No point list linked.\n");
 		return;
 	}
+
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
 
 	// Mode - For moving Average
 	// 0 = inverse distance
@@ -903,6 +919,10 @@ void DemGrid::interpolateNearestPointNormal()
 		return;
 	}
 
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
+
 	double Px, Py, dist, best_dist, Z;
 	int total = DEM.getCols()*DEM.getRows();
 	MatchingPoints *mp;
@@ -949,6 +969,10 @@ void DemGrid::interpolateNearestPointNormal()
 
 void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 {
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
+
 	// Mode 0 = inverse distance
 	// Mode 1 = linear decrease
 	double Px, Py, d, D, sum1, sum2, weight;
@@ -1007,6 +1031,10 @@ void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 
 void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int mode2)
 {
+        // If empty list of points
+        if (point_list->size() < 1)
+            return;
+
 	// Mode - For moving Average
 	// 0 = inverse distance
 	// 1 = linear decrease
@@ -1256,4 +1284,21 @@ string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     txt << "Z error standard deviation: " << Zstd << "\n\n";
 
     return txt.str();
+}
+
+void DemGrid::overlayMap(Matrix *map)
+{
+    if (map->getCols() != DEM.getCols() || map->getRows() != DEM.getRows())
+        return;
+
+    for (int i=1; i<=DEM.getRows(); i++)
+    {
+        for (int j=1; j<=DEM.getCols(); j++)
+        {
+            if (map->get(i,j) - 0.0 < 0.000000000001)
+                continue;
+
+            DEM.set(i,j,map->get(i,j));
+        }
+    }
 }
