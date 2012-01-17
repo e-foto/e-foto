@@ -353,7 +353,7 @@ void MatchingPointsList::XYZboundingBox(double &xi, double &yi, double &xf, doub
 
 void MatchingPointsList::boundingBox(double &xi, double &yi, double &xf, double &yf, double &zi, double &zf, int type)
 {
-	xi = yi = xf = yf = 0.0;
+        xi = yi = xf = yf = zi = zf = 0.0;
 
 	if (list.size()<1)
 		return;

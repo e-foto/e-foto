@@ -60,6 +60,7 @@ public:
         void getXYAt(int, int, double &, double &);
         void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
         string calculateDemQuality(MatchingPointsList mpl);
+        void overlayMap(Matrix * map);
 
 private:
 	Matrix DEM;
@@ -72,7 +73,7 @@ private:
 	void loadDemEfoto(char *);
 	void saveDemAscii(char *);
 	double getAsciiParameter(ifstream *, string);
-	void loadDemAscii(char *);
+        void loadDemAscii(char *);
         DEMManager* manager;
 
         // Used with a lot of pooints

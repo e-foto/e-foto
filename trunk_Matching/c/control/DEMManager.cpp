@@ -400,9 +400,9 @@ void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
     }
 
     if (Xi < bb_Xi) bb_Xi = Xi;
-    if (Xf < bb_Xf) bb_Xf = Xf;
+    if (Xf > bb_Xf) bb_Xf = Xf;
     if (Yi < bb_Yi) bb_Yi = Yi;
-    if (Yf < bb_Yf) bb_Yf = Yf;
+    if (Yf > bb_Yf) bb_Yf = Yf;
 }
 
 /*
@@ -481,8 +481,9 @@ int DEMManager::loadDem(char * filename, int fileType)
     DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    updateBoundingBox(Xi, Yi, Xf, Yf);
     dui->setAutoExtInfo(seeds.size(),pairs.size(),Zi,Zf);
-    dui->setBoundingBox(Xi, Yi, Xf, Yf);
+    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
 
     // Show image, if selected
     if (isShowImage)
@@ -518,21 +519,17 @@ int DEMManager::loadDemFeature(char *filename)
     }
 
     // Update info
-    MatchingPointsList tmpList;
-    df->addFeaturesToPairList(&tmpList, false);
-
-    if (tmpList.size() < 1)
-    {
-        dui->showErrorMessage("No point or line found !");
-        return 0;
-    }
+    MatchingPointsList ptLineList, allList;
+    df->addFeaturesToPairList(&ptLineList, false);
+    df->addFeaturesToPairList(&allList, true);
 
     double Xi, Yi, Zi, Xf, Yf, Zf;
-    tmpList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    allList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     updateBoundingBox(Xi, Yi, Xf, Yf);
+    ptLineList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     dui->setStatus((char *)"Done");
     dui->progressBar->setValue(0);
-    dui->setManualExtInfo(seeds.size(),Zi,Zf);
+    dui->setManualExtInfo(ptLineList.size(),Zi,Zf);
     dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
 
     return 1;
@@ -571,7 +568,10 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     }
 
     if (garea == 0)
-        modPairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
+    {
+        Xi = bb_Xi; Xf = bb_Xf;
+        Yi = bb_Yi; Yf = bb_Yf;
+    }
 
     if (grid != NULL)
         delete grid;
@@ -602,6 +602,13 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
     dui->enableOptions();
     grid_unsaved = true;
     dui->setElapsedTime(grid->getElapsedTime());
+
+    // Add polygons, if selected
+    if (gridSource > 0)
+    {
+        Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+        grid->overlayMap(&overMap);
+    }
 
     // Show image, if selected
     if (isShowImage && !cancel_flag)
