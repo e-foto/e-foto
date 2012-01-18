@@ -354,6 +354,13 @@ void DemFeatures::calculatePerimeter(int featid)
 	DemFeature *df =  &features.at(featid-1);
 	double RX, RY, RZ, perimeter = 0.0;
 
+        // If point, no perimeter
+        if (df->feature_type == 1)
+        {
+            df->perimeter = 0.0;
+            return;
+        }
+
 	for (int k=0; k<df->points.size()-1; k++)
 	{
 		RX = df->points.at(k+1).X - df->points.at(k).X;
