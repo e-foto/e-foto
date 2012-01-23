@@ -186,7 +186,7 @@ double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double
 	double delta_X = X2 - X1;
 	double delta_Y = Y2 - Y1;
 
-	if (delta_X - 0.0 < 0.0000000000001)
+        if (fabs(delta_X - 0.0) < 0.0000000000001)
 	{
 		if (delta_Y > 0.0)
 			return M_PI/2.0;
@@ -194,7 +194,7 @@ double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double
 			return 3*M_PI/2.0;
 	}
 
-	return fixAngle(atan(delta_Y/delta_X));
+        return fixAngle(atan(delta_Y/delta_X));
 }
 
 bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolerance)
@@ -266,6 +266,7 @@ int DEMManager::getPairs()
 		{
 			if (i==j)
 				continue;
+
 			img = listAllImages.at(j);
 			Xa = img->getEO()->getXa();
 			X2 = Xa.get(1,1);
@@ -763,17 +764,14 @@ void DEMManager::extractDEMPair(int pair)
 	//
 	// Load images
 	//
-	Matrix *img1 = NULL, *img2 = NULL;
+        Matrix img1, img2;
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->setStatus((char *)"Loading left image ...");
 	string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
-	img1 = dui->loadImage((char *)filename.c_str(), downsample);
+        dui->loadImage(img1, (char *)filename.c_str(), downsample);
 	dui->setStatus((char *)"Loading right image ...");
 	filename = getImage(right_id)->getFilepath() + "/" + getImage(right_id)->getFilename();
-	img2 = dui->loadImage((char *)filename.c_str(), downsample);
-
-	if (img1 == NULL || img2 == NULL)
-		return;
+        dui->loadImage(img2, (char *)filename.c_str(), downsample);
 
 	//
 	// Start matching
@@ -808,10 +806,9 @@ void DEMManager::extractDEMPair(int pair)
 	im->getLSM()->setOverIt(over_it);
 	im->getLSM()->setOverItDist(over_it_dist);
 
-	im->performImageMatching(img1, img2, &seeds, &pairs);
+        im->performImageMatching(&img1, &img2, &seeds, &pairs);
 	//  dui->saveImage((char *)"Map.bmp",&im->getMap());
 
-	delete img1, img2;
 	delete im;
 }
 

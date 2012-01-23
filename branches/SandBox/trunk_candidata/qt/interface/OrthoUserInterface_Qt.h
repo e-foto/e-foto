@@ -52,7 +52,7 @@ public:
 	static OrthoUserInterface_Qt* instance(OrthoManager* manager);
 	// Other Methods
 	//
-	Matrix* loadImage(char *filename, double sample=1.0);
+        void loadImage(Matrix & I, char *filename, double sample=1.0);
 	int saveImage(char *filename, Matrix *I);
 	bool exec();
 	void setProgress(int);
