@@ -77,8 +77,10 @@ class GeometryResource
 	unsigned int nextPointkey_;
 
 public:
-	GeometryResource();
-	void insertPoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
+        GeometryResource();
+        void insertPoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
+        void addPoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
+        void updatePoint(QPointF location, int pointKey = 0, QString label = "", Marker* mark = NULL);
 	void deletePoint(int pointKey);
 	void clear();
 	QImage draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale);
