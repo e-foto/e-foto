@@ -258,7 +258,7 @@ void OrthoUserInterface_Qt::onShowImageChanged(int opt)
  * Image dealing
  **/
 #include <qdebug.h>
-Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
+void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 {
 	int levels=256;
 
@@ -270,7 +270,8 @@ Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
 	int height = int(img.height()*sample);
 	int pixel;
 
-	Matrix *I = new Matrix(height, width);
+        // Resize Matrix
+        I.resize(height, width);
 
 	progressBar->setValue(0);
 	for (unsigned int i=1; i<=height; i++)
@@ -282,12 +283,10 @@ Matrix * OrthoUserInterface_Qt::loadImage(char *filename, double sample)
 			//                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3; // Simple color to gray 8-bit
 			//                        pixel = pixel & 0xFF; // Gray 24-bit to 8-bit
 			//                        I->set(i, j, pixel/double(levels-1));
-			I->set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
+                        I.set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
 		}
 		progressBar->setValue((100*i)/height);
 	}
-
-	return I;
 }
 
 int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)

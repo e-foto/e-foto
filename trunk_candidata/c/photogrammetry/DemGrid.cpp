@@ -214,13 +214,16 @@ int DemGrid::chooseBestInterpolationMathod(double nf)
 	if (no_points < 1000)
 		return 0;
 
-	int area = dem_width * dem_height;
+        // Very large numbers !!
+        // Double prefered !!
+        double area = double(dem_width) * double (dem_height);
 	double density = double(no_points)/double(area);
-	if (density < 1)
-		density = 1;
+        if (density < 1.0)
+                density = 1.0;
 
-	int no_its_normal = no_points*no_points;
-	int no_its_fast = int(area * density*nf);
+        // For not overfloating the "no_points^2", let's consider the sqtr for both equations
+        double no_its_normal = no_points;           // no_points^2
+        double no_its_fast = sqrt(area*density*nf); // area*density*nf
 
 	return (no_its_normal > no_its_fast);
 }

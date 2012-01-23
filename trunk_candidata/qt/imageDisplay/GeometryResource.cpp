@@ -306,31 +306,65 @@ GeometryResource::GeometryResource()
 
 void GeometryResource::insertPoint(QPointF location, int pointKey, QString label, Marker* mark)
 {
-	if (pointKey == 0)
-	{
-		int key = generatePointKey();
-		geometries_.append(Geometry::createPoint(location, key, label, mark));
-		if (nextPointkey_ <= key)
-			nextPointkey_ = key++;
-	}
-	/*
+        if (pointKey == 0)
+        {
+                int key = generatePointKey();
+                geometries_.append(Geometry::createPoint(location, key, label, mark));
+                if (nextPointkey_ <= key)
+                        nextPointkey_ = key++;
+        }
+        /*
  else if (!hasPoint(*pointKey))
   geometries_.append(Geometry::createPoint(location, *pointKey, label, mark));
  else
   geometries_.replace( indexOfPoint(*pointKey), Geometry::createPoint(location, *pointKey, label, mark));
  */
-	else
-	{
-		int key = pointKey;
-		for (int i = geometries_.size()-1; i >= 0; i--)
-		{
-			if (geometries_.at(i).key() == key)
-				geometries_.removeAt(i);
-		}
-		geometries_.append(Geometry::createPoint(location, key, label, mark));
-		if (nextPointkey_ <= key)
-			nextPointkey_ = key++;
-	}
+        else
+        {
+                int key = pointKey;
+                for (int i = geometries_.size()-1; i >= 0; i--)
+                {
+                        if (geometries_.at(i).key() == key)
+                                geometries_.removeAt(i);
+                }
+                geometries_.append(Geometry::createPoint(location, key, label, mark));
+                if (nextPointkey_ <= key)
+                        nextPointkey_ = key++;
+        }
+}
+
+void GeometryResource::addPoint(QPointF location, int pointKey, QString label, Marker* mark)
+{
+        geometries_.append(Geometry::createPoint(location, pointKey, label, mark));
+        if (nextPointkey_ <= pointKey)
+                nextPointkey_ = pointKey++;
+}
+
+void GeometryResource::updatePoint(QPointF location, int pointKey, QString label, Marker* mark)
+{
+        if (pointKey == 0)
+        {
+            return;
+        }
+        else
+        {
+                int key = pointKey;
+                bool removed = false;
+                for (int i = geometries_.size()-1; i >= 0; i--)
+                {
+                    if (geometries_.at(i).key() == key)
+                    {
+                        geometries_.removeAt(i);
+                        removed = true;
+                    }
+                }
+                if (removed)
+                {
+                    geometries_.append(Geometry::createPoint(location, key, label, mark));
+                    if (nextPointkey_ <= key)
+                        nextPointkey_ = key++;
+                }
+        }
 }
 
 void GeometryResource::deletePoint(int pointKey)

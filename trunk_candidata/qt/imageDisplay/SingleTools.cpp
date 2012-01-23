@@ -540,9 +540,14 @@ Marker* MarkTool::getMarker()
 	return &mark;
 }
 
+void MarkTool::addMark(QPointF location, int key, QString label, Marker *marker)
+{
+        _display->getCurrentScene()->geometry()->addPoint(location, key, label, marker == NULL ? &mark : marker);
+}
+
 void MarkTool::insertMark(QPointF location, int key, QString label, Marker *marker)
 {
-	_display->getCurrentScene()->geometry()->insertPoint(location, key, label, marker == NULL ? &mark : marker);
+        _display->getCurrentScene()->geometry()->insertPoint(location, key, label, marker == NULL ? &mark : marker);
 }
 
 void MarkTool::editMark(int key, QPointF location, Marker *marker)

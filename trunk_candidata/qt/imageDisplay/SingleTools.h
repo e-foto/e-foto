@@ -141,7 +141,8 @@ public:
 	void changeMarker(Marker marker);
 	Marker* getMarker();
 
-	void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
+        void addMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
+        void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
 	void editMark(int key, QPointF location, Marker* marker = NULL);
 	void editMark(int key, QPointF location, QString label, Marker* marker = NULL);
         void deleteMark(int key);

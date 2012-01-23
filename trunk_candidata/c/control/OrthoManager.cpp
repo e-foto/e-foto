@@ -178,7 +178,7 @@ void OrthoManager::runAllOrthoTogheter()
 		strimg = Conversion::intToString(i+1);
 		oui->setCurrentWork("Loading image "+strimg);
 		filename = img->getFilepath() + "/" + img->getFilename();
-		img_m = *oui->loadImage((char *)filename.c_str(),1.0);
+                oui->loadImage(img_m, (char *)filename.c_str(),1.0);
 		images.push_back(img_m);
 	}
 
@@ -303,7 +303,8 @@ void OrthoManager::runOrthoIndividual(int image)
 	//
 	oui->setCurrentWork("Loading image "+strimg);
 	string filename = img->getFilepath() + "/" + img->getFilename();
-	Matrix *img_matrix = oui->loadImage((char *)filename.c_str(),1.0);
+        Matrix img_matrix;
+        oui->loadImage(img_matrix, (char *)filename.c_str(), 1.0);
 
 	//
 	// Run Ortho
@@ -335,14 +336,12 @@ void OrthoManager::runOrthoIndividual(int image)
 			if (lin < 1.0 || col < 1.0 || lin > img_height || col > img_width)
 				continue;
 
-			pixel = interp.interpolate(img_matrix, col, lin, inter_method);
+                        pixel = interp.interpolate(&img_matrix, col, lin, inter_method);
 
 			ortho->setOrthoimagePixel(X, Y, pixel);
 		}
 		oui->setProgress(int(100.0*((Y-Yi_img)/(Yf_img-Yi_img-1))));
 	}
-
-	delete img_matrix;
 }
 
 int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)

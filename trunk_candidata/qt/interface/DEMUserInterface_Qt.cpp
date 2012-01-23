@@ -517,7 +517,7 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
  * Image dealing
  **/
 
-Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
+void DEMUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 {
 	int levels=256;
 
@@ -529,7 +529,8 @@ Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
 	int height = int(img.height()*sample);
 	int pixel;
 
-	Matrix *I = new Matrix(height, width);
+        // Resize Matrix
+        I.resize(height, width);
 
 	progressBar->setValue(0);
 	for (unsigned int i=1; i<=height; i++)
@@ -538,12 +539,10 @@ Matrix * DEMUserInterface_Qt::loadImage(char *filename, double sample)
 		{
 			pixel = img.pixel((j-1)*step,(i-1)*step);
 			pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
-			I->set(i, j, pixel/double(levels-1));
+                        I.set(i, j, pixel/double(levels-1));
 		}
 		progressBar->setValue((100*i)/height);
 	}
-
-	return I;
 }
 
 int DEMUserInterface_Qt::saveImage(char *filename, Matrix *I)
@@ -1005,8 +1004,8 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
 		left_coord.setY(double(mp->left_y));
 		right_coord.setX(double(mp->right_x));
 		right_coord.setY(double(mp->right_y));
-		viewer->getLeftMarker().insertMark(left_coord, no_pairs+1, "", mark_pairs);
-		viewer->getRightMarker().insertMark(right_coord, no_pairs+1, "", mark_pairs);
+                viewer->getLeftMarker().addMark(left_coord, no_pairs+1, "", mark_pairs);
+                viewer->getRightMarker().addMark(right_coord, no_pairs+1, "", mark_pairs);
 
 		no_pairs++;
 	}
@@ -1047,14 +1046,14 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
 		right_coord.setY(double(mp->right_y));
 
 		if (mp->left_x > 0 || mp->left_y > 0)
-			viewer->getLeftMarker().insertMark(left_coord, key, QString::number(i+1), mark_seeds);
+                        viewer->getLeftMarker().addMark(left_coord, key, QString::number(i+1), mark_seeds);
 		else
-			viewer->getLeftMarker().insertMark(left_coord, key, "", mark_empty);
+                        viewer->getLeftMarker().addMark(left_coord, key, "", mark_empty);
 
 		if (mp->right_x > 0 || mp->right_y > 0)
-			viewer->getRightMarker().insertMark(right_coord, key, QString::number(i+1), mark_seeds);
+                        viewer->getRightMarker().addMark(right_coord, key, QString::number(i+1), mark_seeds);
 		else
-			viewer->getRightMarker().insertMark(right_coord, key, "", mark_empty);
+                        viewer->getRightMarker().addMark(right_coord, key, "", mark_empty);
 
 		// Table
 		tableWidget->insertRow(no_seeds);
