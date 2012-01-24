@@ -839,10 +839,10 @@ bool EFotoManager::execPT()
 	Sensor *ptSensor = instanceSensor(Conversion::stringToInt(sensor.attribute("key")));
 
 	Flight *ptFlight = instanceFlight(1);
-	//Terrain* ptTerrain = instanceTerrain();
+    Terrain* ptTerrain = instanceTerrain();
 	//ptFlight->setTerrain(ptTerrain);
 	//fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
-	fotoTri = new PTManager(this,images,IOs,ptSensor,ptFlight);
+    fotoTri = new PTManager(this,images,IOs,ptSensor,ptFlight,ptTerrain);
 	result = fotoTri->exec();
 
 	return result;
