@@ -10,7 +10,7 @@ Interpolation::Interpolation()
 	// Mode:
 	// 0 - Grayscale (0-255) in double format (0.0 - 1.0)
 	// 1 - Color (24-bit RRGGBB) in double format (0.0 - 1.0)
-	mode =0;
+        mode=0;
 }
 
 double Interpolation::interpolate(Matrix *_img, double col, double lin, int method)

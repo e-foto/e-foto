@@ -41,6 +41,10 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
 	grid_unsaved = false;
 	elim_bad_pts = false;
 	bb_empty = true;
+        lsm_temp_growth_step = 2;
+        lsm_temp_max_size = 50;
+        ncc_temp_growth_step = 2;
+        ncc_temp_max_size = 50;
 	setListPoint();
 }
 
@@ -346,12 +350,14 @@ void DEMManager::getImagesId(int pos, int &left, int &right)
 	right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
-void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, int _rgy, double downs)
+void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, double downs)
 {
 	rad_cor = _rad_cor;
 	match_method = _match_method;
+
+        // Unifor step for Region Growing
 	rgx = _rgx;
-	rgy = _rgy;
+        rgy = _rgx;
 	downsample = 1.0/downs;
 
 	//    ncc_temp, ncc_sw;
@@ -607,7 +613,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	dui->setAllowClose(true);
 	dui->enableOptions();
 	grid_unsaved = true;
-	dui->setElapsedTime(grid->getElapsedTime());
+        dui->setElapsedTime(grid->getElapsedTime(), 1);
 
 	// Add polygons, if selected
 	if (gridSource > 0)
@@ -667,6 +673,9 @@ void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
 int DEMManager::extractDEM(int option, bool clearMList)
 {
 	cancel_flag = false;
+
+        // Reset extraction time
+        dem_total_elapsed_time = 0.0;
 
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->disableOptions();
@@ -739,6 +748,8 @@ int DEMManager::extractDEM(int option, bool clearMList)
 		return 0;
 	}
 
+        dui->setElapsedTime(dem_total_elapsed_time, 0);
+
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
 	{
@@ -797,8 +808,12 @@ void DEMManager::extractDEMPair(int pair)
 	im->setRadiometricMode(rad_cor-1);
 	im->setMinStd(std);
 	im->setElimanteBadPoints(elim_bad_pts);
+        im->getNCC()->setTemplateGrothStep(ncc_temp_growth_step);
+        im->getNCC()->setTemplateMaximumSize(ncc_temp_max_size);
 	im->getNCC()->setTemplate(ncc_temp);
 	im->getNCC()->setSearchWindow(ncc_sw);
+        im->getLSM()->setTemplateGrothStep(lsm_temp_growth_step);
+        im->getLSM()->setTemplateMaximumSize(lsm_temp_max_size);
 	im->getLSM()->setTemplate(lsm_temp);
 	im->getLSM()->setMaxIterations(lsm_it);
 	im->getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
@@ -808,6 +823,8 @@ void DEMManager::extractDEMPair(int pair)
 
         im->performImageMatching(&img1, &img2, &seeds, &pairs);
 	//  dui->saveImage((char *)"Map.bmp",&im->getMap());
+
+        dem_total_elapsed_time += im->getElapsedTime();
 
 	delete im;
 }
@@ -839,6 +856,30 @@ string DEMManager::getDemQuality(char *filename, int option)
 		return "";
 
 	return grid->calculateDemQuality(mpl);
+}
+
+double DEMManager::calculateDemRes(double ds)
+{
+        if (listAllImages.size() < 1)
+            return 0.0;
+
+        Image *img = listAllImages.at(0);
+
+        // Calculate image approximate resolution scanning
+        int img_width = img->getWidth(), img_height = img->getHeight();
+        double DPI = (2.54/23.0) * (img_width + img_height)/2;
+
+        // Calculate resolution in image space (mm)
+        double resolution_mm = 0.0254/DPI;
+
+        // Calculate scale
+        double focal = img->getSensor()->getFocalDistance() / 1000.0;
+        double Z0 = img->getEO()->getXa().get(3,1);
+        double scale = Z0 / focal;
+
+        double resolution = resolution_mm * scale;
+
+        return resolution*ds;
 }
 
 } // namespace efoto
