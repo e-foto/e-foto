@@ -64,6 +64,7 @@ public:
 	void setElimanteBadPoints(bool _el) { elim_bad_pts = _el; };
 	void setCancel() { cancel_flag = true; };
 	Matrix & getMap() { return map; };
+        double getElapsedTime() { return elap_time; };
 
 private:
 	int image_depth;
@@ -90,6 +91,7 @@ private:
 	void init();
 	void fillMap(MatchingPointsList *);
 	bool elim_bad_pts;
+        double elap_time;
 };
 
 } // namespace efoto

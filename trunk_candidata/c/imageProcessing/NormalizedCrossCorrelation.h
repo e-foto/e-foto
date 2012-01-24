@@ -42,6 +42,10 @@ public:
 	int getBestY() { return best_y; };
 	void setMinStd(double _mstd) { min_std_acceptance = _mstd; };
 	bool checkTemplateStd(Matrix *refmat);
+        void setTemplateGrothStep(int _gs) { temp_growth_step = _gs; };
+        int getTemplateGrothStep() { return temp_growth_step; };
+        void setTemplateMaximumSize(int _ms) { temp_max_size = _ms; };
+        int getTemplateMaximumSize() { return temp_max_size; };
 
 private:
 	double average(Matrix *m, int row_i=0, int row_f=0, int col_i=0, int col_f=0);
@@ -54,6 +58,7 @@ private:
 	double best_p;
 	int best_x, best_y;
 	double min_std_acceptance;
+        int temp_growth_step, temp_max_size;
 
 };
 

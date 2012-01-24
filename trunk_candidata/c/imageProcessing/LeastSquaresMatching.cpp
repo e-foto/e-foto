@@ -23,6 +23,8 @@ LeastSquaresMatching::LeastSquaresMatching()
 	gradient_filter = Gradient;
 	over_it = true;
 	over_it_distance = 0.5;
+        temp_growth_step = 2;
+        temp_max_size = 50;
 }
 
 /*
@@ -49,14 +51,14 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 		ncc.setTemplateCenter(Tx,Ty);
 		if (!ncc.checkTemplateStd(img1))
 		{
-			template_width += 2;
-			template_height += 2;
+                        template_width += temp_growth_step;
+                        template_height += temp_growth_step;
 		}
 		else
 			break;
 
 		// Check if size is too big, with still low variance - really quit
-		if (template_width > ori_template_width*5 || template_height > ori_template_height*5)
+                if (template_width > temp_max_size || template_height > temp_max_size)
 		{
 			template_width = ori_template_width;
 			template_height = ori_template_height;

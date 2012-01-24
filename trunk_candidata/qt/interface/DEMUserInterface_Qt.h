@@ -62,6 +62,9 @@ protected slots:
 	void enableAfterGrid();
 	void onLoadPtsButtonClicked();
 	void onSavePtsButtonClicked();
+        void onLSMTemplateSizeChanged(int ts);
+        void onCorrTemplateSizeChanged(int ts);
+        void onDownValueChanged(double value);
 
 private:
 	void init();
@@ -90,7 +93,7 @@ public:
 	void enableOptions();
 	void showFatalErrorMessage(QString msg, bool abort);
 	void showErrorMessage(QString msg) { showFatalErrorMessage(msg, false); };
-	void setElapsedTime(double t);
+        void setElapsedTime(double t, int opt);
 };
 
 class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow

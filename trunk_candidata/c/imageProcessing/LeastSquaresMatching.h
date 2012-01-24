@@ -49,6 +49,10 @@ public:
 	void setMaxDistance(double _max) { max_distance = _max; };
 	void setOverIt(bool ovit) { over_it = ovit; };
 	void setOverItDist(double ovitd) { over_it_distance = ovitd; };
+        void setTemplateGrothStep(int _gs) { temp_growth_step = _gs; };
+        int getTemplateGrothStep() { return temp_growth_step; };
+        void setTemplateMaximumSize(int _ms) { temp_max_size = _ms; };
+        int getTemplateMaximumSize() { return temp_max_size; };
 
 private:
 	void imgGradient(Matrix *);
@@ -69,6 +73,7 @@ private:
 	Matrix Gx, Gy;
 	Matrix affine_coefficients;
 	NormalizedCrossCorrelation ncc; // Used for evaluation
+        int temp_growth_step, temp_max_size;
 };
 
 } // namespace efoto
