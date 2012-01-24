@@ -26,7 +26,7 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 {
 	listImages=listSelectedImages;
 	listPoints=listSelectedPoints;
-	//	fliDir=flightDirection;
+//	fliDir=flightDirection;
 
 	numImages=listImages.size();
 	numPoints=listPoints.size();
@@ -59,16 +59,16 @@ BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*
 	eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
 
 	userInitialValues = hasAllImagesInitialValues();
-	//userInitialValues= false;
+		//userInitialValues= false;
 
 
 	/*
- for (int i=0;i<listPhotogrammetricPoints.size();i++)
-  qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
+	for (int i=0;i<listPhotogrammetricPoints.size();i++)
+		qDebug("%s",listPhotogrammetricPoints.at(i)->getPointId().c_str());
 
- //qDebug("Numero de todos os pontos: %d",listPoints.size());
- qDebug("%s",printAll().c_str());
- */
+	//qDebug("Numero de todos os pontos: %d",listPoints.size());
+	qDebug("%s",printAll().c_str());
+	*/
 }
 
 int BundleAdjustment::numberOfEquations()
@@ -127,22 +127,23 @@ bool BundleAdjustment::calculate()
 		}
 	}
 
+	double range=0.0;
+	double diff=0.0;
+	//normalize(listPoints,range,diff);
+
 	matAdjust=matInitialValues;
 
 	//qDebug("%s",printAll().c_str());
 
-	//convertToGeocentric(listPoints,WGS84,-1,23);
-	//qDebug("%s",printAll().c_str());
-	//convertToGeocentric(listPoints,WGS84);
-	//qDebug("%s",printAll().c_str());
+	//matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
 
 	//matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
-	matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
+	//matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
 
 	/*
- matAdjust=convertToUTM(matAdjust,WGS84,);
- matAdjust.show('f',5,"matAdjust Inicial Values em UTM");
- */
+	matAdjust=convertToUTM(matAdjust,WGS84,);
+	matAdjust.show('f',5,"matAdjust Inicial Values em UTM");
+	*/
 
 	P.identity(numEquations);
 	//P.show();
@@ -156,193 +157,193 @@ bool BundleAdjustment::calculate()
 	{
 		//while(!resOk && totalIterations<maxIterations)
 		//{
-		int conv=0;
-		while(totalIterations<maxIterations && conv!=1)
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
 			//while(convIterations<maxIterations && conv!=1)
-		{
-			ptime.start();
-			createA1();
-			int A1time=ptime.restart();
-			//A1.show('f',3,"A1");
+			{
+				ptime.start();
+				createA1();
+				int A1time=ptime.restart();
+				//A1.show('f',3,"A1");
 
-			createA2();
-			//A2.show('f',3,"A2");
-			int A2time=ptime.restart();
+				createA2();
+				//A2.show('f',3,"A2");
+				int A2time=ptime.restart();
 
-			createL0();
-			//L0.show('f',3,"L0");
-			int l0time=ptime.restart();
+				createL0();
+				//L0.show('f',3,"L0");
+				int l0time=ptime.restart();
 
-			createLb();
-			//Lb.show('f',3,"Lb");
-			int lbtime=ptime.restart();
+				createLb();
+				//Lb.show('f',3,"Lb");
+				int lbtime=ptime.restart();
 
-			Matrix l=Lb-L0;
+				Matrix l=Lb-L0;
 
-			ptime.start();
-			/*Matrix*/ n11=getN11();
-			int n11time=ptime.restart();
-			//n11.show('f',3,"N11=A1^T*P*A1");
-
-
-			/*Matrix*/ n12=getN12();
-			//n12.show('f',3,"N12=A1^T*P*A2");
-			int n12time=ptime.restart();
-
-			/*Matrix*/ n22=getN22();
-			//n22.show('f',3,"N22==A2^T*P*A2");
-			int n22time=ptime.restart();
+				ptime.start();
+				/*Matrix*/ n11=getN11();
+				int n11time=ptime.restart();
+				//n11.show('f',3,"N11=A1^T*P*A1");
 
 
-			//int invN22time=ptime.restart();
+				/*Matrix*/ n12=getN12();
+				//n12.show('f',3,"N12=A1^T*P*A2");
+				int n12time=ptime.restart();
 
-			/*Matrix*/ n1=getn1(l);
-			//n1.show('f',3,"n1=A1^T*P*L");
-			int n1time=ptime.restart();
+				/*Matrix*/ n22=getN22();
+				//n22.show('f',3,"N22==A2^T*P*A2");
+				int n22time=ptime.restart();
 
-			/*Matrix*/ n2=getn2(l);
-			//n2.show('f',3,"n2==A2^T*P*L");
-			int n2time=ptime.restart();
+
+				//int invN22time=ptime.restart();
+
+				/*Matrix*/ n1=getn1(l);
+				//n1.show('f',3,"n1=A1^T*P*L");
+				int n1time=ptime.restart();
+
+				/*Matrix*/ n2=getn2(l);
+				//n2.show('f',3,"n2==A2^T*P*L");
+				int n2time=ptime.restart();
 #ifdef PAULO
-			setInverseN11(n11);
-			int invN11time=ptime.restart();
-			setx2(n12,n22,n2,n1);
-			int x2time=ptime.restart();
-			//x2.show();
+				setInverseN11(n11);
+				int invN11time=ptime.restart();
+				setx2(n12,n22,n2,n1);
+				int x2time=ptime.restart();
+				//x2.show();
 
-			setx1(n12,n1);
-			int x1time=ptime.restart();
-			//x1.show();
+				setx1(n12,n1);
+				int x1time=ptime.restart();
+				//x1.show();
 #endif
 
 #ifdef FRANC
 
-			setInverseN22(n22);
-			int invN22time=ptime.restart();
-			setx1(n12,n1);
-			int x1time=ptime.restart();
+				setInverseN22(n22);
+				int invN22time=ptime.restart();
+				setx1(n12,n1);
+				int x1time=ptime.restart();
 
-			setx2(n12,n22,n2,n1);
-			int x2time=ptime.restart();
-			//x2.show();
+				setx2(n12,n22,n2,n1);
+				int x2time=ptime.restart();
+				//x2.show();
 
 #endif
 
 #ifdef TIMES
-			qDebug("Tempo para executar a %d iteracao",totalIterations);
-			qDebug("Para criar A1: %.3f",A1time/1000.0);
-			qDebug("Para criar A2: %.3f",A2time/1000.0);
-			qDebug("Para criar L0: %.3f",l0time/1000.0);
-			qDebug("Para criar Lb: %.3f",lbtime/1000.0);
-			qDebug("Para calcular N11: %.3f",n11time/1000.0);
-			qDebug("Para calcular N12: %.3f",n12time/1000.0);
-			qDebug("Para calcular N22: %.3f",n22time/1000.0);
+				qDebug("Tempo para executar a %d iteracao",totalIterations);
+				qDebug("Para criar A1: %.3f",A1time/1000.0);
+				qDebug("Para criar A2: %.3f",A2time/1000.0);
+				qDebug("Para criar L0: %.3f",l0time/1000.0);
+				qDebug("Para criar Lb: %.3f",lbtime/1000.0);
+				qDebug("Para calcular N11: %.3f",n11time/1000.0);
+				qDebug("Para calcular N12: %.3f",n12time/1000.0);
+				qDebug("Para calcular N22: %.3f",n22time/1000.0);
 #ifdef PAULO
-			qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
+				qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
 #endif
 
 #ifdef FRANC
-			qDebug("Para calcular inversaN11: %.3f",invN22time/1000.0);
+				qDebug("Para calcular inversaN11: %.3f",invN22time/1000.0);
 #endif
-			qDebug("Para calcular n1: %.3f",n1time/1000.0);
-			qDebug("Para calcular n2: %.3f",n2time/1000.0);
-			qDebug("Para calcular x1: %.3f",x1time/1000.0);
-			qDebug("Para calcular x2: %.3f",x2time/1000.0);
+				qDebug("Para calcular n1: %.3f",n1time/1000.0);
+				qDebug("Para calcular n2: %.3f",n2time/1000.0);
+				qDebug("Para calcular x1: %.3f",x1time/1000.0);
+				qDebug("Para calcular x2: %.3f",x2time/1000.0);
 #endif
-			//x1.show('f',3,"x1");
-			//x2.show('f',3,"x2");
+				//x1.show('f',3,"x1");
+				//x2.show('f',3,"x2");
 
-			conv=testConverged();
-			if (conv ==-2)
-			{
-				printf("Apareceu valor infinito");
-				break;
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				updateMatAdjust();
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
+				updateCoordFotog();
+
+				//matAdjust.show('f',5,"matAdjust Iterando");
+				totalIterations++;
+				qDebug("iteration %d/%d",totalIterations,maxIterations);
 			}
-			if (conv ==-1)
-			{
-				printf("Apareceu valor NAN");
-				break;
-			}
-			//matAdjust.show('f',5,"MatAdjus antes do update do loop");
-			updateMatAdjust();
-			//matAdjust.show('f',5,"MatAdjus depois do update do loop");
-			updateCoordFotog();
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
-			//matAdjust.show('f',5,"matAdjust Iterando");
-			totalIterations++;
-			qDebug("iteration %d/%d",totalIterations,maxIterations);
-		}
-		//qDebug("numero iterations %d=%d",changePesos,iterations);
+			//matAdjust.show('f',5,"MatAdjus depois da iteracao");
+			calculateResiduos();
 
-		//matAdjust.show('f',5,"MatAdjus depois da iteracao");
-		calculateResiduos();
-
-		//matRes.show('f',5,"MatRes depois da iteracao");
-		/*
-   resOk=testResiduo();
-   if (changePesos==0)
-	tempRes.resize(matRes.getRows(),1);
-   calculatePeso();
-   matRes=matRes-tempRes;
-   tempRes=matRes;
-   changePesos++;
-   //totalIterations+=iterations;
-   //matRes.show('f',5,"MatRes");
-  }*/
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			/*
+			resOk=testResiduo();
+			if (changePesos==0)
+				tempRes.resize(matRes.getRows(),1);
+			calculatePeso();
+			matRes=matRes-tempRes;
+			tempRes=matRes;
+			changePesos++;
+			//totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
+		}*/
 	}
 	else
 	{
 		//qDebug("Sem pontos Fotogrametricos");
 		/*while(!resOk)
-  {*/
-		totalIterations=0;
-		int conv=0;
-		while(totalIterations<maxIterations && conv!=1)
-		{
-			createA1();
-			createL0();
-			createLb();
-			Matrix l=Lb-L0;
-			Matrix n11=getN11();
-			Matrix n1=getn1(l);
-			//n11.show('f',3,"N11");
-			setInverseN11(n11);
+		{*/
+			totalIterations=0;
+			int conv=0;
+			while(totalIterations<maxIterations && conv!=1)
+			{
+				createA1();
+				createL0();
+				createLb();
+				Matrix l=Lb-L0;
+				Matrix n11=getN11();
+				Matrix n1=getn1(l);
+				//n11.show('f',3,"N11");
+				setInverseN11(n11);
 #ifdef ESPARSA
-			x1=SparseMatrix(inverseN11)*n1;
+				x1=SparseMatrix(inverseN11)*n1;
 #endif
-			//x1.show('f',3,"x1");
-			//matAdjust.show('f',5,"MatAdjus antes do update do loop");
+				//x1.show('f',3,"x1");
+				//matAdjust.show('f',5,"MatAdjus antes do update do loop");
 
-			conv=testConverged();
-			if (conv ==-2)
-			{
-				printf("Apareceu valor infinito");
-				break;
+				conv=testConverged();
+				if (conv ==-2)
+				{
+					printf("Apareceu valor infinito");
+					break;
+				}
+				if (conv ==-1)
+				{
+					printf("Apareceu valor NAN");
+					break;
+				}
+				totalIterations++;
+				qDebug("iteration %d",totalIterations);
+				updateMatAdjust();
+				//matAdjust.show('f',5,"MatAdjus depois do update do loop");
 			}
-			if (conv ==-1)
-			{
-				printf("Apareceu valor NAN");
-				break;
-			}
-			totalIterations++;
-			qDebug("iteration %d",totalIterations);
-			updateMatAdjust();
-			//matAdjust.show('f',5,"MatAdjus depois do update do loop");
-		}
-		//qDebug("numero iterations %d=%d",changePesos,iterations);
+			//qDebug("numero iterations %d=%d",changePesos,iterations);
 
-		//matAdjust.show('f',7,"MatAdjus depois da iteracao");
-		calculateResiduos();
-		//matRes.show('f',5,"MatRes depois da iteracao");
-		//resOk=testResiduo();
-		//if (changePesos==0)
-		//tempRes.resize(matRes.getRows(),1);
-		//calculatePeso();
-		//matRes=matRes-tempRes;
-		//tempRes=matRes;
-		//changePesos++;
-		//totalIterations+=iterations;
-		//matRes.show('f',5,"MatRes");
+			//matAdjust.show('f',7,"MatAdjus depois da iteracao");
+			calculateResiduos();
+			//matRes.show('f',5,"MatRes depois da iteracao");
+			//resOk=testResiduo();
+			//if (changePesos==0)
+				//tempRes.resize(matRes.getRows(),1);
+			//calculatePeso();
+			//matRes=matRes-tempRes;
+			//tempRes=matRes;
+			//changePesos++;
+			//totalIterations+=iterations;
+			//matRes.show('f',5,"MatRes");
 		//}
 	}
 	//printf("Numero de troca de pesos: %d\n",changePesos);
@@ -350,11 +351,13 @@ bool BundleAdjustment::calculate()
 	//matRes.show('f',8,"MatResCalculate");
 
 	/*
- matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
- matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
- */	//matAdjust=convertToUTM(matAdjust,WGS84);
+	matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
+	matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
+	*/	//matAdjust=convertToUTM(matAdjust,WGS84);
 
-	matAdjust.show('f',5,"matAdjust em UTM");
+	//desnormalize(listPoints,range,diff);
+
+	//matAdjust.show('f',5,"matAdjust em UTM");
 
 	//convertToUTM(listPoints,WGS84);
 	setAFP();
@@ -413,13 +416,13 @@ Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
 {
 
 #ifdef ESPARSA
-	/*	SparseMatrix q1=SparseMatrix(SparseMatrix(M12)*M22.inverse());
- return	SparseMatrix((M11-q1*M12.transpose()).inverse() )*( m1-q1*m2 );*/
+/*	SparseMatrix q1=SparseMatrix(SparseMatrix(M12)*M22.inverse());
+	return	SparseMatrix((M11-q1*M12.transpose()).inverse() )*( m1-q1*m2 );*/
 	SparseMatrix temp1=SparseMatrix(inverseM11);
 	return temp1*m1-SparseMatrix(temp1*M12)*xypf;
 #endif
 
-	//	return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.transpose()*m2 );
+//	return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.transpose()*m2 );
 	//return ( (M11-M12*M22.inverse()*M12.transpose()).inverse() )*( m1-M12*M22.inverse()*m2 );
 }
 
@@ -428,8 +431,8 @@ Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
 {
 #ifdef ESPARSA
 	/*
- SparseMatrix q1=SparseMatrix(M22.inverse());
- return q1*m2-SparseMatrix(q1*M12.transpose())*paf;*/
+	SparseMatrix q1=SparseMatrix(M22.inverse());
+	return q1*m2-SparseMatrix(q1*M12.transpose())*paf;*/
 	SparseMatrix temp1=SparseMatrix(SparseMatrix(M12.transpose())*inverseM11);
 	return SparseMatrix((M22-temp1*M12).inverse())*(m2-temp1*m1);
 #endif
@@ -503,10 +506,10 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 
 	/*
 #ifdef ESPARSA
- SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
- //Matrix mat=(N22-temp1*N12);
- //mat.show('f',5,"N22-temp1*N12");
- x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
+	SparseMatrix temp1=SparseMatrix(SparseMatrix(N12.transpose())*inverseN11);
+	//Matrix mat=(N22-temp1*N12);
+	//mat.show('f',5,"N22-temp1*N12");
+	x2=SparseMatrix((N22-temp1*N12).inverse())*(n2-temp1*n1);
 #endif
 */
 #ifdef PAULO
@@ -527,18 +530,18 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 /*
 void BundleAdjustment::setInverseN22(Matrix n22)
 {
- int rows=n22.getRows();
- inverseN22=n22;
- //n22.show('f',4,"n22");
- for (int i=1;i<rows;i+=3)
- {
-  Matrix unit=n22.sel(i,i+2,i,i+2);
-  //unit.show('f',4,"unidade n22");
-  inverseN22.putMatrix(unit.inverse(),i,i);
-  //unit.inverse().show('f',4,"unidade inversa n22");
- }
- //inverseN22.show('f',4,"Inversa n22 ");
- //return n22;
+	int rows=n22.getRows();
+	inverseN22=n22;
+	//n22.show('f',4,"n22");
+	for (int i=1;i<rows;i+=3)
+	{
+		Matrix unit=n22.sel(i,i+2,i,i+2);
+		//unit.show('f',4,"unidade n22");
+		inverseN22.putMatrix(unit.inverse(),i,i);
+		//unit.inverse().show('f',4,"unidade inversa n22");
+	}
+	//inverseN22.show('f',4,"Inversa n22 ");
+	//return n22;
 }
 
 */
@@ -890,63 +893,6 @@ void BundleAdjustment::calculateInicialsValues()
 		//m2.show('f',3,"m2");
 		int m2time=init.restart();
 
-		/*
-  Matrix atotal;
-  atotal.putMatrix(m11,1,1);
-  atotal.putMatrix(m12,1,m11.getCols()+1);
-  atotal.putMatrix(m12.transpose(),m11.getRows()+1,1);
-  atotal.putMatrix(m22,m11.getRows()+1,m11.getCols()+1);
-
-  //atotal.show('f',4,"atotal");
-  Matrix mtotal=m1|m2;
-  //mtotal.show('f',4,"mtotal");
-
-  // equacao matricial da forma A*X=M . a incognita e a matriz X
-  Eigen::MatrixXd Aeig = convertMatrixToEigen(atotal);
-  Eigen::MatrixXd Meig = convertMatrixToEigen(mtotal);
-
-  Eigen::VectorXd XLUeig = Aeig.lu().solve(Meig);
-  Eigen::VectorXd XHouseHoldereig = Aeig.colPivHouseholderQr().solve(Meig);
-  Eigen::VectorXd XFullPiveig = Aeig.fullPivLu().solve(Meig);
-
-  Matrix PAFeigLU=convertVectorEigenToMatrix(XLUeig);
-  Matrix PAFeigHouseHolder=convertVectorEigenToMatrix(XHouseHoldereig);
-  Matrix PAFeigFullPivLU=convertVectorEigenToMatrix(XFullPiveig);
-
-  Matrix paf;
-  Matrix xypf;
-  if ((Aeig*XLUeig).isApprox(Meig,0.001))
-  {
-   PAFeigLU.show('f',4,"PAFLUeig");
-  }else
-  {
-   qDebug("Nao resolveu por lu");
-  }
-
-  if ((Aeig*XHouseHoldereig).isApprox(Meig,0.001))
-  {
-   PAFeigHouseHolder.show('f',4,"PAFHouseHoldereig");
-   paf=PAFeigHouseHolder.sel(1,6*numImages,1,1);
-   xypf=PAFeigHouseHolder.sel(6*numImages+1,PAFeigHouseHolder.getRows(),1,1);
-
-   //convertEigenToMatrix(XHouseHoldereig.kernel()).show('f',4,"kernelHouse");
-
-  }else
-  {
-   qDebug("Nao resolveu por houseHolder");
-  }
-
-  if ((Aeig*XFullPiveig).isApprox(Meig,0.001))
-  {
-   PAFeigFullPivLU.show('f',4,"PAFFullPiveig");
-   paf=PAFeigFullPivLU.sel(1,6*numImages,1,1);
-   xypf=PAFeigFullPivLU.sel(6*numImages+1,PAFeigFullPivLU.getRows(),1,1);
-
-  }else
-  {
-   qDebug("Nao resolveu por fullPivLU");
-  }
-*/
 		Matrix xypf=getXYpf(m12,m22,m1,m2);
 		int xypftime=init.restart();
 
@@ -1065,46 +1011,46 @@ Matrix BundleAdjustment::createM1()
 
 Matrix BundleAdjustment::createM2()
 {
+/*
+	/* configura�ao de cada matriz B
+		 |-1  0|
+		 | 0 -1|
+
+
+	Matrix B(2,2);
+	B.set(1,1,-1);
+	B.set(2,2,-1);
 	/*
- /* configuraÃ§ao de cada matriz B
-   |-1  0|
-   | 0 -1|
-
-
- Matrix B(2,2);
- B.set(1,1,-1);
- B.set(2,2,-1);
- /*
- for (int i=0;i<numImages;i++)
- {
-  int pnts=listImages.at(i)->countPoints();
-  int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
-  int posLin=1;
-  Matrix oneImage(2*rows,2*numFotogrametricPoints);
-  for (int j=0;j<pnts;j++)
-  {
-   if(whereInPoints(getPointFrom(i,j))!=-1)
-   {
-	if(isPhotogrammetricPoint(i,j))
+	for (int i=0;i<numImages;i++)
 	{
+		int pnts=listImages.at(i)->countPoints();
+		int rows=numberControlPoints(listImages.at(i))+numberPhotogrammetricPoints(listImages.at(i));
+		int posLin=1;
+		Matrix oneImage(2*rows,2*numFotogrametricPoints);
+		for (int j=0;j<pnts;j++)
+		{
+			if(whereInPoints(getPointFrom(i,j))!=-1)
+			{
+				if(isPhotogrammetricPoint(i,j))
+				{
 
-	 int posCol=whereInPoints(getPointFrom(i,j));
-	 posCol=2*(posCol-numControlPoints)+1;
-	 //qDebug("M2:Achou o ponto fotogrametrico %d",getPointFrom(i,j)->getId());
-	 //	qDebug("put in i=%d j=%d",2*j+1,2*(pos-numControlPoints)+1);//2*
-	 //oneImage.putMatrix(B,2*(posLin)+1,2*(posCol-numControlPoints)+1);
-	 oneImage.putMatrix(B,posLin,posCol);
+					int posCol=whereInPoints(getPointFrom(i,j));
+					posCol=2*(posCol-numControlPoints)+1;
+					//qDebug("M2:Achou o ponto fotogrametrico %d",getPointFrom(i,j)->getId());
+					//	qDebug("put in i=%d j=%d",2*j+1,2*(pos-numControlPoints)+1);//2*
+					//oneImage.putMatrix(B,2*(posLin)+1,2*(posCol-numControlPoints)+1);
+					oneImage.putMatrix(B,posLin,posCol);
+				}
+				posLin+=2;
+			}
+		}
+		//oneImage.show('f',3,"OneImage");
+		result=result|oneImage;
+		//result.show('f',3,"Result");
 	}
-	posLin+=2;
-   }
-  }
-  //oneImage.show('f',3,"OneImage");
-  result=result|oneImage;
-  //result.show('f',3,"Result");
- }
 
- //imprime(result,"M2object");
- return result;*/
+	//imprime(result,"M2object");
+	return result;*/
 
 	//Matrix result(0,3*numFotogrametricPoints);
 	Matrix result(0,2*numFotogrametricPoints);
@@ -1155,9 +1101,9 @@ Matrix BundleAdjustment::imageToMatrixAnalogicalCoordenates(Image *img)
 	for (int i=0;i<numpnts;i++)
 	{
 		/* configuraÃ§ao de cada matriz temp
-	   |1	eta xi	0	 0		0 |
-	   |0	 0	0	1	eta 	xi|
-  */
+				   |1	eta xi	0	 0		0 |
+				   |0	 0	0	1	eta 	xi|
+		*/
 		if (whereInPoints(img->getPointAt(i))!=-1 && !img->getPointAt(i)->is("CheckingPoint"))
 		{
 			Matrix temp(2,6);
@@ -1184,37 +1130,37 @@ Matrix BundleAdjustment::imageToMatrixAnalogicalCoordenates(Image *img)
 
 Matrix BundleAdjustment::digitalToAnalog(InteriorOrientation *oi,int linha, int coluna)
 {
-	double a0, a1, a2, b0, b1, b2;
+		double a0, a1, a2, b0, b1, b2;
 
-	a0 = oi->getXa().get(1,1);
-	a1 = oi->getXa().get(2,1);
-	a2 = oi->getXa().get(3,1);
-	b0 = oi->getXa().get(4,1);
-	b1 = oi->getXa().get(5,1);
-	b2 = oi->getXa().get(6,1);
+		a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
 
-	//imprime(oi->getXa(),"Xa");
+		//imprime(oi->getXa(),"Xa");
 
-	Matrix result(1,2);
-	result.set(1,1, a0 + a1*coluna + a2*linha);
-	result.set(1,2, b0 + b1*coluna + b2*linha);
-	return result;
+		Matrix result(1,2);
+		result.set(1,1, a0 + a1*coluna + a2*linha);
+		result.set(1,2, b0 + b1*coluna + b2*linha);
+		return result;
 }
 
 Matrix BundleAdjustment::analogToDigital(InteriorOrientation *oi,double xsi, double eta)
 {
-	double a0, a1, a2, b0, b1, b2;
-	a0 = oi->getXa().get(1,1);
-	a1 = oi->getXa().get(2,1);
-	a2 = oi->getXa().get(3,1);
-	b0 = oi->getXa().get(4,1);
-	b1 = oi->getXa().get(5,1);
-	b2 = oi->getXa().get(6,1);
-	//Ideia do Rafael Aguiar para contornar erro de cast (somar 0.1)
-	Matrix result(1,2);
-	result.setInt(1,1, (int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 ) );
-	result.setInt(1,2, (int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 ) );
-	return result;
+		double a0, a1, a2, b0, b1, b2;
+		a0 = oi->getXa().get(1,1);
+		a1 = oi->getXa().get(2,1);
+		a2 = oi->getXa().get(3,1);
+		b0 = oi->getXa().get(4,1);
+		b1 = oi->getXa().get(5,1);
+		b2 = oi->getXa().get(6,1);
+		//Ideia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+		Matrix result(1,2);
+		result.setInt(1,1, (int)((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 ) );
+		result.setInt(1,2, (int)((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 ) );
+		return result;
 }
 
 int BundleAdjustment::numberControlPoints(Image *img)
@@ -1286,38 +1232,38 @@ void BundleAdjustment::zeroingCoordinatesPhotogrammetrics()
 double BundleAdjustment::getMediaScale(int imageIndex)
 {
 	/*
- double media=0.0;
- double normaObjeto=0.0;
- double normaImagem=0.0;
+	double media=0.0;
+	double normaObjeto=0.0;
+	double normaImagem=0.0;
 
- int pnts=listImages.at(imageIndex)->countPoints();
+	int pnts=listImages.at(imageIndex)->countPoints();
 
- double xFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getX();
- double yFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getY();
- double zFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getZ();
- double xiFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
- double etaFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
+	double xFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getX();
+	double yFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getY();
+	double zFirstPoint=getPointFrom(imageIndex,0)->getObjectCoordinate().getZ();
+	double xiFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
+	double etaFirstPoint=getPointFrom(imageIndex,0)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
 
- for(int j=1;j<pnts;j++)
- {
-  if (whereInPoints(getPointFrom(imageIndex,j))!=-1 && !isCheckingPoint(imageIndex,j))
-  {
-   double xCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getX();
-   double yCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getY();
-   double zCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getZ();
+	for(int j=1;j<pnts;j++)
+	{
+		if (whereInPoints(getPointFrom(imageIndex,j))!=-1 && !isCheckingPoint(imageIndex,j))
+		{
+			double xCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getX();
+			double yCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getY();
+			double zCurrentPoint=getPointFrom(imageIndex,j)->getObjectCoordinate().getZ();
 
-   double xiCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
-   double etaCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
+			double xiCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getXi();
+			double etaCurrentPoint=getPointFrom(imageIndex,j)->getAnalogCoordinate(listImages.at(imageIndex)->getId()).getEta();
 
-   normaObjeto =sqrt(pow(xFirstPoint-xCurrentPoint,2)+pow(yFirstPoint-yCurrentPoint,2)+pow(zFirstPoint-zCurrentPoint,2));
-   normaImagem =sqrt(pow(xiFirstPoint-xiCurrentPoint,2)+pow(etaFirstPoint-etaCurrentPoint,2));
-   //printf("Objeto sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ))= %f\n",xiFirstPoint,xiCurrentPoint,etaFirstPoint,etaCurrentPoint,normaImagem);
-   media+=normaObjeto/normaImagem;
-  }
- }
- int p=numberControlPoints(listImages.at(imageIndex))+numberPhotogrammetricPoints(listImages.at(imageIndex));
- printf("object media %f count: %d\n",media,p);
- */
+			normaObjeto =sqrt(pow(xFirstPoint-xCurrentPoint,2)+pow(yFirstPoint-yCurrentPoint,2)+pow(zFirstPoint-zCurrentPoint,2));
+			normaImagem =sqrt(pow(xiFirstPoint-xiCurrentPoint,2)+pow(etaFirstPoint-etaCurrentPoint,2));
+			//printf("Objeto sqrt(( %.3f - %.3f )^2) + ( %.3f - %.3f)^2 ))= %f\n",xiFirstPoint,xiCurrentPoint,etaFirstPoint,etaCurrentPoint,normaImagem);
+			media+=normaObjeto/normaImagem;
+		}
+	}
+	int p=numberControlPoints(listImages.at(imageIndex))+numberPhotogrammetricPoints(listImages.at(imageIndex));
+	printf("object media %f count: %d\n",media,p);
+	*/
 	//return //media/(p-1);
 }
 
@@ -1335,7 +1281,7 @@ Matrix BundleAdjustment::imageToMatrixJacobiana(int indexImage)
 			double x=aux.getX();
 			double y=aux.getY();
 			double z=aux.getZ();
-			result=result|getJacobianaControl(x,y,z,indexImage+1); // esse id pode gerar inconsistencia// soluÃ§ao seria setar os ids de todas as imagens e pontos no inicio logo apos o sort de pontos
+			result=result|getJacobianaControl(x,y,z,indexImage+1);
 		}
 	}
 	return result;
@@ -1493,7 +1439,7 @@ void BundleAdjustment::calculatePeso()
 				P.set(d,d,p);
 				d++;
 				p=(numEquations-numUnknows)/((pow(getRy(listImages.at(i),j),2)));
-				P.set(d,d,p);
+					P.set(d,d,p);
 				d++;
 			}
 			if (isPhotogrammetricPoint(i,j) && whereInPoints(getPointFrom(i,j))!=-1)
@@ -1562,17 +1508,17 @@ int BundleAdjustment::whereInImages(Image *img)
 /*
 Matrix BundleAdjustment::getSparseN11()
 {
- Matrix result;
- int currentRows=0;
- for (int i=0;i<numImages;i++)
- {
-  Matrix partial=imageToMatrixJacobiana(i);
-  //partial.transpose()*partial;
-  result.putMatrix(partial,currentRows+1,6*i+1);
-  currentRows+=partial.getRows();
- }
- A1=result;
- return A1;
+	Matrix result;
+	int currentRows=0;
+	for (int i=0;i<numImages;i++)
+	{
+		Matrix partial=imageToMatrixJacobiana(i);
+		//partial.transpose()*partial;
+		result.putMatrix(partial,currentRows+1,6*i+1);
+		currentRows+=partial.getRows();
+	}
+	A1=result;
+	return A1;
 }
 */
 /* setters and getters*/
@@ -1597,18 +1543,18 @@ void BundleAdjustment::setAFP()
 	//Isso Ã© feito apenas para:
 	//ExibiÃ§ao dos angulos em Graus.
 	/*
- Matrix result(matAdjust.getRows(),matAdjust.getCols());
- for (int i=1;i<=numImages;i++)
- {
-  result.set(i,1,Dms::radianoToDegreeDecimal(matAdjust.get(i,1)));
-  result.set(i,2,Dms::radianoToDegreeDecimal(matAdjust.get(i,2)));
-  result.set(i,3,Dms::radianoToDegreeDecimal(matAdjust.get(i,3)));
-  result.set(i,4,matAdjust.get(i,4));
-  result.set(i,5,matAdjust.get(i,5));
-  result.set(i,6,matAdjust.get(i,6));
- }
- afp=result;
- */
+	Matrix result(matAdjust.getRows(),matAdjust.getCols());
+	for (int i=1;i<=numImages;i++)
+	{
+		result.set(i,1,Dms::radianoToDegreeDecimal(matAdjust.get(i,1)));
+		result.set(i,2,Dms::radianoToDegreeDecimal(matAdjust.get(i,2)));
+		result.set(i,3,Dms::radianoToDegreeDecimal(matAdjust.get(i,3)));
+		result.set(i,4,matAdjust.get(i,4));
+		result.set(i,5,matAdjust.get(i,5));
+		result.set(i,6,matAdjust.get(i,6));
+	}
+	afp=result;
+	*/
 	afp=matAdjust;
 }
 
@@ -1649,50 +1595,50 @@ bool BundleAdjustment::testResiduo()
 // Se der infinito retorna -2, se der NAN retorna -1, se nao convergir retorna 0 e se convergir retorna 1
 int BundleAdjustment::testConverged()
 {
-	/*
- int rowsX1=x1.getRows();
- int rowsX2=x2.getRows();
-   // printf("testando X1");
- for (int i=1;i<=rowsX1;i++)
- {
-  if (isinf(fabs(x1.get(i,1))))
-  {
-   qDebug("numero e INFINITO");
-   return -2;
-  }
-  if (isnan(fabs(x1.get(i,1))))
-  {
-   qDebug("numero e NAN");
-   return -1;
-  }
-  if (fabs(x1.get(i,1)>convergency))
-  {
-   return 0;
-  }
- }
- //printf("testando X2");
- for (int i=1;i<=rowsX2;i++)
- {
-  if (isinf(fabs(x1.get(i,1))))
-  {
-   qDebug("numero e INFINITO");
-   return -2;
-  }
-  if (isnan(fabs(x2.get(i,1))))
-  {
-   qDebug("numero e NAN");
-   return -1;
-  }
-  if (fabs(x2.get(i,1)>convergency))
-  {
-   return 0;
-  }
- }
- return 1;
- */
+/*
 	int rowsX1=x1.getRows();
 	int rowsX2=x2.getRows();
-	// printf("testando X1");
+   // printf("testando X1");
+	for (int i=1;i<=rowsX1;i++)
+	{
+		if (isinf(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x1.get(i,1)>convergency))
+		{
+			return 0;
+		}
+	}
+	//printf("testando X2");
+	for (int i=1;i<=rowsX2;i++)
+	{
+		if (isinf(fabs(x1.get(i,1))))
+		{
+			qDebug("numero e INFINITO");
+			return -2;
+		}
+		if (isnan(fabs(x2.get(i,1))))
+		{
+			qDebug("numero e NAN");
+			return -1;
+		}
+		if (fabs(x2.get(i,1)>convergency))
+		{
+			return 0;
+		}
+	}
+	return 1;
+	*/
+	int rowsX1=x1.getRows();
+	int rowsX2=x2.getRows();
+   // printf("testando X1");
 	for (int i=0;i<rowsX1;i++)
 	{
 		if (isinf(fabs(x1.get(i+1,1))))
@@ -1712,8 +1658,12 @@ int BundleAdjustment::testConverged()
 		}
 		else // Os três ultimos elementos são omega, phi, kappa
 		{
+			//printf("x1(%d)= %.5f\n",i+1,fabs(x1.get(i+1,1)));
 			if (fabs(x1.get(i+1,1)>angularConvergency))
+			{
+				//printf("angulo nao convergido x1(%d,1)= %.5f \tangular convergency: %.5f\n",i+1,fabs(x1.get(i+1,1)),angularConvergency);
 				return 0;
+			}
 		}
 	}
 	//printf("testando X2");
@@ -1775,15 +1725,15 @@ string BundleAdjustment::printAll()
 				result +="\t";
 				result += pnt->getPointId().c_str();
 				result += " col: ";
-				result += Conversion::intToString(col);
+								result += Conversion::intToString(col);
 				result += " lin: ";
-				result += Conversion::intToString(lin);
+								result += Conversion::intToString(lin);
 				result += " X: ";
-				result += Conversion::doubleToString(X);
+								result += Conversion::doubleToString(X);
 				result += " Y: ";
-				result += Conversion::doubleToString(Y);
+								result += Conversion::doubleToString(Y);
 				result += " Z: ";
-				result += Conversion::doubleToString(Z);
+								result += Conversion::doubleToString(Z);
 				result += "\n";
 			}
 			//printf("\t%s: col: %d lin %d\n",pnt->getPointId().c_str(),col,lin);
@@ -1870,41 +1820,41 @@ Matrix BundleAdjustment::getMatrixInicialValues()
 /*
 Matrix BundleAdjustment::convertEigenToMatrix(Eigen::MatrixXd eigen)
 {
- int cols = eigen.cols();
- int rows = eigen.rows();
- Matrix mat(rows,cols);
- //qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
- for(int i=0;i<rows;i++)
-  for (int j=0;j<cols;j++)
-  {
-   mat.set(i+1,j+1,eigen(i,j));
-  }
- return mat;
+	int cols = eigen.cols();
+	int rows = eigen.rows();
+	Matrix mat(rows,cols);
+	//qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
+	for(int i=0;i<rows;i++)
+		for (int j=0;j<cols;j++)
+		{
+			mat.set(i+1,j+1,eigen(i,j));
+		}
+	return mat;
 }
 
 Eigen::MatrixXd BundleAdjustment::convertMatrixToEigen(Matrix mat)
 {
- int cols=mat.getCols();
- int rows=mat.getRows();
- Eigen::MatrixXd eig(rows,cols);
- for(int i=0;i<rows;i++)
-  for (int j=0;j<cols;j++)
-  {
-   eig(i,j)=mat.get(i+1,j+1);
-  }
- return eig;
+	int cols=mat.getCols();
+	int rows=mat.getRows();
+	Eigen::MatrixXd eig(rows,cols);
+	for(int i=0;i<rows;i++)
+		for (int j=0;j<cols;j++)
+		{
+			eig(i,j)=mat.get(i+1,j+1);
+		}
+	return eig;
 }
 
 Matrix BundleAdjustment::convertVectorEigenToMatrix(Eigen::VectorXd eigen)
 {
- //int cols = eigen.cols();
- int rows = eigen.rows();
- Matrix mat(rows,1);
- //qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
- for(int i=0;i<rows;i++)
-  mat.set(i+1,1,eigen(i,0));
+	//int cols = eigen.cols();
+	int rows = eigen.rows();
+	Matrix mat(rows,1);
+	//qDebug("num cols: %f\tnumRows: %f",numCols,numRows);
+	for(int i=0;i<rows;i++)
+		mat.set(i+1,1,eigen(i,0));
 
- return mat;
+	return mat;
 }
 */
 
@@ -2016,6 +1966,131 @@ void BundleAdjustment::convertToUTM(deque<Point*> points, GeoSystem sys)
 		temp.setZ(gc.get(1,3));
 		pnt->setObjectCoordinate(temp);
 	}
+}
+
+	// em teste
+
+void BundleAdjustment::normalize(deque<Point *>points,double &range, double &offset)
+{
+	int rows=points.size();
+	double minX, minY, minZ, maxX, maxY, maxZ,minT,maxT;
+
+	Point *pnt=points.at(0);
+	ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+
+	minX=maxX=temp.getX();
+	minY=maxY=temp.getY();
+	minZ=maxZ=temp.getZ();
+
+	for (int i=1;i<rows;i++)
+	{
+		Point *pnt=points.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double X = temp.getX();
+		double Y = temp.getY();
+		double Z = temp.getZ();
+
+		if(X<minX)
+			minX=X;
+		if(Y<minY)
+			minY=Y;
+		if(Z<minZ)
+			minZ=Z;
+
+		if(X>=maxX)
+			maxX=X;
+		if(Y>=maxY)
+			maxY=Y;
+		if(Z>=maxZ)
+			maxZ=Z;
+	}
+
+	// Calculo do minimo e do maximo
+
+	if(maxX>=maxY)// && maxY>maxZ)
+		maxT=maxX;
+	else
+		maxT=maxY;
+
+	if(maxT<maxZ)
+		maxT=maxZ;
+
+	if(minX<=minY)// && maxY>maxZ)
+		minT=minX;
+	else
+		minT=minY;
+
+	if(minT>minZ)
+		minT=minZ;
+	qDebug("maxT %.5f minT %.5f",maxT, minT);
+
+	double myRange = maxT-minT;
+	double myOffset = -(minT);
+
+	for (int i=0;i<rows;i++)
+	{
+		Point *pnt=points.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double X = temp.getX();
+		double Y = temp.getY();
+		double Z = temp.getZ();
+
+		temp.setX((X+myOffset)/myRange);
+		temp.setY((Y+myOffset)/myRange);
+		temp.setZ((Z+myOffset)/myRange);
+		pnt->setObjectCoordinate(temp);
+	}
+
+	for( int i=1; i <= matInitialValues.getRows();i++)
+	{
+		double X0 = matInitialValues.get(i,4);
+		double Y0 = matInitialValues.get(i,5);
+		double Z0 = matInitialValues.get(i,6);
+
+		matInitialValues.set(i,4,(X0+myOffset)/myRange);
+		matInitialValues.set(i,5,(Y0+myOffset)/myRange);
+		matInitialValues.set(i,6,(Z0+myOffset)/myRange);
+	}
+
+	metricConvergency=(metricConvergency+myOffset)/myRange;
+
+	range=myRange;
+	offset=myOffset;
+
+	//qDebug("range %.4f offset %.4f metricconvergency %.18f",range,offset,metricConvergency);
+
+}
+
+void BundleAdjustment::desnormalize(deque<Point*>points, double range, double offset)
+{
+	int rows=points.size();
+	for (int i=0;i<rows;i++)
+	{
+		Point *pnt=points.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double X = temp.getX();
+		double Y = temp.getY();
+		double Z = temp.getZ();
+		temp.setX(X*range-offset);
+		temp.setY(Y*range-offset);
+		temp.setZ(Z*range-offset);
+		pnt->setObjectCoordinate(temp);
+
+	}
+
+	for( int i=1;i<= matAdjust.getRows();i++)
+	{
+		double X0 = matAdjust.get(i,4);
+		double Y0 = matAdjust.get(i,5);
+		double Z0 = matAdjust.get(i,6);
+
+		matAdjust.set(i,4,X0*range-offset);
+		matAdjust.set(i,5,Y0*range-offset);
+		matAdjust.set(i,6,Z0*range-offset);
+	}
+
+	metricConvergency=metricConvergency*range - offset;
+
 }
 
 } // namespace efoto

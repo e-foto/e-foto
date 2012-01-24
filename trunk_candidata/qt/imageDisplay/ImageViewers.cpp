@@ -96,7 +96,9 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 	leftDisplay = new SingleDisplay(this);
 	rightDisplay = new SingleDisplay(this);
 	tool = new SeparatedStereoToolsBar(leftDisplay, rightDisplay, this);
-	addToolBar(Qt::TopToolBarArea,tool);
+
+	/** Mudança feita pelo Paulo para mudar o local inicial da toolbar*/
+	addToolBar(Qt::RightToolBarArea, tool);
 
 	leftPart->setCentralWidget(leftDisplay);
 	leftPart->statusBar()->addWidget(tool->getLeftInfo());
