@@ -22,6 +22,7 @@ class Point;
 class Image;
 class Sensor;
 class Flight;
+class Terrain;
 class InteriorOrientation;
 
 /**
@@ -47,6 +48,7 @@ protected:
 
 	Sensor *mySensor;
 	Flight *myFlight;
+	Terrain *myTerrain;
 	double flightScale;
 	/***/
 	deque<Image*> listAllImages;
@@ -74,7 +76,7 @@ public:
  * \param sensor : Objeto Sensor, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  * \param flight : Objeto Flight, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  */
-	PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight);
+	PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
 
 	/**
   * \brief Destrutor do objeto
@@ -513,21 +515,49 @@ public:
  * \return bool : Informa se todas as imagens tem valores iniciais para o calculo dos parametros de orientaçao exterior
  */
 	bool hasAllImagesInitialValues();
-	/*
- /**
- * \brief
- * \param pointKey: Key do ponto no projeto
- * \return Matrix :
- */
-	//Matrix getPointResiduo(int pointKey);
-	/*
- void photogrammetricSort();
- /**
- * \brief Metodo que transformas
- * \param
- * \return Matrix :
- */
-	//Matrix digitalToEN(Image *img,int col, int row, Matrix oe);
+
+	/**
+	* \brief Metodo que retorna o valor da latitude, em radianos, do terreno informado pelo usuario no projectmanager
+	* \return double : Latitude em radianos
+	*/
+	double getPhiTerrain();
+
+	/**
+	* \brief Metodo que retorna o valor da longitude, em radianos, do terreno informado pelo usuario no projectmanager
+	* \return double : Longitude em radianos
+	*/
+	double getLambdaTerrain();
+
+	/**
+	* \brief Metodo que retorna o valor da altitude media, em metros, do terreno informado pelo usuario no projectmanager
+	* \return double : Altitude media em metros
+	*/
+	double getAltitudeMedia();
+
+
+
+	// em teste 17/01/12
+
+
+	/**
+	* \brief Metodo que converte todos as coordenadas para geocentricas
+	* \param points : lista dos pontos contendo as coordenadas
+	* \param sys : Sistema geodesico no qual as coordenadas estão
+	* \param hemi : inteiro informando em qual hemisferio estão as coordenadas; i.e. -1=Sul +1=Norte
+	* \param zona : Zona na qual as coordenadas estão
+	* \return Matrix: Matriz com as coordenadas convertidas para geocentricas
+	*/
+	void convertToNunes(deque<Point*> points, GeoSystem sys, int hemi, int zona);
+
+	/**
+	* \brief Metodo que converte todos as coordenadas para UTM
+	* \param points : lista dos pontos contendo as coordenadas
+	* \param sys : Sistema geodesico no qual as coordenadas deverão estar
+	* \return Matrix: Matriz com as coordenadas convertidas para UTM
+	*/
+	void convertToUTM(deque<Point*> points, GeoSystem sys);
+
+
 };
 
 } // namespace efoto

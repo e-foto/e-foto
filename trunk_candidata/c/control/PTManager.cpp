@@ -34,7 +34,7 @@ PTManager::PTManager()
 	angularConvergency = 0.001;
 }
 
-PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight)
+PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight, Terrain *terrain)
 {
 	efotoManager = newManager;
 	listAllImages = images;
@@ -42,6 +42,7 @@ PTManager::PTManager(EFotoManager *newManager, deque<Image*>images, deque<Interi
 	setListPoint();//lista todos os pontos
 	mySensor = sensor;
 	myFlight = flight;
+	myTerrain= terrain;
 	marksSaveState= true;
 	started = false;
 	status = false;
@@ -104,7 +105,7 @@ Matrix PTManager::getFotoIndice(deque<Matrix*> imgs, deque<Matrix> IOs, deque<Ma
 	// Basta então, retornarmos o fotoindice.
 
 	// Obs.: Essa primeira abordagem deve gerar imagens com vultos nas sobreposições e a segunda imagem, a de contruições, não necessáriamente revela as sobreposições da maneira como esta feito.
-	// Contudo podemos ter uma terceira e uma quarta matrizes para registrar essa sobreposição real (sobre o domínio do espaço imagem). Nesse modo, a quarta matrix é binária. Ou uma imagem desenhou um pixel ou não. E ao final de cada imagem (do projeto) processada soma-se os valores da quarta matrix à terceira e em seguida zera-se a quarta matrix. O resultado disto é que no final o terceira matrix vai dizer quantas imagens contribuiram para cada pixel.
+	// Contudo podemos ter uma terceira e uma quarta matrizes para registrar essa sobreposição real (sobre o domínio do espaço imagem). Nesse modo, a quarta matrix é binária. Ou uma imagem desenhou um pixel ou não. E ao final de cada imagem (do projeto) processada soma-se os valores da quarta matrix �  terceira e em seguida zera-se a quarta matrix. O resultado disto é que no final o terceira matrix vai dizer quantas imagens contribuiram para cada pixel.
 
 
 
@@ -191,12 +192,20 @@ string PTManager::getImagefile(int imageId)
 bool PTManager::calculatePT()
 {
 	sortPointsSelected();
+
+
+
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints);
+
+	qDebug("UTM:\n%s",pt->printAll().c_str());
+	convertToNunes(listSelectedPoints,WGS84,-1,23);
+	//qDebug("NUNES:\n%s",pt->printAll().c_str());
+	//convertToUTM(listSelectedPoints,WGS84);
+	//qDebug("UTM:\n%s",pt->printAll().c_str());
+
 	pt->setMaxNumberIterations(maxIterations);
 	pt->setMetricConvergencyValue(metricConvergency);
-	pt->setAngularConvergencyValue(angularConvergency);
-
-	//photogrammetricSort(listSelectedPoints);
+	pt->setAngularConvergencyValue(angularConvergency*M_PI/180);
 
 	if (pt->isPossibleCalculate())
 	{
@@ -225,15 +234,10 @@ bool PTManager::calculatePT()
 
 		bool result=pt->calculate();
 		setMatrixAFP(pt->getAFP());
-		residuos=pt->getMatRes();
-		//residuos.show('f',4,"residuos");
-		//deque<Point*> ptlist=pt->getPhotogrammetricList();
-		/*
-  for (int i=0;i<ptlist.size();i++)
-  {
-   pt->getResiduo(ptlist.at(i)).show('f',6,ptlist.at(i)->getPointId().c_str());
-  }*/
 
+		convertToUTM(listSelectedPoints,WGS84);
+
+		residuos=pt->getMatRes();
 
 		return result;
 	}
@@ -1380,6 +1384,93 @@ bool PTManager::hasAllImagesInitialValues()
 			return false;
 	}
 	return true;
+}
+
+double PTManager::getPhiTerrain()
+{
+	Dms lat(myTerrain->getCentralCoordLat());
+	EDomElement coordinates(efotoManager->getXml("terrain"));
+	coordinates=coordinates.elementByTagName("Lat");
+	if (coordinates.attribute("direction")=="S")
+		lat.setSignal(true);
+
+	//printf("phi0 : %s\tDMS: %s\n",myterrain->getCentralCoordLat().c_str(),lat.toString(5).c_str());
+	return lat.dmsToRadiano();
+}
+
+double PTManager::getLambdaTerrain()
+{
+	Dms longi(myTerrain->getCentralCoordLong());
+	//printf("long0 : %s\tDMS: %s\n\n",myterrain->getCentralCoordLong().c_str(),longi.toString(5).c_str());
+	EDomElement coordinates(efotoManager->getXml("terrain"));
+	coordinates=coordinates.elementByTagName("Long");
+	if (coordinates.attribute("direction")=="W")
+		longi.setSignal(true);
+
+	return longi.dmsToRadiano();
+}
+
+double PTManager::getAltitudeMedia()
+{
+	return myTerrain->getMeanAltitude();
+}
+
+void PTManager::convertToNunes(deque<Point*> points, GeoSystem sys, int hemi, int zona)
+{
+	int rows=points.size();
+	for (int i=0;i<rows;i++)
+	{      //N0=-5.85
+		Point *pnt=points.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double E = temp.getX();
+		double N = temp.getY();
+		double H = temp.getZ();
+		//qDebug("phi %.5f\tlambda%.5f",getPhiTerrain(),getLambdaTerrain());
+		Matrix gc=ConvertionsSystems::utmToNunes(E,N,H,zona,hemi,getPhiTerrain(),getLambdaTerrain(),sys);
+		temp.setX(gc.get(1,1));
+		temp.setY(gc.get(1,2));
+		temp.setZ(gc.get(1,3));
+		pnt->setObjectCoordinate(temp);
+	}
+}
+
+void PTManager::convertToUTM(deque<Point*> points, GeoSystem sys)
+{
+	int rows=points.size();
+
+	//double R=ConvertionsSystems::getNunesRaio(getPhiTerrain(),getLambdaTerrain(),sys);
+	double phi0=getPhiTerrain();
+	double lambda0=getLambdaTerrain();
+
+	for (int i=0;i<rows;i++)
+	{
+		Point *pnt=points.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double X = temp.getX();
+		double Y = temp.getY();
+		double Z = temp.getZ();
+
+		Matrix gc=ConvertionsSystems::nunesToUtm(X,Y,Z,phi0,lambda0,sys);
+		temp.setX(gc.get(1,1));
+		temp.setY(gc.get(1,2));
+		temp.setZ(gc.get(1,3));
+		pnt->setObjectCoordinate(temp);
+	}
+
+	// convertendo os parametros da OE
+	//Matrix oes=getMatrixOE();
+
+	for (int i=1; i<=AFP.getRows(); i++)
+	{
+		double X0 = AFP.get(i,4);
+		double Y0 = AFP.get(i,5);
+		double Z0 = AFP.get(i,6);
+		Matrix temp2 = ConvertionsSystems::nunesToUtm(X0,Y0,Z0,phi0,lambda0,sys);
+		AFP.set(i,4,temp2.get(1,1));
+		AFP.set(i,5,temp2.get(1,2));
+		AFP.set(i,6,temp2.get(1,3));
+	}
+
 }
 
 } // namespace efoto

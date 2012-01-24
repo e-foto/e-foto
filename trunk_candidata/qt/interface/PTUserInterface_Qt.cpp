@@ -51,7 +51,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	viewer->getRightMarker().changeMarker(mark);
 
 	SeparatedStereoToolsBar* tool = viewer->getToolBar(); // Adicionando uma baita gambiarra só para testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
-	QAction* showFotoIndice = new QAction("show results", tool);
+	QAction* showFotoIndice = new QAction("Results",tool);
+	showFotoIndice->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Show Results</span></p></body></html>");
 	tool->addSeparator();
 	tool->addAction(showFotoIndice);
 	connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));

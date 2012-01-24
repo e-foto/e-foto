@@ -323,9 +323,9 @@ void ImageForm::cleanForm()
 	gnssSigmaController->fillValues("Not Available");
 	//inertial navigation
 	insSigmaController->fillValues("Not Available");
-	omegaDmsEdit->clear();
-	kappaDmsEdit->clear();
-	phiDmsEdit->clear();
+	omegaDmsEdit->setText(locale().toString(locale().toDouble("0.0"),'f',4));
+	kappaDmsEdit->setText(locale().toString(locale().toDouble("0.0"),'f',4));
+	phiDmsEdit->setText(locale().toString(locale().toDouble("0.0"),'f',4));
 	//metadata
 	fileNameLine->clear();
 	filePathLine->clear();

@@ -22,7 +22,7 @@ Matrix ConvertionsSystems::GeoelipToGeocentricCartesian(double phi, double lambd
 
 	double b=a*(1-f);
 
-	//qDebug("phi= %.16f\tlambda= %.16f\th= %.16f",phi,lambda,haltura);
+		//qDebug("phi= %.16f\tlambda= %.16f\th= %.16f",phi,lambda,haltura);
 
 	double e2=1-(b*b)/(a*a);
 	double Ni=a/(sqrt(1-e2*sin(phi)*sin(phi)));
@@ -36,7 +36,7 @@ Matrix ConvertionsSystems::GeoelipToGeocentricCartesian(double phi, double lambd
 	xyz.set(1,2,Yi);
 	xyz.set(1,3,Zi);
 
-	//qDebug("Xi: %f\tYi: %f\tZi: %f\n",xyz.get(1,1),xyz.get(1,2),xyz.get(1,3));
+		//qDebug("Xi: %f\tYi: %f\tZi: %f\n",xyz.get(1,1),xyz.get(1,2),xyz.get(1,3));
 	return xyz;
 }
 
@@ -112,7 +112,7 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
 	//Correção do Francisco 15/09/2011
 	double lon=lambda*180/M_PI;
 	if (lon>=180)
-		lon=179;
+			lon=179;
 	zona=(int)(fabs(31+lon/6)+0.1);//+0.1: Idéia do rafael para contornar erro de arredondamento.
 
 	double A=a*(1 - n + (5*n*n/4)*(1-n)+(81*pow(n,4)/64)*(1-n));
@@ -142,14 +142,14 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
 	double T8 = v*k0*pow(cos(phi),5)*(5-18*pow(tan(phi),2) + pow(tan(phi),4) + 14*pow(e1*cos(phi),2) - 58*pow(tan(phi)*e1*cos(phi),2) + 13*pow(e1*cos(phi),4) + 4*pow(e1*cos(phi),6) - 64*tan(phi)*tan(phi)*pow(e1*cos(phi),4) - 24*tan(phi)*tan(phi)*pow(e1*cos(phi),6) )/120;
 	double T9 = v*k0*pow(cos(phi),7)*(61 - 479*pow(tan(phi),2) + 179*pow(tan(phi),4) - pow(tan(phi),6))/5040;
 
-	//qDebug("S= %.14f \nv= %.14f \np= %.14f",S,v,dLambda);
-	//qDebug("T1= %.14f \nT2= %.14f \nT3= %.14f ",T1,T2,T3);
-	// double A6=pow(M_PI/(3600*180)*dLambda,6)*(nu*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
+  //qDebug("S= %.14f \nv= %.14f \np= %.14f",S,v,dLambda);
+  //qDebug("T1= %.14f \nT2= %.14f \nT3= %.14f ",T1,T2,T3);
+   // double A6=pow(M_PI/(3600*180)*dLambda,6)*(nu*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
 
 	double N=10000000 + T1 + T2*pow(dLambda,2) + T3*pow(dLambda,4) + T4*pow(dLambda,6) + T5*pow(dLambda,8);
 	double E= 500000  + T6*dLambda + T7*pow(dLambda,3) + T8*pow(dLambda,5) + T9*pow(dLambda,7);
 	//if (N<0)
-	//  N=10000000+N;
+	  //  N=10000000+N;
 
 	Matrix xyh(1,4);
 
@@ -161,19 +161,17 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
 	//qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
 
-	// qDebug("Phi: %.9f\tLambda: %.9f\t phi: %.9f lambda: %.9f\n",phi*180/M_PI,lambda*180/M_PI,phi,lambda);
-	// qDebug("E: %.9f\tN: %.9f\t zona: %d hemi: %d\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
+   // qDebug("Phi: %.9f\tLambda: %.9f\t phi: %.9f lambda: %.9f\n",phi*180/M_PI,lambda*180/M_PI,phi,lambda);
+   // qDebug("E: %.9f\tN: %.9f\t zona: %d hemi: %d\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
 
-	return xyh;
+   return xyh;
 }
 
-Matrix ConvertionsSystems::utmToGeo(double E, double N, int zona, int hemi, GeoSystem system)
+Matrix ConvertionsSystems::utmToGeo(double E, double N,int zona, int hemi, GeoSystem system)
 {
-	// qDebug("E: %.9f\tN: %.9f\t zona: %d hemi: %d\n",E,N,zona,hemi);
+   // qDebug("E: %.9f\tN: %.9f\t zona: %d hemi: %d\n",E,N,zona,hemi);
 	//teste com as equações da tabela
 	//funcionando com a precisão dada
-
-
 
 	if (hemi < 0)
 	{
@@ -198,7 +196,7 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, int zona, int hemi, GeoS
 	double J2=21*pow(e1,2)/16-55*pow(e1,4)/32;
 	double J3=151*pow(e1,3)/96;
 	double J4=1097*pow(e1,4)/512;
-	// qDebug("e1= %.9f \n J1= %.9f \nJ2= %.9g \nJ3= %.9g \nJ4= %.9g",e1,J1,J2,J3,J4);
+   // qDebug("e1= %.9f \n J1= %.9f \nJ2= %.9g \nJ3= %.9g \nJ4= %.9g",e1,J1,J2,J3,J4);
 
 	//double convergency = (1e-10)*M_PI/180;
 
@@ -237,11 +235,11 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N, int zona, int hemi, GeoS
 
 	//qDebug("E: %.9f\tN: %.9f\tH: %f",E,N,haltura);
 	//qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
-	// qDebug("\n\nM= %.9f \nmu= %.9f \nfp= %.9f \ne12= %.9g",M,mu,fp,e12);
-	// qDebug("C1= %.9f \nT1= %.9f \nR1= %.9f \nN1= %.9f",C1,T1,R1,N1);
+   // qDebug("\n\nM= %.9f \nmu= %.9f \nfp= %.9f \ne12= %.9g",M,mu,fp,e12);
+   // qDebug("C1= %.9f \nT1= %.9f \nR1= %.9f \nN1= %.9f",C1,T1,R1,N1);
 
-	// qDebug("Q1= %.9f \nQ2= %.9f \nQ3= %.9g \nQ4= %.9g",Q1,Q2,Q3,Q4);
-	// qDebug("Q5= %.9f \nQ6= %.9g \nQ7= %.9g",Q5,Q6,Q7);
+   // qDebug("Q1= %.9f \nQ2= %.9f \nQ3= %.9g \nQ4= %.9g",Q1,Q2,Q3,Q4);
+   // qDebug("Q5= %.9f \nQ6= %.9g \nQ7= %.9g",Q5,Q6,Q7);
 
 
 	//qDebug("Phi: %.9f\tLambda: %.9f\t phi: %.9f lambda: %.9f\n",Lat*180/M_PI,Long*180/M_PI,Lat,Long);
@@ -351,19 +349,19 @@ Matrix ConvertionsSystems::convertSystemsSimplifiedMolodensky(GeoSystem oldSyste
 	double dZ=parameters.get(1,3);
 
 	/* wgs84 sad69*/
-	double f0=oldSystem.getF();
-	double f1=newSystem.getF();
+		double f0=oldSystem.getF();
+		double f1=newSystem.getF();
 
-	double a0=oldSystem.getA();
-	double a1=newSystem.getA();
+		double a0=oldSystem.getA();
+		double a1=newSystem.getA();
 
-	double e=f0*(2-f0);                             //e = 0.006694379990141
-	double df=f1-f0;                                //df= 0.000000081204000
-	double da=a1-a0;                                //da= 23.000
-	double M=a0*(1-e)/pow(1-e*pow(sin(phi),2),1.5); //M = 6351714.150933220000000
-	double N=a0/sqrt(1-e*pow(sin(phi),2));          //N = 6383593.832647510000000
+		double e=f0*(2-f0);                             //e = 0.006694379990141
+		double df=f1-f0;                                //df= 0.000000081204000
+		double da=a1-a0;                                //da= 23.000
+		double M=a0*(1-e)/pow(1-e*pow(sin(phi),2),1.5); //M = 6351714.150933220000000
+		double N=a0/sqrt(1-e*pow(sin(phi),2));          //N = 6383593.832647510000000
 
-	// formulas simplificadas
+		// formulas simplificadas
 
 	double p1=(a0*df+f0*da)*sin(2*phi);
 	double p2=-(dX*sin(phi)*cos(lambda));
@@ -385,8 +383,8 @@ Matrix ConvertionsSystems::convertSystemsSimplifiedMolodensky(GeoSystem oldSyste
 
 	//qDebug("phi=%.16f\t lambda=%.16f h=%.16f",phi,lambda,haltura); //
 	//qDebug("dX= %.6f\tdY= %.6f\tdZ= %.6f",dX,dY,dZ);
-	// qDebug("e= %.16f\ndf= %.16f\nda= %.16f\nM= %.16f\nN= %.16f",e,df,da,M,N);
-	// qDebug("dphi= %.16f\ndlambda= %.16f\ndN= %.16f",dphi,dlambda,dN);
+   // qDebug("e= %.16f\ndf= %.16f\nda= %.16f\nM= %.16f\nN= %.16f",e,df,da,M,N);
+   // qDebug("dphi= %.16f\ndlambda= %.16f\ndN= %.16f",dphi,dlambda,dN);
 	//qDebug("converted\nphi=%.16f\t lambda=%.16f h=%.16f",result[0],result[1],result[2]);
 	return result;
 }
@@ -536,6 +534,72 @@ double ConvertionsSystems::truncate(double value, int decimal)
 	frac1=(frac1-floor(frac1))/pow(10,decimal);
 	return value-frac1;
 }
+
+
+Matrix ConvertionsSystems::utmToNunes(double E, double N, double H, int zona, int hemi, double phi0, double lambda0, GeoSystem system)
+{
+	H+=-5.85;
+	double R=getNunesRaio(phi0,lambda0,system);
+	Matrix temp=utmToGeo(E,N,zona,hemi,system);
+
+	double phi = temp.get(1,1);
+	double lambda = temp.get(1,2);
+
+	double beta = (phi - phi0);///R;
+	double alpha = (lambda - lambda0);///R;
+
+
+	Matrix result(1,3);
+
+	double X=(R+H)*cos(beta)*sin(alpha);
+	double Y=(R+H)*sin(beta);
+	double Z=(R+H)*cos(beta)*cos(alpha)-R;
+
+	result.set(1,1,X);
+	result.set(1,2,Y);
+	result.set(1,3,Z);
+
+	return result;
+}
+
+Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0, double lambda0, GeoSystem system)
+{
+	double R = getNunesRaio(phi0,lambda0,system);
+
+	double alpha = atan( X/(R+Z) );
+	double beta  = atan( Y*cos(alpha)/(R+Z) );
+	/*
+	double lambda = R*alpha + lambda0;
+	double phi =  R*beta + phi0;
+	*/
+	double lambda = alpha + lambda0;
+	double phi =  beta + phi0;
+	double H = (R+Z)/(cos(alpha)*cos(beta)) - R;
+
+
+	Matrix temp=geoToUtm(phi,lambda,system);
+	Matrix result(1,3);
+
+	result.set(1,1,temp.get(1,1));
+	result.set(1,2,temp.get(1,2));
+	result.set(1,3,H+5.85);
+
+	return result;
+}
+
+//E o Lambda0 nao serve para nada??
+double ConvertionsSystems::getNunesRaio(double phi0, double lambda0, GeoSystem sys)
+{
+	double a=sys.getA();
+	double e=sys.getFirstEccentricity();
+
+	double M=a*(1-e*e)/(pow(1-pow(e*sin(phi0),2),1.5));
+	double N=a/(sqrt(1-pow(e*sin(phi0),2)));
+
+	return sqrt(M*N);
+
+}
+
 
 } // namespace efoto
 } // namespace eng
