@@ -1,5 +1,7 @@
 #include "ImageMatching.h"
 #include "DEMManager.h"
+#include <sys/time.h>
+#include <time.h>
 
 namespace br {
 namespace uerj {
@@ -30,6 +32,7 @@ void ImageMatching::init()
 	manager = NULL;
 	cancel_flag = false;
 	elim_bad_pts = false;
+        elap_time = 0.0;
 }
 
 void ImageMatching::setMatchingLimits(int xi, int xf, int yi, int yf)
@@ -59,6 +62,15 @@ void ImageMatching::setMinStd(double std)
 void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPointsList *repository, MatchingPointsList *mpoints)
 {
 	cancel_flag = false;
+
+        //
+        // Calculate operation time
+        //
+        struct timeval begin;
+        struct timeval end;
+        int MICRO_PER_SECOND = 1000000;
+
+        gettimeofday(&begin,NULL);
 
 	//
 	// Step 1 - Radiometric Tranformation
@@ -154,6 +166,15 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
 	// Default values: sigma_x=3, sigma_y=1.5
 	if (elim_bad_pts)
 		mpoints->filterBadPoints2D();
+
+        //
+        // Finish time calculation
+        //
+
+        gettimeofday(&end,NULL);
+        float etime = (float)(end.tv_sec - begin.tv_sec);
+        etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+        elap_time = double(etime);
 }
 
 /*

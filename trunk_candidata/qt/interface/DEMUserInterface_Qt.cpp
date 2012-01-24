@@ -51,6 +51,11 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	QObject::connect(comboBox4, SIGNAL(currentIndexChanged(int)), this, SLOT(onMatchingMethodChanged(int)));
 	QObject::connect(loadPtsButton, SIGNAL(clicked()), this, SLOT(onLoadPtsButtonClicked()));
 	QObject::connect(saveQButton, SIGNAL(clicked()), this, SLOT(onSavePtsButtonClicked()));
+        QObject::connect(spinBox3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
+        QObject::connect(spinBox11, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
+        QObject::connect(spinBox3_3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
+        QObject::connect(spinBox11_3, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
+        QObject::connect(doubleSpinBox0, SIGNAL(valueChanged(double)), this, SLOT(onDownValueChanged(double)));
 
 	setWindowState(this->windowState());
 	sed = NULL;
@@ -78,6 +83,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	onGridAreaLimitsStateChanged(0);
 	onInterStateChanged(0);
 	manager->setShowImage(checkBox_3->isChecked());
+        downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
 
 	allow_close = true;
 
@@ -175,6 +181,23 @@ void DEMUserInterface_Qt::onAbortClicked()
 	manager->setCancel();
 	enableOptions();
 	setAllowClose(true);
+}
+
+void DEMUserInterface_Qt::onLSMTemplateSizeChanged(int ts)
+{
+    if (spinBox3->value() > spinBox3_3->value())
+        spinBox3_3->setValue(spinBox3->value() + spinBox3_2->value());
+}
+
+void DEMUserInterface_Qt::onCorrTemplateSizeChanged(int ts)
+{
+    if (spinBox11->value() > spinBox11_3->value())
+        spinBox11_3->setValue(spinBox11->value() + spinBox11_2->value());
+}
+
+void DEMUserInterface_Qt::onDownValueChanged(double value)
+{
+    downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
 }
 
 void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
@@ -371,7 +394,7 @@ void DEMUserInterface_Qt::onDemGridClicked()
 	enableAfterGrid();
 }
 
-void DEMUserInterface_Qt::setElapsedTime(double t)
+void DEMUserInterface_Qt::setElapsedTime(double t, int opt)
 {
 	int hms = int(t);
 	int h = hms/3600;
@@ -382,12 +405,21 @@ void DEMUserInterface_Qt::setElapsedTime(double t)
 	s = s + (t-floor(t));
 
 	QString str_time;
+        QString h_str, m_str, s_str;
 
-	if (h>0) str_time = QString::number(h) + " hours, ";
-	if (h>0 || m>0) str_time += QString::number(m) + " minutes, ";
-	str_time += QString::number(s) + " seconds.";
+        (int(h) != 1) ? h_str = " hours, " : h_str = " hour, ";
+        (int(m) != 1) ? m_str = " minutes, " : m_str = " minute, ";
+        (int(s) != 1) ? s_str = " seconds." : s_str = " second.";
 
-	timeLabel->setText(str_time);
+        if (h>0) str_time = QString::number(h) + h_str;
+        if (h>0 || m>0) str_time += QString::number(m) + m_str;
+        str_time += QString::number(s) + s_str;
+
+        switch (opt)
+        {
+            case 1 : timeLabel->setText(str_time); break;
+            default : matchingTimeLabel->setText(str_time);
+        }
 }
 
 void DEMUserInterface_Qt::onLSMCheckChanged(int state)
@@ -503,8 +535,9 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
-	manager->setEliminateBadPoints(checkBox_4->isChecked());
-	manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), spinBox2->value(), doubleSpinBox0->value());
+        manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value());
+        manager->setEliminateBadPoints(checkBox_4->isChecked());
+        manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), doubleSpinBox0->value());
 	manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
 	manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
 	int DEMflag = manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());

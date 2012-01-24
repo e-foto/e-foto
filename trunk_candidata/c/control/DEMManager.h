@@ -68,6 +68,8 @@ class DEMManager
 	DemGrid *grid;
 	DemFeatures *df;
 	StereoPair sp;
+        int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step, ncc_temp_max_size;
+        double dem_total_elapsed_time;
 
 public:
 
@@ -88,7 +90,7 @@ public:
 	void returnProject();
 	int getPairs();
 	int extractDEM(int, bool);
-	void setAutoExtractionSettings(int, int, int, int, double);
+        void setAutoExtractionSettings(int, int, int, double);
 	void setNCCSettings(int, int, double, double);
 	void setLSMSettings(int, int, double, double, int, double, double, double, int, double);
 	void setProgress(int);
@@ -108,6 +110,8 @@ public:
 	void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); };
 	int loadDemFeature(char * filename);
 	string getDemQuality(char * filename, int option);
+        void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; };
+        double calculateDemRes(double ds);
 
 };
 
