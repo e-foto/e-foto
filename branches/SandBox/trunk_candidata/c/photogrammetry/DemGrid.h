@@ -56,7 +56,7 @@ public:
 	void getMinMax(double &, double &); // Return Min Z and Max Z
 	double getMeanZ();
 	double getHeightXY(double X, double Y);
-	double getHeight(double col, double row);
+        double getHeight(double row, double col);
 	Matrix *getDemImage(double min=0.0, double max=0.0);
 	Matrix &getDem();
 	int getWidth() { return dem_width; };
