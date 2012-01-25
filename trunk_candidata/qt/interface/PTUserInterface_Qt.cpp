@@ -85,7 +85,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	actionCalculateFotoTri->setEnabled(activeCalculate);
 	calculateFotoTriToolButton->setEnabled(activeCalculate);
 
-
 	imagesPointTreeWidget->setColumnHidden(3,true);
 
 	qApp->processEvents();
@@ -258,7 +257,6 @@ bool PTUserInterface_Qt::exec()
 	/** carregar imagem da direita*/
 	viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
 	viewer->getRightDisplay()->getCurrentScene()->scaleTo(1);
-	//mark.load("../X16x16.png");
 
 	updateImageTable(leftImageTableWidget, leftImageString);
 	updatePointsTable();
