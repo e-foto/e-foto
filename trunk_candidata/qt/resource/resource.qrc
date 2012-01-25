@@ -18,7 +18,6 @@
         <file alias="FotoTriangulacao_CursorGL">glcursor.png</file>
     </qresource>
     <qresource prefix="/icon">
-        <file>google_earth_icon.png</file>
         <file>exit.png</file>
         <file>exit2.png</file>
         <file>export.png</file>
@@ -66,5 +65,7 @@
         <file>edit.png</file>
         <file>ortho.png</file>
         <file>cancel.png</file>
+        <file>exportKMLIcon.png</file>
+        <file>addmark.png</file>
     </qresource>
 </RCC>

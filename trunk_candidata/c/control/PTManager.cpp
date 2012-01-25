@@ -197,7 +197,7 @@ bool PTManager::calculatePT()
 
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints);
 
-	qDebug("UTM:\n%s",pt->printAll().c_str());
+	//qDebug("UTM:\n%s",pt->printAll().c_str());
 	convertToNunes(listSelectedPoints,WGS84,-1,23);
 	//qDebug("NUNES:\n%s",pt->printAll().c_str());
 	//convertToUTM(listSelectedPoints,WGS84);
