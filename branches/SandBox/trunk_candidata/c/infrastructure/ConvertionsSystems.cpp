@@ -538,16 +538,16 @@ double ConvertionsSystems::truncate(double value, int decimal)
 
 Matrix ConvertionsSystems::utmToNunes(double E, double N, double H, int zona, int hemi, double phi0, double lambda0, GeoSystem system)
 {
-	H+=-5.85;
-	double R=getNunesRaio(phi0,lambda0,system);
+	//H+=-5.85;
+	double R0=getNunesRaio(phi0,lambda0,system);
 	Matrix temp=utmToGeo(E,N,zona,hemi,system);
 
 	double phi = temp.get(1,1);
 	double lambda = temp.get(1,2);
 
+	double R=getNunesRaio(phi,lambda,system);
 	double beta = (phi - phi0);///R;
 	double alpha = (lambda - lambda0);///R;
-
 
 	Matrix result(1,3);
 
@@ -582,7 +582,7 @@ Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0,
 
 	result.set(1,1,temp.get(1,1));
 	result.set(1,2,temp.get(1,2));
-	result.set(1,3,H+5.85);
+	result.set(1,3,H);//+5.85);
 
 	return result;
 }
