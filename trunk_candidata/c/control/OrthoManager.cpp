@@ -133,7 +133,6 @@ void OrthoManager::runAllOrthoTogheter()
 	vector <int> Cy;
 	vector <int> img_width;
 	vector <int> img_height;
-	vector <Matrix> images;
 	vector <ProjectiveRay> pr;
 
 	// Get image centers in pixels
@@ -151,6 +150,7 @@ void OrthoManager::runAllOrthoTogheter()
 		Cy.push_back(h/2);
 		if (w>best_dist_inital)
 			best_dist_inital = double(w);
+                pr.push_back(ProjectiveRay(img));
 	}
 
 	best_dist_inital *= best_dist_inital;
@@ -159,89 +159,88 @@ void OrthoManager::runAllOrthoTogheter()
 	//    ProjectiveRay pr(left);
 
 	//
-	// Load image as matrix
+        // Run ortho-image image by image
 	//
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 	string filename, strimg;
 	Matrix img_m;
 
-	for (int i=0; i<listAllImages.size(); i++)
+        for (int curr_image=0; curr_image<listAllImages.size(); curr_image++)
 	{
 		if (flag_cancel)
 			return;
 
-		// Create projective rays
-		img = listAllImages.at(i);
-		pr.push_back(ProjectiveRay(img));
+                img = listAllImages.at(curr_image);
 
 		// Load image as matrix
-		strimg = Conversion::intToString(i+1);
+                strimg = Conversion::intToString(curr_image + 1);
 		oui->setCurrentWork("Loading image "+strimg);
 		filename = img->getFilepath() + "/" + img->getFilename();
                 oui->loadImage(img_m, (char *)filename.c_str(),1.0);
-		images.push_back(img_m);
-	}
 
-	//
-	// Run Ortho
-	//
-	AnalogImageSpaceCoordinate analog_coord;
-	Interpolation interp;
-	interp.setMode(1); // Color
-	double meanZ = grid->getMeanZ(), Z;
-	double Xi, Yi, Xf, Yf, res_x, res_y, best_dist, dist, pixel;
-	double lin, col, best_lin, best_col;
-	int best_img;
+                //
+                // Run Ortho
+                //
+                AnalogImageSpaceCoordinate analog_coord;
+                Interpolation interp;
+                interp.setMode(1); // Color
+                double meanZ = grid->getMeanZ(), Z;
+                double Xi, Yi, Xf, Yf, res_x, res_y, best_dist, dist, pixel;
+                double lin, col, best_lin, best_col;
+                int best_img;
 
-	grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
-	res_x = ortho->getGridResX();
-	res_y = ortho->getGridResY();
+                grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+                res_x = ortho->getGridResX();
+                res_y = ortho->getGridResY();
 
-	oui->setProgress(0);
-	oui->setCurrentWork("Calculating ortho-rectification for all images");
-	for (double Y=Yi; Y<Yf; Y+=res_y)
-	{
-		for (double X=Xi; X<Xf; X+=res_x)
-		{
-			if (flag_cancel)
-				return;
+                oui->setProgress(0);
+                oui->setCurrentWork("Calculating ortho-rectification for image "+strimg);
+                for (double Y=Yi; Y<Yf; Y+=res_y)
+                {
+                        for (double X=Xi; X<Xf; X+=res_x)
+                        {
+                                if (flag_cancel)
+                                        return;
 
-			// Get X, Y, Z coordinates
-			Z = grid->getHeightXY(X, Y);
-			if (Z-0.0 < 0.00000000000000001)
-				Z = meanZ;
+                                // Get X, Y, Z coordinates
+                                Z = grid->getHeightXY(X, Y);
+                                if (fabs(Z-0.0) < 0.00000000000000001)
+                                        Z = meanZ;
 
-			best_img = -1;
-			best_dist = best_dist_inital;
-			for (int k=0; k<listAllImages.size(); k++)
-			{
-				analog_coord = pr.at(k).objectToAnalog(X, Y, Z);
-				pr.at(k).analogToDigital(analog_coord.getXi(), analog_coord.getEta(), col, lin);
-				col += 1.0; // Matrix coordinate system
-				lin += 1.0; // Matrix coordinate system
+                                best_img = -1;
+                                best_dist = best_dist_inital;
+                                for (int k=0; k<listAllImages.size(); k++)
+                                {
+                                        analog_coord = pr.at(k).objectToAnalog(X, Y, Z);
+                                        pr.at(k).analogToDigital(analog_coord.getXi(), analog_coord.getEta(), col, lin);
+                                        col += 1.0; // Matrix coordinate system
+                                        lin += 1.0; // Matrix coordinate system
 
-				if (lin < 1.0 || col < 1.0 || lin > img_height.at(k) || col > img_width.at(k))
-					continue;
+                                        if (lin < 1.0 || col < 1.0 || lin > img_height.at(k) || col > img_width.at(k))
+                                                continue;
 
-				// Calculate distance to the center
-				dist = sqrt(pow(col - Cx.at(k),2) + pow(lin - Cy.at(k),2));
+                                        // Calculate distance to the center
+                                        dist = sqrt(pow(col - Cx.at(k),2) + pow(lin - Cy.at(k),2));
 
-				if (dist < best_dist)
-				{
-					best_dist = dist;
-					best_img = k;
-					best_lin = lin;
-					best_col = col;
-				}
-			}
+                                        if (dist < best_dist)
+                                        {
+                                                best_dist = dist;
+                                                best_img = k;
+                                                best_lin = lin;
+                                                best_col = col;
+                                        }
+                                }
 
-			(best_img == -1) ? pixel = 0.0 : pixel = interp.interpolate(&images.at(best_img), best_col, best_lin, inter_method);
-			ortho->setOrthoimagePixel(X, Y, pixel);
-		}
-		oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
-	}
-
-	images.clear();
+                                // Is best image = current image, copy pixel
+                                if (best_img == curr_image)
+                                {
+                                        (best_img == -1) ? pixel = 0.0 : pixel = interp.interpolate(&img_m, best_col, best_lin, inter_method);
+                                        ortho->setOrthoimagePixel(X, Y, pixel);
+                                }
+                        }
+                        oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
+                }
+        }
 }
 
 void OrthoManager::runOrthoIndividual(int image)
@@ -282,7 +281,9 @@ void OrthoManager::runOrthoIndividual(int image)
 				return;
 
 			Z = grid->getHeightXY(X, Y);
-			if (Z-0.0 < 0.00000000000000001) Z = meanZ;
+
+                        if (fabs(Z-0.0) < 0.00000000000000001)
+                            Z = meanZ;
 
 			analog_coord = pr.objectToAnalog(X, Y, Z);
 			pr.analogToDigital(analog_coord.getXi(), analog_coord.getEta(), col, lin);
@@ -326,7 +327,9 @@ void OrthoManager::runOrthoIndividual(int image)
 				return;
 
 			Z = grid->getHeightXY(X, Y);
-			if (Z-0.0 < 0.00000000000000001) Z = meanZ;
+
+                        if (fabs(Z-0.0) < 0.00000000000000001)
+                            Z = meanZ;
 
 			analog_coord = pr.objectToAnalog(X, Y, Z);
 			pr.analogToDigital(analog_coord.getXi(), analog_coord.getEta(), col, lin);
@@ -411,7 +414,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 	{
 		OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 		Matrix * img = ortho->getOrthoImage();
-		oui->showImage(img, 1);
+                oui->showImage(img, false);
 		delete img;
 	}
 

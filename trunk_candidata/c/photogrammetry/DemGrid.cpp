@@ -101,10 +101,10 @@ double DemGrid::getHeightXY(double X, double Y)
 	col = 1.0 + (X-Xi)/res_x;
 	row = 1.0 + (Y-Yi)/res_y;
 
-	return getHeight(row, col);
+        return getHeight(row, col);
 }
 
-double DemGrid::getHeight(double col, double row)
+double DemGrid::getHeight(double row, double col)
 {
 	// Check limits
 	if (col<1.0) col = 1.0;
