@@ -1049,6 +1049,7 @@ string PTManager::exportBlockTokml(string fileName)
 		}
 	}
 
+        /*
 	double interX=0.0;
 	double interY=0.0;
 	for( int i=0; i<epolygons.size()-1;i++)
@@ -1064,7 +1065,7 @@ string PTManager::exportBlockTokml(string fileName)
 			}
 		}
 	}
-
+*/
 	string controlPoint="";
 	string photogrammetricPoint="";
 	string checkingPoint="";
@@ -1117,12 +1118,18 @@ string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSystem sy
 	double N=pnt->getObjectCoordinate().getY();
 	double H=pnt->getObjectCoordinate().getZ();
 
-	Matrix plh=ConvertionsSystems::utmToGeo(E,N,zona,hemiLatitude,sys);
+        Matrix temp=ConvertionsSystems::utmToGeo(E,N,zona,hemiLatitude,sys);
+
+        double oldPhi=temp.get(1,1);
+        double oldLambda=temp.get(1,2);
+
+        Matrix plh=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi,oldLambda,H);
 
 	double lat=plh.get(1,1)*180/M_PI;
 	double longi=plh.get(1,2)*180/M_PI;
+        H=plh.get(1,3);
 
-	//lat = (hemiLatitude=='S' ? -lat:lat);
+        //lat = (hemiLatitude=='S' ? -lat:lat);
 
 	pointString << "<Placemark>\n";
 	pointString << "<name>" << pnt->getPointId() << "</name>\n";
