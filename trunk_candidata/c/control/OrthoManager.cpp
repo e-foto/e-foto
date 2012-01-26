@@ -356,6 +356,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 	double Xi, Yi, Xf, Yf, res_x, res_y;
 	grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
 	ortho = new Orthorectification(Xi, Yi, Xf, Yf, user_res_x, user_res_y);
+        ortho->setNumberOfBands(3);
 	flag_cancel = false;
 
 	if (option == 0)

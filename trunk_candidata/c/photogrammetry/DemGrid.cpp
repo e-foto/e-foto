@@ -786,7 +786,7 @@ void DemGrid::loadDemEfoto(char * filename)
 	Xf = header[2];
 	Yf = header[3];
 	res_x = header[4];
-	res_x = header[5];
+        res_y = header[5];
 	dem_width = int(header[6]);
 	dem_height = int(header[7]);
 
