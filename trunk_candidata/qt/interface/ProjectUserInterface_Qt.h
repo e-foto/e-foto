@@ -23,6 +23,8 @@
 #include <QModelIndex>
 #include <QStackedWidget>
 #include <QScrollArea>
+#include <QFile>
+
 
 namespace br {
 namespace uerj {
@@ -159,6 +161,15 @@ public slots:
 	void exportPointsToTxt();
 	void importImagesFromTxt();
 	void importPointsFromTxt2();
+
+	/*Paulo importar imagens em batch 26/01/12*/
+	void importImagesBatch();
+	string addImageXml(QString fileName, int keyImage);
+	string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages );
+
+	/*Paulo importar Ois em batch 26/01/12*/
+	void importOIDigitalMarks();
+	string OIToXml(QStringList oiMarks, int imageKey);
 	//void exportImagesToTxt();
 
 	void importDigitalCoordinatesFromTxt();
