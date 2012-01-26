@@ -193,12 +193,10 @@ bool PTManager::calculatePT()
 {
 	sortPointsSelected();
 
-
-
 	pt= new BundleAdjustment(listSelectedImages,listSelectedPoints);
 
 	//qDebug("UTM:\n%s",pt->printAll().c_str());
-	convertToNunes(listSelectedPoints,WGS84,-1,23);
+	//convertToNunes(listSelectedPoints,WGS84,-1,23);
 	//qDebug("NUNES:\n%s",pt->printAll().c_str());
 	//convertToUTM(listSelectedPoints,WGS84);
 	//qDebug("UTM:\n%s",pt->printAll().c_str());
@@ -235,7 +233,7 @@ bool PTManager::calculatePT()
 		bool result=pt->calculate();
 		setMatrixAFP(pt->getAFP());
 
-		convertToUTM(listSelectedPoints,WGS84);
+		//convertToUTM(listSelectedPoints,WGS84);
 
 		residuos=pt->getMatRes();
 

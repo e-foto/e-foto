@@ -132,14 +132,22 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	centralWidget()->layout()->addWidget(&centerArea);
 	centralWidget()->layout()->addWidget(&controlButtons);
 
-	// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
+	// Adiciona um atalho para os desenvolvedores observarem as mudanças no XML durante o runtime
 	QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
 	// Inserido pelo Paulo 05/09/2011
 	// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
-	//QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
-	//connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
+	QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
+	connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
+
+	QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+I", "Import")),this);
+	connect(shortcut3, SIGNAL(activated()), this, SLOT(importImagesBatch()));
+
+
+	QShortcut* shortcut4 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
+	connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
+
 
 	actionFoto_Tri->setEnabled(availablePhotoTri());
 
@@ -2757,6 +2765,241 @@ string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement poi
 	return result.c_str();
 }
 
+
+void ProjectUserInterface_Qt::importImagesBatch()
+{
+	//primeiro arquivo
+	//QString importDirName = QFileDialog::getExistingDirectory(this,tr("Open directory of images"),".",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	//if(importDirName=="")
+		//return;
+
+	QMessageBox msgBox;
+	msgBox.setText("Loading images");
+	msgBox.setInformativeText("All images has the same dimensions?");
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.setDefaultButton(QMessageBox::Yes);
+
+	int resp=msgBox.exec();
+
+	QStringList importFilesName = QFileDialog::getOpenFileNames(this, "Select all images files", ".", "*.tif *.png *.bmp *.jpg");
+	if(importFilesName.size()==0)
+		return;
+
+	string xmlImages="";
+
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	loading.setRange(0,importFilesName.size());
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Exporting Points"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	if (resp==QMessageBox::No)
+	{
+		for (int i=0; i<importFilesName.size();i++)
+		{
+			loading.setFormat(tr("Image %v/%m : %p%"));
+			// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
+			xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i);
+			loading.setValue(i+1);
+		}
+	}
+	else
+	{
+		QImage firstImage(importFilesName.at(0));
+		int imageWidth=firstImage.width();
+		int imageHeight=firstImage.height();
+
+		for (int i=0; i<importFilesName.size();i++)
+		{
+			loading.setFormat(tr("Image %v/%m : %p%"));
+			QFileInfo imageFileInfo(importFilesName.at(i));
+			// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
+			xmlImages+=addImageXml(imageFileInfo.fileName(),manager->getFreeImageId()+i,imageWidth,imageHeight);
+			loading.setValue(i+1);
+		}
+	}
+
+	manager->addComponent(xmlImages,"images");
+
+	loadWidget->close();
+	updateTree();
+	viewImages();
+	actionSave_file->setEnabled(true);
+
+}
+
+string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage)
+{
+
+	stringstream imageXml;
+	QImage image(fileName);
+	QDir absolutePath (getSavedIn());
+	int i=fileName.lastIndexOf("/");
+	int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
+
+	QString fileImagePath(".");
+	if (j>0)
+		fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
+
+	QString sugestionID=fileName.right(fileName.length()-i-1);
+	sugestionID.chop(4);//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
+
+	imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
+	imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+	imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(image.width())<<"</width>\n";
+	imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(image.height())<<"</height>\n";
+	imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toStdString()<<"</fileName>\n";
+	imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+	imageXml << "\t\t<resolution uom=\"#dpi\">N/A</resolution>\n";
+	imageXml << "\t</image>\n";
+
+	return imageXml.str();
+}
+
+
+string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages )
+{
+
+	stringstream imageXml;
+	QDir absolutePath (getSavedIn());
+
+	int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
+	QString fileImagePath(".");
+	if (j>0)
+		fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
+
+	QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
+	sugestionID.chop(4);
+	imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
+	imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+	imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(widthImages)<<"</width>\n";
+	imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
+	imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
+	imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+	imageXml << "\t\t<resolution uom=\"#dpi\">N/A</resolution>\n";
+	imageXml << "\t</image>\n";
+
+	return imageXml.str();
+}
+
+
+void ProjectUserInterface_Qt::importOIDigitalMarks()
+{
+	QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import OI Digital File"),".","*.txt");
+	if(importFileName=="")
+		return;
+	QFile *importFile = new QFile(importFileName);
+	QStringList marksList;
+
+	importFile->open(QIODevice::ReadOnly);
+
+	while(!importFile->atEnd())
+	{
+		QByteArray line = importFile->readLine();
+		QString aux(line);
+		marksList << aux.remove('\n');
+	}
+	importFile->close();
+
+	QWidget *loadWidget= new QWidget();
+	loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+	QProgressBar loading;
+	QPushButton cancelButton("Cancel");
+	loading.setRange(0,marksList.size());
+
+	QVBoxLayout loadLayout;
+	loadLayout.addWidget(&loading,Qt::AlignCenter);
+	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+	loadWidget->setLayout(&loadLayout);
+	loadWidget->setWindowTitle(tr("Loading OIs"));
+	loading.setMinimumSize(300,30);
+	loadWidget->show();
+
+	string newOIXML;
+	int imagescount=1;
+	for (int i=0; i<marksList.length() && loadWidget!=NULL;i+=4)
+	{
+		loading.setFormat(tr("%v/%m : %p%"));
+
+		QStringList OIMarks;
+		OIMarks<<marksList.at(i)<<marksList.at(i+1)<<marksList.at(i+2)<<marksList.at(i+3);
+		newOIXML+=OIToXml(OIMarks,imagescount++);
+		loading.setValue(i+1);
+	}
+
+	manager->addComponent(newOIXML,"interiorOrientation");
+	loadWidget->close();
+
+	updateTree();
+	viewPoints();
+	actionSave_file->setEnabled(true);
+}
+
+string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
+{
+	stringstream OIxml;
+	bool ok;
+	//Paulo: Metodo Lusitano
+	int markx1=oiMarks.at(0).section('\t',0,0).toInt(&ok);
+	int marky1=oiMarks.at(0).section('\t',1,1).toInt(&ok);
+
+	int markx2=oiMarks.at(1).section('\t',0,0).toInt(&ok);
+	int marky2=oiMarks.at(1).section('\t',1,1).toInt(&ok);
+
+	int markx3=oiMarks.at(2).section('\t',0,0).toInt(&ok);
+	int marky3=oiMarks.at(2).section('\t',1,1).toInt(&ok);
+
+	int markx4=oiMarks.at(3).section('\t',0,0).toInt(&ok);
+	int marky4=oiMarks.at(3).section('\t',1,1).toInt(&ok);
+
+	OIxml << "<imageIO type=\"Affine\" image_key=\""<< Conversion::intToString(imageKey)<<"\">\n";
+	OIxml << "\t<fiductialMarks uom=\"#px\">\n";
+	OIxml << "\t\t<fiductialMark key=\"1\">\n";
+	OIxml << "\t\t\t<gml:pos>"<< Conversion::intToString(markx1) << " " << Conversion::intToString(marky1) << "</gml:pos>\n";
+	OIxml << "\t\t</fiductialMark>\n";
+
+	OIxml << "\t\t<fiductialMark key=\"2\">\n";
+	OIxml << "\t\t\t<gml:pos>"<< Conversion::intToString(markx2) << " " << Conversion::intToString(marky2) << "</gml:pos>\n";
+	OIxml << "\t\t</fiductialMark>\n";
+
+	OIxml << "\t\t<fiductialMark key=\"3\">\n";
+	OIxml << "\t\t\t<gml:pos>"<< Conversion::intToString(markx3) << " " << Conversion::intToString(marky3) << "</gml:pos>\n";
+	OIxml << "\t\t</fiductialMark>\n";
+
+	OIxml << "\t\t<fiductialMark key=\"4\">\n";
+	OIxml << "\t\t\t<gml:pos>"<< Conversion::intToString(markx4) << " " << Conversion::intToString(marky4) << "</gml:pos>\n";
+	OIxml << "\t\t</fiductialMark>\n";
+
+	OIxml << "\t</fiductialMarks>\n";
+
+	OIxml << "</imageIO>\n";
+
+	/*
+	<fiductialMarks uom="#px">
+		<fiductialMark key="1">
+			<gml:pos>2771 1361</gml:pos>
+		</fiductialMark>
+		<fiductialMark key="2">
+			<gml:pos>107 1367</gml:pos>
+		</fiductialMark>
+		<fiductialMark key="3">
+			<gml:pos>1435 30</gml:pos>
+		</fiductialMark>
+		<fiductialMark key="4">
+				<gml:pos>1443 2697</gml:pos>
+		</fiductialMark>
+	</fiductialMarks>
+	*/
+
+	return OIxml.str();
+}
 
 
 
