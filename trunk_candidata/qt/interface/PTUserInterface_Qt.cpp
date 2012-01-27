@@ -430,7 +430,8 @@ void PTUserInterface_Qt::showSelectionWindow()
 			ids+=QString::fromStdString(idsOut.at(i));
 			ids+=", ";
 		}
-		ids.chop(1);
+		ids.chop(2);
+		ids+=".";
 		QMessageBox::warning(selectionView,"Point taked out of evaluate",QString("Points with less than 2 overlaps:\n%1").arg(ids));
 	}
 

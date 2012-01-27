@@ -926,10 +926,9 @@ string PTManager::exportBlockTokml(string fileName)
 	aux<<"<Style id=\"sh_PhotogrammetricPoint\">\n<IconStyle>\n<color>"<<colorHighLightPhotogrammetric<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< photogrammetricPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 
 	// Style para pontos de checking
-	aux<<"<StyleMap id=\"checkingPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_CheckingPoint</styleUrl>\n</Pair>\n<Pair>\n<key>normal</key>\n<styleUrl>#sh_CheckingPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
+	aux<<"<StyleMap id=\"checkingPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_CheckingPoint</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_CheckingPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
 	aux<<"<Style id=\"sn_CheckingPoint\">\n<IconStyle>\n<color>"<<colorNormalChecking<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 	aux<<"<Style id=\"sh_CheckingPoint\">\n<IconStyle>\n<color>"<<colorHighLightChecking<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
-
 
 	Matrix oe=getMatrixOE();
 	//oe.show();
@@ -991,10 +990,8 @@ string PTManager::exportBlockTokml(string fileName)
 			double E2=oe.get(i+1,4)+deltaE;
 			double N2=oe.get(i+1,5)-deltaN;
 
-			//QPolygonF
-			//EPolygon *pol1= new EPolygon();
-			//pol1 << QPointF(E1,N1) << QPointF(E2,N1) << QPointF(E2,N2) << QPointF(E1,N2);
 
+		/*
 			QList<QPointF *> pnts;
 			pnts << new QPointF(E1,N1) <<  new QPointF(E2,N1) <<  new QPointF(E2,N2) << new QPointF(E1,N2);
 
@@ -1002,18 +999,46 @@ string PTManager::exportBlockTokml(string fileName)
 			polygon->setLabel(QString::fromStdString(img->getFilename()));
 			epolygons << polygon;
 
-			pnts.clear();
-			Matrix plh1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,GeoSystem());
-			Matrix plh2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,GeoSystem());
+			pnts.clear();*/
+			Matrix temp1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,sys);
+			Matrix temp2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,sys);
 
 
-			double lat1 = plh1.get(1,1)*180/M_PI;
-			lat1 = (hemiLatitude =='S'? -lat1 : lat1);
-			double longi1 = plh1.get(1,2)*180/M_PI;
+			double lat1,longi1,lat2,longi2;
+			Matrix plh1,plh2;
 
-			double lat2 = plh2.get(1,1)*180/M_PI;
-			lat2 = (hemiLatitude =='S'? -lat2 : lat2);
-			double longi2 =plh2.get(1,2)*180/M_PI;
+			qDebug("old system: %s",sys.getSystemName().c_str());
+			if (sys.getSystemName()!="WGS84")
+			{
+				double oldPhi1=temp1.get(1,1);
+				double oldLambda1=temp1.get(1,2);
+				double oldPhi2=temp2.get(1,1);
+				double oldLambda2=temp2.get(1,2);
+
+				plh1=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi1,oldLambda1,0);
+				plh2=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi2,oldLambda2,0);
+
+				lat1 = plh1.get(1,1)*180/M_PI;
+				lat1 = (hemiLatitude =='S'? -lat1 : lat1);
+				longi1 = plh1.get(1,2)*180/M_PI;
+
+				lat2 = plh2.get(1,1)*180/M_PI;
+				lat2 = (hemiLatitude =='S'? -lat2 : lat2);
+				longi2 =plh2.get(1,2)*180/M_PI;
+			}
+			else
+			{
+				plh1=temp1;
+				plh2=temp2;
+
+				lat1 = plh1.get(1,1)*180/M_PI;
+				lat1 = (hemiLatitude =='S'? -lat1 : lat1);
+				longi1 = plh1.get(1,2)*180/M_PI;
+
+				lat2 = plh2.get(1,1)*180/M_PI;
+				lat2 = (hemiLatitude =='S'? -lat2 : lat2);
+				longi2 =plh2.get(1,2)*180/M_PI;
+			}
 
 			stringstream coord;
 			coord << Conversion::doubleToString(longi1) << "," <<Conversion::doubleToString(lat1) << ",0 ";
@@ -1049,7 +1074,7 @@ string PTManager::exportBlockTokml(string fileName)
 		}
 	}
 
-        /*
+		/*
 	double interX=0.0;
 	double interY=0.0;
 	for( int i=0; i<epolygons.size()-1;i++)
@@ -1118,18 +1143,32 @@ string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSystem sy
 	double N=pnt->getObjectCoordinate().getY();
 	double H=pnt->getObjectCoordinate().getZ();
 
-        Matrix temp=ConvertionsSystems::utmToGeo(E,N,zona,hemiLatitude,sys);
+	Matrix temp=ConvertionsSystems::utmToGeo(E,N,zona,hemiLatitude,sys);
+	double lat,longi;
+	Matrix plh;
 
-        double oldPhi=temp.get(1,1);
-        double oldLambda=temp.get(1,2);
-
-        Matrix plh=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi,oldLambda,H);
-
+	if (sys.getSystemName()!="WGS84")
+	{
+		double oldPhi=temp.get(1,1);
+		double oldLambda=temp.get(1,2);
+		plh=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi,oldLambda,H);
+		lat = plh.get(1,1)*180/M_PI;
+		lat = (hemiLatitude =='S'? -lat : lat);
+		longi = plh.get(1,2)*180/M_PI;
+	}
+	else
+	{
+		plh=temp;
+		lat = plh.get(1,1)*180/M_PI;
+		lat = (hemiLatitude =='S'? -lat : lat);
+		longi = plh.get(1,2)*180/M_PI;
+	}
+/*
 	double lat=plh.get(1,1)*180/M_PI;
-	double longi=plh.get(1,2)*180/M_PI;
-        H=plh.get(1,3);
+	double longi=plh.get(1,2)*180/M_PI;*/
+	H=plh.get(1,3);
 
-        //lat = (hemiLatitude=='S' ? -lat:lat);
+	//lat = (hemiLatitude=='S' ? -lat:lat);
 
 	pointString << "<Placemark>\n";
 	pointString << "<name>" << pnt->getPointId() << "</name>\n";

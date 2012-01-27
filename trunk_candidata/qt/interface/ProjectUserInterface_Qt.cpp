@@ -2773,14 +2773,6 @@ void ProjectUserInterface_Qt::importImagesBatch()
 	//if(importDirName=="")
 		//return;
 
-	QMessageBox msgBox;
-	msgBox.setText("Loading images");
-	msgBox.setInformativeText("All images has the same dimensions?");
-	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	msgBox.setDefaultButton(QMessageBox::Yes);
-
-	int resp=msgBox.exec();
-
 	QStringList importFilesName = QFileDialog::getOpenFileNames(this, "Select all images files", ".", "*.tif *.png *.bmp *.jpg");
 	if(importFilesName.size()==0)
 		return;
@@ -2796,8 +2788,16 @@ void ProjectUserInterface_Qt::importImagesBatch()
 	loadWidget->setLayout(&loadLayout);
 	loadWidget->setWindowTitle(tr("Exporting Points"));
 	loading.setMinimumSize(300,30);
-	loadWidget->show();
 
+
+	QMessageBox msgBox;
+	msgBox.setText("Loading images");
+	msgBox.setInformativeText("All images has the same dimensions?");
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.setDefaultButton(QMessageBox::Yes);
+
+	int resp=msgBox.exec();
+	loadWidget->show();
 	if (resp==QMessageBox::No)
 	{
 		for (int i=0; i<importFilesName.size();i++)
@@ -2980,23 +2980,6 @@ string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
 	OIxml << "\t</fiductialMarks>\n";
 
 	OIxml << "</imageIO>\n";
-
-	/*
-	<fiductialMarks uom="#px">
-		<fiductialMark key="1">
-			<gml:pos>2771 1361</gml:pos>
-		</fiductialMark>
-		<fiductialMark key="2">
-			<gml:pos>107 1367</gml:pos>
-		</fiductialMark>
-		<fiductialMark key="3">
-			<gml:pos>1435 30</gml:pos>
-		</fiductialMark>
-		<fiductialMark key="4">
-				<gml:pos>1443 2697</gml:pos>
-		</fiductialMark>
-	</fiductialMarks>
-	*/
 
 	return OIxml.str();
 }
