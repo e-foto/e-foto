@@ -14,7 +14,7 @@ FlightDirectionForm::FlightDirectionForm(QWidget *parent) : QWidget(parent)
 	connect(flightDirectionSpin,SIGNAL(valueChanged(int)),this,SLOT(setDialValue(int)));
 	connect(acceptAngleButton, SIGNAL(clicked()),this,SLOT(acceptValues()));
 	connect(finishButton,SIGNAL(clicked()),this,SLOT(close()));
-
+	setWindowTitle("Flight Direction");
 }
 
 void FlightDirectionForm::acceptValues()
