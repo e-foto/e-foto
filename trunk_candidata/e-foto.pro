@@ -408,3 +408,5 @@ win32 {
 	}
 	else:!build_pass:message(Debug build! WIN32)# Essa linha pode ser suprimida, isso s� aparecer� na saida do compilador(Compile Output)
 }
+#linha para colocar o icone do e-foto no executavel
+RC_FILE = efotoIcon.rc
