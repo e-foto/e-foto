@@ -370,7 +370,10 @@ void DEMUserInterface_Qt::enableAfterDEM(int sender)
 			comboBox0->setCurrentIndex(1);
 	}
 	else
+        {
 		comboBox0->setEnabled(true);
+                comboBox0->setCurrentIndex(2);
+        }
 }
 
 void DEMUserInterface_Qt::enableAfterGrid()
