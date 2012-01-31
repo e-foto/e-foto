@@ -109,8 +109,9 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
 	grid->loadDem(filename,fileType);
 
 	// Report grid resolution
-	double Xi, Yi, Xf, Yf, res_x, res_y;
+        double Xi, Yi, Xf, Yf, res_x, res_y, Zi, Zf, res_z;
 	grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+        grid->getMinMax(Zi,Zf);
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 	oui->doubleSpinBox1->setValue(res_x);
 	oui->doubleSpinBox2->setValue(res_y);
@@ -118,8 +119,9 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
 	// Display results
 	if (show_image)
 	{
+                res_z = (Zf-Zi)/255.0;
 		Matrix * img = grid->getDemImage();
-		oui->showImage(img, 1);
+                oui->showImage3D(img,Xi , res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
 
@@ -415,7 +417,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 	{
 		OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 		Matrix * img = ortho->getOrthoImage();
-                oui->showImage(img, false);
+                oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
 		delete img;
 	}
 

@@ -313,13 +313,24 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 	return 1;
 }
 
-void OrthoUserInterface_Qt::showImage(Matrix* image, bool isGrayscale)
+void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
-	SingleViewer* sv = new SingleViewer(this);
-	sv->loadImage(image, isGrayscale);
-	sv->blockOpen();
-	sv->blockMark();
-	sv->show();
+        SingleViewer* sv = new SingleViewer(this);
+        sv->setOrtoImageMode(xi, dx, yi, dy);
+        sv->loadImage(image, isGrayscale);
+        sv->blockOpen();
+        sv->blockMark();
+        sv->show();
+}
+
+void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
+{
+        SingleViewer* sv = new SingleViewer(this);
+        sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
+        sv->loadImage(image, isGrayscale);
+        sv->blockOpen();
+        sv->blockMark();
+        sv->show();
 }
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg)
