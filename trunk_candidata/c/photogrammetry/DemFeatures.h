@@ -123,6 +123,7 @@ public:
 	bool isInside(int feat_id, double X, double Y);
 	void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
 	double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
+        string getFeaturesList();
 };
 
 } // namespace efoto
