@@ -702,7 +702,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 		if ((tag.compare("</EFOTO_POINTS>")==0) || (arq.fail()))
 			break;
 
-		feature_id = atoi(tag.c_str());
+                feature_id = Conversion::stringToInt(tag);
 		feature_id += p_feat;
 		getline(arq,tag); // 2nd line point_id
 		point_id = atoi(tag.c_str());
@@ -718,11 +718,11 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
 			// Only X, Y, Z
 			getline(arq,tag); // 7th line X
-			dfp.X = atof(tag.c_str());
+                        dfp.X = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 8th line Y
-			dfp.Y = atof(tag.c_str());
+                        dfp.Y = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 9th line Z
-			dfp.Z = atof(tag.c_str());
+                        dfp.Z = Conversion::stringToDouble(tag);
 
 			features.at(feature_id-1).points.push_back(dfp);
 		}
@@ -923,7 +923,7 @@ double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double
 		D0 = sqrt(delta_X*delta_X + delta_Y*delta_Y);
 	}
 
-	DemFeature *df =  &features.at(feat_id-1);
+        DemFeature *df = &features.at(feat_id-1);
 	int n = df->points.size();
 
 	// Calculate weights
@@ -1007,6 +1007,26 @@ bool DemFeatures::isInside(int feat_id, double X, double Y)
 		return false;
 
 	return true;
+}
+
+string DemFeatures::getFeaturesList()
+{
+    stringstream txt;
+    DemFeature df;
+
+    txt << fixed << setprecision(5);
+
+    for (int i=0; i<features.size(); i++)
+    {
+            df = features.at(i);
+
+            txt << "Feture #" << i+1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
+
+            for (int k=0; k<df.points.size(); k++)
+                txt << "\tPoint #" << k+1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
+    }
+
+    return txt.str();
 }
 
 } // namespace efoto
