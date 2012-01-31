@@ -210,13 +210,24 @@ void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
 	histProgressBar6->setValue(hist[5]);
 }
 
-void DEMUserInterface_Qt::showImage(Matrix* image, bool isGrayscale)
+void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
 	SingleViewer* sv = new SingleViewer(this);
+        sv->setOrtoImageMode(xi, dx, yi, dy);
 	sv->loadImage(image, isGrayscale);
 	sv->blockOpen();
 	sv->blockMark();
 	sv->show();
+}
+
+void DEMUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
+{
+        SingleViewer* sv = new SingleViewer(this);
+        sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
+        sv->loadImage(image, isGrayscale);
+        sv->blockOpen();
+        sv->blockMark();
+        sv->show();
 }
 
 void DEMUserInterface_Qt::disableOptions()

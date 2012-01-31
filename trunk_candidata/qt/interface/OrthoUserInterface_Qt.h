@@ -60,7 +60,8 @@ public:
 	void setAllowClose(bool _b) { allow_close = _b; };
 	void disableOptions();
 	void enableOptions();
-	void showImage(Matrix* image, bool isGrayscale = true);
+        void showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale = true);
+        void showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale = true);
 	void showErrorMessage(QString msg);
 };
 

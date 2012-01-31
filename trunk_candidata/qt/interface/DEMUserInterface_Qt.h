@@ -88,7 +88,8 @@ public:
 	void setProgress(int);
 	void setMathcingHistogram(int *);
 	void setAllowClose(bool _b) { allow_close = _b; };
-	void showImage(Matrix* image, bool isGrayscale = true);
+        void showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale = true);
+        void showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale = true);
 	void disableOptions();
 	void enableOptions();
 	void showFatalErrorMessage(QString msg, bool abort);

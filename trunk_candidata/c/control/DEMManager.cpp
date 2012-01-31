@@ -501,7 +501,7 @@ int DEMManager::loadDem(char * filename, int fileType)
 	if (isShowImage)
 	{
 		Matrix * img = pairs.getDemImage(1.0, 1.0);
-		dui->showImage(img, 0);
+                dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
 		//dui->saveImage((char *)"teste_img.bmp",img);
 		delete img;
 	}
@@ -595,11 +595,14 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
 	switch (method)
 	{
-	case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
-	case 2: grid->interpolateTrendSurface(tsurface); break;
-	case 3: grid->interpolateNearestPoint(); break;
-	default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
+            case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
+            case 2: grid->interpolateTrendSurface(tsurface); break;
+            case 3: grid->interpolateNearestPoint(); break;
+            default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
 	}
+
+        // Update Zi and Zf
+        grid->getMinMax(Zi, Zf);
 
 	// Update info
 	double min, max;
@@ -625,8 +628,9 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
 	{
+                double res_z = (Zf-Zi)/255.0;
 		Matrix * img = grid->getDemImage();
-		dui->showImage(img, 1);
+                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
 }
@@ -754,7 +758,7 @@ int DEMManager::extractDEM(int option, bool clearMList)
 	if (isShowImage && !cancel_flag)
 	{
 		Matrix * img = pairs.getDemImage(1.0, 1.0);
-		dui->showImage(img, 0);
+                dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
 		delete img;
 	}
 
