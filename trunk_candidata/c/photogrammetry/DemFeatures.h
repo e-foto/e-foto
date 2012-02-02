@@ -49,6 +49,7 @@ class DemFeaturePoints
 public:
 	DemFeaturePoints() { X = Y = Z = 0.0; };
 	double X, Y, Z;
+        double left_x, left_y, right_x, right_y;
 };
 
 // One feature
@@ -69,7 +70,9 @@ class DemFeatures
 {
 private:
 	int loadFeatSp165(char *filename, bool append);
-	void convertClassesIdsFomSp165();
+        int saveFeatSp165(char *filename, bool append);
+        void convertClassesIdsFromSp165();
+        int getClassIdToSp165(int new_class);
 	void createClassesFromSp165();
 	void calculateFeaturesAttributes();
 	void calculateFeatureAttributes(int featid);
@@ -89,6 +92,7 @@ public:
 	FeatureClass * getFeatureClass(int);
 	string getFeatureTypeName(int);
 	int loadFeatures(char *filename, int mode, bool append);
+        int saveFeatures(char *filename, int mode, bool append);
 	DemFeature getFeature(int feat); // Read only
 	void showFeatures(bool full);
 	void showClasses();
@@ -124,6 +128,7 @@ public:
 	void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
 	double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
         string getFeaturesList();
+        string getFeaturesToDisplay(int mode=0);
 };
 
 } // namespace efoto

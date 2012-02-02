@@ -1,6 +1,8 @@
 #include "ImageViewers.h"
 #include <QDesktopWidget>
 
+#include "DemFeatures.h"
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -171,6 +173,11 @@ void SeparatedStereoViewer::loadRightImage(Matrix *image, bool isGrayscale)
 	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
 	ss->loadImage(image, isGrayscale);
 	//tool->setFitRightView->trigger();
+}
+
+void SeparatedStereoViewer::setFeatures(DemFeatures *df)
+{
+
 }
 
 void SeparatedStereoViewer::blockOpen()
