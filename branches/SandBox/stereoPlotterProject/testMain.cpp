@@ -11,6 +11,7 @@ using namespace std;
 #include "EFotoManager.h"
 #include "testTable.h"
 #include "DemFeatures.h"
+#include "ImageViewers.h"
 
 int main( int argc, char ** argv )
 {
@@ -28,10 +29,14 @@ int main( int argc, char ** argv )
     myFeatures.loadFeatures("/home/marts/Documentos/e-foto/eppsHomePage/FEICOES_UERJ_3.txt",1,false);
     QString txt = QString::fromStdString(myFeatures.getFeaturesList());
 
-    //txt = ("Getting Started\tHow to familiarize yourself with Qt Designer\n\t\tLaunching Designer\tRunning the Qt Designer application\n\t\tThe User Interface\tHow to interact with Qt Designer\n\tConnection Editing Mode\tConnecting widgets together with signals and slots\n\t\tConnecting Objects\tMaking connections in Qt Designer\n\t\tEditing Connections\tChanging existing connections");
     QTreeView *treeViewer = new QTreeView;
     br::uerj::eng::efoto::TreeFeatures* tree = new br::uerj::eng::efoto::TreeFeatures(txt);
     treeViewer->setModel(tree);
     treeViewer->show();
+
+    br::uerj::eng::efoto::SeparatedStereoViewer* imageViewer = new br::uerj::eng::efoto::SeparatedStereoViewer();
+    imageViewer->loadLeftImage("/home/marts/EFOTO/Develop/data_and_images/1997_016_300dpi.bmp");
+    imageViewer->loadRightImage("/home/marts/EFOTO/Develop/data_and_images/1997_017_300dpi.bmp");
+    imageViewer->setFeatures(&myFeatures);
     return efoto.exec();
 }
