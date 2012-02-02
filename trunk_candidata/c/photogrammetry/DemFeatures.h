@@ -32,6 +32,14 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+// Feature 2D
+class DemFeatures2D
+{
+public:
+    int pt_id;
+    double left_x, left_y, right_x, right_y;
+};
+
 // Feature Class
 class FeatureClass
 {
@@ -49,7 +57,6 @@ class DemFeaturePoints
 public:
 	DemFeaturePoints() { X = Y = Z = 0.0; };
 	double X, Y, Z;
-        double left_x, left_y, right_x, right_y;
 };
 
 // One feature
@@ -82,9 +89,11 @@ private:
 	void addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi, double res_x, double res_y);
 	Matrix mapPolygon(int feat_id, double res_x, double res_y);
 	double angle2D(double X1, double Y1, double X2, double Y2);
+        int findFeature2D(int id);
 	int selected_feat, selected_pt;
 	vector <DemFeature> features;
 	vector <FeatureClass> feature_classes;
+        vector <DemFeatures2D> display_coords;
 	Matrix polygonMap;
 
 public:
@@ -128,7 +137,11 @@ public:
 	void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
 	double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
         string getFeaturesList();
-        string getFeaturesToDisplay(int mode=0);
+        string getFeaturesToDisplayText(int mode=0);
+        vector<DemFeatures2D> * getFeaturesToDisplay() { return &display_coords; };
+        void insertFeature2D(int id, double lx, double ly, double rx, double ry);
+        void deleteFeature2D(int id);
+        void deleteAllFeatures2D() { display_coords.clear(); };
 };
 
 } // namespace efoto
