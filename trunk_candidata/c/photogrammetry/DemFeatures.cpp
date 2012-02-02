@@ -49,8 +49,15 @@ string DemFeatures::getFeatureTypeName(int ftype)
 int DemFeatures::loadFeatures(char *filename, int mode, bool append=false)
 {
 	// 0- SP 1.65
-	// 1- This version
+        // 1- This version - To be developed
 	return loadFeatSp165(filename, append);
+}
+
+int DemFeatures::saveFeatures(char *filename, int mode, bool append=false)
+{
+        // 0- SP 1.65
+        // 1- This version - To be developed
+        return saveFeatSp165(filename, append);
 }
 
 // Feature id ranges from 1-N
@@ -461,8 +468,7 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 //
 // Stereoplotter 1.65 and DEM 2.5 compatibility
 //
-
-void DemFeatures::convertClassesIdsFomSp165()
+void DemFeatures::convertClassesIdsFromSp165()
 {
 	int fc, ft, new_fc;
 	for (int i=0; i<features.size(); i++)
@@ -517,6 +523,36 @@ void DemFeatures::convertClassesIdsFomSp165()
 
 		features.at(i).feature_class = new_fc;
 	}
+}
+
+int DemFeatures::getClassIdToSp165(int new_class)
+{
+    int old_class;
+
+    switch (new_class)
+    {
+        case 1 : old_class = 0; break;
+        case 2 : old_class = 1; break;
+        case 3 : old_class = 1; break;
+        case 4 : old_class = 2; break;
+        case 5 : old_class = 3; break;
+        case 6 : old_class = 4; break;
+        case 7 : old_class = 5; break;
+        case 8 : old_class = 6; break;
+        case 9 : old_class = 1; break;
+        case 10 : old_class = 2; break;
+        case 11 : old_class = 3; break;
+        case 12 : old_class = 4; break;
+        case 13 : old_class = 5; break;
+        case 14 : old_class = 6; break;
+        case 15 : old_class = 7; break;
+        case 16 : old_class = 8; break;
+        case 17 : old_class = 9; break;
+        case 18 : old_class = 10; break;
+        case 19 : old_class = 11; break;
+    }
+
+    return old_class;
 }
 
 void DemFeatures::createClassesFromSp165()
@@ -710,13 +746,17 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 		// Check if point is not a closing point (string "C1")
 		if (point_id != 0)
 		{
-			// These coords are not used in this version
+                        // Digital coords
 			getline(arq,tag); // 3rd line left_column
+                        dfp.left_x = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 4th line left_row
+                        dfp.left_y = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 5th line right_column
+                        dfp.right_x = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 6th line right_row
+                        dfp.right_y = Conversion::stringToDouble(tag);
 
-			// Only X, Y, Z
+                        // X, Y, Z
 			getline(arq,tag); // 7th line X
                         dfp.X = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 8th line Y
@@ -741,9 +781,82 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
 	// Create classes from SP 1.65
 	createClassesFromSp165();
-	convertClassesIdsFomSp165();
+        convertClassesIdsFromSp165();
 
 	return 1;
+}
+
+int DemFeatures::saveFeatSp165(char *filename, bool append)
+{
+    // If list is empty, return
+    if (features.size() == 0)
+            return 0;
+
+    // Open file to save
+    ofstream arq(filename);
+    if (arq.fail())
+    {
+            printf("Problems while saving ...\n");
+            return 0;
+    }
+
+    DemFeature df;
+
+    // Save polygon features first
+    arq << "<EFOTO_FEATURES>\n";
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+            df = features.at(i);
+            arq << i+1 << "\n"; // Feature ID
+            arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
+            arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
+            arq << df.name << "\n"; // Description (changed to name in this version)
+    }
+    arq << "</EFOTO_FEATURES>\n";
+
+    // Now, save the points
+    arq << "<EFOTO_POINTS>\n";
+    arq.precision(20);
+    double lc,lr,rc,rr,X,Y,Z;
+    DemFeaturePoints dfp;
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+            df = features.at(i);
+
+            for (unsigned int j=0; j<df.points.size(); j++)
+            {
+                    dfp = df.points.at(j);
+
+                    arq << i+1 << "\n"; // Feature ID
+                    arq << j+1 << "\n"; // Point ID
+                    arq << dfp.left_x << "\n"; // Left Column
+                    arq << dfp.left_y << "\n"; // Left Row
+                    arq << dfp.right_x << "\n"; // Right Column
+                    arq << dfp.right_y << "\n"; // Right Row
+                    arq << dfp.X << "\n"; // X
+                    arq << dfp.Y << "\n"; // Y
+                    arq << dfp.Z << "\n"; // Z
+            }
+            // If feature is a polygon, close it with a C1 marker
+            if (df.feature_type > 2)
+            {
+                    dfp = df.points.at(0);
+
+                    arq << i+1 << "\n"; // Feature ID
+                    arq << "C1" << "\n"; // Point ID
+                    arq << dfp.left_x << "\n"; // Left Column
+                    arq << dfp.left_y << "\n"; // Left Row
+                    arq << dfp.right_x << "\n"; // Right Column
+                    arq << dfp.right_y << "\n"; // Right Row
+                    arq << dfp.X << "\n"; // X
+                    arq << dfp.Y << "\n"; // Y
+                    arq << dfp.Z << "\n"; // Z
+            }
+    }
+    arq << "</EFOTO_POINTS>\n";
+
+    arq.close();
+    return 1;
 }
 
 
@@ -1024,6 +1137,37 @@ string DemFeatures::getFeaturesList()
 
             for (int k=0; k<df.points.size(); k++)
                 txt << "\tPoint #" << k+1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
+    }
+
+    return txt.str();
+}
+
+string DemFeatures::getFeaturesToDisplay(int mode)
+{
+    // Mode 0 = Digital coordinates
+    // Mode 1 = Terrain coordinartes
+
+    stringstream txt;
+    DemFeature df;
+
+    txt << fixed << setprecision(5);
+
+    // Number of features
+    txt << features.size() << "\n";
+
+    for (int i=0; i<features.size(); i++)
+    {
+            df = features.at(i);
+
+            txt << df.feature_type << "\t " << df.points.size() << "\n";
+
+            for (int k=0; k<df.points.size(); k++)
+            {
+                if (mode == 1)
+                    txt << df.points.at(k).X << "\t" << df.points.at(k).Y << "\t" << df.points.at(k).Z << "\n";
+                else
+                    txt << df.points.at(k).left_x << "\t" << df.points.at(k).left_y << "\t" << df.points.at(k).right_x << "\t" << df.points.at(k).right_y << "\n";
+            }
     }
 
     return txt.str();

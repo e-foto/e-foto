@@ -12,6 +12,8 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+class DemFeatures;
+
 class SingleViewer : public QMainWindow, public Ui::EVMainWindow
 {
 	Q_OBJECT
@@ -63,6 +65,7 @@ public slots:
 	void loadRightImage(QImage* image);
 	void loadLeftImage(Matrix* image, bool isGrayscale = true);
 	void loadRightImage(Matrix* image, bool isGrayscale = true);
+        void setFeatures(DemFeatures* df);
 	void blockOpen();
 	void blockSave();
 	void blockMark();
