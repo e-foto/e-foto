@@ -601,6 +601,13 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
             default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
 	}
 
+        // Add polygons, if selected
+        if (gridSource > 0)
+        {
+                Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+                grid->overlayMap(&overMap);
+        }
+
         // Update Zi and Zf
         grid->getMinMax(Zi, Zf);
 
@@ -617,13 +624,6 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	dui->enableOptions();
 	grid_unsaved = true;
         dui->setElapsedTime(grid->getElapsedTime(), 1);
-
-	// Add polygons, if selected
-	if (gridSource > 0)
-	{
-		Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
-		grid->overlayMap(&overMap);
-	}
 
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
