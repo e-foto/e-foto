@@ -485,10 +485,10 @@ void DemFeatures::checkIsOnScreen(int featid)
     // 3 - Feature is on both images
     for (int i=0; i<df->points.size(); i++)
     {
-        if (int(df->points.at(i).left_x) >= 0 || int(df->points.at(i).left_x) < img_left_width || int(df->points.at(i).left_y) >= 0 || int(df->points.at(i).left_y) < img_left_height)
+        if (int(df->points.at(i).left_x) >= 0 && int(df->points.at(i).left_x) < img_left_width && int(df->points.at(i).left_y) >= 0 && int(df->points.at(i).left_y) < img_left_height)
             df->is_on_screen = df->is_on_screen | 1;
 
-        if (int(df->points.at(i).right_x) >= 0 || int(df->points.at(i).right_x) < img_right_width || int(df->points.at(i).right_y) >= 0 || int(df->points.at(i).right_y) < img_right_height)
+        if (int(df->points.at(i).right_x) >= 0 && int(df->points.at(i).right_x) < img_right_width && int(df->points.at(i).right_y) >= 0 && int(df->points.at(i).right_y) < img_right_height)
             df->is_on_screen = df->is_on_screen | 2;
     }
 }
@@ -810,7 +810,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
                 feature_id = Conversion::stringToInt(tag);
 		feature_id += p_feat;
 		getline(arq,tag); // 2nd line point_id
-		point_id = atoi(tag.c_str());
+                point_id = Conversion::stringToInt(tag);
 
 		// Check if point is not a closing point (string "C1")
 		if (point_id != 0)

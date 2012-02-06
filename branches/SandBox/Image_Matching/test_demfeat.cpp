@@ -64,7 +64,7 @@ int main(void)
 	df.addFeaturesToPairList(&mpl,true);
 	mpl.listMp();
 */
-
+/*
 	//
 	// Teste 2
 	//
@@ -82,6 +82,49 @@ int main(void)
 	Matrix overMap = df.createPolygonMap(680332.43766, 7464125.88182, 682283.11950, 7465958.62632, 1.0, 1.0);
 
 	saveImage("overmap.bmp", &overMap);
+*/
+
+	//
+	// Teste 3
+	//
+
+	// UERJ 16 e 17 images
+	DemFeatures dfs;
+//	dfs.setImagePairSize(2895, 2838, 2895, 2838);
+	dfs.setImagePairSize(2000, 2000, 2000, 2000);
+	dfs.loadFeatures((char *)"/home/marcelo/DevEFOTO/e-foto/eppsHomePage/FEICOES_UERJ.txt",1,false); // Change to current machine path
+
+	// Check if must render, for each image
+	int no_feats = dfs.getNumFeatures();
+	DemFeature df;
+	bool renderLeft, renderRight;
+
+	for (int i=1; i<= no_feats; i++)
+	{
+		df = dfs.getFeature(i);
+
+		// Not rendered
+		if (df.is_on_screen == 0)
+			continue;
+
+		// Is rended somewhere
+		renderLeft = (df.is_on_screen & 1) == 1;
+		renderRight = (df.is_on_screen & 2) == 2;
+		printf("Feature #%d:\n",i);
+
+		for (int k=0; k<df.points.size(); k++)
+		{
+			// Render left image
+			if (renderLeft)
+				printf("Left: %f, %f ", df.points.at(k).left_x, df.points.at(k).left_y);
+
+			// Render right image
+			if (renderRight)
+				printf("Right: %f, %f ", df.points.at(k).right_x, df.points.at(k).right_y);
+
+			printf("\n");
+		}
+	}
 
 	return 1;
 }

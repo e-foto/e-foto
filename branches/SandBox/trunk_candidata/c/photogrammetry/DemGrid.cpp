@@ -57,14 +57,19 @@ void DemGrid::setPointList(MatchingPointsList *mpl)
 
 void DemGrid::getMinMax(double &min, double &max)
 {
-	min = max = DEM.get(1,1);
+        min = 1e100;
+        max = -1e100;
 	double Z;
 
-	for (unsigned int i=1; i<dem_height; i++)
+        for (unsigned int i=1; i<=dem_height; i++)
 	{
-		for (unsigned int j=1; j<dem_width; j++)
+                for (unsigned int j=1; j<=dem_width; j++)
 		{
 			Z = DEM.get(i,j);
+
+                        if (fabs(Z - 0.0) < 0.00000000001)
+                            continue;
+
 			if (Z < min) min = Z;
 			if (Z > max) max = Z;
 		}
@@ -76,14 +81,14 @@ double DemGrid::getMeanZ()
 	double meanZ = 0.0, Z;
 	unsigned int count=0;
 
-	for (unsigned int i=1; i<dem_height; i++)
+        for (unsigned int i=1; i<=dem_height; i++)
 	{
-		for (unsigned int j=1; j<dem_width; j++)
+                for (unsigned int j=1; j<=dem_width; j++)
 		{
 			Z = DEM.get(i,j);
 
 			// If hole, continue
-			if (Z - 0.0 < 0.000000000000000001)
+                        if (fabs(Z - 0.0) < 0.000000000000000001)
 				continue;
 
 			meanZ += Z;
