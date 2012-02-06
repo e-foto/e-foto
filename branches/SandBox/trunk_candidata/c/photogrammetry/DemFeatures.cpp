@@ -14,6 +14,7 @@ DemFeatures::DemFeatures()
 	// No feature and point selected
 	selected_feat = -1;
 	selected_pt = -1;
+        img_left_width = img_left_height = img_right_width = img_right_height = -1;
 }
 
 
@@ -163,6 +164,24 @@ void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, doubl
 	features.at(featid-1).points.at(pointid-1).Z = Z;
 
 	calculateFeatureAttributes(featid);
+}
+
+void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry)
+{
+    // Check if feature is valid
+    if (featid < 1 || featid > features.size())
+            return;
+
+    // check if point is valid
+    if (pointid < 1 || pointid > features.at(featid-1).points.size())
+            return;
+
+    features.at(featid-1).points.at(pointid-1).left_x = lx;
+    features.at(featid-1).points.at(pointid-1).left_y = ly;
+    features.at(featid-1).points.at(pointid-1).right_x = rx;
+    features.at(featid-1).points.at(pointid-1).right_y = ry;
+
+    checkIsOnScreen(featid);
 }
 
 int DemFeatures::deletePoint(int featid, int pointid)
@@ -399,7 +418,7 @@ void DemFeatures::calculateArea(int featid)
 	if (featid < 1 || featid > features.size())
 		return;
 
-	DemFeature *df =  &features.at(featid-1);
+        DemFeature *df = &features.at(featid-1);
 
 	// Calculate area only for polygons
 	if (df->feature_type < 3)
@@ -442,6 +461,38 @@ void DemFeatures::calculateArea(int featid)
 	df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2));
 }
 
+void DemFeatures::checkAllIsOnScreen()
+{
+    for (int i=1; i<=features.size(); i++)
+        checkIsOnScreen(i);
+}
+
+void DemFeatures::checkIsOnScreen(int featid)
+{
+    if (featid < 1 || featid > features.size())
+            return;
+
+    DemFeature *df = &features.at(featid-1);
+
+    df->is_on_screen = 0;
+
+    if (img_left_width == -1 || img_left_height == -1 || img_right_width == -1 || img_right_height == -1)
+        return;
+
+    // Flag - set if at least one point is found on screen
+    // 1 - Feature is on left image
+    // 2 - Feature is on right image
+    // 3 - Feature is on both images
+    for (int i=0; i<df->points.size(); i++)
+    {
+        if (int(df->points.at(i).left_x) >= 0 || int(df->points.at(i).left_x) < img_left_width || int(df->points.at(i).left_y) >= 0 || int(df->points.at(i).left_y) < img_left_height)
+            df->is_on_screen = df->is_on_screen | 1;
+
+        if (int(df->points.at(i).right_x) >= 0 || int(df->points.at(i).right_x) < img_right_width || int(df->points.at(i).right_y) >= 0 || int(df->points.at(i).right_y) < img_right_height)
+            df->is_on_screen = df->is_on_screen | 2;
+    }
+}
+
 // Return 0, if feature list is empty
 int DemFeatures::getNearestFeature(double X, double Y, double Z)
 {
@@ -450,10 +501,28 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 
 	int best_feat = 1;
 	double dist, best_dist = sqrt(pow(X - features.at(0).centroid.X, 2) + pow(Y - features.at(0).centroid.Y, 2) + pow(Z - features.at(0).centroid.Z, 2));
+        double dist_k;
 
 	for (int i=1; i<features.size(); i++)
 	{
-		dist = sqrt(pow(X - features.at(i).centroid.X, 2) + pow(Y - features.at(i).centroid.Y, 2) + pow(Z - features.at(i).centroid.Z, 2));
+                dist = sqrt(pow(X - features.at(i).centroid.X, 2) + pow(Y - features.at(i).centroid.Y, 2) + pow(Z - features.at(i).centroid.Z, 2));
+
+                // If line, set nearest point as distance
+                if (features.at(i).feature_type == 2)
+                {
+                    if (features.at(i).points.size() < 1)
+                        break;
+
+                    dist = sqrt(pow(X - features.at(i).points.at(0).X, 2) + pow(Y - features.at(i).points.at(0).Y, 2) + pow(Z - features.at(i).points.at(0).Z, 2));
+
+                    for (int k=1; k<features.at(i).points.size(); k++)
+                    {
+                        dist_k = sqrt(pow(X - features.at(i).points.at(k).X, 2) + pow(Y - features.at(i).points.at(k).Y, 2) + pow(Z - features.at(i).points.at(k).Z, 2));
+
+                        if (dist_k < dist)
+                            dist = dist_k;
+                    }
+                }
 
 		if (dist < best_dist)
 		{
@@ -730,7 +799,6 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	// Start to read the points
 	int feature_id, point_id;
 	DemFeaturePoints dfp;
-        double lx, ly, rx, ry;
 	while (!arq.fail())
 	{
 		// Points EOF
@@ -749,15 +817,13 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 		{
                         // Digital coords
 			getline(arq,tag); // 3rd line left_column
-                        lx = Conversion::stringToDouble(tag);
+                        dfp.left_x = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 4th line left_row
-                        ly = Conversion::stringToDouble(tag);
+                        dfp.left_y = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 5th line right_column
-                        rx = Conversion::stringToDouble(tag);
+                        dfp.right_x = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 6th line right_row
-                        ry = Conversion::stringToDouble(tag);
-
-                        insertFeature2D(feature_id, lx, ly, rx, ry);
+                        dfp.right_y = Conversion::stringToDouble(tag);
 
                         // X, Y, Z
 			getline(arq,tag); // 7th line X
@@ -785,6 +851,9 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	// Create classes from SP 1.65
 	createClassesFromSp165();
         convertClassesIdsFromSp165();
+
+        // Check if points are on screen
+        checkAllIsOnScreen();
 
 	return 1;
 }
@@ -820,13 +889,11 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
     // Now, save the points
     arq << "<EFOTO_POINTS>\n";
     arq.precision(20);
-    int pos;
-    double lx, ly, rx, ry;
+    double lc,lr,rc,rr,X,Y,Z;
     DemFeaturePoints dfp;
     for (unsigned int i=0; i<features.size(); i++)
     {
             df = features.at(i);
-            pos = findFeature2D(i+1);
 
             for (unsigned int j=0; j<df.points.size(); j++)
             {
@@ -834,18 +901,10 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 
                     arq << i+1 << "\n"; // Feature ID
                     arq << j+1 << "\n"; // Point ID
-                    lx = ly = rx = ry = 0.0;
-                    if (pos != -1)
-                    {
-                        lx = display_coords.at(pos-1).left_x;
-                        ly = display_coords.at(pos-1).left_y;
-                        rx = display_coords.at(pos-1).right_x;
-                        ry = display_coords.at(pos-1).right_y;
-                    }
-                    arq << lx << "\n"; // Left Column
-                    arq << ly << "\n"; // Left Row
-                    arq << rx << "\n"; // Right Column
-                    arq << ry << "\n"; // Right Row
+                    arq << dfp.left_x << "\n"; // Left Column
+                    arq << dfp.left_y << "\n"; // Left Row
+                    arq << dfp.right_x << "\n"; // Right Column
+                    arq << dfp.right_y << "\n"; // Right Row
                     arq << dfp.X << "\n"; // X
                     arq << dfp.Y << "\n"; // Y
                     arq << dfp.Z << "\n"; // Z
@@ -857,18 +916,10 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 
                     arq << i+1 << "\n"; // Feature ID
                     arq << "C1" << "\n"; // Point ID
-                    lx = ly = rx = ry = 0.0;
-                    if (pos != -1)
-                    {
-                        lx = display_coords.at(pos-1).left_x;
-                        ly = display_coords.at(pos-1).left_y;
-                        rx = display_coords.at(pos-1).right_x;
-                        ry = display_coords.at(pos-1).right_y;
-                    }
-                    arq << lx << "\n"; // Left Column
-                    arq << ly << "\n"; // Left Row
-                    arq << rx << "\n"; // Right Column
-                    arq << ry << "\n"; // Right Row
+                    arq << dfp.left_x << "\n"; // Left Column
+                    arq << dfp.left_y << "\n"; // Left Row
+                    arq << dfp.right_x << "\n"; // Right Column
+                    arq << dfp.right_y << "\n"; // Right Row
                     arq << dfp.X << "\n"; // X
                     arq << dfp.Y << "\n"; // Y
                     arq << dfp.Z << "\n"; // Z
@@ -908,6 +959,7 @@ void DemFeatures::showFeatures(bool full=false)
 		printf(" Centroid: %f, %f, %f\n",df.centroid.X, df.centroid.Y, df.centroid.Z);
 		printf(" Perimeter: %f\n",df.perimeter);
 		printf(" Area: %f\n",df.area);
+                printf(" Is on screen flag: %d\n",df.is_on_screen);
 	}
 }
 
@@ -1163,7 +1215,7 @@ string DemFeatures::getFeaturesList()
     return txt.str();
 }
 
-string DemFeatures::getFeaturesToDisplayText(int mode)
+string DemFeatures::getFeaturesToDisplay(int mode)
 {
     // Mode 0 = Digital coordinates
     // Mode 1 = Terrain coordinartes
@@ -1176,8 +1228,6 @@ string DemFeatures::getFeaturesToDisplayText(int mode)
     // Number of features
     txt << features.size() << "\n";
 
-    int pos;
-    double lx, ly, rx, ry;
     for (int i=0; i<features.size(); i++)
     {
             df = features.at(i);
@@ -1186,76 +1236,22 @@ string DemFeatures::getFeaturesToDisplayText(int mode)
 
             for (int k=0; k<df.points.size(); k++)
             {
-                if (mode == 0)
-                {
-                    pos = findFeature2D(i+1);
-                    lx = ly = rx = ry = 0.0;
-                    if (pos != -1)
-                    {
-                        lx = display_coords.at(pos-1).left_x;
-                        ly = display_coords.at(pos-1).left_y;
-                        rx = display_coords.at(pos-1).right_x;
-                        ry = display_coords.at(pos-1).right_y;
-                    }
-                    txt << lx << "\t" << ly << "\t" << rx << "\t" << ry << "\n";
-                }
-                else
+                if (mode == 1)
                     txt << df.points.at(k).X << "\t" << df.points.at(k).Y << "\t" << df.points.at(k).Z << "\n";
+                else
+                    txt << df.points.at(k).left_x << "\t" << df.points.at(k).left_y << "\t" << df.points.at(k).right_x << "\t" << df.points.at(k).right_y << "\n";
             }
     }
 
     return txt.str();
 }
 
-/*
- * Features 2D
- */
-
-int DemFeatures::findFeature2D(int id)
+void DemFeatures::setImagePairSize(int lw, int lh, int rw, int rh)
 {
-    for (int i=0; i<display_coords.size(); i++)
-    {
-        if (id == display_coords.at(i).pt_id)
-            return i+1;
-    }
-
-    return -1;
-}
-
-void DemFeatures::insertFeature2D(int id, double lx, double ly, double rx, double ry)
-{
-    if (id < 1)
-        return;
-
-    int pos = findFeature2D(id);
-
-    DemFeatures2D df2;
-
-    if (pos == -1)
-    {
-        df2.pt_id = id;
-        df2.left_x = lx;
-        df2.left_y = ly;
-        df2.right_x = rx;
-        df2.right_y = ry;
-
-        display_coords.push_back(df2);
-    }
-    else
-    {
-        display_coords.at(pos-1).left_x = lx;
-        display_coords.at(pos-1).left_y = ly;
-        display_coords.at(pos-1).right_x = rx;
-        display_coords.at(pos-1).right_y = ry;
-    }
-}
-
-void DemFeatures::deleteFeature2D(int id)
-{
-    int pos = findFeature2D(id);
-
-    if (pos != -1)
-        display_coords.erase(display_coords.begin()+pos-1);
+    img_left_width = lw;
+    img_left_height = lh;
+    img_right_width = rw;
+    img_right_height = rh;
 }
 
 } // namespace efoto
