@@ -520,8 +520,8 @@ int DEMManager::loadDemFeature(char *filename)
 
 	// Stereoplotter 1.65, mode = 0
 	// Append = false
-	bool dfFlag = df->loadFeatures(filename, 0, false);
-df->saveFeatures("/home/marts/teste.txt",0,false);
+        bool dfFlag = df->loadFeatures(filename, 0, false);
+
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 
 	if (!dfFlag)

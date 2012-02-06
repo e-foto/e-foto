@@ -32,14 +32,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Feature 2D
-class DemFeatures2D
-{
-public:
-    int pt_id;
-    double left_x, left_y, right_x, right_y;
-};
-
 // Feature Class
 class FeatureClass
 {
@@ -57,18 +49,19 @@ class DemFeaturePoints
 public:
 	DemFeaturePoints() { X = Y = Z = 0.0; };
 	double X, Y, Z;
+        double left_x, left_y, right_x, right_y;
 };
 
 // One feature
 class DemFeature
 {
 public:
-	DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; };
-	int feature_class, feature_type, layer;
+        DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; is_on_screen = 0; };
+        int feature_class, feature_type, layer, is_on_screen;
 	double perimeter, area;
 	string name, description;
 	DemFeaturePoints centroid;
-	bool flag_calc_centroid;
+        bool flag_calc_centroid;
 	vector <DemFeaturePoints> points;
 };
 
@@ -76,6 +69,7 @@ public:
 class DemFeatures
 {
 private:
+        int img_left_width, img_left_height, img_right_width, img_right_height;
 	int loadFeatSp165(char *filename, bool append);
         int saveFeatSp165(char *filename, bool append);
         void convertClassesIdsFromSp165();
@@ -86,14 +80,14 @@ private:
 	void calculateCentroid(int featid);
 	void calculatePerimeter(int featid);
 	void calculateArea(int featid);
+        void checkAllIsOnScreen();
+        void checkIsOnScreen(int featid);
 	void addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi, double res_x, double res_y);
 	Matrix mapPolygon(int feat_id, double res_x, double res_y);
 	double angle2D(double X1, double Y1, double X2, double Y2);
-        int findFeature2D(int id);
 	int selected_feat, selected_pt;
 	vector <DemFeature> features;
 	vector <FeatureClass> feature_classes;
-        vector <DemFeatures2D> display_coords;
 	Matrix polygonMap;
 
 public:
@@ -114,6 +108,7 @@ public:
 	int copyFeature(int featid, double shift);
 	void addNewPoint(int featid, int pointid, double X, double Y, double Z); // Returns point id
 	void updatePoint(int featid, int pointid, double X, double Y, double Z);
+        void update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry);
 	int deletePoint(int featid, int pointid);
 	void setName(int featid, string _name);
 	string getName(int featid);
@@ -137,11 +132,8 @@ public:
 	void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
 	double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
         string getFeaturesList();
-        string getFeaturesToDisplayText(int mode=0);
-        vector<DemFeatures2D> * getFeaturesToDisplay() { return &display_coords; };
-        void insertFeature2D(int id, double lx, double ly, double rx, double ry);
-        void deleteFeature2D(int id);
-        void deleteAllFeatures2D() { display_coords.clear(); };
+        string getFeaturesToDisplay(int mode=0);
+        void setImagePairSize(int lw, int lh, int rw, int rh);
 };
 
 } // namespace efoto
