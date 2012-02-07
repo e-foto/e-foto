@@ -557,7 +557,15 @@ public:
 	*/
 	void convertToUTM(deque<Point*> points, GeoSystem sys);
 
+	/** \brief Metodo que checa se alguma orientacao exterior foi feita
+	/* return bool : Informa se há ou nao orientacao exterior feita
+	*/
+	bool hasEODone();
 
+	/** \brief Metodo que retorna uma matriz com os parametros da orientacao exterior, onde cada linha contem os parametros.
+	/* return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
+	*/
+	Matrix eoFromXml();
 };
 
 } // namespace efoto

@@ -299,7 +299,7 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 	EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
 	if (xmlEO.getContent().compare("") == 0)
 		return NULL;
-	if (xmlEO.attribute("type").compare("spatialRessection") == 0)
+	//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
 	{
 		SpatialRessection* newEO = new SpatialRessection();
 		newEO->xmlSetData(xmlEO.getContent());

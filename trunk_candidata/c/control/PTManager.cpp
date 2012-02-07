@@ -777,18 +777,18 @@ string PTManager::createBundleAdjustmentXml()
 	stringstream fotoTriXml;
 	//codigo de criaçao da xml da bundle(multiplas tags de Orientação Exterior)
 	Matrix oe=pt->getAFP();
-	string lb=pt->getLb().xmlGetData();
-	string l0=pt->getL0().xmlGetData();
+	//string lb=pt->getLb().xmlGetData();
+	//string l0=pt->getL0().xmlGetData();
 	fotoTriXml << "<exteriorOrientation>\n";
 	for (int i=1;i<=oe.getRows();i++)
 	{
-		//fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << Conversion::intToString(i) << "\">\n";
-		fotoTriXml << "\t<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(i) << "\">\n";
+		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << Conversion::intToString(i) << "\">\n";
+		//fotoTriXml << "\t<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(i) << "\">\n";
 		fotoTriXml << "\t\t<iterations>"<< pt->getTotalIterations() <<"</iterations>\n";
 		fotoTriXml << "\t\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
 		fotoTriXml << "\t\t<parameters>\n";
-		fotoTriXml << "\t\t\t<Lb>\n";
-		fotoTriXml << lb << "\n</Lb>\n";
+		//fotoTriXml << "\t\t\t<Lb>\n";
+		//fotoTriXml << lb << "\n</Lb>\n";
 		fotoTriXml << "\t\t\t<Xa>\n";
 		fotoTriXml << "\t\t\t\t<X0 uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,4)) << "</X0>\n";
 		fotoTriXml << "\t\t\t\t<Y0 uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,5)) << "</Y0>\n";
@@ -797,8 +797,8 @@ string PTManager::createBundleAdjustmentXml()
 		fotoTriXml << "\t\t\t\t<omega uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,1)) << "</omega>\n";
 		fotoTriXml << "\t\t\t\t<kappa uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,3)) << "</kappa>\n";
 		fotoTriXml << "\t\t\t</Xa>\n";
-		fotoTriXml << "\t\t\t<L0>\n";
-		fotoTriXml << l0 << "\n</L0>\n";
+		//fotoTriXml << "\t\t\t<L0>\n";
+		//fotoTriXml << l0 << "\n</L0>\n";
 		fotoTriXml << "\t\t</parameters>\n";
 		fotoTriXml << "</imageEO>\n";
 	}
@@ -1515,6 +1515,51 @@ void PTManager::convertToUTM(deque<Point*> points, GeoSystem sys)
 		AFP.set(i,6,temp2.get(1,3));
 	}
 
+}
+
+bool PTManager::hasEODone()
+{
+	EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+	if(exteriorXml.getContent()!="")
+		return true;
+
+	printf("retornou falso");
+	return false;
+}
+
+Matrix PTManager::eoFromXml()
+{
+	EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+	int numEO= exteriorXml.children().size();
+
+	Matrix oesMatrix(numEO,7);
+
+	int imagekey;
+	double x0,y0,z0,omega,phi,kappa;
+
+	deque<EDomElement> oesXml=exteriorXml.elementsByTagName("imageEO");
+	EDomElement tempXa;
+	for (int i=0; i<numEO; i++)
+	{
+		//temp.setContent(oesXml.at(i).getContent());
+		imagekey=Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
+		tempXa.setContent(oesXml.at(i).elementByTagName("Xa").getContent());
+		x0=Conversion::stringToDouble(tempXa.elementByTagName("X0").getContent());
+		y0=Conversion::stringToDouble(tempXa.elementByTagName("Y0").getContent());
+		z0=Conversion::stringToDouble(tempXa.elementByTagName("Z0").getContent());
+		omega=Conversion::stringToDouble(tempXa.elementByTagName("omega").getContent())*180/M_PI;
+		phi=Conversion::stringToDouble(tempXa.elementByTagName("phi").getContent())*180/M_PI;
+		kappa=Conversion::stringToDouble(tempXa.elementByTagName("kappa").getContent())*180/M_PI;
+
+		oesMatrix.set(i+1,1,imagekey);
+		oesMatrix.set(i+1,2,x0);
+		oesMatrix.set(i+1,3,y0);
+		oesMatrix.set(i+1,4,z0);
+		oesMatrix.set(i+1,5,omega);
+		oesMatrix.set(i+1,6,phi);
+		oesMatrix.set(i+1,7,kappa);
+	}
+	return oesMatrix;
 }
 
 } // namespace efoto
