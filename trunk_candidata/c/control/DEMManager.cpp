@@ -520,8 +520,8 @@ int DEMManager::loadDemFeature(char *filename)
 
 	// Stereoplotter 1.65, mode = 0
 	// Append = false
-        bool dfFlag = df->loadFeatures(filename, 0, false);
-
+	bool dfFlag = df->loadFeatures(filename, 0, false);
+//df->saveFeatures("/home/marts/teste.txt",0,false);
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 
 	if (!dfFlag)
@@ -624,6 +624,13 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	dui->enableOptions();
 	grid_unsaved = true;
         dui->setElapsedTime(grid->getElapsedTime(), 1);
+
+	// Add polygons, if selected
+	//if (gridSource > 0)
+	//{
+		//Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+		//grid->overlayMap(&overMap);
+	//}
 
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)

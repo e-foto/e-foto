@@ -66,7 +66,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
 	connect(markToolButton,SIGNAL(clicked()),this,SLOT(addPoint()));
 	connect(insertPointInButton,SIGNAL(clicked(bool)),this,SLOT(toggleInsertPointMode(bool)));
-
+	connect(viewReportToolButton,SIGNAL(clicked(bool)),this,SLOT(showReportXml()));
 	//connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	//connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 
@@ -77,7 +77,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 
 	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
-	actionView_Report->setEnabled(false);
+
+	if( ptManager->hasEODone())
+		actionView_Report->setEnabled(true);
+	else
+		actionView_Report->setEnabled(false);
+
+
 	insertionMode=false;
 
 	//antes do merge do irving
@@ -395,6 +401,25 @@ void PTUserInterface_Qt::viewReport()
 	resultView->setWindowModality(Qt::ApplicationModal);
 }
 
+void PTUserInterface_Qt::showReportXml()
+{
+
+	QWidget *resultView = new QWidget();
+	resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400);
+	QHBoxLayout *horizontalLayout= new QHBoxLayout();
+	//qDebug("Vendo Report");
+	QStringList oeHeaderLabels;
+	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
+	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+
+	ETableWidget *table= new ETableWidget(ptManager->eoFromXml());
+
+	resultView->show();
+
+
+}
+
+
 bool PTUserInterface_Qt::calculatePT()
 {
 
@@ -570,75 +595,6 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 //Atualiza a tabela de imagens
 void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string imageFilename, bool move)
 {
-	/*
- bool ok;
- QStringList idImagesPoints, keysImagePoints;
- deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
- deque<string> keysPoints = ptManager->getStringKeysPoints(imageFilename);
- for (int i=0;i<imagesPoints.size();i++)
- {
-  idImagesPoints << QString(imagesPoints.at(i).c_str());
-  keysImagePoints << QString(keysPoints.at(i).c_str());
- }
- Matrix imageColLin= ptManager->getColLin(imageFilename);
- //qDebug()<< "keys " <<imageFilename << " : "<<keysImagePoints;
- if(imageTable=="leftImage")
- {
-  leftImageTableWidget->setSortingEnabled(false);
-  leftImageTableWidget->clearContents();
-  leftImageTableWidget->setRowCount(0);
-  leftImageTableWidget->putInColumn(idImagesPoints,0);
-  leftImageTableWidget->putIn(imageColLin,0,1,'f',0);//,"QSpinBox",true,0,dim.getInt(1,1),dim.getInt(1,2));
-  leftImageTableWidget->putInColumn(keysImagePoints,3);
-  int pos=findKeyAppearances(leftImageTableWidget,currentPointKey);
-  leftImageTableWidget->selectRow(pos);
-
-
-  clearAllMarks(leftDisplay);
-  markAllpoints(leftDisplay);
-
-  if (pos >=0)
-  {
-   int col =leftImageTableWidget->item(pos,1)->text().toInt(&ok);
-   int lin =leftImageTableWidget->item(pos,2)->text().toInt(&ok);
-   //qDebug("left image coord %dx%d",col,lin);
-   QPointF pixel(col,lin);
-   if (move)
-	leftView->moveTo(pixel);
-   leftDisplay->update();
-  }
-  leftImageTableWidget->setSortingEnabled(true);
-
- }else if (image == "rightImage")
- {
-  //qDebug()<<"chamou updateImageTable: "<< image << " : " << imageFilename;
-  rightImageTableWidget->setSortingEnabled(false);
-  rightImageTableWidget->clearContents();
-  rightImageTableWidget->setRowCount(0);
-  rightImageTableWidget->putInColumn(idImagesPoints,0);
-  rightImageTableWidget->putIn(imageColLin,0,1,'f',0);//,"QSpinBox",false,0,);
-  rightImageTableWidget->putInColumn(keysImagePoints,3);
-  int pos=findKeyAppearances(rightImageTableWidget,currentPointKey);
-  rightImageTableWidget->selectRow(pos);
-
-
-  clearAllMarks(rightDisplay);
-  markAllpoints(rightDisplay);
-
-  if (pos >=0)
-  {
-   int col =rightImageTableWidget->item(pos,1)->text().toInt(&ok);
-   int lin =rightImageTableWidget->item(pos,2)->text().toInt(&ok);
-   //qDebug("right image coord %dx%d",col,lin);
-   QPointF pixel(col,lin);
-   if(move)
-	rightView->moveTo(pixel);
-   rightDisplay->update();
-  }
-  rightImageTableWidget->setSortingEnabled(true);
- }
- */
-
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
 	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
@@ -1283,6 +1239,9 @@ void PTUserInterface_Qt::undoMark()
 	}
 
 }
+
+
+
 
 PointMark::PointMark(QPointF coord, int keypoint,int imagekey,QString id)
 {
