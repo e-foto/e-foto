@@ -799,6 +799,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	// Start to read the points
 	int feature_id, point_id;
 	DemFeaturePoints dfp;
+        //double lx, ly, rx, ry;
 	while (!arq.fail())
 	{
 		// Points EOF
@@ -824,6 +825,8 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
                         dfp.right_x = Conversion::stringToDouble(tag);
 			getline(arq,tag); // 6th line right_row
                         dfp.right_y = Conversion::stringToDouble(tag);
+
+                        //insertFeature2D(feature_id, lx, ly, rx, ry);
 
                         // X, Y, Z
 			getline(arq,tag); // 7th line X
@@ -894,6 +897,7 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
     for (unsigned int i=0; i<features.size(); i++)
     {
             df = features.at(i);
+            //pos = findFeature2D(i+1);
 
             for (unsigned int j=0; j<df.points.size(); j++)
             {
@@ -1228,6 +1232,8 @@ string DemFeatures::getFeaturesToDisplay(int mode)
     // Number of features
     txt << features.size() << "\n";
 
+    //int pos;
+    //double lx, ly, rx, ry;
     for (int i=0; i<features.size(); i++)
     {
             df = features.at(i);

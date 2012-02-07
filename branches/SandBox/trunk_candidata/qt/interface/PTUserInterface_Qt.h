@@ -239,6 +239,11 @@ public slots:
  */
 	void tableClicked(QTableWidgetItem* item);
 
+	/**
+	* \brief Metodo que mostra, coloca em um widget, o resultado de calculo de OE presente no corrente Xml
+	*/
+	void showReportXml();
+
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	void updatePoint(int, int, int);
 protected slots:
