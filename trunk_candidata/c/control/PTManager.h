@@ -566,6 +566,10 @@ public:
 	/* return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
 	*/
 	Matrix eoFromXml();
+
+        int getTotalIterationsXml();
+
+        bool getConvergedXML();
 };
 
 } // namespace efoto
