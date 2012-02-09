@@ -66,9 +66,9 @@ public:
 public slots:
 	void autoCopy();
 	void enableAutoCopy(int enable);
-	void updateTableValues(char mode, int precision);
-	void updateModoValues(int modo);
-	void updateDecimalsValues(int decimal);
+        void updateTableValues(char mode='f', int precision=4);
+        void updateModoValues(int modo=0);
+        void updateDecimalsValues(int decimal=4);
 	void selectionBackground();
 	void avaliateType(QTableWidgetItem *);
 	void avaliateType(int row, int col);

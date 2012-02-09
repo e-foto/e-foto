@@ -1544,12 +1544,12 @@ Matrix PTManager::eoFromXml()
 		//temp.setContent(oesXml.at(i).getContent());
 		imagekey=Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
 		tempXa.setContent(oesXml.at(i).elementByTagName("Xa").getContent());
-		x0=Conversion::stringToDouble(tempXa.elementByTagName("X0").getContent());
-		y0=Conversion::stringToDouble(tempXa.elementByTagName("Y0").getContent());
-		z0=Conversion::stringToDouble(tempXa.elementByTagName("Z0").getContent());
-		omega=Conversion::stringToDouble(tempXa.elementByTagName("omega").getContent())*180/M_PI;
-		phi=Conversion::stringToDouble(tempXa.elementByTagName("phi").getContent())*180/M_PI;
-		kappa=Conversion::stringToDouble(tempXa.elementByTagName("kappa").getContent())*180/M_PI;
+                x0=Conversion::stringToDouble(tempXa.elementByTagName("X0").toString());
+                y0=Conversion::stringToDouble(tempXa.elementByTagName("Y0").toString());
+                z0=Conversion::stringToDouble(tempXa.elementByTagName("Z0").toString());
+                omega=Conversion::stringToDouble(tempXa.elementByTagName("omega").toString())*180/M_PI;
+                phi=Conversion::stringToDouble(tempXa.elementByTagName("phi").toString())*180/M_PI;
+                kappa=Conversion::stringToDouble(tempXa.elementByTagName("kappa").toString())*180/M_PI;
 
 		oesMatrix.set(i+1,1,imagekey);
 		oesMatrix.set(i+1,2,x0);
@@ -1562,6 +1562,19 @@ Matrix PTManager::eoFromXml()
 	return oesMatrix;
 }
 
+int PTManager::getTotalIterationsXml()
+{
+    EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+    return Conversion::stringToInt(exteriorXml.elementByTagName("iterations").toString());
+}
+
+bool PTManager::getConvergedXML()
+{
+    EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+    if (exteriorXml.elementByTagName("converged").toString()=="true")
+        return true;
+    return false;
+}
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

@@ -209,7 +209,7 @@ void PTUserInterface_Qt::init()
 	//rightImageTableWidget->setType(2,"QSpinBox");
 
 	// Se tiver sido calculado antes habilita o botão
-	viewReportToolButton->setEnabled(ptManager->hasPreviousData());
+        viewReportToolButton->setEnabled(ptManager->hasEODone());
 
 	//	connect(new QKeySequence())
 }
@@ -404,6 +404,7 @@ void PTUserInterface_Qt::viewReport()
 void PTUserInterface_Qt::showReportXml()
 {
 
+        Matrix oesXml=ptManager->eoFromXml();
 	QWidget *resultView = new QWidget();
 	resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400);
 	QHBoxLayout *horizontalLayout= new QHBoxLayout();
@@ -412,8 +413,41 @@ void PTUserInterface_Qt::showReportXml()
 	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
 	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
-	ETableWidget *table= new ETableWidget(ptManager->eoFromXml());
+        QString iter="Iterations: ";
+        iter+=QString::number(ptManager->getTotalIterationsXml());
 
+        QLabel *iterations = new QLabel(iter);
+        QLabel *converged;
+        if (ptManager->getConvergedXML())
+                converged = new QLabel(tr("Converged: yes"));
+        else
+                converged = new QLabel(tr("Converged: no"));
+
+        QHBoxLayout *infoLayout= new QHBoxLayout();
+        infoLayout->addWidget(iterations);
+        infoLayout->addWidget(converged);
+
+
+        QStringList imagesSelected;
+        for (int i=1; i<=oesXml.getRows();i++)
+            imagesSelected << QString::fromStdString(ptManager->getImagefile(oesXml.getInt(i,1)));
+
+        //oesXml=oesXml.sel(1,oesXml.getRows(),2,7);
+        ETableWidget *table= new ETableWidget();
+        table->putInColumn(imagesSelected,0);
+        table->putIn(oesXml,0,1,'f',3);
+        table->setHorizontalHeaderLabels(oeHeaderLabels);
+        horizontalLayout->addWidget(table,3,Qt::AlignCenter);
+
+
+        QVBoxLayout *reportLayout= new QVBoxLayout;
+        reportLayout->addLayout(infoLayout);
+        reportLayout->addLayout(horizontalLayout);
+        //reportLayout->addLayout(oeLayout);
+        //reportLayout->addLayout(buttonsLayout);
+
+        table->resizeTable();//table->
+        resultView->setLayout(reportLayout);
 	resultView->show();
 
 
@@ -944,10 +978,11 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, int value)
 
 }
 
-
 void PTUserInterface_Qt::acceptResults()
 {
 	ptManager->saveResults();
+        ptManager->setENH();
+        updatePointsTable();
 }
 
 void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
