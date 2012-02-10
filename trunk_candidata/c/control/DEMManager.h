@@ -94,9 +94,10 @@ public:
 	void setNCCSettings(int, int, double, double);
 	void setLSMSettings(int, int, double, double, int, double, double, double, int, double);
 	void setProgress(int);
-	void saveDem(char *, int);
-	void saveDemGrid(char *, int);
-	int loadDem(char *, int);
+        void saveDem(char * filename, int fileType);
+        void saveDemGrid(char * filename, int fileType);
+        int loadDem(char * filename, int fileType);
+        int loadDemGrid(char * filename, int fileType);
 	void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource);
 	void setCancel();
 	void setShowImage(int _state) { isShowImage = _state; };

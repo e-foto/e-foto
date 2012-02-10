@@ -47,6 +47,7 @@ protected slots:
 	virtual void languageChange();
 	void onDemExtractionClicked();
 	void onDemLoadClicked();
+        void onDemGridLoadClicked();
 	void onDemSaveClicked();
 	void onDemGridSaveClicked();
 	void onDemGridClicked();

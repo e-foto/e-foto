@@ -40,6 +40,7 @@ protected slots:
 	virtual void languageChange();
 	void onAbortClicked();
 	void onLoadDemClicked();
+        void onLoadOrthoClicked();
 	void onOrthoClicked();
 	void onShowImageChanged(int);
 

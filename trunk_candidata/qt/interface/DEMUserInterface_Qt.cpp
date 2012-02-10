@@ -40,6 +40,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	QObject::connect(saveButton2, SIGNAL(clicked()), this, SLOT(onDemSaveClicked()));
 	QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onDemGridSaveClicked()));
 	QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
+        QObject::connect(loadButton2, SIGNAL(clicked()), this, SLOT(onDemGridLoadClicked()));
 	QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
 	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
@@ -364,6 +365,27 @@ void DEMUserInterface_Qt::onDemLoadClicked()
 	}
 
 	enableAfterDEM(1);
+}
+
+void DEMUserInterface_Qt::onDemGridLoadClicked()
+{
+        // File open dialog
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), ".", tr("DSM (*.dsm);; Text File (*.txt);; All files (*.*)")) ;
+        // if no file name written, return
+        if (filename=="")
+                return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        QDir dir(filename.left(i));
+        dir.setCurrent(dir.absolutePath());
+
+        // Load DEM Grid
+        if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
+        {
+                QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
+                return;
+        }
 }
 
 void DEMUserInterface_Qt::enableAfterDEM(int sender)
