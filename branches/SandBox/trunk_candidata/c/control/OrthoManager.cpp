@@ -128,6 +128,28 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
 	return 1;
 }
 
+void OrthoManager::loadOrtho(char *filename)
+{
+    if (ortho != NULL)
+        delete ortho;
+
+    // Create custom. Load will set correct values.
+    ortho = new Orthorectification(1.0, 1.0, 2.0, 2.0, 1.0, 1.0);
+    ortho->loadOrtho(filename,0);
+
+    double Xi, Yi, Xf, Yf, res_x, res_y;
+    ortho->getOrthoParametersA(Xi, Yi, Xf, Yf, res_x, res_y);
+
+    // Display results
+    if (show_image)
+    {
+            OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+            Matrix * img = ortho->getOrthoImage();
+            oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
+            delete img;
+    }
+}
+
 void OrthoManager::runAllOrthoTogheter()
 {
 	// List of all centers

@@ -66,6 +66,7 @@ public:
 	void setFlagCancel() { flag_cancel = true; };
 	void setShowImage(bool _shw) { show_image = _shw; };
 	void setInterMethod(int _mth) { inter_method = _mth; };
+        void loadOrtho(char *filename);
 
 };
 
