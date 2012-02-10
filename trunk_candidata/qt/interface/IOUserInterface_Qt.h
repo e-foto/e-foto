@@ -3,7 +3,8 @@
 
 #include "ui_IOForm.h"
 #include "IOUserInterface.h"
-#include "ImageView.h"
+//#include "ImageView.h"
+#include "ImageViewers.h"
 #include "LoadingScreen.h"
 
 #include <QPoint>
@@ -24,7 +25,7 @@ public:
 
 public slots:
 	virtual void informState();
-	virtual void receiveMark(QPoint p);
+	virtual void receiveMark(QPointF p);
 	virtual void makeRepaint();
 	virtual void activeSetMode();
 	virtual void activePanMode();
@@ -40,7 +41,8 @@ protected:
 	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~IOUserInterface_Qt();
 	QWidget *windowReport;
-	ImageView *myImageView;
+	//ImageView *oldImageView;
+	SingleViewer *imageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	int selectedPoint;

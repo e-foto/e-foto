@@ -24,6 +24,8 @@ class SingleViewer : public QMainWindow, public Ui::EVMainWindow
 
 public:
 	SingleViewer(QWidget *parent=0);
+	SingleDisplay* getDisplay() {return sd;}
+	MarkTool* getMarker() {return &tool->mark;}
 
 public slots:
 	void loadImage(QString filename);
