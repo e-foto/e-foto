@@ -62,6 +62,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
 	QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
 	QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
+        QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
 	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
 
 	setWindowState(this->windowState());
@@ -181,6 +182,26 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
 	}
 }
 
+void OrthoUserInterface_Qt::onLoadOrthoClicked()
+{
+        // File open dialog
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), ".", tr("EOI (*.eoi);; All files (*.*)")) ;
+        // if no file name written, return
+        if (filename=="")
+                return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        QDir dir(filename.left(i));
+        dir.setCurrent(dir.absolutePath());
+
+        // Add file to line edit
+        lineEdit->setText(filename);
+
+        // Load Ortho
+        manager->loadOrtho((char *)lineEdit->text().toStdString().c_str());
+}
+
 void OrthoUserInterface_Qt::onOrthoClicked()
 {
 	// Ortho clicked
@@ -221,6 +242,7 @@ void OrthoUserInterface_Qt::disableOptions()
 	doubleSpinBox2->setEnabled(false);
 	orthoButton->setEnabled(false);
 	doneButton->setEnabled(false);
+        loadButton->setEnabled(false);
 }
 
 void OrthoUserInterface_Qt::enableOptions()
@@ -232,6 +254,7 @@ void OrthoUserInterface_Qt::enableOptions()
 	doubleSpinBox2->setEnabled(true);
 	orthoButton->setEnabled(true);
 	doneButton->setEnabled(true);
+        loadButton->setEnabled(true);
 }
 
 void OrthoUserInterface_Qt::setProgress(int progress)

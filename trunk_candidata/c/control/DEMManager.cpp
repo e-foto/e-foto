@@ -511,6 +511,35 @@ int DEMManager::loadDem(char * filename, int fileType)
 	return 1;
 }
 
+int DEMManager::loadDemGrid(char * filename, int fileType)
+{
+
+        // Create custom grid. Load will fix these values.
+        if (grid != NULL)
+            delete grid;
+        grid = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
+        grid->loadDem(filename,fileType);
+
+        // Update info
+        DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+        double Xi, Yi, Zi, Xf, Yf, Zf, res_x, res_y;
+        grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+        int w = grid->getWidth(), h = grid->getHeight();
+        grid->getMinMax(Zi,Zf);
+        dui->setGridData(Xi,Yi,Xf,Yf,Zi,Zf,res_x,res_y,w,h);
+
+        // Show image, if selected
+        if (isShowImage && !cancel_flag)
+        {
+                double res_z = (Zf-Zi)/255.0;
+                Matrix * img = grid->getDemImage();
+                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
+                delete img;
+        }
+
+        return 1;
+}
+
 int DEMManager::loadDemFeature(char *filename)
 {
 	if (df != NULL)
