@@ -159,7 +159,7 @@ QImage SymbolsResource::getText(QString text, bool bottom)
 
 
 Marker::Marker(const QImage &image2Mark) :
-	QImage(image2Mark)
+		QImage(image2Mark)
 {
 }
 
@@ -238,7 +238,7 @@ Coord::Coord()
 }
 
 Coord::Coord(QPointF location, QString label, Marker *mark) :
-	QPointF(location.x(),location.y())
+		QPointF(location.x(),location.y())
 {
 	label_ = label;
 	marker_ = mark;
@@ -302,69 +302,72 @@ GeometryResource::GeometryResource()
 {
 	linkPointsMode = 4;
 	nextPointkey_ = 1;
+	nextLinekey_ = 1;
 }
 
 void GeometryResource::insertPoint(QPointF location, int pointKey, QString label, Marker* mark)
 {
-        if (pointKey == 0)
-        {
-                int key = generatePointKey();
-                geometries_.append(Geometry::createPoint(location, key, label, mark));
-                if (nextPointkey_ <= key)
-                        nextPointkey_ = key++;
-        }
-        /*
+	if (pointKey == 0)
+	{
+		int key = generatePointKey();
+		geometries_.append(Geometry::createPoint(location, key, label, mark));
+		if (nextPointkey_ <= key)
+			nextPointkey_ = key++;
+	}
+	/*
  else if (!hasPoint(*pointKey))
   geometries_.append(Geometry::createPoint(location, *pointKey, label, mark));
  else
   geometries_.replace( indexOfPoint(*pointKey), Geometry::createPoint(location, *pointKey, label, mark));
  */
-        else
-        {
-                int key = pointKey;
-                for (int i = geometries_.size()-1; i >= 0; i--)
-                {
-                        if (geometries_.at(i).key() == key)
-                                geometries_.removeAt(i);
-                }
-                geometries_.append(Geometry::createPoint(location, key, label, mark));
-                if (nextPointkey_ <= key)
-                        nextPointkey_ = key++;
-        }
+	else
+	{
+		int key = pointKey;
+		for (int i = geometries_.size()-1; i >= 0; i--)
+		{
+			if (geometries_.at(i).key() == key)
+				geometries_.removeAt(i);
+		}
+		geometries_.append(Geometry::createPoint(location, key, label, mark));
+		if (nextPointkey_ <= key)
+			nextPointkey_ = key++;
+	}
 }
 
 void GeometryResource::addPoint(QPointF location, int pointKey, QString label, Marker* mark)
 {
-        geometries_.append(Geometry::createPoint(location, pointKey, label, mark));
-        if (nextPointkey_ <= pointKey)
-                nextPointkey_ = pointKey++;
+	if (pointKey == 0)
+		pointKey = nextPointkey_;
+	geometries_.append(Geometry::createPoint(location, pointKey, label, mark));
+	if (nextPointkey_ <= pointKey)
+		nextPointkey_ = pointKey++;
 }
 
 void GeometryResource::updatePoint(QPointF location, int pointKey, QString label, Marker* mark)
 {
-        if (pointKey == 0)
-        {
-            return;
-        }
-        else
-        {
-                int key = pointKey;
-                bool removed = false;
-                for (int i = geometries_.size()-1; i >= 0; i--)
-                {
-                    if (geometries_.at(i).key() == key)
-                    {
-                        geometries_.removeAt(i);
-                        removed = true;
-                    }
-                }
-                if (removed)
-                {
-                    geometries_.append(Geometry::createPoint(location, key, label, mark));
-                    if (nextPointkey_ <= key)
-                        nextPointkey_ = key++;
-                }
-        }
+	if (pointKey == 0)
+	{
+		return;
+	}
+	else
+	{
+		int key = pointKey;
+		bool removed = false;
+		for (int i = geometries_.size()-1; i >= 0; i--)
+		{
+			if (geometries_.at(i).key() == key)
+			{
+				geometries_.removeAt(i);
+				removed = true;
+			}
+		}
+		if (removed)
+		{
+			geometries_.append(Geometry::createPoint(location, key, label, mark));
+			if (nextPointkey_ <= key)
+				nextPointkey_ = key++;
+		}
+	}
 }
 
 void GeometryResource::deletePoint(int pointKey)
@@ -375,6 +378,18 @@ void GeometryResource::deletePoint(int pointKey)
 		if (geometries_.at(i).key() == key)
 			geometries_.removeAt(i);
 	}
+}
+
+void GeometryResource::addLine(QPointF p0, QPointF p1, int lineKey)
+{
+	if (lineKey == 0)
+		lineKey = nextLinekey_;
+	QList<Coord> locations;
+	locations.append(Coord(p0,""));
+	locations.append(Coord(p1,""));
+	geometries_.append(Geometry::createLine(locations, nextLinekey_));
+	if (nextLinekey_ <= lineKey)
+		nextLinekey_ = lineKey++;
 }
 
 void GeometryResource::clear()
@@ -402,6 +417,23 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
 				painter.setPen(QPen(Qt::yellow));
 				painter.setFont(QFont("Arial", 10));
 				painter.drawText(x+mark->width()/2, y+mark->height()/2, label);
+			}
+		}
+		else if  (geometries_.at(i).type() == 2)
+		{
+			painter.setPen(QPen(Qt::green));
+			QList<Coord> points = geometries_.at(i).listPoints();
+			double x[points.size()];
+			double y[points.size()];
+			for (int j = 0; j<points.size();j++)
+			{
+				x[j] = (points.at(j).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
+				y[j] = (points.at(j).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
+			}
+			for (int j = 0; j<points.size()-1;j++)
+			{
+				int k = (j+1)%points.size();
+				painter.drawLine(QPointF(x[j],y[j]),QPointF(x[k],y[k]));
 			}
 		}
 	}
