@@ -50,7 +50,8 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	this->connect(actionDEMExtraction, SIGNAL(triggered()), this, SLOT(executeDEM()));
 	this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 	this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
-	this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
+        this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
+        this->connect(actionStereo, SIGNAL(triggered()), this, SLOT(executeSP()));
 	this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
 	this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 	this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
@@ -694,6 +695,17 @@ void ProjectUserInterface_Qt::executeDEM()
 	this->close();
 	manager->startModule("DEM-Extraction",0);
 	changeModule = false;
+}
+
+void ProjectUserInterface_Qt::executeSP()
+{
+        changeModule = true;
+        confirmToClose();
+        LoadingScreen::instance().show();
+        qApp->processEvents();
+        this->close();
+        manager->startModule("Stereo Plotter",0);
+        changeModule = false;
 }
 
 void ProjectUserInterface_Qt::executeFT()
