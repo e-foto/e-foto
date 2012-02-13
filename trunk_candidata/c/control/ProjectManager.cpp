@@ -427,6 +427,8 @@ bool ProjectManager::startModule(string module, int image)
 			manager->setNextModule(6);
 		else if (module.compare("Ortho-rectification") == 0)
 			manager->setNextModule(7);
+                else if (module.compare("Stereo Plotter") == 0)
+                        manager->setNextModule(8);
 
 		manager->setNextImage(image);
 		manager->exec();

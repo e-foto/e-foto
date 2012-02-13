@@ -31,6 +31,7 @@ class PTManager;
 class ProjectManager;
 class DEMManager;
 class OrthoManager;
+class SPManager;
 
 /**
   * class EFotoManager
@@ -59,6 +60,7 @@ class EFotoManager
 	PTManager* fotoTri;
 	DEMManager* dem;
 	OrthoManager* ortho;
+        SPManager* sp;
 
 	Terrain* theTerrain;
 	deque<Sensor*> sensors;
@@ -317,6 +319,12 @@ public:
 		 */
 	bool execOrtho();
 	void stopOrtho();
+
+        /**
+  * This method starts the main execution loop.
+  */
+        bool execSP();
+        void stopSP();
 
 	/**
   * This method starts the main execution loop.
