@@ -48,7 +48,7 @@ void extractProjections(br::uerj::eng::efoto::SeparatedStereoViewer* sv, br::uer
 	// Precciso de um projeto carrregado e estou imrovisando isso aqui:
 	br::uerj::eng::efoto::EFotoManager manager;
 	stringstream myData;
-	ifstream myFile("/home/irvingbadolato/Desktop/data/UERJ_APRESENTACAO.epp");
+        ifstream myFile("/home/marts/Documentos/e-foto/eppsHomePage/UERJ_io_eo.epp");
 	if (myFile.is_open())
 	{
 		string line;
@@ -107,9 +107,10 @@ int main( int argc, char ** argv )
 
 	qApp->processEvents();
 
-	//br::uerj::eng::efoto::EFotoManager manager;
-	//manager.setInterfaceType("Qt");
-
+        br::uerj::eng::efoto::EFotoManager manager;
+        manager.setInterfaceType("Qt");
+        manager.exec();
+/*
 	br::uerj::eng::efoto::DemFeatures myFeatures;
 	myFeatures.loadFeatures("/home/irvingbadolato/Desktop/FEICOES_UERJ_3.txt",1,false);
 	QString txt = QString::fromStdString(myFeatures.getFeaturesList());
@@ -123,7 +124,7 @@ int main( int argc, char ** argv )
 	br::uerj::eng::efoto::SeparatedStereoViewer* sv = new br::uerj::eng::efoto::SeparatedStereoViewer();
 	extractProjections(sv, &myFeatures, 1, 2);
 	sv->show();
-
+*/
 	/*
 	Tool3D* tool3d = new Tool3D();
 	tool3d->setCentralWidget(tool3d->getDisplay3D());

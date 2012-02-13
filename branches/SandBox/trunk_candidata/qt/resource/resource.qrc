@@ -67,5 +67,10 @@
         <file>cancel.png</file>
         <file>exportKMLIcon.png</file>
         <file>addmark.png</file>
+        <file>select.png</file>
+        <file>ptadd.png</file>
+        <file>ptedit.png</file>
+        <file>removeall.png</file>
+        <file>ptremove.png</file>
     </qresource>
 </RCC>

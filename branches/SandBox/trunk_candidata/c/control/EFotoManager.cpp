@@ -9,6 +9,7 @@
 #include "ProjectManager.h"
 #include "DEMManager.h"
 #include "OrthoManager.h"
+#include "SPManager.h"
 
 #include <QApplication>
 
@@ -33,6 +34,7 @@ EFotoManager::EFotoManager()
 	fotoTri = NULL;
 	dem = NULL;
 	ortho = NULL;
+        sp = NULL;
 	theTerrain = NULL;
 	nextModule = 1;
 }
@@ -719,6 +721,10 @@ bool EFotoManager::reloadProject()
 		{
 			stopOrtho();
 		}
+                if (sp != NULL)
+                {
+                        stopSP();
+                }
 		return project->reload();
 	}
 	else
@@ -824,6 +830,64 @@ void EFotoManager::stopSR(int id)
 	deleteSensor(srImage->getSensorId());
 	deleteTerrain();
 	deleteImage(id);
+}
+
+/**
+ *
+ */
+bool EFotoManager::execSP()
+{
+
+        bool result;
+/*        nextModule = 8;
+        Image* srImage = instanceImage(id);
+        if (srImage == NULL)
+        {
+                return false;
+        }
+        Sensor* srSensor = instanceSensor(srImage->getSensorId());
+        Flight* srFlight = instanceFlight(srImage->getFlightId());
+        InteriorOrientation* srIO = instanceIO(id);
+        SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
+        Terrain* srTerrain = instanceTerrain();
+        srFlight->setTerrain(srTerrain);
+        if (sr == NULL)
+        {
+                sr = new SpatialRessection(id);
+                EOs.push_back(sr);
+        }
+        else
+        {
+
+        }
+        spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr);
+
+        result = spatialRessection->exec();
+        /* precisa de um stop
+ delete spatialRessection;
+ deleteEO(id);
+ deleteIO(id);
+ deleteFlight(srImage->getFlightId());
+ deleteSensor(srImage->getSensorId());
+ deleteTerrain();
+ deleteImage(id);
+ */
+        return result;
+}
+
+void EFotoManager::stopSP()
+{
+/*
+        Image* srImage = instanceImage(id);
+        delete spatialRessection;
+        spatialRessection = NULL;
+        deleteEO(id);
+        deleteIO(id);
+        deleteFlight(srImage->getFlightId());
+        deleteSensor(srImage->getSensorId());
+        deleteTerrain();
+        deleteImage(id);
+*/
 }
 
 bool EFotoManager::execPT()
