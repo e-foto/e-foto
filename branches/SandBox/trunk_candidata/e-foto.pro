@@ -102,6 +102,7 @@ HEADERS += \
 		   PositionMatrix.h \
 		   RectSupport.h \
 		   SparseMatrix.h \
+                   TreeFeatures.h \
 		   #c/interface/
 		   DEMUserInterface.h \
 		   IOUserInterface.h \
@@ -240,6 +241,7 @@ SOURCES += \
 		   PositionMatrix.cpp \
 		   RectSupport.cpp \
 		   SparseMatrix.cpp \
+                   TreeFeatures.cpp \
 		   #c/interface/
 		   DEMUserInterface.cpp \
 		   IOUserInterface.cpp \
@@ -365,7 +367,8 @@ FORMS += \
 		  OrthoForm.ui \
 		  ProgressWindow.ui \
 		  SeedEditor.ui \
-		  SRForm.ui
+                  SRForm.ui \
+                  Stereoplotter.ui
 
 RESOURCES += resource.qrc
 

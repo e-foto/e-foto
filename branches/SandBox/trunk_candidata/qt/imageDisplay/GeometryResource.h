@@ -7,6 +7,13 @@
 #include <QImage>
 #include <QPainter>
 
+#include "DemFeatures.h"
+
+namespace br {
+namespace uerj {
+namespace eng {
+namespace efoto {
+
 enum DefaultMark {
 	NoMark, RedMark, GreenMark, BlueMark, CyanMark, MagentaMark, YellowMark, DarkRedMark, DarkGreenMark, DarkBlueMark, DarkCyanMark, DarkMagentaMark, DarkYellowMark, BlackMark, WhiteMark, GrayMark, BlackAndWhiteMark
 };
@@ -21,7 +28,7 @@ public:
 	static QImage getBordedX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
 
 	static QImage getTriangle(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
-	static QImage getCircle(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+	static QImage getCircle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 	static QImage getSquare(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 
 	static QImage getOpenHand();
@@ -71,6 +78,10 @@ public:
 
 class GeometryResource
 {
+	DemFeatures* df;
+	Marker* defaultMark;
+	Marker* selectedMark;
+	int featureProjection;
 	QList<Geometry> geometries_;
 	int linkPointsMode;
 
@@ -86,12 +97,19 @@ public:
 	void addLine(QPointF p0, QPointF p1, int lineKey = 0);
 	void clear();
 	QImage draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale);
+	QImage draw(DemFeatures* df, int projection, QImage dst, QSize targetSize, QPointF viewpoint, double scale);
 
 	unsigned int generatePointKey();
 	bool hasPoint(unsigned int key);
 	int indexOfPoint(unsigned int key);
 
 	void setLinkPointsMode(int mode);
+	void setFeatures(DemFeatures* features, int projection) {df = features; featureProjection = projection;}
 };
+
+} // namespace efoto
+} // namespace eng
+} // namespace uerj
+} // namespace br
 
 #endif // GEOMETRYRESOURCE_H
