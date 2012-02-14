@@ -99,7 +99,7 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 	rightDisplay = new SingleDisplay(this);
 	tool = new SeparatedStereoToolsBar(leftDisplay, rightDisplay, this);
 
-	/** Mudança feita pelo Paulo para mudar o local inicial da toolbar*/
+	/** MudanÃ§a feita pelo Paulo para mudar o local inicial da toolbar*/
 	addToolBar(Qt::RightToolBarArea, tool);
 
 	leftPart->setCentralWidget(leftDisplay);
@@ -177,7 +177,8 @@ void SeparatedStereoViewer::loadRightImage(Matrix *image, bool isGrayscale)
 
 void SeparatedStereoViewer::setFeatures(DemFeatures *df)
 {
-
+	leftDisplay->getCurrentScene()->geometry()->setFeatures(df,0);
+	rightDisplay->getCurrentScene()->geometry()->setFeatures(df,1);
 }
 
 void SeparatedStereoViewer::blockOpen()

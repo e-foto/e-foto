@@ -1,6 +1,11 @@
 #include "GeometryResource.h"
 #include "SingleDisplay.h"
 
+namespace br {
+namespace uerj {
+namespace eng {
+namespace efoto {
+
 QImage SymbolsResource::getBackGround(QColor color, QSize size, QPoint pointedIn, QColor pointColor, unsigned int pointWeigth)
 {
 	QImage img(size, QImage::Format_ARGB32);
@@ -78,8 +83,22 @@ QImage SymbolsResource::getTriangle(QColor color, QSize size, unsigned int weigt
 {
 }
 
-QImage SymbolsResource::getCircle(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, unsigned int weigth, bool pointingCenter)
 {
+	QImage img(size, QImage::Format_ARGB32);
+	img.fill(QColor(0,0,0,0).rgba());
+	int hotX = size.width() / 2;
+	int hotY = size.height() / 2;
+
+	QPainter painter(&img);
+	painter.setBrush(QBrush(fillcolor));
+	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
+	painter.setPen(QPen(QBrush(color),weigth));
+	painter.setBrush(QBrush(Qt::transparent));
+	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
+	painter.end();
+
+	return img;
 }
 
 QImage SymbolsResource::getSquare(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
@@ -300,9 +319,15 @@ QList<Coord> Geometry::listPoints() const
 
 GeometryResource::GeometryResource()
 {
+	df = NULL;
+	featureProjection = -1;
 	linkPointsMode = 4;
 	nextPointkey_ = 1;
 	nextLinekey_ = 1;
+	defaultMark = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(8,8), 1, true));
+	selectedMark  = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(16,16), 2, true));
+	//defaultMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
+	//selectedMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
 }
 
 void GeometryResource::insertPoint(QPointF location, int pointKey, QString label, Marker* mark)
@@ -399,6 +424,11 @@ void GeometryResource::clear()
 
 QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale)
 {
+	if (df != NULL)
+	{
+		dst = draw(df, featureProjection, dst, targetSize, viewpoint, scale);
+	}
+
 	QImage result(dst);
 	QPainter painter(&result);
 	for (int i = 0; i<geometries_.size();i++)
@@ -437,47 +467,62 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
 			}
 		}
 	}
-	/*
- if (linkPointsMode)
- {
-  for (int i = 0; i<geometries_.size();i += 1+linkPointsMode)
-  {
-   if (geometries_.at(i).type() == 1)
-   {
-	double x[4], y[4];
+	painter.end();
+	return result;
+}
 
-	QList<Coord> point0 = geometries_.at(i).listPoints();
-	x[0] = (point0.at(0).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
-	y[0] = (point0.at(0).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
-
-	if (i+1 < geometries_.size())
+QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSize targetSize, QPointF viewpoint, double scale)
+{
+	QImage result(dst);
+	QPainter painter(&result);
+	for (int i = 0; i < dfs->getNumFeatures(); i++)
 	{
-	 QList<Coord> point1 = geometries_.at(i+1).listPoints();
-	 x[1] = (point1.at(0).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
-	 y[1] = (point1.at(0).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
-	 painter.drawLine(QPointF(x[0],y[0]),QPointF(x[1],y[1]));
+		if (dfs->selectedFeature() == i+1)
+			continue;
+		DemFeature* df = dfs->getFeatureLink(i+1);
+		for (int j = 0; j < df->points.size(); j++)
+		{
+			double x = 0;
+			double y = 0;
+			if (projection == 0)
+			{
+				x = df->points.at(j).left_x;
+				y = df->points.at(j).left_y;
+			}
+			else if (projection == 1)
+			{
+				x = df->points.at(j).right_x;
+				y = df->points.at(j).right_y;
+			}
+			if (df->feature_type == 3) // preenchimento e fechamento
+			{
+
+			}
+			if (df->feature_type > 1) // linhas
+			{
+
+			}
+			if (true) // pontos
+			{
+				Marker* mark = defaultMark;
+				QString label = QString::number(j+1);
+
+				x = (x -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
+				y = (y -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
+
+				painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
+				painter.setPen(QPen(Qt::yellow));
+				painter.setFont(QFont("Arial", 10));
+				painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
+			}
+		}
 	}
 
-	if (linkPointsMode > 1 && i+2 < geometries_.size())
+	if (dfs->selectedFeature() > 0)
 	{
-	 QList<Coord> point2 = geometries_.at(i+2).listPoints();
-	 x[2] = (point2.at(0).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
-	 y[2] = (point2.at(0).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
-	 painter.drawLine(QPointF(x[1],y[1]),QPointF(x[2],y[2]));
+		DemFeature* df = dfs->getFeatureLink(dfs->selectedFeature()-1);
+		// Repetir o código de renderização aqui;
 	}
-
-	if (linkPointsMode == 4 && i+3 < geometries_.size())
-	{
-	 QList<Coord> point3 = geometries_.at(i+3).listPoints();
-	 x[3] = (point3.at(0).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
-	 y[3] = (point3.at(0).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
-	 painter.drawLine(QPointF(x[2],y[2]),QPointF(x[3],y[3]));
-	 painter.drawLine(QPointF(x[3],y[3]),QPointF(x[0],y[0]));
-	}
-   }
-  }
- }
- */
 	painter.end();
 	return result;
 }
@@ -505,3 +550,8 @@ void GeometryResource::setLinkPointsMode(int mode)
 {
 	linkPointsMode = mode;
 }
+
+} // namespace efoto
+} // namespace eng
+} // namespace uerj
+} // namespace br

@@ -30,44 +30,30 @@ SPUserInterface_Qt* SPUserInterface_Qt::instance(SPManager* manager)
 }
 
 SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::WindowFlags fl)
-	: QWidget(parent, fl)
+		: QMainWindow(parent, fl)
 {
-	//setupUi(this);
-	/*
- actionSet_mark->setCheckable(true);
- actionMove->setCheckable(true);
- actionZoom->setCheckable(true);
- QActionGroup *group = new QActionGroup(this);
- group->addAction(actionSet_mark);
- group->addAction(actionMove);
- group->addAction(actionZoom);
- group->setExclusive(true);
- actionActive_grid->setCheckable(true);
- actionView_report->setEnabled(false);
- actionInterior_orientation->setEnabled(false);
- table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
+		setupUi(this);
 
- QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
- QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
- QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
- QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
- QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
- QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
-		if (manager->interiorDone())
-				actionView_report->setEnabled(true);
-*/
+		// Connections
+		QObject::connect(comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(updateClass(int)));
+		QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveButton()));
+		QObject::connect(addButton, SIGNAL(clicked()), this, SLOT(onAddButton()));
+		QObject::connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemoveButton()));
+		QObject::connect(removeAllButton, SIGNAL(clicked()), this, SLOT(onRemoveAllButton()));
+		QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+
+
 	this->manager = manager;
+		setWindowState(this->windowState());
 
+		showMaximized();
 
-	setWindowState(this->windowState());
-
-	// Center window
-	QDesktopWidget *desktop = QApplication::desktop();
-	int Cx,Cy;
-	QRect rect = geometry();
-	Cx = (desktop->width() - rect.width())/2;
-	Cy = (desktop->height() - rect.height())/2;
-	move(Cx,Cy);
+		updateClass(0);
 
 	allow_close = true;
 
@@ -131,9 +117,153 @@ void SPUserInterface_Qt::closeEvent(QCloseEvent *e)
 
 bool SPUserInterface_Qt::exec()
 {
+	viewer = new SeparatedStereoViewer();
+	viewer->blockOpen();
+	viewer->blockSave();
+	setCentralWidget(viewer);
+	viewer->setFeatures(manager->getFeaturesLink());
+
 	show();
+	qApp->processEvents();
+	changePair(1,2);
+
 	LoadingScreen::instance().close();
 	return true;
+}
+
+void SPUserInterface_Qt::updateData()
+{
+	updateTable();
+	viewer->update();
+}
+
+void SPUserInterface_Qt::updateTable()
+{
+	QString txt = QString::fromStdString(manager->getFeaturesList());
+
+	TreeFeatures *tree = new TreeFeatures(txt);
+
+	treeView->setModel(tree);
+}
+
+void SPUserInterface_Qt::updateClass(int feat_type)
+{
+	comboBox_4->clear();
+
+	// Point
+	if (feat_type == 0)
+	{
+		comboBox_4->addItem("Point");
+	}
+
+	// Line
+	if (feat_type == 1)
+	{
+		comboBox_4->addItem("Undefined");
+		comboBox_4->addItem("Paved street");
+		comboBox_4->addItem("Unpaved street");
+		comboBox_4->addItem("Trail");
+		comboBox_4->addItem("Railway");
+		comboBox_4->addItem("River");
+		comboBox_4->addItem("Bridge");
+	}
+
+	// Polygon
+	if (feat_type == 2)
+	{
+		comboBox_4->addItem("Undefined");
+		comboBox_4->addItem("House");
+		comboBox_4->addItem("Building");
+		comboBox_4->addItem("Industrial");
+		comboBox_4->addItem("Club");
+		comboBox_4->addItem("Station");
+		comboBox_4->addItem("Wasteland");
+		comboBox_4->addItem("Square");
+		comboBox_4->addItem("Park");
+		comboBox_4->addItem("Forest");
+		comboBox_4->addItem("Lagoon");
+		comboBox_4->addItem("Pool");
+	}
+}
+
+/*
+ *  Button clicks
+ **/
+
+void SPUserInterface_Qt::onLoadButton()
+{
+	// File open dialog
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open Fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+	// if no file name written, return
+	if (filename=="")
+			return;
+
+	// Save last dir
+	int i=filename.lastIndexOf("/");
+	QDir dir(filename.left(i));
+	dir.setCurrent(dir.absolutePath());
+
+	// Load DEM
+	bool sp_load_flag = manager->loadFeatures((char *)filename.toStdString().c_str());
+
+	// Report error
+	if (!sp_load_flag)
+	{
+			QMessageBox::critical(this,"Error","Invalid features file format.");
+			return;
+	}
+
+	manager->updateProjections();
+	updateData();
+}
+
+void SPUserInterface_Qt::onSaveButton()
+{
+	// File open dialog
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save Fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+	// if no file name written, return
+	if (filename=="")
+			return;
+
+	// Save last dir
+	int i=filename.lastIndexOf("/");
+	QDir dir(filename.left(i));
+	dir.setCurrent(dir.absolutePath());
+
+	// Load DEM
+	manager->saveFeatures((char *)filename.toStdString().c_str());
+
+}
+
+void SPUserInterface_Qt::onAddButton()
+{
+	manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex()+1);
+
+	updateData();
+}
+
+void SPUserInterface_Qt::onRemoveButton()
+{
+	manager->removeFeature();
+
+	updateData();
+}
+
+void SPUserInterface_Qt::onRemoveAllButton()
+{
+	if (QMessageBox::warning(this,"Erase all?","Erase all features?",QMessageBox::Yes,QMessageBox::No) == QMessageBox::No)
+		return;
+
+	manager->removeAllFeatures();
+
+	updateData();
+}
+
+void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
+{
+	viewer->loadLeftImage(QString(manager->getFullImagePath(leftKey).c_str()));
+	viewer->loadRightImage(QString(manager->getFullImagePath(rightKey).c_str()));
+	viewer->update();
 }
 
 } // namespace efoto

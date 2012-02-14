@@ -1,25 +1,26 @@
 #ifndef SPUSERINTERFACE_QT_H
 #define SPUSERINTERFACE_QT_H
 
-//#include "ui_DemExtraction.h"
+#include "ui_Stereoplotter.h"
 #include "SPUserInterface.h"
 #include "ImageView.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
-
+#include "TreeFeatures.h"
 #include <QPoint>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "ImageViewers.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-class SPUserInterface_Qt : public QWidget, public SPUserInterface
+class SPUserInterface_Qt : public QMainWindow, public Ui::StereoPlotterForm, public SPUserInterface
 {
 	Q_OBJECT
 
@@ -32,20 +33,22 @@ protected:
 	SPUserInterface_Qt(SPManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SPUserInterface_Qt();
 	SPManager *manager;
+	SeparatedStereoViewer* viewer;
+	SeparatedStereoToolsBar* tools;
 	void closeEvent(QCloseEvent *e);
 	int checkBoundingBox();
+	void updateData();
+	void updateTable();
 
 protected slots:
 	virtual void languageChange();
-	/*
-		void onDemExtractionClicked();
-		void onDemLoadClicked();
-		void onDemSaveClicked();
-		void onDemGridSaveClicked();
-		void onDemGridClicked();
-		void onLSMCheckChanged(int);
-		void onAbortClicked();
-		*/
+	void updateClass(int feat_type);
+	void onLoadButton();
+	void onSaveButton();
+	void onAddButton();
+	void onRemoveButton();
+	void onRemoveAllButton();
+	void changePair(int leftKey, int rightKey);
 
 private:
 	void init();
@@ -57,20 +60,7 @@ public:
 	// Other Methods
 	//
 	bool exec();
-	/*
-		Matrix * loadImage(char *filename, double sample=1.0);
-		int saveImage(char *filename, Matrix *I);
-		void addImagePair(char *);
-		void setStatus(char *);
-		void setAutoExtInfo(int, int , double, double);
-		void setBoundingBox(double Xi, double Yi, double Xf, double Yf);
-		void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
-		void setProgress(int);
-		void setMathcingHistogram(int *);
-		void setAllowClose(bool _b) { allow_close = _b; };
-		void disableOptions();
-		void enableOptions();
-		*/
+
 };
 
 } // namespace efoto

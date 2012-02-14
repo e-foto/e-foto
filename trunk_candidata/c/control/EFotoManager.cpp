@@ -837,57 +837,54 @@ void EFotoManager::stopSR(int id)
  */
 bool EFotoManager::execSP()
 {
+    bool result;
 
-        bool result;
-/*        nextModule = 8;
-        Image* srImage = instanceImage(id);
-        if (srImage == NULL)
-        {
-                return false;
-        }
-        Sensor* srSensor = instanceSensor(srImage->getSensorId());
-        Flight* srFlight = instanceFlight(srImage->getFlightId());
-        InteriorOrientation* srIO = instanceIO(id);
-        SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
-        Terrain* srTerrain = instanceTerrain();
-        srFlight->setTerrain(srTerrain);
-        if (sr == NULL)
-        {
-                sr = new SpatialRessection(id);
-                EOs.push_back(sr);
-        }
-        else
-        {
+    nextModule = 2;
 
-        }
-        spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr);
+    instanceAllImages();
+    instanceAllPoints();
 
-        result = spatialRessection->exec();
-        /* precisa de um stop
- delete spatialRessection;
- deleteEO(id);
- deleteIO(id);
- deleteFlight(srImage->getFlightId());
- deleteSensor(srImage->getSensorId());
- deleteTerrain();
- deleteImage(id);
- */
-        return result;
+    for (int i = images.size() - 1; i >=0; i--)
+    {
+            Image* img = images.at(i);
+            Sensor* sensor = instanceSensor(img->getSensorId());
+            InteriorOrientation* imgIO = instanceIO(img->getId());
+            SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
+
+            img->setSensor(sensor);
+            img->setIO(imgIO);
+            img->setEO(imgEO);
+
+            if (imgIO == NULL || imgEO == NULL)
+            {
+                    deleteImage(img->getId());
+            }
+    }
+
+    sp = new SPManager(this, images, EOs);
+
+    result = sp->exec();
+
+    return result;
 }
 
 void EFotoManager::stopSP()
 {
-/*
-        Image* srImage = instanceImage(id);
-        delete spatialRessection;
-        spatialRessection = NULL;
-        deleteEO(id);
-        deleteIO(id);
-        deleteFlight(srImage->getFlightId());
-        deleteSensor(srImage->getSensorId());
-        deleteTerrain();
-        deleteImage(id);
-*/
+    delete sp;
+    sp = NULL;
+    //deleteSensor(images.at(0)->getSensorId());
+    int numPoints=points.size();
+    int numImages=images.size();
+
+    for (int i=0;i<numPoints;i++)
+    {
+            deletePoint(points.at(0)->getId());
+    }
+    for (int i=0;i<numImages;i++)
+    {
+            deleteIO(images.at(0)->getId());
+            deleteImage(images.at(0)->getId());
+    }
 }
 
 bool EFotoManager::execPT()
@@ -1074,6 +1071,10 @@ bool EFotoManager::exec(string filename)
 		savedState = true;
 		execOrtho();
 		break;
+        case 8:
+                savedState = true;
+                execSP();
+                break;
 	default:
 		nextModule = 0;
 	}
