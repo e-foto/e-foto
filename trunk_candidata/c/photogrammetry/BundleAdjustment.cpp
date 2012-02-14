@@ -5,8 +5,8 @@
 #include <QTime>
 
 
-#define FRANC
-//#define PAULO
+//#define FRANC
+#define PAULO
 
 #define MAXRESIDUO 0.0001
 #define ESPARSA

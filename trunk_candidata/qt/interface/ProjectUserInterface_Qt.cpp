@@ -549,6 +549,7 @@ void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 			//delete alert;
 		}
 	}
+	updateLabelFileName();
 }
 
 void ProjectUserInterface_Qt::saveFile()
@@ -952,10 +953,13 @@ void ProjectUserInterface_Qt::updateTree()
 	else
 	{
 		//treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
+		/*
 		if (actionSave_file->isEnabled())
 			projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
 		else
 			projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
+			*/
+		updateLabelFileName();
 	}
 	if (headerForm.lineEditName->text() != "")
 		setWindowTitle(headerForm.lineEditName->text() + tr(" - efoto[Project Manager]"));
@@ -1034,7 +1038,7 @@ bool ProjectUserInterface_Qt::exec()
 	LoadingScreen::instance().close();
 	qApp->processEvents();
 	changeModule = false;
-
+	updateLabelFileName();
 	//if (qApp->exec())
 	//return false;
 	return true;
@@ -2996,7 +3000,13 @@ string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
 	return OIxml.str();
 }
 
-
+void ProjectUserInterface_Qt::updateLabelFileName()
+{
+		if (actionSave_file->isEnabled())
+			projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
+		else
+			projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
+}
 
 } // namespace efoto
 } // namespace eng

@@ -404,7 +404,10 @@ void PTUserInterface_Qt::showReportXml()
 {
 
         Matrix oesXml=ptManager->eoFromXml();
+        QDockWidget *dockResultView = new QDockWidget("EO Parameters",this);
         QWidget *resultView = new QWidget();
+
+        dockResultView->setWidget(resultView);
         QHBoxLayout *horizontalLayout= new QHBoxLayout();
         //qDebug("Vendo Report");
         QStringList oeHeaderLabels;
@@ -428,22 +431,17 @@ void PTUserInterface_Qt::showReportXml()
         QStringList imagesSelected;
         //oesXml.show('f',3,"oesXml");
         for (int i=0; i<oesXml.getRows();i++)
-            imagesSelected << QString::fromStdString(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
-
+        {
+                //qDebug("imageID: %d\n",oesXml.getInt(i+1,1));
+                imagesSelected << QString::fromStdString(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
+        }
         oesXml=oesXml.sel(1,oesXml.getRows(),2,7);
         ETableWidget *table= new ETableWidget();
         table->setColumnCount(7);
         table->putInColumn(imagesSelected,0);
-        table->putIn(oesXml,0,1,'f',3);
+        table->putIn(oesXml,0,1,'f',4);
         table->setHorizontalHeaderLabels(oeHeaderLabels);
         table->resizeTable();
-        table->setColumnWidth(1,100);
-        table->setColumnWidth(2,100);
-        table->setColumnWidth(3,100);
-        table->setColumnWidth(4,250);
-        table->setColumnWidth(5,250);
-        table->setColumnWidth(6,250);
-
         table->setSortingEnabled(true);
         horizontalLayout->addWidget(table);
         horizontalLayout->setStretchFactor(table,7);
@@ -454,9 +452,12 @@ void PTUserInterface_Qt::showReportXml()
 
         //reportLayout->setStretchFactor(horizontalLayout,7);
         resultView->setLayout(reportLayout);
-        resultView->setMinimumSize(resultView->width()+50,table->rowCount()*table->rowHeight(0)+20);
-        resultView->show();
+       // int tableHeight = table->rowHeight(0)*table->rowCount()+100 > 600 ? 600 : table->rowHeight(0)*table->rowCount()+100 ;
+        //resultView->setMinimumSize(resultView->width()+50,tableHeight);
 
+        dockResultView->setFloating(true);
+        dockResultView->show();
+        resultView->show();
 }
 
 
