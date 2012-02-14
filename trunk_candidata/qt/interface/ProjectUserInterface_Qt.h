@@ -99,6 +99,7 @@ public:
 	//insere as coordenadas digitais no ponto
 	bool insertDigitalCoordinates(QString coordinates);
 	bool availablePhotoTri();
+	void updateLabelFileName();
 	//bool availabeOI();
 	//bool availableOE();
 

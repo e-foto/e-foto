@@ -87,10 +87,10 @@ public:
 
 	/**
  * \brief Metodo que retorna o nome de arquivo da imagem pelo seu respectiva key no projeto
- * \param imageId : Key da imagem no projeto
+ * \param imageKey : Key da imagem no projeto
  * \return string : Texto contendo o nome do arquivo da imagem
  */
-	string getImagefile(int imageId);
+	string getImagefile(int imageKey);
 
 	/**
  * \brief Metodo que altera a interface com o usuÃ¡rio
