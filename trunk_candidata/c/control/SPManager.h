@@ -10,6 +10,7 @@
 #include <deque>
 #include "Image.h"
 #include "ExteriorOrientation.h"
+#include "DemFeatures.h"
 
 /*
 #include "Matrix.h"
@@ -37,6 +38,7 @@ class SPManager
 	bool status;
 	bool over_it;
 	double over_it_dist;
+	DemFeatures spFeatures;
 
 	SPUserInterface* myInterface;
 	EFotoManager* manager;
@@ -76,6 +78,15 @@ public:
 	//
 	bool exec();
 	void returnProject();
+	int loadFeatures(char *filename);
+	void saveFeatures(char *filename);
+	void addFeature(string name, int feattype, int featclass);
+	int removeFeature();
+	void removeAllFeatures();
+	DemFeatures* getFeaturesLink() { return &spFeatures; }
+	string getFeaturesList() { return spFeatures.getFeaturesList(); }
+	void updateProjections();
+	string getFullImagePath(int imagekey);
 	/*
 		void getPairs();
 		void extractDEM(int);
