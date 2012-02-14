@@ -190,9 +190,9 @@ string PTManager::getImagefile(int imageId)
 }
 */
 
-string PTManager::getImagefile(int imageId)
+string PTManager::getImagefile(int imageKey)
 {
-    Image *img= efotoManager->instanceImage(imageId);
+    Image *img= efotoManager->instanceImage(imageKey);
     return img->getFilename();
 }
 
@@ -309,7 +309,7 @@ void PTManager::setENH()
                 points.set(i+1,2,N);
                 points.set(i+1,3,H);
         }
-        //	points.show('f',4);
+        //points.show('f',4);
         ENH=points;
         spareENH=ENH;
         spareENH.putMatrix(pointKeys,1,ENH.getCols()+1);
@@ -788,7 +788,7 @@ string PTManager::createBundleAdjustmentXml()
         //string lb=pt->getLb().xmlGetData();
         //string l0=pt->getL0().xmlGetData();
         fotoTriXml << "<exteriorOrientation>\n";
-        fotoTriXml << "\t<iterations>"<< pt->getTotalIterations() <<"</iterations>\n";
+        fotoTriXml << "\t<iterations>"<< Conversion::intToString(pt->getTotalIterations()) <<"</iterations>\n";
         fotoTriXml << "\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
 
         for (int i=1;i<=oe.getRows();i++)
@@ -1001,7 +1001,7 @@ string PTManager::exportBlockTokml(string fileName)
                         double N2=oe.get(i+1,5)-deltaN;
 
 
-                /*
+                        /*
                         QList<QPointF *> pnts;
                         pnts << new QPointF(E1,N1) <<  new QPointF(E2,N1) <<  new QPointF(E2,N2) << new QPointF(E1,N2);
 
@@ -1084,7 +1084,7 @@ string PTManager::exportBlockTokml(string fileName)
                 }
         }
 
-                /*
+        /*
         double interX=0.0;
         double interY=0.0;
         for( int i=0; i<epolygons.size()-1;i++)
@@ -1173,7 +1173,7 @@ string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSystem sy
                 lat = (hemiLatitude =='S'? -lat : lat);
                 longi = plh.get(1,2)*180/M_PI;
         }
-/*
+        /*
         double lat=plh.get(1,1)*180/M_PI;
         double longi=plh.get(1,2)*180/M_PI;*/
         H=plh.get(1,3);
@@ -1531,22 +1531,21 @@ bool PTManager::hasEODone()
 {
         EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
         if(exteriorXml.hasTagName("imageEO"))
-            return true;
+                return true;
         return false;
 }
 
 Matrix PTManager::eoFromXml()
 {
+        EDomElement tempXa;
         EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
-        int numEO= exteriorXml.children().size();
-
-        Matrix oesMatrix(numEO,7);
+        deque<EDomElement> oesXml=exteriorXml.elementsByTagName("imageEO");
 
         int imagekey;
         double x0,y0,z0,omega,phi,kappa;
+        int numEO = oesXml.size();
+        Matrix oesMatrix(numEO,7);
 
-        deque<EDomElement> oesXml=exteriorXml.elementsByTagName("imageEO");
-        EDomElement tempXa;
         for (int i=0; i<numEO; i++)
         {
                 //temp.setContent(oesXml.at(i).getContent());
