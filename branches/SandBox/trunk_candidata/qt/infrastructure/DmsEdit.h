@@ -25,17 +25,17 @@ enum DmsEditMode { DMS, DEG, RAD };
 * \class DmsEdit
 * \brief Classe que controla um widget para mostrar valores no formato de angulos
 * \copyright E-Foto group
-* \author Paulo André Batista Pupim e Irving Badolato
+* \author Paulo AndrÃ© Batista Pupim e Irving Badolato
 */
 
 class DmsEdit : public QLineEdit
 {
-    Q_OBJECT
+	Q_OBJECT
 protected:
-    Dms *dmsMin;
-    Dms *dmsMax;
-    Dms *oldDegMinSecLine;
-    double radMax,radMin,degMin,degMax;
+	Dms *dmsMin;
+	Dms *dmsMax;
+	Dms *oldDegMinSecLine;
+	double radMax,radMin,degMin,degMax;
 	Dms *degMinSecLine;
 	double radValue;
 	double degValue;
@@ -51,97 +51,97 @@ public:
 	* \brief Construtor da classe
 	* \param parent : Widget pai
 	*/
-    DmsEdit(QWidget *parent=0);
+	DmsEdit(QWidget *parent=0);
 
 	/**
 	* \brief Metodo para alterar o valor de casas decimais do campo segundos quando no modo DMS
 	* \param newDecimals : Numero de casas decimais
 	*/
-    void setDecimals(int newDecimals);
+	void setDecimals(int newDecimals);
 
 	/**
 	* \brief Metodo para retornar o numero de casas decimais do campo segundos quando no modo DMS
 	* \return int : Numero de casas decimais
 	*/
-    int getDecimals();
+	int getDecimals();
 
 	/**
 	* \brief Metodo para retornar o modo do widget, podendo ser DMS, grau decimal e radiano
-	* \return DmsEditMode : Enumerador que representa o modo de operação do widget
+	* \return DmsEditMode : Enumerador que representa o modo de operaÃ§Ã£o do widget
 	*/
-    DmsEditMode getDmsEditMode();
+	DmsEditMode getDmsEditMode();
 
 	/**
 	* \brief Metodo que retorna o valor do angulo em radiano
 	* \return double : Valor do angulo em radiano
 	*/
-    double getRadianValue();
+	double getRadianValue();
 
 	/**
 	* \brief Metodo que retorna o valor do angulo em grau decimal
 	* \return double : Valor do angulo em grau decimal
 	*/
-    double getDegreeValue();
+	double getDegreeValue();
 
 	/**
 	* \brief Metodo que retorna um objeto Dms correspondente ao valor atual do widget
 	* \return Dms : Objeto Dms
 	*/
-    Dms* getDmsValue();
+	Dms* getDmsValue();
 
 	/**
 	* \brief Metodo que altera o valor minimo aceito pelo widget
 	* \param degree  : Valor minimo do grau
 	* \param minutes : Valor minimo do minuto
 	* \param seconds : Valor minimo do segundo
-	* \param signal  : Booleano que informa se o valor é positivo ou negativo
+	* \param signal  : Booleano que informa se o valor Ã© positivo ou negativo
 	*/
-    void setDmsMinimum(int degree,int minutes, double seconds, bool signal);
+	void setDmsMinimum(int degree,int minutes, double seconds, bool signal);
 
 	/**
 	* \brief Metodo que altera o valor maximo aceito pelo widget
 	* \param degree  : Valor maximo do grau
 	* \param minutes : Valor maximo do minuto
 	* \param seconds : Valor maximo do segundo
-	* \param signal  : Booleano que informa se o valor é positivo ou negativo
+	* \param signal  : Booleano que informa se o valor Ã© positivo ou negativo
 	*/
-    void setDmsMaximum(int degree,int minutes, double seconds, bool signal);
+	void setDmsMaximum(int degree,int minutes, double seconds, bool signal);
 
 	/**
 	* \brief Metodo que retorna o valor minimo aceito pelo widget em graus decimais
 	* \return double : Valor minimo
 	*/
-    double getMinimumDeg();
+	double getMinimumDeg();
 
 	/**
 	* \brief Metodo que retorna o valor maximo aceito pelo widget em graus decimais
 	* \return double : Valor maximo
 	*/
-    double getMaximumDeg();
+	double getMaximumDeg();
 
 	/**
 	* \brief Metodo que retorna o valor minimo aceito pelo widget em radianos
 	* \return double : Valor minimo
 	*/
-    double getMinimumRad();
+	double getMinimumRad();
 
 	/**
 	* \brief Metodo que retorna o valor maximo aceito pelo widget em radianos
 	* \return double : Valor maximo
 	*/
-    double getMaximumRad();
+	double getMaximumRad();
 
 	/**
 	* \brief Metodo que retorna o valor minimo aceito pelo widget representado no objeto Dms
 	* \return double : Valor minimo
 	*/
-    Dms * getMinimumDms();
+	Dms * getMinimumDms();
 
 	/**
 	* \brief Metodo que retorna o valor maximo aceito pelo widget representado no objeto Dms
 	* \return double : Valor maximo
 	*/
-    Dms * getMaximumDms();
+	Dms * getMaximumDms();
 
 
 protected:
@@ -158,11 +158,11 @@ protected:
 	* \brief Metodo sobrescrito da QLineEdit para atender os eventos de pressionamento de tecla
 	* \param evento : Evento de pressionamento de tecla a ser tratado
 	*/
-    void keyPressEvent(QKeyEvent *evento);
+	void keyPressEvent(QKeyEvent *evento);
 
 	/**
 	* \brief Metodo sobrescrito da QLineEdit para atender os eventos de entrada de foco do widget
-	* \param evento : Evento de obtenção de foco pelo widget
+	* \param evento : Evento de obtenÃ§Ã£o de foco pelo widget
 	*/
 	void focusInEvent(QFocusEvent *evento);
 
@@ -175,78 +175,78 @@ protected:
 private:
 
 	/**
-	* \brief Metodo auxiliar que informa a posiçao atual do cursor do teclado no widget
+	* \brief Metodo auxiliar que informa a posiÃ§ao atual do cursor do teclado no widget
 	* \return PositionValue : Enumerador que indica em que campo esta o cursor do teclado
 	*/
 	PositionValue positionValue();
 
 	/**
-	* \brief Metodo auxiliar que informa a posiçao do cursor do teclado no widget
-	* \param pos : Valor posiçao do cursor
+	* \brief Metodo auxiliar que informa a posiÃ§ao do cursor do teclado no widget
+	* \param pos : Valor posiÃ§ao do cursor
 	* \return PositionValue : Enumerador que indica em que campo esta o cursor do teclado
 	*/
-    PositionValue positionValue(int pos);
+	PositionValue positionValue(int pos);
 
 public slots:
 
 	/**
 	* \brief Metodo que valida o valor apresentado no widget
 	*/
-    void validate();
+	void validate();
 
 	/**
 	* \brief Metodo que diminui o valor do campo em uma unidade, desde que o modo esteja em DMS
 	*/
-    void stepDown();
+	void stepDown();
 
 	/**
 	* \brief Metodo que aumenta o valor do campo em uma unidade, desde que o modo esteja em DMS
 	*/
-    void stepUp();
+	void stepUp();
 
 	/**
 	* \brief Metodo que aumenta ou diminui o valor do campo em uma unidade, desde que o modo esteja em DMS
 	* \param steps : Valor a ser acrescentado, se steps>0, ou a ser decrementado, se steps <0
 	*/
-    void stepBy(int steps);
+	void stepBy(int steps);
 
 	/**
 	* \brief Metodo que seleciona um campo segundo o valor informado no parametro pos
 	* \param pos : Enumerador indicando o campo a ser selecionado
 	*/
-    void selectField(PositionValue pos);
+	void selectField(PositionValue pos);
 
 	/**
 	* \brief Metodo auxiliar que determina de que campo para qual campo o cursor do teclado mudou
-	* \param oldPos : Valor inicial da posiçao do cursor
-	* \param newPos : Valor final da posiçao do cursor
+	* \param oldPos : Valor inicial da posiÃ§ao do cursor
+	* \param newPos : Valor final da posiÃ§ao do cursor
 	*/
-    void changedField(int oldPos, int newPos);
+	void changedField(int oldPos, int newPos);
 
 	/**
 	* \brief Metodo que altera o modo em que o widget apresenta os angulos
-	* \param newMode : Enumerador que representa o modo de apresentação dos valores
+	* \param newMode : Enumerador que representa o modo de apresentaÃ§Ã£o dos valores
 	*/
-    void setDmsEditMode(DmsEditMode newMode);
+	void setDmsEditMode(DmsEditMode newMode);
 
 	/**
 	* \brief Metodo auxiliar para atualizar o valor apresentado pelo widget
 	* \param newValue : Texto contendo o valor a ser mostrado no widget, se for vazio simplesmente mostra o valor armazenado pelo objeto.
 	*/
-    void updateValue(QString newValue="");
+	void updateValue(QString newValue="");
 
-    /**
-    * \brief Metodo que converte um objeto Dms em Qstring
-    * \param Dms : Objeto a ser convertido
-    * \return QString : Texto do valor do DMS formatado
-    */
-    QString dmsToQString(Dms *dms);
+	/**
+	* \brief Metodo que converte um objeto Dms em Qstring
+	* \param Dms : Objeto a ser convertido
+	* \return QString : Texto do valor do DMS formatado
+	*/
+	QString dmsToQString(Dms *dms);
 
-    /**
-    * \brief Metodo que converte uma QString em objeto Dms
-    * \param dmsQString : QString contendo o valor do dms no formato dd°mm'ss.sss"
-    */
-    void qStringToDms(QString dmsQString);
+	/**
+	* \brief Metodo que converte uma QString em objeto Dms
+	* \param dmsQString : QString contendo o valor do dms no formato ddÂ°mm'ss.sss"
+	*/
+	void qStringToDms(QString dmsQString);
 
 };
 

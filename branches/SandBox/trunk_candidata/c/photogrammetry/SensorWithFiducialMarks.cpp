@@ -128,7 +128,7 @@ Matrix SensorWithFiducialMarks::getSigmaLb()
  * Set all the values of anaFidMarks deque at once
  * @param newAnaFidMarks a deque with the new values
  */
-void SensorWithFiducialMarks::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks)
+void SensorWithFiducialMarks::setAnaFidMarks(deque<DetectorFiducialMark> newAnaFidMarks)
 {
 	anaFidMarks = newAnaFidMarks;
 }
@@ -137,7 +137,7 @@ void SensorWithFiducialMarks::setAnaFidMarks(deque<AnalogFiductialMark> newAnaFi
  * Get all the values of anaFidMarks deque at once
  * @return a deque the values of anaFidMarks
  */
-deque<AnalogFiductialMark> SensorWithFiducialMarks::getAnaFidMarks()
+deque<DetectorFiducialMark> SensorWithFiducialMarks::getAnaFidMarks()
 {
 	return anaFidMarks;
 }
@@ -146,7 +146,7 @@ deque<AnalogFiductialMark> SensorWithFiducialMarks::getAnaFidMarks()
  * Add one value to anaFidMarks deque
  * @param newAnaFidMark the value to be added
  */
-void SensorWithFiducialMarks::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
+void SensorWithFiducialMarks::putAnaFidMark(DetectorFiducialMark newAnaFidMark)
 {
 	anaFidMarks.push_back(newAnaFidMark);
 }
@@ -154,26 +154,26 @@ void SensorWithFiducialMarks::putAnaFidMark(AnalogFiductialMark newAnaFidMark)
 /**
  * Get one value from anaFidMarks deque
  * @param id the id of the value
- * @return the value of the AnalogFiductialMark
+ * @return the value of the DetectorFiducialMark
  */
-AnalogFiductialMark SensorWithFiducialMarks::getAnaFidMark(int id)
+DetectorFiducialMark SensorWithFiducialMarks::getAnaFidMark(int id)
 {
 	for (unsigned int i = 0; i < anaFidMarks.size(); i++)
 		if (anaFidMarks.at(i).getId() == id)
 			return anaFidMarks.at(i);
-	return AnalogFiductialMark();
+	return DetectorFiducialMark();
 }
 
 /**
  * Get one value from anaFidMarks deque
  * @param index the position of the value
- * @return the value of the AnalogFiductialMark
+ * @return the value of the DetectorFiducialMark
  */
-AnalogFiductialMark SensorWithFiducialMarks::getAnaFidMarkAt(unsigned int index)
+DetectorFiducialMark SensorWithFiducialMarks::getAnaFidMarkAt(unsigned int index)
 {
 	if (index < anaFidMarks.size())
 		return anaFidMarks.at(index);
-	return AnalogFiductialMark();
+	return DetectorFiducialMark();
 }
 
 /**
@@ -316,7 +316,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 	anaFidMarks.clear();
 	for (unsigned int i = 0; i < xmlFiductial.size(); i++)
 	{
-		AnalogFiductialMark* fiductial = new AnalogFiductialMark;
+		DetectorFiducialMark* fiductial = new DetectorFiducialMark;
 		fiductial->xmlSetData(xmlFiductial.at(i).getContent());
 		anaFidMarks.push_back(*fiductial);
 	}

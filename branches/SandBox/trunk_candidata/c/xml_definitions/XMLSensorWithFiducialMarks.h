@@ -3,7 +3,6 @@
 
 #include "XMLSensor.h"
 #include "EObject.h"
-#include "AnalogFiductialMark.h"
 /*
 class XMLSensorWithFiducialMarks:XMLSensor
 {

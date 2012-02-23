@@ -1,5 +1,5 @@
-#ifndef ABSTRACTDIGITALCOORDINATE_H
-#define ABSTRACTDIGITALCOORDINATE_H
+#ifndef ABSTRACTIMAGECOORDINATE_H
+#define ABSTRACTIMAGECOORDINATE_H
 
 #include "Coordinate.h"
 
@@ -10,19 +10,19 @@ namespace efoto {
 
 /**
 * \file AbstracDigitalCoordinate.h
-* \class AbstractDigitalCoordinate
+* \class AbstractImageCoordinate
 * \brief Base para as classes de coordenadas digitais 2D
 * \abstract A classe de Coordenadas Digitais 2D foi definida como uma classe abstrata, então você não deve usá-la diretamente.
 * \attention Contrua apenas objetos das classes derivadas.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class AbstractDigitalCoordinate : public Coordinate
+class AbstractImageCoordinate : public Coordinate
 {
 
 protected:
-	int lin;
-	int col;
+	double lin;
+	double col;
 	string unit;
 
 public:
@@ -30,19 +30,19 @@ public:
 	/**
  * \brief Destrutor virtual padrão.
  */
-	virtual ~AbstractDigitalCoordinate();
+	virtual ~AbstractImageCoordinate();
 
 	/**
  * \brief Método para alterar o valor Linha num sistema de coordenadas (Coluna, Linha).
  * \param newLin	Novo valor de linha.
  */
-	void setLin(int newLin);
+	void setLin(double newLin);
 
 	/**
  * \brief Método para alterar o valor Coluna num sistema de coordenadas (Coluna, Linha).
  * \param newCol	Novo valor de coluna.
  */
-	void setCol(int newCol);
+	void setCol(double newCol);
 
 	/**
  * \brief Método para alterar a unidade em que a coordenada é considerada.
@@ -54,13 +54,13 @@ public:
  * \brief Método para retornar o valor de Linha num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da linha.
  */
-	int getLin();
+	double getLin();
 
 	/**
  * \brief Método para retornar o valor de Coluna num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da coluna.
  */
-	int getCol();
+	double getCol();
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
@@ -93,4 +93,4 @@ public:
 } // namespace uerj
 } // namespace br
 
-#endif //ABSTRACTDIGITALCOORDINATE_H
+#endif //ABSTRACTIMAGECOORDINATE_H

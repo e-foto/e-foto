@@ -7,7 +7,7 @@
 #define SENSORWITHKNOWPARAMETERS_H
 #include "FrameSensor.h"
 #include "Matrix.h"
-#include "AnalogFiductialMark.h"
+#include "DetectorFiducialMark.h"
 
 namespace br {
 namespace uerj {

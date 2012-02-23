@@ -54,7 +54,7 @@ void Sensor::setFocalDistanceSigma(double newFocalDistanceSigma)
  focalDistanceSigma = newFocalDistanceSigma;
 }
 
-void Sensor::setPrincipalPointCoordinates(AnalogImageSpaceCoordinate newCoordinates)
+void Sensor::setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates)
 {
  principalPointCoordinates = newCoordinates;
 }
@@ -84,7 +84,7 @@ double Sensor::getFocalDistanceSigma()
  return focalDistanceSigma;
 }
 
-AnalogImageSpaceCoordinate Sensor::getPrincipalPointCoordinates()
+DetectorSpaceCoordinate Sensor::getPrincipalPointCoordinates()
 {
  return principalPointCoordinates;
 }

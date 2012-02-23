@@ -82,19 +82,20 @@ void IOUserInterface_Qt::languageChange()
 
 void IOUserInterface_Qt::informState()
 {
-	//REVER
-	//oldImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
 }
 
 void IOUserInterface_Qt::receiveMark(QPointF p)
 {
 	if (p.x() < 0 || p.y() < 0)
 		return;
-	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1));
+	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
+
 	points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
 	points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
 	points->setData(points->index(table1->currentIndex().row(), 4), QVariant(true));
+
 	measureMark(table1->currentIndex().row()+1,p.x(),p.y());
+
 	table1->selectRow(table1->currentIndex().row() + 1);
 	testActivateIO();
 }
@@ -131,8 +132,6 @@ void IOUserInterface_Qt::init()
 	QWidget* centralwidget = new QWidget(this);
 	QGridLayout* gridLayout = new QGridLayout(centralwidget);
 
-	//myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
-	//myImageView->setFocusPolicy(Qt::NoFocus);
 	//oldImageView = new ImageView(centralwidget);
 	imageView = new SingleViewer();
 	imageView->blockOpen();
@@ -141,13 +140,12 @@ void IOUserInterface_Qt::init()
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
-	Marker mark(SymbolsResource::getCross(Qt::green, QSize(24, 24),3)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-	imageView->getMarker()->changeMarker(mark);
+	mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24),3)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+	//imageView->getMarker()->changeMarker(mark);
 
 	//resize(1024,800);
 
 	// Make some connections
-	//REVER
 	imageView->getMarker()->setToOnlyEmitClickedMode();
 	connect(imageView->getMarker(),SIGNAL(clicked(QPointF)), this, SLOT(receiveMark(QPointF)));
 	//connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
@@ -160,7 +158,7 @@ void IOUserInterface_Qt::init()
 	//myImageView->fitView();
 }
 
-bool IOUserInterface_Qt::measureMark(int id, int col, int lin)
+bool IOUserInterface_Qt::measureMark(int id, double col, double lin)
 {
 	return manager->measureMark(id, col, lin);
 }
@@ -341,6 +339,7 @@ void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 	LoadingScreen::instance().show();
 	qApp->processEvents();
 	delete(imageView);
+	delete(mark);
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
 }
@@ -408,7 +407,7 @@ bool IOUserInterface_Qt::exec()
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->getMarker()->insertMark(location, row+1, pointName);
+			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
 		}
 		makeRepaint();
 		actionMove->trigger();
@@ -478,7 +477,7 @@ bool IOUserInterface_Qt::exec()
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->getMarker()->insertMark(location, row+1, pointName);
+			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
 		}
 
 		table1->selectRow(0);

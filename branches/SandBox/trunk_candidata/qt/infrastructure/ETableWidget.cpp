@@ -26,12 +26,15 @@ ETableWidget::ETableWidget(QWidget *parent): QTableWidget(parent)
         setColumnCount(0);
         setMode('f');
         setDecimals(6);
-        //horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+		horizontalHeader()->setResizeMode(QHeaderView::Stretch);
         verticalHeader()->setResizeMode(QHeaderView::Stretch);
-        horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+
+		/*
+		horizontalHeader()->setResizeMode(QHeaderView::Interactive);
         horizontalHeader()->setStretchLastSection(true);
         horizontalHeader()->setMinimumSectionSize(-1);
-
+*/
         /*
         verticalHeader()->setResizeMode(QHeaderView::Interactive);
         verticalHeader()->setStretchLastSection(true);
@@ -624,7 +627,6 @@ void ETableWidget::avaliateType(int row, int col)
                 itemDoubleSpinBox->selectAll();
         }
 }
-
 
 void ETableWidget::validateItem()
 {

@@ -10,8 +10,8 @@
 #include "ExteriorOrientation.h"
 #include "Flight.h"
 #include "EOQuality.h"
-#include "DigitalImageSpaceCoordinate.h"
-#include "AnalogImageSpaceCoordinate.h"
+#include "ImageSpaceCoordinate.h"
+#include "DetectorSpaceCoordinate.h"
 #include "RayTester.h"
 
 /**
@@ -48,7 +48,7 @@ class SpatialRessection : public ExteriorOrientation
 	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
 	deque<int> selectedPoints;
 	bool pointForFlightDirectionAvailable;
-	DigitalImageSpaceCoordinate pointForFlightDirection;
+	ImageSpaceCoordinate pointForFlightDirection;
 
 	int totalIterations;
 	bool gnssConverged, insConverged;
@@ -88,7 +88,7 @@ public:
 	Matrix getLastL0();
 
 	deque<int> getSelectedPoints();
-	DigitalImageSpaceCoordinate* getPointForFlightDirection();
+	ImageSpaceCoordinate* getPointForFlightDirection();
 
 	int getTotalIterations();
 	bool getConverged();
@@ -140,14 +140,14 @@ public:
 
 	// Private support methods
 	//
-	AnalogImageSpaceCoordinate applyDistortions(double xi, double eta);
-	AnalogImageSpaceCoordinate applyDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate);
-	AnalogImageSpaceCoordinate removeDistortions(double xi, double eta);
-	AnalogImageSpaceCoordinate removeDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate);
-	AnalogImageSpaceCoordinate getRadialDistortions(double xi, double eta);
-	AnalogImageSpaceCoordinate getDecenteredDistortions(double xi, double eta);
-	AnalogImageSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
-	AnalogImageSpaceCoordinate getCurvatureDistortions(double xi, double eta);
+	DetectorSpaceCoordinate applyDistortions(double xi, double eta);
+	DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
+	DetectorSpaceCoordinate removeDistortions(double xi, double eta);
+	DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
+	DetectorSpaceCoordinate getRadialDistortions(double xi, double eta);
+	DetectorSpaceCoordinate getDecenteredDistortions(double xi, double eta);
+	DetectorSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
+	DetectorSpaceCoordinate getCurvatureDistortions(double xi, double eta);
 
 };
 
