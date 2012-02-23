@@ -69,7 +69,7 @@ RasterResource::~RasterResource()
 void RasterResource::emitLoadError()
 {
 	QMessageBox* msgBox = new QMessageBox();
-	msgBox->setText("Error: Load image was failed.");
+	msgBox->setText("Error: The image loading process.");
 	msgBox->exec();
 }
 
