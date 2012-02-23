@@ -3,7 +3,7 @@
 
 #include "ui_Stereoplotter.h"
 #include "SPUserInterface.h"
-#include "ImageView.h"
+#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
 #include "TreeFeatures.h"
@@ -13,7 +13,6 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "ImageViewers.h"
 
 namespace br {
 namespace uerj {

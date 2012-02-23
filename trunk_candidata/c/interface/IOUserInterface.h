@@ -44,7 +44,7 @@ public:
 
 	// Other Methods
 	//
-	virtual bool measureMark(int id, int col, int lin) = 0;
+	virtual bool measureMark(int id, double col, double lin) = 0;
 	virtual bool calculateIO() = 0;
 	virtual bool exec() = 0;
 

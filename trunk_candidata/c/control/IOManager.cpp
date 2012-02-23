@@ -79,11 +79,11 @@ PositionMatrix IOManager::getAnalogMarks()
 	return PositionMatrix();
 }
 
-bool IOManager::measureMark(int id, int col, int lin)
+bool IOManager::measureMark(int id, double col, double lin)
 {
 	if (started)
 	{
-		DigitalFiductialMark* myMark = new DigitalFiductialMark(id, myImage->getId(), col, lin);
+		ImageFiducialMark* myMark = new ImageFiducialMark(id, myImage->getId(), col, lin);
 		myImage->deleteDigFidMark(id);
 		myImage->putDigFidMark(*myMark);
 		return true;
@@ -105,11 +105,11 @@ deque<string> IOManager::markData(int index)
 
 		result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 1),3));
 		result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 2),3));
-		DigitalFiductialMark myMark = myImage->getDigFidMark(index + 1);
+		ImageFiducialMark myMark = myImage->getDigFidMark(index + 1);
 		if (myMark.isAvailable())
 		{
-			result.push_back(Conversion::intToString(myMark.getCol()));
-			result.push_back(Conversion::intToString(myMark.getLin()));
+			result.push_back(Conversion::doubleToString(myMark.getCol()));
+			result.push_back(Conversion::doubleToString(myMark.getLin()));
 		}
 	}
 	return result;

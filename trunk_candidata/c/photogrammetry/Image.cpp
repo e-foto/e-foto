@@ -291,7 +291,7 @@ string Image::getInsType()
  * Set all the values of digFidMarks deque at once
  * @param newDigFidMarks a deque with the new values
  */
-void Image::setDigFidMarks(deque<DigitalFiductialMark> newDigFidMarks)
+void Image::setDigFidMarks(deque<ImageFiducialMark> newDigFidMarks)
 {
 	digFidMarks = newDigFidMarks;
 }
@@ -300,7 +300,7 @@ void Image::setDigFidMarks(deque<DigitalFiductialMark> newDigFidMarks)
  * Get all the values of digFidMarks deque at once
  * @return a deque the values of digFidMarks
  */
-deque<DigitalFiductialMark> Image::getDigFidMarks()
+deque<ImageFiducialMark> Image::getDigFidMarks()
 {
 	return digFidMarks;
 }
@@ -309,7 +309,7 @@ deque<DigitalFiductialMark> Image::getDigFidMarks()
  * Add one value to digFidMarks deque
  * @param newDigFidMark the value to be added
  */
-void Image::putDigFidMark(DigitalFiductialMark newDigFidMark)
+void Image::putDigFidMark(ImageFiducialMark newDigFidMark)
 {
 	if (digFidMarks.empty())
 	{
@@ -338,26 +338,26 @@ void Image::putDigFidMark(DigitalFiductialMark newDigFidMark)
 /**
  * Get one value from digFidMarks deque
  * @param index the position of the value
- * @return the value of the DigitalFiductialMark
+ * @return the value of the ImageFiducialMark
  */
-DigitalFiductialMark Image::getDigFidMark(int id)
+ImageFiducialMark Image::getDigFidMark(int id)
 {
 	for (unsigned int i = 0; i < digFidMarks.size(); i++)
 		if (digFidMarks.at(i).getId() == id)
 			return digFidMarks.at(i);
-	return DigitalFiductialMark();
+	return ImageFiducialMark();
 }
 
 /**
  * Get one value from digFidMarks deque
  * @param index the position of the value
- * @return the value of the DigitalFiductialMark
+ * @return the value of the ImageFiducialMark
  */
-DigitalFiductialMark Image::getDigFidMarkAt(unsigned int index)
+ImageFiducialMark Image::getDigFidMarkAt(unsigned int index)
 {
 	if (index < digFidMarks.size())
 		return digFidMarks.at(index);
-	return DigitalFiductialMark();
+	return ImageFiducialMark();
 }
 
 /**
@@ -651,20 +651,15 @@ int Image::load()
 	return 0;
 }
 
-
-//Paulo 09/09/11
-// metodo para colocar os pontos de controle antes dos pontos photogrametricos
-
 void Image::sortPoints()
 {
 	deque<Point*> listCtrl;
 
 	for(int i=0; i<myPoints.size() ;i++)
 	{
-		//Point* pnt=myPoints.at(i);
-		if (myPoints.at(i)->is("ControlPoint")) //pnt->is("ControlPoint"))
-			listCtrl.push_front(myPoints.at(i)); //pnt);
-		else if (myPoints.at(i)->is("PhotogrammetricPoint") || myPoints.at(i)->is("CheckingPoint"))
+		if (myPoints.at(i)->getType() == Point::CONTROL)
+			listCtrl.push_front(myPoints.at(i));
+		else
 			listCtrl.push_back(myPoints.at(i));
 
 		//qDebug("\tponto %d = %s",i, myPoints.at(i)->getPointId().c_str());//pnt->getPointId());

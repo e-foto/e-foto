@@ -19,6 +19,7 @@ public:
 	RasterResource(QString filepath, bool withSmoothIn = false, bool withSmoothOut = true);
 	~RasterResource();
 
+	void emitLoadError();
 	bool load(QImage image);
 	bool load(QString filepath);
 	bool save(QString filepath, QString format);

@@ -65,10 +65,10 @@ public:
 
 	// Other Methods
 	//
-	bool measurePoint(int id, int col, int lin);
+	bool measurePoint(int id, double col, double lin);
 	void selectPoint(int id);
 	void unselectPoint(int id);
-	deque<double> pointToAnalog(int col, int lin);
+	deque<double> pointToDetector(double col, double lin);
 	bool removePoint(int id);
 	bool insertPointOnImage(int id);
 	bool removePointFromImage(int id);
@@ -80,7 +80,7 @@ public:
 	bool connectImagePoints();
 	bool updatePointsTable();
 	bool flightDirection(int markId);
-	bool flightDirection(int col, int lin);
+	bool flightDirection(double col, double lin);
 	bool calculateSR(int iterations, double gnssPrecision, double insPrecision);
 	bool exteriorDone();
 	deque<string> makeReport();

@@ -141,8 +141,8 @@ void SPManager::updateProjections()
 		for (int j = 0; j < df->points.size(); j++)
 		{
 			// Isso vai ficar um pouco ruim, mas vai melhorar em breve quando a classe DigitalImageCoordinates for substituida por algo equivalente usando double (completando o suporte a subpixels)
-			DigitalImageSpaceCoordinate pL0 = prL.objectToDigital(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
-			DigitalImageSpaceCoordinate pR0 = prR.objectToDigital(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
+			ImageSpaceCoordinate pL0 = prL.objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
+			ImageSpaceCoordinate pR0 = prR.objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
 			df->points.at(j).left_x = pL0.getCol();
 			df->points.at(j).left_y = pL0.getLin();
 			df->points.at(j).right_x = pR0.getCol();

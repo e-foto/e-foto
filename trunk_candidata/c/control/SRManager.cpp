@@ -67,14 +67,14 @@ SRUserInterface* SRManager::getInterface()
 // Other Methods
 //
 
-bool SRManager::measurePoint(int id, int col, int lin)
+bool SRManager::measurePoint(int id, double col, double lin)
 {
 	if (started)
 	{
 		Point* pointToMeasure = myImage->getPoint(id);
 		if (pointToMeasure != NULL)
 		{
-			pointToMeasure->putDigitalCoordinate(DigitalImageSpaceCoordinate(myImage->getId(), col, lin));
+			pointToMeasure->putImageCoordinate(ImageSpaceCoordinate(myImage->getId(), col, lin));
 			mySR->selectPoint(id);
 		}
 		/* ERRO: ponto fora da imagem. */
@@ -99,11 +99,11 @@ void SRManager::unselectPoint(int id)
 	}
 }
 
-deque<double> SRManager::pointToAnalog(int col, int lin)
+deque<double> SRManager::pointToDetector(double col, double lin)
 {
 	deque<double> result;
-	result.push_back(myIO->digitalToAnalog(col, lin).getXi());
-	result.push_back(myIO->digitalToAnalog(col, lin).getEta());
+	result.push_back(myIO->imageToDetector(col, lin).getXi());
+	result.push_back(myIO->imageToDetector(col, lin).getEta());
 	return result;
 }
 
@@ -144,7 +144,7 @@ bool SRManager::removePointFromImage(int id)
 		Point* pointToRemove = manager->instancePoint(id);
 		if (pointToRemove != NULL)
 		{
-			pointToRemove->deleteDigitalCoordinate(myImage->getId());
+			pointToRemove->deleteImageCoordinate(myImage->getId());
 		}
 		return true;
 		/* ERRO: ponto nÃ£o existe. */
@@ -227,11 +227,11 @@ deque<string> SRManager::pointData(int index)
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getX(),3));
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getY(),3));
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getZ(),3));
-		if (myPoint->hasDigitalCoordinate(myImage->getId()) && myPoint->getDigitalCoordinate(myImage->getId()).isAvailable())
+		if (myPoint->hasImageCoordinate(myImage->getId()) && myPoint->getImageCoordinate(myImage->getId()).isAvailable())
 		{
-			result.push_back(Conversion::intToString(myPoint->getDigitalCoordinate(myImage->getId()).getCol()));
-			result.push_back(Conversion::intToString(myPoint->getDigitalCoordinate(myImage->getId()).getLin()));
-			AnalogImageSpaceCoordinate aisc = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+			result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getCol()));
+			result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getLin()));
+			DetectorSpaceCoordinate aisc = myImage->getIO()->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
 			result.push_back(Conversion::doubleToString(aisc.getXi(),3));
 			result.push_back(Conversion::doubleToString(aisc.getEta(),3));
 		}
@@ -286,7 +286,7 @@ bool SRManager::flightDirection(int MarkId)
 	return false;
 }
 
-bool SRManager::flightDirection(int col, int lin)
+bool SRManager::flightDirection(double col, double lin)
 {
 	if (started)
 	{

@@ -79,8 +79,36 @@ QImage SymbolsResource::getBordedX(QColor colorBrush, QColor colorPen, QSize siz
 	return img;
 }
 
-QImage SymbolsResource::getTriangle(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+QImage SymbolsResource::getTriangle(QColor color, QColor fillcolor, QSize size, unsigned int weigth, bool pointingCenter)
 {
+	QImage img(size, QImage::Format_ARGB32);
+	img.fill(QColor(0,0,0,0).rgba());
+	double hotX = size.width() / 2.0;
+	double hotY = size.height() / 2.0;
+
+	double a = hotY - 1;
+	double b = a / 2.0;
+	double c = sqrt(2.0) * a / 2.0;
+	QPointF A(hotX, 1);
+	QPointF B(hotX + c, hotY + b);
+	QPointF C(hotX - c, hotY + b);
+	QVector<QPointF> points;
+	points.append(A);
+	points.append(B);
+	points.append(C);
+	QPolygonF poly(points);
+
+	QPainter painter(&img);
+	painter.setBrush(QBrush(fillcolor));
+	painter.drawConvexPolygon(poly);
+	painter.setPen(QPen(QBrush(color),weigth));
+	painter.setBrush(QBrush(Qt::transparent));
+	if (pointingCenter)
+		painter.drawPoint(hotX, hotY);
+	painter.drawConvexPolygon(poly);
+	painter.end();
+
+	return img;
 }
 
 QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, unsigned int weigth, bool pointingCenter)
@@ -95,6 +123,8 @@ QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, un
 	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
 	painter.setPen(QPen(QBrush(color),weigth));
 	painter.setBrush(QBrush(Qt::transparent));
+	if (pointingCenter)
+		painter.drawPoint(hotX, hotY);
 	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
 	painter.end();
 
@@ -324,8 +354,8 @@ GeometryResource::GeometryResource()
 	linkPointsMode = 4;
 	nextPointkey_ = 1;
 	nextLinekey_ = 1;
-	defaultMark = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(8,8), 1, true));
-	selectedMark  = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(16,16), 2, true));
+	defaultMark = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(8,8), 1, false));
+	selectedMark  = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(16,16), 2, false));
 	//defaultMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
 	//selectedMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
 }

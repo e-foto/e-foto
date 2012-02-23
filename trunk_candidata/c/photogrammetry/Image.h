@@ -6,7 +6,7 @@
 #define IMAGE_H
 
 #include "EObject.h"
-#include "DigitalFiductialMark.h"
+#include "ImageFiducialMark.h"
 #include "ObjectSpaceCoordinate.h"
 
 namespace br {
@@ -60,7 +60,7 @@ class Image : public EObject
 
 	// Composed objects
 	//
-	deque<DigitalFiductialMark> digFidMarks;
+	deque<ImageFiducialMark> digFidMarks;
 
 	// Associated objects
 	//
@@ -115,12 +115,12 @@ public:
 
 	// Composed objects accessor methods
 	//
-	void setDigFidMarks(deque<DigitalFiductialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
-	deque<DigitalFiductialMark> getDigFidMarks(); // Get for all DigFidMarks using deque.
+	void setDigFidMarks(deque<ImageFiducialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
+	deque<ImageFiducialMark> getDigFidMarks(); // Get for all DigFidMarks using deque.
 
-	void putDigFidMark(DigitalFiductialMark newDigFidMark); // Put one DigFidMark between the components of the image.
-	DigitalFiductialMark getDigFidMark(int id);
-	DigitalFiductialMark getDigFidMarkAt(unsigned int index); // Get one DigFidMark by index for iterations.
+	void putDigFidMark(ImageFiducialMark newDigFidMark); // Put one DigFidMark between the components of the image.
+	ImageFiducialMark getDigFidMark(int id);
+	ImageFiducialMark getDigFidMarkAt(unsigned int index); // Get one DigFidMark by index for iterations.
 	int countDigFidMarks();  // Inform the number of DigFidMarks composed in the image.
 
 	void deleteDigFidMark(int id); // Delete one DigFidMark by id in the image.
