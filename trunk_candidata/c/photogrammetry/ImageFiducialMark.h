@@ -1,7 +1,7 @@
-#ifndef DIGITALFIDUCTIALMARK_H
-#define DIGITALFIDUCTIALMARK_H
+#ifndef IMAGEFIDUCIALMARK_H
+#define IMAGEFIDUCIALMARK_H
 
-#include "AbstractDigitalCoordinate.h"
+#include "AbstractImageCoordinate.h"
 
 namespace br {
 namespace uerj {
@@ -9,13 +9,13 @@ namespace eng {
 namespace efoto {
 
 /**
-* \file DigitalFiductialMark.h
-* \class DigitalFiductialMark
+* \file ImageFiducialMark.h
+* \class ImageFiducialMark
 * \brief Classes de marca fiducial digital. É a referência impressa sobre uma imagem por um sensor métrico.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class DigitalFiductialMark : public AbstractDigitalCoordinate
+class ImageFiducialMark : public AbstractImageCoordinate
 {
 
 private:
@@ -27,14 +27,14 @@ public:
 	/**
  * \brief Construtor vazio.
  */
-	DigitalFiductialMark();
+	ImageFiducialMark();
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com seus identificadores.
  * \param myId	Identificador da marca fiducial digital.
  * \param myImageId	Identificador da imagem à qual a marca pertence.
  */
-	DigitalFiductialMark(int myId, int myImageId);
+	ImageFiducialMark(int myId, int myImageId);
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com todos os seus valores.
@@ -43,7 +43,7 @@ public:
  * \param myCol	Valor da coluna.
  * \param myLin	Valor da linha.
  */
-	DigitalFiductialMark(int myId, int myImageId, int myCol, int myLin);
+	ImageFiducialMark(int myId, int myImageId, double myCol, double myLin);
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com todos os seus valores usando matrizes.
@@ -51,12 +51,12 @@ public:
  * \param myImageId	Identificador da imagem à qual a marca pertence.
  * \param myPositio	Matriz coluna com os valores de posicionamento da marca.
  */
-	DigitalFiductialMark(int myId, int myImageId, const PositionMatrix& myPosition);
+	ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition);
 
 	/**
  * \brief Destrutor padrão.
  */
-	~DigitalFiductialMark();
+	~ImageFiducialMark();
 
 	/**
  * \brief Método de acesso que seta o valor de id da marca fiducial digital.
@@ -98,19 +98,19 @@ public:
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja DigitalFiductialMark. Retorna falso no caso contrário.
+ * \return bool	Retorna verdadeiro caso o nome passado seja ImageFiducialMark. Retorna falso no caso contrário.
  */
 	bool is(string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
- * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe DigitalFiductialMark.
+ * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe ImageFiducialMark.
  */
 	void xmlSetData(string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe DigitalFiductialMark.
+ * \return string	Retorna o string contendo o xml para uma instância da classe ImageFiducialMark.
  */
 	string xmlGetData();
 };
@@ -120,4 +120,4 @@ public:
 } // namespace uerj
 } // namespace br
 
-#endif // DIGITALFIDUCTIALMARK_H
+#endif // IMAGEFIDUCIALMARK_H

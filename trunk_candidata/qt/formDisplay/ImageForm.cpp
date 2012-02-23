@@ -2,7 +2,6 @@
 #include <QFileDialog>
 #include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
-#include "CommonMethods.h"
 
 namespace br {
 namespace uerj {
@@ -239,8 +238,11 @@ QString ImageForm::loadImageFile()
 		//***************************************************************************************************
 		int w, h, f;
 
-		CommonMethods::instance(CM::CVMethods)->loadImage(w,h,f,fileImage.toStdString());
-		CommonMethods::instance(CM::CVMethods)->freeImage();
+		//CommonMethods::instance(CM::CVMethods)->loadImage(w,h,f,fileImage.toStdString());
+		//CommonMethods::instance(CM::CVMethods)->freeImage();
+		QImage img(fileImage);
+		w = img.width(); h = img.height();
+
 		heightLine->setText(QString::number(h)+" px");
 		widthLine->setText(QString::number(w)+" px");
 		return fileImage;

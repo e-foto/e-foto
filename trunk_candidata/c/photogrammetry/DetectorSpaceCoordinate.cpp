@@ -1,15 +1,15 @@
 /************************************************************************
-   AnalogImageSpaceCoordinate.cpp
+   DetectorSpaceCoordinate.cpp
 **************************************************************************/
 
-#include "AnalogImageSpaceCoordinate.h"
+#include "DetectorSpaceCoordinate.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate()
+DetectorSpaceCoordinate::DetectorSpaceCoordinate()
 {
 	imageId = 0;
 	unit = "";
@@ -22,7 +22,7 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate()
 	sigmaAvailable = false;
 }
 
-AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId)
+DetectorSpaceCoordinate::DetectorSpaceCoordinate(int myImageId)
 {
 	imageId = myImageId;
 	unit = "";
@@ -35,7 +35,7 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId)
 	sigmaAvailable = false;
 }
 
-AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
+DetectorSpaceCoordinate::DetectorSpaceCoordinate(int myImageId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
 {
 	imageId = myImageId;
 	unit = myUnit;
@@ -48,51 +48,51 @@ AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, string myU
 	sigmaAvailable = true;
 }
 
-AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition)
+DetectorSpaceCoordinate::DetectorSpaceCoordinate(int myImageId, const PositionMatrix& myPosition)
 {
 	imageId = myImageId;
 	setPosition(myPosition);
 	sigmaAvailable = false;
 }
 
-AnalogImageSpaceCoordinate::AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
+DetectorSpaceCoordinate::DetectorSpaceCoordinate(int myImageId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
 {
 	imageId = myImageId;
 	setPosition(myPosition);
 	setPositionSigmas(myPositionSigmas);
 }
 
-AnalogImageSpaceCoordinate::~AnalogImageSpaceCoordinate()
+DetectorSpaceCoordinate::~DetectorSpaceCoordinate()
 {
 
 }
 
-void AnalogImageSpaceCoordinate::setImageId(int newImageId)
+void DetectorSpaceCoordinate::setImageId(int newImageId)
 {
 	imageId = newImageId;
 }
 
-int AnalogImageSpaceCoordinate::getImageId()
+int DetectorSpaceCoordinate::getImageId()
 {
 	return imageId;
 }
 
-string AnalogImageSpaceCoordinate::objectType(void)
+string DetectorSpaceCoordinate::objectType(void)
 {
-	return "AnalogImageSpaceCoordinate";
+	return "DetectorSpaceCoordinate";
 }
 
-string AnalogImageSpaceCoordinate::objectAssociations(void)
+string DetectorSpaceCoordinate::objectAssociations(void)
 {
 	return "";
 }
 
-bool AnalogImageSpaceCoordinate::is(string s)
+bool DetectorSpaceCoordinate::is(string s)
 {
-	return (s == "AnalogImageSpaceCoordinate" ? true : false);
+	return (s == "DetectorSpaceCoordinate" ? true : false);
 }
 
-void AnalogImageSpaceCoordinate::xmlSetData(string xml)
+void DetectorSpaceCoordinate::xmlSetData(string xml)
 {
 	EDomElement root(xml);
 	imageId = Conversion::stringToInt(root.attribute("image_key"));
@@ -124,7 +124,7 @@ void AnalogImageSpaceCoordinate::xmlSetData(string xml)
 	setPositionSigmas(sigmaMatrix);
 }
 
-string AnalogImageSpaceCoordinate::xmlGetData()
+string DetectorSpaceCoordinate::xmlGetData()
 {
 	stringstream result;
 

@@ -69,8 +69,8 @@ ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(double xiLeft, 
 	{
 		double Z = calculateZ(xiLeft, etaLeft, xiRight, etaRight);
 
-		ObjectSpaceCoordinate leftObject = leftRay->analogToObject(xiLeft, etaLeft, Z);
-		ObjectSpaceCoordinate rightObject = rightRay->analogToObject(xiRight, etaRight, Z);
+		ObjectSpaceCoordinate leftObject = leftRay->detectorToObject(xiLeft, etaLeft, Z);
+		ObjectSpaceCoordinate rightObject = rightRay->detectorToObject(xiRight, etaRight, Z);
 
 		double X = (leftObject.getX() + rightObject.getX()) / 2;
 		double Y = (leftObject.getY() + rightObject.getY()) / 2;
@@ -84,7 +84,7 @@ ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(double xiLeft, 
 	}
 }
 
-ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(AnalogImageSpaceCoordinate leftCoord, AnalogImageSpaceCoordinate rightCoord)
+ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(DetectorSpaceCoordinate leftCoord, DetectorSpaceCoordinate rightCoord)
 {
 	return calculateIntersection(leftCoord.getXi(), leftCoord.getEta(), rightCoord.getXi(), rightCoord.getEta());
 }
@@ -93,8 +93,8 @@ ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(int colLeft, in
 {
 	if (stereoPair->hasOrientations())
 	{
-		AnalogImageSpaceCoordinate leftAnalog = leftRay->digitalToAnalog(colLeft, rowLeft);
-		AnalogImageSpaceCoordinate rightAnalog = rightRay->digitalToAnalog(colRight, rowRight);
+		DetectorSpaceCoordinate leftAnalog = leftRay->imageToDetector(colLeft, rowLeft);
+		DetectorSpaceCoordinate rightAnalog = rightRay->imageToDetector(colRight, rowRight);
 		return calculateIntersection(leftAnalog.getXi(), leftAnalog.getEta(), rightAnalog.getXi(), rightAnalog.getEta());
 	}
 	else
@@ -103,7 +103,7 @@ ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(int colLeft, in
 	}
 }
 
-ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(DigitalImageSpaceCoordinate leftCoord, DigitalImageSpaceCoordinate rightCoord)
+ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(ImageSpaceCoordinate leftCoord, ImageSpaceCoordinate rightCoord)
 {
 	return calculateIntersection(leftCoord.getCol(), leftCoord.getLin(), rightCoord.getCol(), rightCoord.getLin());
 }

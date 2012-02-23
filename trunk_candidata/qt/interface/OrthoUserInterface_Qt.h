@@ -3,10 +3,9 @@
 
 #include "ui_OrthoForm.h"
 #include "OrthoUserInterface.h"
-#include "ImageView.h"
+#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
-#include "ImageViewers.h"
 
 #include <QPoint>
 #include <QGridLayout>

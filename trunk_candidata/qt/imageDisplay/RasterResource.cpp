@@ -1,6 +1,7 @@
 #include "RasterResource.h"
 #include "math.h"
 
+#include <QMessageBox>
 #include <QDebug>
 
 RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmoothOut)
@@ -11,8 +12,11 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 	_levels = 0;
 	_useSmoothIn = withSmoothIn;
 	_useSmoothOut = withSmoothOut;
-	if (!_isValid)
+	if (!_isValid || srcImage->width() == 0 || srcImage->height() == 0)
+	{
+		emitLoadError();
 		return;
+	}
 
 	// Calcular o numero de niveis da piramide
 	_imageDim = srcImage->size();
@@ -24,6 +28,14 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 	// Atribui a imagem original ao primeiro nível
 	_pyramid[0] = new QImage(srcImage->convertToFormat(QImage::Format_ARGB32));
 	delete(srcImage);
+	if (_pyramid[0]->width() == 0 || _pyramid[0]->height() == 0)
+	{
+		_isValid = false;
+		delete(_pyramid[0]);
+		free(_pyramid);
+		emitLoadError();
+		return;
+	}
 
 	// Construindo imagens
 	for(int l = 1; l < _levels; l++)
@@ -32,6 +44,16 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
 		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::KeepAspectRatioByExpanding, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
+
+		if (_pyramid[l]->width() == 0 || _pyramid[l]->height() == 0)
+		{
+			_isValid = false;
+			for (int k = l; l >= 0; l--)
+				delete(_pyramid[k]);
+			free(_pyramid);
+			emitLoadError();
+			return;
+		}
 	}
 }
 
@@ -42,6 +64,13 @@ RasterResource::~RasterResource()
 	for(int l = 0; l < _levels; l++)
 		delete(_pyramid[l]);
 	free(_pyramid);
+}
+
+void RasterResource::emitLoadError()
+{
+	QMessageBox* msgBox = new QMessageBox();
+	msgBox->setText("Error: Load image was failed.");
+	msgBox->exec();
 }
 
 void RasterResource::useSmoothIn(bool useSmooth)
@@ -64,7 +93,10 @@ bool RasterResource::load(QImage image)
 {
 	// Impede carga de imagem nula
 	if (image.isNull())
+	{
+		emitLoadError();
 		return false;
+	}
 
 	// Remove imagem pré-existente
 	if (_isValid)
@@ -85,6 +117,14 @@ bool RasterResource::load(QImage image)
 
 	// Atribui a imagem original ao primeiro nível
 	_pyramid[0] = new QImage(image.convertToFormat(QImage::Format_ARGB32));
+	if (_pyramid[0]->width() == 0 || _pyramid[0]->height() == 0)
+	{
+		_isValid = false;
+		delete(_pyramid[0]);
+		free(_pyramid);
+		emitLoadError();
+		return false;
+	}
 
 	// Construindo imagens
 	for(int l = 1; l < _levels; l++)
@@ -93,6 +133,16 @@ bool RasterResource::load(QImage image)
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
 		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
+
+		if (_pyramid[l]->width() == 0 || _pyramid[l]->height() == 0)
+		{
+			_isValid = false;
+			for (int k = l; l >= 0; l--)
+				delete(_pyramid[k]);
+			free(_pyramid);
+			emitLoadError();
+			return false;
+		}
 	}
 	return _isValid;
 }
@@ -123,6 +173,14 @@ bool RasterResource::load(QString filepath)
 
 	// Atribui a imagem original ao primeiro nível
 	_pyramid[0] = new QImage(image.convertToFormat(QImage::Format_ARGB32));
+	if (_pyramid[0]->width() == 0 || _pyramid[0]->height() == 0)
+	{
+		_isValid = false;
+		delete(_pyramid[0]);
+		free(_pyramid);
+		emitLoadError();
+		return false;
+	}
 
 	// Construindo imagens
 	for(int l = 1; l < _levels; l++)
@@ -131,6 +189,16 @@ bool RasterResource::load(QString filepath)
 		int w = _pyramid[l-1]->width()/2;
 		int h = _pyramid[l-1]->height()/2;
 		_pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
+
+		if (_pyramid[l]->width() == 0 || _pyramid[l]->height() == 0)
+		{
+			_isValid = false;
+			for (int k = l; l >= 0; l--)
+				delete(_pyramid[k]);
+			free(_pyramid);
+			emitLoadError();
+			return false;
+		}
 	}
 	return _isValid;
 }

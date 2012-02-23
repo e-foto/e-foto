@@ -1,5 +1,5 @@
-#ifndef ABSTRACTANALOGCOORDINATE_H
-#define ABSTRACTANALOGCOORDINATE_H
+#ifndef ABSTRACTDETECTORCOORDINATE_H
+#define ABSTRACTDETECTORCOORDINATE_H
 
 #include "Coordinate.h"
 
@@ -9,15 +9,15 @@ namespace eng {
 namespace efoto {
 
 /**
-* \file AbstractAnalogCoordinate.h
-* \class AbstractAnalogCoordinate
+* \file AbstractDetectorCoordinate.h
+* \class AbstractDetectorCoordinate
 * \brief Base para as classes de coordenadas analógicas 2D
 * \abstract A classe de Coordenadas Analógicas 2D foi definida como uma classe abstrata, então você não deve usá-la diretamente.
 * \attention Contrua apenas objetos das classes derivadas.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class AbstractAnalogCoordinate : public Coordinate
+class AbstractDetectorCoordinate : public Coordinate
 {
 
 protected:
@@ -33,7 +33,7 @@ public:
 	/**
  * \brief Destrutor virtual padrão.
  */
-	virtual ~AbstractAnalogCoordinate();
+	virtual ~AbstractDetectorCoordinate();
 
 	/**
  * \brief Método para alterar o valor Xi num sistema de coordenadas (Xi, Eta).
@@ -144,4 +144,4 @@ public:
 } // namespace uerj
 } // namespace br
 
-#endif // ANALOGIMAGESPACE_H
+#endif // ABSTRACTDETECTORCOORDINATE_H

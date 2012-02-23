@@ -4,10 +4,9 @@
 #include "ui_DemExtraction.h"
 #include "ui_SeedEditor.h"
 #include "DEMUserInterface.h"
-#include "ImageView.h"
+#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
-#include "ImageViewers.h"
 #include "MatchingPoints.h"
 #include "ProgressWindow_Qt.h"
 #include <QPoint>

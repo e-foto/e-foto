@@ -14,9 +14,7 @@
 #include "SensorWithKnowParameters.h"
 #include "Flight.h"
 #include "Image.h"
-#include "CheckingPoint.h"
-#include "ControlPoint.h"
-#include "PhotogrammetricPoint.h"
+#include "Point.h"
 #include "InteriorOrientation.h"
 #include "SpatialRessection.h"
 
@@ -60,7 +58,7 @@ class EFotoManager
 	PTManager* fotoTri;
 	DEMManager* dem;
 	OrthoManager* ortho;
-        SPManager* sp;
+	SPManager* sp;
 
 	Terrain* theTerrain;
 	deque<Sensor*> sensors;
@@ -107,9 +105,9 @@ public:
 	Image* instanceImage(int id);
 
 	/**
-		 * This method creates an instance of the @e Point class.
-		 * @param id The number of the @e Point identifier.
-		 */
+	 * This method creates an instance of the @e Point class.
+	 * @param id The number of the @e Point identifier.
+	 */
 	void instanceAllPoints();
 	void instanceAllIOs();
 	void instanceAllEOs();

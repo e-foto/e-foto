@@ -42,6 +42,7 @@ protected:
 	~IOUserInterface_Qt();
 	QWidget *windowReport;
 	//ImageView *oldImageView;
+	Marker *mark;
 	SingleViewer *imageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
@@ -55,7 +56,7 @@ protected slots:
 
 private:
 	void init();
-	bool measureMark(int id, int col, int lin);
+	bool measureMark(int id, double col, double lin);
 
 public:
 	static IOUserInterface_Qt* instance(IOManager* manager);

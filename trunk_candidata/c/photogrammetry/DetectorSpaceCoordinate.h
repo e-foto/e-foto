@@ -1,7 +1,7 @@
-#ifndef ANALOGIMAGESPACECOORDINATE_H
-#define ANALOGIMAGESPACECOORDINATE_H
+#ifndef DETECTORSPACECOORDINATE_H
+#define DETECTORSPACECOORDINATE_H
 
-#include "AbstractAnalogCoordinate.h"
+#include "AbstractDetectorCoordinate.h"
 
 namespace br {
 namespace uerj {
@@ -9,15 +9,15 @@ namespace eng {
 namespace efoto {
 
 /**
-* \file AnalogImageSpaceCoordinate.h
-* \class AnalogImageSpaceCoordinate
+* \file DetectorSpaceCoordinate.h
+* \class DetectorSpaceCoordinate
 * \brief Classes de coordenada analógica sobre o espaço imagem (espaço discreto 2D). Usada quando transformamos uma coordenada digital de imagem (por transformação afim) para o plano do sensor onde ela foi obtida.
 * \attention Atenção, pois essa classe foi construída para representar as coordenadas da matriz da imagem digital transformada sobre o plano de obtenção da imagem no sensor.
 * \attention Não use esta classe como se ela fosse uma classe para subpixels.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class AnalogImageSpaceCoordinate : public AbstractAnalogCoordinate
+class DetectorSpaceCoordinate : public AbstractDetectorCoordinate
 {
 
 private:
@@ -28,13 +28,13 @@ public:
 	/**
  * \brief Construtor vazio.
  */
-	AnalogImageSpaceCoordinate();
+	DetectorSpaceCoordinate();
 
 	/**
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem.
  * \param myImageId	Identificador da imagem à qual a coordenada pertence.
  */
-	AnalogImageSpaceCoordinate(int myImageId);
+	DetectorSpaceCoordinate(int myImageId);
 
 	/**
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem com todos os seus valores.
@@ -46,14 +46,14 @@ public:
  * \param mySigmaEta	Valor do erro na direção Eta.
  * \param mySigmaXiEta	Valor de erro conjunto para as direções Xi e Eta.
  */
-	AnalogImageSpaceCoordinate(int myImageId, string myUnit, double myXi, double myEta, double mySigmaXi = 1, double mySigmaEta = 1, double mySigmaXiEta = 0);
+	DetectorSpaceCoordinate(int myImageId, string myUnit, double myXi, double myEta, double mySigmaXi = 1, double mySigmaEta = 1, double mySigmaXiEta = 0);
 
 	/**
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem sem erro conhecido usando matrizes.
  * \param myImageId	Identificador da imagem à qual a coordenada pertence.
  * \param myPositio	Matriz coluna com os valores de posicionamento da coordenada.
  */
-	AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition);
+	DetectorSpaceCoordinate(int myImageId, const PositionMatrix& myPosition);
 
 	/**
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem com todos os seus valores usando matrizes.
@@ -61,12 +61,12 @@ public:
  * \param myPositio	Matriz coluna com os valores de posicionamento da coordenada.
  * \param myPositionSigmas	Matriz sigma com os valores de erro para o posicionamento da coordenada.
  */
-	AnalogImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas);
+	DetectorSpaceCoordinate(int myImageId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas);
 
 	/**
  * \brief Destrutor padrão.
  */
-	~AnalogImageSpaceCoordinate();
+	~DetectorSpaceCoordinate();
 
 	/**
  * \brief Método de acesso que seta o valor de id da imagem à qual a coordenada pertence.
@@ -96,19 +96,19 @@ public:
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja AnalogImageSpaceCoordinate. Retorna falso no caso contrário.
+ * \return bool	Retorna verdadeiro caso o nome passado seja DetectorSpaceCoordinate. Retorna falso no caso contrário.
  */
 	bool is(string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
- * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe AnalogImageSpaceCoordinate.
+ * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe DetectorSpaceCoordinate.
  */
 	void xmlSetData(string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe AnalogImageSpaceCoordinate.
+ * \return string	Retorna o string contendo o xml para uma instância da classe DetectorSpaceCoordinate.
  */
 	string xmlGetData();
 
@@ -119,4 +119,4 @@ public:
 } // namespace uerj
 } // namespace br
 
-#endif // ANALOGIMAGESPACECOORDINATE_H
+#endif // DETECTORSPACECOORDINATE_H

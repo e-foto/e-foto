@@ -3,8 +3,8 @@
 
 #include "EObject.h"
 #include "ObjectSpaceCoordinate.h"
-#include "DigitalImageSpaceCoordinate.h"
-#include "AnalogImageSpaceCoordinate.h"
+#include "ImageSpaceCoordinate.h"
+#include "DetectorSpaceCoordinate.h"
 
 namespace br {
 namespace uerj {
@@ -25,17 +25,24 @@ class Image;
 */
 class Point : public EObject
 {
+public:
+
+	enum PointType { PHOTOGRAMMETRIC, CHECKING, CONTROL, UNKNOWN};
 
 protected:
 	int id;
 	string pointId;
 	string description;
+	PointType type;
 
 	ObjectSpaceCoordinate objectCoordinate;
-	deque<DigitalImageSpaceCoordinate> digitalCoordinates;
-	deque<AnalogImageSpaceCoordinate> analogCoordinates;
+	deque<ImageSpaceCoordinate> imageCoordinates;
+	deque<DetectorSpaceCoordinate> detectorCoordinates;
 
 	deque<Image*> myImages;
+
+	PointType readPointType(string type);
+	string writePointType(PointType type);
 
 public:
 
@@ -50,33 +57,35 @@ public:
 	void setId(int newId);
 	void setPointId(string newPointId);
 	void setDescription(string newDescription);
+	void setType(PointType type);
 	int getId();
 	string getPointId();
 	string getDescription();
+	PointType getType();
 
 	// Composed Objects accessor methods
 	//
 	void setObjectCoordinate(ObjectSpaceCoordinate newObject);
 	ObjectSpaceCoordinate getObjectCoordinate();
 
-	void setDigitalCoordinates(deque<DigitalImageSpaceCoordinate> newDigitalCoordinates);
-	void setAnalogCoordinates(deque<AnalogImageSpaceCoordinate> newAnalogCoordinates);
-	deque<DigitalImageSpaceCoordinate> getDigitalCoordinates();
-	deque<AnalogImageSpaceCoordinate> getAnalogCoordinates();
+	void setImageCoordinates(deque<ImageSpaceCoordinate> newImageCoordinates);
+	void setDetectorCoordinates(deque<DetectorSpaceCoordinate> newDetectorCoordinates);
+	deque<ImageSpaceCoordinate> getImageCoordinates();
+	deque<DetectorSpaceCoordinate> getDetectorCoordinates();
 
-	int putDigitalCoordinate(DigitalImageSpaceCoordinate newDigitalCoordinate);
-	int putAnalogCoordinate(AnalogImageSpaceCoordinate newAnalogCoordinate);
-	DigitalImageSpaceCoordinate getDigitalCoordinate(int imageId);
-	AnalogImageSpaceCoordinate getAnalogCoordinate(int imageId);
-	DigitalImageSpaceCoordinate getDigitalCoordinateAt(unsigned int index);
-	AnalogImageSpaceCoordinate getAnalogCoordinateAt(unsigned int index);
-	unsigned int countDigitalCoordinates();
-	unsigned int countAnalogCoordinates();
+	int putImageCoordinate(ImageSpaceCoordinate newimageCoordinate);
+	int putDetectorCoordinate(DetectorSpaceCoordinate newdetectorCoordinate);
+	ImageSpaceCoordinate getImageCoordinate(int imageId);
+	DetectorSpaceCoordinate getDetectorCoordinate(int imageId);
+	ImageSpaceCoordinate getImageCoordinateAt(unsigned int index);
+	DetectorSpaceCoordinate getDetectorCoordinateAt(unsigned int index);
+	unsigned int countImageCoordinates();
+	unsigned int countDetectorCoordinates();
 
-	void clearDigitalCoordinates();
-	void clearAnalogCoordinates();
-	void deleteDigitalCoordinate(int imageId);
-	void deleteAnalogCoordinate(int imageId);
+	void clearImageCoordinates();
+	void clearDetectorCoordinates();
+	void deleteImageCoordinate(int imageId);
+	void deleteDetectorCoordinate(int imageId);
 
 	// Associated object accessor methods
 	//
@@ -87,8 +96,8 @@ public:
 
 	// Check methods
 	//
-	bool hasDigitalCoordinate(int imageId);
-	bool hasAnalogCoordinate(int imageId);
+	bool hasImageCoordinate(int imageId);
+	bool hasDetectorCoordinate(int imageId);
 
 	// EObject methods
 	//
@@ -98,6 +107,8 @@ public:
 
 	// Other methods
 	//
+	void xmlSetData(string xml);
+	string xmlGetData();
 };
 
 } // namespace efoto

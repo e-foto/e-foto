@@ -7,7 +7,7 @@
 #define SENSORWITHFIDUCIALMARKS_H
 #include "FrameSensor.h"
 #include "Matrix.h"
-#include "AnalogFiductialMark.h"
+#include "DetectorFiducialMark.h"
 
 namespace br {
 namespace uerj {
@@ -38,7 +38,7 @@ private:
 
 	//Composed objects
 	//
-	deque<AnalogFiductialMark> anaFidMarks;
+	deque<DetectorFiducialMark> anaFidMarks;
 
 public:
 
@@ -59,12 +59,12 @@ public:
 
 	//Composed object accessor methods
 	//
-	void setAnaFidMarks(deque<AnalogFiductialMark> newAnaFidMarks);
-	deque<AnalogFiductialMark> getAnaFidMarks();
+	void setAnaFidMarks(deque<DetectorFiducialMark> newAnaFidMarks);
+	deque<DetectorFiducialMark> getAnaFidMarks();
 
-	void putAnaFidMark(AnalogFiductialMark newAnaFidMark);
-	AnalogFiductialMark getAnaFidMark(int id);
-	AnalogFiductialMark getAnaFidMarkAt(unsigned int index);
+	void putAnaFidMark(DetectorFiducialMark newAnaFidMark);
+	DetectorFiducialMark getAnaFidMark(int id);
+	DetectorFiducialMark getAnaFidMarkAt(unsigned int index);
 	int countAnaFidMarks();
 
 	void deleteAnaFidMark(int id);

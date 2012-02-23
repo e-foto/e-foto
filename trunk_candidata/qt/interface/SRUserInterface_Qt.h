@@ -3,8 +3,9 @@
 
 #include "ui_SRForm.h"
 #include "SRUserInterface.h"
-#include "ImageView.h"
+#include "ImageViewers.h"
 #include "LoadingScreen.h"
+#include "FlightDirectionForm.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -26,8 +27,9 @@ protected slots:
 
 public slots:
 	virtual void informState();
-	virtual void receivePoint(QPoint p);
-	virtual void receiveFlightDirection(QPoint p);
+	virtual void receivePoint(QPointF p);
+	virtual void receiveFlightDirection(QPointF p);
+	virtual void actualizeDisplayedPoints();
 	virtual void actualizeSelection(QStandardItem* item);
 	virtual void makeRepaint();
 	virtual void activeSetMode();
@@ -43,17 +45,21 @@ public slots:
 
 private:
 	void init();
-	bool measurePoint(int id, int col, int lin);
+	bool measurePoint(int id, double col, double lin);
 
 protected:
 	static SRUserInterface_Qt* srInst;
 	SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SRUserInterface_Qt();
 	QWidget *windowReport;
-	ImageView *myImageView;
+	//ImageView *oldImageView;
+	Marker *markOn;
+	Marker *markOff;
+	SingleViewer *imageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	bool flightAvailable;
+	FlightDirectionForm *flightDirectionForm;
 	void closeEvent(QCloseEvent *e);
 
 public:

@@ -41,10 +41,10 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
 	grid_unsaved = false;
 	elim_bad_pts = false;
 	bb_empty = true;
-        lsm_temp_growth_step = 2;
-        lsm_temp_max_size = 50;
-        ncc_temp_growth_step = 2;
-        ncc_temp_max_size = 50;
+		lsm_temp_growth_step = 2;
+		lsm_temp_max_size = 50;
+		ncc_temp_growth_step = 2;
+		ncc_temp_max_size = 50;
 	setListPoint();
 }
 
@@ -117,7 +117,7 @@ void DEMManager::setListPoint()
 	for(int i=0;i<allPoints.size();i++)
 	{
 		Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
-		if (point != NULL)// && !point->is("CheckingPoint"))
+		if (point != NULL)
 			listAllPoints.push_back(point);
 	}
 }
@@ -190,7 +190,7 @@ double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double
 	double delta_X = X2 - X1;
 	double delta_Y = Y2 - Y1;
 
-        if (fabs(delta_X - 0.0) < 0.0000000000001)
+		if (fabs(delta_X - 0.0) < 0.0000000000001)
 	{
 		if (delta_Y > 0.0)
 			return M_PI/2.0;
@@ -198,7 +198,7 @@ double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double
 			return 3*M_PI/2.0;
 	}
 
-        return fixAngle(atan(delta_Y/delta_X));
+		return fixAngle(atan(delta_Y/delta_X));
 }
 
 bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolerance)
@@ -249,7 +249,7 @@ int DEMManager::getPairs()
 	Y1 = Xa.get(2,1);
 	p1 = img->getWidth();
 	p2 = img->getHeight()/2;
-	osc = pr.digitalToObject(p1,p2,img->getHeight(),false);
+	osc = pr.imageToObject(p1,p2,img->getHeight(),false);
 	X2 = osc.getX();
 	Y2 = osc.getY();
 	R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
@@ -355,9 +355,9 @@ void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int 
 	rad_cor = _rad_cor;
 	match_method = _match_method;
 
-        // Unifor step for Region Growing
+		// Unifor step for Region Growing
 	rgx = _rgx;
-        rgy = _rgx;
+		rgy = _rgx;
 	downsample = 1.0/downs;
 
 	//    ncc_temp, ncc_sw;
@@ -429,7 +429,7 @@ void DEMManager::createInitialSeeds()
 	Point *p;
 	int no_imgs_pt, left_id, right_id;
 	double X, Y, Z;
-	DigitalImageSpaceCoordinate left_dic, right_dic;
+	ImageSpaceCoordinate left_dic, right_dic;
 
 	for (int i=0; i<listAllPoints.size(); i++)
 	{
@@ -445,11 +445,11 @@ void DEMManager::createInitialSeeds()
 		{
 			getImagesId(k, left_id, right_id);
 
-			if (!p->hasDigitalCoordinate(left_id) || !p->hasDigitalCoordinate(right_id))
+			if (!p->hasImageCoordinate(left_id) || !p->hasImageCoordinate(right_id))
 				continue;
 
-			left_dic = p->getDigitalCoordinate(left_id);
-			right_dic = p->getDigitalCoordinate(right_id);
+			left_dic = p->getImageCoordinate(left_id);
+			right_dic = p->getImageCoordinate(right_id);
 			X = p->getObjectCoordinate().getX();
 			Y = p->getObjectCoordinate().getY();
 			Z = p->getObjectCoordinate().getZ();
@@ -501,7 +501,7 @@ int DEMManager::loadDem(char * filename, int fileType)
 	if (isShowImage)
 	{
 		Matrix * img = pairs.getDemImage(1.0, 1.0);
-                dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
+				dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
 		//dui->saveImage((char *)"teste_img.bmp",img);
 		delete img;
 	}
@@ -514,30 +514,30 @@ int DEMManager::loadDem(char * filename, int fileType)
 int DEMManager::loadDemGrid(char * filename, int fileType)
 {
 
-        // Create custom grid. Load will fix these values.
-        if (grid != NULL)
-            delete grid;
-        grid = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
-        grid->loadDem(filename,fileType);
+		// Create custom grid. Load will fix these values.
+		if (grid != NULL)
+			delete grid;
+		grid = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
+		grid->loadDem(filename,fileType);
 
-        // Update info
-        DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
-        double Xi, Yi, Zi, Xf, Yf, Zf, res_x, res_y;
-        grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
-        int w = grid->getWidth(), h = grid->getHeight();
-        grid->getMinMax(Zi,Zf);
-        dui->setGridData(Xi,Yi,Xf,Yf,Zi,Zf,res_x,res_y,w,h);
+		// Update info
+		DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+		double Xi, Yi, Zi, Xf, Yf, Zf, res_x, res_y;
+		grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+		int w = grid->getWidth(), h = grid->getHeight();
+		grid->getMinMax(Zi,Zf);
+		dui->setGridData(Xi,Yi,Xf,Yf,Zi,Zf,res_x,res_y,w,h);
 
-        // Show image, if selected
-        if (isShowImage && !cancel_flag)
-        {
-                double res_z = (Zf-Zi)/255.0;
-                Matrix * img = grid->getDemImage();
-                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
-                delete img;
-        }
+		// Show image, if selected
+		if (isShowImage && !cancel_flag)
+		{
+				double res_z = (Zf-Zi)/255.0;
+				Matrix * img = grid->getDemImage();
+				dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
+				delete img;
+		}
 
-        return 1;
+		return 1;
 }
 
 int DEMManager::loadDemFeature(char *filename)
@@ -624,21 +624,21 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
 	switch (method)
 	{
-            case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
-            case 2: grid->interpolateTrendSurface(tsurface); break;
-            case 3: grid->interpolateNearestPoint(); break;
-            default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
+			case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
+			case 2: grid->interpolateTrendSurface(tsurface); break;
+			case 3: grid->interpolateNearestPoint(); break;
+			default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
 	}
 
-        // Add polygons, if selected
-        if (gridSource > 0)
-        {
-                Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
-                grid->overlayMap(&overMap);
-        }
+		// Add polygons, if selected
+		if (gridSource > 0)
+		{
+				Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+				grid->overlayMap(&overMap);
+		}
 
-        // Update Zi and Zf
-        grid->getMinMax(Zi, Zf);
+		// Update Zi and Zf
+		grid->getMinMax(Zi, Zf);
 
 	// Update info
 	double min, max;
@@ -652,7 +652,7 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	dui->setAllowClose(true);
 	dui->enableOptions();
 	grid_unsaved = true;
-        dui->setElapsedTime(grid->getElapsedTime(), 1);
+		dui->setElapsedTime(grid->getElapsedTime(), 1);
 
 	// Add polygons, if selected
 	//if (gridSource > 0)
@@ -664,9 +664,9 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
 	{
-                double res_z = (Zf-Zi)/255.0;
+				double res_z = (Zf-Zi)/255.0;
 		Matrix * img = grid->getDemImage();
-                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
+				dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
 }
@@ -714,8 +714,8 @@ int DEMManager::extractDEM(int option, bool clearMList)
 {
 	cancel_flag = false;
 
-        // Reset extraction time
-        dem_total_elapsed_time = 0.0;
+		// Reset extraction time
+		dem_total_elapsed_time = 0.0;
 
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->disableOptions();
@@ -788,13 +788,13 @@ int DEMManager::extractDEM(int option, bool clearMList)
 		return 0;
 	}
 
-        dui->setElapsedTime(dem_total_elapsed_time, 0);
+		dui->setElapsedTime(dem_total_elapsed_time, 0);
 
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
 	{
 		Matrix * img = pairs.getDemImage(1.0, 1.0);
-                dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
+				dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
 		delete img;
 	}
 
@@ -815,14 +815,14 @@ void DEMManager::extractDEMPair(int pair)
 	//
 	// Load images
 	//
-        Matrix img1, img2;
+		Matrix img1, img2;
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->setStatus((char *)"Loading left image ...");
 	string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
-        dui->loadImage(img1, (char *)filename.c_str(), downsample);
+		dui->loadImage(img1, (char *)filename.c_str(), downsample);
 	dui->setStatus((char *)"Loading right image ...");
 	filename = getImage(right_id)->getFilepath() + "/" + getImage(right_id)->getFilename();
-        dui->loadImage(img2, (char *)filename.c_str(), downsample);
+		dui->loadImage(img2, (char *)filename.c_str(), downsample);
 
 	//
 	// Start matching
@@ -848,12 +848,12 @@ void DEMManager::extractDEMPair(int pair)
 	im->setRadiometricMode(rad_cor-1);
 	im->setMinStd(std);
 	im->setElimanteBadPoints(elim_bad_pts);
-        im->getNCC()->setTemplateGrothStep(ncc_temp_growth_step);
-        im->getNCC()->setTemplateMaximumSize(ncc_temp_max_size);
+		im->getNCC()->setTemplateGrothStep(ncc_temp_growth_step);
+		im->getNCC()->setTemplateMaximumSize(ncc_temp_max_size);
 	im->getNCC()->setTemplate(ncc_temp);
 	im->getNCC()->setSearchWindow(ncc_sw);
-        im->getLSM()->setTemplateGrothStep(lsm_temp_growth_step);
-        im->getLSM()->setTemplateMaximumSize(lsm_temp_max_size);
+		im->getLSM()->setTemplateGrothStep(lsm_temp_growth_step);
+		im->getLSM()->setTemplateMaximumSize(lsm_temp_max_size);
 	im->getLSM()->setTemplate(lsm_temp);
 	im->getLSM()->setMaxIterations(lsm_it);
 	im->getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
@@ -861,10 +861,10 @@ void DEMManager::extractDEMPair(int pair)
 	im->getLSM()->setOverIt(over_it);
 	im->getLSM()->setOverItDist(over_it_dist);
 
-        im->performImageMatching(&img1, &img2, &seeds, &pairs);
+		im->performImageMatching(&img1, &img2, &seeds, &pairs);
 	//  dui->saveImage((char *)"Map.bmp",&im->getMap());
 
-        dem_total_elapsed_time += im->getElapsedTime();
+		dem_total_elapsed_time += im->getElapsedTime();
 
 	delete im;
 }
@@ -900,26 +900,26 @@ string DEMManager::getDemQuality(char *filename, int option)
 
 double DEMManager::calculateDemRes(double ds)
 {
-        if (listAllImages.size() < 1)
-            return 0.0;
+		if (listAllImages.size() < 1)
+			return 0.0;
 
-        Image *img = listAllImages.at(0);
+		Image *img = listAllImages.at(0);
 
-        // Calculate image approximate resolution scanning
-        int img_width = img->getWidth(), img_height = img->getHeight();
-        double DPI = (2.54/23.0) * (img_width + img_height)/2;
+		// Calculate image approximate resolution scanning
+		int img_width = img->getWidth(), img_height = img->getHeight();
+		double DPI = (2.54/23.0) * (img_width + img_height)/2;
 
-        // Calculate resolution in image space (mm)
-        double resolution_mm = 0.0254/DPI;
+		// Calculate resolution in image space (mm)
+		double resolution_mm = 0.0254/DPI;
 
-        // Calculate scale
-        double focal = img->getSensor()->getFocalDistance() / 1000.0;
-        double Z0 = img->getEO()->getXa().get(3,1);
-        double scale = Z0 / focal;
+		// Calculate scale
+		double focal = img->getSensor()->getFocalDistance() / 1000.0;
+		double Z0 = img->getEO()->getXa().get(3,1);
+		double scale = Z0 / focal;
 
-        double resolution = resolution_mm * scale;
+		double resolution = resolution_mm * scale;
 
-        return resolution*ds;
+		return resolution*ds;
 }
 
 } // namespace efoto

@@ -59,7 +59,7 @@ public:
 	// Other Methods
 	//
 	PositionMatrix getAnalogMarks();
-	bool measureMark(int id, int col, int lin);
+	bool measureMark(int id, double col, double lin);
 	unsigned int countMarks();
 	deque<string> markData(int index);
 	unsigned int getTotalMarks();

@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QPointF>
+#include <QPolygonF>
 #include <QObject>
 #include <QImage>
 #include <QPainter>
@@ -27,7 +28,7 @@ public:
 	static QImage getX(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
 	static QImage getBordedX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
 
-	static QImage getTriangle(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+	static QImage getTriangle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 	static QImage getCircle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 	static QImage getSquare(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 

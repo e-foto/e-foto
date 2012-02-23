@@ -226,7 +226,7 @@ deque<int> SpatialRessection::getSelectedPoints()
 /**
  *
  */
-DigitalImageSpaceCoordinate* SpatialRessection::getPointForFlightDirection()
+ImageSpaceCoordinate* SpatialRessection::getPointForFlightDirection()
 {
 	if (pointForFlightDirectionAvailable)
 		return &pointForFlightDirection;
@@ -474,9 +474,9 @@ void SpatialRessection::generateInitialA()
 		{
 			// Essas linhas estão horríveis de ler!!! Mas não consigo melhorar mais que isso...
 			Point* myPoint = myImage->getPoint(selectedPoints.at(i)); // Escolhi aqui o ponto que estou usando.
-			AnalogImageSpaceCoordinate myCoordinate = myPoint->getAnalogCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
+			DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
 			if (myCoordinate.getUnit() == "") // Se essas coordenadas analógicas não existirem, acusadas pela falta de unidade...
-				myCoordinate = rt->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+				myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
 			//myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId())); // Crio elas usando digitalToAnalog nas coordenadas digitais.
 
 			// Distortions added.
@@ -576,8 +576,8 @@ void SpatialRessection::generateL0()
 			//double L0xi = xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
 			//double L0eta = eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
 
-			//AnalogImageSpaceCoordinate newXiEta = applyDistortions(L0xi, L0eta);
-			//AnalogImageSpaceCoordinate newXiEta = removeDistortions(L0xi, L0eta);
+			//DetectorSpaceCoordinate newXiEta = applyDistortions(L0xi, L0eta);
+			//DetectorSpaceCoordinate newXiEta = removeDistortions(L0xi, L0eta);
 
 			//double newXi = newXiEta.getXi();
 			//double newEta = newXiEta.getEta();
@@ -588,7 +588,7 @@ void SpatialRessection::generateL0()
 			//L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
 			//L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
 
-			AnalogImageSpaceCoordinate analog = rt->objectToAnalog(myCoordinate);
+			DetectorSpaceCoordinate analog = rt->objectToDetector(myCoordinate);
 
 			L0.set(j, 1, analog.getXi());
 			L0.set(j+1, 1, analog.getEta());
@@ -609,9 +609,9 @@ void SpatialRessection::generateLb()
 		{
 			// Mesmo código horrível do A inicial.
 			Point* myPoint = myImage->getPoint(selectedPoints.at(i));
-			AnalogImageSpaceCoordinate myCoordinate = myPoint->getAnalogCoordinate(myImage->getId());
+			DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId());
 			if (myCoordinate.getUnit() == "")
-				myCoordinate = rt->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
+				myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
 			//myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
 
 			// Distortions added.
@@ -689,8 +689,8 @@ void SpatialRessection::initialize()
 		phi0 = 0;
 
 		// Calculating kappa0.
-		AnalogImageSpaceCoordinate fiductialCoordinate = rt->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
-		//AnalogImageSpaceCoordinate fiductialCoordinate = myImage->getIO()->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+		DetectorSpaceCoordinate fiductialCoordinate = rt->imageToDetector(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+		//DetectorSpaceCoordinate fiductialCoordinate = myImage->getIO()->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
 
 		// Distortions added.
 		//if (useDistortions)
@@ -839,21 +839,21 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 // Private support methods
 //
 
-AnalogImageSpaceCoordinate SpatialRessection::applyDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::applyDistortions(double xi, double eta)
 {
 	// Por enquanto estou aplicando todas. Crio a flag depois.
 
-	AnalogImageSpaceCoordinate radial = getRadialDistortions(xi, eta);
-	AnalogImageSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
-	AnalogImageSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
-	AnalogImageSpaceCoordinate curvature = getCurvatureDistortions(xi, eta);
+	DetectorSpaceCoordinate radial = getRadialDistortions(xi, eta);
+	DetectorSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
+	DetectorSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
+	DetectorSpaceCoordinate curvature = getCurvatureDistortions(xi, eta);
 
 	qDebug("%f %f\n%f %f\n%f %f\n%f %f\n\n",radial.getXi(),radial.getEta(),decentered.getXi(),decentered.getEta(),atmosphere.getXi(),atmosphere.getEta(),curvature.getXi(),curvature.getEta());
 
 	double xiFinal = xi + radial.getXi() + decentered.getXi() + atmosphere.getXi() + curvature.getXi();
 	double etaFinal = eta + radial.getEta() + decentered.getEta() + atmosphere.getEta() + curvature.getEta();
 
-	AnalogImageSpaceCoordinate result(myImage->getId());
+	DetectorSpaceCoordinate result(myImage->getId());
 	result.setXi(xiFinal);
 	result.setEta(etaFinal);
 	result.setAvailable(true);
@@ -861,24 +861,24 @@ AnalogImageSpaceCoordinate SpatialRessection::applyDistortions(double xi, double
 	return result;
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::applyDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate)
+DetectorSpaceCoordinate SpatialRessection::applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate)
 {
 	return applyDistortions(myAnalogCoordinate.getXi(), myAnalogCoordinate.getEta());
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::removeDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::removeDistortions(double xi, double eta)
 {
 	// Por enquanto estou aplicando todas. Crio a flag depois.
 
-	AnalogImageSpaceCoordinate radial = getRadialDistortions(xi, eta);
-	AnalogImageSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
-	AnalogImageSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
-	AnalogImageSpaceCoordinate curvature = getCurvatureDistortions(xi, eta);
+	DetectorSpaceCoordinate radial = getRadialDistortions(xi, eta);
+	DetectorSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
+	DetectorSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
+	DetectorSpaceCoordinate curvature = getCurvatureDistortions(xi, eta);
 
 	double xiFinal = xi - (radial.getXi() + decentered.getXi() + atmosphere.getXi() + curvature.getXi());
 	double etaFinal = eta - (radial.getEta() + decentered.getEta() + atmosphere.getEta() + curvature.getEta());
 
-	AnalogImageSpaceCoordinate result(myImage->getId());
+	DetectorSpaceCoordinate result(myImage->getId());
 	result.setXi(xiFinal);
 	result.setEta(etaFinal);
 	result.setAvailable(true);
@@ -886,14 +886,14 @@ AnalogImageSpaceCoordinate SpatialRessection::removeDistortions(double xi, doubl
 	return result;
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::removeDistortions(AnalogImageSpaceCoordinate myAnalogCoordinate)
+DetectorSpaceCoordinate SpatialRessection::removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate)
 {
 	return removeDistortions(myAnalogCoordinate.getXi(), myAnalogCoordinate.getEta());
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::getRadialDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::getRadialDistortions(double xi, double eta)
 {
-	AnalogImageSpaceCoordinate result;
+	DetectorSpaceCoordinate result;
 	result.setXi(0.0);
 	result.setEta(0.0);
 	result.setAvailable(true);
@@ -921,9 +921,9 @@ AnalogImageSpaceCoordinate SpatialRessection::getRadialDistortions(double xi, do
 	return result;
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::getDecenteredDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::getDecenteredDistortions(double xi, double eta)
 {
-	AnalogImageSpaceCoordinate result;
+	DetectorSpaceCoordinate result;
 	result.setXi(0.0);
 	result.setEta(0.0);
 	result.setAvailable(true);
@@ -947,9 +947,9 @@ AnalogImageSpaceCoordinate SpatialRessection::getDecenteredDistortions(double xi
 	return result;
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, double eta)
 {
-	AnalogImageSpaceCoordinate result;
+	DetectorSpaceCoordinate result;
 	result.setXi(0.0);
 	result.setEta(0.0);
 	result.setAvailable(true);
@@ -996,9 +996,9 @@ AnalogImageSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi
 	return result;
 }
 
-AnalogImageSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, double eta)
+DetectorSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, double eta)
 {
-	AnalogImageSpaceCoordinate result;
+	DetectorSpaceCoordinate result;
 	result.setXi(0.0);
 	result.setEta(0.0);
 	result.setAvailable(true);

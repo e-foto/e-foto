@@ -1,15 +1,15 @@
 /************************************************************************
-   AnalogFiductialMark.cpp
+   DetectorFiducialMark.cpp
 **************************************************************************/
 
-#include "AnalogFiductialMark.h"
+#include "DetectorFiducialMark.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-AnalogFiductialMark::AnalogFiductialMark()
+DetectorFiducialMark::DetectorFiducialMark()
 {
 	id = 0;
 	sensorId = 0;
@@ -23,7 +23,7 @@ AnalogFiductialMark::AnalogFiductialMark()
 	sigmaAvailable = false;
 }
 
-AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId)
 {
 	id = myId;
 	sensorId = mySensorId;
@@ -37,7 +37,7 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId)
 	sigmaAvailable = false;
 }
 
-AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
 {
 	id = myId;
 	sensorId = mySensorId;
@@ -51,7 +51,7 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, string myUnit
 	sigmaAvailable = true;
 }
 
-AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const PositionMatrix& myPosition)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition)
 {
 	id = myId;
 	sensorId = mySensorId;
@@ -59,7 +59,7 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const Positio
 	sigmaAvailable = false;
 }
 
-AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
 {
 	id = myId;
 	sensorId = mySensorId;
@@ -67,49 +67,49 @@ AnalogFiductialMark::AnalogFiductialMark(int myId, int mySensorId, const Positio
 	setPositionSigmas(myPositionSigmas);
 }
 
-AnalogFiductialMark::~AnalogFiductialMark()
+DetectorFiducialMark::~DetectorFiducialMark()
 {
 
 }
 
-void AnalogFiductialMark::setId(int newId)
+void DetectorFiducialMark::setId(int newId)
 {
 	id = newId;
 }
 
-void AnalogFiductialMark::setSensorId(int newSensorId)
+void DetectorFiducialMark::setSensorId(int newSensorId)
 {
 	sensorId = newSensorId;
 }
 
-int AnalogFiductialMark::getId()
+int DetectorFiducialMark::getId()
 {
 	return id;
 }
 
-int AnalogFiductialMark::getSensorId()
+int DetectorFiducialMark::getSensorId()
 {
 	return sensorId;
 }
 
-string AnalogFiductialMark::objectType(void)
+string DetectorFiducialMark::objectType(void)
 {
 	stringstream result;
-	result << "AnalogFiductialMark " << id;
+	result << "DetectorFiducialMark " << id;
 	return result.str();
 }
 
-string AnalogFiductialMark::objectAssociations(void)
+string DetectorFiducialMark::objectAssociations(void)
 {
 	return "";
 }
 
-bool AnalogFiductialMark::is(string s)
+bool DetectorFiducialMark::is(string s)
 {
-	return (s == "AnalogFiductialMark" ? true : false);
+	return (s == "DetectorFiducialMark" ? true : false);
 }
 
-void AnalogFiductialMark::xmlSetData(string xml)
+void DetectorFiducialMark::xmlSetData(string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -140,10 +140,10 @@ void AnalogFiductialMark::xmlSetData(string xml)
 	setPositionSigmas(sigmaMatrix);
 }
 
-string AnalogFiductialMark::xmlGetData()
+string DetectorFiducialMark::xmlGetData()
 {
 	stringstream result;
-	result << "<fiductialMark key=\"" << Conversion::intToString(id) << "\">\n";
+	result << "<FiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
 	if (available)
 		result << "<gml:pos>" << Conversion::doubleToString(xi) << " " << Conversion::doubleToString(eta) << "</gml:pos>\n";
 	else
@@ -152,7 +152,7 @@ string AnalogFiductialMark::xmlGetData()
 		result << "<sigma>\n" << getPositionSigmas().xmlGetData() << "</sigma>\n";
 	else
 		result << "<sigma>Not Available</sigma>\n";
-	result << "</fiductialMark>";
+	result << "</FiducialMark>";
 	return result.str();
 }
 

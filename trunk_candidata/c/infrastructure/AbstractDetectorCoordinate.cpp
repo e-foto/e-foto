@@ -1,80 +1,80 @@
 /************************************************************************
-   AbstractAnalogCoordinate.cpp
+   AbstractDetectorCoordinate.cpp
 **************************************************************************/
 
-#include "AbstractAnalogCoordinate.h"
+#include "AbstractDetectorCoordinate.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-AbstractAnalogCoordinate::~AbstractAnalogCoordinate()
+AbstractDetectorCoordinate::~AbstractDetectorCoordinate()
 {
 
 }
 
-void AbstractAnalogCoordinate::setXi(double newXi)
+void AbstractDetectorCoordinate::setXi(double newXi)
 {
 	xi = newXi;
 }
 
-void AbstractAnalogCoordinate::setEta(double newEta)
+void AbstractDetectorCoordinate::setEta(double newEta)
 {
 	eta = newEta;
 }
 
-void AbstractAnalogCoordinate::setSigmaXi(double newSigmaXi)
+void AbstractDetectorCoordinate::setSigmaXi(double newSigmaXi)
 {
 	sigmaXi = newSigmaXi;
 }
 
-void AbstractAnalogCoordinate::setSigmaEta(double newSigmaEta)
+void AbstractDetectorCoordinate::setSigmaEta(double newSigmaEta)
 {
 	sigmaEta = newSigmaEta;
 }
 
-void AbstractAnalogCoordinate::setSigmaXiEta(double newSigmaXiEta)
+void AbstractDetectorCoordinate::setSigmaXiEta(double newSigmaXiEta)
 {
 	sigmaXi = newSigmaXiEta;
 }
 
-void AbstractAnalogCoordinate::setUnit(string newUnit)
+void AbstractDetectorCoordinate::setUnit(string newUnit)
 {
 	unit = newUnit;
 }
 
-double AbstractAnalogCoordinate::getXi()
+double AbstractDetectorCoordinate::getXi()
 {
 	return xi;
 }
 
-double AbstractAnalogCoordinate::getEta()
+double AbstractDetectorCoordinate::getEta()
 {
 	return eta;
 }
 
-double AbstractAnalogCoordinate::getSigmaXi()
+double AbstractDetectorCoordinate::getSigmaXi()
 {
 	return sigmaXi;
 }
 
-double AbstractAnalogCoordinate::getSigmaEta()
+double AbstractDetectorCoordinate::getSigmaEta()
 {
 	return sigmaEta;
 }
 
-double AbstractAnalogCoordinate::getSigmaXiEta()
+double AbstractDetectorCoordinate::getSigmaXiEta()
 {
 	return sigmaXiEta;
 }
 
-string AbstractAnalogCoordinate::getUnit()
+string AbstractDetectorCoordinate::getUnit()
 {
 	return unit;
 }
 
-void AbstractAnalogCoordinate::setPosition(const PositionMatrix& newPosition)
+void AbstractDetectorCoordinate::setPosition(const PositionMatrix& newPosition)
 {
 	if (newPosition.getRows() == 2 && newPosition.getCols() == 1)
 	{
@@ -85,7 +85,7 @@ void AbstractAnalogCoordinate::setPosition(const PositionMatrix& newPosition)
 	available = true;
 }
 
-void AbstractAnalogCoordinate::setPositionSigmas(const Matrix& newPositionSigmas)
+void AbstractDetectorCoordinate::setPositionSigmas(const Matrix& newPositionSigmas)
 {
 	if (newPositionSigmas.getRows() == 2 && newPositionSigmas.getCols() == 1)
 	{
@@ -102,7 +102,7 @@ void AbstractAnalogCoordinate::setPositionSigmas(const Matrix& newPositionSigmas
 	sigmaAvailable = true;
 }
 
-PositionMatrix AbstractAnalogCoordinate::getPosition()
+PositionMatrix AbstractDetectorCoordinate::getPosition()
 {
 	PositionMatrix position(2, unit);
 	position.set(1,xi);
@@ -110,7 +110,7 @@ PositionMatrix AbstractAnalogCoordinate::getPosition()
 	return position;
 }
 
-Matrix AbstractAnalogCoordinate::getPositionSigmas()
+Matrix AbstractDetectorCoordinate::getPositionSigmas()
 {
 	Matrix positionSigmas(2,2);
 	positionSigmas.set(1,1,sigmaXi);
@@ -120,9 +120,9 @@ Matrix AbstractAnalogCoordinate::getPositionSigmas()
 	return positionSigmas;
 }
 
-string AbstractAnalogCoordinate::objectType(void)
+string AbstractDetectorCoordinate::objectType(void)
 {
-	return "AbstractAnalogCoordinate";
+	return "AbstractDetectorCoordinate";
 }
 
 } // namespace efoto

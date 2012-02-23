@@ -11,23 +11,9 @@ RCC_DIR = ../temp/rcc
 QT += opengl
 
 unix {
-INCLUDEPATH += \
-			/usr/include/opencv
-LIBS += \
-			-lGL \
-			-lGLU \
-			-lcv \
-			-lhighgui \
-			-lcvaux
 }
 
 win32 {
-	INCLUDEPATH += C:/OpenCV2.0/include/opencv
-	LIBS += "C:/OpenCV2.0\bin\libcv200.dll" \
-		"C:/OpenCV2.0\bin\libcvaux200.dll" \
-		"C:/OpenCV2.0\bin\libcxcore200.dll" \
-		"C:/OpenCV2.0\bin\libcxts200.dll" \
-		"C:/OpenCV2.0\bin\libhighgui200.dll"
 }
 
 DEPENDPATH += \
@@ -38,7 +24,6 @@ DEPENDPATH += \
 			  c/interface \
 			  c/photogrammetry \
 			  c/xml_definitions \
-			  cv/infrastructure \
 			  qt/formDisplay \
 			  qt/imageDisplay \
 			  qt/infrastructure \
@@ -57,7 +42,6 @@ INCLUDEPATH += . \
 			   c/imageDisplay \
 			   c/xml_definitions \
 			   qt/formDisplay \
-			   cv/infrastructure \
 			   qt/resource
 
 # Input
@@ -72,14 +56,14 @@ HEADERS += \
 		   SPManager.h \
 		   SRManager.h \
 		   #c/imageDisplay/
-		   AbstractSWidget.h \
-		   GLMethods.h \
-		   SExhibition.h \
-		   SImage.h \
-		   SMark.h \
-		   SMarker.h \
-		   STile.h \
-		   SViewport.h \
+		   #AbstractSWidget.h \
+		   #GLMethods.h \
+		   #SExhibition.h \
+		   #SImage.h \
+		   #SMark.h \
+		   #SMarker.h \
+		   #STile.h \
+		   #SViewport.h \
 		   #c/imageProcessing/
 		   ImageMatching.h \
 		   Interpolation.h \
@@ -87,9 +71,9 @@ HEADERS += \
 		   NormalizedCrossCorrelation.h \
 		   RadiometricTransformation.h \
 		   #c/infrastructure/
-		   AbstractAnalogCoordinate.h \
-		   AbstractDigitalCoordinate.h \
-		   CommonMethods.h \
+		   AbstractDetectorCoordinate.h \
+		   AbstractImageCoordinate.h \
+		   #CommonMethods.h \
 		   ConvertionsSystems.h \
 		   Coordinate.h \
 		   Dms.h \
@@ -102,7 +86,7 @@ HEADERS += \
 		   PositionMatrix.h \
 		   RectSupport.h \
 		   SparseMatrix.h \
-                   TreeFeatures.h \
+		   TreeFeatures.h \
 		   #c/interface/
 		   DEMUserInterface.h \
 		   IOUserInterface.h \
@@ -112,15 +96,13 @@ HEADERS += \
 		   SPUserInterface.h \
 		   SRUserInterface.h \
 		   #c/photogrammetry/
-		   AnalogFiductialMark.h \
-		   AnalogImageSpaceCoordinate.h \
+		   DetectorFiducialMark.h \
+		   DetectorSpaceCoordinate.h \
 		   BundleAdjustment.h \
-		   CheckingPoint.h \
-		   ControlPoint.h \
 		   DemFeatures.h \
 		   DemGrid.h \
-		   DigitalFiductialMark.h \
-		   DigitalImageSpaceCoordinate.h \
+		   ImageFiducialMark.h \
+		   ImageSpaceCoordinate.h \
 		   EOQuality.h \
 		   ExteriorOrientation.h \
 		   Flight.h \
@@ -132,7 +114,6 @@ HEADERS += \
 		   MatchingPointsGrid.h \
 		   ObjectSpaceCoordinate.h \
 		   Orthorectification.h \
-		   PhotogrammetricPoint.h \
 		   Point.h \
 		   ProjectHeader.h \
 		   ProjectiveRay.h \
@@ -154,7 +135,7 @@ HEADERS += \
 		   XMLTerrain.h \
 		   XmlUpdater.h \
 		   #cv/infrastructure/
-		   CommonCVMethods.h \
+		   #CommonCVMethods.h \
 		   #qt/formDisplay/
 		   AbstractForm.h \
 		   ControlButtons.h \
@@ -168,7 +149,7 @@ HEADERS += \
 		   TerrainForm.h \
 		   #qt/imageDisplay/
 		   GeometryResource.h \
-		   ImageView.h \
+		   #ImageView.h \
 		   ImageViewers.h \
 		   #PhotoTools.h \
 		   RasterResource.h \
@@ -178,10 +159,10 @@ HEADERS += \
 		   StereoDisplay.h \
 		   StereoScene.h \
 		   StereoTools.h \
-		   SWidgetQt.h \
+		   #SWidgetQt.h \
 		   #qt/infrastructure/
 		   AboutForm.h \
-		   CommonQtMethods.h \
+		   #CommonQtMethods.h \
 		   DmsEdit.h \
 		   EfotoDoubleSpinBox.h \
 		   EPolygon.h \
@@ -212,14 +193,14 @@ SOURCES += \
 		   SPManager.cpp \
 		   SRManager.cpp \
 		   #c/imageDisplay/
-		   AbstractSWidget.cpp \
-		   GLMethods.cpp \
-		   SExhibition.cpp \
-		   SImage.cpp \
-		   SMark.cpp \
-		   SMarker.cpp \
-		   STile.cpp \
-		   SViewport.cpp \
+		   #AbstractSWidget.cpp \
+		   #GLMethods.cpp \
+		   #SExhibition.cpp \
+		   #SImage.cpp \
+		   #SMark.cpp \
+		   #SMarker.cpp \
+		   #STile.cpp \
+		   #SViewport.cpp \
 		   #c/imageProcessing/
 		   ImageMatching.cpp \
 		   Interpolation.cpp \
@@ -227,9 +208,9 @@ SOURCES += \
 		   NormalizedCrossCorrelation.cpp \
 		   RadiometricTransformation.cpp \
 		   #c/infrastructure/
-		   AbstractAnalogCoordinate.cpp \
-		   AbstractDigitalCoordinate.cpp \
-		   CommonMethods.cpp \
+		   AbstractDetectorCoordinate.cpp \
+		   AbstractImageCoordinate.cpp \
+		   #CommonMethods.cpp \
 		   ConvertionsSystems.cpp \
 		   Coordinate.cpp \
 		   Dms.cpp \
@@ -241,7 +222,7 @@ SOURCES += \
 		   PositionMatrix.cpp \
 		   RectSupport.cpp \
 		   SparseMatrix.cpp \
-                   TreeFeatures.cpp \
+		   TreeFeatures.cpp \
 		   #c/interface/
 		   DEMUserInterface.cpp \
 		   IOUserInterface.cpp \
@@ -251,15 +232,13 @@ SOURCES += \
 		   SPUserInterface.cpp \
 		   SRUserInterface.cpp \
 		   #c/photogrammetry/
-		   AnalogFiductialMark.cpp \
-		   AnalogImageSpaceCoordinate.cpp \
+		   DetectorFiducialMark.cpp \
+		   DetectorSpaceCoordinate.cpp \
 		   BundleAdjustment.cpp \
-		   CheckingPoint.cpp \
-		   ControlPoint.cpp \
 		   DemFeatures.cpp \
 		   DemGrid.cpp \
-		   DigitalFiductialMark.cpp \
-		   DigitalImageSpaceCoordinate.cpp \
+		   ImageFiducialMark.cpp \
+		   ImageSpaceCoordinate.cpp \
 		   EOQuality.cpp \
 		   ExteriorOrientation.cpp \
 		   Flight.cpp \
@@ -271,7 +250,6 @@ SOURCES += \
 		   MatchingPointsGrid.cpp \
 		   ObjectSpaceCoordinate.cpp \
 		   Orthorectification.cpp \
-		   PhotogrammetricPoint.cpp \
 		   Point.cpp \
 		   ProjectHeader.cpp \
 		   ProjectiveRay.cpp \
@@ -293,7 +271,7 @@ SOURCES += \
 		   XMLTerrain.cpp \
 		   XmlUpdater.cpp \
 		   #cv/infrastructure/
-		   CommonCVMethods.cpp \
+		   #CommonCVMethods.cpp \
 		   #qt/formDisplay/
 		   ControlButtons.cpp \
 		   FlightForm.cpp \
@@ -306,7 +284,7 @@ SOURCES += \
 		   TerrainForm.cpp \
 		   #qt/imageDisplay/
 		   GeometryResource.cpp \
-		   ImageView.cpp \
+		   #ImageView.cpp \
 		   ImageViewers.cpp \
 		   #PhotoTools.cpp \
 		   RasterResource.cpp \
@@ -316,10 +294,10 @@ SOURCES += \
 		   StereoDisplay.cpp \
 		   StereoScene.cpp \
 		   StereoTools.cpp \
-		   SWidgetQt.cpp \
+		   #SWidgetQt.cpp \
 		   #qt/infrastructure/
 		   AboutForm.cpp \
-		   CommonQtMethods.cpp \
+		   #CommonQtMethods.cpp \
 		   DmsEdit.cpp \
 		   EfotoDoubleSpinBox.cpp \
 		   EPolygon.cpp \
@@ -367,8 +345,8 @@ FORMS += \
 		  OrthoForm.ui \
 		  ProgressWindow.ui \
 		  SeedEditor.ui \
-                  SRForm.ui \
-                  Stereoplotter.ui
+		  SRForm.ui \
+		  Stereoplotter.ui
 
 RESOURCES += resource.qrc
 

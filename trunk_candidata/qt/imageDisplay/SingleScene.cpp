@@ -68,7 +68,8 @@ void SingleScene::useSmooth(bool useSmooth)
 
 void SingleScene::centerContent()
 {
-	viewpoint_ = rasterRsrc_->center();
+	if (rasterRsrc_ && rasterRsrc_->isValid())
+		viewpoint_ = rasterRsrc_->center();
 }
 
 void SingleScene::moveTo(QPointF pos)
@@ -111,7 +112,7 @@ void SingleScene::scaleTo(double newScale, QPointF at)
 	limitScale();
 
 	//if (at == QPoint(-1,-1) || rasterRsrc_ == NULL)
-	if (at.x() < 0 || at.y() < 0 || rasterRsrc_ == NULL)
+	if (at.x() < 0 || at.y() < 0 || !rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return;
 	if (!((at.x() >= 0 && at.x() <= rasterRsrc_->width()) && (at.y() >= 0 && at.y() <= rasterRsrc_->height())))
 		at = rasterRsrc_->center();
@@ -125,7 +126,7 @@ void SingleScene::zoom(double zoomFactor, QPointF at)
 
 	limitScale();
 
-	if (at == QPointF(-1,-1) || rasterRsrc_ == NULL)
+	if (at == QPointF(-1,-1) || !rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return;
 	if (!((at.x() >= 0 && at.x() <= rasterRsrc_->width()) && (at.y() >= 0 && at.y() <= rasterRsrc_->height())))
 		at = rasterRsrc_->center();
@@ -141,7 +142,8 @@ void SingleScene::setViewport(QSize viewportSize)
 
 void SingleScene::transformImage(double H[9])
 {
-	rasterRsrc_->transformImage(H);
+	if (rasterRsrc_ && rasterRsrc_->isValid())
+		rasterRsrc_->transformImage(H);
 }
 
 bool SingleScene::createImage(QSize size, QColor color)
@@ -168,7 +170,7 @@ bool SingleScene::createImage(QSize size, QColor color)
 
 bool SingleScene::saveImage(QString filepath, QString format)
 {
-	if (rasterRsrc_)
+	if (rasterRsrc_ && rasterRsrc_->isValid())
 	{
 		return rasterRsrc_->save(filepath,format);
 	}
@@ -237,7 +239,7 @@ bool SingleScene::loadImage(Matrix *image, bool isGrayscale)
 	}
 
 	// Procede o load por QImage;
-	loadImage(img);
+	return loadImage(img);
 }
 
 QSize SingleScene::imageSize()
@@ -273,7 +275,7 @@ void SingleScene::limitScale()
 
 QImage SingleScene::getImage()
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -285,7 +287,7 @@ QImage SingleScene::getImage()
 
 QImage SingleScene::getFrame(QSize targetSize)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -300,7 +302,7 @@ QImage SingleScene::getFrame(QSize targetSize)
 
 QImage SingleScene::getFrame(QSize targetSize, QSize rectSize)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -326,7 +328,7 @@ QImage SingleScene::getFrame(QSize targetSize, QSize rectSize)
 
 QImage SingleScene::getFrame(QSize targetSize, double scale)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -341,7 +343,7 @@ QImage SingleScene::getFrame(QSize targetSize, double scale)
 
 QImage SingleScene::getThumb(QSize targetSize, QRect* rect)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -368,7 +370,7 @@ QImage SingleScene::getThumb(QSize targetSize, QRect* rect)
 
 QImage SingleScene::getDetail(QSize targetSize, QPointF point, double zoom)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QImage();
 
 	QRectF imageCut;
@@ -385,14 +387,14 @@ QImage SingleScene::getDetail(QSize targetSize, QPointF point, double zoom)
 
 QColor SingleScene::getColor(QPoint at)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return QColor();
 	return rasterRsrc_->getColor(at);
 }
 
 unsigned int SingleScene::getGrayColor(QPointF at, bool linear)
 {
-	if (!rasterRsrc_)
+	if (!rasterRsrc_ || !(rasterRsrc_->isValid()))
 		return 0;
 	return rasterRsrc_->getGrayColor(at, linear);
 }

@@ -1,15 +1,15 @@
 /*******************************************************************************
-   DigitalFiductialMark.cpp
+   ImageFiducialMark.cpp
 **************************************************************************/
 
-#include "DigitalFiductialMark.h"
+#include "ImageFiducialMark.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-DigitalFiductialMark::DigitalFiductialMark()
+ImageFiducialMark::ImageFiducialMark()
 {
 	id = 0;
 	imageId = 0;
@@ -20,7 +20,7 @@ DigitalFiductialMark::DigitalFiductialMark()
 	sigmaAvailable = false;
 }
 
-DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId)
 {
 	id = myId;
 	imageId = myImageId;
@@ -31,7 +31,7 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId)
 	sigmaAvailable = false;
 }
 
-DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, int myCol, int myLin)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, double myCol, double myLin)
 {
 	id = myId;
 	imageId = myImageId;
@@ -42,7 +42,7 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, int myCol, i
 	sigmaAvailable = false;
 }
 
-DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, const PositionMatrix& myPosition)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition)
 {
 	id = myId;
 	imageId = myImageId;
@@ -50,49 +50,49 @@ DigitalFiductialMark::DigitalFiductialMark(int myId, int myImageId, const Positi
 	sigmaAvailable = false;
 }
 
-DigitalFiductialMark::~DigitalFiductialMark()
+ImageFiducialMark::~ImageFiducialMark()
 {
 
 }
 
-void DigitalFiductialMark::setId(int newId)
+void ImageFiducialMark::setId(int newId)
 {
 	id = newId;
 }
 
-void DigitalFiductialMark::setImageId(int newImageId)
+void ImageFiducialMark::setImageId(int newImageId)
 {
 	imageId = newImageId;
 }
 
-int DigitalFiductialMark::getId()
+int ImageFiducialMark::getId()
 {
 	return id;
 }
 
-int DigitalFiductialMark::getImageId()
+int ImageFiducialMark::getImageId()
 {
 	return imageId;
 }
 
-string DigitalFiductialMark::objectType(void)
+string ImageFiducialMark::objectType(void)
 {
 	stringstream result;
-	result << "DigitalFiductialMark " << id;
+	result << "ImageFiducialMark " << id;
 	return result.str();
 }
 
-string DigitalFiductialMark::objectAssociations(void)
+string ImageFiducialMark::objectAssociations(void)
 {
 	return "";
 }
 
-bool DigitalFiductialMark::is(string s)
+bool ImageFiducialMark::is(string s)
 {
-	return (s == "DigitalFiductialMark" ? true : false);
+	return (s == "ImageFiducialMark" ? true : false);
 }
 
-void DigitalFiductialMark::xmlSetData(string xml)
+void ImageFiducialMark::xmlSetData(string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -100,8 +100,8 @@ void DigitalFiductialMark::xmlSetData(string xml)
 	if (xmlPos.isAvailable())
 	{
 		deque<double> gmlPosValues = xmlPos.toGmlPos();
-		col = (int) gmlPosValues.at(0);
-		lin = (int) gmlPosValues.at(1);
+		col = gmlPosValues.at(0);
+		lin = gmlPosValues.at(1);
 		available = true;
 	}
 	else
@@ -110,15 +110,15 @@ void DigitalFiductialMark::xmlSetData(string xml)
 	}
 }
 
-string DigitalFiductialMark::xmlGetData()
+string ImageFiducialMark::xmlGetData()
 {
 	stringstream result;
-	result << "<fiductialMark key=\"" << Conversion::intToString(id) << "\">\n";
+	result << "<FiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
 	if (available)
-		result << "<gml:pos>" << Conversion::intToString(col) << " " << Conversion::intToString(lin) << "</gml:pos>\n";
+		result << "<gml:pos>" << Conversion::doubleToString(col) << " " << Conversion::doubleToString(lin) << "</gml:pos>\n";
 	else
 		result << "<gml:pos>Not Available</gml:pos>\n";
-	result << "</fiductialMark>";
+	result << "</FiducialMark>";
 	return result.str();
 }
 

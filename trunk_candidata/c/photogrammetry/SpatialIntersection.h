@@ -49,9 +49,9 @@ public:
 	// Other methods
 	//
 	ObjectSpaceCoordinate calculateIntersection(double xiLeft, double etaLeft, double xiRight, double etaRight);
-	ObjectSpaceCoordinate calculateIntersection(AnalogImageSpaceCoordinate leftCoord, AnalogImageSpaceCoordinate rightCoord);
+	ObjectSpaceCoordinate calculateIntersection(DetectorSpaceCoordinate leftCoord, DetectorSpaceCoordinate rightCoord);
 	ObjectSpaceCoordinate calculateIntersection(int colLeft, int rowLeft, int colRight, int rowRight);
-	ObjectSpaceCoordinate calculateIntersection(DigitalImageSpaceCoordinate leftCoord, DigitalImageSpaceCoordinate rightCoord);
+	ObjectSpaceCoordinate calculateIntersection(ImageSpaceCoordinate leftCoord, ImageSpaceCoordinate rightCoord);
 	PositionMatrix calculateIntersection(PositionMatrix leftPos, PositionMatrix rightPos);
 
 	// EObject methods

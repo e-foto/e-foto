@@ -16,13 +16,13 @@ protected:
 	virtual void setId(int newId) = 0;
 	virtual void setFocalDistance(double newFocalDistance) = 0;
 	virtual void setFocalDistanceSigma(double newFocalDistanceSigma) = 0;
-	virtual void setPrincipalPointCoordinates(AnalogImageSpaceCoordinate newCoordinates) = 0;
+	virtual void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates) = 0;
 	virtual void setDescription(string newDescription) = 0;
 
 	virtual int getId() = 0;
 	virtual double getFocalDistance() = 0;
 	virtual double getFocalDistanceSigma() = 0;
-	virtual AnalogImageSpaceCoordinate getPrincipalPointCoordinates() = 0;
+	virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
 	virtual string getDescription() = 0;
 	virtual void putImage(Image* newImageAssociation) = 0;
 	virtual void putFlight(Flight* newFlightAssociation) = 0;

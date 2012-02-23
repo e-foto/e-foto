@@ -34,7 +34,7 @@ EFotoManager::EFotoManager()
 	fotoTri = NULL;
 	dem = NULL;
 	ortho = NULL;
-        sp = NULL;
+		sp = NULL;
 	theTerrain = NULL;
 	nextModule = 1;
 }
@@ -184,27 +184,9 @@ void EFotoManager::instanceAllPoints()
 				notAvailable = false;
 		if (notAvailable)
 		{
-			if (xmlAllPoint.at(i).attribute("type").compare("control") == 0)
-			{
-				ControlPoint* newPoint = new ControlPoint();
-				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
-				points.push_back(newPoint);
-				//return (Point*) newPoint;
-			}
-			if (xmlAllPoint.at(i).attribute("type").compare("checking") == 0)
-			{
-				CheckingPoint* newPoint = new CheckingPoint();
-				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
-				points.push_back(newPoint);
-				//return (Point*) newPoint;
-			}
-			if (xmlAllPoint.at(i).attribute("type").compare("photogrammetric") == 0)
-			{
-				PhotogrammetricPoint* newPoint = new PhotogrammetricPoint();
-				newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
-				points.push_back(newPoint);
-				//return (Point*) newPoint;
-			}
+			Point* newPoint = new Point();
+			newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
+			points.push_back(newPoint);
 		}
 	}
 }
@@ -219,28 +201,11 @@ Point* EFotoManager::instancePoint(int id)
 	EDomElement xmlPoint = root.elementByTagAtt("point", "key", Conversion::intToString(id));
 	if (xmlPoint.getContent().compare("") == 0)
 		return NULL;
-	if (xmlPoint.attribute("type").compare("control") == 0)
-	{
-		ControlPoint* newPoint = new ControlPoint();
-		newPoint->xmlSetData(xmlPoint.getContent());
-		points.push_back(newPoint);
-		return (Point*) newPoint;
-	}
-	if (xmlPoint.attribute("type").compare("checking") == 0)
-	{
-		CheckingPoint* newPoint = new CheckingPoint();
-		newPoint->xmlSetData(xmlPoint.getContent());
-		points.push_back(newPoint);
-		return (Point*) newPoint;
-	}
-	if (xmlPoint.attribute("type").compare("photogrammetric") == 0)
-	{
-		PhotogrammetricPoint* newPoint = new PhotogrammetricPoint();
-		newPoint->xmlSetData(xmlPoint.getContent());
-		points.push_back(newPoint);
-		return (Point*) newPoint;
-	}
-	return NULL;
+
+	Point* newPoint = new Point();
+	newPoint->xmlSetData(xmlPoint.getContent());
+	points.push_back(newPoint);
+	return (Point*) newPoint;
 }
 
 /**
@@ -431,22 +396,8 @@ void EFotoManager::deletePoint(int id)
 		}
 	if (myPoint != NULL)
 	{
-		EDomElement xmlPoint(myPoint->xmlGetData());
-		if (xmlPoint.attribute("type").compare("control") == 0)
-		{
-			ControlPoint* myControl = (ControlPoint*) myPoint;
-			delete(myControl);
-		}
-		else if (xmlPoint.attribute("type").compare("checking") == 0)
-		{
-			CheckingPoint* myChecking = (CheckingPoint*) myPoint;
-			delete(myChecking);
-		}
-		else if (xmlPoint.attribute("type").compare("control") == 0)
-		{
-			PhotogrammetricPoint* myPhotogrammetric = (PhotogrammetricPoint*) myPoint;
-			delete(myPhotogrammetric);
-		}
+		Point* point = myPoint;
+			delete(point);
 		points.erase(points.begin() + i);
 	}
 }
@@ -721,10 +672,10 @@ bool EFotoManager::reloadProject()
 		{
 			stopOrtho();
 		}
-                if (sp != NULL)
-                {
-                        stopSP();
-                }
+				if (sp != NULL)
+				{
+						stopSP();
+				}
 		return project->reload();
 	}
 	else
@@ -837,54 +788,54 @@ void EFotoManager::stopSR(int id)
  */
 bool EFotoManager::execSP()
 {
-    bool result;
+	bool result;
 
-    nextModule = 2;
+	nextModule = 2;
 
-    instanceAllImages();
-    instanceAllPoints();
+	instanceAllImages();
+	instanceAllPoints();
 
-    for (int i = images.size() - 1; i >=0; i--)
-    {
-            Image* img = images.at(i);
-            Sensor* sensor = instanceSensor(img->getSensorId());
-            InteriorOrientation* imgIO = instanceIO(img->getId());
-            SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
+	for (int i = images.size() - 1; i >=0; i--)
+	{
+			Image* img = images.at(i);
+			Sensor* sensor = instanceSensor(img->getSensorId());
+			InteriorOrientation* imgIO = instanceIO(img->getId());
+			SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
 
-            img->setSensor(sensor);
-            img->setIO(imgIO);
-            img->setEO(imgEO);
+			img->setSensor(sensor);
+			img->setIO(imgIO);
+			img->setEO(imgEO);
 
-            if (imgIO == NULL || imgEO == NULL)
-            {
-                    deleteImage(img->getId());
-            }
-    }
+			if (imgIO == NULL || imgEO == NULL)
+			{
+					deleteImage(img->getId());
+			}
+	}
 
-    sp = new SPManager(this, images, EOs);
+	sp = new SPManager(this, images, EOs);
 
-    result = sp->exec();
+	result = sp->exec();
 
-    return result;
+	return result;
 }
 
 void EFotoManager::stopSP()
 {
-    delete sp;
-    sp = NULL;
-    //deleteSensor(images.at(0)->getSensorId());
-    int numPoints=points.size();
-    int numImages=images.size();
+	delete sp;
+	sp = NULL;
+	//deleteSensor(images.at(0)->getSensorId());
+	int numPoints=points.size();
+	int numImages=images.size();
 
-    for (int i=0;i<numPoints;i++)
-    {
-            deletePoint(points.at(0)->getId());
-    }
-    for (int i=0;i<numImages;i++)
-    {
-            deleteIO(images.at(0)->getId());
-            deleteImage(images.at(0)->getId());
-    }
+	for (int i=0;i<numPoints;i++)
+	{
+			deletePoint(points.at(0)->getId());
+	}
+	for (int i=0;i<numImages;i++)
+	{
+			deleteIO(images.at(0)->getId());
+			deleteImage(images.at(0)->getId());
+	}
 }
 
 bool EFotoManager::execPT()
@@ -900,10 +851,10 @@ bool EFotoManager::execPT()
 	Sensor *ptSensor = instanceSensor(Conversion::stringToInt(sensor.attribute("key")));
 
 	Flight *ptFlight = instanceFlight(1);
-    Terrain* ptTerrain = instanceTerrain();
+	Terrain* ptTerrain = instanceTerrain();
 	//ptFlight->setTerrain(ptTerrain);
 	//fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
-    fotoTri = new PTManager(this,images,IOs,ptSensor,ptFlight,ptTerrain);
+	fotoTri = new PTManager(this,images,IOs,ptSensor,ptFlight,ptTerrain);
 	result = fotoTri->exec();
 
 	return result;
@@ -1071,10 +1022,10 @@ bool EFotoManager::exec(string filename)
 		savedState = true;
 		execOrtho();
 		break;
-        case 8:
-                savedState = true;
-                execSP();
-                break;
+	case 8:
+		savedState = true;
+		execSP();
+		break;
 	default:
 		nextModule = 0;
 	}
