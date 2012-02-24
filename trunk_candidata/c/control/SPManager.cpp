@@ -116,6 +116,41 @@ void SPManager::removeAllFeatures()
 	spFeatures.deleteAllFeatures();
 }
 
+int SPManager::removePoint()
+{
+	int sel_feat = spFeatures.selectedFeature();
+
+	if (sel_feat == -1)
+		return 0;
+
+	int sel_pt = spFeatures.selectedPoint();
+
+	if (sel_pt == -1)
+		return 0;
+
+	spFeatures.deletePoint(sel_feat, sel_pt);
+
+	return 1;
+}
+
+void SPManager::setSelected(int feat_id, int pt_id)
+{
+	if (feat_id < -1 || pt_id < -1 || feat_id > spFeatures.getNumFeatures())
+		return;
+
+	if (feat_id > 0)
+	{
+		if (pt_id > spFeatures.getNumPoints(feat_id))
+			return;
+	}
+
+	if (feat_id == 0 || pt_id == 0)
+		return;
+
+	spFeatures.setSelectedFeature(feat_id);
+	spFeatures.setSelectedPoint(pt_id);
+}
+
 void SPManager::updateProjections()
 {
 	int leftKey = 1;

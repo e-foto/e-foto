@@ -51,6 +51,7 @@ public:
 	ObjectSpaceCoordinate calculateIntersection(double xiLeft, double etaLeft, double xiRight, double etaRight);
 	ObjectSpaceCoordinate calculateIntersection(DetectorSpaceCoordinate leftCoord, DetectorSpaceCoordinate rightCoord);
 	ObjectSpaceCoordinate calculateIntersection(int colLeft, int rowLeft, int colRight, int rowRight);
+	ObjectSpaceCoordinate calculateIntersectionSubPixel(double colLeft, double rowLeft, double colRight, double rowRight);
 	ObjectSpaceCoordinate calculateIntersection(ImageSpaceCoordinate leftCoord, ImageSpaceCoordinate rightCoord);
 	PositionMatrix calculateIntersection(PositionMatrix leftPos, PositionMatrix rightPos);
 

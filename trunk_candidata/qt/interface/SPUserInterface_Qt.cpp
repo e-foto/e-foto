@@ -43,22 +43,25 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(removeAllButton, SIGNAL(clicked()), this, SLOT(onRemoveAllButton()));
 		QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
 		QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
-		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
-		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
-		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onAddPtButton()));
+		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onRemovePtButton()));
+		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
+		QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
 
+		// Edit mode = None
+		measure_mode = 0;
 
-	this->manager = manager;
+		this->manager = manager;
 		setWindowState(this->windowState());
 
 		showMaximized();
 
 		updateClass(0);
 
-	allow_close = true;
+		allow_close = true;
 
-	qApp->processEvents();
-	init();
+		qApp->processEvents();
+		init();
 }
 
 SPUserInterface_Qt::~SPUserInterface_Qt()
@@ -257,6 +260,47 @@ void SPUserInterface_Qt::onRemoveAllButton()
 	manager->removeAllFeatures();
 
 	updateData();
+}
+
+void SPUserInterface_Qt::onAddPtButton()
+{
+	if (editPtButton->isChecked())
+		editPtButton->setChecked(false);
+
+	measure_mode = addPtButton->isChecked();
+}
+
+void SPUserInterface_Qt::onEditPtButton()
+{
+	if (addPtButton->isChecked())
+		addPtButton->setChecked(false);
+
+	editPtButton->isChecked() ? measure_mode = 2 : measure_mode = 0;
+}
+
+void SPUserInterface_Qt::onRemovePtButton()
+{
+	manager->removePoint();
+	updateData();
+}
+
+void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
+{
+	QModelIndex p_index = index.parent();
+	int feat_id, pt_id;
+
+	if (p_index.row() < 0)
+	{
+		feat_id = index.row() + 1;
+		pt_id = -1;
+	}
+	else
+	{
+		feat_id = p_index.row() + 1;
+		pt_id = index.row() + 1;
+	}
+
+	manager->setSelected(feat_id, pt_id);
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)

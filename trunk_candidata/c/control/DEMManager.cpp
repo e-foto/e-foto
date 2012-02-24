@@ -689,7 +689,7 @@ void DEMManager::calcPointsXYZ()
 
 		spc_inter.setStereoPair(&sp);
 
-		object = spc_inter.calculateIntersection(int(mp->left_x), int(mp->left_y), int(mp->right_x), int(mp->right_y));
+		object = spc_inter.calculateIntersectionSubPixel(mp->left_x, mp->left_y, mp->right_x, mp->right_y);
 
 		mp->X = object.getX();
 		mp->Y = object.getY();

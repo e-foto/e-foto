@@ -29,6 +29,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Feature list</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
@@ -46,6 +52,9 @@
      <width>500</width>
      <height>524287</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Feature editor</string>
@@ -126,6 +135,9 @@
      <width>238</width>
      <height>524287</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Feature tools</string>
@@ -239,6 +251,9 @@
            <height>40</height>
           </size>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -342,6 +357,9 @@
            <width>40</width>
            <height>40</height>
           </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
