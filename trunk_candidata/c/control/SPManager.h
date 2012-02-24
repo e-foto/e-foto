@@ -83,6 +83,8 @@ public:
 	void addFeature(string name, int feattype, int featclass);
 	int removeFeature();
 	void removeAllFeatures();
+	int removePoint();
+	void setSelected(int feat_id, int pt_id);
 	DemFeatures* getFeaturesLink() { return &spFeatures; }
 	string getFeaturesList() { return spFeatures.getFeaturesList(); }
 	void updateProjections();

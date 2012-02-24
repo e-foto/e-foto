@@ -103,6 +103,20 @@ ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(int colLeft, in
 	}
 }
 
+ObjectSpaceCoordinate SpatialIntersection::calculateIntersectionSubPixel(double colLeft, double rowLeft, double colRight, double rowRight)
+{
+	if (stereoPair->hasOrientations())
+	{
+		DetectorSpaceCoordinate leftAnalog = leftRay->imageToDetector(colLeft, rowLeft);
+		DetectorSpaceCoordinate rightAnalog = rightRay->imageToDetector(colRight, rowRight);
+		return calculateIntersection(leftAnalog.getXi(), leftAnalog.getEta(), rightAnalog.getXi(), rightAnalog.getEta());
+	}
+	else
+	{
+		return ObjectSpaceCoordinate();
+	}
+}
+
 ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(ImageSpaceCoordinate leftCoord, ImageSpaceCoordinate rightCoord)
 {
 	return calculateIntersection(leftCoord.getCol(), leftCoord.getLin(), rightCoord.getCol(), rightCoord.getLin());
