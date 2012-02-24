@@ -47,12 +47,17 @@ protected slots:
 	void onAddButton();
 	void onRemoveButton();
 	void onRemoveAllButton();
+	void onAddPtButton();
+	void onEditPtButton();
+	void onRemovePtButton();
+	void onFeatureListClicked(QModelIndex index);
 	void changePair(int leftKey, int rightKey);
 
 private:
 	void init();
 	//void close();
 	bool allow_close;
+	int measure_mode; // 0 - None, 1- Add, 2- Edit
 
 public:
 	static SPUserInterface_Qt* instance(SPManager* manager);
