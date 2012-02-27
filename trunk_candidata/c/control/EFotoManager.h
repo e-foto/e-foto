@@ -32,15 +32,12 @@ class OrthoManager;
 class SPManager;
 
 /**
-  * class EFotoManager
-  *
-  * This class manages the data flow within the application.
-  * @author The e-foto team
-  * @date 14/10/2010
-  * @version 1.0.21
-  *
-  */
-
+* \file EFotoManager.h
+* \class EFotoManager
+* \brief Esta classe gerencia o fluxo de dados da aplicação.
+* \copyright E-Foto group
+* \authors Rafael Aguiar & Irving Badolato
+*/
 class EFotoManager
 {
 
@@ -70,272 +67,351 @@ class EFotoManager
 
 public:
 
-
 	/**
-  * Default constructor.
-  */
+	* \brief Construtor padrão.
+	*/
 	EFotoManager();
 
 	/**
-  * Default destructor.
-  */
+	* \brief Destrutor padrão.
+	*/
 	~EFotoManager();
 
 	/**
-  * This method creates an instance of the @e Terrain class.
-  */
+	* \brief Método que cria uma instância da classe Terrain.
+	* \return Terrain Retorna a instância criada.
+	*/
 	Terrain* instanceTerrain();
 
 	/**
-  * This method creates an instance of the @e Sensor class.
-  * @param id The number of the @e Sensor identifier.
-  */
+	* \brief Método que cria uma instância da classe Sensor.
+	* \param id Identificador do Sensor.
+	* \return Sensor Retorna a instância criada.
+	*/
 	Sensor* instanceSensor(int id);
 
 	/**
-  * This method creates an instance of the @e Flight class.
-  * @param id The number of the @e Flight identifier.
-  */
+	* \brief Método que cria uma instância da classe Flight.
+	* \param id Identificador do Vôo.
+	* \return Flight Retorna a instância criada.
+	*/
 	Flight* instanceFlight(int id);
 
 	/**
-  * This method creates an instance of the @e Image class.
-  * @param id The number of the @e Image identifier.
-  */
+	* \brief Método que cria uma instância da classe Image.
+	* \param id Identificador da Imagem.
+	* \return Image Retorna a instância criada.
+	*/
 	Image* instanceImage(int id);
 
 	/**
-	 * This method creates an instance of the @e Point class.
-	 * @param id The number of the @e Point identifier.
-	 */
+	* \brief Método que cria instâncias de classes para todos os pontos existentes do projeto.
+	*/
 	void instanceAllPoints();
+
+	/**
+	* \brief Método que cria instâncias de classes para todas as orientações interiores existentes do projeto.
+	*/
 	void instanceAllIOs();
+
+	/**
+	* \brief Método que cria instâncias de classes para todas as orientações exteriores existentes do projeto.
+	*/
 	void instanceAllEOs();
+
+	/**
+	* \brief Método que cria instâncias de classes para todas as imagens existentes do projeto.
+	*/
 	void instanceAllImages();
 
 	/**
-  * This method creates an instance of the @e Point class.
-  * @param id The number of the @e Point identifier.
-  */
+	* \brief Método que cria uma instância da classe Point.
+	* \param id Identificador do Ponto.
+	* \return Point Retorna a instância criada.
+	*/
 	Point* instancePoint(int id);
 
 	/**
-  * This method creates an instance of the @e InteriorOrientation class.
-  * @param imageId The number of the image identifier.
-  */
+	* \brief Método que cria uma instância da classe InteriorOrientation.
+	* \param imageId Identificador da imagem a ser utilizada na Orientação Interior.
+	* \return InteriorOrientation Retorna a instância criada.
+	*/
 	InteriorOrientation* instanceIO(int imageId);
 
 	/**
-  * This method creates an instance of the @e ExteriorOrientation class.
-  * @param imageId The number of the image identifier.
-  */
+	* \brief Método que cria uma instância da classe ExteriorOrientation.
+	* \param imageId Identificador da imagem a ser utilizada na Orientação Exterior.
+	* \return ExteriorOrientation Retorna a instância criada.
+	*/
 	ExteriorOrientation* instanceEO(int imageId);
 
 	/**
-  * This method deletes an instance of the @e Terrain class.
-  */
+	* \brief Método que apaga uma instância da classe Terrain.
+	*/
 	void deleteTerrain();
 
 	/**
-  * This method deletes an instance of the @e Sensor class.
-  * @param id Sensor identifier.
-  */
+	* \brief Método que apaga uma instância da classe Sensor.
+	* \param id Identificador do Sensor.
+	*/
 	void deleteSensor(int id);
 
 	/**
-  * This method deletes an instance of the @e Flight class.
-  * @param id Flight identifier.
-  */
+	* \brief Método que apaga uma instância da classe Flight.
+	* \param id Identificador do Vôo.
+	*/
 	void deleteFlight(int id);
 
 	/**
-  * This method deletes an instance of the @e Image class.
-  * @param id Image identifier.
-  */
+	* \brief Método que apaga uma instância da classe Image.
+	* \param id Identificador da Imagem.
+	*/
 	void deleteImage(int id);
 
 	/**
-  * This method deletes an instance of the @e Point class.
-  * @param id Point identifier.
-  */
+	* \brief Método que apaga uma instância da classe Point.
+	* \param id Identificador do Ponto.
+	*/
 	void deletePoint(int id);
 
 	/**
-  * This method deletes an instance of the @e InteriorOrientation class.
-  * @param id InteriorOrientation identifier.
-  */
+	* \brief Método que apaga uma instância da classe InteriorOrientation.
+	* \param id Identificador da Orientação Interior.
+	*/
 	void deleteIO(int id);
 
 	/**
-  * This method deletes an instance of the @e ExteriorOrientation class.
-  * @param id ExteriorOrientation identifier.
-  */
+	* \brief Método que apaga uma instância da classe ExteriorOrientation.
+	* \param id Identificador da Orientação Exterior.
+	*/
 	void deleteEO(int id);
 
 	/**
-  * This method returns the pointer of an existing @e Terrain object.
-  */
+	* \brief Método que retorna uma instância existente da classe Terrain.
+	* \return Terrain Instância da classe Terrain.
+	 */
 	Terrain* terrain();
 
 	/**
-  * This method returns the pointer of an existing @e Sensor object.
-  * @param id The number of the sensor identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe Sensor.
+	* \param id Identificador do Sensor.
+	* \return Sensor Instância da classe Sensor.
+	*/
 	Sensor* sensor(int id);
 
 	/**
-  * This method returns the pointer of an existing @e Flight object.
-  * @param id The number of the flight identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe Flight.
+	* \param id Identificador do Vôo.
+	* \return Flight Instância da classe Flight.
+	*/
 	Flight* flight(int id);
 
 	/**
-  * This method returns the pointer of an existing @e Image object.
-  * @param id The number of the image identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe Image.
+	* \param id Identificador da Imagem.
+	* \return Image Instância da classe Image.
+	*/
 	Image* image(int id);
 
 	/**
-  * This method returns the pointer of an existing @e Point object.
-  * @param id The number of the point identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe Point.
+	* \param id Identificador do Ponto.
+	* \return Point Instância da classe Point.
+	*/
 	Point* point(int id);
 
 	/**
-  * This method returns the pointer of an existing @e InteriorOrientation object.
-  * @param id The number of an identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe InteriorOrientation.
+	* \param id Identificador da Orientação Interior.
+	* \return InteriorOrientation Instância da classe InteriorOrientation.
+	*/
 	InteriorOrientation* IO(int id);
 
 	/**
-  * This method returns the pointer of an existing @e ExteriorOrientation object.
-  * @param id The number of an identifier.
-  */
+	* \brief Método que retorna uma instância existente da classe ExteriorOrientation.
+	* \param id Identificador da Orientação Exterior.
+	* \return ExteriorOrientation Instância da classe ExteriorOrientation.
+	*/
 	ExteriorOrientation* EO(int id);
 
 	/**
-  * This method returns data from a specific node in a XML string.
-  * @param tagname The name of the intended XML tag.
-  */
+	* \brief Método que retorna os valores de um nó do XML.
+	* \param tagname Nome da tag do XML.
+	* \return string Valores do Nó do XML que foi requisitado.
+	*/
 	string getXml(string tagname);
 
 	/**
-  * This method returns data from a specific node in a XML string.
-  * @param tagname The name of the intended XML tag.
-  * @param att The value of the attribute of the intended XML tag.
-  * @param value The value of the node of the intended XML tag.
-  */
+	* \brief Método que retorna os valores de um nó do XML.
+	* \param tagname Nome da tag do XML.
+	* \param att Valor do atributo da tag do XML.
+	* \param value Valor do nó da tag do XML.
+	* \return string Valores do Nó do XML que foi requisitado.
+	*/
 	string getXml(string tagname, string att, string value);
 
 	/**
-  * This method return a string containing the object type.
-  */
+	* \brief Método para emitir o nome de classe.
+	* \return string	Retorna o nome de classe do objeto.
+	*/
 	string objectType(void);
 
 	/**
-  * This method return a string containing all the object associations.
-  */
+	* \brief Método para emitir as associações de uma instância.
+	* \return string	Retorna vazio para esta classe.
+	* \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
+	*/
 	string objectAssociations(void);
 
 	/**
-  * This method checks if the current object @e is of a specific class.
-  * @param s Identifier of the intended instance.
-  */
+	* \brief Método de teste para o nome/tipo de instância.
+	* \param s	Texto com o nome da classe que é esperado.
+	* \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
+	*/
 	bool is(string s);
 
 	/**
-  * This method reads data from a XML string and sets the internal variables with them.
-  * @param xml A string containing the XML data.
-  */
+	* \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
+	* \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe EFotoManager.
+	*/
 	void xmlSetData(string xml);
 
 	/**
-  * This method returns the current data from the program to a XML string.
-  */
+	* \brief Método para extrair o equivalente em dados xml de uma instância.
+	* \return string	Retorna o string contendo o xml para uma instância da classe EFotoManager.
+	*/
 	string xmlGetData();
 
+	/**
+	* \brief Método usado após aceitar uma IO ou SR para setar como default que o projeto ainda não foi salvo.
+	* \param state Estado do projeto se foi ou não salvo.
+	*/
 	void setSavedState(bool state);
+
+	/**
+	* \brief Método que retorna se o projeto foi salvo ou não.
+	* \return bool Retorna verdadeiro caso o projeto tenha sido salvo. Retorna falso, caso contrário.
+	*/
 	bool getSavedState();
 
 	/**
-  * This sets the type of user interface which the program will run under.
-  * @param newInterfaceType String from Interface Type.
-  */
+	* \brief Método que seta o tipo de interface em que o programa irá rodar.
+	* \param newInterfaceType O tipo de interface.
+	*/
 	void setInterfaceType(string newInterfaceType);
 
 	/**
-  * This method gets the current interface type.
-  */
+	* \brief Método que retorna o tipo de interface corrente.
+	* \return string O tipo de interface corrente.
+	*/
 	string getInterfaceType();
 
 	/**
-  * This method sets the next module to be executed.
-  * @param newModule New Module identification.
-  */
+	* \brief Método que seta o próximo módulo a ser executado.
+	* \param newModule  O próximo módulo a ser executado.
+	*/
 	void setNextModule(int newModule);
 
 	/**
-  * This method sets the next image to be processed.
-  * @param newImage New Image identification.
-  */
+	* \brief Método que seta a próxima imagem a ser processada.
+	* \param newImage  A próxima imagem a ser executada.
+	*/
 	void setNextImage(int newImage);
 
 	/**
-  * This method starts the Project Manager module.
-  */
+	* \brief Método que carrega o módulo ProjectManager.
+	* \return bool Retorna verdadeiro se o módulo ProjectManager já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execProject(string filename = "");
 
 	/**
-  * This method reloads the Project Manager module.
-  */
+	* \brief Método que recarrega o módulo ProjectManager.
+	* \return bool Retorna verdadeiro se o módulo ProjectManager já tiver terminado de ser recarregado. Retorna falso, caso contrário.
+	*/
 	bool reloadProject();
 
 	/**
-  * This method starts the IO module.
-  * @param id An image identifier.
-  */
+	* \brief Método que carrega o módulo de InteriorOrientation.
+	* \param id Identificador da Imagem.
+	* \return bool Retorna verdadeiro se o módulo InteriorOrientation já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execIO(int id);
+
+	/**
+	* \brief Método que encerra o módulo de InteriorOrientation.
+	* \param id Identificador da Imagem.	
+	*/
 	void stopIO(int id);
 
 	/**
-		 * This method starts the SR module.
-		 * @param id An image identifier.
-		 */
+	* \brief Método que carrega o módulo de ExteriorOrientation.
+	* \param id Identificador da Imagem.
+	* \return bool Retorna verdadeiro se o módulo ExteriorOrientation já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execSR(int id);
+
+	/**
+	* \brief Método que encerra o módulo de ExteriorOrientation.
+	* \param id Identificador da Imagem.
+	*/
 	void stopSR(int id);
 
 	/**
-		 * This method starts the DEM module.
-		 * @param id An image identifier.
-		 */
+	* \brief Método que carrega o módulo de DEM.
+	* \return bool Retorna verdadeiro se o módulo DEM já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execDEM();
+
+	/**
+	* \brief Método que encerra o módulo de DEM.
+	*/
 	void stopDEM();
 
 	/**
-		 * This method starts the Ortho module.
-		 * @param id An image identifier.
-		 */
+	* \brief Método que carrega o módulo de ortoretificação de imagens.
+	* \return bool Retorna verdadeiro se o módulo Ortho já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execOrtho();
+
+	/**
+	* \brief Método que encerra o módulo de ortoretificação de imagens.
+	*/
 	void stopOrtho();
 
-        /**
-  * This method starts the main execution loop.
-  */
-        bool execSP();
-        void stopSP();
+	/**
+	* \brief Método que carrega o módulo de estereoploter.
+	* \return bool Retorna verdadeiro se o módulo estereoploter já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
+	bool execSP();
 
 	/**
-  * This method starts the main execution loop.
-  */
-	bool exec(string filename= "");
+	* \brief Método que encerra o módulo de estereoploter.
+	*/
+	void stopSP();
 
-	// executa fotoTri
+	/**
+	* \brief Método que executa um loop de execuções principais.
+	* \return bool Retorna verdadeiro se as execuções principais estejam sendo executadas corretamente. Retorna falso, caso contrário.
+	*/
+	bool exec(string filename= "");
+	/**
+	* \brief Método que carrega o módulo de FotoTri.
+	* \return bool Retorna verdadeiro se o módulo FotoTri já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
 	bool execPT();
+	/**
+	* \brief Método que encerra o módulo de FotoTri.
+	*/
 	void stopPT();
 	/**
-   *
-   */
+	* \brief Método que retorna uma imagem cadastrada que ainda não foi utilizada.
+	* \return int Identificador da Imagem.
+	*/
 	int getFreeImageId();
+	/**
+	* \brief Método que retorna um ponto cadastrado que ainda não foi utilizado.
+	* \return int Identificador do Ponto.
+	*/
 	int getFreePointId();
 
 };

@@ -212,8 +212,8 @@ void PTUserInterface_Qt::init()
 	connect(rightImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
 	connect(pointsTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
 
-	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,double)));
-	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,int)),this,SLOT(updatePoint(int,int,double)));
+	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
+	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
 
 	/*Permite ediÃ§ao de coordenada via tabela*/
 	//leftImageTableWidget->setType(1,"QSpinBox");

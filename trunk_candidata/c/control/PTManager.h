@@ -29,7 +29,7 @@ class InteriorOrientation;
   * \file PTManager.h
   * \class PTMannager
   * \brief Classe responsavel por gerenciar a interface e o calculo da fototriangulaÃ§Ã£o fornecendo metodos basicos a interface, e fazendo a ligaÃ§Ã£o entre o calculo e a interface
-  * \author Paulo AndrÃ© Batista Pupim
+  * \author Paulo Andre Batista Pupim
 */
 class PTManager
 {
@@ -63,9 +63,9 @@ protected:
 
 public:
         /**
- * \brief Construtor basico da classe
- * \attention NÃ£o use-o em sua totalidade
- */
+	 * \brief Construtor basico da classe
+	 * \attention Nao use-o em sua totalidade
+	 */
         PTManager();
 
         /**
