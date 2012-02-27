@@ -42,11 +42,12 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemoveButton()));
 		QObject::connect(removeAllButton, SIGNAL(clicked()), this, SLOT(onRemoveAllButton()));
 		QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
-		QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onSelPtButton()));
 		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onAddPtButton()));
 		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onRemovePtButton()));
 		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
 		QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
+		QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangePair(int)));
 
 		// Edit mode = None
 		measure_mode = 0;
@@ -240,7 +241,7 @@ void SPUserInterface_Qt::onSaveButton()
 
 void SPUserInterface_Qt::onAddButton()
 {
-	manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex()+1);
+	manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex());
 
 	updateData();
 }
@@ -267,6 +268,9 @@ void SPUserInterface_Qt::onAddPtButton()
 	if (editPtButton->isChecked())
 		editPtButton->setChecked(false);
 
+	if (selButton->isChecked())
+		selButton->setChecked(false);
+
 	measure_mode = addPtButton->isChecked();
 }
 
@@ -275,7 +279,21 @@ void SPUserInterface_Qt::onEditPtButton()
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
 
+	if (selButton->isChecked())
+		selButton->setChecked(false);
+
 	editPtButton->isChecked() ? measure_mode = 2 : measure_mode = 0;
+}
+
+void SPUserInterface_Qt::onSelPtButton()
+{
+	if (addPtButton->isChecked())
+		addPtButton->setChecked(false);
+
+	if (editPtButton->isChecked())
+		editPtButton->setChecked(false);
+
+	selButton->isChecked() ? measure_mode = 3 : measure_mode = 0;
 }
 
 void SPUserInterface_Qt::onRemovePtButton()
@@ -301,6 +319,27 @@ void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
 	}
 
 	manager->setSelected(feat_id, pt_id);
+
+	onFeatureSelected();
+}
+
+void SPUserInterface_Qt::onFeatureSelected()
+{
+	// Get Feature data
+	string fname;
+	int fclass, ftype;
+
+	manager->getFeatureData(fname, ftype, fclass);
+
+	nameEdit->setText(QString::fromStdString(fname));
+	comboBox_3->setCurrentIndex(ftype-1);
+	comboBox_4->setCurrentIndex(fclass);
+}
+
+void SPUserInterface_Qt::addImagePair(char * item)
+{
+	QString text = QString::fromAscii(item);
+	comboBox->addItem(text);
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
@@ -308,6 +347,13 @@ void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
 	viewer->loadLeftImage(QString(manager->getFullImagePath(leftKey).c_str()));
 	viewer->loadRightImage(QString(manager->getFullImagePath(rightKey).c_str()));
 	viewer->update();
+}
+
+void SPUserInterface_Qt::onChangePair(int pos)
+{
+	int lk, rk;
+	manager->changePair(pos, lk, rk);
+	changePair(lk, rk);
 }
 
 } // namespace efoto
