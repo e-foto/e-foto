@@ -39,12 +39,20 @@ class SPManager
 	bool over_it;
 	double over_it_dist;
 	DemFeatures spFeatures;
+	int leftKey, rightKey;
+
+	void getImagesId(int pos, int &left, int &right);
+	void addPairsToInterface();
+	int getPairs();
+	bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
+	double getAngleBetweenImages(double X1, double Y1, double X2, double Y2);
+	double fixAngle(double angle);
+	deque<int> listPairs;
 
 	SPUserInterface* myInterface;
 	EFotoManager* manager;
 	deque<Image*> listAllImages;
 	deque<Point*> listAllPoints;
-	deque<int> listPairs;
 	deque<ExteriorOrientation*> listEOs;
 
 	/*
@@ -89,18 +97,8 @@ public:
 	string getFeaturesList() { return spFeatures.getFeaturesList(); }
 	void updateProjections();
 	string getFullImagePath(int imagekey);
-	/*
-		void getPairs();
-		void extractDEM(int);
-		void setAutoExtractionSettings(int, int, int, int, double);
-		void setNCCSettings(int, int, double, double);
-		void setLSMSettings(int, int, double, double, int, double, double, double, int, double);
-		void setProgress(int);
-		void saveDem(char *, int);
-		void saveDemGrid(char *, int);
-		int loadDem(char *, int);
-		void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight);
-		*/
+	void getFeatureData(string &fname, int &ftype, int &fclass);
+	void changePair(int pair, int &lk, int &rk);
 
 };
 
