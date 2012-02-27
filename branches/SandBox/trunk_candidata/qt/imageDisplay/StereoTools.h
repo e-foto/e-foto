@@ -9,6 +9,8 @@
 #include <QAction>
 #include <QTimer>
 #include <QLabel>
+#include <QDoubleSpinBox>
+#include <QComboBox>
 #include <QObject>
 
 #include "GeometryResource.h"
@@ -144,6 +146,63 @@ public:
 
 public slots:
 	void executeAction(QAction *action);
+	/*
+	Q_OBJECT
+
+protected:
+	StereoDisplay* _display;
+	QLabel* _leftInfoLabel;
+	QLabel* _rightInfoLabel;
+	QLabel* _objectInfoLabel;
+	StereoTool* currentLeftTool;
+	StereoTool* currentRightTool;
+
+public:
+	StereoToolsBar(StereoDisplay* display, QWidget* parent);
+
+	QAction* setZoomTool;
+	QAction* setMoveTool;
+	QAction* setMarkTool;
+
+	QAction* setLeftEffect;
+	QAction* setRightEffect;
+	QAction* setBothEffect;
+
+	QAction* setFitView;
+	QAction* showOverview;
+	QAction* showNearview;
+	QAction* useAntialias;
+	QAction* openLeftImage;
+	QAction* openRightImage;
+	QAction* saveLeftImage;
+	QAction* saveRightImage;
+	QDoubleSpinBox* scaleSpinBox;
+	QComboBox* detailComboBox;
+
+	ZoomStereoTool zoom;
+	MoveStereoTool move;
+	MarkStereoTool mark;
+	NearTool leftNear;
+	OverTool leftOver;
+	NearTool rightNear;
+	OverTool rightOver;
+
+	void setOpenVisible(bool status);
+	void setSaveVisible(bool status);
+	void setMarkVisible(bool status);
+	QLabel* getLeftInfo();
+	QLabel* getRightInfo();
+	QDockWidget* getLeftOverview();
+	QDockWidget* getRightOverview();
+	QDockWidget* getLeftNearview();
+	QDockWidget* getRightNearview();
+
+public slots:
+	void executeAction(QAction *action);
+	void rescaleLeftDisplay();
+	void rescaleRightDisplay();
+	void changeDetailZoom(int nz);
+	*/
 };
 
 } // namespace efoto

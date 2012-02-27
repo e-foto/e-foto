@@ -141,11 +141,11 @@ public:
 	void changeMarker(Marker marker);
 	Marker* getMarker();
 
-        void addMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
-        void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
+	void addMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
+	void insertMark(QPointF location, int key, QString label = "", Marker* marker = NULL);
 	void editMark(int key, QPointF location, Marker* marker = NULL);
 	void editMark(int key, QPointF location, QString label, Marker* marker = NULL);
-        void deleteMark(int key);
+	void deleteMark(int key);
 	void clear();
 
 	//void paintEvent(const QPaintEvent& event);
@@ -172,19 +172,19 @@ signals:
 class InfoTool : public SingleTool
 {
 public:
-	InfoTool(SingleDisplay* display);
-	~InfoTool();
+ InfoTool(SingleDisplay* display);
+ ~InfoTool();
 
-	void paintEvent(const QPaintEvent& event);
-	void resizeEvent(const QResizeEvent &event);
-	void enterEvent(const QHoverEvent& event);
-	void leaveEvent(const QHoverEvent& event);
-	void moveEvent(const QHoverEvent& event);
-	void mousePressed(const QMouseEvent & event);
-	void mouseReleased(const QMouseEvent & event);
-	void mouseMoved(const QMouseEvent & event);
-	void mouseDblClicked(const QMouseEvent & event);
-	void wheelEvent(const QWheelEvent& event);
+ void paintEvent(const QPaintEvent& event);
+ void resizeEvent(const QResizeEvent &event);
+ void enterEvent(const QHoverEvent& event);
+ void leaveEvent(const QHoverEvent& event);
+ void moveEvent(const QHoverEvent& event);
+ void mousePressed(const QMouseEvent & event);
+ void mouseReleased(const QMouseEvent & event);
+ void mouseMoved(const QMouseEvent & event);
+ void mouseDblClicked(const QMouseEvent & event);
+ void wheelEvent(const QWheelEvent& event);
 };
 */
 
@@ -273,7 +273,7 @@ public:
 	ZoomTool zoom;
 	MoveTool move;
 	MarkTool mark;
-        NearTool near_;
+	NearTool near_;
 	OverTool over;
 	//InfoTool info;
 
@@ -355,6 +355,7 @@ public:
 
 public slots:
 	void executeAction(QAction *action);
+	void changeMode(int action);
 	void rescaleLeftDisplay();
 	void rescaleRightDisplay();
 	void changeDetailZoom(int nz);

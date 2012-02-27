@@ -79,8 +79,9 @@ public:
 	unsigned int countSelectedPoints();
 	bool connectImagePoints();
 	bool updatePointsTable();
-	bool flightDirection(int markId);
-	bool flightDirection(double col, double lin);
+        bool flightDirection(int markId);
+        bool flightDirection(double col, double lin);
+        bool flightDirection(double kappa0);
 	bool calculateSR(int iterations, double gnssPrecision, double insPrecision);
 	bool exteriorDone();
 	deque<string> makeReport();

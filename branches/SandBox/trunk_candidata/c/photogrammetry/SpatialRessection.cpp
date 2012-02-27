@@ -25,7 +25,7 @@ namespace efoto {
  */
 SpatialRessection::SpatialRessection()
 {
-	pointForFlightDirectionAvailable = false;
+        pointForFlightDirectionAvailable = flightDirectionAvailable = false;
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
@@ -44,7 +44,7 @@ SpatialRessection::SpatialRessection()
 SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only, needed in project use.
 {
 	imageId = myImageId;
-	pointForFlightDirectionAvailable = false;
+        pointForFlightDirectionAvailable = flightDirectionAvailable = false;
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
@@ -299,11 +299,19 @@ int SpatialRessection::countSelectedPoints()
 // Selected fiductial mark or point to indicate the direction of flight manipulators
 //
 
-void SpatialRessection::setPointForFlightDirection(int col, int lin)
+void SpatialRessection::setFlightDirection(double kappa0)
+{
+    flightDirection = kappa0;
+    flightDirectionAvailable = true;
+    pointForFlightDirectionAvailable = false;
+}
+
+void SpatialRessection::setPointForFlightDirection(double col, double lin)
 {
 	pointForFlightDirection.setCol(col);
 	pointForFlightDirection.setLin(lin);
-	pointForFlightDirectionAvailable = true;
+        flightDirectionAvailable = false;
+        pointForFlightDirectionAvailable = true;
 }
 
 void SpatialRessection::selectFiductialMarkForFlightDirection(int id)
@@ -312,13 +320,14 @@ void SpatialRessection::selectFiductialMarkForFlightDirection(int id)
 	{
 		pointForFlightDirection.setCol(myImage->getDigFidMark(id).getCol());
 		pointForFlightDirection.setLin(myImage->getDigFidMark(id).getLin());
-		pointForFlightDirectionAvailable = true;
+                flightDirectionAvailable = false;
+                pointForFlightDirectionAvailable = true;
 	}
 }
 
 void SpatialRessection::unsetPointForFlightDirection()
 {
-	pointForFlightDirectionAvailable = false;
+        flightDirectionAvailable = false;
 }
 
 // EObject methods
@@ -647,7 +656,7 @@ void SpatialRessection::generateX0()
 
 void SpatialRessection::initialize()
 {
-	if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && pointForFlightDirectionAvailable)
+        if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
 	{
 		rt->setImage(myImage);
 		rt->setIOParameters(myImage->getIO()->getXa());
@@ -688,33 +697,32 @@ void SpatialRessection::initialize()
 		omega0 = 0;
 		phi0 = 0;
 
-		// Calculating kappa0.
-		DetectorSpaceCoordinate fiductialCoordinate = rt->imageToDetector(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
-		//DetectorSpaceCoordinate fiductialCoordinate = myImage->getIO()->digitalToAnalog(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+                if (flightDirectionAvailable)
+                    kappa0 = flightDirection;
+                else
+                {
+                    // Calculating kappa0.
+                    DetectorSpaceCoordinate fiductialCoordinate = rt->imageToDetector(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
 
-		// Distortions added.
-		//if (useDistortions)
-		//fiductialCoordinate = applyDistortions(fiductialCoordinate);
-		//fiductialCoordinate = removeDistortions(fiductialCoordinate);
+                    double fiductialXi = fiductialCoordinate.getXi();
+                    double fiductialEta = fiductialCoordinate.getEta();
 
-		double fiductialXi = fiductialCoordinate.getXi();
-		double fiductialEta = fiductialCoordinate.getEta();
+                    double fiductialX = Xa.get(1,1) + fiductialXi * Xa.get(2,1) + fiductialEta * Xa.get(3,1);
+                    double fiductialY = Xa.get(4,1) + fiductialXi * Xa.get(5,1) + fiductialEta * Xa.get(6,1);
 
-		double fiductialX = Xa.get(1,1) + fiductialXi * Xa.get(2,1) + fiductialEta * Xa.get(3,1);
-		double fiductialY = Xa.get(4,1) + fiductialXi * Xa.get(5,1) + fiductialEta * Xa.get(6,1);
+                    double deltaX = fiductialX - X00;
+                    double deltaY = fiductialY - Y00;
 
-		double deltaX = fiductialX - X00;
-		double deltaY = fiductialY - Y00;
-
-		double angle = atan(fabs(deltaY/deltaX));
-		if ((deltaX >= 0.0) && (deltaY >= 0.0))
+                    double angle = atan(fabs(deltaY/deltaX));
+                    if ((deltaX >= 0.0) && (deltaY >= 0.0))
 			kappa0 = angle;
-		if ((deltaX < 0.0) && (deltaY >= 0.0))
+                    if ((deltaX < 0.0) && (deltaY >= 0.0))
 			kappa0 = M_PI - angle;
-		if ((deltaX < 0.0) && (deltaY < 0.0))
+                    if ((deltaX < 0.0) && (deltaY < 0.0))
 			kappa0 = M_PI + angle;
-		if ((deltaX >= 0.0) && (deltaY < 0.0))
+                    if ((deltaX >= 0.0) && (deltaY < 0.0))
 			kappa0 = -angle;
+                }
 
 		// Setting the values to X0 and reseting Xa.
 		X0.resize(6, 1);
@@ -752,7 +760,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 {
 	gnssConverged = false;
 	insConverged = false;
-	if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && pointForFlightDirectionAvailable)
+        if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
 	{
 		int iterations = 0;
 

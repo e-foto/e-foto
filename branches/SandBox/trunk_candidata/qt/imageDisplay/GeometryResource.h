@@ -23,7 +23,7 @@ class SymbolsResource
 {
 public:
 	static QImage getBackGround(QColor color, QSize size = QSize(24,24), QPoint pointedIn = QPoint(-2, -2), QColor pointColor = QColor(255,255,255,255), unsigned int pointWeigth = 2);
-	static QImage getCross(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
+        static QImage getCross(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 	static QImage getBordedCross(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
 	static QImage getX(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
 	static QImage getBordedX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
