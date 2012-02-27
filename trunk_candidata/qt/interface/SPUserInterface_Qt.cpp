@@ -126,6 +126,8 @@ bool SPUserInterface_Qt::exec()
 	viewer->blockSave();
 	setCentralWidget(viewer);
 	viewer->setFeatures(manager->getFeaturesLink());
+	viewer->getLeftMarker().setToOnlyEmitClickedMode();
+	viewer->getRightMarker().setToOnlyEmitClickedMode();
 
 	show();
 	qApp->processEvents();
@@ -265,6 +267,7 @@ void SPUserInterface_Qt::onRemoveAllButton()
 
 void SPUserInterface_Qt::onAddPtButton()
 {
+	viewer->getToolBar()->changeMode(1);
 	if (editPtButton->isChecked())
 		editPtButton->setChecked(false);
 
@@ -276,6 +279,7 @@ void SPUserInterface_Qt::onAddPtButton()
 
 void SPUserInterface_Qt::onEditPtButton()
 {
+	viewer->getToolBar()->changeMode(1);
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
 
@@ -287,6 +291,7 @@ void SPUserInterface_Qt::onEditPtButton()
 
 void SPUserInterface_Qt::onSelPtButton()
 {
+	viewer->getToolBar()->changeMode(1);
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
 

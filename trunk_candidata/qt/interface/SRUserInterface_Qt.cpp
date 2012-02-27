@@ -100,6 +100,11 @@ void SRUserInterface_Qt::init()
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
+        flightDirectionForm = new FlightDirectionForm();
+        flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+        flightDirectionForm->imageLabel->setHidden(true);
+        connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+
 	markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	//imageView->getMarker()->changeMarker(mark);
@@ -145,39 +150,11 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 	testActivateSR();
 }
 
-void SRUserInterface_Qt::receiveFlightDirection(QPointF p)
+void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
-	//REVER
-	//oldImageView->drawFlightDirection(p.x(),p.y());
-	manager->flightDirection(p.x(),p.y());
+        manager->flightDirection(kappa0);
 	flightAvailable = true;
-
-	/*
-
-void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
-{
-				int imageKey = ptManager->getImageId(imageFile.toStdString().c_str());
-				ptManager->setImageFlightDirection(imageKey, kappa0);
-
-				int currentIndex=flightDirectionForm->imagesFlightDirectionCombo->currentIndex();
-
-				if (currentIndex==listAllImages.size()-1)
-								flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(listAllImages.size()-1);
-				else
-								flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(currentIndex+1);
-
-				if (ptManager->allKappaSet())
-				{
-								actionCalculateFotoTri->setEnabled(true);
-								calculateFotoTriToolButton->setEnabled(true);
-				}
-}
-
-	  */
-
 	actionSpatialRessection->setEnabled(true);
-	//toolBar->setEnabled(true);
-	//dockWidget->setEnabled(true);
 }
 
 void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
@@ -438,11 +415,6 @@ void SRUserInterface_Qt::testActivateSR()
 
 void SRUserInterface_Qt::setFlight()
 {
-	flightDirectionForm= new FlightDirectionForm();
-	flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-
-	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
-
 	flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
 	flightDirectionForm->show();
 }

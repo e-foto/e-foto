@@ -236,13 +236,21 @@ QString ImageForm::loadImageFile()
 			filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
 		lastPath = filePathLine->text();
 		//***************************************************************************************************
-		int w, h, f;
-
-		//CommonMethods::instance(CM::CVMethods)->loadImage(w,h,f,fileImage.toStdString());
-		//CommonMethods::instance(CM::CVMethods)->freeImage();
-		QImage img(fileImage);
-		w = img.width(); h = img.height();
-
+		int w, h;
+		bool success = false;
+		for (int i = 0; i < 100 && !success; i++)
+		{
+			QImage img(fileImage);
+			w = img.width(); h = img.height();
+			if (w != 0 && h != 0)
+				success = true;
+		}
+		if (!success)
+		{
+			QMessageBox* msgBox = new QMessageBox();
+			msgBox->setText("Error: The image loading process.");
+			msgBox->exec();
+		}
 		heightLine->setText(QString::number(h)+" px");
 		widthLine->setText(QString::number(w)+" px");
 		return fileImage;

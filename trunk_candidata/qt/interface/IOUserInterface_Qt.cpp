@@ -140,7 +140,7 @@ void IOUserInterface_Qt::init()
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
-	mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24),3)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+	mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24), 1, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	//imageView->getMarker()->changeMarker(mark);
 
 	//resize(1024,800);

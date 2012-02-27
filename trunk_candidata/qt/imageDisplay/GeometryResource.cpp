@@ -16,18 +16,32 @@ QImage SymbolsResource::getBackGround(QColor color, QSize size, QPoint pointedIn
 	return img;
 }
 
-QImage SymbolsResource::getCross(QColor color, QSize size, unsigned int weigth)
+QImage SymbolsResource::getCross(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
 {
 	QImage img(size, QImage::Format_ARGB32);
 	img.fill(QColor(0,0,0,0).rgba());
-	int hotX = size.width() / 2;
-	int hotY = size.height() / 2;
+        double hotX = size.width() / 2.0;
+        double hotY = size.height() / 2.0;
 
 	QPainter painter(&img);
-	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
-	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
-	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
-	painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
+        //painter.setRenderHint(QPainter::Antialiasing, true);
+        //painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
+        //painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
+        //painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
+        //painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
+
+        double diff = weigth;
+        painter.setPen(QPen(QBrush(color),weigth));
+        if (pointingCenter)
+        {
+            painter.drawPoint(hotX, hotY);
+            diff = weigth +2;
+        }
+        painter.drawLine(QPointF(0,hotY),QPointF(hotX-diff,hotY));
+        painter.drawLine(QPointF(hotX+diff,hotY),QPointF(size.width(),hotY));
+        painter.drawLine(QPointF(hotX,0),QPointF(hotX,hotY-diff));
+        painter.drawLine(QPointF(hotX,hotY+diff),QPointF(hotX,size.height()));
+
 	painter.end();
 
 	return img;
@@ -41,6 +55,7 @@ QImage SymbolsResource::getBordedCross(QColor colorBrush, QColor colorPen, QSize
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
+        painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
 	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
 	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
@@ -99,10 +114,11 @@ QImage SymbolsResource::getTriangle(QColor color, QColor fillcolor, QSize size, 
 	QPolygonF poly(points);
 
 	QPainter painter(&img);
+        painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawConvexPolygon(poly);
 	painter.setPen(QPen(QBrush(color),weigth));
-	painter.setBrush(QBrush(Qt::transparent));
+        painter.setBrush(QBrush(Qt::transparent));
 	if (pointingCenter)
 		painter.drawPoint(hotX, hotY);
 	painter.drawConvexPolygon(poly);
@@ -119,6 +135,7 @@ QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, un
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
+        painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
 	painter.setPen(QPen(QBrush(color),weigth));

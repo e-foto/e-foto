@@ -27,8 +27,8 @@ protected slots:
 
 public slots:
 	virtual void informState();
-	virtual void receivePoint(QPointF p);
-	virtual void receiveFlightDirection(QPointF p);
+        virtual void receivePoint(QPointF p);
+        virtual void setFlightDirection(QString,double);
 	virtual void actualizeDisplayedPoints();
 	virtual void actualizeSelection(QStandardItem* item);
 	virtual void makeRepaint();

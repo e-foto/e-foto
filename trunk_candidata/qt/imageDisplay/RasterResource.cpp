@@ -14,7 +14,8 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 	_useSmoothOut = withSmoothOut;
 	if (!_isValid || srcImage->width() == 0 || srcImage->height() == 0)
 	{
-		emitLoadError();
+		if (filepath != "")
+			emitLoadError();
 		return;
 	}
 
