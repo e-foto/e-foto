@@ -49,21 +49,25 @@ protected slots:
 	void onRemoveAllButton();
 	void onAddPtButton();
 	void onEditPtButton();
+	void onSelPtButton();
 	void onRemovePtButton();
 	void onFeatureListClicked(QModelIndex index);
+	void onChangePair(int pos);
 	void changePair(int leftKey, int rightKey);
+	void onFeatureSelected();
 
 private:
 	void init();
 	//void close();
 	bool allow_close;
-	int measure_mode; // 0 - None, 1- Add, 2- Edit
+	int measure_mode; // 0 - None, 1- Add, 2- Edit, 3- Select
 
 public:
 	static SPUserInterface_Qt* instance(SPManager* manager);
 	// Other Methods
 	//
 	bool exec();
+	void addImagePair(char *);
 
 };
 

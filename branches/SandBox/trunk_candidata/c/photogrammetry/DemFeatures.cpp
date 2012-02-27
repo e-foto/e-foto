@@ -549,59 +549,59 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 //
 void DemFeatures::convertClassesIdsFromSp165()
 {
-	int fc, ft, new_fc;
+	int fc, ft;
 	for (int i=0; i<features.size(); i++)
 	{
 		ft = features.at(i).feature_type;
 		fc = features.at(i).feature_class;
-
-		if (ft == 1)
-		{
-			features.at(i).feature_class = 2;
-			continue;
-		}
-
-		if (fc == 0)
-		{
-			features.at(i).feature_class = 1;
-			continue;
-		}
-
-		if (ft == 2)
-		{
-			switch (fc)
-			{
-			case 1 : new_fc = 3; break;
-			case 2 : new_fc = 4; break;
-			case 3 : new_fc = 5; break;
-			case 4 : new_fc = 6; break;
-			case 5 : new_fc = 7; break;
-			case 6 : new_fc = 8; break;
-			default: new_fc = 1;
-			}
-		}
-
-		if (ft == 3)
-		{
-			switch (fc)
-			{
-			case 1 : new_fc = 9; break;
-			case 2 : new_fc = 10; break;
-			case 3 : new_fc = 11; break;
-			case 4 : new_fc = 12; break;
-			case 5 : new_fc = 13; break;
-			case 6 : new_fc = 14; break;
-			case 7 : new_fc = 15; break;
-			case 8 : new_fc = 16; break;
-			case 9 : new_fc = 17; break;
-			case 10 : new_fc = 18; break;
-			case 11 : new_fc = 19; break;
-			default: new_fc = 1;
-			}
-		}
-
-		features.at(i).feature_class = new_fc;
+		features.at(i).feature_class = convClassFromSp165(ft, fc);
 	}
+}
+
+int DemFeatures::convClassFromSp165(int ft, int fc)
+{
+	int new_fc;
+
+	if (ft == 1)
+		return 2;
+
+	if (fc == 0)
+		return 1;
+
+	if (ft == 2)
+	{
+		switch (fc)
+		{
+		case 1 : new_fc = 3; break;
+		case 2 : new_fc = 4; break;
+		case 3 : new_fc = 5; break;
+		case 4 : new_fc = 6; break;
+		case 5 : new_fc = 7; break;
+		case 6 : new_fc = 8; break;
+		default: new_fc = 1;
+		}
+	}
+
+	if (ft == 3)
+	{
+		switch (fc)
+		{
+		case 1 : new_fc = 9; break;
+		case 2 : new_fc = 10; break;
+		case 3 : new_fc = 11; break;
+		case 4 : new_fc = 12; break;
+		case 5 : new_fc = 13; break;
+		case 6 : new_fc = 14; break;
+		case 7 : new_fc = 15; break;
+		case 8 : new_fc = 16; break;
+		case 9 : new_fc = 17; break;
+		case 10 : new_fc = 18; break;
+		case 11 : new_fc = 19; break;
+		default: new_fc = 1;
+		}
+	}
+
+	return new_fc;
 }
 
 int DemFeatures::getClassIdToSp165(int new_class)

@@ -81,7 +81,6 @@ private:
 	int loadFeatSp165(char *filename, bool append);
 	int saveFeatSp165(char *filename, bool append);
 	void convertClassesIdsFromSp165();
-	int getClassIdToSp165(int new_class);
 	void calculateFeaturesAttributes();
 	void calculateFeatureAttributes(int featid);
 	void calculateCentroid(int featid);
@@ -102,6 +101,8 @@ private:
 public:
 	DemFeatures();
 	void createClassesFromSp165();
+	int convClassFromSp165(int ft, int fc);
+	int getClassIdToSp165(int new_class);
 	FeatureClass * getFeatureClass(int);
 	string getFeatureTypeName(int);
 	int loadFeatures(char *filename, int mode, bool append);
