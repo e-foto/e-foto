@@ -55,6 +55,7 @@ protected slots:
 	void onChangePair(int pos);
 	void changePair(int leftKey, int rightKey);
 	void onFeatureSelected();
+	void onCloseFeature();
 
 private:
 	void init();
