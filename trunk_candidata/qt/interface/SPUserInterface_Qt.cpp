@@ -41,7 +41,7 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(addButton, SIGNAL(clicked()), this, SLOT(onAddButton()));
 		QObject::connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemoveButton()));
 		QObject::connect(removeAllButton, SIGNAL(clicked()), this, SLOT(onRemoveAllButton()));
-		QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
+		QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onCloseFeature()));
 		QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onSelPtButton()));
 		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onAddPtButton()));
 		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onRemovePtButton()));
@@ -345,6 +345,12 @@ void SPUserInterface_Qt::addImagePair(char * item)
 {
 	QString text = QString::fromAscii(item);
 	comboBox->addItem(text);
+}
+
+void SPUserInterface_Qt::onCloseFeature()
+{
+	manager->setSelected(-1,-1);
+	treeView->clearSelection();
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
