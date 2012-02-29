@@ -121,13 +121,27 @@ void SPUserInterface_Qt::closeEvent(QCloseEvent *e)
 
 bool SPUserInterface_Qt::exec()
 {
-	viewer = new SeparatedStereoViewer();
+	viewer = new StereoViewer();
 	viewer->blockOpen();
 	viewer->blockSave();
-	setCentralWidget(viewer);
 	viewer->setFeatures(manager->getFeaturesLink());
-	viewer->getLeftMarker().setToOnlyEmitClickedMode();
-	viewer->getRightMarker().setToOnlyEmitClickedMode();
+	viewer->getMarker().setToOnlyEmitClickedMode();
+
+	viewerSeparated = new SeparatedStereoViewer();
+	viewerSeparated->blockOpen();
+	viewerSeparated->blockSave();
+	viewerSeparated->getLeftMarker().setToOnlyEmitClickedMode();
+	viewerSeparated->getRightMarker().setToOnlyEmitClickedMode();
+	viewerSeparated->getLeftDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getLeftScene());
+	viewerSeparated->getRightDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getRightScene());
+
+	QTabWidget* viewersTab = new QTabWidget();
+	viewersTab->addTab(viewer,"StereoViewer");
+	viewersTab->addTab(viewerSeparated,"SeparatedViewers");
+	setCentralWidget(viewersTab);
+
+	connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
+	connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
 
 	show();
 	qApp->processEvents();
@@ -140,7 +154,8 @@ bool SPUserInterface_Qt::exec()
 void SPUserInterface_Qt::updateData()
 {
 	updateTable();
-	viewer->update();
+	viewer->getDisplay()->updateAll();
+	viewerSeparated->update();
 }
 
 void SPUserInterface_Qt::updateTable()
@@ -246,6 +261,11 @@ void SPUserInterface_Qt::onAddButton()
 	manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex());
 
 	updateData();
+
+	int fid, pid;
+	manager->getSelected(fid, pid);
+
+	treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
 }
 
 void SPUserInterface_Qt::onRemoveButton()
@@ -268,6 +288,7 @@ void SPUserInterface_Qt::onRemoveAllButton()
 void SPUserInterface_Qt::onAddPtButton()
 {
 	viewer->getToolBar()->changeMode(1);
+	viewerSeparated->getToolBar()->changeMode(1);
 	if (editPtButton->isChecked())
 		editPtButton->setChecked(false);
 
@@ -280,6 +301,7 @@ void SPUserInterface_Qt::onAddPtButton()
 void SPUserInterface_Qt::onEditPtButton()
 {
 	viewer->getToolBar()->changeMode(1);
+	viewerSeparated->getToolBar()->changeMode(1);
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
 
@@ -292,6 +314,7 @@ void SPUserInterface_Qt::onEditPtButton()
 void SPUserInterface_Qt::onSelPtButton()
 {
 	viewer->getToolBar()->changeMode(1);
+	viewerSeparated->getToolBar()->changeMode(1);
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
 
@@ -326,6 +349,8 @@ void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
 	manager->setSelected(feat_id, pt_id);
 
 	onFeatureSelected();
+
+	viewer->getDisplay()->updateAll();
 }
 
 void SPUserInterface_Qt::onFeatureSelected()
@@ -351,6 +376,61 @@ void SPUserInterface_Qt::onCloseFeature()
 {
 	manager->setSelected(-1,-1);
 	treeView->clearSelection();
+}
+
+void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
+{
+	if (measure_mode == 0)
+		return;
+
+	int fid, pid;
+	manager->getSelected(fid, pid);
+
+	if (measure_mode != 3)
+	{
+		if (fid < 1 || (pid < 1 && measure_mode != 1))
+			return;
+	}
+
+	double lx = lPos.x(), ly = lPos.y(), rx = rPos.x(), ry = rPos.y(), X , Y, Z;
+
+	manager->computeIntersection(lx, ly, rx, ry, X, Y, Z);
+
+	//
+	// Check mode
+	//
+
+	// Add pt
+	if (measure_mode == 1)
+	{
+		pid++;
+		if (pid < 1)
+			pid = 1;
+		manager->addPoint(fid, pid, lx, ly, rx, ry, X, Y, Z);
+		updateData();
+	}
+
+	// Edit pt
+	if (measure_mode == 2)
+	{
+		manager->updatePoint(fid, pid, lx, ly, rx, ry, X, Y, Z);
+		updateData();
+	}
+
+	// Select feature
+	if (measure_mode == 3)
+	{
+		manager->setSelectedXYZ(X,Y,Z);
+		manager->getSelected(fid,pid);
+		treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+	}
+}
+
+void SPUserInterface_Qt::stereoMoved(QPointF lPos, QPointF rPos)
+{
+	double lx = lPos.x(), ly = lPos.y(), rx = rPos.x(), ry = rPos.y(), X , Y, Z;
+	manager->computeIntersection(lx, ly, rx, ry, X, Y, Z);
+	viewer->getToolBar()->actualizeStereoInfoLabel(X, Y, Z);
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)

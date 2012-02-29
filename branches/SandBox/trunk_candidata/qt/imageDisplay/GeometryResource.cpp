@@ -20,27 +20,27 @@ QImage SymbolsResource::getCross(QColor color, QSize size, unsigned int weigth, 
 {
 	QImage img(size, QImage::Format_ARGB32);
 	img.fill(QColor(0,0,0,0).rgba());
-        double hotX = size.width() / 2.0;
-        double hotY = size.height() / 2.0;
+		double hotX = size.width() / 2.0;
+		double hotY = size.height() / 2.0;
 
 	QPainter painter(&img);
-        //painter.setRenderHint(QPainter::Antialiasing, true);
-        //painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
-        //painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
-        //painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
-        //painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
+		//painter.setRenderHint(QPainter::Antialiasing, true);
+		//painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, color);
+		//painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, color);
+		//painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, color);
+		//painter.fillRect(hotX-weigth/2, size.height()/2+(weigth+1)/2, weigth, size.height()/2-weigth/2, color);
 
-        double diff = weigth;
-        painter.setPen(QPen(QBrush(color),weigth));
-        if (pointingCenter)
-        {
-            painter.drawPoint(hotX, hotY);
-            diff = weigth +2;
-        }
-        painter.drawLine(QPointF(0,hotY),QPointF(hotX-diff,hotY));
-        painter.drawLine(QPointF(hotX+diff,hotY),QPointF(size.width(),hotY));
-        painter.drawLine(QPointF(hotX,0),QPointF(hotX,hotY-diff));
-        painter.drawLine(QPointF(hotX,hotY+diff),QPointF(hotX,size.height()));
+		double diff = weigth;
+		painter.setPen(QPen(QBrush(color),weigth));
+		if (pointingCenter)
+		{
+			painter.drawPoint(hotX, hotY);
+			diff = weigth +2;
+		}
+		painter.drawLine(QPointF(0,hotY),QPointF(hotX-diff,hotY));
+		painter.drawLine(QPointF(hotX+diff,hotY),QPointF(size.width(),hotY));
+		painter.drawLine(QPointF(hotX,0),QPointF(hotX,hotY-diff));
+		painter.drawLine(QPointF(hotX,hotY+diff),QPointF(hotX,size.height()));
 
 	painter.end();
 
@@ -55,7 +55,7 @@ QImage SymbolsResource::getBordedCross(QColor colorBrush, QColor colorPen, QSize
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
-        painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
 	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
 	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
@@ -114,11 +114,11 @@ QImage SymbolsResource::getTriangle(QColor color, QColor fillcolor, QSize size, 
 	QPolygonF poly(points);
 
 	QPainter painter(&img);
-        painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawConvexPolygon(poly);
 	painter.setPen(QPen(QBrush(color),weigth));
-        painter.setBrush(QBrush(Qt::transparent));
+		painter.setBrush(QBrush(Qt::transparent));
 	if (pointingCenter)
 		painter.drawPoint(hotX, hotY);
 	painter.drawConvexPolygon(poly);
@@ -135,7 +135,7 @@ QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, un
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
-        painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
 	painter.setPen(QPen(QBrush(color),weigth));
@@ -372,7 +372,7 @@ GeometryResource::GeometryResource()
 	nextPointkey_ = 1;
 	nextLinekey_ = 1;
 	defaultMark = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(8,8), 1, false));
-	selectedMark  = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128), QSize(16,16), 2, false));
+	selectedMark  = new Marker(SymbolsResource::getCircle(QColor(0,0,0), QColor(128,255,128,32), QSize(10,10), 2, true));
 	//defaultMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
 	//selectedMark = new Marker(SymbolsResource::getBordedCross(QColor(Qt::yellow), QColor(Qt::black), QSize(16,16), 4));
 }
@@ -527,6 +527,7 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
 		if (dfs->selectedFeature() == i+1)
 			continue;
 		DemFeature* df = dfs->getFeatureLink(i+1);
+		QVector<QPointF> poly;
 		for (int j = 0; j < df->points.size(); j++)
 		{
 			double x = 0;
@@ -541,22 +542,28 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
 				x = df->points.at(j).right_x;
 				y = df->points.at(j).right_y;
 			}
-			if (df->feature_type == 3) // preenchimento e fechamento
+			x = (x -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
+			y = (y -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
+			poly.append(QPointF(x,y));
+		}
+		painter.setPen(QPen(QColor(Qt::darkGreen)));
+		painter.setBrush(QBrush(QColor(128,128,0,128)));
+		if (df->feature_type == 3) // preenchimento e fechamento
+		{
+			painter.drawPolygon(poly);
+		}
+		if (df->feature_type == 2) // linhas
+		{
+			painter.drawPolyline(poly);
+		}
+		if (true) // pontos
+		{
+			Marker* mark = defaultMark;
+			for (int j = 0; j < poly.size(); j++)
 			{
-
-			}
-			if (df->feature_type > 1) // linhas
-			{
-
-			}
-			if (true) // pontos
-			{
-				Marker* mark = defaultMark;
 				QString label = QString::number(j+1);
-
-				x = (x -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
-				y = (y -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
-
+				double x = poly.at(j).x();
+				double y = poly.at(j).y();
 				painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
 				painter.setPen(QPen(Qt::yellow));
 				painter.setFont(QFont("Arial", 10));
@@ -567,8 +574,64 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
 
 	if (dfs->selectedFeature() > 0)
 	{
-		DemFeature* df = dfs->getFeatureLink(dfs->selectedFeature()-1);
-		// Repetir o código de renderização aqui;
+		DemFeature* df = dfs->getFeatureLink(dfs->selectedFeature());
+		QVector<QPointF> poly;
+		for (int j = 0; j < df->points.size(); j++)
+		{
+			double x = 0;
+			double y = 0;
+			if (projection == 0)
+			{
+				x = df->points.at(j).left_x;
+				y = df->points.at(j).left_y;
+			}
+			else if (projection == 1)
+			{
+				x = df->points.at(j).right_x;
+				y = df->points.at(j).right_y;
+			}
+			x = (x -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
+			y = (y -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
+			poly.append(QPointF(x,y));
+		}
+		painter.setPen(QPen(QBrush(QColor(Qt::darkGreen)),3));
+		painter.setBrush(QBrush(QColor(Qt::darkYellow), Qt::Dense7Pattern));
+		if (df->feature_type == 3) // preenchimento e fechamento
+		{
+			painter.drawPolygon(poly);
+		}
+		if (df->feature_type == 2) // linhas
+		{
+			painter.drawPolyline(poly);
+		}
+		if (true) // pontos
+		{
+			Marker* mark = defaultMark;
+			for (int j = 0; j < poly.size(); j++)
+			{
+				if (dfs->selectedPoint()-1 == j)
+				{
+					Marker* mark = selectedMark;
+					QString label = QString::number(j+1);
+					double x = poly.at(j).x();
+					double y = poly.at(j).y();
+					painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
+					painter.setPen(QPen(Qt::yellow));
+					painter.setFont(QFont("Arial", 10));
+					painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
+				}
+				else
+				{
+					QString label = QString::number(j+1);
+					double x = poly.at(j).x();
+					double y = poly.at(j).y();
+					painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
+					painter.setPen(QPen(Qt::yellow));
+					painter.setFont(QFont("Arial", 10));
+					painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
+				}
+			}
+		}
 	}
 	painter.end();
 	return result;

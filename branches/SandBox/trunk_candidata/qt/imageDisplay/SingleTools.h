@@ -129,8 +129,6 @@ class MarkTool : public SingleTool
 	Q_OBJECT
 
 	Marker mark;
-
-	//QList< MarkListener* > _listeners;
 	int nextMarkItem;
 	bool onlyEmitClickedMode;
 
@@ -162,7 +160,6 @@ public:
 	void setToOnlyEmitClickedMode();
 	void setToAutoCreateMarkFrom(unsigned int start);
 	void putClickOn(QPointF& pos);
-	//void setListener(MarkListener* listener, bool active = true);
 
 signals:
 	void clicked(QPointF);
@@ -335,13 +332,11 @@ public:
 	MarkTool leftMark;
 	NearTool leftNear;
 	OverTool leftOver;
-	//InfoTool leftInfo;
 	ZoomTool rightZoom;
 	MoveTool rightMove;
 	MarkTool rightMark;
 	NearTool rightNear;
 	OverTool rightOver;
-	//InfoTool rightInfo;
 
 	void setOpenVisible(bool status);
 	void setSaveVisible(bool status);

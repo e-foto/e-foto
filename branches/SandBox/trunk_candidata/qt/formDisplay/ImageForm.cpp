@@ -261,7 +261,6 @@ QString ImageForm::loadImageFile()
 
 void ImageForm::startSingleViewer()
 {
-
 	SingleViewer* sv = new SingleViewer(this);
 	sv->blockOpen();
 	sv->blockSave();
@@ -270,16 +269,19 @@ void ImageForm::startSingleViewer()
 	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
 
 	/*
- SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
- v->show();
- v->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
- v->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
+	SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
+	v->show();
+	v->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
+	v->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
 
- StereoViewer* s = new StereoViewer(this);
- s->show();
- s->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
- s->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
-*/
+	StereoViewer* s = new StereoViewer(this);
+	s->show();
+	s->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
+	s->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
+	s->blockOpen();
+	s->blockSave();
+	//s->blockMark();
+	*/
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)

@@ -11,6 +11,7 @@
 #include "Image.h"
 #include "ExteriorOrientation.h"
 #include "DemFeatures.h"
+#include "SpatialIntersection.h"
 
 /*
 #include "Matrix.h"
@@ -93,12 +94,17 @@ public:
 	void removeAllFeatures();
 	int removePoint();
 	void setSelected(int feat_id, int pt_id);
+	void getSelected(int &fid, int &pid) { fid = spFeatures.selectedFeature(); pid = spFeatures.selectedPoint(); };
 	DemFeatures* getFeaturesLink() { return &spFeatures; }
 	string getFeaturesList() { return spFeatures.getFeaturesList(); }
 	void updateProjections();
+	void computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z);
 	string getFullImagePath(int imagekey);
 	void getFeatureData(string &fname, int &ftype, int &fclass);
 	void changePair(int pair, int &lk, int &rk);
+	void addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
+	void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
+	void setSelectedXYZ(double X, double Y, double Z);
 
 };
 
