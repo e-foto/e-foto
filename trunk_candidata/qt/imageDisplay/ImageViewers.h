@@ -78,16 +78,14 @@ class StereoViewer : public QMainWindow
 	Q_OBJECT
 
 	StereoDisplay* stereoDisplay;
-	SingleDisplay* leftDisplay;
-	SingleDisplay* rightDisplay;
-	//SingleToolsBar* tool;
 	StereoToolsBar* stereoTool;
-	SingleToolsBar* leftTool;
-	SingleToolsBar* rightTool;
 	void closeEvent(QCloseEvent *);
 
 public:
 	StereoViewer(QWidget *parent=0);
+	StereoDisplay* getDisplay() {return stereoDisplay;}
+	MarkStereoTool& getMarker() {return stereoTool->_mark;}
+	StereoToolsBar* getToolBar() {return stereoTool;}
 
 public slots:
 	void loadLeftImage(QString filename);
@@ -96,6 +94,7 @@ public slots:
 	void loadRightImage(QImage* image);
 	void loadLeftImage(Matrix* image, bool isGrayscale = true);
 	void loadRightImage(Matrix* image, bool isGrayscale = true);
+	void setFeatures(DemFeatures* df);
 	void blockOpen();
 	void blockSave();
 	void blockMark();

@@ -204,36 +204,22 @@ StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 	stereoDisplay = new StereoDisplay(this);
 	stereoTool = new StereoToolsBar(stereoDisplay, this);
 
-	leftDisplay = stereoDisplay->getLeftDisplay();
-	leftTool = new SingleToolsBar(leftDisplay, this);
-
-	rightDisplay = stereoDisplay->getRightDisplay();
-	rightTool = new SingleToolsBar(rightDisplay, this);
-
 	addToolBar(Qt::TopToolBarArea,stereoTool);
-	addToolBar(Qt::TopToolBarArea,leftTool);
-	addToolBar(Qt::TopToolBarArea,rightTool);
+
+	statusBar()->addWidget(stereoTool->getStereoInfo());
+	statusBar()->addWidget(stereoTool->getLeftInfo());
+	statusBar()->addWidget(stereoTool->getRightInfo());
 
 	setCentralWidget(stereoDisplay);
-	addDockWidget(Qt::RightDockWidgetArea, leftTool->getNearview(), Qt::Horizontal);
-	addDockWidget(Qt::RightDockWidgetArea, rightTool->getNearview(), Qt::Horizontal);
 
-	QDockWidget* overDock = new QDockWidget("Overviewers",this);
-	QDockWidget* leftOver = leftTool->getOverview();
-	QDockWidget* rightOver = rightTool->getOverview();
-	QWidget* overviewers = new QWidget(this);
-	QHBoxLayout* overLayout = new QHBoxLayout(0);
-	overLayout->addWidget(leftOver);
-	overLayout->addWidget(rightOver);
-	overviewers->setLayout(overLayout);
-	overDock->setWidget(overviewers);
+	QDockWidget* nearDock = stereoTool->getNearviews();
+	addDockWidget(Qt::RightDockWidgetArea, nearDock, Qt::Horizontal);
+
+	QDockWidget* overDock = stereoTool->getOverviews();
 	addDockWidget(Qt::RightDockWidgetArea, overDock, Qt::Vertical);
 
-	leftDisplay->setHidden(true);
-	rightDisplay->setHidden(true);
-
-	QRect desktop = QDesktopWidget().screenGeometry();
-	move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
+	//QRect desktop = QDesktopWidget().screenGeometry();
+	//move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
 }
 
 void StereoViewer::closeEvent(QCloseEvent *)
@@ -245,59 +231,53 @@ void StereoViewer::closeEvent(QCloseEvent *)
 
 void StereoViewer::loadLeftImage(QString filename)
 {
-	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
-	ss->loadImage(filename);
-	leftTool->setFitView->trigger();
+	stereoDisplay->loadLeftImage(filename);
 }
 
 void StereoViewer::loadRightImage(QString filename)
 {
-	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
-	ss->loadImage(filename);
-	rightTool->setFitView->trigger();
+	stereoDisplay->loadRightImage(filename);
 }
 
 void StereoViewer::loadLeftImage(QImage *image)
 {
-	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
-	ss->loadImage(*image);
-	leftTool->setFitView->trigger();
+	stereoDisplay->loadLeftImage(image);
 }
 
 void StereoViewer::loadRightImage(QImage *image)
 {
-	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
-	ss->loadImage(*image);
-	rightTool->setFitView->trigger();
+	stereoDisplay->loadRightImage(image);
 }
 
 void StereoViewer::loadLeftImage(Matrix *image, bool isGrayscale)
 {
-	SingleScene* ss = (SingleScene*) leftDisplay->getCurrentScene();
-	ss->loadImage(image, isGrayscale);
-	leftTool->setFitView->trigger();
+	stereoDisplay->loadLeftImage(image,isGrayscale);
 }
 
 void StereoViewer::loadRightImage(Matrix *image, bool isGrayscale)
 {
-	SingleScene* ss = (SingleScene*) rightDisplay->getCurrentScene();
-	ss->loadImage(image, isGrayscale);
-	rightTool->setFitView->trigger();
+	stereoDisplay->loadRightImage(image,isGrayscale);
+}
+
+void StereoViewer::setFeatures(DemFeatures *df)
+{
+	stereoDisplay->getCurrentScene()->getLeftScene()->geometry()->setFeatures(df,0);
+	stereoDisplay->getCurrentScene()->getRightScene()->geometry()->setFeatures(df,1);
 }
 
 void StereoViewer::blockOpen()
 {
-	//tool->setOpenVisible(false);
+	stereoTool->setOpenVisible(false);
 }
 
 void StereoViewer::blockSave()
 {
-	//tool->setSaveVisible(false);
+	stereoTool->setSaveVisible(false);
 }
 
 void StereoViewer::blockMark()
 {
-	//tool->setMarkVisible(false);
+	stereoTool->setMarkVisible(false);
 }
 
 } // namespace efoto

@@ -93,6 +93,8 @@ void SPManager::addFeature(string name, int feattype, int featclass)
 	int fclass = spFeatures.convClassFromSp165(feattype, featclass);
 
 	spFeatures.addNewFeature(name, "", fclass, feattype, 1);
+
+	setSelected(spFeatures.getNumFeatures(),-1);
 }
 
 int SPManager::removeFeature()
@@ -194,6 +196,27 @@ void SPManager::updateProjections()
 			df->points.at(j).right_y = pR0.getLin();
 		}
 	}
+}
+
+void SPManager::computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z)
+{
+	Image* leftImage = listAllImages.at(leftKey-1);
+	Image* rightImage = listAllImages.at(rightKey-1);
+	Sensor* sensor = leftImage->getSensor();
+	InteriorOrientation* lio = leftImage->getIO();
+	InteriorOrientation* rio = rightImage->getIO();
+	SpatialRessection* lsr = (SpatialRessection*)leftImage->getEO();
+	SpatialRessection* rsr = (SpatialRessection*)rightImage->getEO();
+	leftImage->setSensor(sensor); leftImage->setIO(lio); leftImage->setEO(lsr);
+	rightImage->setSensor(sensor); rightImage->setIO(rio); rightImage->setEO(rsr);
+	if (leftImage == NULL || rightImage == NULL)
+		return;
+
+	SpatialIntersection si(new StereoPair(leftImage, rightImage));
+	ObjectSpaceCoordinate obj = si.calculateIntersectionSubPixel(xl,yl,xr,yr);
+	X = obj.getX();
+	Y = obj.getY();
+	Z = obj.getZ();
 }
 
 string SPManager::getFullImagePath(int imagekey)
@@ -369,6 +392,41 @@ void SPManager::addPairsToInterface()
 		txt << "Images " << str_left << " and " << str_right;
 		spui->addImagePair((char *)txt.str().c_str());
 	}
+}
+
+void SPManager::addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
+{
+	if (fid < 1 || fid > spFeatures.getNumFeatures())
+		return;
+
+	if (pid < 1 || pid > spFeatures.getFeature(fid).points.size()+1)
+		return;
+
+	spFeatures.addNewPoint(fid, pid, X, Y, Z);
+	spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
+	spFeatures.setSelectedFeature(fid);
+	spFeatures.setSelectedPoint(pid);
+}
+
+void SPManager::updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
+{
+	if (fid < 1 || fid > spFeatures.getNumFeatures())
+		return;
+
+	if (pid < 1 || pid > spFeatures.getFeature(fid).points.size())
+		return;
+
+	spFeatures.updatePoint(fid, pid, X, Y, Z);
+	spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
+}
+
+void SPManager::setSelectedXYZ(double X, double Y, double Z)
+{
+	int fid, pid;
+
+	spFeatures.getNearestPoint(X,Y,Z,fid,pid);
+	spFeatures.setSelectedFeature(fid);
+	spFeatures.setSelectedPoint(pid);
 }
 
 // Internal function. Pos from 0 - N-1.

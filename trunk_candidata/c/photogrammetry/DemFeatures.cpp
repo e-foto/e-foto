@@ -511,7 +511,7 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 
 	int best_feat = 1;
 	double dist, best_dist = sqrt(pow(X - features.at(0).centroid.X, 2) + pow(Y - features.at(0).centroid.Y, 2) + pow(Z - features.at(0).centroid.Z, 2));
-		double dist_k;
+	double dist_k;
 
 	for (int i=1; i<features.size(); i++)
 	{
@@ -542,6 +542,56 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 	}
 
 	return best_feat;
+}
+
+int DemFeatures::getNearestPoint(int fid, double X, double Y, double Z)
+{
+	if (fid < 1 || fid > features.size())
+		return 0;
+
+	int best_pt = 1;
+	double best_dist = sqrt(pow(X - features.at(fid-1).points.at(0).X, 2) + pow(Y - features.at(fid-1).points.at(0).Y, 2) + pow(Z - features.at(fid-1).points.at(0).Z, 2));
+	double dist;
+
+	for (int i=1; i<features.at(fid-1).points.size(); i++)
+	{
+		dist = sqrt(pow(X - features.at(fid-1).points.at(i).X, 2) + pow(Y - features.at(fid-1).points.at(i).Y, 2) + pow(Z - features.at(fid-1).points.at(i).Z, 2));
+		if (dist < best_dist)
+		{
+			best_pt = i+1;
+			best_dist = dist;
+		}
+	}
+
+	return best_pt;
+}
+
+void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& pid)
+{
+	if (features.size() < 1)
+		return;
+
+	int best_pid = 1;
+	int best_fid = 1;
+	double best_dist = 10e100, dist;
+
+	for (fid=1; fid<= features.size(); fid++)
+	{
+
+		for (pid=1; pid<=features.at(fid-1).points.size(); pid++)
+		{
+			dist = sqrt(pow(X - features.at(fid-1).points.at(pid-1).X, 2) + pow(Y - features.at(fid-1).points.at(pid-1).Y, 2) + pow(Z - features.at(fid-1).points.at(pid-1).Z, 2));
+			if (dist < best_dist)
+			{
+				best_pid = pid;
+				best_fid = fid;
+				best_dist = dist;
+			}
+		}
+	}
+
+	fid = best_fid;
+	pid = best_pid;
 }
 
 //

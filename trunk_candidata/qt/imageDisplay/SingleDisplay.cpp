@@ -137,7 +137,7 @@ void SingleDisplay::blockShowDetailedArea(bool status)
 void SingleDisplay::setCurrentScene(AbstractScene *newScene)
 {
 	_currentScene = newScene;
-	updateAll();
+	update();
 }
 
 AbstractScene* SingleDisplay::getCurrentScene()
@@ -147,18 +147,24 @@ AbstractScene* SingleDisplay::getCurrentScene()
 
 SingleDisplay* SingleDisplay::getOverDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(0);
-	result->setOverviewMode(this);
-	_over = result;
-	return result;
+	if (_over == NULL)
+	{
+		SingleDisplay* result = new SingleDisplay(0);
+		result->setOverviewMode(this);
+		_over = result;
+	}
+	return _over;
 }
 
 SingleDisplay* SingleDisplay::getDetailDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(0);
-	result->setDetailMode(this);
-	_detail = result;
-	return result;
+	if (_detail == NULL)
+	{
+		SingleDisplay* result = new SingleDisplay(0);
+		result->setDetailMode(this);
+		_detail = result;
+	}
+	return _detail;
 }
 
 void SingleDisplay::fitView()
@@ -168,7 +174,7 @@ void SingleDisplay::fitView()
 	double hscale = height() / (double)_currentScene->getHeight();
 	_currentScene->scaleTo(wscale < hscale ? wscale : hscale);
 	_currentScene->centerContent();
-	updateAll();
+	update();
 }
 
 void SingleDisplay::pan(int dx, int dy)
@@ -195,6 +201,13 @@ void SingleDisplay::setCloneScale(bool status)
 void SingleDisplay::updateAll()
 {
 	QWidget::update();
+	if(_displayMode == IntermediatedScreen)
+	{
+		if (_detail)
+			_detail->update();
+		if (_over)
+			_over->update();
+	}
 }
 
 void SingleDisplay::updateDetail()
@@ -345,7 +358,7 @@ void SingleDisplay::resizeEvent(QResizeEvent *e)
 		return;
 
 	_currentScene->setViewport(e->size());
-	updateAll();
+	update();
 
 	for (int i = 0; i < _tool.size(); i++)
 	{

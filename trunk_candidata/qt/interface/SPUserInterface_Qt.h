@@ -32,8 +32,10 @@ protected:
 	SPUserInterface_Qt(SPManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SPUserInterface_Qt();
 	SPManager *manager;
-	SeparatedStereoViewer* viewer;
-	SeparatedStereoToolsBar* tools;
+	SeparatedStereoViewer* viewerSeparated;
+	SeparatedStereoToolsBar* toolsSeparated;
+	StereoViewer* viewer;
+	StereoToolsBar* tools;
 	void closeEvent(QCloseEvent *e);
 	int checkBoundingBox();
 	void updateData();
@@ -56,6 +58,8 @@ protected slots:
 	void changePair(int leftKey, int rightKey);
 	void onFeatureSelected();
 	void onCloseFeature();
+	void stereoClicked(QPointF, QPointF);
+	void stereoMoved(QPointF, QPointF);
 
 private:
 	void init();

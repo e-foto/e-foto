@@ -51,33 +51,32 @@ void GLDisplay::updateMousePosition()
 	_mouseScreenPos = mapFromGlobal(QCursor::pos());
 }
 
-void GLDisplay::setGLCursor(QCursor cursor)
+void GLDisplay::setGLCursor(QImage cursor)
 {
 	if (ctexture != NULL && glIsTexture((GLuint)ctexture))
 		glDeleteTextures(1, (GLuint*)(&ctexture));
 	_cursor = cursor;
-	QImage cursorImage(cursor.pixmap().toImage());
-	if (cursorImage.isNull())
+	if (cursor.isNull())
 	{
 		ctexture = NULL;
 		return;
 	}
-	cursorImage = QGLWidget::convertToGLFormat(cursorImage);
+	cursor = QGLWidget::convertToGLFormat(cursor);
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures( 1, (GLuint*)(&ctexture) );
 	glBindTexture( GL_TEXTURE_2D, (GLuint)ctexture );
-	glTexImage2D( GL_TEXTURE_2D, 0, 4, cursorImage.width(), cursorImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, cursorImage.bits());
+	glTexImage2D( GL_TEXTURE_2D, 0, 4, cursor.width(), cursor.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, cursor.bits());
 	glDisable(GL_TEXTURE_2D);
 }
 
-QCursor GLDisplay::getGLCursor()
+QImage GLDisplay::getGLCursor()
 {
 	if (ctexture != NULL)
 	{
 		return _cursor;
 	}
 	else
-		return QCursor();
+		return QImage();
 }
 
 void GLDisplay::setGLBackground(QImage bg)
@@ -112,7 +111,7 @@ void GLDisplay::initializeGL()
 
 	glClearColor(0, 0, 0, 0);
 
-	setGLCursor(NOCURSOR);
+	//setGLCursor(SymbolsResource::getBackGround(QColor(0,0,0,0));
 	//setGLBackground(QImage(":/cursors/BlackBG"));
 	_GLDisplayUpdate = true;
 }
@@ -318,13 +317,24 @@ void GLDisplay::resizeGL(int w, int h)
 
 void GLDisplay::paintEvent(QPaintEvent *e)
 {
+	QGLWidget::paintEvent(e);
 	if (!stereoDisplay_ || !stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())
 		return;
 	for (int i = 0; i < _tool.size(); i++)
 	{
 		_tool.at(i)->paintEvent(*e);
 	}
-	QGLWidget::paintEvent(e);
+}
+
+void GLDisplay::resizeEvent(QResizeEvent *e)
+{
+	if (!stereoDisplay_ || !stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())
+		return;
+	for (int i = 0; i < _tool.size(); i++)
+	{
+		_tool.at(i)->resizeEvent(*e);
+	}
+	QGLWidget::resizeEvent(e);
 }
 
 bool GLDisplay::eventFilter(QObject *o, QEvent *e)
@@ -442,15 +452,17 @@ void GLDisplay::wheelEvent(QWheelEvent *e)
 
 // Stereo Display class
 StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
-	QWidget(parent),
-	leftDisplay_(0),
-	rightDisplay_(0)
+	QWidget(parent)
 {
 	//QGLFormat fmt;
 	//fmt.setAlpha(true);
 	//fmt.setStereo(true);
 	//fmt.setDoubleBuffer(true);
+	//fmt.setOverlay(true);
 	//QGLFormat::setDefaultFormat(fmt);
+
+	leftDisplay_ = NULL;
+	rightDisplay_ = NULL;
 
 	if (currentScene)
 		currentScene_ = currentScene;
@@ -479,22 +491,90 @@ StereoScene* StereoDisplay::getCurrentScene()
 
 SingleDisplay* StereoDisplay::getLeftDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(this, currentScene_ ? currentScene_->getLeftScene() : NULL);
-	leftDisplay_ = result;
-	return result;
+	if (leftDisplay_ == NULL)
+	{
+		SingleDisplay* result = new SingleDisplay(0, currentScene_ ? currentScene_->getLeftScene() : NULL);
+		leftDisplay_ = result;
+	}
+	return leftDisplay_;
 }
 
 SingleDisplay* StereoDisplay::getRightDisplay()
 {
-	SingleDisplay* result = new SingleDisplay(this, currentScene_ ? currentScene_->getRightScene(): NULL);
-	rightDisplay_ = result;
-	return result;
+	if (rightDisplay_ == NULL)
+	{
+		SingleDisplay* result = new SingleDisplay(0, currentScene_ ? currentScene_->getRightScene(): NULL);
+		rightDisplay_ = result;
+	}
+	return rightDisplay_;
+}
+
+SingleDisplay* StereoDisplay::getLeftNearDisplay()
+{
+	if (leftDisplay_ == NULL)
+		getLeftDisplay();
+	return leftDisplay_->getDetailDisplay();
+}
+
+SingleDisplay* StereoDisplay::getRightNearDisplay()
+{
+	if (rightDisplay_ == NULL)
+		getRightDisplay();
+	return rightDisplay_->getDetailDisplay();
+}
+
+SingleDisplay* StereoDisplay::getLeftOverDisplay()
+{
+	if (leftDisplay_ == NULL)
+		getLeftDisplay();
+	return leftDisplay_->getOverDisplay();
+}
+
+SingleDisplay* StereoDisplay::getRightOverDisplay()
+{
+	if (rightDisplay_ == NULL)
+		getRightDisplay();
+	return rightDisplay_->getOverDisplay();
 }
 
 GLDisplay* StereoDisplay::getRealDisplay()
 {
 	return glDisplay_;
 }
+
+
+
+void StereoDisplay::loadLeftImage(QString filename)
+{
+	currentScene_->getLeftScene()->loadImage(filename);
+}
+
+void StereoDisplay::loadRightImage(QString filename)
+{
+	currentScene_->getRightScene()->loadImage(filename);
+}
+
+void StereoDisplay::loadLeftImage(QImage *image)
+{
+	currentScene_->getLeftScene()->loadImage(*image);
+}
+
+void StereoDisplay::loadRightImage(QImage *image)
+{
+	currentScene_->getRightScene()->loadImage(*image);
+}
+
+void StereoDisplay::loadLeftImage(Matrix *image, bool isGrayscale)
+{
+	currentScene_->getLeftScene()->loadImage(image,isGrayscale);
+}
+
+void StereoDisplay::loadRightImage(Matrix *image, bool isGrayscale)
+{
+	currentScene_->getRightScene()->loadImage(image,isGrayscale);
+}
+
+
 
 QPointF StereoDisplay::getLeftCursorOffset()
 {
@@ -516,12 +596,12 @@ void StereoDisplay::setRightCursorOffset(QPointF offset)
 	rightCursorOffset_ = offset;
 }
 
-void StereoDisplay::setCursor(QCursor newCursor)
+void StereoDisplay::setCursor(QImage newCursor)
 {
 	glDisplay_->setGLCursor(newCursor);
 }
 
-QCursor StereoDisplay::getCursor()
+QImage StereoDisplay::getCursor()
 {
 	return glDisplay_->getGLCursor();
 }
@@ -534,6 +614,12 @@ double StereoDisplay::getCurrentZ()
 void StereoDisplay::setCurrentZ(double z)
 {
 	_currentZ = z;
+}
+
+QPointF StereoDisplay::screenPosition(QPointF position, bool leftChannel)
+{
+	//REFAZER
+	return QPointF(0,0);
 }
 
 QPointF StereoDisplay::getMouseScreenPosition()
@@ -590,9 +676,9 @@ void StereoDisplay::updateAll()
 	glDisplay_->_GLDisplayUpdate = true;
 	glDisplay_->update();
 	if (leftDisplay_)
-		leftDisplay_->update();
+		leftDisplay_->updateAll();
 	if (rightDisplay_)
-		rightDisplay_->update();
+		rightDisplay_->updateAll();
 }
 
 void StereoDisplay::updateAll(QPointF* left, QPointF* right, bool emitClicked)
