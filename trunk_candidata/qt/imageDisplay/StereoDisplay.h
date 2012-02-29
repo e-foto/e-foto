@@ -28,12 +28,13 @@ protected:
 	QList< StereoTool* > _tool;
 
 	QPointF _mouseScreenPos;
-	QCursor _cursor;
+	QImage _cursor;
 
 	void initializeGL();
 	void paintGL();
 	void resizeGL(int w, int h);
 	void paintEvent(QPaintEvent *e);
+	void resizeEvent(QResizeEvent *);
 	bool eventFilter(QObject *o, QEvent *e);
 	void enterEvent(QHoverEvent *e);
 	void leaveEvent(QHoverEvent *e);
@@ -52,8 +53,8 @@ public:
 
 	void updateMousePosition();
 	QPointF getMouseScreenPosition();
-	void setGLCursor(QCursor cursor);
-	QCursor getGLCursor();
+	void setGLCursor(QImage cursor);
+	QImage getGLCursor();
 	void setGLBackground(QImage bg);
 
 	void setActivatedTool(StereoTool* tool, bool active = true);
@@ -78,19 +79,31 @@ public:
 	StereoScene* getCurrentScene();
 	SingleDisplay* getLeftDisplay();
 	SingleDisplay* getRightDisplay();
+	SingleDisplay* getLeftOverDisplay();
+	SingleDisplay* getRightOverDisplay();
+	SingleDisplay* getLeftNearDisplay();
+	SingleDisplay* getRightNearDisplay();
 	GLDisplay* getRealDisplay();
+
+	void loadLeftImage(QString filename);
+	void loadRightImage(QString filename);
+	void loadLeftImage(QImage* image);
+	void loadRightImage(QImage* image);
+	void loadLeftImage(Matrix* image, bool isGrayscale = true);
+	void loadRightImage(Matrix* image, bool isGrayscale = true);
 
 	QPointF getLeftCursorOffset();
 	QPointF getRightCursorOffset();
 	void setLeftCursorOffset(QPointF offset);
 	void setRightCursorOffset(QPointF offset);
-	void setCursor(QCursor newCursor);
-	QCursor getCursor();
+	void setCursor(QImage newCursor);
+	QImage getCursor();
 
 	double getCurrentZ();
 	void setCurrentZ(double z);
 
 	void updateMousePosition();
+	QPointF screenPosition(QPointF position, bool leftChannel = true);
 	QPointF getMouseScreenPosition();
 	QPointF getPositionLeft(QPoint screenPosition);
 	QPointF getPositionRight(QPoint screenPosition);

@@ -11,9 +11,11 @@ namespace efoto {
 class StereoScene: public QObject
 {
 	Q_OBJECT
+
 protected:
 	SingleScene* leftScene_;
 	SingleScene* rightScene_;
+
 public:
 	StereoScene(QObject* parent, QString leftImageFilepath, QString rightImageFilepath);
 	~StereoScene();
@@ -21,6 +23,8 @@ public:
 	bool isValid();
 	SingleScene* getLeftScene() const;
 	SingleScene* getRightScene() const;
+
+	double getScale() {return leftScene_->getScale();}
 
 	void setLeftScene(SingleScene* leftScene);
 	void setRightScene(SingleScene* rightScene);

@@ -145,7 +145,7 @@ void SingleTool::mouseReleased(const QMouseEvent &event)
 		scene->setDetailedPoint(_display->getPosition(event.pos()));
 	}
 
-	_display->updateAll();
+	_display->update();
 }
 
 void SingleTool::mouseMoved(const QMouseEvent &event)
@@ -164,7 +164,7 @@ void SingleTool::mouseMoved(const QMouseEvent &event)
 		else
 			_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getLeftArrow())));
 		actualizeScaleSpin(_display->getCurrentScene()->getScale());
-		_display->updateAll();
+		_display->update();
 
 		if (_propagateScaleTo != NULL)
 			_propagateScaleTo->propagateScale(newScale, _display->screenPosition(_fixedPointOnImage).toPoint());
@@ -200,7 +200,7 @@ void SingleTool::autoMove()
 		actualizePosLabel(_display, true);
 
 		_display->blockShowDetailedArea(true);
-		_display->updateAll();
+		_display->update();
 		_display->blockShowDetailedArea(false);
 
 		if (_propagateMoveTo != NULL)
@@ -253,7 +253,7 @@ void SingleTool::actualizePosLabel(SingleDisplay* display, bool force)
 void SingleTool::propagateMove(QPointF desloc)
 {
 	_display->getCurrentScene()->pan(desloc);
-	_display->updateAll();
+	_display->update();
 }
 
 void SingleTool::propagateScale(double scale, QPoint at, int movementMode)
@@ -275,7 +275,7 @@ void SingleTool::propagateScale(double scale, QPoint at, int movementMode)
 	else // to ScaleBar
 		_display->getCurrentScene()->scaleTo(scale, _display->getPosition(at));
 
-	_display->updateAll();
+	_display->update();
 	actualizeScaleSpin(_display->getCurrentScene()->getScale());
 }
 
@@ -423,7 +423,7 @@ void ZoomTool::mouseMoved(const QMouseEvent & event)
 	// Rubberband zoom.
 	if (event.buttons() & Qt::LeftButton)
 	{
-		_display->updateAll();
+		_display->update();
 		return;
 	}
 	SingleTool::mouseMoved(event);
@@ -480,7 +480,7 @@ void MoveTool::mousePressed(const QMouseEvent & event)
 	SingleTool::mousePressed(event);
 	if (event.buttons() & Qt::LeftButton)
 		_display->setCursor(QPixmap::fromImage(SymbolsResource::getClosedHand()));
-	_display->updateAll();
+	_display->update();
 }
 
 void MoveTool::mouseReleased(const QMouseEvent & event)
@@ -499,7 +499,7 @@ void MoveTool::mouseMoved(const QMouseEvent & event)
 		double scale;
 		scale = _display->getCurrentScene()->getScale();
 		_display->getCurrentScene()->pan(-(diff/scale));
-		_display->updateAll();
+		_display->update();
 
 		if (_propagateMoveTo != NULL)
 			_propagateMoveTo->propagateMove(-(diff/scale));
@@ -590,7 +590,7 @@ void MarkTool::putClickOn(QPointF& pos)
 	else
 	{
 		_display->getCurrentScene()->geometry()->insertPoint(pos, nextMarkItem, QString::number(nextMarkItem), &mark);
-		_display->updateAll();
+		_display->update();
 		nextMarkItem++;
 	}
 }
@@ -783,7 +783,7 @@ void OverTool::mousePressed(const QMouseEvent & event)
 		{
 			_display->getCurrentScene()->moveTo(_over->getLastMousePosition());
 			_over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
-			_display->updateAll();
+			_display->update();
 		}
 	}
 }
@@ -802,7 +802,7 @@ void OverTool::mouseMoved(const QMouseEvent & event)
 		{
 			_over->updateMousePosition();
 			_display->getCurrentScene()->pan(_over->getLastMousePosition() - _lastPos);
-			_display->updateAll();
+			_display->update();
 			_lastPos = _over->getLastMousePosition();
 		}
 	}
@@ -828,7 +828,7 @@ void OverTool::wheelEvent(const QWheelEvent & event)
 				zoomStep = 0.957603281; // 1/2^(1÷(2^4))
 			for (int i = 0; i<abs(numSteps);i++)
 				_display->getCurrentScene()->zoom(zoomStep, _over->getLastMousePosition());
-			_display->updateAll();
+			_display->update();
 			actualizeScaleSpin(_display->getCurrentScene()->getScale());
 
 			if (_propagateScaleTo != NULL)
@@ -1011,21 +1011,7 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
   //info(display)
 {
 	_display = display;
-	//_display->setActivatedTool(&info);
-	//resize(580, 28);
 
-	/* Modificado Paulo :Tool Tips
-		setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),"Zoom", this);
-		setMoveTool = new QAction(QIcon(":/icon/moveIcon"),"Move", this);
-		setMarkTool = new QAction(QIcon(":/icon/markIcon"),"Mark", this);
-		setFitView = new QAction(QIcon(":/icon/fit.png"),"Fit View", this);
-		showOverview = new QAction(QIcon(":/icon/overIcon"),"Overview", this);
-		showNearview = new QAction(QIcon(":/icon/detailIcon"),"Detailview", this);
-		useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),"Antialias", this);
-		useFixedNearview = new QAction(QIcon(":/icon/fixdetailviewIcon.png"),"Fixed Detailview", this);
-		openImage = new QAction(QIcon(":/icon/fileopen.png"),"Open", this);
-		saveImage = new QAction(QIcon(":/icon/disquette.png"),"Save", this);
-*/
 	setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Zoom</span></p></body></html>", this);
 	setMoveTool = new QAction(QIcon(":/icon/moveIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Move</span></p></body></html>", this);
 	setMarkTool = new QAction(QIcon(":/icon/markIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Mark</span></p></body></html>", this);
@@ -1036,7 +1022,6 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	useFixedNearview = new QAction(QIcon(":/icon/fixdetailviewIcon.png"),"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Fixed Detailview</span></p></body></html>", this);
 	openImage = new QAction(QIcon(":/icon/fileopen.png"),                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Open</span></p></body></html>", this);
 	saveImage = new QAction(QIcon(":/icon/disquette.png"),               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Save</span></p></body></html>", this);
-
 
 	scaleSpinBox = new QDoubleSpinBox(this);
 	scaleSpinBox->setSuffix(" %");
@@ -1051,7 +1036,6 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	mark.setScaleSpin(scaleSpinBox);
 	near_.setScaleSpin(scaleSpinBox);
 	over.setScaleSpin(scaleSpinBox);
-	//info.setScaleSpin(scaleSpinBox);
 
 	_infoLabel = new QLabel("   ", 0);
 
@@ -1060,7 +1044,6 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	mark.setPosLabel(_infoLabel);
 	near_.setPosLabel(_infoLabel);
 	over.setPosLabel(_infoLabel);
-	//info.setPosLabel(_infoLabel);
 
 	detailComboBox = new QComboBox(this);
 	detailComboBox->addItems(QString("1x 2x 4x 8x").split(" "));
@@ -1180,12 +1163,12 @@ void SingleToolsBar::executeAction(QAction *action)
 	{
 		SingleScene* scene = (SingleScene*)_display->getCurrentScene();
 		scene->useSmooth(useAntialias->isChecked());
-		_display->updateAll();
+		_display->update();
 	}
 	if (action == useFixedNearview)
 	{
 		_display->setShowDetailedArea(useFixedNearview->isChecked());
-		_display->updateAll();
+		_display->update();
 	}
 	if (action ==  openImage )
 	{
@@ -1194,7 +1177,7 @@ void SingleToolsBar::executeAction(QAction *action)
 		{
 			SingleScene* scene = (SingleScene*)_display->getCurrentScene();
 			scene->loadImage(filename);
-			_display->updateAll();
+			_display->update();
 		}
 	}
 	if (action ==  saveImage )
@@ -1208,7 +1191,7 @@ void SingleToolsBar::rescaleDisplay()
 	if (diff)
 	{
 		_display->getCurrentScene()->scaleTo(scaleSpinBox->value()/100);
-		_display->updateAll();
+		_display->update();
 		currentTool->actualizeScaleSpin(_display->getCurrentScene()->getScale());
 	}
 }
@@ -1596,7 +1579,7 @@ void SeparatedStereoToolsBar::executeAction(QAction *action)
 			rightOver.propagateScaleTo(&leftOver);
 			scaleRightSpinBox->setValue(scaleLeftSpinBox->value());
 			_rightDisplay->getCurrentScene()->scaleTo(scaleLeftSpinBox->value()/100);
-			_rightDisplay->updateAll();
+			_rightDisplay->update();
 			currentRightTool->actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
 			scaleRightSpinBox->setDisabled(true);
 		}
@@ -1619,8 +1602,8 @@ void SeparatedStereoToolsBar::executeAction(QAction *action)
 		SingleScene* rightScene = (SingleScene*)_rightDisplay->getCurrentScene();
 		leftScene->useSmooth(useAntialias->isChecked());
 		rightScene->useSmooth(useAntialias->isChecked());
-		_leftDisplay->updateAll();
-		_rightDisplay->updateAll();
+		_leftDisplay->update();
+		_rightDisplay->update();
 	}
 	if (action ==  openLeftImage )
 	{
@@ -1629,7 +1612,7 @@ void SeparatedStereoToolsBar::executeAction(QAction *action)
 		{
 			SingleScene* scene = (SingleScene*)_leftDisplay->getCurrentScene();
 			scene->loadImage(filename);
-			_leftDisplay->updateAll();
+			_leftDisplay->update();
 		}
 	}
 	if (action ==  openRightImage )
@@ -1639,7 +1622,7 @@ void SeparatedStereoToolsBar::executeAction(QAction *action)
 		{
 			SingleScene* scene = (SingleScene*)_rightDisplay->getCurrentScene();
 			scene->loadImage(filename);
-			_rightDisplay->updateAll();
+			_rightDisplay->update();
 		}
 	}
 	if (action ==  saveLeftImage )
@@ -1672,13 +1655,13 @@ void SeparatedStereoToolsBar::rescaleLeftDisplay()
 	if (diff)
 	{
 		_leftDisplay->getCurrentScene()->scaleTo(scaleLeftSpinBox->value()/100);
-		_leftDisplay->updateAll();
+		_leftDisplay->update();
 		currentLeftTool->actualizeScaleSpin(_leftDisplay->getCurrentScene()->getScale());
 
 		if (setEqualScales->isChecked())
 		{
 			_rightDisplay->getCurrentScene()->scaleTo(scaleLeftSpinBox->value()/100);
-			_rightDisplay->updateAll();
+			_rightDisplay->update();
 			currentRightTool->actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
 		}
 	}
@@ -1690,7 +1673,7 @@ void SeparatedStereoToolsBar::rescaleRightDisplay()
 	if (diff)
 	{
 		_rightDisplay->getCurrentScene()->scaleTo(scaleRightSpinBox->value()/100);
-		_rightDisplay->updateAll();
+		_rightDisplay->update();
 		currentRightTool->actualizeScaleSpin(_rightDisplay->getCurrentScene()->getScale());
 		//currentLeftTool->actualizeScaleSpin(_leftDisplay->getCurrentScene()->getScale());
 	}

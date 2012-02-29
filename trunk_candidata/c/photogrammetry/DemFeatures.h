@@ -139,6 +139,8 @@ public:
 	int addFeatureClass(FeatureClass fc); // Return class id
 	void setFeatureClass(int classid, FeatureClass fc);
 	int getNearestFeature(double X, double Y, double Z);
+	int getNearestPoint(int fid, double X, double Y, double Z);
+	void getNearestPoint(double X, double Y, double Z, int& fid, int& pid);
 	void addFeaturesToPairList(MatchingPointsList *mpl, bool usePolygons);
 	Matrix createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y);
 	bool isInside(int feat_id, double X, double Y);
