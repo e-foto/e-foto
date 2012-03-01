@@ -1241,7 +1241,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="fiductialMarksGroupBox">
+       <widget class="QGroupBox" name="fiducialMarksGroupBox">
         <property name="title">
          <string>Fiducial Marks (mm)</string>
         </property>
@@ -1249,7 +1249,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_44">
            <item>
-            <widget class="QComboBox" name="fiductialMarksCombo">
+            <widget class="QComboBox" name="fiducialMarksCombo">
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -1300,7 +1300,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_1">
+                <widget class="QLabel" name="fiducialLabel_1">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1335,7 +1335,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi0doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1370,7 +1370,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_2">
+                <widget class="QLabel" name="fiducialLabel_2">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1405,7 +1405,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta0doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta0doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1461,7 +1461,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_3">
+                <widget class="QLabel" name="fiducialLabel_3">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1496,7 +1496,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi1doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1531,7 +1531,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_4">
+                <widget class="QLabel" name="fiducialLabel_4">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1566,7 +1566,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta1doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta1doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1622,7 +1622,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_5">
+                <widget class="QLabel" name="fiducialLabel_5">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1657,7 +1657,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi2doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1692,7 +1692,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_6">
+                <widget class="QLabel" name="fiducialLabel_6">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1727,7 +1727,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta2doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta2doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1783,7 +1783,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_7">
+                <widget class="QLabel" name="fiducialLabel_7">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1818,7 +1818,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi3doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1853,7 +1853,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_8">
+                <widget class="QLabel" name="fiducialLabel_8">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1888,7 +1888,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta3doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta3doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1944,7 +1944,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_29" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_9">
+                <widget class="QLabel" name="fiducialLabel_9">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1979,7 +1979,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi4doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2014,7 +2014,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_10">
+                <widget class="QLabel" name="fiducialLabel_10">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2049,7 +2049,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta4doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta4doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2105,7 +2105,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_47" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_11">
+                <widget class="QLabel" name="fiducialLabel_11">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2140,7 +2140,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi5doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2175,7 +2175,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_12">
+                <widget class="QLabel" name="fiducialLabel_12">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2210,7 +2210,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta5doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta5doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2266,7 +2266,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_49" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_13">
+                <widget class="QLabel" name="fiducialLabel_13">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2301,7 +2301,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi6doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2336,7 +2336,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_48" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_14">
+                <widget class="QLabel" name="fiducialLabel_14">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2371,7 +2371,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta6doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta6doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2427,7 +2427,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_51" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_15">
+                <widget class="QLabel" name="fiducialLabel_15">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2462,7 +2462,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialXi7doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialXi7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2497,7 +2497,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_50" stretch="0,1">
                <item>
-                <widget class="QLabel" name="fiductialLabel_16">
+                <widget class="QLabel" name="fiducialLabel_16">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2532,7 +2532,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiductialEta7doubleSpin">
+                <widget class="br::uerj::eng::efoto::EfotoDoubleSpinBox" name="fiducialEta7doubleSpin">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>

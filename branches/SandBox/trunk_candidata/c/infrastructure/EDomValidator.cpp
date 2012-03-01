@@ -268,12 +268,12 @@ bool EDomValidator::validateSensor(string xml)
    <gml:pos/>!
    <sigma/>?
   </principalPointCoordinates>
-  <fiductialMarks>X
-   <fiductialMark>
+  <fiducialMarks>X
+   <fiducialMark>
 	<gml:pos/>
 	<sigma/>
-   </fiductialMark>
-  </fiductialMarks>
+   </fiducialMark>
+  </fiducialMarks>
  </sensor>
 
  Consideramos X (= tag não precisa existir), ? (= tag precisa existir e pode estar vazia) e ! (= tag precisa existir e ser preenchida)
