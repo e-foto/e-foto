@@ -416,8 +416,7 @@ void PTUserInterface_Qt::viewReport()
 
 void PTUserInterface_Qt::showReportXml()
 {
-
-	Matrix oesXml=ptManager->eoFromXml();
+	Matrix oesXml=ptManager->eoParametersFromXml();
 	QDockWidget *dockResultView = new QDockWidget("EO Parameters",this);
 	QWidget *resultView = new QWidget();
 

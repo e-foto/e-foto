@@ -862,6 +862,7 @@ bool EFotoManager::execPT()
 
 void EFotoManager::stopPT()
 {
+
 	delete fotoTri;
 	fotoTri = NULL;
 	deleteSensor(images.at(0)->getSensorId());

@@ -123,7 +123,6 @@ unsigned int IOManager::getTotalMarks()
 int IOManager::getCalculationMode()
 {
 	string mode = mySensor->getCalculationMode();
-	cout << mode << endl;
 	return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
 }
 
