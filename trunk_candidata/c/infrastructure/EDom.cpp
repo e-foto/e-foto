@@ -508,7 +508,7 @@ bool EDomElement::replaceChildByTagName(string tagname, string newChild)
 						closing = opening;
 					if (closing != opening)
 					{
-						content.replace(opening, closing - opening, newChild);;
+						content.replace(opening, closing - opening, newChild);
 						result = true;
 					}
 				}

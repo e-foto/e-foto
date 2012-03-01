@@ -280,7 +280,7 @@ bool SRManager::flightDirection(int MarkId)
 {
 	if (started)
 	{
-		mySR->selectFiductialMarkForFlightDirection(MarkId);
+		mySR->selectFiducialMarkForFlightDirection(MarkId);
 		return true;
 	}
 	return false;
@@ -288,22 +288,22 @@ bool SRManager::flightDirection(int MarkId)
 
 bool SRManager::flightDirection(double col, double lin)
 {
-        if (started)
-        {
-                mySR->setPointForFlightDirection(col, lin);
-                return true;
-        }
-        return false;
+		if (started)
+		{
+				mySR->setPointForFlightDirection(col, lin);
+				return true;
+		}
+		return false;
 }
 
 bool SRManager::flightDirection(double kappa0)
 {
-        if (started)
-        {
-                mySR->setFlightDirection(kappa0);
-                return true;
-        }
-        return false;
+		if (started)
+		{
+				mySR->setFlightDirection(kappa0);
+				return true;
+		}
+		return false;
 }
 
 bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrecision)

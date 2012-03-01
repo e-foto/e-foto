@@ -99,7 +99,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Fiductial mark coordinates</string>
+    <string>Fiducial mark coordinates</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

@@ -69,13 +69,13 @@ void XMLSensorWithFiducialMarks::xmlSetData(string xml)
 
 	principalPointCoordinates.xmlSetData(root.elementByTagName("principalPointCoordinates").getContent());
 
-	deque<EDomElement> xmlFiductial = root.elementsByTagName("fiductialMark");
+	deque<EDomElement> xmlFiducial = root.elementsByTagName("fiducialMark");
 	anaFidMarks.clear();
-	for (unsigned int i = 0; i < xmlFiductial.size(); i++)
+	for (unsigned int i = 0; i < xmlFiducial.size(); i++)
 	{
-		AnalogFiductialMark* fiductial = new AnalogFiductialMark;
-		fiductial->xmlSetData(xmlFiductial.at(i).getContent());
-		anaFidMarks.push_back(*fiductial);
+		AnalogFiducialMark* fiducial = new AnalogFiducialMark;
+		fiducial->xmlSetData(xmlFiducial.at(i).getContent());
+		anaFidMarks.push_back(*fiducial);
 	}
 }
 
@@ -140,12 +140,12 @@ string SensorWithFiducialMarks::xmlGetData()
 	result << "<principalPointCoordinates uom=\"" << principalPointCoordinates.getUnit() << "\">\n";
 	result << principalPointCoordinates.xmlGetData();
 	result << "</principalPointCoordinates>\n";
-	result << "<fiductialMarks uom=\"" << anaFidMarks.at(1).getUnit() << "\">\n";
+	result << "<fiducialMarks uom=\"" << anaFidMarks.at(1).getUnit() << "\">\n";
 	for (unsigned int i = 0; i < anaFidMarks.size(); i++)
 	{
 		result << anaFidMarks.at(i).xmlGetData() << "\n";
 	}
-	result << "</fiductialMarks>\n";
+	result << "</fiducialMarks>\n";
 	result << "</sensor>\n";
 	return result.str();
 }

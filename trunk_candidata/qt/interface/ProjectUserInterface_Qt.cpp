@@ -322,24 +322,24 @@ namespace efoto {
 		//text +=	"\t\t\t</mml:matrix>\n";
 		text +=	"</sigma>\n";
 		text +=	"</principalPointCoordinates>\n";
-		text +=	"<fiductialMarks uom=\"#mm\">\n";
-		text +=	"<fiductialMark key=\"1\">\n";
+		text +=	"<fiducialMarks uom=\"#mm\">\n";
+		text +=	"<fiducialMark key=\"1\">\n";
 		text +=	"<gml:pos></gml:pos>\n";
 		text +=	"<sigma></sigma>\n";
-		text +=	"</fiductialMark>\n";
-		text +=	"<fiductialMark key=\"2\">\n";
+		text +=	"</fiducialMark>\n";
+		text +=	"<fiducialMark key=\"2\">\n";
 		text +=	"<gml:pos></gml:pos>\n";
 		text +=	"<sigma></sigma>\n";
-		text +=	"</fiductialMark>\n";
-		text +=	"<fiductialMark key=\"3\">\n";
+		text +=	"</fiducialMark>\n";
+		text +=	"<fiducialMark key=\"3\">\n";
 		text +=	"<gml:pos></gml:pos>\n";
 		text +=	"<sigma></sigma>\n";
-		text +=	"</fiductialMark>\n";
-		text +=	"<fiductialMark key=\"4\">\n";
+		text +=	"</fiducialMark>\n";
+		text +=	"<fiducialMark key=\"4\">\n";
 		text +=	"<gml:pos></gml:pos>\n";
 		text +=	"<sigma></sigma>\n";
-		text +=	"</fiductialMark>\n";
-		text +=	"</fiductialMarks>\n";
+		text +=	"</fiducialMark>\n";
+		text +=	"</fiducialMarks>\n";
 		text += "</sensor>";
 
 		manager->addComponent(text, "sensors");
@@ -1557,24 +1557,24 @@ text +=	"</mml:matrixrow>\n";
 text +=	"</mml:matrix>\n";
 text +=	"</sigma>\n";
 text +=	"</principalPointCoordinates>\n";
-text +=	"<fiductialMarks uom=\"#mm\">\n";
-text +=	"<fiductialMark key=\"1\">\n";
+text +=	"<fiducialMarks uom=\"#mm\">\n";
+text +=	"<fiducialMark key=\"1\">\n";
 text +=	"<gml:pos></gml:pos>\n";
 text +=	"<sigma></sigma>\n";
-text +=	"</fiductialMark>\n";
-text +=	"<fiductialMark key=\"2\">\n";
+text +=	"</fiducialMark>\n";
+text +=	"<fiducialMark key=\"2\">\n";
 text +=	"<gml:pos></gml:pos>\n";
 text +=	"<sigma></sigma>\n";
-text +=	"</fiductialMark>\n";
-text +=	"<fiductialMark key=\"3\">\n";
+text +=	"</fiducialMark>\n";
+text +=	"<fiducialMark key=\"3\">\n";
 text +=	"<gml:pos></gml:pos>\n";
 text +=	"<sigma></sigma>\n";
-text +=	"</fiductialMark>\n";
-text +=	"<fiductialMark key=\"4\">\n";
+text +=	"</fiducialMark>\n";
+text +=	"<fiducialMark key=\"4\">\n";
 text +=	"<gml:pos></gml:pos>\n";
 text +=	"<sigma></sigma>\n";
-text +=	"</fiductialMark>\n";
-text +=	"</fiductialMarks>\n";
+text +=	"</fiducialMark>\n";
+text +=	"</fiducialMarks>\n";
 text += "</sensor>";
 */
 	}
@@ -1963,10 +1963,10 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			(!sensorForm.fid1SigmaController->getValidate()) ||
 			(!sensorForm.fid2SigmaController->getValidate()) ||
 			(!sensorForm.fid3SigmaController->getValidate()) ||
-			((!sensorForm.fid4SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
-			((!sensorForm.fid5SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
-			((!sensorForm.fid6SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
-			((!sensorForm.fid7SigmaController->getValidate())&&(sensorForm.fiductialMarksCombo->currentIndex()==1)) ||
+			((!sensorForm.fid4SigmaController->getValidate())&&(sensorForm.fiducialMarksCombo->currentIndex()==1)) ||
+			((!sensorForm.fid5SigmaController->getValidate())&&(sensorForm.fiducialMarksCombo->currentIndex()==1)) ||
+			((!sensorForm.fid6SigmaController->getValidate())&&(sensorForm.fiducialMarksCombo->currentIndex()==1)) ||
+			((!sensorForm.fid7SigmaController->getValidate())&&(sensorForm.fiducialMarksCombo->currentIndex()==1)) ||
 			(!sensorForm.principalSigmaController->getValidate()) ||
 			(!sensorForm.radialSigmaController->getValidate()) ||
 			(!sensorForm.decenteredSigmaController->getValidate()) ||
@@ -2975,24 +2975,24 @@ bool ProjectUserInterface_Qt::availableOE()
 		double marky4=oiMarks.at(3).section('\t',1,1).toDouble(&ok);
 
 		OIxml << "<imageIO type=\"Affine\" image_key=\""<< Conversion::doubleToString(imageKey)<<"\">\n";
-		OIxml << "\t<fiductialMarks uom=\"#px\">\n";
-		OIxml << "\t\t<fiductialMark key=\"1\">\n";
+		OIxml << "\t<fiducialMarks uom=\"#px\">\n";
+		OIxml << "\t\t<fiducialMark key=\"1\">\n";
 		OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx1) << " " << Conversion::doubleToString(marky1) << "</gml:pos>\n";
-		OIxml << "\t\t</fiductialMark>\n";
+		OIxml << "\t\t</fiducialMark>\n";
 
-		OIxml << "\t\t<fiductialMark key=\"2\">\n";
+		OIxml << "\t\t<fiducialMark key=\"2\">\n";
 		OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx2) << " " << Conversion::doubleToString(marky2) << "</gml:pos>\n";
-		OIxml << "\t\t</fiductialMark>\n";
+		OIxml << "\t\t</fiducialMark>\n";
 
-		OIxml << "\t\t<fiductialMark key=\"3\">\n";
+		OIxml << "\t\t<fiducialMark key=\"3\">\n";
 		OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx3) << " " << Conversion::doubleToString(marky3) << "</gml:pos>\n";
-		OIxml << "\t\t</fiductialMark>\n";
+		OIxml << "\t\t</fiducialMark>\n";
 
-		OIxml << "\t\t<fiductialMark key=\"4\">\n";
+		OIxml << "\t\t<fiducialMark key=\"4\">\n";
 		OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx4) << " " << Conversion::doubleToString(marky4) << "</gml:pos>\n";
-		OIxml << "\t\t</fiductialMark>\n";
+		OIxml << "\t\t</fiducialMark>\n";
 
-		OIxml << "\t</fiductialMarks>\n";
+		OIxml << "\t</fiducialMarks>\n";
 
 		OIxml << "</imageIO>\n";
 

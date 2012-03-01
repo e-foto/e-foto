@@ -75,7 +75,7 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 
 	//oldSensor
 	//connect(detectorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(detectorGroup(int)));
-	connect(fiductialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiductialGroup(int)));
+	connect(fiducialMarksCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(fiducialGroup(int)));
 
 	//newSensor
 	connect(calcModelComboBox, SIGNAL (currentIndexChanged(int)), this, SLOT(calculationMode(int)));
@@ -196,81 +196,81 @@ void SensorForm::fillvalues(string values)
 
 	if (calcModelComboBox->currentIndex() == 0)
 	{
-		EDomElement fids = ede.elementByTagName("fiductialMarks");
+		EDomElement fids = ede.elementByTagName("fiducialMarks");
 		if (fids.children().size()==0)
 		{
-			fiductialMarksCombo->setCurrentIndex(0);
-			fiductialGroup(fiductialMarksCombo->currentIndex());
+			fiducialMarksCombo->setCurrentIndex(0);
+			fiducialGroup(fiducialMarksCombo->currentIndex());
 		}
 		else
 		{
-			fiductialMarksCombo->setCurrentIndex(fiductialMarksCombo->findText(QString::number(fids.children().size())+" marks"));
-			fiductialGroup(fiductialMarksCombo->currentIndex());
+			fiducialMarksCombo->setCurrentIndex(fiducialMarksCombo->findText(QString::number(fids.children().size())+" marks"));
+			fiducialGroup(fiducialMarksCombo->currentIndex());
 		}
 
-		EDomElement fid = ede.elementByTagAtt("fiductialMark","key","1");
+		EDomElement fid = ede.elementByTagAtt("fiducialMark","key","1");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi0doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-			fiductialEta0doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+			fiducialXi0doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+			fiducialEta0doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 		}
 		fid0SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-		fid =  ede.elementByTagAtt("fiductialMark","key","2");
+		fid =  ede.elementByTagAtt("fiducialMark","key","2");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi1doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-			fiductialEta1doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+			fiducialXi1doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+			fiducialEta1doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 		}
 		fid1SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-		fid =  ede.elementByTagAtt("fiductialMark","key","3");
+		fid =  ede.elementByTagAtt("fiducialMark","key","3");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi2doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-			fiductialEta2doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+			fiducialXi2doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+			fiducialEta2doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 		}
 		fid2SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-		fid =  ede.elementByTagAtt("fiductialMark","key","4");
+		fid =  ede.elementByTagAtt("fiducialMark","key","4");
 		if (fid.elementByTagName("gml:pos").toString() != "")
 		{
-			fiductialXi3doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-			fiductialEta3doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+			fiducialXi3doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+			fiducialEta3doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 		}
 		fid3SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-		if (fiductialMarksCombo->currentIndex()==1){
-			fiductialGroup(fiductialMarksCombo->currentIndex());
-			fid =  ede.elementByTagAtt("fiductialMark","key","5");
+		if (fiducialMarksCombo->currentIndex()==1){
+			fiducialGroup(fiducialMarksCombo->currentIndex());
+			fid =  ede.elementByTagAtt("fiducialMark","key","5");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi4doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-				fiductialEta4doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+				fiducialXi4doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+				fiducialEta4doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 			}
 			fid4SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-			fid =  ede.elementByTagAtt("fiductialMark","key","6");
+			fid =  ede.elementByTagAtt("fiducialMark","key","6");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi5doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-				fiductialEta5doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+				fiducialXi5doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+				fiducialEta5doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 			}
 			fid5SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-			fid =  ede.elementByTagAtt("fiductialMark","key","7");
+			fid =  ede.elementByTagAtt("fiducialMark","key","7");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi6doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-				fiductialEta6doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+				fiducialXi6doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+				fiducialEta6doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 			}
 			fid6SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 
-			fid =  ede.elementByTagAtt("fiductialMark","key","8");
+			fid =  ede.elementByTagAtt("fiducialMark","key","8");
 			if (fid.elementByTagName("gml:pos").toString() != "")
 			{
-				fiductialXi7doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
-				fiductialEta7doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
+				fiducialXi7doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(0).toDouble());
+				fiducialEta7doubleSpin->setValue(QString::fromUtf8(fid.elementByTagName("gml:pos").toString().c_str()).split(" ").at(1).toDouble());
 			}
 			fid7SigmaController->fillValues(fid.elementByTagName("sigma").getContent());
 		}
@@ -300,29 +300,29 @@ void SensorForm::fillvalues(string values)
 		xaB0SpinBox->setValue(0);
 		xaB1SpinBox->setValue(0);
 		xaB2SpinBox->setValue(0);
-		fiductialXi0doubleSpin->setValue(0);
-		fiductialEta0doubleSpin->setValue(0);
+		fiducialXi0doubleSpin->setValue(0);
+		fiducialEta0doubleSpin->setValue(0);
 		fid0SigmaController->fillValues("");
-		fiductialXi1doubleSpin->setValue(0);
-		fiductialEta1doubleSpin->setValue(0);
+		fiducialXi1doubleSpin->setValue(0);
+		fiducialEta1doubleSpin->setValue(0);
 		fid1SigmaController->fillValues("");
-		fiductialXi2doubleSpin->setValue(0);
-		fiductialEta2doubleSpin->setValue(0);
+		fiducialXi2doubleSpin->setValue(0);
+		fiducialEta2doubleSpin->setValue(0);
 		fid2SigmaController->fillValues("");
-		fiductialXi3doubleSpin->setValue(0);
-		fiductialEta3doubleSpin->setValue(0);
+		fiducialXi3doubleSpin->setValue(0);
+		fiducialEta3doubleSpin->setValue(0);
 		fid3SigmaController->fillValues("");
-		fiductialXi4doubleSpin->setValue(0);
-		fiductialEta4doubleSpin->setValue(0);
+		fiducialXi4doubleSpin->setValue(0);
+		fiducialEta4doubleSpin->setValue(0);
 		fid4SigmaController->fillValues("");
-		fiductialXi5doubleSpin->setValue(0);
-		fiductialEta5doubleSpin->setValue(0);
+		fiducialXi5doubleSpin->setValue(0);
+		fiducialEta5doubleSpin->setValue(0);
 		fid5SigmaController->fillValues("");
-		fiductialXi6doubleSpin->setValue(0);
-		fiductialEta6doubleSpin->setValue(0);
+		fiducialXi6doubleSpin->setValue(0);
+		fiducialEta6doubleSpin->setValue(0);
 		fid6SigmaController->fillValues("");
-		fiductialXi7doubleSpin->setValue(0);
-		fiductialEta7doubleSpin->setValue(0);
+		fiducialXi7doubleSpin->setValue(0);
+		fiducialEta7doubleSpin->setValue(0);
 		fid7SigmaController->fillValues("");
 	}
 	else if (calcModelComboBox->currentIndex() == 2)
@@ -339,29 +339,29 @@ void SensorForm::fillvalues(string values)
 		sensorRowsSpinBox->setValue(0);
 		sensorColsSpinBox->setValue(0);
 		updateSensorDiagonal();
-		fiductialXi0doubleSpin->setValue(0);
-		fiductialEta0doubleSpin->setValue(0);
+		fiducialXi0doubleSpin->setValue(0);
+		fiducialEta0doubleSpin->setValue(0);
 		fid0SigmaController->fillValues("");
-		fiductialXi1doubleSpin->setValue(0);
-		fiductialEta1doubleSpin->setValue(0);
+		fiducialXi1doubleSpin->setValue(0);
+		fiducialEta1doubleSpin->setValue(0);
 		fid1SigmaController->fillValues("");
-		fiductialXi2doubleSpin->setValue(0);
-		fiductialEta2doubleSpin->setValue(0);
+		fiducialXi2doubleSpin->setValue(0);
+		fiducialEta2doubleSpin->setValue(0);
 		fid2SigmaController->fillValues("");
-		fiductialXi3doubleSpin->setValue(0);
-		fiductialEta3doubleSpin->setValue(0);
+		fiducialXi3doubleSpin->setValue(0);
+		fiducialEta3doubleSpin->setValue(0);
 		fid3SigmaController->fillValues("");
-		fiductialXi4doubleSpin->setValue(0);
-		fiductialEta4doubleSpin->setValue(0);
+		fiducialXi4doubleSpin->setValue(0);
+		fiducialEta4doubleSpin->setValue(0);
 		fid4SigmaController->fillValues("");
-		fiductialXi5doubleSpin->setValue(0);
-		fiductialEta5doubleSpin->setValue(0);
+		fiducialXi5doubleSpin->setValue(0);
+		fiducialEta5doubleSpin->setValue(0);
 		fid5SigmaController->fillValues("");
-		fiductialXi6doubleSpin->setValue(0);
-		fiductialEta6doubleSpin->setValue(0);
+		fiducialXi6doubleSpin->setValue(0);
+		fiducialEta6doubleSpin->setValue(0);
 		fid6SigmaController->fillValues("");
-		fiductialXi7doubleSpin->setValue(0);
-		fiductialEta7doubleSpin->setValue(0);
+		fiducialXi7doubleSpin->setValue(0);
+		fiducialEta7doubleSpin->setValue(0);
 		fid7SigmaController->fillValues("");
 	}
 
@@ -473,57 +473,57 @@ string SensorForm::getvalues()
 
 	if (calcModelComboBox->currentIndex() == 0)
 	{
-		auxStream << "<fiductialMarks uom=\"#mm\">\n";
-		auxStream << "<fiductialMark key=\"1\">\n";
-		auxStream << "<gml:pos>" << fiductialXi0doubleSpin->value() << " " << fiductialEta0doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "<sigma>" << fiductialSigma0doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiducialMarks uom=\"#mm\">\n";
+		auxStream << "<fiducialMark key=\"1\">\n";
+		auxStream << "<gml:pos>" << fiducialXi0doubleSpin->value() << " " << fiducialEta0doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiducialSigma0doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid0SigmaController->getValues();
-		auxStream << "</fiductialMark>\n";
+		auxStream << "</fiducialMark>\n";
 
-		auxStream << "<fiductialMark key=\"2\">\n";
-		auxStream << "<gml:pos>" << fiductialXi1doubleSpin->value() << " " << fiductialEta1doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "<sigma>" << fiductialSigma1doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiducialMark key=\"2\">\n";
+		auxStream << "<gml:pos>" << fiducialXi1doubleSpin->value() << " " << fiducialEta1doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiducialSigma1doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
-		auxStream << "</fiductialMark>\n";
+		auxStream << "</fiducialMark>\n";
 
-		auxStream << "<fiductialMark key=\"3\">\n";
-		auxStream << "<gml:pos>" << fiductialXi2doubleSpin->value() << " " << fiductialEta2doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "<sigma>" << fiductialSigma2doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiducialMark key=\"3\">\n";
+		auxStream << "<gml:pos>" << fiducialXi2doubleSpin->value() << " " << fiducialEta2doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiducialSigma2doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid2SigmaController->getValues();
-		auxStream << "</fiductialMark>\n";
+		auxStream << "</fiducialMark>\n";
 
-		auxStream << "<fiductialMark key=\"4\">\n";
-		auxStream << "<gml:pos>" << fiductialXi3doubleSpin->value() << " " << fiductialEta3doubleSpin->value() << "</gml:pos>\n";
-		//auxStream << "<sigma>" << fiductialSigma3doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		auxStream << "<fiducialMark key=\"4\">\n";
+		auxStream << "<gml:pos>" << fiducialXi3doubleSpin->value() << " " << fiducialEta3doubleSpin->value() << "</gml:pos>\n";
+		//auxStream << "<sigma>" << fiducialSigma3doubleSpin->text().toUtf8().data() << "</sigma>\n";
 		auxStream << fid3SigmaController->getValues();
-		auxStream << "</fiductialMark>\n";
+		auxStream << "</fiducialMark>\n";
 
-		if (fiductialMarksCombo->currentIndex()==1){
-			auxStream << "<fiductialMark key=\"5\">\n";
-			auxStream << "<gml:pos>" << fiductialXi4doubleSpin->value() << " " << fiductialEta4doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "<sigma>" << fiductialSigma4doubleSpin->text().toUtf8().data() << "</sigma>\n";
+		if (fiducialMarksCombo->currentIndex()==1){
+			auxStream << "<fiducialMark key=\"5\">\n";
+			auxStream << "<gml:pos>" << fiducialXi4doubleSpin->value() << " " << fiducialEta4doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiducialSigma4doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid4SigmaController->getValues();
-			auxStream << "</fiductialMark>\n";
+			auxStream << "</fiducialMark>\n";
 
-			auxStream << "<fiductialMark key=\"6\">\n";
-			auxStream << "<gml:pos>" << fiductialXi5doubleSpin->value() << " " << fiductialEta5doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "<sigma>" << fiductialSigma5doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiducialMark key=\"6\">\n";
+			auxStream << "<gml:pos>" << fiducialXi5doubleSpin->value() << " " << fiducialEta5doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiducialSigma5doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid5SigmaController->getValues();
-			auxStream << "</fiductialMark>\n";
+			auxStream << "</fiducialMark>\n";
 
-			auxStream << "<fiductialMark key=\"7\">\n";
-			auxStream << "<gml:pos>" << fiductialXi6doubleSpin->value() << " " << fiductialEta6doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "<sigma>" << fiductialSigma6doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiducialMark key=\"7\">\n";
+			auxStream << "<gml:pos>" << fiducialXi6doubleSpin->value() << " " << fiducialEta6doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiducialSigma6doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid6SigmaController->getValues();
-			auxStream << "</fiductialMark>\n";
+			auxStream << "</fiducialMark>\n";
 
-			auxStream << "<fiductialMark key=\"8\">\n";
-			auxStream << "<gml:pos>" << fiductialXi7doubleSpin->value() << " " << fiductialEta7doubleSpin->value() << "</gml:pos>\n";
-			//auxStream << "<sigma>" << fiductialSigma7doubleSpin->text().toUtf8().data() << "</sigma>\n";
+			auxStream << "<fiducialMark key=\"8\">\n";
+			auxStream << "<gml:pos>" << fiducialXi7doubleSpin->value() << " " << fiducialEta7doubleSpin->value() << "</gml:pos>\n";
+			//auxStream << "<sigma>" << fiducialSigma7doubleSpin->text().toUtf8().data() << "</sigma>\n";
 			auxStream << fid7SigmaController->getValues();
-			auxStream << "</fiductialMark>\n";
+			auxStream << "</fiducialMark>\n";
 		}
-		auxStream << "</fiductialMarks>\n";
+		auxStream << "</fiducialMarks>\n";
 	}
 	else if (calcModelComboBox->currentIndex() == 1)
 	{
@@ -591,39 +591,39 @@ void SensorForm::setReadOnly(bool state)
 	//principalSigmaY0doubleSpin->setReadOnly(state);
 	principalSigmaController->setReadOnly(state);
 
-	fiductialMarksCombo->setEnabled(!state);
-	//fiductialSigmaCheckBox->setEnabled(!state);
+	fiducialMarksCombo->setEnabled(!state);
+	//fiducialSigmaCheckBox->setEnabled(!state);
 
-	fiductialXi0doubleSpin->setReadOnly(state);
-	fiductialEta0doubleSpin->setReadOnly(state);
+	fiducialXi0doubleSpin->setReadOnly(state);
+	fiducialEta0doubleSpin->setReadOnly(state);
 	fid0SigmaController->setReadOnly(state);
 
-	fiductialXi1doubleSpin->setReadOnly(state);
-	fiductialEta1doubleSpin->setReadOnly(state);
+	fiducialXi1doubleSpin->setReadOnly(state);
+	fiducialEta1doubleSpin->setReadOnly(state);
 	fid1SigmaController->setReadOnly(state);
 
-	fiductialXi2doubleSpin->setReadOnly(state);
-	fiductialEta2doubleSpin->setReadOnly(state);
+	fiducialXi2doubleSpin->setReadOnly(state);
+	fiducialEta2doubleSpin->setReadOnly(state);
 	fid2SigmaController->setReadOnly(state);
 
-	fiductialXi3doubleSpin->setReadOnly(state);
-	fiductialEta3doubleSpin->setReadOnly(state);
+	fiducialXi3doubleSpin->setReadOnly(state);
+	fiducialEta3doubleSpin->setReadOnly(state);
 	fid3SigmaController->setReadOnly(state);
 
-	fiductialXi4doubleSpin->setReadOnly(state);
-	fiductialEta4doubleSpin->setReadOnly(state);
+	fiducialXi4doubleSpin->setReadOnly(state);
+	fiducialEta4doubleSpin->setReadOnly(state);
 	fid4SigmaController->setReadOnly(state);
 
-	fiductialXi5doubleSpin->setReadOnly(state);
-	fiductialEta5doubleSpin->setReadOnly(state);
+	fiducialXi5doubleSpin->setReadOnly(state);
+	fiducialEta5doubleSpin->setReadOnly(state);
 	fid5SigmaController->setReadOnly(state);
 
-	fiductialXi6doubleSpin->setReadOnly(state);
-	fiductialEta6doubleSpin->setReadOnly(state);
+	fiducialXi6doubleSpin->setReadOnly(state);
+	fiducialEta6doubleSpin->setReadOnly(state);
 	fid6SigmaController->setReadOnly(state);
 
-	fiductialXi7doubleSpin->setReadOnly(state);
-	fiductialEta7doubleSpin->setReadOnly(state);
+	fiducialXi7doubleSpin->setReadOnly(state);
+	fiducialEta7doubleSpin->setReadOnly(state);
 	fid7SigmaController->setReadOnly(state);
 
 	xaA0SpinBox->setReadOnly(state);
@@ -646,43 +646,43 @@ void SensorForm::setReadOnly(bool state)
 	radSymmetricGroupBox->setChecked(radialAvailable);
 }
 
-// show 4 or 8 fiductialMarks
-void SensorForm:: fiductialGroup(int index)
+// show 4 or 8 fiducialMarks
+void SensorForm:: fiducialGroup(int index)
 {
 	if (index==0)
-		showLast4Fiductial(false);
+		showLast4Fiducial(false);
 	else
 	{
-		showLast4Fiductial(true);
+		showLast4Fiducial(true);
 	}
 }
 
-void SensorForm::showLast4Fiductial(bool state)
+void SensorForm::showLast4Fiducial(bool state)
 {
-	fiductialEta4doubleSpin->setVisible(state);
-	fiductialXi4doubleSpin->setVisible(state);
+	fiducialEta4doubleSpin->setVisible(state);
+	fiducialXi4doubleSpin->setVisible(state);
 	fid4SigmaContent->setVisible(state);
 
-	fiductialEta5doubleSpin->setVisible(state);
-	fiductialXi5doubleSpin->setVisible(state);
+	fiducialEta5doubleSpin->setVisible(state);
+	fiducialXi5doubleSpin->setVisible(state);
 	fid5SigmaContent->setVisible(state);
 
-	fiductialEta6doubleSpin->setVisible(state);
-	fiductialXi6doubleSpin->setVisible(state);
+	fiducialEta6doubleSpin->setVisible(state);
+	fiducialXi6doubleSpin->setVisible(state);
 	fid6SigmaContent->setVisible(state);
 
-	fiductialEta7doubleSpin->setVisible(state);
-	fiductialXi7doubleSpin->setVisible(state);
+	fiducialEta7doubleSpin->setVisible(state);
+	fiducialXi7doubleSpin->setVisible(state);
 	fid7SigmaContent->setVisible(state);
 
-	fiductialLabel_9->setVisible(state);
-	fiductialLabel_10->setVisible(state);
-	fiductialLabel_11->setVisible(state);
-	fiductialLabel_12->setVisible(state);
-	fiductialLabel_13->setVisible(state);
-	fiductialLabel_14->setVisible(state);
-	fiductialLabel_15->setVisible(state);
-	fiductialLabel_16->setVisible(state);
+	fiducialLabel_9->setVisible(state);
+	fiducialLabel_10->setVisible(state);
+	fiducialLabel_11->setVisible(state);
+	fiducialLabel_12->setVisible(state);
+	fiducialLabel_13->setVisible(state);
+	fiducialLabel_14->setVisible(state);
+	fiducialLabel_15->setVisible(state);
+	fiducialLabel_16->setVisible(state);
 
 }
 
@@ -690,19 +690,19 @@ void SensorForm::calculationMode (int modeIndex)
 {
 	if(modeIndex==0)
 	{
-		fiductialMarksGroupBox->setVisible(true);
+		fiducialMarksGroupBox->setVisible(true);
 		sensorDimensionsGroupBox->setVisible(false);
 		xaGroupBox->setVisible(false);
 	}
 	else if (modeIndex==1)
 	{
-		fiductialMarksGroupBox->setVisible(false);
+		fiducialMarksGroupBox->setVisible(false);
 		sensorDimensionsGroupBox->setVisible(true);
 		xaGroupBox->setVisible(false);
 	}
 	else
 	{
-		fiductialMarksGroupBox->setVisible(false);
+		fiducialMarksGroupBox->setVisible(false);
 		sensorDimensionsGroupBox->setVisible(false);
 		xaGroupBox->setVisible(true);
 	}
@@ -769,7 +769,7 @@ void SensorForm::clearForm()
 	principalX0doubleSpin->clear();
 	principalY0doubleSpin->clear();
 
-	//fiductialMarks
+	//fiducialMarks
 	fid0SigmaController->fillValues("Not Available");
 	fid1SigmaController->fillValues("Not Available");
 	fid2SigmaController->fillValues("Not Available");
@@ -778,25 +778,25 @@ void SensorForm::clearForm()
 	fid5SigmaController->fillValues("Not Available");
 	fid6SigmaController->fillValues("Not Available");
 
-	fiductialXi0doubleSpin->clear();
-	fiductialXi1doubleSpin->clear();
-	fiductialXi2doubleSpin->clear();
-	fiductialXi3doubleSpin->clear();
-	fiductialXi4doubleSpin->clear();
-	fiductialXi5doubleSpin->clear();
-	fiductialXi6doubleSpin->clear();
-	fiductialXi7doubleSpin->clear();
-	fiductialEta0doubleSpin->clear();
-	fiductialEta1doubleSpin->clear();
-	fiductialEta2doubleSpin->clear();
-	fiductialEta3doubleSpin->clear();
-	fiductialEta4doubleSpin->clear();
-	fiductialEta5doubleSpin->clear();
-	fiductialEta6doubleSpin->clear();
-	fiductialEta7doubleSpin->clear();
+	fiducialXi0doubleSpin->clear();
+	fiducialXi1doubleSpin->clear();
+	fiducialXi2doubleSpin->clear();
+	fiducialXi3doubleSpin->clear();
+	fiducialXi4doubleSpin->clear();
+	fiducialXi5doubleSpin->clear();
+	fiducialXi6doubleSpin->clear();
+	fiducialXi7doubleSpin->clear();
+	fiducialEta0doubleSpin->clear();
+	fiducialEta1doubleSpin->clear();
+	fiducialEta2doubleSpin->clear();
+	fiducialEta3doubleSpin->clear();
+	fiducialEta4doubleSpin->clear();
+	fiducialEta5doubleSpin->clear();
+	fiducialEta6doubleSpin->clear();
+	fiducialEta7doubleSpin->clear();
 
-	fiductialMarksCombo->setCurrentIndex(0);
-	fiductialGroup(fiductialMarksCombo->currentIndex());
+	fiducialMarksCombo->setCurrentIndex(0);
+	fiducialGroup(fiducialMarksCombo->currentIndex());
 
 	// xa
 	xaA0SpinBox->clear();
@@ -842,23 +842,23 @@ void SensorForm::setFormLocale(QLocale locale)
 	principalX0doubleSpin->setLocale(locale);
 	principalY0doubleSpin->setLocale(locale);
 
-	//fiductialMarks
-	fiductialXi0doubleSpin->setLocale(locale);
-	fiductialXi1doubleSpin->setLocale(locale);
-	fiductialXi2doubleSpin->setLocale(locale);
-	fiductialXi3doubleSpin->setLocale(locale);
-	fiductialXi4doubleSpin->setLocale(locale);
-	fiductialXi5doubleSpin->setLocale(locale);
-	fiductialXi6doubleSpin->setLocale(locale);
-	fiductialXi7doubleSpin->setLocale(locale);
-	fiductialEta0doubleSpin->setLocale(locale);
-	fiductialEta1doubleSpin->setLocale(locale);
-	fiductialEta2doubleSpin->setLocale(locale);
-	fiductialEta3doubleSpin->setLocale(locale);
-	fiductialEta4doubleSpin->setLocale(locale);
-	fiductialEta5doubleSpin->setLocale(locale);
-	fiductialEta6doubleSpin->setLocale(locale);
-	fiductialEta7doubleSpin->setLocale(locale);
+	//fiducialMarks
+	fiducialXi0doubleSpin->setLocale(locale);
+	fiducialXi1doubleSpin->setLocale(locale);
+	fiducialXi2doubleSpin->setLocale(locale);
+	fiducialXi3doubleSpin->setLocale(locale);
+	fiducialXi4doubleSpin->setLocale(locale);
+	fiducialXi5doubleSpin->setLocale(locale);
+	fiducialXi6doubleSpin->setLocale(locale);
+	fiducialXi7doubleSpin->setLocale(locale);
+	fiducialEta0doubleSpin->setLocale(locale);
+	fiducialEta1doubleSpin->setLocale(locale);
+	fiducialEta2doubleSpin->setLocale(locale);
+	fiducialEta3doubleSpin->setLocale(locale);
+	fiducialEta4doubleSpin->setLocale(locale);
+	fiducialEta5doubleSpin->setLocale(locale);
+	fiducialEta6doubleSpin->setLocale(locale);
+	fiducialEta7doubleSpin->setLocale(locale);
 
 	// xa
 	xaA0SpinBox->setLocale(locale);

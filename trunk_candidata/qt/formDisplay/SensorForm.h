@@ -83,14 +83,14 @@ public:
  * \brief Metodo que mostra ou não mais quatro marcas fiduciais no formulario
  * \param state : booleana que controla a exibiçao ou não de quatro marcas fiduciais extra
  */
-	void showLast4Fiductial(bool state);
+	void showLast4Fiducial(bool state);
 public slots:
 
 	/**
  * \brief Metodo que controla a exibiçao de campos para 4 ou 8 marcas fiduciais de acordo com a seleção do usuario
  * \param marks : codigo para exibiçao de 4 ou 8 marcas, marks=0 para 4 marcas fiduciais e marks=1 para 8 marcas fiduciais
  */
-	void fiductialGroup(int marks);
+	void fiducialGroup(int marks);
 
 	/**
  * \brief Metodo que altera o metodo de calculo da orientação interior e atualiza o formulario para tal

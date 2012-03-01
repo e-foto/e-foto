@@ -113,12 +113,12 @@ void ImageFiducialMark::xmlSetData(string xml)
 string ImageFiducialMark::xmlGetData()
 {
 	stringstream result;
-	result << "<FiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
+	result << "<fiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
 	if (available)
 		result << "<gml:pos>" << Conversion::doubleToString(col) << " " << Conversion::doubleToString(lin) << "</gml:pos>\n";
 	else
 		result << "<gml:pos>Not Available</gml:pos>\n";
-	result << "</FiducialMark>";
+	result << "</fiducialMark>";
 	return result.str();
 }
 
