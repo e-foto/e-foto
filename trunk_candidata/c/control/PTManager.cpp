@@ -795,7 +795,7 @@ void PTManager::saveBundleAdjustment()
 	{
 		temp.setContent(oldEos.at(i).getContent());
 		string imageKey = temp.attribute("image_key");
-		if (newExteriorOrientationXml.elementByTagAtt("imageEO","image_key",imageKey).getContent()=="")
+		if (newExteriorOrientationXml.elementByTagAtt("imageEO","image_key",imageKey).getContent()==""  && temp.attribute("type")=="spatialRessection")
 			newExteriorOrientationXml.addChildAtTagName("exteriorOrientation",temp.getContent());
 	}
 
