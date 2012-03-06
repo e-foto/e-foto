@@ -194,6 +194,10 @@ bool ProjectManager::loadFile(string filename)
 			if (updater->isUpdated())
 			{
 				xmlData = updater->getAllXml().getContent();
+
+				/* Paulo 6/3/12 : Se deu um update salva o arquivo automaticamente.*/
+				manager->xmlSetData(xmlData);
+				saveFile(filename);
 			}
 			else
 			{
@@ -220,6 +224,7 @@ bool ProjectManager::loadFile(string filename)
 			}
 			// Aqui deve entrar um codigo para validar o XML.
 			manager->xmlSetData(xmlData);
+
 
 			if (treeModel != NULL)
 				delete treeModel;
