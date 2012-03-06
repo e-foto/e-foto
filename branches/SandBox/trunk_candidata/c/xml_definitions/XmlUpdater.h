@@ -97,6 +97,21 @@ public:
  * \brief Método para aplicar a atualização para a versão 1.0.42 do arquivo .epp.
  */
 	void updateToBuild1_0_42();
+
+	/**
+ * \brief Método para aplicar a atualização para a versão 1.X.XX do arquivo .epp.
+ */
+	void updateToBuild1_X_XX();
+
+	/**
+	  * \brief Metodo para substituir uma palavra por outra no texto
+	  * \param text: Text contendo a palavra a se substituida
+	  * \param oldWord: Palavra a ser substituida
+	  * \param newWord: Palavra a ser colocada no lugar da palavra procurada
+	  * \return bool : Informa se a palavra foi encontrada ou nao, no texto.
+	  */
+	bool replacer(string &text,string oldWord,string newWord);
+
 };
 
 } // namespace efoto
