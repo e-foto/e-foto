@@ -31,6 +31,9 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 		allXml.setContent(xml);
 	}
 	updateBuild(&error);
+
+	// Gambiarra
+	updateToBuild1_X_XX();
 }
 
 EDomElement XmlUpdater::getAllXml()
@@ -172,6 +175,26 @@ void XmlUpdater::updateToBuild1_0_42()
 
 	allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.42");
 }
+
+void XmlUpdater::updateToBuild1_X_XX()
+{
+	string all= allXml.getContent();
+	while(replacer(all,"fiductial","fiducial"));
+	allXml.setContent(all);
+}
+
+bool XmlUpdater::replacer(string &text,string oldWord,string newWord)
+{
+	size_t searched;
+	searched = text.rfind(oldWord);
+	if (searched != string::npos)
+	{
+		text.replace(searched,oldWord.length(),newWord);
+		return true;
+	}
+	return false;
+}
+
 
 } // namespace efoto
 } // namespace eng
