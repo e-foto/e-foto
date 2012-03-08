@@ -567,6 +567,11 @@ public:
 		*/
 		Matrix eoParametersFromXml();
 
+		/**
+		* \brief Metodo que retorna o valor do RMSE do bloco
+		* \return double: Valor do RMSE
+		*/
+		double getRMSE();
 
 		int getTotalIterationsXml();
 		bool getConvergedXML();
