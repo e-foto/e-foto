@@ -853,8 +853,11 @@ public:
 	*/
 	void convertToUTM(deque<Point*> points, GeoSystem sys);
 
-
-
+	/**
+	* \brief Metodo que calcula o RMSE do bloco
+	* \return double: Valor do RMSE
+	*/
+	double calculateRMSE();
 
 
 

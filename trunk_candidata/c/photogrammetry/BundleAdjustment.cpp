@@ -1976,6 +1976,15 @@ void BundleAdjustment::convertToUTM(deque<Point*> points, GeoSystem sys)
 		}
 }
 
+double BundleAdjustment::calculateRMSE()
+{
+	int numRes=matRes.getRows();
+	double sum=0;
+	for (int i=1;i<=numRes;i++)
+		sum+=pow(matRes.get(i,1),2);
+	return sqrt(sum/(numEquations-numUnknows));
+}
+
 		// em teste
 
 void BundleAdjustment::normalize(deque<Point *>points,double &range, double &offset)

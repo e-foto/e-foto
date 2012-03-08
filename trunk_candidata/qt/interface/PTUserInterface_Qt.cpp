@@ -317,8 +317,12 @@ void PTUserInterface_Qt::viewReport()
 	QString iter="Iterations: ";
 	iter+=QString::number(ptManager->getBundleAdjustment()->getTotalIterations());
 
+	QString rmse="RMSE: ";
+	rmse+=QString::number(ptManager->getRMSE(),'f',4);
+
 	QLabel *iterations = new QLabel(iter);
 	QLabel *converged;
+	QLabel *rmseLabel = new QLabel(rmse);
 	if (ptManager->getBundleAdjustment()->isConverged())
 		converged = new QLabel(tr("Converged: yes"));
 	else
@@ -327,6 +331,7 @@ void PTUserInterface_Qt::viewReport()
 	QHBoxLayout *infoLayout= new QHBoxLayout();
 	infoLayout->addWidget(iterations);
 	infoLayout->addWidget(converged);
+	infoLayout->addWidget(rmseLabel);
 
 	/**///tabela das OEs
 	QVBoxLayout *oeLayout= new QVBoxLayout();
