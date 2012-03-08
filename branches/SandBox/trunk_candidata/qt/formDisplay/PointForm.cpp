@@ -74,6 +74,7 @@ void PointForm::fillvalues(string values)
 	//lineEditImageCoordinates1->setText(QString::fromUtf8(ede.elementByTagAtt("imageCoordinates","image_key","1").elementByTagName("gml:pos").toString().c_str()));
 
 	imageMeasurementsTable->setRowCount(imageKeyList.size());
+	bool ok;
 	for (unsigned int i = 0; i < imageKeyList.size(); i++)
 	{
 		QTableWidgetItem *keyItem = new QTableWidgetItem(QString::number(imageKeyList.at(i)));
@@ -81,7 +82,8 @@ void PointForm::fillvalues(string values)
 		QTableWidgetItem *imageItem = new QTableWidgetItem(QString::fromUtf8(imageNameList.at(i).c_str()));
 		QTableWidgetItem *linItem = new QTableWidgetItem();
 		QTableWidgetItem *colItem = new QTableWidgetItem();
-
+		linItem->setTextAlignment(Qt::AlignCenter);
+		colItem->setTextAlignment(Qt::AlignCenter);
 		EDomElement imgMeasure = ede.elementByTagAtt("imageCoordinates","image_key",Conversion::intToString(imageKeyList.at(i)));
 		if (imgMeasure.getContent() != "")
 		{
@@ -89,8 +91,21 @@ void PointForm::fillvalues(string values)
 			QStringList linColStr = QString(imgMeasure.elementByTagName("gml:pos").toString().c_str()).split(" ");
 			if (linColStr.size() == 2)
 			{
-				linItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
-				colItem->setText(QString::number(linColStr.at(1).toDouble(),'f',3));
+				QString linStr=linColStr.at(0);
+				QString colStr=linColStr.at(1);
+				//qDebug() << "FillValues linstr:" <<linStr << "colStr:"<<colStr;
+				if ((linStr=="-1" && colStr=="-1") || (linStr=="" && colStr==""))
+				{
+					linItem->setText("--");
+					colItem->setText("--");
+				}
+				else
+				{
+					//linItem->setText(QString::number(linColStr.at(0).toDouble(),'f',3));
+					//colItem->setText(QString::number(linColStr.at(1).toDouble(),'f',3));
+					linItem->setText(QString::number(linStr.toDouble(&ok),'f',3));
+					colItem->setText(QString::number(colStr.toDouble(&ok),'f',3));
+				}
 			}
 		}
 
@@ -119,12 +134,19 @@ string PointForm::getvalues()
 		QCheckBox* myCheck = (QCheckBox*) imageMeasurementsTable->cellWidget(i,1);
 		if (myCheck != NULL && myCheck->checkState())
 		{
+			QString colStr=imageMeasurementsTable->item(i,3)->text();
+			QString linStr=imageMeasurementsTable->item(i,4)->text();
+			if ((colStr=="" && linStr=="") || (linStr=="--" && colStr=="--"))
+			{
+				linStr="-1";
+				colStr="-1";
+			}
 			auxStream << "<imageCoordinates uom=\"#px\" image_key=\"";
 			auxStream << imageMeasurementsTable->item(i,0)->text().toStdString();
 			auxStream << "\"><gml:pos>";
-			auxStream << imageMeasurementsTable->item(i,3)->text().toStdString();
+			auxStream << colStr.toStdString();
 			auxStream << " ";
-			auxStream << imageMeasurementsTable->item(i,4)->text().toStdString();
+			auxStream << linStr.toStdString();
 			auxStream << "</gml:pos>";
 			auxStream << "</imageCoordinates>\n";
 		}

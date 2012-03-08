@@ -165,16 +165,16 @@ namespace efoto {
 		return status=true;
 	}
 
-	void PTManager::returnProject()
-	{
-		//if (pt!=NULL)
-		// delete pt;
-		//delete myInterface;
-		//delete mySensor;
-		//delete myFlight;
-		//listAllImages.clear();
-		efotoManager->reloadProject();
-	}
+void PTManager::returnProject()
+{
+	//if (pt!=NULL)
+	// delete pt;
+	//delete myInterface;
+	//delete mySensor;
+	//delete myFlight;
+	//listAllImages.clear();
+	efotoManager->reloadProject();
+}
 
 	/*
 string PTManager::getImagefile(int imageId)
@@ -213,10 +213,10 @@ string PTManager::getImagefile(int imageId)
 		{
 			if (hasAllImagesInitialValues())
 			{
-				Matrix matInitialValues(listAllImages.size(),6);
-				for (int i=0;i<listAllImages.size();i++)
+				Matrix matInitialValues(listSelectedImages.size(),6);
+				for (int i=0;i<listSelectedImages.size();i++)
 				{
-					Image *img=listAllImages.at(i);
+					Image *img=listSelectedImages.at(i);
 					if(img->isInsAvailable() && img->getInsType()=="Initial")
 					{
 						matInitialValues.set(i+1,1,img->getInsOmega());
