@@ -141,7 +141,7 @@ bool BundleAdjustment::calculate()
 
 		//qDebug("%s",printAll().c_str());
 
-		//matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
+		matAdjust.show('f',5,"matAdjust Inicial Values");
 
 		//matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
 		//matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
