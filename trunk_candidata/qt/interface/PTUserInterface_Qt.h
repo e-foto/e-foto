@@ -245,7 +245,7 @@ public slots:
 	void showReportXml();
 
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
-	void updatePoint(int, int, double);
+	//void updatePoint(int, int, double);
 protected slots:
 
 	/**
@@ -263,6 +263,11 @@ protected slots:
  */
 	void putInStack(int oldCol,int oldLin,int pointKey, int imageKey, QString pointId);
 
+	/**
+	* \brief Método que substitui todos os "-1" para -- indicando que esse ponto ainda não foi marcado na imagem
+	* \param imageTable: Tabela com valores a serem substituidos
+	*/
+	void replaceTo__(ETableWidget *imageTable);
 	//void openImagesFlightDirectionForm();
 	//virtual bool confirmToClose();
 };

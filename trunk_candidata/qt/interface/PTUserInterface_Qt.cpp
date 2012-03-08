@@ -89,7 +89,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")),this);
 	connect(undoShortcut, SIGNAL(activated()), this, SLOT(undoMark()));
 
-	//setWindowState(this->windowState() | Qt::WindowMaximized);
 	actionMove->setChecked(true);
 
 	if( ptManager->hasEODone())
@@ -97,15 +96,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	else
 		viewReportToolButton->setEnabled(false);
 
-
 	insertionMode=false;
-
-	//antes do merge do irving
 	bool activeCalculate=ptManager->hasAllImagesInitialValues();
 	actionCalculateFotoTri->setEnabled(activeCalculate);
 	calculateFotoTriToolButton->setEnabled(activeCalculate);
-
 	imagesPointTreeWidget->setColumnHidden(3,true);
+
+	setWindowState(this->windowState() | Qt::WindowMaximized);
 
 	qApp->processEvents();
 	//qDebug("Construtor");
@@ -212,8 +209,8 @@ void PTUserInterface_Qt::init()
 	connect(rightImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
 	connect(pointsTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
 
-	connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
-	connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
+	//connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
+	//connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
 
 	/*Permite ediÃ§ao de coordenada via tabela*/
 	//leftImageTableWidget->setType(1,"QSpinBox");
@@ -480,6 +477,8 @@ bool PTUserInterface_Qt::calculatePT()
 	ptManager->selectImages(selectionImagesView->getSelectedItens());
 	ptManager->selectPoints(selectionPointsView->getSelectedItens());
 
+	QMessageBox::information(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
+
 	bool result = ptManager->calculatePT();
 	if (result)
 	{
@@ -491,9 +490,7 @@ bool PTUserInterface_Qt::calculatePT()
 	{
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
-
 	return result;
-
 }
 
 void PTUserInterface_Qt::showSelectionWindow()
@@ -513,7 +510,6 @@ void PTUserInterface_Qt::showSelectionWindow()
 		ids+=".";
 		QMessageBox::warning(selectionView,"Point taked out of evaluate",QString("Points with less than 2 overlaps:\n%1").arg(ids));
 	}
-
 
 
 	//if (selectionImagesView==NULL || selectionPointsView==NULL)
@@ -669,8 +665,9 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 	imageTable->putIn(imageColLin,0,1,'f',3);//,"QSpinBox",true,0,dim.getInt(1,1),dim.getInt(1,2));
 	imageTable->putInColumn(keysImagePoints,3);
 
+	replaceTo__(imageTable);
 	int pos=findKeyAppearances(imageTable,currentPointKey);
-	if (pos >=0)
+	if (pos >=0 && imageTable->item(pos,1)->text()!="--" && imageTable->item(pos,2)->text()!="--")
 	{
 		imageTable->selectRow(pos);
 
@@ -707,6 +704,7 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		}
 	}
 	imageTable->setSortingEnabled(true);
+
 }
 
 void PTUserInterface_Qt::updatePointsTable()
@@ -910,11 +908,13 @@ void PTUserInterface_Qt::imageClicked(QPointF pixel)
 		//rightView->moveTo(*pixel);
 		//previsionMark(currentPointKey,pixel);
 	}
+	showImagesAppearances(currentPointKey);
 }
 
 
 /* Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface. Atualmente abilitada
    */
+   /*
 void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 {
 	bool ok;
@@ -1000,7 +1000,7 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 	}
 
 }
-
+*/
 void PTUserInterface_Qt::acceptResults()
 {
 	ptManager->saveResults();
@@ -1026,8 +1026,9 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
 			lin=leftImageTableWidget->item(i,2)->text().toDouble(&ok);
 			//colocar as marcas no display
 			int pos=findKeyAppearances(leftImageTableWidget, leftImageTableWidget->item(i,3)->text().toInt(&ok));
-			if (pos >=0)
+			if (pos >=0 && (leftImageTableWidget->item(i,1)->text()!="--" && leftImageTableWidget->item(i,2)->text()!="--"))
 			{
+				//qDebug("left lin: %.3f  col: %.3f",lin,col);
 				QPointF pixel(col,lin);
 				//viewer->getLeftDisplay()->getCurrentScene()->geometry()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
 				int pointkey = leftImageTableWidget->item(pos,3)->text().toInt();
@@ -1046,8 +1047,9 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
 			lin=rightImageTableWidget->item(i,2)->text().toDouble(&ok);
 			//colocar as marcas no display
 			int pos=findKeyAppearances(rightImageTableWidget, rightImageTableWidget->item(i,3)->text().toInt(&ok));
-			if (pos >=0)
+			if (pos >=0 && (rightImageTableWidget->item(i,1)->text()!="--" && rightImageTableWidget->item(i,2)->text()!="--"))
 			{
+				//qDebug("right lin: %.3f  col: %.3f",lin,col);
 				QPointF pixel(col,lin);
 				//viewer->getRightDisplay()->getCurrentScene()->geometry()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
 				int pointkey = rightImageTableWidget->item(pos,3)->text().toInt();
@@ -1078,8 +1080,16 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 	{
 		QString imageKey= QString::number(ptManager->getImageId(appearances.at(i)));
 		Matrix coord=ptManager->getDigitalCoordinate(ptManager->getImageId(appearances.at(i)),pointKey);
+		QString linStr=QString::number(coord.get(1,1),'f',3);
+		QString colStr=QString::number(coord.get(1,2),'f',3);
+		if(coord.get(1,1)==-1 && coord.get(1,2)==-1)
+		{
+			linStr="--";
+			colStr="--";
+		}
 		QStringList stringList;
-		stringList << QString::fromStdString(appearances.at(i)) << QString::number(coord.get(1,1))<< QString::number(coord.get(1,2)) << imageKey;
+		//stringList << QString::fromStdString(appearances.at(i)) << QString::number(coord.get(1,1))<< QString::number(coord.get(1,2)) << imageKey;
+		stringList << QString::fromStdString(appearances.at(i)) << linStr<< colStr << imageKey;
 		QTreeWidgetItem *item=new QTreeWidgetItem(stringList);
 		item->setTextAlignment(0,Qt::AlignCenter);
 		item->setTextAlignment(1,Qt::AlignCenter);
@@ -1162,20 +1172,27 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 		setCurrentPointKey(leftImageTableWidget->item(tableRow,3)->text().toInt(&ok));
 		leftCol=leftImageTableWidget->item(tableRow,1)->text().toDouble(&ok);
 		leftLin=leftImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
-		SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
-		scene->moveTo(QPointF(leftCol,leftLin));
-		scene->setDetailedPoint(QPointF(leftCol,leftLin));
-		viewer->getLeftDisplay()->update();
+		if (leftImageTableWidget->item(tableRow,1)->text()!="--" && leftImageTableWidget->item(tableRow,2)->text()!="--")
+		{
+			SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+			scene->moveTo(QPointF(leftCol,leftLin));
+			scene->setDetailedPoint(QPointF(leftCol,leftLin));
+			viewer->getLeftDisplay()->update();
+		}
 	}
 	else if (table==rightImageTableWidget)
 	{
 		setCurrentPointKey(rightImageTableWidget->item(tableRow,3)->text().toInt(&ok));
 		rightCol=rightImageTableWidget->item(tableRow,1)->text().toDouble(&ok);
 		rightLin=rightImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
-		SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
-		scene->moveTo(QPointF(rightCol,rightLin));
-		scene->setDetailedPoint(QPointF(rightCol,rightLin));
-		viewer->getRightDisplay()->update();
+
+		if (rightImageTableWidget->item(tableRow,1)->text()!="--" && rightImageTableWidget->item(tableRow,2)->text()!="--")
+		{
+			SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+			scene->moveTo(QPointF(rightCol,rightLin));
+			scene->setDetailedPoint(QPointF(rightCol,rightLin));
+			viewer->getRightDisplay()->update();
+		}
 	}
 	else if (table==pointsTableWidget)
 	{
@@ -1186,19 +1203,25 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 		{
 			leftCol=leftImageTableWidget->item(leftTableIndex,1)->text().toDouble(&ok);
 			leftLin=leftImageTableWidget->item(leftTableIndex,2)->text().toDouble(&ok);
-			SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
-			scene->moveTo(QPointF(leftCol,leftLin));
-			scene->setDetailedPoint(QPointF(leftCol,leftLin));
-			viewer->getLeftDisplay()->update();
+			if (leftImageTableWidget->item(leftTableIndex,1)->text()!="--" && leftImageTableWidget->item(leftTableIndex,2)->text()!="--")
+			{
+				SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+				scene->moveTo(QPointF(leftCol,leftLin));
+				scene->setDetailedPoint(QPointF(leftCol,leftLin));
+				viewer->getLeftDisplay()->update();
+			}
 		}
 		if (rightTableIndex >=0)
 		{
 			rightCol=rightImageTableWidget->item(rightTableIndex,1)->text().toDouble(&ok);
 			rightLin=rightImageTableWidget->item(rightTableIndex,2)->text().toDouble(&ok);
-			SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
-			scene->moveTo(QPointF(rightCol,rightLin));
-			scene->setDetailedPoint(QPointF(rightCol,rightLin));
-			viewer->getRightDisplay()->update();
+			if (rightImageTableWidget->item(rightTableIndex,1)->text()!="--" && rightImageTableWidget->item(rightTableIndex,2)->text()!="--")
+			{
+				SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+				scene->moveTo(QPointF(rightCol,rightLin));
+				scene->setDetailedPoint(QPointF(rightCol,rightLin));
+				viewer->getRightDisplay()->update();
+			}
 		}
 	}
 }
@@ -1243,6 +1266,20 @@ void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)
 	else
 		insertPointInButton->setStatusTip("Insertion mode OFF");
 
+}
+
+void PTUserInterface_Qt::replaceTo__(ETableWidget *imageTable)
+{
+	int rows= imageTable->rowCount();
+	int cols= imageTable->columnCount();
+	for (int i=0;i<rows;i++)
+	{
+		for (int j=0;j<cols;j++)
+		{
+			if (imageTable->item(i,j)->text()=="-1.000")
+				imageTable->item(i,j)->setText("--");
+		}
+	}
 }
 
 //Retorna a posicao do ponto na tabela se o ponto nao estiver retorna -1
