@@ -1636,6 +1636,11 @@ Matrix PTManager::digitalToEN(Image *img,int col, int row,Matrix oe)
 	 return oesMatrix;
  }
 
+ double PTManager::getRMSE()
+ {
+		return pt->calculateRMSE();
+ }
+
  int PTManager::getTotalIterationsXml()
  {
 	 EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
