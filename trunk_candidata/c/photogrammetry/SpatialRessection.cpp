@@ -25,7 +25,7 @@ namespace efoto {
  */
 SpatialRessection::SpatialRessection()
 {
-		pointForFlightDirectionAvailable = flightDirectionAvailable = false;
+	pointForFlightDirectionAvailable = flightDirectionAvailable = false;
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
