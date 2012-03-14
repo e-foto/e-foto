@@ -820,7 +820,7 @@ string PTManager::createOESXml()
 		Image *img = listSelectedImages.at(i-1);
 		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << Conversion::intToString(img->getId()) << "\">\n";
 		//fotoTriXml << "\t<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(i) << "\">\n";
-		fotoTriXml << "\t\t<parameters>\n";
+		//fotoTriXml << "\t\t<parameters>\n";
 		//fotoTriXml << "\t\t\t<Lb>\n";
 		//fotoTriXml << lb << "\n</Lb>\n";
 		fotoTriXml << "\t\t\t<Xa>\n";
@@ -833,7 +833,7 @@ string PTManager::createOESXml()
 		fotoTriXml << "\t\t\t</Xa>\n";
 		//fotoTriXml << "\t\t\t<L0>\n";
 		//fotoTriXml << l0 << "\n</L0>\n";
-		fotoTriXml << "\t\t</parameters>\n";
+		//fotoTriXml << "\t\t</parameters>\n";
 		fotoTriXml << "</imageEO>\n";
 	}
 

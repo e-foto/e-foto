@@ -1,5 +1,7 @@
 #include "XmlUpdater.h"
 #include <QApplication>
+//#include <QDebug>
+
 
 namespace br {
 namespace uerj {
@@ -181,6 +183,53 @@ void XmlUpdater::updateToBuild1_X_XX()
 	string all= allXml.getContent();
 	while(replacer(all,"fiductial","fiducial"));
 	allXml.setContent(all);
+
+	deque<EDomElement> eosXml = allXml.elementsByTagName("imageEO");
+
+	for(int i=0;i</*1*/eosXml.size();i++)
+	{
+		string total="";
+		EDomElement eoXml;
+		eoXml.setContent(eosXml.at(i).getContent());
+		if (eoXml.hasTagName("iterations"))
+		{
+			EDomElement xaXml =	eoXml.elementByTagName("Xa");
+			xaXml.replaceAttributeByTagAtt("phi","uom","#m","uom","#rad");
+			xaXml.replaceAttributeByTagAtt("omega","uom","#m","uom","#rad");
+			xaXml.replaceAttributeByTagAtt("kappa","uom","#m","uom","#rad");
+
+			stringstream aux;
+			aux << "<imageEO type=\""<< eoXml.attribute("type") <<"\" image_key=\""<< eoXml.attribute("image_key") << "\">\n";
+			aux << xaXml.getContent();
+			aux << "\n</imageEO>";
+
+
+			//total+=aux.str();
+			//total+="\n";
+			//xaXml.setContent(aux.str());
+
+			eoXml.replaceChildByTagName("Xa","");
+
+			stringstream newXmlSpatialRessection;
+			newXmlSpatialRessection << "<spatialRessection image_key=\""<< eoXml.attribute("image_key") << "\">\n";
+			newXmlSpatialRessection << eoXml.elementByTagName("iterations").getContent() << "\n";
+			newXmlSpatialRessection << eoXml.elementByTagName("converged").getContent() << "\n";
+			newXmlSpatialRessection << eoXml.elementByTagName("parameters").getContent() << "\n";
+			newXmlSpatialRessection << eoXml.elementByTagName("quality").getContent() << "\n";
+			newXmlSpatialRessection << "</spatialRessection>\n";
+
+			allXml.replaceChildByTagAtt("imageEO","image_key",eoXml.attribute("image_key"),aux.str());
+			//eoXml.setContent(xaXml.getContent());
+
+			allXml.addChildAtTagName("efotoPhotogrammetricProject",newXmlSpatialRessection.str());
+
+			//qDebug("NewSpatial\n%s",newXmlSpatialRessection.str().c_str());
+		}
+
+	}
+
+	//qDebug("Exterior orientation:\n%s",allXml.elementByTagName("exteriorOrientation").getContent().c_str());
+
 }
 
 bool XmlUpdater::replacer(string &text,string oldWord,string newWord)
