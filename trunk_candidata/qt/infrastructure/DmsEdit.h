@@ -25,7 +25,7 @@ enum DmsEditMode { DMS, DEG, RAD };
 * \class DmsEdit
 * \brief Classe que controla um widget para mostrar valores no formato de angulos
 * \copyright E-Foto group
-* \author Paulo AndrÃ© Batista Pupim e Irving Badolato
+* \author Paulo André Batista Pupim e Irving Badolato
 */
 
 class DmsEdit : public QLineEdit
