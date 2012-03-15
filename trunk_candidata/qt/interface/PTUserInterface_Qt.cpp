@@ -291,18 +291,6 @@ bool PTUserInterface_Qt::exec()
 	return true;
 }
 
-void PTUserInterface_Qt::makeRepaint()
-{
-}
-void PTUserInterface_Qt::activePanMode()
-{
-}
-
-void PTUserInterface_Qt::fitView()
-{
-	//myImageLeftView->fitView();
-}
-
 void PTUserInterface_Qt::viewReport()
 {
 	QWidget *resultView = new QWidget();
@@ -322,7 +310,7 @@ void PTUserInterface_Qt::viewReport()
 
 	QLabel *iterations = new QLabel(iter);
 	QLabel *converged;
-	QLabel *rmseLabel = new QLabel(rmse);
+	QLabel *rmseLabel = new QLabel(rmse+" m");
 	if (ptManager->getBundleAdjustment()->isConverged())
 		converged = new QLabel(tr("Converged: yes"));
 	else
@@ -341,6 +329,10 @@ void PTUserInterface_Qt::viewReport()
 	for (int i=0;i<images.size();i++)
 		imagesSelected << QString(images.at(i).c_str());
 	oeTable->setColumnCount(13);
+
+		QTableWidget *table;
+		table->columnCount();
+
 	oeTable->putInColumn(imagesSelected,0);
 	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',4);
 	oeTable->putIn(ptManager->getMVC(),0,7,'f',5);
@@ -834,6 +826,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 		viewer->getLeftMarker().insertMark(pixel, pointKey, leftImageTableWidget->item(pos,0)->text());
 		viewer->getLeftDisplay()->update();
 
+				/*
 		if(leftImageTableWidget->getItemSpinBox()!=NULL)
 		{
 			int colTable=leftImageTableWidget->getCurrentSpinBoxColumn();
@@ -842,6 +835,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 			else if (colTable==2)
 				leftImageTableWidget->getItemSpinBox()->setValue(lin);
 		}
+				*/
 	}else if(display == viewer->getRightDisplay())
 	{
 		int pos=findKeyAppearances(rightImageTableWidget, pointKey);
@@ -861,6 +855,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 		viewer->getRightMarker().insertMark(pixel, pointKey,rightImageTableWidget->item(pos,0)->text());
 		viewer->getRightDisplay()->update();
 
+				/*
 		if(rightImageTableWidget->getItemSpinBox()!=NULL)
 		{
 			int colTable=rightImageTableWidget->getCurrentSpinBoxColumn();
@@ -869,6 +864,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 			else if (colTable==2)
 				rightImageTableWidget->getItemSpinBox()->setValue(lin);
 		}
+				*/
 	}
 	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
 }
