@@ -17,6 +17,14 @@ namespace efoto {
 
 class PointMark;
 
+
+/**
+* \file PTUserInterface_Qt.h
+* \class PTUserInterface_Qt
+* \brief Classe que gerencia a interface grafica com o usuario
+* \copyright E-Foto group
+* \author Paulo AndrÈ Batista Pupim
+*/
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
 	Q_OBJECT
@@ -89,16 +97,10 @@ public slots:
 	deque<Matrix*> getImageMatrixes(); // (GraphicWorkAround).
 	Matrix* getImageMatrix(QImage img); // (GraphicWorkAround).
 
-	void activePanMode();
-
-	void fitView();
-
 	/**
  * \brief Metodo que mostra um widget com as informa√ßoes principais do resultado da fototriangula√ßao
  */
 	void viewReport();
-
-	void makeRepaint();
 
 	/**
  * \brief Metodo que mostra um widget com algumas op√ßoes para rodar o calculo da fotoTriangula√ßao
@@ -183,7 +185,7 @@ public slots:
 	void updateCoordinatesInfo(QPointF* pixel);
 
 	/**
- * \brief Metodo que reponsavel por atualizar no display a posi√ßao da marca de um ponto
+ * \brief Metodo que reponsavel por atualizar no display a posiÁ„o da marca de um ponto
  * \param display : Objeto display a ser atualizado
  * \param imageKey: Key da imagem contida no display
  * \param pointKey: Key do ponto a ter sua marca atualizada
@@ -239,9 +241,9 @@ public slots:
  */
 	void tableClicked(QTableWidgetItem* item);
 
-	/**
-		* \brief Metodo que mostra, coloca em um widget, o resultado de calculo de OE presente no corrente Xml
-		*/
+/**
+* \brief Metodo que mostra, coloca em um widget, o resultado de calculo de OE presente no corrente Xml
+*/
 	void showReportXml();
 
 	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
