@@ -11,6 +11,7 @@ RCC_DIR = ../temp/rcc
 QT += opengl
 
 unix {
+LIBS += -lGL -lGLU
 }
 
 win32 {

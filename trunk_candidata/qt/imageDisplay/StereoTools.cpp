@@ -224,8 +224,8 @@ void StereoTool::wheelEvent(const QWheelEvent & event)
 			_display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
 		else
 		{
-			_display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/abs(numSteps),0));
-			_display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/abs(numSteps),0));
+            _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/fabs(numSteps),0));
+            _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/fabs(numSteps),0));
 		}
 		_display->updateAll();
 	}
