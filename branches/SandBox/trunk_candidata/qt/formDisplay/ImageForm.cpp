@@ -144,6 +144,10 @@ void ImageForm::fillvalues(string values)
 		insSigmaController->fillValues(ede.elementByTagName("INS").elementByTagName("sigma").getContent());
 		activeINS = true;
 	}
+
+
+
+
 }
 
 string ImageForm::getvalues()
@@ -310,17 +314,19 @@ bool ImageForm::isForm(string formName)
 void ImageForm::setIOAvailable(bool state)
 {
 	if (state)
-		labelIO->setText("Interior orientation is available");
-	else
-		labelIO->setText("Interior orientation is not available");
+	;
+		//labelIO->setText("Interior orientation is available");
+	//else
+		//labelIO->setText("Interior orientation is not available");
 }
 
 void ImageForm::setEOAvailable(bool state)
 {
 	if (state)
-		labelEO->setText("Spatial resection is available");
-	else
-		labelEO->setText("Spatial resection is not available");
+	;
+		//labelEO->setText("Spatial resection is available");
+	//else
+		//labelEO->setText("Spatial resection is not available");
 }
 
 void ImageForm::cleanForm()
