@@ -1273,6 +1273,12 @@ menuExecute->setEnabled(true);
 		if (node2.getContent()!="")
 		{
 			imageForm.setIOAvailable(true);
+			imageForm.a0Label->setText("a0: " + QString::number(node2.elementByTagName("a0").toDouble(),'f', 4));
+			imageForm.a1Label->setText("a1: " + QString::number(node2.elementByTagName("a1").toDouble(),'f',4));
+			imageForm.a2Label->setText("a2: " + QString::number(node2.elementByTagName("a2").toDouble(),'f',4));
+			imageForm.b0Label->setText("b0: " + QString::number(node2.elementByTagName("b0").toDouble(),'f',4));
+			imageForm.b1Label->setText("b1: " + QString::number(node2.elementByTagName("b1").toDouble(),'f',4));
+			imageForm.b2Label->setText("b2: " + QString::number(node2.elementByTagName("b2").toDouble(),'f',4));
 		}
 		else
 		{
@@ -1283,6 +1289,18 @@ menuExecute->setEnabled(true);
 		if (node3.getContent()!="")
 		{
 			imageForm.setEOAvailable(true);
+
+			if (node3.attribute("type")=="spatialRessection")
+				imageForm.groupBox_2->setTitle("OE Parameters (Spatial Ressection)");
+			else
+				imageForm.groupBox_2->setTitle("OE Parameters (Phototriangulation)");
+
+			imageForm.x0Label->setText("X0: " + QString::number(node3.elementByTagName("X0").toDouble(),'f',4) +" m");
+			imageForm.y0Label->setText("Y0: " + QString::number(node3.elementByTagName("Y0").toDouble(),'f',4) +" m");
+			imageForm.z0Label->setText("Z0: " + QString::number(node3.elementByTagName("Z0").toDouble(),'f',4) +" m");
+			imageForm.omegaLabel->setText(imageForm.omegaLabel->text().append(QString::number(node3.elementByTagName("phi").toDouble()*180/M_PI,'f',4) + "°"));
+			imageForm.phiLabel->setText(imageForm.phiLabel->text().append(QString::number(node3.elementByTagName("omega").toDouble()*180/M_PI,'f',4) + "°"));
+			imageForm.kappaLabel->setText(imageForm.kappaLabel->text().append(QString::number(node3.elementByTagName("kappa").toDouble()*180/M_PI,'f',4) + "°"));
 		}
 		else
 		{
