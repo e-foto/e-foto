@@ -558,12 +558,12 @@ public:
 		void convertToUTM(deque<Point*> points, GeoSystem sys);
 
 		/** \brief Metodo que checa se alguma orientacao exterior foi feita
-		/* return bool : Informa se há ou nao orientacao exterior feita
+		/* \return bool : Informa se há ou nao orientacao exterior feita
 		*/
 		bool hasEODone();
 
 		/** \brief Metodo que retorna uma matriz com os parametros da orientacao exterior, onde cada linha contem os parametros.
-		/* return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
+		/* \return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
 		*/
 		Matrix eoParametersFromXml();
 
@@ -573,11 +573,40 @@ public:
 		*/
 		double getRMSE();
 
-		int getTotalIterationsXml();
-		bool getConvergedXML();
+		/**
+		*	\brief Metodo que retorna o numero de iteracoes salvo no xml anteriormente
+		*	\return int : Numero de iteracoes
+		*/
+		int getPreviousTotalIterationsXml();
 
+		/**
+		*	\brief Metodo que informa se a fototriangulacao salva anteriormente convergiu ou nao
+		*	\return bool : true: convergiu, false: nao convergiu
+		*/
+		bool getPreviousConvergedXML();
+
+		/**
+		*	\brief Metodo que retorna o valor do RMSE em metros salvo no xml anteriormente
+		*	\return double: Valor do RMSE em metros
+		*/
+		double getPreviousRmseXML();
+
+		/**
+		*	\brief
+		*	\return string
+		*/
 		string getPhotoTriXml();
+
+		/**
+		*	\brief
+		*	\return string
+		*/
 		string getUsedPointsXml();
+
+		/**
+		*	\brief
+		*	\return string
+		*/
 		string getUsedImagesXml();
 
 };

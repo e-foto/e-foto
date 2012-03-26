@@ -330,9 +330,6 @@ void PTUserInterface_Qt::viewReport()
 		imagesSelected << QString(images.at(i).c_str());
 	oeTable->setColumnCount(13);
 
-		QTableWidget *table;
-		table->columnCount();
-
 	oeTable->putInColumn(imagesSelected,0);
 	oeTable->putIn(ptManager->getMatrixOE(),0,1,'f',4);
 	oeTable->putIn(ptManager->getMVC(),0,7,'f',5);
@@ -422,18 +419,23 @@ void PTUserInterface_Qt::showReportXml()
 	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
 	QString iter="Iterations: ";
-	iter+=QString::number(ptManager->getTotalIterationsXml());
+	iter+=QString::number(ptManager->getPreviousTotalIterationsXml());
 
 	QLabel *iterations = new QLabel(iter);
 	QLabel *converged;
-	if (ptManager->getConvergedXML())
+	if (ptManager->getPreviousConvergedXML())
 		converged = new QLabel(tr("Converged: yes"));
 	else
 		converged = new QLabel(tr("Converged: no"));
 
+	QString rmse="RMSE: ";
+	rmse+=QString::number(ptManager->getPreviousRmseXML());
+	QLabel *rmseLabel = new QLabel(rmse +" m");
+
 	QHBoxLayout *infoLayout= new QHBoxLayout();
 	infoLayout->addWidget(iterations);
 	infoLayout->addWidget(converged);
+	infoLayout->addWidget(rmseLabel);
 
 	QStringList imagesSelected;
 	//oesXml.show('f',3,"oesXml");

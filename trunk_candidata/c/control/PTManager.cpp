@@ -776,14 +776,6 @@ void PTManager::saveBundleAdjustment()
 	EDomElement oldExteriorOrientationXml(efotoManager->getXml("exteriorOrientation"));
 	deque<EDomElement> oldEos = oldExteriorOrientationXml.elementsByTagName("imageEO");
 
-	/*
-	EDomElement oldEpp(efotoManager->xmlGetData());
-	if (oldEpp.hasTagName("phototriangulation"))
-		oldEpp.replaceChildByTagName("phototriangulation",getPhotoTriXml());
-	else
-		oldEpp.addChildAtTagName("efotoPhotogrammetricProject",getPhotoTriXml());
-	*/
-
 	EDomElement oldEpp(efotoManager->xmlGetData());
 	if (oldEpp.hasTagName("phototriangulation"))
 		oldEpp.replaceChildByTagName("phototriangulation",getPhotoTriXml());
@@ -809,10 +801,8 @@ void PTManager::saveBundleAdjustment()
 string PTManager::createOESXml()
 {
 	stringstream fotoTriXml;
-	//codigo de criaÃ§ao da xml da bundle(multiplas tags de OrientaÃ§Ã£o Exterior)
+	//codigo de criacao da xml da bundle(multiplas tags de Orientacao Exterior)
 	Matrix oe=pt->getAFP();
-	//string lb=pt->getLb().xmlGetData();
-	//string l0=pt->getL0().xmlGetData();
 
 	fotoTriXml << "<exteriorOrientation>\n";
 	for (int i=1;i<=oe.getRows();i++)
@@ -850,8 +840,11 @@ string PTManager::createOESXml()
 
 		fotoTriXml << "\t<iterations>"<< Conversion::intToString(pt->getTotalIterations()) <<"</iterations>\n";
 		fotoTriXml << "\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
+		fotoTriXml << "\t<metricConvergency>"<< pt->getMetricConvergencyValue()<<"</metricConvergency>\n";
+		fotoTriXml << "\t<rmse>" << pt->calculateRMSE() << "</rmse>\n";
+		fotoTriXml << "\t<angularConvergency>"<< pt->getAngularConvergencyValue()<<"</angularConvergency>\n";
 
-		fotoTriXml << getUsedPointsXml() << getUsedImagesXml() ;
+		fotoTriXml << getUsedPointsXml() << getUsedImagesXml();
 
 		fotoTriXml << "</phototriangulation>\n";
 
@@ -1641,19 +1634,26 @@ Matrix PTManager::digitalToEN(Image *img,int col, int row,Matrix oe)
 		return pt->calculateRMSE();
  }
 
- int PTManager::getTotalIterationsXml()
+ int PTManager::getPreviousTotalIterationsXml()
  {
-	 EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+	 EDomElement exteriorXml(efotoManager->getXml("phototriangulation"));
 	 return Conversion::stringToInt(exteriorXml.elementByTagName("iterations").toString());
  }
 
- bool PTManager::getConvergedXML()
- {
-	 EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
-	 if (exteriorXml.elementByTagName("converged").toString()=="true")
-		 return true;
-	 return false;
- }
+bool PTManager::getPreviousConvergedXML()
+{
+	EDomElement exteriorXml(efotoManager->getXml("phototriangulation"));
+	if (exteriorXml.elementByTagName("converged").toString()=="true")
+		return true;
+	return false;
+}
+
+double PTManager::getPreviousRmseXML()
+{
+	EDomElement exteriorXml(efotoManager->getXml("phototriangulation"));
+	return exteriorXml.elementByTagName("rmse").toDouble();
+}
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj
