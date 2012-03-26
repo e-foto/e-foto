@@ -37,6 +37,10 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 	omegaDmsEdit->setDmsEditMode(DEG);
 	phiDmsEdit->setDmsEditMode(DEG);
 	kappaDmsEdit->setDmsEditMode(DEG);
+
+	groupBox->setVisible(false);
+	groupBox_2->setVisible(false);
+
 }
 
 void ImageForm::fillvalues(string values)

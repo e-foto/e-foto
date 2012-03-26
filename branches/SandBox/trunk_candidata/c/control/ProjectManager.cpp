@@ -197,7 +197,7 @@ bool ProjectManager::loadFile(string filename)
 
 				/* Paulo 6/3/12 : Se deu um update salva o arquivo automaticamente.*/
 				manager->xmlSetData(xmlData);
-				saveFile(filename);
+				//saveFile(filename);
 			}
 			else
 			{
