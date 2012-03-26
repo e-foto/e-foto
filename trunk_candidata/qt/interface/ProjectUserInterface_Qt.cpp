@@ -1272,6 +1272,7 @@ menuExecute->setEnabled(true);
 		EDomElement node2(manager->getXml("imageIO", "image_key", Conversion::intToString(id)));
 		if (node2.getContent()!="")
 		{
+			imageForm.groupBox->setVisible(true);
 			imageForm.setIOAvailable(true);
 			imageForm.a0Label->setText("a0: " + QString::number(node2.elementByTagName("a0").toDouble(),'f', 4));
 			imageForm.a1Label->setText("a1: " + QString::number(node2.elementByTagName("a1").toDouble(),'f',4));
@@ -1282,12 +1283,14 @@ menuExecute->setEnabled(true);
 		}
 		else
 		{
+			imageForm.setVisible(false);
 			imageForm.setIOAvailable(false);
 		}
 
 		EDomElement node3(manager->getXml("imageEO", "image_key", Conversion::intToString(id)));
 		if (node3.getContent()!="")
 		{
+			imageForm.groupBox_2->setVisible(true);
 			imageForm.setEOAvailable(true);
 
 			if (node3.attribute("type")=="spatialRessection")
@@ -1304,6 +1307,7 @@ menuExecute->setEnabled(true);
 		}
 		else
 		{
+			imageForm.groupBox_2->setVisible(false);
 			imageForm.setEOAvailable(false);
 		}
 
