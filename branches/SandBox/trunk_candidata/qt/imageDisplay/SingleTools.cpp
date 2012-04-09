@@ -15,52 +15,55 @@ namespace efoto {
 
 void SingleTool::paintEvent(const QPaintEvent& event)
 {
-	QPainter painter(_display);
-	painter.setRenderHint(QPainter::Antialiasing);
+    if (_display->painting())
+    {
+        QPainter painter(_display);
+        painter.setRenderHint(QPainter::Antialiasing);
 
-	if (_autoPan != QPointF(0,0))
-	{
-		// Draw autoMove feedback
-		QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
+        if (_autoPan != QPointF(0,0))
+        {
+            // Draw autoMove feedback
+            QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-		painter.drawPoint(_lastMousePosition);
+            painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+            painter.drawPoint(_lastMousePosition);
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
-		painter.drawLine(_lastMousePosition, endArrow);
+            painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
+            painter.drawLine(_lastMousePosition, endArrow);
 
-		if (_autoPan != QPointF(0,0))
-		{
-			double tangent = atan2(_autoPan.y(), _autoPan.x());
-			QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
-			QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
-			QVector<QPoint> arrow;
-			arrow.append(pa);
-			arrow.append(endArrow);
-			arrow.append(endArrow);
-			arrow.append(pb);
+            if (_autoPan != QPointF(0,0))
+            {
+                double tangent = atan2(_autoPan.y(), _autoPan.x());
+                QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
+                QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
+                QVector<QPoint> arrow;
+                arrow.append(pa);
+                arrow.append(endArrow);
+                arrow.append(endArrow);
+                arrow.append(pb);
 
-			painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
-			painter.drawLines(arrow);
-		}
-	}
-	else if (_scale > 0)
-	{
-		// Draw scaleBar feedback
-		//QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
-		QPoint endBar(_display->screenPosition(_fixedPointOnImage).x(), _display->getMouseScreenPosition().y());
+                painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+                painter.drawLines(arrow);
+            }
+        }
+        else if (_scale > 0)
+        {
+            // Draw scaleBar feedback
+            //QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
+            QPoint endBar(_display->screenPosition(_fixedPointOnImage).x(), _display->getMouseScreenPosition().y());
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-		//painter.drawPoint(_fixedPoint);
-		painter.drawPoint(_display->screenPosition(_fixedPointOnImage));
+            painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+            //painter.drawPoint(_fixedPoint);
+            painter.drawPoint(_display->screenPosition(_fixedPointOnImage));
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 2));
-		//painter.drawLine(_fixedPoint, endBar);
-		painter.drawLine(_display->screenPosition(_fixedPointOnImage), endBar);
-		painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
-		painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
-	}
-	painter.end();
+            painter.setPen(QPen(QBrush(Qt::yellow), 2));
+            //painter.drawLine(_fixedPoint, endBar);
+            painter.drawLine(_display->screenPosition(_fixedPointOnImage), endBar);
+            painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
+            painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
+        }
+        //painter.end();
+    }
 }
 
 void SingleTool::resizeEvent(const QResizeEvent &event)
