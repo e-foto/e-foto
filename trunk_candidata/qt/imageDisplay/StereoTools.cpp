@@ -12,69 +12,55 @@ namespace efoto {
 
 void StereoTool::paintEvent(const QPaintEvent& event)
 {
-	QPainter painter(_display);
-	painter.setRenderHint(QPainter::Antialiasing);
+    if (_display->painting())
+    {
+        QPainter painter(_display);
+        painter.setRenderHint(QPainter::Antialiasing);
 
-	if (_autoPan != QPointF(0,0))
-	{
-		// Draw autoMove feedback
-		QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
+        if (_autoPan != QPointF(0,0))
+        {
+            // Draw autoMove feedback
+            QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-		painter.drawPoint(_lastMousePosition);
+            painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+            painter.drawPoint(_lastMousePosition);
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
-		painter.drawLine(_lastMousePosition, endArrow);
+            painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
+            painter.drawLine(_lastMousePosition, endArrow);
 
-		if (_autoPan != QPointF(0,0))
-		{
-			double tangent = atan2(_autoPan.y(), _autoPan.x());
-			QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
-			QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
-			QVector<QPoint> arrow;
-			arrow.append(pa);
-			arrow.append(endArrow);
-			arrow.append(endArrow);
-			arrow.append(pb);
+            if (_autoPan != QPointF(0,0))
+            {
+                double tangent = atan2(_autoPan.y(), _autoPan.x());
+                QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
+                QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
+                QVector<QPoint> arrow;
+                arrow.append(pa);
+                arrow.append(endArrow);
+                arrow.append(endArrow);
+                arrow.append(pb);
 
-			painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
-			painter.drawLines(arrow);
-		}
-	}
-	else if (_scale > 0)
-	{
-		// Draw scaleBar feedback
-		//QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
-		QPoint endBar(_display->screenPosition(_fixedPointOnImage).x(), _display->getMouseScreenPosition().y());
+                painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+                painter.drawLines(arrow);
+            }
+        }
+        else if (_scale > 0)
+        {
+            // Draw scaleBar feedback
+            //QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
+            QPoint endBar(_display->screenPosition(_fixedPointOnImage).x(), _display->getMouseScreenPosition().y());
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-		//painter.drawPoint(_fixedPoint);
-		painter.drawPoint(_display->screenPosition(_fixedPointOnImage));
+            painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
+            //painter.drawPoint(_fixedPoint);
+            painter.drawPoint(_display->screenPosition(_fixedPointOnImage));
 
-		painter.setPen(QPen(QBrush(Qt::yellow), 2));
-		//painter.drawLine(_fixedPoint, endBar);
-		painter.drawLine(_display->screenPosition(_fixedPointOnImage), endBar);
-		painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
-		painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
-	}
-	painter.end();
-	/*
-	QPainter painter(_display->getRealDisplay());
-	painter.setPen(QPen(Qt::yellow));
-	if (_autoPan != QPointF(0,0))
-	{
-		// Draw autoMove feedback
-		painter.drawLine(_lastMousePosition, _lastMousePosition - _autoPan*5*_display->getCurrentScene()->getLeftScene()->getScale());
-	}
-	else if (_scale > 0)
-	{
-		// Draw scaleBar feedback
-		QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
-		painter.drawLine(_fixedPoint, endBar);
-		painter.drawText(endBar, QString::number(_display->getCurrentScene()->getLeftScene()->getScale()*100,'f', 1).append("%"));
-	}
-	painter.end();
-	*/
+            painter.setPen(QPen(QBrush(Qt::yellow), 2));
+            //painter.drawLine(_fixedPoint, endBar);
+            painter.drawLine(_display->screenPosition(_fixedPointOnImage), endBar);
+            painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
+            painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
+        }
+        painter.end();
+    }
 }
 
 void StereoTool::resizeEvent(const QResizeEvent &event)
@@ -86,12 +72,12 @@ void StereoTool::resizeEvent(const QResizeEvent &event)
 
 void StereoTool::enterEvent(const QHoverEvent& event)
 {
-	_display->setCursor(_currentCursor);
+    _display->setCursor(_currentCursor, _display->isStereoCursor());
 }
 
 void StereoTool::leaveEvent(const QHoverEvent& event)
 {
-	_display->setCursor(SymbolsResource::getBackGround(QColor(0,0,0,0)));
+    _display->setCursor(SymbolsResource::getBackGround(QColor(0,0,0,0)), _display->isStereoCursor());
 	_display->updateAll();
 }
 
@@ -125,14 +111,14 @@ void StereoTool::mousePressed(const QMouseEvent &event)
 		_fixedPointOnImage = _display->getPositionLeft(_fixedPoint);
 		_scale = _display->getCurrentScene()->getScale();
 		_currentCursor = SymbolsResource::getLeftArrow();
-		_display->setCursor(_currentCursor);
+        _display->setCursor(_currentCursor, _display->isStereoCursor());
 		_actualizePosLabel = false;
 	}
 	// Prepair move reference
 	else if (event.buttons() & Qt::RightButton)
 	{
 		_currentCursor = SymbolsResource::getBackGround(QColor(0,0,0,0));
-		_display->setCursor(_currentCursor);
+        _display->setCursor(_currentCursor, _display->isStereoCursor());
 	}
 	_lastMousePosition = event.pos();
 
@@ -149,7 +135,7 @@ void StereoTool::mouseReleased(const QMouseEvent &event)
 
 	//if (_autoPan != QPoint(0,0) || _scale != -1)
 	_currentCursor = _lastCursor;
-	_display->setCursor(_currentCursor);
+    _display->setCursor(_currentCursor, _display->isStereoCursor());
 
 	// Stop move default (autoMove).
 	_autoPan = QPoint(0,0);
@@ -187,12 +173,12 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
 		if (event.pos().x() < _display->screenPosition(_fixedPointOnImage).x())
 		{
 			_currentCursor = SymbolsResource::getRightArrow();
-			_display->setCursor(_currentCursor);
+            _display->setCursor(_currentCursor, _display->isStereoCursor());
 		}
 		else
 		{
 			_currentCursor = SymbolsResource::getLeftArrow();
-			_display->setCursor(_currentCursor);
+            _display->setCursor(_currentCursor, _display->isStereoCursor());
 		}
 		//actualizeScaleSpin(_display->getCurrentScene()->getScale());
 		_display->updateAll();
@@ -205,7 +191,7 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
 		QPointF diff = event.posF() - _lastMousePosition;
 		_autoPan = -(diff/(5*scale));
 		_currentCursor = SymbolsResource::getText(QString::fromUtf8("Auto"));
-		_display->setCursor(_currentCursor);
+        _display->setCursor(_currentCursor, _display->isStereoCursor());
 	}
 }
 
@@ -283,10 +269,10 @@ void StereoTool::actualizePosLabel()
 	}
 }
 
-void StereoTool::setCursor(QImage cursor)
+void StereoTool::setCursor(QImage cursor, bool stereo)
 {
-	_currentCursor = cursor;
-	_display->setCursor(_currentCursor);
+    _currentCursor = cursor;
+    _display->setCursor(_currentCursor, stereo);
 }
 
 void StereoTool::actualizePosLabel(SingleDisplay* display, bool force)
@@ -343,12 +329,12 @@ void ZoomStereoTool::paintEvent(const QPaintEvent &event)
 		if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8)
 		{
 			_currentCursor = SymbolsResource::getMagnifyGlass("-");
-			_display->setCursor(_currentCursor);
+            _display->setCursor(_currentCursor, false);
 			return;
 		}
 		else
 		{	_currentCursor = SymbolsResource::getMagnifyGlass("+");
-			_display->setCursor(_currentCursor);
+            _display->setCursor(_currentCursor, false);
 		}
 		QPainter painter(_display->getRealDisplay());
 		painter.setPen(QPen(Qt::yellow));
@@ -382,7 +368,7 @@ void ZoomStereoTool::mousePressed(const QMouseEvent & event)
 		_onRubberBand = true;
 		_lastCursor = _display->getCursor();
 		_currentCursor = SymbolsResource::getMagnifyGlass("-");
-		_display->setCursor(_currentCursor);
+        _display->setCursor(_currentCursor, false);
 		//_display->blockShowDetailedArea(true);
 		_display->updateAll();
 		return;
@@ -489,7 +475,7 @@ void MoveStereoTool::mousePressed(const QMouseEvent & event)
 	if (event.buttons() & Qt::LeftButton)
 	{
 		_currentCursor = SymbolsResource::getClosedHand();
-		_display->setCursor(_currentCursor);
+        _display->setCursor(_currentCursor, false);
 	}
 	_display->updateAll();
 }
@@ -498,7 +484,7 @@ void MoveStereoTool::mouseReleased(const QMouseEvent & event)
 {
 	StereoTool::mouseReleased(event);
 	_currentCursor = SymbolsResource::getOpenHand();
-	_display->setCursor(_currentCursor);
+    _display->setCursor(_currentCursor, false);
 }
 
 void MoveStereoTool::mouseMoved(const QMouseEvent & event)
@@ -664,8 +650,8 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
 	_rightNear = _display->getRightNearDisplay();
 	//_leftNear->setHidden(true);
 	//_rightNear->setHidden(true);
-	//_leftNear->setActivatedTool(this);
-	//_rightNear->setActivatedTool(this);
+    _leftNear->setActivatedTool(this);
+    _rightNear->setActivatedTool(this);
 	_leftNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
 	_rightNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
 
@@ -724,6 +710,26 @@ void NearStereoTool::setNearCursor(QCursor cursor)
 
 void NearStereoTool::paintEvent(const QPaintEvent &event)
 {
+    QPixmap ico = QPixmap::fromImage(_display->getCursor());
+    QRect reg(QPoint(), ico.size());
+    if (_leftNear->painting())
+    {
+        QPainter painter(_leftNear);
+        {
+            reg.moveCenter(QPoint(_leftNear->width()/2, _leftNear->height()/2));
+            painter.drawPixmap(reg,ico);
+            //painter.end();
+        }
+    }
+    if (_rightNear->painting())
+    {
+        QPainter painter(_rightNear);
+        {
+            reg.moveCenter(QPoint(_rightNear->width()/2, _rightNear->height()/2));
+            painter.drawPixmap(reg,ico);
+            //painter.end();
+        }
+    }
 }
 
 void NearStereoTool::resizeEvent(const QResizeEvent &event)
@@ -1057,21 +1063,21 @@ void StereoToolsBar::executeAction(QAction *action)
 	{
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_zoom);
-		_zoom.setCursor(SymbolsResource::getMagnifyGlass());
+        _zoom.setCursor(SymbolsResource::getMagnifyGlass(), false);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
 	}
 	if (action ==  setMoveTool )
 	{
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_move);
-		_move.setCursor(SymbolsResource::getOpenHand());
+        _move.setCursor(SymbolsResource::getOpenHand(), false);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
 	}
 	if (action ==  setMarkTool )
 	{
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_mark);
-		_mark.setCursor(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)));
+        _mark.setCursor(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)),true);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)))));
 	}
 	if (action ==  setFitView )

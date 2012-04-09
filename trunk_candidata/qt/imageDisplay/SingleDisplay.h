@@ -15,6 +15,7 @@ namespace efoto {
 enum DisplayMode {IntermediatedScreen, TopViewScreen, MostDetailedScreen};
 
 class AbstractScene;
+class StereoTool;
 
 class SingleDisplay : public QWidget
 {
@@ -24,8 +25,9 @@ protected:
 	AbstractScene* _currentScene;
 	DisplayMode _displayMode;
 	SingleDisplay* _over;
-	SingleDisplay* _detail;
-	QList< SingleTool* > _tool;
+    SingleDisplay* _detail;
+    QList< SingleTool* > _tool;
+    QList< StereoTool* > _stool;
 
 	//bool _onMove;
 	bool _cloneScale;
@@ -79,8 +81,9 @@ public:
 
 	void setOverviewMode(SingleDisplay* display);
 	void setDetailMode(SingleDisplay* display);
-	DisplayMode getDisplayMode();
-	void setActivatedTool(SingleTool* tool, bool active = true);
+    DisplayMode getDisplayMode();
+    void setActivatedTool(SingleTool* tool, bool active = true);
+    void setActivatedTool(StereoTool* tool, bool active = true);
 
 public slots:
 	void setCloneScale(bool status);

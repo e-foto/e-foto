@@ -1,5 +1,7 @@
 #include "SingleDisplay.h"
 
+#include "StereoTools.h"
+
 #include <QCursor>
 #include <QPainter>
 #include <QColor>
@@ -254,15 +256,28 @@ DisplayMode SingleDisplay::getDisplayMode()
 
 void SingleDisplay::setActivatedTool(SingleTool *tool, bool active)
 {
-	for (int i = _tool.size() - 1; i >=  0; i--)
-	{
-		if (tool == _tool.at(i))
-		{
-			_tool.removeAt(i);
-		}
-	}
-	if (active)
-		_tool.prepend(tool);
+    for (int i = _tool.size() - 1; i >=  0; i--)
+    {
+        if (tool == _tool.at(i))
+        {
+            _tool.removeAt(i);
+        }
+    }
+    if (active)
+        _tool.prepend(tool);
+}
+
+void SingleDisplay::setActivatedTool(StereoTool *tool, bool active)
+{
+    for (int i = _stool.size() - 1; i >=  0; i--)
+    {
+        if (tool == _stool.at(i))
+        {
+            _stool.removeAt(i);
+        }
+    }
+    if (active)
+        _stool.prepend(tool);
 }
 
 void SingleDisplay::paintEvent(QPaintEvent *e)
@@ -344,11 +359,15 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 		painter.end();
 	}
 	if (!_currentScene || !_currentScene->isValid())
-		return;
-	for (int i = 0; i < _tool.size(); i++)
-	{
-		_tool.at(i)->paintEvent(*e);
-	}
+        return;
+    for (int i = 0; i < _tool.size(); i++)
+    {
+        _tool.at(i)->paintEvent(*e);
+    }
+    for (int i = 0; i < _stool.size(); i++)
+    {
+        _stool.at(i)->paintEvent(*e);
+    }
 	_onPainting = false;
 }
 

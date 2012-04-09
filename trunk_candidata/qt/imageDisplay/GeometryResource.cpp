@@ -55,7 +55,7 @@ QImage SymbolsResource::getBordedCross(QColor colorBrush, QColor colorPen, QSize
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
-		painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.fillRect(weigth%2, hotY-weigth/2, size.width()/2-(weigth+1)/2, weigth, colorPen);
 	painter.fillRect(size.width()/2+(weigth+1)/2, hotY-weigth/2, size.width()/2-weigth/2, weigth, colorPen);
 	painter.fillRect(hotX-weigth/2, weigth%2, weigth, size.height()/2-(weigth+1)/2, colorPen);
@@ -114,7 +114,7 @@ QImage SymbolsResource::getTriangle(QColor color, QColor fillcolor, QSize size, 
 	QPolygonF poly(points);
 
 	QPainter painter(&img);
-		painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawConvexPolygon(poly);
 	painter.setPen(QPen(QBrush(color),weigth));
@@ -135,7 +135,7 @@ QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, un
 	int hotY = size.height() / 2;
 
 	QPainter painter(&img);
-		painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QBrush(fillcolor));
 	painter.drawEllipse(QPoint(hotX, hotY), size.width()/2-1, size.height()/2-1);
 	painter.setPen(QPen(QBrush(color),weigth));

@@ -114,10 +114,9 @@
     <addaction name="actionInterior_Orientation"/>
     <addaction name="actionSpatial_resection"/>
     <addaction name="actionFoto_Tri"/>
-    <addaction name="actionExport_Stereo"/>
+    <addaction name="actionStereo"/>
     <addaction name="actionDEMExtraction"/>
     <addaction name="actionOrtho_rectification"/>
-    <addaction name="actionStereo"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -153,9 +152,6 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -305,10 +301,13 @@
   </action>
   <action name="actionSpatial_resection">
    <property name="text">
-    <string>Spatial &amp;resection</string>
+    <string>Spatial &amp;Resection</string>
+   </property>
+   <property name="toolTip">
+    <string>Spatial Resection</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -361,31 +360,40 @@
    <property name="toolTip">
     <string>Export a file to be used on Stereoplotter or DEM File</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+E</string>
-   </property>
   </action>
   <action name="actionFoto_Tri">
    <property name="text">
     <string>&amp;Photo Triangulation</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionDEMExtraction">
    <property name="text">
     <string>DEM-Extraction</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionOrtho_rectification">
    <property name="text">
-    <string>Ortho-rectification</string>
+    <string>Ortho-Rectification</string>
+   </property>
+   <property name="toolTip">
+    <string>Ortho-Rectification</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionStereo">
    <property name="text">
     <string>Stereo Plotter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>
