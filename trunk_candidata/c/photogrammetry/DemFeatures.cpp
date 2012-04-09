@@ -371,6 +371,13 @@ void DemFeatures::calculateCentroid(int featid)
 		return;
 
 	DemFeature *df =  &features.at(featid-1);
+
+    if (df->points.size() == 0)
+    {
+        df->flag_calc_centroid = true;
+        return;
+    }
+
 	double CX, CY, CZ;
 	CX = CY = CZ = 0;
 
@@ -437,9 +444,15 @@ void DemFeatures::calculateArea(int featid)
 		return;
 	}
 
+    int num_points = df->points.size();
+    if (num_points < 3)
+    {
+        df->area = 0.0;
+        return;
+    }
+
 	// Calculate normal vector
 	double NX, NY, NZ, X1, Y1, Z1, X2, Y2, Z2, VX, VY, VZ;
-	int num_points = df->points.size();
 	NX = NY = NZ = VX = VY = VZ = 0.0;
 	for (int i=0; i<num_points; i++)
 	{

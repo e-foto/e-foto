@@ -143,9 +143,11 @@ bool SPUserInterface_Qt::exec()
 	connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
 	connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
 
-	show();
+    show();
 	qApp->processEvents();
-	changePair(1,2);
+    changePair(1,2);
+    viewer->getToolBar()->executeAction(viewer->getToolBar()->setMoveTool);
+    viewer->getDisplay()->updateAll();
 
 	LoadingScreen::instance().close();
 	return true;

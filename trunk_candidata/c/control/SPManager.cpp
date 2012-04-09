@@ -105,6 +105,7 @@ int SPManager::removeFeature()
 		return 0;
 
 	spFeatures.deleteFeature(sel_feat);
+	spFeatures.setSelectedFeature(-1);
 
 	return 1;
 }
@@ -112,6 +113,7 @@ int SPManager::removeFeature()
 void SPManager::removeAllFeatures()
 {
 	spFeatures.deleteAllFeatures();
+	spFeatures.setSelectedFeature(-1);
 }
 
 int SPManager::removePoint()
@@ -127,6 +129,8 @@ int SPManager::removePoint()
 		return 0;
 
 	spFeatures.deletePoint(sel_feat, sel_pt);
+    if (sel_pt > spFeatures.getFeature(spFeatures.selectedFeature()).points.size())
+        spFeatures.setSelectedPoint(sel_pt - 1);
 
 	return 1;
 }

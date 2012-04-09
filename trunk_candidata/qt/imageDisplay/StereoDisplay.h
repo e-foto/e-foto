@@ -29,6 +29,7 @@ protected:
 
 	QPointF _mouseScreenPos;
 	QImage _cursor;
+    bool _onPainting;
 
 	void initializeGL();
 	void paintGL();
@@ -57,6 +58,8 @@ public:
 	QImage getGLCursor();
 	void setGLBackground(QImage bg);
 
+    bool painting();
+
 	void setActivatedTool(StereoTool* tool, bool active = true);
 };
 
@@ -71,6 +74,7 @@ protected:
 	QPointF leftCursorOffset_;
 	QPointF rightCursorOffset_;
 	double _currentZ;
+    bool _stereoCursor;
 
 public:
 	StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
@@ -96,8 +100,9 @@ public:
 	QPointF getRightCursorOffset();
 	void setLeftCursorOffset(QPointF offset);
 	void setRightCursorOffset(QPointF offset);
-	void setCursor(QImage newCursor);
+    void setCursor(QImage newCursor, bool stereo = true);
 	QImage getCursor();
+    bool isStereoCursor() {return _stereoCursor;}
 
 	double getCurrentZ();
 	void setCurrentZ(double z);
@@ -117,6 +122,8 @@ public:
 	void updateDetail(QPointF* left, QPointF* right, bool emitClicked = false);
 
 	void setActivatedTool(StereoTool* tool, bool active = true);
+
+    bool painting();
 
 signals:
 	void mousePositionsChanged(QPointF*, QPointF*);

@@ -48,7 +48,7 @@ public:
 	void actualizePosLabel();
 	void actualizePosLabel(SingleDisplay* display, bool force = false);
 
-	void setCursor(QImage cursor);
+    void setCursor(QImage cursor, bool stereo);
 
 public slots:
 	void autoMove();

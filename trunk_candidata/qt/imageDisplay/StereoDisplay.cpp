@@ -27,6 +27,7 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
 	ctexture = 0;
 	btexture = 0;
 	_GLDisplayUpdate = false;
+    _onPainting = false;
 	setAutoFillBackground(false);
 
 	setAttribute(Qt::WA_Hover, true);
@@ -117,6 +118,11 @@ void GLDisplay::initializeGL()
 	//setGLCursor(SymbolsResource::getBackGround(QColor(0,0,0,0));
 	//setGLBackground(QImage(":/cursors/BlackBG"));
 	_GLDisplayUpdate = true;
+}
+
+bool GLDisplay::painting()
+{
+    return _onPainting;
 }
 
 void GLDisplay::paintGL()
@@ -217,16 +223,16 @@ void GLDisplay::paintGL()
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(ll, lt);
+        glVertex2f(ll, lt);
 
 		glTexCoord2f(1.0, 1.0);
-		glVertex2f(lr, lt);
+        glVertex2f(lr, lt);
 
 		glTexCoord2f(1.0, 0.0);
-		glVertex2f(lr, lb);
+        glVertex2f(lr, lb);
 
 		glTexCoord2f(0.0, 0.0);
-		glVertex2f(ll, lb);
+        glVertex2f(ll, lb);
 	}
 	glEnd ();
 
@@ -236,16 +242,16 @@ void GLDisplay::paintGL()
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(cl+stereoDisplay_->getLeftCursorOffset().x(), ct+stereoDisplay_->getLeftCursorOffset().y());
+        glVertex2f(cl+stereoDisplay_->getLeftCursorOffset().x(), cb+stereoDisplay_->getLeftCursorOffset().y());
 
 		glTexCoord2f(1.0, 1.0);
-		glVertex2f(cr+stereoDisplay_->getLeftCursorOffset().x(), ct+stereoDisplay_->getLeftCursorOffset().y());
+        glVertex2f(cr+stereoDisplay_->getLeftCursorOffset().x(), cb+stereoDisplay_->getLeftCursorOffset().y());
 
 		glTexCoord2f(1.0, 0.0);
-		glVertex2f(cr+stereoDisplay_->getLeftCursorOffset().x(), cb+stereoDisplay_->getLeftCursorOffset().y());
+        glVertex2f(cr+stereoDisplay_->getLeftCursorOffset().x(), ct+stereoDisplay_->getLeftCursorOffset().y());
 
 		glTexCoord2f(0.0, 0.0);
-		glVertex2f(cl + stereoDisplay_->getLeftCursorOffset().x(), cb+stereoDisplay_->getLeftCursorOffset().y());
+        glVertex2f(cl + stereoDisplay_->getLeftCursorOffset().x(), ct+stereoDisplay_->getLeftCursorOffset().y());
 	}
 	glEnd ();
 	//glDisable(GL_TEXTURE_2D);
@@ -267,16 +273,16 @@ void GLDisplay::paintGL()
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(rl, rt);
+        glVertex2f(rl, rt);
 
 		glTexCoord2f(1.0, 1.0);
-		glVertex2f(rr, rt);
+        glVertex2f(rr, rt);
 
 		glTexCoord2f(1.0, 0.0);
-		glVertex2f(rr, rb);
+        glVertex2f(rr, rb);
 
 		glTexCoord2f(0.0, 0.0);
-		glVertex2f(rl, rb);
+        glVertex2f(rl, rb);
 	}
 	glEnd ();
 
@@ -286,16 +292,16 @@ void GLDisplay::paintGL()
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(cl+stereoDisplay_->getRightCursorOffset().x(), ct+stereoDisplay_->getRightCursorOffset().y());
+        glVertex2f(cl+stereoDisplay_->getRightCursorOffset().x(), cb+stereoDisplay_->getRightCursorOffset().y());
 
 		glTexCoord2f(1.0, 1.0);
-		glVertex2f(cr+stereoDisplay_->getRightCursorOffset().x(), ct+stereoDisplay_->getRightCursorOffset().y());
+        glVertex2f(cr+stereoDisplay_->getRightCursorOffset().x(), cb+stereoDisplay_->getRightCursorOffset().y());
 
 		glTexCoord2f(1.0, 0.0);
-		glVertex2f(cr+stereoDisplay_->getRightCursorOffset().x(), cb+stereoDisplay_->getRightCursorOffset().y());
+        glVertex2f(cr+stereoDisplay_->getRightCursorOffset().x(), ct+stereoDisplay_->getRightCursorOffset().y());
 
 		glTexCoord2f(0.0, 0.0);
-		glVertex2f(cl+stereoDisplay_->getRightCursorOffset().x(), cb+stereoDisplay_->getRightCursorOffset().y());
+        glVertex2f(cl+stereoDisplay_->getRightCursorOffset().x(), ct+stereoDisplay_->getRightCursorOffset().y());
 	}
 	glEnd ();
 	glDisable(GL_TEXTURE_2D);
@@ -320,13 +326,15 @@ void GLDisplay::resizeGL(int w, int h)
 
 void GLDisplay::paintEvent(QPaintEvent *e)
 {
-	QGLWidget::paintEvent(e);
+    _onPainting = true;
+    QGLWidget::paintEvent(e);
 	if (!stereoDisplay_ || !stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())
 		return;
 	for (int i = 0; i < _tool.size(); i++)
 	{
 		_tool.at(i)->paintEvent(*e);
 	}
+    _onPainting = false;
 }
 
 void GLDisplay::resizeEvent(QResizeEvent *e)
@@ -465,7 +473,7 @@ StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
 	//QGLFormat::setDefaultFormat(fmt);
 
 	leftDisplay_ = NULL;
-	rightDisplay_ = NULL;
+    rightDisplay_ = NULL;
 
 	if (currentScene)
 		currentScene_ = currentScene;
@@ -599,14 +607,27 @@ void StereoDisplay::setRightCursorOffset(QPointF offset)
 	rightCursorOffset_ = offset;
 }
 
-void StereoDisplay::setCursor(QImage newCursor)
+void StereoDisplay::setCursor(QImage newCursor, bool stereo)
 {
-	glDisplay_->setGLCursor(newCursor);
+    if (stereo)
+    {
+        glDisplay_->setCursor(QCursor(NOCURSOR));
+        glDisplay_->setGLCursor(newCursor);
+    }
+    else
+    {
+        glDisplay_->setCursor(QCursor(QPixmap::fromImage(newCursor)));
+        glDisplay_->setGLCursor(QCursor(NOCURSOR).pixmap().toImage());
+    }
+    _stereoCursor = stereo;
 }
 
 QImage StereoDisplay::getCursor()
 {
-	return glDisplay_->getGLCursor();
+    if (_stereoCursor)
+        return glDisplay_->getGLCursor();
+    else
+        return glDisplay_->cursor().pixmap().toImage();
 }
 
 double StereoDisplay::getCurrentZ()
@@ -715,6 +736,11 @@ void StereoDisplay::updateDetail(QPointF* left, QPointF* right, bool emitClicked
 void StereoDisplay::setActivatedTool(StereoTool *tool, bool active)
 {
 	glDisplay_->setActivatedTool(tool, active);
+}
+
+bool StereoDisplay::painting()
+{
+    return glDisplay_->painting();
 }
 
 } // namespace efoto
