@@ -99,9 +99,9 @@ public:
 	void updateToBuild1_0_42();
 
 	/**
- * \brief Método para aplicar a atualização para a versão 1.X.XX do arquivo .epp.
+ * \brief Método para aplicar a atualização para a versão 1.0.266 do arquivo .epp.
  */
-	void updateToBuild1_X_XX();
+    void updateToBuild1_0_266();
 
 	/**
 	  * \brief Metodo para substituir uma palavra por outra no texto

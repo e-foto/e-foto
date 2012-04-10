@@ -352,7 +352,20 @@ void ImageForm::cleanForm()
 	fileNameLine->clear();
 	filePathLine->clear();
 	heightLine->clear();
-	widthLine->clear();
+    widthLine->clear();
+
+    phiLabel->clear();
+    omegaLabel->clear();
+    kappaLabel->clear();
+    x0Label->clear();
+    y0Label->clear();
+    z0Label->clear();
+    a0Label->clear();
+    a1Label->clear();
+    a2Label->clear();
+    b0Label->clear();
+    b1Label->clear();
+    b2Label->clear();
 
 	gnssGroup->setChecked(false);
 	insGroup->setChecked(false);

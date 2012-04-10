@@ -23,7 +23,7 @@ namespace efoto {
 	{
 		setupUi(this);
 
-		//  Inicia variÃ¡veis
+		//  Inicia variÃÂ¡veis
 		this->manager = manager;
 		this->currentForm = NULL;
 		this->currentItemId = 0;
@@ -39,7 +39,7 @@ namespace efoto {
 		setWindowTitle(tr("efoto[Project Manager]"));
 		imageForm.proj = this;
 
-		// Realiza as conexÃµes necessÃ¡rias
+		// Realiza as conexÃÂµes necessÃÂ¡rias
 		this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
 		this->connect(actionLoad_file, SIGNAL(triggered()), this, SLOT(loadFile()));
 		this->connect(actionSave_file, SIGNAL(triggered()), this, SLOT(saveFile()));
@@ -131,7 +131,7 @@ namespace efoto {
 		centralWidget()->layout()->addWidget(&centerArea);
 		centralWidget()->layout()->addWidget(&controlButtons);
 
-		// Adiciona um atalho para os desenvolvedores observarem as mudanças no XML durante o runtime
+		// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
 		QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
 		connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
@@ -366,7 +366,7 @@ namespace efoto {
 
 		manager->addComponent(text, "flights");
 
-		// Estas linhas fazem parte realmente deste cÃ³digo e nÃ£o sÃ£o parte da gambiarra a cima
+		// Estas linhas fazem parte realmente deste cÃÂ³digo e nÃÂ£o sÃÂ£o parte da gambiarra a cima
 		saveFile();
 		controlButtons.editButton->click();
 		//treeWidget->setCurrentItem(treeItems.at(0));
@@ -574,7 +574,7 @@ namespace efoto {
 			updateTree();
 		}
 		else
-			saveFileAs(); // Isso jÃ¡ nÃ£o executa nunca mais. Eu acho!
+			saveFileAs(); // Isso jÃÂ¡ nÃÂ£o executa nunca mais. Eu acho!
 	}
 
 	bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
@@ -809,12 +809,12 @@ namespace efoto {
 			}
 			else if (etm->dataAt(index.row()) == "sensors")
 			{
-				//viewSensors(); mudanÃ§a temporaria
+				//viewSensors(); mudanÃÂ§a temporaria
 				viewSensor(1);
 			}
 			else if (etm->dataAt(index.row()) == "flights")
 			{
-				//viewFlights(); mudanÃ§a temporaria
+				//viewFlights(); mudanÃÂ§a temporaria
 				viewFlight(1);
 			}
 			else if (etm->dataAt(index.row()) == "images")
@@ -830,12 +830,12 @@ namespace efoto {
 		{
 			if (etm->dataAt(index.parent().row()) == "sensors")
 			{
-				//viewSensor(etm->idAt(index.parent().row(), index.row())); mudanÃ§a temporaria
+				//viewSensor(etm->idAt(index.parent().row(), index.row())); mudanÃÂ§a temporaria
 				viewSensor(1);
 			}
 			else if (etm->dataAt(index.parent().row()) == "flights")
 			{
-				//viewFlight(etm->idAt(index.parent().row(), index.row())); mudanÃ§a temporaria
+				//viewFlight(etm->idAt(index.parent().row(), index.row())); mudanÃÂ§a temporaria
 				viewFlight(1);
 			}
 			else if (etm->dataAt(index.parent().row()) == "images")
@@ -1301,9 +1301,9 @@ menuExecute->setEnabled(true);
 			imageForm.x0Label->setText("X0: " + QString::number(node3.elementByTagName("X0").toDouble(),'f',4) +" m");
 			imageForm.y0Label->setText("Y0: " + QString::number(node3.elementByTagName("Y0").toDouble(),'f',4) +" m");
 			imageForm.z0Label->setText("Z0: " + QString::number(node3.elementByTagName("Z0").toDouble(),'f',4) +" m");
-			imageForm.omegaLabel->setText(imageForm.omegaLabel->text().append(QString::number(node3.elementByTagName("phi").toDouble()*180/M_PI,'f',4) + "�"));
-			imageForm.phiLabel->setText(imageForm.phiLabel->text().append(QString::number(node3.elementByTagName("omega").toDouble()*180/M_PI,'f',4) + "�"));
-			imageForm.kappaLabel->setText(imageForm.kappaLabel->text().append(QString::number(node3.elementByTagName("kappa").toDouble()*180/M_PI,'f',4) + "�"));
+            imageForm.omegaLabel->setText(QString::fromUtf8( " ω: ") + QString::number(node3.elementByTagName("phi").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
+            imageForm.phiLabel->setText(QString::fromUtf8( " φ: ") + QString::number(node3.elementByTagName("omega").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
+            imageForm.kappaLabel->setText(QString::fromUtf8( " κ: ") + QString::number(node3.elementByTagName("kappa").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
 		}
 		else
 		{
@@ -1699,7 +1699,7 @@ viewSensors();
 else
 {
 QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado Ã© invÃ¡lido.");
+msgBox.setText("Erro: Xml passado ÃÂ© invÃÂ¡lido.");
 msgBox.exec();
 emit viewButtons->editButton->click();
 }
@@ -1719,7 +1719,7 @@ viewFlights();
 else
 {
 QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado Ã© invÃ¡lido.");
+msgBox.setText("Erro: Xml passado ÃÂ© invÃÂ¡lido.");
 msgBox.exec();
 emit viewButtons->editButton->click();
 }
@@ -1776,7 +1776,7 @@ emit viewButtons->editButton->click();
 		about->show();
 	}
 
-	// CÃ³digos das classes extras.
+	// CÃÂ³digos das classes extras.
 
 	//#include <QStringList>
 
@@ -2496,7 +2496,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	}
 
 	/*
-// Se houver imagens cadastradas, poderÃ¡ se fazer a OrientaÃ§Ã£o interior
+// Se houver imagens cadastradas, poderÃÂ¡ se fazer a OrientaÃÂ§ÃÂ£o interior
 bool ProjectUserInterface_Qt::availabeOI()
 {
  EDomElement images(manager->getXml(("images")));
@@ -2506,8 +2506,8 @@ bool ProjectUserInterface_Qt::availabeOI()
   return false;
 }
 // Paulo 24/09/2011
-// Se houver pelo menos uma OI e um ponto cadastrado na imagem, poderÃ¡ se fazer a OrientaÃ§ao exterior
-// OBS.: Aqui nÃ£o Ã© feita a filtragem de quais imagens poderÃ£o ser feitas as OEs!!!!
+// Se houver pelo menos uma OI e um ponto cadastrado na imagem, poderÃÂ¡ se fazer a OrientaÃÂ§ao exterior
+// OBS.: Aqui nÃÂ£o ÃÂ© feita a filtragem de quais imagens poderÃÂ£o ser feitas as OEs!!!!
 bool ProjectUserInterface_Qt::availableOE()
 {
  EDomElement ois(manager->getXml("interiorOrientation"));

@@ -49,11 +49,14 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	controlTool->addWidget(saveMarksButton);
 	controlTool->addWidget(viewReportToolButton);
 	controlTool->addWidget(exportToKmlButton);
-	controlTool->addWidget(insertPointInButton);
-	viewer->addToolBar(Qt::LeftToolBarArea,controlTool);
+    //controlTool->addWidget(insertPointInButton);
+    /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
+    addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
 	toolsDockWidget->setHidden(true);
 
-
+    // Escondendo a opção de ligar ou desligar o modo de vinculação de ponto a uma imagem.
+    insertPointInButton->setHidden(true);
+    insertionMode=true;
 
 	viewer->getLeftMarker().setToOnlyEmitClickedMode(); // Pluges para que o novo display funcione
 	viewer->getRightMarker().setToOnlyEmitClickedMode();
@@ -64,12 +67,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	viewer->getLeftMarker().changeMarker(mark);
 	viewer->getRightMarker().changeMarker(mark);
 
-	SeparatedStereoToolsBar* tool = viewer->getToolBar(); // Adicionando uma baita gambiarra só para testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
-	QAction* showFotoIndice = new QAction("Results",tool);
-	showFotoIndice->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Show Results</span></p></body></html>");
-	tool->addSeparator();
-	tool->addAction(showFotoIndice);
-	connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
+    // Isso permanece aqui para permitir testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
+    //SeparatedStereoToolsBar* tool = viewer->getToolBar();
+    //QAction* showFotoIndice = new QAction("Results",tool);
+    //showFotoIndice->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Show Results</span></p></body></html>");
+    //tool->addSeparator();
+    //tool->addAction(showFotoIndice);
+    //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
 
 	setWindowTitle("E-foto - Phototriangulation");
 
@@ -83,7 +87,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(viewReportToolButton,SIGNAL(clicked(bool)),this,SLOT(showReportXml()));
 	//connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	//connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
-
 	connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
 
 	QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")),this);
@@ -96,7 +99,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	else
 		viewReportToolButton->setEnabled(false);
 
-	insertionMode=false;
+    //insertionMode=false;
 	bool activeCalculate=ptManager->hasAllImagesInitialValues();
 	actionCalculateFotoTri->setEnabled(activeCalculate);
 	calculateFotoTriToolButton->setEnabled(activeCalculate);
@@ -416,7 +419,7 @@ void PTUserInterface_Qt::showReportXml()
 	//qDebug("Vendo Report");
 	QStringList oeHeaderLabels;
 	//omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
-	oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
+    oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
 	QString iter="Iterations: ";
 	iter+=QString::number(ptManager->getPreviousTotalIterationsXml());
@@ -1265,7 +1268,7 @@ void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)
 {
 	this->insertionMode=insertionMode;
 	if (insertionMode)
-		insertPointInButton->setStatusTip("Insertion mode ON");
+        insertPointInButton->setStatusTip("Insertion mode ON");
 	else
 		insertPointInButton->setStatusTip("Insertion mode OFF");
 

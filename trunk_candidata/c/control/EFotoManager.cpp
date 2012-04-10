@@ -262,14 +262,15 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 	for (unsigned int i = 0; i < EOs.size(); i++)
 		if (EOs.at(i)->getImageId() == imageId)
 			return EOs.at(i);
-	EDomElement root(xmlData);
-	EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
-	if (xmlEO.getContent().compare("") == 0)
+    EDomElement root(xmlData);
+    EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
+    EDomElement xmlSR = root.elementByTagAtt("imageSR", "image_key", Conversion::intToString(imageId));
+    if (xmlEO.getContent().compare("") == 0 || xmlSR.getContent().compare("") == 0)
 		return NULL;
 	//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
 	{
 		SpatialRessection* newEO = new SpatialRessection();
-		newEO->xmlSetData(xmlEO.getContent());
+        newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
 		EOs.push_back(newEO);
 		return (ExteriorOrientation*) newEO;
 	}
