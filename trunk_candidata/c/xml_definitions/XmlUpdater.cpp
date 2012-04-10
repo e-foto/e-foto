@@ -10,8 +10,9 @@ namespace efoto {
 
 XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 {
-	builds.push_back("1.0.20");
-	builds.push_back("1.0.42");
+    builds.push_back("1.0.20");
+    builds.push_back("1.0.42");
+    builds.push_back("1.0.266");
 
 	if(referenceBuild=="")
 	{
@@ -35,7 +36,7 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 	updateBuild(&error);
 
 	// Gambiarra Paulo Andre 26/03/12
-	updateToBuild1_X_XX();
+    //updateToBuild1_X_XX();
 }
 
 EDomElement XmlUpdater::getAllXml()
@@ -138,10 +139,14 @@ bool XmlUpdater::updateBuild(int* error)
 
 void XmlUpdater::executeUpdate()
 {
-	if (getXmlBuild().compare("1.0.20") == 0)
-	{
-		updateToBuild1_0_42();
-	}
+    if (getXmlBuild().compare("1.0.20") == 0)
+    {
+        updateToBuild1_0_42();
+    }
+    if (getXmlBuild().compare("1.0.42") == 0)
+    {
+        updateToBuild1_0_266();
+    }
 }
 
 bool XmlUpdater::buildIsValid(string build)
@@ -178,7 +183,7 @@ void XmlUpdater::updateToBuild1_0_42()
 	allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.42");
 }
 
-void XmlUpdater::updateToBuild1_X_XX()
+void XmlUpdater::updateToBuild1_0_266()
 {
 	string all= allXml.getContent();
 	while(replacer(all,"fiductial","fiducial"));
@@ -186,7 +191,8 @@ void XmlUpdater::updateToBuild1_X_XX()
 
 	deque<EDomElement> eosXml = allXml.elementsByTagName("imageEO");
 
-	for(int i=0;i</*1*/eosXml.size();i++)
+    allXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
+    for(int i=0;i<eosXml.size();i++)
 	{
 		string total="";
 		EDomElement eoXml;
@@ -203,33 +209,23 @@ void XmlUpdater::updateToBuild1_X_XX()
 			aux << xaXml.getContent();
 			aux << "\n</imageEO>";
 
-
-			//total+=aux.str();
-			//total+="\n";
-			//xaXml.setContent(aux.str());
-
 			eoXml.replaceChildByTagName("Xa","");
 
 			stringstream newXmlSpatialRessection;
-			newXmlSpatialRessection << "<spatialRessection image_key=\""<< eoXml.attribute("image_key") << "\">\n";
+            newXmlSpatialRessection << "<imageSR image_key=\""<< eoXml.attribute("image_key") << "\">\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("iterations").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("converged").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("parameters").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("quality").getContent() << "\n";
-			newXmlSpatialRessection << "</spatialRessection>\n";
+            newXmlSpatialRessection << "</imageSR>\n";
 
-			allXml.replaceChildByTagAtt("imageEO","image_key",eoXml.attribute("image_key"),aux.str());
-			//eoXml.setContent(xaXml.getContent());
+            allXml.replaceChildByTagAtt("imageEO","image_key",eoXml.attribute("image_key"),aux.str());
 
-			allXml.addChildAtTagName("efotoPhotogrammetricProject",newXmlSpatialRessection.str());
-
-			//qDebug("NewSpatial\n%s",newXmlSpatialRessection.str().c_str());
+            allXml.addChildAtTagName("spatialRessections",newXmlSpatialRessection.str());
 		}
+    }
 
-	}
-
-	//qDebug("Exterior orientation:\n%s",allXml.elementByTagName("exteriorOrientation").getContent().c_str());
-
+    allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.266");
 }
 
 bool XmlUpdater::replacer(string &text,string oldWord,string newWord)
