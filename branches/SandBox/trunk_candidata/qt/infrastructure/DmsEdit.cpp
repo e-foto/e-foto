@@ -656,23 +656,22 @@ QString DmsEdit::dmsToQString(Dms *dms)
 {
 	QString dmsQString;
 
-	if (dms->hasSignal())
-		dmsQString+='-';
+    if (dms->hasSignal())
+        dmsQString.append(QString::fromUtf8("-"));
+    dmsQString.append(QString::number(dms->getDegree()));
+    dmsQString.append(QString::fromUtf8("°"));
+    dmsQString.append(Conversion::intToString(dms->getMinute()).c_str());
+    dmsQString.append(QString::fromUtf8("\'"));
+    dmsQString.append(Conversion::doubleToString(dms->getSeconds(),getDecimals()).c_str());
+    dmsQString.append(QString::fromUtf8("\""));
 
-	dmsQString+=QString::number(dms->getDegree());
-	//dmsQString+=QString::fromUtf8("°");
-	dmsQString+="°";
-	dmsQString+=QString::number(dms->getMinute());
-	dmsQString+="\'";
-	dmsQString+=QString::number(dms->getSeconds(),'f',getDecimals());
-	dmsQString+="\"";
 	return dmsQString;
 }
 
 void DmsEdit::qStringToDms(QString dmsQString)
 {
-	dmsQString.replace("°"," ");
-	dmsQString.replace("'"," ");
+    dmsQString.replace(QString::fromUtf8("°")," ");
+    dmsQString.replace("\'"," ");
 	dmsQString.replace("\""," ");
 
 	degMinSecLine->stringToDms(dmsQString.toStdString());
