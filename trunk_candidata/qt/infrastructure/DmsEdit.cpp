@@ -1,5 +1,5 @@
 #include "DmsEdit.h"
-#include <QDebug>
+//#include <QDebug>
 #include <math.h>
 
 namespace br {
@@ -47,8 +47,10 @@ void DmsEdit::validate()
 	bool ok;
 	if (getDmsEditMode()==DMS)
 	{
-		degMinSecLine->stringToDms(this->text().toStdString());
+		//degMinSecLine->stringToDms(this->text().toStdString());
+		qStringToDms(this->text());
 
+		//qDebug("depois do string to dms:  %d  %d  %.4f",degMinSecLine->getDegree(),degMinSecLine->getMinute(),degMinSecLine->getSeconds());
 		int compMin=degMinSecLine->compareDegMinSecs(getMinimumDms());
 		int compMax=degMinSecLine->compareDegMinSecs(getMaximumDms());
 		if (compMin>=0 && compMax<=0)
@@ -661,9 +663,9 @@ QString DmsEdit::dmsToQString(Dms *dms)
     dmsQString.append(QString::number(dms->getDegree()));
     dmsQString.append(QString::fromUtf8("°"));
     dmsQString.append(Conversion::intToString(dms->getMinute()).c_str());
-    dmsQString.append(QString::fromUtf8("\'"));
+	dmsQString.append("\'");
     dmsQString.append(Conversion::doubleToString(dms->getSeconds(),getDecimals()).c_str());
-    dmsQString.append(QString::fromUtf8("\""));
+	dmsQString.append("\"");
 
 	return dmsQString;
 }

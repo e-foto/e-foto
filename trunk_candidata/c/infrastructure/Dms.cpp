@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-//#include <QDebug>
+#include <QDebug>
 
 namespace br {
 namespace uerj {
@@ -223,18 +223,18 @@ Dms* Dms::stringToDms(string dms)
 
     string aux=dms;
 
-   // qDebug("dms:%s",aux.c_str());
+	//qDebug("dms:%s",aux.c_str());
     int pos=aux.find_first_of(" ");
     int degree = Conversion::stringToInt(aux.substr(0,pos));
     aux=aux.substr(pos+1);// dms without Degrees
 
-    //qDebug("dms without Degrees:%s",aux.c_str());
+	//qDebug("\tdms without Degrees:%s\n",aux.c_str());
 
     pos = aux.find_first_of(" ");
     int minute = Conversion::stringToInt(aux.substr(0,pos));
     aux=aux.substr(pos+1);// dms without Degrees and Minutes
 
-    //qDebug("dms without Degrees and Minutes:%s",aux.c_str());
+	//qDebug("dms without Degrees and Minutes:%s",aux.c_str());
     pos = aux.find_first_of(" ");
     double second= Conversion::stringToDouble(aux.substr(0,pos));
 
@@ -242,7 +242,7 @@ Dms* Dms::stringToDms(string dms)
 
     //qDebug("Depois do Replace:  %s",dms.c_str());
 //    qDebug("string: %s",dms.toStdString().c_str());
-//    qDebug("stringToDMS: %d %d %.9f",degree,minute,second);
+	//qDebug("stringToDMS: %d %d %.9f",degree,minute,second);
 
     if(dms[0]=='-')
     {
@@ -259,8 +259,9 @@ Dms* Dms::stringToDms(string dms)
     setMinute(minute);
     setSeconds(second);
 
-    //setSecondsPrecision(getSecondsPrecision());
-    //qDebug("Final da conversao:%s\n",this->toString(5).c_str());
+	//qDebug("\t%d*%d*%.5f*",degree,minute,second);
+	//setSecondsPrecision(getSecondsPrecision());
+	//qDebug("\tFinal da conversao:%s\n",this->toString(5).c_str());
     return this;
 }
 

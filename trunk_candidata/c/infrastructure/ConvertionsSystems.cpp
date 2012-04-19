@@ -536,42 +536,72 @@ double ConvertionsSystems::truncate(double value, int decimal)
 }
 
 
-Matrix ConvertionsSystems::utmToNunes(double E, double N, double H, int zona, int hemi, double phi0, double lambda0, GeoSystem system)
+Matrix ConvertionsSystems::utmToNunes(double E, double N, double H, int zona, int hemi, double phi0, double lambda0, double h0, GeoSystem system)
 {
-	//H+=-5.85;
-	double R0=getNunesRaio(phi0,lambda0,system);
-	Matrix temp=utmToGeo(E,N,zona,hemi,system);
+	/*
+		double R0=getNunesRaio(phi0,lambda0,system);
+		Matrix temp=utmToGeo(E,N,zona,hemi,system);
 
-	double phi = temp.get(1,1);
-	double lambda = temp.get(1,2);
+		double phi = temp.get(1,1);
+		double lambda = temp.get(1,2);
 
-	double R=getNunesRaio(phi,lambda,system);
-	double beta = (phi - phi0);///R;
-	double alpha = (lambda - lambda0);///R;
+		double R=getNunesRaio(phi,lambda,system);
+		double beta = (phi - phi0);///R;
+		double alpha = (lambda - lambda0);///R;
 
-	Matrix result(1,3);
+		Matrix result(1,3);
 
-	double X=(R+H)*cos(beta)*sin(alpha);
-	double Y=(R+H)*sin(beta);
-	double Z=(R+H)*cos(beta)*cos(alpha)-R;
+		double X=(R+H)*cos(beta)*sin(alpha);
+		double Y=(R+H)*sin(beta);
+		double Z=(R+H)*cos(beta)*cos(alpha)-R;
 
-	result.set(1,1,X);
-	result.set(1,2,Y);
-	result.set(1,3,Z);
+		result.set(1,1,X);
+		result.set(1,2,Y);
+		result.set(1,3,Z);
 
-	return result;
+		return result;*/
+
+		//double R0=getNunesRaio(phi0,lambda0,system);
+
+		Matrix XYZ0=GeoelipToGeocentricCartesian(phi0,lambda0,h0,system);
+		double X0 = XYZ0.get(1,1);
+		double Y0 = XYZ0.get(1,2);
+		double Z0 = XYZ0.get(1,3);
+
+		Matrix temp=utmToGeocentrica(E,N,H,zona,hemi,system);
+
+		double X = temp.get(1,1);
+		double Y = temp.get(1,2);
+		double Z = temp.get(1,3);
+
+		//double R=getNunesRaio(phi,lambda,system);
+		Matrix delta(3,1);
+		delta.set(1,1,X-X0);
+		delta.set(2,1,Y-Y0);
+		delta.set(3,1,Z-Z0);
+
+		Matrix rot(3,3);
+		rot.set(1,1,-sin(lambda0));            rot.set(1,2,cos(lambda0));              rot.set(1,3,0);
+		rot.set(2,1,-sin(phi0)*cos(lambda0));  rot.set(2,2,-sin(phi0)*sin(lambda0));   rot.set(2,3,cos(phi0));
+		rot.set(3,1,cos(phi0)*cos(lambda0));   rot.set(3,2,cos(phi0)*sin(lambda0));    rot.set(3,3,sin(phi0));
+
+		Matrix result(3,1);
+		result=rot*delta;
+		return result.transpose();
+
 }
 
-Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0, double lambda0, GeoSystem system)
+Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0, double lambda0, double h0,GeoSystem system)
 {
+	/*
 	double R = getNunesRaio(phi0,lambda0,system);
 
 	double alpha = atan( X/(R+Z) );
 	double beta  = atan( Y*cos(alpha)/(R+Z) );
-	/*
-	double lambda = R*alpha + lambda0;
-	double phi =  R*beta + phi0;
-	*/
+
+	//double lambda = R*alpha + lambda0;
+	//double phi =  R*beta + phi0;
+
 	double lambda = alpha + lambda0;
 	double phi =  beta + phi0;
 	double H = (R+Z)/(cos(alpha)*cos(beta)) - R;
@@ -584,7 +614,39 @@ Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0,
 	result.set(1,2,temp.get(1,2));
 	result.set(1,3,H);//+5.85);
 
+	return result;*/
+
+
+
+	Matrix rot(3,3);
+	rot.set(1,1,-sin(lambda0));            rot.set(1,2,cos(lambda0));              rot.set(1,3,0);
+	rot.set(2,1,-sin(phi0)*cos(lambda0));  rot.set(2,2,-sin(phi0)*sin(lambda0));   rot.set(2,3,cos(phi0));
+	rot.set(3,1,cos(phi0)*cos(lambda0));   rot.set(3,2,cos(phi0)*sin(lambda0));    rot.set(3,3,sin(phi0));
+
+	Matrix xyz(3,1);
+	xyz.set(1,1,X);
+	xyz.set(2,1,Y);
+	xyz.set(3,1,Z);
+
+	Matrix delta(3,1);
+	delta=rot.transpose()*xyz;
+
+	Matrix XYZ0=GeoelipToGeocentricCartesian(phi0,lambda0,h0,system);
+	double X0 = XYZ0.get(1,1);
+	double Y0 = XYZ0.get(1,2);
+	double Z0 = XYZ0.get(1,3);
+
+
+	double x = delta.get(1,1)+X0;
+	double y = delta.get(2,1)+Y0;
+	double z = delta.get(3,1)+Z0;
+
+
+	Matrix result=GeocentricaToUtm(x,y,z,system);
+
+
 	return result;
+
 }
 
 //E o Lambda0 nao serve para nada??

@@ -18,7 +18,14 @@ namespace efoto {
 class FlightDirectionForm : public QWidget, public Ui::FlightDirectionForm
 {
 	Q_OBJECT
+
 public:
+
+	QList<int> imagesMarked;
+	QIcon markedIcon, unmarkedIcon;
+
+	FlightDirectionForm(QStringList comboBoxItens,QWidget *parent = 0);
+
 
 	/**
 	* \brief Construtor padrao
@@ -44,6 +51,12 @@ public slots:
 	* \param value : Valor do angulo em graus
 	*/
 	void setDialValue(int value);
+
+
+	bool isMarked(int comboIndex);
+	void updateMarkedLabel(int comboIndex);
+	void setMarkedImages(QList<int> indexesCombo);
+	QList<int> getMarkedImages();
 
 signals:
 
