@@ -34,32 +34,33 @@ class InteriorOrientation;
 class PTManager
 {
 protected:
-		bool started;
-		bool status;
-		bool marksSaveState;
-		bool previousData;
+	bool localTopocentricMode;
+	bool started;
+	bool status;
+	bool marksSaveState;
+	bool previousData;
 
-		int maxIterations;
-		double metricConvergency;
-		double angularConvergency;
+	int maxIterations;
+	double metricConvergency;
+	double angularConvergency;
 
-		EFotoManager* efotoManager;
-		PTUserInterface* myInterface;
+	EFotoManager* efotoManager;
+	PTUserInterface* myInterface;
 
-		Sensor *mySensor;
-		Flight *myFlight;
-		Terrain *myTerrain;
-		double flightScale;
-		/***/
-		deque<Image*> listAllImages;
-		deque<Point*> listAllPoints;
-		deque<InteriorOrientation*> listOis;
+	Sensor *mySensor;
+	Flight *myFlight;
+	Terrain *myTerrain;
+	double flightScale;
+	/***/
+	deque<Image*> listAllImages;
+	deque<Point*> listAllPoints;
+	deque<InteriorOrientation*> listOis;
 
-		deque<Image*> listSelectedImages;
-		deque<Point*> listSelectedPoints;
+	deque<Image*> listSelectedImages;
+	deque<Point*> listSelectedPoints;
 
-		BundleAdjustment* pt;
-		Matrix ENH,spareENH,AFP,MVC,residuos;
+	BundleAdjustment* pt;
+	Matrix ENH,spareENH,AFP,MVC,residuos;
 
 public:
 		/**
@@ -535,6 +536,23 @@ public:
 		double getAltitudeMedia();
 
 
+		GeoSystem getTerrainDatum();
+		int getTerrainLatHemisphere();
+		int getTerrainLongHemisphere();
+		int getTerrainZone();
+
+
+		/**
+		* \brief Metodo que altera o sistema de coordenadas dos pontos para um sistema local topocentrico para ajuste da fototriangulacao
+		* \param status: Ativa ou desativa o modo de calculo topocentrico
+		*/
+		void setLocalTopocentricMode(bool status);
+
+		/**
+		* \brief Metodo que retorna o modo de calculo da fototriangulacao, a saber com coordenadas topocentricas ou não
+		* \return bool: Variavel que indica se esta ou não ativado o calculo da fototriangulação por coordenadas topocentricas
+		*/
+		bool getLocalTopocentricMode();
 
 		// em teste 17/01/12
 
