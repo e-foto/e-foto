@@ -479,7 +479,14 @@ bool PTUserInterface_Qt::calculatePT()
 	ptManager->selectImages(selectionImagesView->getSelectedItens());
 	ptManager->selectPoints(selectionPointsView->getSelectedItens());
 
-	QMessageBox::information(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
+	//int answer=QMessageBox::Question(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
+
+	int answer = QMessageBox::question(this,tr("Calculating PhotoTriangulation"),tr("Do you want to calculate in Local Topocentric Mode?\nThis mode converts all control points coordinates in local topocentric coordinates then calculate photo triangulation.\n\n\nThis may take awhile.\nPlease wait window with results appears"),QMessageBox::Yes, QMessageBox::No);
+	if (answer== QMessageBox::Yes)
+		ptManager->setLocalTopocentricMode(true);
+	else
+		ptManager->setLocalTopocentricMode(false);
+
 
 	bool result = ptManager->calculatePT();
 	if (result)
@@ -1120,8 +1127,8 @@ void PTUserInterface_Qt::saveMarks()
 
 void PTUserInterface_Qt::openImagesFlightDirectionForm()
 {
-	flightDirectionForm= new FlightDirectionForm();
-	flightDirectionForm->imagesFlightDirectionCombo->addItems(listAllImages);
+	flightDirectionForm= new FlightDirectionForm(listAllImages);
+	//flightDirectionForm->imagesFlightDirectionCombo->addItems(listAllImages);
 
 	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
@@ -1145,7 +1152,9 @@ void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 	{
 		actionCalculateFotoTri->setEnabled(true);
 		calculateFotoTriToolButton->setEnabled(true);
+		//flightDirectionForm->close();
 	}
+
 }
 
 void PTUserInterface_Qt::exportToKml()
