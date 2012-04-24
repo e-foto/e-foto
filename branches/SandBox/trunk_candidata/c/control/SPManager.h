@@ -56,6 +56,11 @@ class SPManager
 	deque<Point*> listAllPoints;
 	deque<ExteriorOrientation*> listEOs;
 
+    Image* leftImage;
+    Image* rightImage;
+    ProjectiveRay prL;
+    ProjectiveRay prR;
+
 	/*
 		Image * getImage(int);
 		void setListPoint();
@@ -103,8 +108,13 @@ public:
 	void getFeatureData(string &fname, int &ftype, int &fclass);
 	void changePair(int pair, int &lk, int &rk);
 	void addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
-	void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
-	void setSelectedXYZ(double X, double Y, double Z);
+    void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
+    void setSelectedXYZ(double X, double Y, double Z);
+    ObjectSpaceCoordinate getBoundingBoxCenter();
+    double getBoundingBoxIdealZoom(int width, int height);
+    ObjectSpaceCoordinate getCentralPoint();
+    ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
+    ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
 
 };
 

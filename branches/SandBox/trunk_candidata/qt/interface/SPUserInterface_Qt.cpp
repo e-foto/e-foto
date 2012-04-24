@@ -61,6 +61,9 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 
 		allow_close = true;
 
+        tree = new TreeFeatures("");
+        treeView->setModel(tree);
+
 		qApp->processEvents();
 		init();
 }
@@ -124,7 +127,7 @@ bool SPUserInterface_Qt::exec()
 	viewer = new StereoViewer();
 	viewer->blockOpen();
 	viewer->blockSave();
-	viewer->setFeatures(manager->getFeaturesLink());
+    viewer->setFeatures(manager->getFeaturesLink());
 	viewer->getMarker().setToOnlyEmitClickedMode();
 
 	viewerSeparated = new SeparatedStereoViewer();
@@ -140,8 +143,9 @@ bool SPUserInterface_Qt::exec()
 	viewersTab->addTab(viewerSeparated,"SeparatedViewers");
 	setCentralWidget(viewersTab);
 
-	connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
-	connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
+    connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
+    connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
+    connect(viewer->getDisplay(),SIGNAL(resized(int,int)),this,SLOT(adjustFit(int,int)));
 
     show();
 	qApp->processEvents();
@@ -163,10 +167,18 @@ void SPUserInterface_Qt::updateData()
 void SPUserInterface_Qt::updateTable()
 {
 	QString txt = QString::fromStdString(manager->getFeaturesList());
+    TreeFeatures* newTree = new TreeFeatures(txt);
+    treeView->setModel(newTree);
+    delete tree;
+    tree = newTree;
 
-	TreeFeatures *tree = new TreeFeatures(txt);
-
-	treeView->setModel(tree);
+    int feat_id, pt_id;
+    manager->getSelected(feat_id, pt_id);
+    if (feat_id == -1) feat_id++;
+    if (pt_id == -1) pt_id++;
+    treeView->setCurrentIndex(tree->index(pt_id-1, 0, tree->index(feat_id-1, 0)));
+    treeView->setExpanded(tree->index(feat_id-1, 0),true);
+    treeView->setFocus();
 }
 
 void SPUserInterface_Qt::updateClass(int feat_type)
@@ -359,7 +371,7 @@ void SPUserInterface_Qt::onFeatureSelected()
 {
 	// Get Feature data
 	string fname;
-	int fclass, ftype;
+    int fclass, ftype, feat_id, pt_id;
 
 	manager->getFeatureData(fname, ftype, fclass);
 
@@ -422,9 +434,14 @@ void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
 	// Select feature
 	if (measure_mode == 3)
 	{
-		manager->setSelectedXYZ(X,Y,Z);
-		manager->getSelected(fid,pid);
-		treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+        manager->setSelectedXYZ(X,Y,Z);
+        manager->getSelected(fid, pid);
+        if (fid == -1) fid++;
+        if (pid == -1) pid++;
+        treeView->setCurrentIndex(tree->index(pid-1, 0, tree->index(fid-1, 0)));
+        treeView->setExpanded(tree->index(fid-1, 0),true);
+        onFeatureSelected();
+        treeView->setFocus();
 	}
 }
 
@@ -433,6 +450,27 @@ void SPUserInterface_Qt::stereoMoved(QPointF lPos, QPointF rPos)
 	double lx = lPos.x(), ly = lPos.y(), rx = rPos.x(), ry = rPos.y(), X , Y, Z;
 	manager->computeIntersection(lx, ly, rx, ry, X, Y, Z);
 	viewer->getToolBar()->actualizeStereoInfoLabel(X, Y, Z);
+}
+
+void SPUserInterface_Qt::centerImages(ObjectSpaceCoordinate coord, double zoom)
+{
+    ImageSpaceCoordinate centerLeft = manager->getLeftPoint(coord);
+    ImageSpaceCoordinate centerRight = manager->getRightPoint(coord);
+    QPointF atL(centerLeft.getPosition().get(1), centerLeft.getPosition().get(2));
+    QPointF atR(centerRight.getPosition().get(1), centerRight.getPosition().get(2));
+    viewer->getDisplay()->getCurrentScene()->getLeftScene()->scaleTo(zoom);
+    viewer->getDisplay()->getCurrentScene()->getRightScene()->scaleTo(zoom);
+    viewer->getDisplay()->getCurrentScene()->getLeftScene()->moveTo(atL);
+    viewer->getDisplay()->getCurrentScene()->getRightScene()->moveTo(atR);
+
+    //viewer->getMarker().addMark(atL, atR, 1, "center");
+
+    viewer->update();
+
+    //QMessageBox* msg = new QMessageBox(this);
+    //msg->setText(QString::number(atL.x())+QString("x")+QString::number(atL.y())+QString(" ")+QString::number(atR.x())+QString("x")+QString::number(atR.y()));
+    //msg->setText(QString::number(coord.getPosition().get(1))+QString("x")+QString::number(coord.getPosition().get(2))+QString("x")+QString::number(coord.getPosition().get(3)));
+    //msg->show();
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
@@ -446,7 +484,14 @@ void SPUserInterface_Qt::onChangePair(int pos)
 {
 	int lk, rk;
 	manager->changePair(pos, lk, rk);
-	changePair(lk, rk);
+    changePair(lk, rk);
+    centerImages(manager->getCentralPoint(), 1.0);
+    viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(viewer->getDisplay()->width(),viewer->getDisplay()->height()));
+}
+
+void SPUserInterface_Qt::adjustFit(int width, int height)
+{
+    viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(width,height));
 }
 
 } // namespace efoto

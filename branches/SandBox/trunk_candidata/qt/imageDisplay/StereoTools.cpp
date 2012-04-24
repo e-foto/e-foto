@@ -47,15 +47,15 @@ void StereoTool::paintEvent(const QPaintEvent& event)
         {
             // Draw scaleBar feedback
             //QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
-            QPoint endBar(_display->screenPosition(_fixedPointOnImage).x(), _display->getMouseScreenPosition().y());
+            QPoint endBar(_display->screenPosition(_fixedPointOnImageLeft).x(), _display->getMouseScreenPosition().y());
 
             painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
             //painter.drawPoint(_fixedPoint);
-            painter.drawPoint(_display->screenPosition(_fixedPointOnImage));
+            painter.drawPoint(_display->screenPosition(_fixedPointOnImageLeft));
 
             painter.setPen(QPen(QBrush(Qt::yellow), 2));
             //painter.drawLine(_fixedPoint, endBar);
-            painter.drawLine(_display->screenPosition(_fixedPointOnImage), endBar);
+            painter.drawLine(_display->screenPosition(_fixedPointOnImageLeft), endBar);
             painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
             painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
         }
@@ -95,7 +95,7 @@ void StereoTool::moveEvent(const QHoverEvent& event)
 	if (!_hasButtomPressed)
 		_display->updateAll();
 
-	emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
 }
 
 void StereoTool::mousePressed(const QMouseEvent &event)
@@ -107,8 +107,9 @@ void StereoTool::mousePressed(const QMouseEvent &event)
 	// Prepair to zoom default (scaleBar).
 	if (event.buttons() & Qt::MidButton)
 	{
-		_fixedPoint = event.pos();
-		_fixedPointOnImage = _display->getPositionLeft(_fixedPoint);
+        _fixedPoint = event.pos();
+        _fixedPointOnImageLeft = _display->getPositionLeft(_fixedPoint);
+        _fixedPointOnImageRight = _display->getPositionRight(_fixedPoint);
 		_scale = _display->getCurrentScene()->getScale();
 		_currentCursor = SymbolsResource::getLeftArrow();
         _display->setCursor(_currentCursor, _display->isStereoCursor());
@@ -166,11 +167,13 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
 	// Make zoom default (scaleBar).
 	if (event.buttons() & Qt::MidButton)
 	{
-		int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImage).y();
+
+        int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImageLeft).y();
 		double newScale = (_scale*100 - diff)/100;
-		_display->getCurrentScene()->getLeftScene()->scaleTo(newScale, _fixedPointOnImage);
-		_display->getCurrentScene()->getRightScene()->scaleTo(newScale, _fixedPointOnImage);
-		if (event.pos().x() < _display->screenPosition(_fixedPointOnImage).x())
+        //qDebug("screenPositionY = %f, diff = %d, newScale = %f e fixedPoint = (%f, %f)", _display->screenPosition(_fixedPointOnImage).y(), diff, newScale, _fixedPointOnImage.x(), _fixedPointOnImage.y());
+        _display->getCurrentScene()->getLeftScene()->scaleTo(newScale, _fixedPointOnImageLeft);
+        _display->getCurrentScene()->getRightScene()->scaleTo(newScale, _fixedPointOnImageRight);
+        if (event.pos().x() < _display->screenPosition(_fixedPointOnImageLeft).x())
 		{
 			_currentCursor = SymbolsResource::getRightArrow();
             _display->setCursor(_currentCursor, _display->isStereoCursor());
@@ -180,6 +183,7 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
 			_currentCursor = SymbolsResource::getLeftArrow();
             _display->setCursor(_currentCursor, _display->isStereoCursor());
 		}
+
 		//actualizeScaleSpin(_display->getCurrentScene()->getScale());
 		_display->updateAll();
 	}
@@ -250,8 +254,8 @@ void StereoTool::actualizePosLabel()
 		QPointF pl = _display->getPositionLeft((mp + _display->getLeftCursorOffset()).toPoint());
 		QPointF pr = _display->getPositionRight((mp + _display->getRightCursorOffset()).toPoint());
 
-		QString leftInfo = QString::number(pl.x(),'f',2) + QString(" x ") + QString::number(pl.y(),'f',2);
-		QString rightInfo = QString::number(pr.x(),'f',2) + QString(" x ") + QString::number(pr.y(),'f',2);
+        QString leftInfo = QString("Left: ") + QString::number(pl.x(),'f',2) + QString(" x ") + QString::number(pl.y(),'f',2);
+        QString rightInfo = QString("Right: ") + QString::number(pr.x(),'f',2) + QString(" x ") + QString::number(pr.y(),'f',2);
 
 		//double X; double Y;	double Z;
 		//computeIntersection(pl.x(), pl.y(), pr.x(), pr.y(), X, Y, Z);
@@ -1020,8 +1024,8 @@ void StereoToolsBar::clearStereoInfoLabel()
 
 void StereoToolsBar::actualizeStereoInfoLabel(double X, double Y, double Z)
 {
-	QString stereoInfo = QString::number(X,'f',2) + QString(" x ") + QString::number(Y,'f',2) + QString(" x ") + QString::number(Z,'f',2);
-	_stereoInfoLabel->setText(stereoInfo);
+    QString stereoInfo = QString("Object: ") + QString::number(X,'f',2) + QString(" x ") + QString::number(Y,'f',2) + QString(" x ") + QString::number(Z,'f',2);
+    _stereoInfoLabel->setText(stereoInfo);
 }
 
 void  StereoToolsBar::setOpenVisible(bool status)
@@ -1064,6 +1068,9 @@ void StereoToolsBar::executeAction(QAction *action)
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_zoom);
         _zoom.setCursor(SymbolsResource::getMagnifyGlass(), false);
+        _leftInfoLabel->setHidden(true);
+        _rightInfoLabel->setHidden(true);
+        _stereoInfoLabel->setHidden(true);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
 	}
 	if (action ==  setMoveTool )
@@ -1071,6 +1078,9 @@ void StereoToolsBar::executeAction(QAction *action)
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_move);
         _move.setCursor(SymbolsResource::getOpenHand(), false);
+        _leftInfoLabel->setHidden(true);
+        _rightInfoLabel->setHidden(true);
+        _stereoInfoLabel->setHidden(true);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
 	}
 	if (action ==  setMarkTool )
@@ -1078,6 +1088,9 @@ void StereoToolsBar::executeAction(QAction *action)
 		_display->setActivatedTool(currentTool, false);
 		_display->setActivatedTool(currentTool = &_mark);
         _mark.setCursor(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)),true);
+        _leftInfoLabel->setHidden(false);
+        _rightInfoLabel->setHidden(false);
+        _stereoInfoLabel->setHidden(false);
 		//_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)))));
 	}
 	if (action ==  setFitView )

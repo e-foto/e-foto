@@ -374,7 +374,7 @@ void DemFeatures::calculateCentroid(int featid)
 
     if (df->points.size() == 0)
     {
-        df->flag_calc_centroid = true;
+        df->flag_calc_centroid = false;
         return;
     }
 
@@ -403,7 +403,7 @@ void DemFeatures::calculatePerimeter(int featid)
 	double RX, RY, RZ, perimeter = 0.0;
 
 	// If point, no perimeter
-	if (df->feature_type == 1)
+    if (df->feature_type == 1 || df->points.size() < 2)
 	{
 		df->perimeter = 0.0;
 		return;

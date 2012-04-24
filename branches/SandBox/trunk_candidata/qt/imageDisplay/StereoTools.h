@@ -57,7 +57,8 @@ protected:
 	StereoDisplay * _display;
 	QPointF _autoPan;
 	QPoint _lastMousePosition;
-	QPointF _fixedPointOnImage;
+    QPointF _fixedPointOnImageLeft;
+    QPointF _fixedPointOnImageRight;
 	QPoint _fixedPoint;
 	double _scale;
 	bool _hasButtomPressed;
