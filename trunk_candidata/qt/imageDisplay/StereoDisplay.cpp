@@ -640,10 +640,18 @@ void StereoDisplay::setCurrentZ(double z)
 	_currentZ = z;
 }
 
-QPointF StereoDisplay::screenPosition(QPointF position, bool leftChannel)
+QPointF StereoDisplay::screenPosition(QPointF pos, bool leftChannel)
 {
 	//REFAZER
-	return QPointF(0,0);
+    //return QPointF(0,0);
+
+    QPointF screenPos;
+    if (leftChannel)
+        screenPos = (pos - currentScene_->getLeftScene()->getViewpoint())*currentScene_->getLeftScene()->getScale() + QPointF(glDisplay_->width()/2, glDisplay_->height()/2);
+    else
+        screenPos = (pos - currentScene_->getRightScene()->getViewpoint())*currentScene_->getRightScene()->getScale() + QPointF(glDisplay_->width()/2, glDisplay_->height()/2);
+
+    return screenPos;
 }
 
 QPointF StereoDisplay::getMouseScreenPosition()
@@ -674,14 +682,10 @@ QPointF StereoDisplay::getPositionRight(QPoint screenPosition)
 
 void StereoDisplay::fitView()
 {
-	double wscale = glDisplay_->width() / (double)currentScene_->getWidth();
-	double hscale = glDisplay_->height() / (double)currentScene_->getHeight();
-	currentScene_->getLeftScene()->scaleTo(wscale < hscale ? wscale : hscale);
-	currentScene_->getLeftScene()->centerContent();
-	currentScene_->getLeftScene()->pan(-currentScene_->getChannelsOffset()/2.0);
-	currentScene_->getRightScene()->scaleTo(wscale < hscale ? wscale : hscale);
-	currentScene_->getRightScene()->centerContent();
-	currentScene_->getRightScene()->pan(currentScene_->getChannelsOffset()/2.0);
+    currentScene_->getLeftScene()->scaleTo(_fitScale);
+    currentScene_->getLeftScene()->moveTo(_centerOnLeft);
+    currentScene_->getRightScene()->scaleTo(_fitScale);
+    currentScene_->getRightScene()->moveTo(_centerOnRight);
 	updateAll();
 }
 
@@ -741,6 +745,13 @@ void StereoDisplay::setActivatedTool(StereoTool *tool, bool active)
 bool StereoDisplay::painting()
 {
     return glDisplay_->painting();
+}
+
+void StereoDisplay::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    if (currentScene_->isValid())
+        emit resized(glDisplay_->width(), glDisplay_->height());
 }
 
 } // namespace efoto

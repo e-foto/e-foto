@@ -47,6 +47,7 @@ protected:
 	int currentPointKey,leftImageKey,rightImageKey;
 	bool insertionMode;
 
+	QList<int> markedImages;
 	//void previsionMark(int pointKey,QPointF *point);
 
 	string leftImageString, rightImageString;
@@ -246,7 +247,8 @@ public slots:
 */
 	void showReportXml();
 
-	// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
+	void FlightFormClosed(QList<int> list);
+		// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	//void updatePoint(int, int, double);
 protected slots:
 

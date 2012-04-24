@@ -483,11 +483,17 @@ string SRManager::getImageFile()
 
 void SRManager::acceptSR()
 {
-	EDomElement newXml(manager->xmlGetData());
-	if (newXml.elementByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
-		newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetData());
-	else
-		newXml.addChildAtTagName("exteriorOrientation", mySR->xmlGetData());
+    EDomElement newXml(manager->xmlGetData());
+    if (newXml.elementByTagName("spatialRessections").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
+    if (newXml.elementByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
+        newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetDataEO());
+    else
+        newXml.addChildAtTagName("exteriorOrientation", mySR->xmlGetDataEO());
+    if (newXml.elementByTagAtt("imageSR", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
+        newXml.replaceChildByTagAtt("imageSR", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetData());
+    else
+        newXml.addChildAtTagName("spatialRessections", mySR->xmlGetData());
 	int currentPointId;
 	for (int i = 0; i < myImage->countPoints(); i++)
 	{
