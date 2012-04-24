@@ -31,7 +31,8 @@ public:
 
 	// Other Methods
 	//
-	virtual bool exec() = 0;
+    virtual bool exec() = 0;
+    virtual void centerImages(ObjectSpaceCoordinate coord, double zoom) = 0;
 
 };
 

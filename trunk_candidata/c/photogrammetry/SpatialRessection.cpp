@@ -410,39 +410,47 @@ void SpatialRessection::xmlSetData(string xml)
  */
 string SpatialRessection::xmlGetData()
 {
-	stringstream result;
-	result << "<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
-	result << "<iterations>" << Conversion::intToString(totalIterations) << "</iterations>\n";
-	if (gnssConverged && insConverged)
-		result << "<converged>true</converged>\n";
-	else
-		result << "<converged>false</converged>\n";
-	result << "<parameters>\n";
-	result << "<Lb>\n";
-	result << Lb.xmlGetData();
-	result << "</Lb>\n";
-	result << "<Xa>\n";
-	result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
-	result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
-	result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(3,1)) << "</Z0>\n";
-	result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa.get(4,1)) << "</phi>\n";
-	result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa.get(5,1)) << "</omega>\n";
-	result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa.get(6,1)) << "</kappa>\n";
-	result << "</Xa>\n";
-	result << "<L0>\n";
-	result << L0.xmlGetData();
-	result << "</L0>\n";
-	result << "<X0>\n";
-	result << "<X00 uom=\"#m\">" << Conversion::doubleToString(X0.get(1,1)) << "</X00>\n";
-	result << "<Y00 uom=\"#m\">" << Conversion::doubleToString(X0.get(2,1)) << "</Y00>\n";
-	result << "<Z00 uom=\"#m\">" << Conversion::doubleToString(X0.get(3,1)) << "</Z00>\n";
-	result << "<phi0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(4,1)) << "</phi0>\n";
-	result << "<omega0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(5,1)) << "</omega0>\n";
-	result << "<kappa0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(6,1)) << "</kappa0>\n";
-	result << "</X0>\n";
-	result << "</parameters>\n";
-	result << myQuality.xmlGetData();
-	result << "</imageEO>\n";
+    stringstream result;
+    result << "<imageSR image_key=\"" << Conversion::intToString(imageId) << "\">\n";
+    result << "<iterations>" << Conversion::intToString(totalIterations) << "</iterations>\n";
+    if (gnssConverged && insConverged)
+        result << "<converged>true</converged>\n";
+    else
+        result << "<converged>false</converged>\n";
+    result << "<parameters>\n";
+    result << "<Lb>\n";
+    result << Lb.xmlGetData();
+    result << "</Lb>\n";
+    result << "<L0>\n";
+    result << L0.xmlGetData();
+    result << "</L0>\n";
+    result << "<X0>\n";
+    result << "<X00 uom=\"#m\">" << Conversion::doubleToString(X0.get(1,1)) << "</X00>\n";
+    result << "<Y00 uom=\"#m\">" << Conversion::doubleToString(X0.get(2,1)) << "</Y00>\n";
+    result << "<Z00 uom=\"#m\">" << Conversion::doubleToString(X0.get(3,1)) << "</Z00>\n";
+    result << "<phi0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(4,1)) << "</phi0>\n";
+    result << "<omega0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(5,1)) << "</omega0>\n";
+    result << "<kappa0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(6,1)) << "</kappa0>\n";
+    result << "</X0>\n";
+    result << "</parameters>\n";
+    result << myQuality.xmlGetData();
+    result << "</imageSR>\n";
+    return result.str();
+}
+
+string SpatialRessection::xmlGetDataEO()
+{
+    stringstream result;
+    result << "<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
+    result << "<Xa>\n";
+    result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
+    result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
+    result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(3,1)) << "</Z0>\n";
+    result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa.get(4,1)) << "</phi>\n";
+    result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa.get(5,1)) << "</omega>\n";
+    result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa.get(6,1)) << "</kappa>\n";
+    result << "</Xa>\n";
+    result << "</imageEO>\n";
 	return result.str();
 }
 

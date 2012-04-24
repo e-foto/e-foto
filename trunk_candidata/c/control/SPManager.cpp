@@ -16,13 +16,15 @@ namespace efoto {
 // Constructors and destructors
 //
 
-SPManager::SPManager()
+SPManager::SPManager() :
+    prL(0), prR(0)
 {
 	started = false;
 	status = false;
 }
 
-SPManager::SPManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
+SPManager::SPManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos) :
+    prL(0), prR(0)
 {
 	this->manager = manager;
 	started = false;
@@ -65,9 +67,10 @@ bool SPManager::exec()
 		}
 		started = true;
 		if (myInterface != NULL)
-		{
-			myInterface->exec();
-			getPairs();
+        {
+            myInterface->exec();
+            getPairs();
+            myInterface->centerImages(getCentralPoint(), 1.0);
 		}
 	}
 	return status;
@@ -128,9 +131,11 @@ int SPManager::removePoint()
 	if (sel_pt == -1)
 		return 0;
 
-	spFeatures.deletePoint(sel_feat, sel_pt);
-    if (sel_pt > spFeatures.getFeature(spFeatures.selectedFeature()).points.size())
+    spFeatures.deletePoint(sel_feat, sel_pt);
+    if (sel_pt > spFeatures.getFeature(spFeatures.selectedFeature()).points.size() && sel_pt != 1)
         spFeatures.setSelectedPoint(sel_pt - 1);
+    else if (sel_pt == 1 && spFeatures.getFeature(spFeatures.selectedFeature()).points.size() == 0)
+        spFeatures.setSelectedPoint(-1);
 
 	return 1;
 }
@@ -171,8 +176,8 @@ void SPManager::getFeatureData(string &fname, int &ftype, int &fclass)
 
 void SPManager::updateProjections()
 {
-	Image* leftImage = listAllImages.at(leftKey-1);
-	Image* rightImage = listAllImages.at(rightKey-1);
+    leftImage = listAllImages.at(leftKey-1);
+    rightImage = listAllImages.at(rightKey-1);
 	Sensor* sensor = leftImage->getSensor();
 	InteriorOrientation* lio = leftImage->getIO();
 	InteriorOrientation* rio = rightImage->getIO();
@@ -182,8 +187,8 @@ void SPManager::updateProjections()
 	rightImage->setSensor(sensor); rightImage->setIO(rio); rightImage->setEO(rsr);
 	if (leftImage == NULL || rightImage == NULL)
 		return;
-	ProjectiveRay prL(leftImage);
-	ProjectiveRay prR(rightImage);
+    prL = ProjectiveRay(leftImage);
+    prR = ProjectiveRay(rightImage);
 
 	// Aqui enquanto não definimos uma estrutura para as geometrias 2d eu vou coordenar a tradução para o que eu já possuia no display para pontos e retas.
 	for (int i = 0; i < spFeatures.getNumFeatures(); i++)
@@ -426,11 +431,131 @@ void SPManager::updatePoint(int fid, int pid, double lx, double ly, double rx, d
 
 void SPManager::setSelectedXYZ(double X, double Y, double Z)
 {
-	int fid, pid;
+    int fid, pid;
 
-	spFeatures.getNearestPoint(X,Y,Z,fid,pid);
-	spFeatures.setSelectedFeature(fid);
-	spFeatures.setSelectedPoint(pid);
+    spFeatures.getNearestPoint(X,Y,Z,fid,pid);
+    spFeatures.setSelectedFeature(fid);
+    spFeatures.setSelectedPoint(pid);
+}
+
+ObjectSpaceCoordinate SPManager::getBoundingBoxCenter()
+{
+    double x[8], y[8];
+    double xmax, ymax, xmin, ymin;
+    double zm = manager->instanceTerrain()->getMeanAltitude();
+
+    x[0] = prL.imageToObject(0,0,zm,false).getPosition().get(1);
+    x[1] = prL.imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(1);
+    x[2] = prL.imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(1);
+    x[3] = prL.imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(1);
+    x[4] = prR.imageToObject(0,0,zm,false).getPosition().get(1);
+    x[5] = prR.imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(1);
+    x[6] = prR.imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(1);
+    x[7] = prR.imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(1);
+
+    y[0] = prL.imageToObject(0,0,zm,false).getPosition().get(2);
+    y[1] = prL.imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(2);
+    y[2] = prL.imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(2);
+    y[3] = prL.imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(2);
+    y[4] = prR.imageToObject(0,0,zm,false).getPosition().get(2);
+    y[5] = prR.imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(2);
+    y[6] = prR.imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(2);
+    y[7] = prR.imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(2);
+
+    xmax = xmin = x[0];
+    ymax = ymin = y[0];
+    for (int i = 1; i < 8; i++)
+    {
+        if (x[i] > xmax)
+            xmax = x[i];
+        if (x[i] < xmin)
+            xmin = x[i];
+        if (y[i] > ymax)
+            ymax = y[i];
+        if (y[i] < ymin)
+            ymin = y[i];
+    }
+    double xm = (xmax + xmin) / 2.0;
+    double ym = (ymax + ymin) / 2.0;
+    return ObjectSpaceCoordinate("m", xm, ym, zm);
+}
+
+double SPManager::getBoundingBoxIdealZoom(int width, int height)
+{
+    double zoom = 1.0;
+
+    ImageSpaceCoordinate leftCenter = getLeftPoint(getBoundingBoxCenter());
+    ImageSpaceCoordinate rightCenter = getRightPoint(getBoundingBoxCenter());
+
+    double dx, dy;
+    double xl = leftCenter.getPosition().get(1);
+    double yl = leftCenter.getPosition().get(2);
+    double xr = rightCenter.getPosition().get(1);
+    double yr = rightCenter.getPosition().get(2);
+    double xmax, ymax;
+
+    if (leftCenter.getPosition().get(1) < rightCenter.getPosition().get(1))
+    {
+        dx = rightCenter.getPosition().get(1) - leftCenter.getPosition().get(1);
+        if (leftImage->getWidth() + dx > rightImage->getWidth())
+            xmax = leftImage->getWidth() + dx;
+        else
+            xmax = rightImage->getWidth();
+    }
+    else
+    {
+        dx = leftCenter.getPosition().get(1) - rightCenter.getPosition().get(1);
+        if (leftImage->getWidth() > rightImage->getWidth() + dx)
+            xmax = leftImage->getWidth();
+        else
+            xmax = rightImage->getWidth() + dx;
+    }
+
+    if (leftCenter.getPosition().get(2) < rightCenter.getPosition().get(2))
+    {
+        dy = rightCenter.getPosition().get(2) - leftCenter.getPosition().get(2);
+        if (leftImage->getHeight() + dy > rightImage->getHeight())
+            ymax = leftImage->getHeight() + dy;
+        else
+            ymax = rightImage->getHeight();
+    }
+    else
+    {
+        dy = leftCenter.getPosition().get(2) - rightCenter.getPosition().get(2);
+        if (leftImage->getHeight() > rightImage->getHeight() + dy)
+            ymax = leftImage->getHeight();
+        else
+            ymax = rightImage->getHeight() + dy;
+    }
+
+    double wscale = width / xmax;
+    double hscale = height / ymax;
+    zoom = wscale < hscale ? wscale : hscale;
+
+    return zoom;
+}
+
+// Esse método calcula o centro planimétrico na linha de voo entre duas imagens
+ObjectSpaceCoordinate SPManager::getCentralPoint()
+{
+    double xl = leftImage->getEO()->getXa().get(1,1);
+    double yl = leftImage->getEO()->getXa().get(2,1);
+    double xr = rightImage->getEO()->getXa().get(1,1);
+    double yr = rightImage->getEO()->getXa().get(2,1);
+    double zm = manager->instanceTerrain()->getMeanAltitude();
+    double xm = (xl + xr) / 2.0;
+    double ym = (yl + yr) / 2.0;
+    return ObjectSpaceCoordinate("m", xm, ym, zm);
+}
+
+ImageSpaceCoordinate SPManager::getLeftPoint(ObjectSpaceCoordinate coord)
+{
+    return ImageSpaceCoordinate(prL.objectToImage(coord,false));
+}
+
+ImageSpaceCoordinate SPManager::getRightPoint(ObjectSpaceCoordinate coord)
+{
+    return ImageSpaceCoordinate(prR.objectToImage(coord,false));
 }
 
 // Internal function. Pos from 0 - N-1.

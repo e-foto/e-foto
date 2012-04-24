@@ -2,6 +2,8 @@
 #define FLIGHTDIRECTIONFORM_H
 
 #include "ui_FlightDirectionForm.h"
+#include <QEvent>
+#include <QCloseEvent>
 
 namespace br {
 namespace uerj {
@@ -21,10 +23,10 @@ class FlightDirectionForm : public QWidget, public Ui::FlightDirectionForm
 
 public:
 
-	QList<int> imagesMarked;
+	QList<int> markedImages;
 	QIcon markedIcon, unmarkedIcon;
-
-	FlightDirectionForm(QStringList comboBoxItens,QWidget *parent = 0);
+	bool autoPassMode;
+	FlightDirectionForm(QStringList comboBoxItens,QList<int> newMarkedImages,QWidget *parent = 0);
 
 
 	/**
@@ -32,6 +34,14 @@ public:
 	* \param parent : ponteiro para o QWidget pai
 	*/
 	FlightDirectionForm(QWidget *parent = 0);
+
+	bool getPassMode();
+	void setPassMode(bool status);
+	bool isMarked(int comboIndex);
+	void setMarkedImages(QList<int> indexesCombo);
+	QList<int> getMarkedImages();
+	QStringList getStringMarkedImages();
+	int getIndexCombo(QString comboText);
 
 public slots:
 
@@ -52,11 +62,13 @@ public slots:
 	*/
 	void setDialValue(int value);
 
-
-	bool isMarked(int comboIndex);
 	void updateMarkedLabel(int comboIndex);
-	void setMarkedImages(QList<int> indexesCombo);
-	QList<int> getMarkedImages();
+
+	void updateItemCombo(int comboIndex);
+
+protected slots:
+	bool eventFilter(QObject * obj, QEvent * event);
+	void closeEvent(QCloseEvent *event);
 
 signals:
 
@@ -65,6 +77,7 @@ signals:
 	*/
 	void valuesFlightDirectionForm(QString,double);
 
+	void markedImagesList(QList<int>,QStringList);
 };
 
 } // namespace efoto

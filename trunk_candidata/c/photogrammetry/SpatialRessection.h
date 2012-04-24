@@ -124,8 +124,9 @@ public:
 
 	// XML methods
 	//
-	void xmlSetData(string xml);
-	string xmlGetData();
+    void xmlSetData(string xml);
+    string xmlGetData();
+    string xmlGetDataEO();
 
 	// Other methods
 	//

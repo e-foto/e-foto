@@ -36,12 +36,12 @@ protected:
 	SeparatedStereoToolsBar* toolsSeparated;
 	StereoViewer* viewer;
 	StereoToolsBar* tools;
-	void closeEvent(QCloseEvent *e);
-	int checkBoundingBox();
+    TreeFeatures *tree;
+    void closeEvent(QCloseEvent *e);
 	void updateData();
 	void updateTable();
 
-protected slots:
+public slots:
 	virtual void languageChange();
 	void updateClass(int feat_type);
 	void onLoadButton();
@@ -60,6 +60,8 @@ protected slots:
 	void onCloseFeature();
 	void stereoClicked(QPointF, QPointF);
 	void stereoMoved(QPointF, QPointF);
+    void centerImages(ObjectSpaceCoordinate coord, double zoom);
+    void adjustFit(int width, int height);
 
 private:
 	void init();

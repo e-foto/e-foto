@@ -627,6 +627,8 @@ public:
 		*/
 		string getUsedImagesXml();
 
+		deque<string> getImagesKappaSet();
+
 };
 
 } // namespace efoto

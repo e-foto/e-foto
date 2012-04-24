@@ -159,6 +159,7 @@ void SingleTool::mouseMoved(const QMouseEvent &event)
 		//int diff = event.pos().y() - _fixedPoint.y();
 		int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImage).y();
 		double newScale = (_scale*100 - diff)/100;
+        //qDebug("screenPositionY = %f, diff = %d, newScale = %f e fixedPoint = (%f, %f)", _display->screenPosition(_fixedPointOnImage).y(), diff, newScale, _fixedPointOnImage.x(), _fixedPointOnImage.y());
 		//_display->getCurrentScene()->scaleTo(newScale, _display->getPosition(_fixedPoint));
 		_display->getCurrentScene()->scaleTo(newScale, _fixedPointOnImage);
 		//if (event.pos().x() < _fixedPoint.x())

@@ -76,6 +76,10 @@ protected:
 	double _currentZ;
     bool _stereoCursor;
 
+    QPointF _centerOnLeft;
+    QPointF _centerOnRight;
+    double _fitScale;
+
 public:
 	StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
 	~StereoDisplay();
@@ -113,6 +117,8 @@ public:
 	QPointF getPositionLeft(QPoint screenPosition);
 	QPointF getPositionRight(QPoint screenPosition);
 
+    void adjustFit(QPointF leftCenter, QPointF rightCenter, double scale) {_centerOnLeft = leftCenter; _centerOnRight = rightCenter; _fitScale = scale; currentScene_->getLeftScene()->setLimitScale(scale, currentScene_->getLeftScene()->getMaxScale()); currentScene_->getRightScene()->setLimitScale(scale, currentScene_->getRightScene()->getMaxScale());}
+
 	virtual void fitView();
 	virtual void pan(int dx, int dy);
 	virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);
@@ -124,10 +130,12 @@ public:
 	void setActivatedTool(StereoTool* tool, bool active = true);
 
     bool painting();
+    void resizeEvent(QResizeEvent *);
 
 signals:
-	void mousePositionsChanged(QPointF*, QPointF*);
-	void mouseClicked(QPointF*, QPointF*);
+    void mousePositionsChanged(QPointF*, QPointF*);
+    void mouseClicked(QPointF*, QPointF*);
+    void resized(int, int);
 };
 
 } // namespace efoto

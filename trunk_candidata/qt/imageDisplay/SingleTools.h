@@ -69,8 +69,8 @@ protected:
 	SingleTool* _propagateScaleTo;
 
 	QPointF _autoPan;
-	QPoint _lastMousePosition;
-	QPointF _fixedPointOnImage;
+    QPoint _lastMousePosition;
+    QPointF _fixedPointOnImage;
 	QPoint _fixedPoint;
 	double _scale;
 

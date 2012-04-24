@@ -472,7 +472,6 @@ void PTUserInterface_Qt::showReportXml()
 	resultView->show();
 }
 
-
 bool PTUserInterface_Qt::calculatePT()
 {
 
@@ -1127,11 +1126,11 @@ void PTUserInterface_Qt::saveMarks()
 
 void PTUserInterface_Qt::openImagesFlightDirectionForm()
 {
-	flightDirectionForm= new FlightDirectionForm(listAllImages);
-	//flightDirectionForm->imagesFlightDirectionCombo->addItems(listAllImages);
+	flightDirectionForm = new FlightDirectionForm(listAllImages,markedImages);
+	flightDirectionForm->setPassMode(true);
 
 	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
-
+	connect(flightDirectionForm,SIGNAL(markedImagesList(QList<int>,QStringList)),this,SLOT(FlightFormClosed(QList<int>)));
 	flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
 	flightDirectionForm->show();
 }
@@ -1140,22 +1139,19 @@ void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
 	int imageKey = ptManager->getImageId(imageFile.toStdString().c_str());
 	ptManager->setImageFlightDirection(imageKey, kappa0);
+}
 
-	int currentIndex=flightDirectionForm->imagesFlightDirectionCombo->currentIndex();
-
-	if (currentIndex==listAllImages.size()-1)
-		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(listAllImages.size()-1);
-	else
-		flightDirectionForm->imagesFlightDirectionCombo->setCurrentIndex(currentIndex+1);
-
-	if (ptManager->allKappaSet())
+void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
+{
+	markedImages=list;
+	if (markedImages.size()==listAllImages.size())
 	{
 		actionCalculateFotoTri->setEnabled(true);
 		calculateFotoTriToolButton->setEnabled(true);
 		//flightDirectionForm->close();
 	}
-
 }
+
 
 void PTUserInterface_Qt::exportToKml()
 {

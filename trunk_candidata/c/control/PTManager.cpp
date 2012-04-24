@@ -208,7 +208,6 @@ bool PTManager::calculatePT()
 if (localTopocentricMode)
 	convertToNunes(listSelectedPoints,getTerrainDatum(),getTerrainLatHemisphere(),getTerrainZone());
 
-
 	//qDebug("NUNES:\n%s",pt->printAll().c_str());
 	//convertToUTM(listSelectedPoints,SAD69);
 	//qDebug("UTM:\n%s",pt->printAll().c_str());
@@ -811,8 +810,8 @@ string PTManager::createOESXml()
 {
 	stringstream fotoTriXml;
 	//codigo de criacao da xml da bundle(multiplas tags de Orientacao Exterior)
-	Matrix oe=pt->getAFP();
-
+	//Matrix oe=pt->getAFP();
+	Matrix oe=AFP;
 	fotoTriXml << "<exteriorOrientation>\n";
 	for (int i=1;i<=oe.getRows();i++)
 	{
@@ -826,9 +825,9 @@ string PTManager::createOESXml()
 		fotoTriXml << "\t\t\t\t<X0 uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,4)) << "</X0>\n";
 		fotoTriXml << "\t\t\t\t<Y0 uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,5)) << "</Y0>\n";
 		fotoTriXml << "\t\t\t\t<Z0 uom=\"#m\">"<< Conversion::doubleToString(oe.get(i,6)) << "</Z0>\n";
-		fotoTriXml << "\t\t\t\t<phi uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,2)) << "</phi>\n";
-		fotoTriXml << "\t\t\t\t<omega uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,1)) << "</omega>\n";
-		fotoTriXml << "\t\t\t\t<kappa uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,3)) << "</kappa>\n";
+		fotoTriXml << "\t\t\t\t<phi uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,2)*M_PI/180) << "</phi>\n";
+		fotoTriXml << "\t\t\t\t<omega uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,1)*M_PI/180) << "</omega>\n";
+		fotoTriXml << "\t\t\t\t<kappa uom=\"#rad\">"<< Conversion::doubleToString(oe.get(i,3)*M_PI/180) << "</kappa>\n";
 		fotoTriXml << "\t\t\t</Xa>\n";
 		//fotoTriXml << "\t\t\t<L0>\n";
 		//fotoTriXml << l0 << "\n</L0>\n";
@@ -1414,6 +1413,21 @@ bool PTManager::allKappaSet()
 	}
 	return true;
 }
+
+deque<string> PTManager::getImagesKappaSet()
+{
+	deque<string> list;
+	int nImages= listAllImages.size();
+	for (int i=0;i<nImages;i++)
+	{
+		Image *img=listAllImages.at(i);
+		if (img->getFlightDirection()<2.5*M_PI && img->getFlightDirection()>=0)
+			list.push_back(img->getFilename());
+	}
+	return list;
+}
+
+
 
 Matrix PTManager::getDigitalCoordinate(int imageKey, int pointKey)
 {

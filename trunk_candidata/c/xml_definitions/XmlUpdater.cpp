@@ -35,8 +35,6 @@ XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 	}
 	updateBuild(&error);
 
-	// Gambiarra Paulo Andre 26/03/12
-    //updateToBuild1_X_XX();
 }
 
 EDomElement XmlUpdater::getAllXml()
