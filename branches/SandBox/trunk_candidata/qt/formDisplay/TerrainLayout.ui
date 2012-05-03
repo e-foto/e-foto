@@ -115,6 +115,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="4">
          <widget class="QSpinBox" name="utmFuseSpin">
+          <property name="specialValueText">
+           <string/>
+          </property>
           <property name="maximum">
            <number>60</number>
           </property>
@@ -254,7 +257,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="title">
-         <string>Work Area Center Coordinates</string>
+         <string>Approximate geographic coordinates of center project area</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
