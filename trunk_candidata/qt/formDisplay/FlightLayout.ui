@@ -98,6 +98,9 @@ p, li { white-space: pre-wrap; }
              </item>
              <item>
               <widget class="QDateEdit" name="flightDateEdit">
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="minimumDate">
                 <date>
                  <year>1913</year>
@@ -133,12 +136,12 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>Nominal Flight Altitude (m)</string>
+                <string>Nominal Flight Altitude (Above sea level)(m)</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="flightHeightSpinBox">
+              <widget class="QDoubleSpinBox" name="flightHeightDoubleSpinBox">
                <property name="toolTip">
                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -149,14 +152,11 @@ p, li { white-space: pre-wrap; }
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="accelerated">
                 <bool>true</bool>
-               </property>
-               <property name="maximum">
-                <number>15000</number>
-               </property>
-               <property name="singleStep">
-                <number>100</number>
                </property>
               </widget>
              </item>
@@ -219,6 +219,9 @@ p, li { white-space: pre-wrap; }
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="accelerated">
                 <bool>true</bool>
                </property>
@@ -229,7 +232,7 @@ p, li { white-space: pre-wrap; }
                 <double>95.000000000000000</double>
                </property>
                <property name="value">
-                <double>60.000000000000000</double>
+                <double>5.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -249,6 +252,9 @@ p, li { white-space: pre-wrap; }
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="accelerated">
                 <bool>true</bool>
                </property>
@@ -259,7 +265,7 @@ p, li { white-space: pre-wrap; }
                 <double>95.000000000000000</double>
                </property>
                <property name="value">
-                <double>30.000000000000000</double>
+                <double>5.000000000000000</double>
                </property>
               </widget>
              </item>
