@@ -480,7 +480,7 @@ bool PTUserInterface_Qt::calculatePT()
 
 	//int answer=QMessageBox::Question(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
 
-	int answer = QMessageBox::question(this,tr("Calculating PhotoTriangulation"),tr("Do you want to calculate in Local Topocentric Mode?\nThis mode converts all control points coordinates in local topocentric coordinates then calculate photo triangulation.\n\n\nThis may take awhile.\nPlease wait window with results appears"),QMessageBox::Yes, QMessageBox::No);
+	int answer = QMessageBox::question(this,tr("Calculating PhotoTriangulation"),tr("Do you want to calculate in Local Topocentric Mode?\nThis mode converts all control points coordinates in local topocentric coordinates then calculate photo triangulation.\n\n\nThis may take awhile.\nPlease wait until window with results appears"),QMessageBox::Yes, QMessageBox::No);
 	if (answer== QMessageBox::Yes)
 		ptManager->setLocalTopocentricMode(true);
 	else
@@ -516,7 +516,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 		}
 		ids.chop(2);
 		ids+=".";
-		QMessageBox::warning(selectionView,"Point taked out of evaluate",QString("Points with less than 2 overlaps:\n%1").arg(ids));
+		QMessageBox::warning(selectionView,"Point taked out of evaluation",QString("Points with less than 2 overlaps:\n%1").arg(ids));
 	}
 
 

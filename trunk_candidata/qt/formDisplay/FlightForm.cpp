@@ -24,7 +24,7 @@ void FlightForm::fillvalues(string values)
 	EDomElement edomfrac(edefrac);
 
 	flightIDLineEdit->setText(QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str()));
-	flightHeightSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
+	flightHeightDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
 	horizontalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").toString().c_str()).toDouble(&ok));
 	verticalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("transversal","uom","#%").toString().c_str()).toDouble(&ok));
 	descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
@@ -49,7 +49,7 @@ string FlightForm::getvalues()
 	auxStream << "<mml:mn>" << Conversion::intToString(nominalScaleSpinBox->value()) <<"</mml:mn>\n";
 	auxStream << "</mml:mfrac>\n";
 	auxStream << "</nominalScale>\n";
-	auxStream << "<flightHeight uom=\"#m\">" << Conversion::intToString(flightHeightSpinBox->value())<<"</flightHeight>\n";
+	auxStream << "<flightHeight uom=\"#m\">" << Conversion::intToString(flightHeightDoubleSpinBox->value())<<"</flightHeight>\n";
 	auxStream << "<overlap>\n";
 	auxStream << "<longitudinal uom=\"#%\">" << Conversion::doubleToString(horizontalOverlapDoubleSpinBox->value())<<"</longitudinal>\n";
 	auxStream << "<transversal uom=\"#%\">" << Conversion::doubleToString(verticalOverlapDoubleSpinBox->value())<<"</transversal>\n";
@@ -63,7 +63,7 @@ string FlightForm::getvalues()
 void FlightForm::setReadOnly(bool state)
 {
 	flightIDLineEdit->setReadOnly(state);
-	flightHeightSpinBox->setReadOnly(state);
+	flightHeightDoubleSpinBox->setReadOnly(state);
 	horizontalOverlapDoubleSpinBox->setReadOnly(state);
 	verticalOverlapDoubleSpinBox->setReadOnly(state);
 	descriptionTextEdit->setReadOnly(state);
@@ -78,7 +78,7 @@ void FlightForm::cleanForm()
 	producerNameLineEdit->clear();
 	descriptionTextEdit->clear();
 	flightDateEdit->clear();
-	flightHeightSpinBox->clear();
+	flightHeightDoubleSpinBox->clear();
 	nominalScaleSpinBox->clear();
 	horizontalOverlapDoubleSpinBox->clear();
 	verticalOverlapDoubleSpinBox->clear();
@@ -90,7 +90,7 @@ void FlightForm::setFormLocale(QLocale locale)
 	producerNameLineEdit->setLocale(locale);
 	descriptionTextEdit->setLocale(locale);
 	flightDateEdit->setLocale(locale);
-	flightHeightSpinBox->setLocale(locale);
+	flightHeightDoubleSpinBox->setLocale(locale);
 	nominalScaleSpinBox->setLocale(locale);
 	horizontalOverlapDoubleSpinBox->setLocale(locale);
 	verticalOverlapDoubleSpinBox->setLocale(locale);

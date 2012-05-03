@@ -2249,6 +2249,10 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
 		if (fileSaveName=="")
 			return;
+		if (!fileSaveName.endsWith(".txt"))
+			fileSaveName.append(".txt");
+
+
 		QFile *exportFileName= new QFile(fileSaveName);
 		exportFileName->setFileName(fileSaveName);
 		exportFileName->open(QIODevice::WriteOnly);
@@ -2281,7 +2285,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loadWidget->close();
 		exportFileName->close();
 
-		exportDigitalCoordinates();
+		//exportDigitalCoordinates();
 
 	}
 
