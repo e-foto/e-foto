@@ -470,13 +470,18 @@ void DEMManager::createInitialSeeds()
 void DEMManager::saveDem(char * filename, int fileType)
 {
 	pairs.save(filename,fileType);
+    // Expanção do XML
+    addPairsToXML(string(filename));
+
 	dem_unsaved = false;
 }
 
 void DEMManager::saveDemGrid(char * filename, int fileType)
 {
-	grid->saveDem(filename,fileType);
+    grid->saveDem(filename,fileType);
 	grid_unsaved = false;
+    // Expanção do XML
+    addDEMToXML(string(filename));
 }
 
 int DEMManager::loadDem(char * filename, int fileType)
@@ -920,6 +925,64 @@ double DEMManager::calculateDemRes(double ds)
 		double resolution = resolution_mm * scale;
 
 		return resolution*ds;
+}
+
+//#include <QDebug>
+void DEMManager::addPairsToXML(string filename)
+{
+    stringstream add;
+    add << "<pairsFilename>";
+    add << filename;
+    add << "</pairsFilename>";
+
+    EDomElement newXml(manager->xmlGetData());
+
+    if (newXml.elementByTagName("DEMs").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<DEMs>\n</DEMs>");
+    newXml.addChildAtTagName("DEMs", add.str());
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
+}
+
+void DEMManager::addSeedsToXML(string filename)
+{
+    stringstream add;
+    add << "<seedsFilename>";
+    add << filename;
+    add << "</seedsFilename>";
+
+    EDomElement newXml(manager->xmlGetData());
+
+    if (newXml.elementByTagName("DEMs").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<DEMs>\n</DEMs>");
+    newXml.addChildAtTagName("DEMs", add.str());
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
+}
+
+void DEMManager::addDEMToXML(string filename)
+{
+    stringstream add;
+    add << "<dsmFilename>";
+    add << filename;
+    add << "</dsmFilename>";
+
+    EDomElement newXml(manager->xmlGetData());
+
+    if (newXml.elementByTagName("DEMs").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<DEMs>\n</DEMs>");
+    newXml.addChildAtTagName("DEMs", add.str());
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
+}
+
+void DEMManager::addDEMQualityToXML(string filename)
+{
+    //Fazer
+    //qDebug("DEMQuality: %s",filename.c_str());
 }
 
 } // namespace efoto

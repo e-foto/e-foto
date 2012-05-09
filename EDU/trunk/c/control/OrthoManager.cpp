@@ -443,6 +443,9 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 		delete img;
 	}
 
+    // Expanção do XML
+    addOrthoToXML(string(filename));
+
 	return 1;
 }
 
@@ -455,6 +458,30 @@ void OrthoManager::setProgress(int progress)
 {
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 	oui->setProgress(progress);
+}
+
+//#include <QDebug>
+void OrthoManager::addOrthoToXML(string filename)
+{
+    stringstream add;
+    add << "<eoiFilename>";
+    add << filename;
+    add << "</eoiFilename>";
+
+    EDomElement newXml(manager->xmlGetData());
+
+    if (newXml.elementByTagName("orthoImages").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<orthoImages>\n</orthoImages>");
+    newXml.addChildAtTagName("orthoImages", add.str());
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
+}
+
+void OrthoManager::addOrthoToXML2(string filename)
+{
+    //Fazer
+    qDebug("Ortho2: %s",filename.c_str());
 }
 
 } // namespace efoto

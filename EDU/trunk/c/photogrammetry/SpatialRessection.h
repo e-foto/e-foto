@@ -46,11 +46,10 @@ class SpatialRessection : public ExteriorOrientation
 
 	double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
 	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
-		deque<int> selectedPoints;
-		bool flightDirectionAvailable;
-		bool pointForFlightDirectionAvailable;
-		double flightDirection;
-		ImageSpaceCoordinate pointForFlightDirection;
+    deque<int> selectedPoints;
+    bool flightDirectionAvailable;
+    bool pointForFlightDirectionAvailable;
+    ImageSpaceCoordinate pointForFlightDirection;
 
 	int totalIterations;
 	bool gnssConverged, insConverged;
