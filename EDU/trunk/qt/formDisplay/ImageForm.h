@@ -21,6 +21,7 @@ class ImageForm : public AbstractForm, public Ui::ImageView
 	QString fileImagePath; QString fileImageName;
 	QString lastPath;
 	bool activeGNSS; bool activeINS;
+    double flightDirection;
 
 public:
 	ProjectUserInterface_Qt* proj;

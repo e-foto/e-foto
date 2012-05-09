@@ -302,10 +302,15 @@ public:
  */
 		void saveBundleAdjustment();
 
-		/**
+        /**
  * \brief Metodo responsavel por salvar, no xml corrente, as maraÃ§oes de linha e coluna
  */
-		void saveMarks();
+        void saveMarks();
+
+        /**
+ * \brief Metodo responsavel por salvar, no xml corrente, as imagens
+ */
+        void saveImages();
 
 		/**
  * \brief Metodo para alterar o estado atual das marcas, isto e, se houve mudanÃ§a nos valores de linha e coluna de algum ponto

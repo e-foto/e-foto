@@ -331,6 +331,9 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 		}
 	}
 
+    // Expanção do XML
+    manager->addOrthoToXML2(string(filename));
+
 	img.save(filename,"BMP");
 
 	return 1;

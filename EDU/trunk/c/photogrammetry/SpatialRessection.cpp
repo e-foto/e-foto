@@ -301,7 +301,7 @@ int SpatialRessection::countSelectedPoints()
 
 void SpatialRessection::setFlightDirection(double kappa0)
 {
-	flightDirection = kappa0;
+    myImage->setFlightDirection(kappa0);
 	flightDirectionAvailable = true;
 	pointForFlightDirectionAvailable = false;
 }
@@ -310,8 +310,8 @@ void SpatialRessection::setPointForFlightDirection(double col, double lin)
 {
 	pointForFlightDirection.setCol(col);
 	pointForFlightDirection.setLin(lin);
-		flightDirectionAvailable = false;
-		pointForFlightDirectionAvailable = true;
+    flightDirectionAvailable = false;
+    pointForFlightDirectionAvailable = true;
 }
 
 void SpatialRessection::selectFiducialMarkForFlightDirection(int id)
@@ -320,14 +320,14 @@ void SpatialRessection::selectFiducialMarkForFlightDirection(int id)
 	{
 		pointForFlightDirection.setCol(myImage->getDigFidMark(id).getCol());
 		pointForFlightDirection.setLin(myImage->getDigFidMark(id).getLin());
-				flightDirectionAvailable = false;
-				pointForFlightDirectionAvailable = true;
+        flightDirectionAvailable = false;
+        pointForFlightDirectionAvailable = true;
 	}
 }
 
 void SpatialRessection::unsetPointForFlightDirection()
 {
-		flightDirectionAvailable = false;
+    flightDirectionAvailable = false;
 }
 
 // EObject methods
@@ -374,6 +374,14 @@ void SpatialRessection::xmlSetData(string xml)
 		gnssConverged = insConverged = true;
 	else
 		gnssConverged = insConverged = false;
+
+    deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
+    selectedPoints.clear();
+    for(int i = 0; i < pts.size();i++)
+    {
+        selectedPoints.push_back(pts.at(i).elementByTagName("pointKey").toInt());
+    }
+
 	Lb.xmlSetData(root.elementByTagName("Lb").elementByTagName("mml:matrix").getContent());
 
 	Xa.resize(6,1);
@@ -418,6 +426,14 @@ string SpatialRessection::xmlGetData()
     else
         result << "<converged>false</converged>\n";
     result << "<parameters>\n";
+
+    result << "<usedPoints>\n";
+    for (int i=0;i<selectedPoints.size();i++)
+    {
+        result << "<pointKey>" <<	Conversion::intToString(selectedPoints.at(i))	<<"</pointKey>\n";
+    }
+    result << "</usedPoints>\n";
+
     result << "<Lb>\n";
     result << Lb.xmlGetData();
     result << "</Lb>\n";
@@ -706,7 +722,7 @@ void SpatialRessection::initialize()
 		phi0 = 0;
 
 				if (flightDirectionAvailable)
-					kappa0 = flightDirection;
+                    kappa0 = myImage->getFlightDirection();
 				else
 				{
 					// Calculating kappa0.

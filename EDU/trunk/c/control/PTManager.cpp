@@ -742,7 +742,7 @@ deque<string> PTManager::getSelectedPointIdPhotogrammetric()
 void PTManager::saveResults()
 {
 	saveBundleAdjustment();
-
+    saveImages();
 	saveMarks();
 	setMarksSavedState(true);
 	efotoManager->setSavedState(false);
@@ -763,19 +763,32 @@ deque<string> PTManager::getImagesAppearances(int pointKey)
 		appearance.push_back(pnt->getImageAt(i)->getFilename());
 	return appearance;
 }
+
 void PTManager::saveMarks()
 {
-	//qDebug("Chamado metodo para salvar as marcas");
-	string points="<points>\n";
-	for (int i=0; i<listAllPoints.size(); i++)
-		points += listAllPoints.at(i)->xmlGetData().c_str();
-	points+="</points>\n";
+    //qDebug("Chamado metodo para salvar as marcas");
+    string points="<points>\n";
+    for (int i=0; i<listAllPoints.size(); i++)
+        points += listAllPoints.at(i)->xmlGetData().c_str();
+    points+="</points>\n";
 
-	EDomElement newXml(efotoManager->xmlGetData());
-	newXml.replaceChildByTagName("points",points);
-	efotoManager->xmlSetData(newXml.getContent());
+    EDomElement newXml(efotoManager->xmlGetData());
+    newXml.replaceChildByTagName("points",points);
+    efotoManager->xmlSetData(newXml.getContent());
 
-	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+    //qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+}
+
+void PTManager::saveImages()
+{
+    string images="<images>\n";
+    for (int i=0; i<listAllImages.size(); i++)
+        images += listAllImages.at(i)->xmlGetData().c_str();
+    images+="</images>\n";
+
+    EDomElement newXml(efotoManager->xmlGetData());
+    newXml.replaceChildByTagName("images",images);
+    efotoManager->xmlSetData(newXml.getContent());
 }
 
 void PTManager::saveBundleAdjustment()

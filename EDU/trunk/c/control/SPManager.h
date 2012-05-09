@@ -116,6 +116,12 @@ public:
     ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
     ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
 
+    /**
+    * \brief Registra no XML o endereço de um arquivo de geometrias.
+    */
+    void addGeometryToXML(string filename);
+
+
 };
 
 } // namespace efoto

@@ -494,6 +494,8 @@ void SRManager::acceptSR()
         newXml.replaceChildByTagAtt("imageSR", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetData());
     else
         newXml.addChildAtTagName("spatialRessections", mySR->xmlGetData());
+
+    newXml.replaceChildByTagAtt("image","key",Conversion::intToString(myImage->getId()),myImage->xmlGetData());
 	int currentPointId;
 	for (int i = 0; i < myImage->countPoints(); i++)
 	{

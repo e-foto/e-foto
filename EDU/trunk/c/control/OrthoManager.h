@@ -121,11 +121,19 @@ public:
 	/**
 	* \brief Método que altera o método de interpolação.
 	*/
-	void setInterMethod(int _mth) { inter_method = _mth; };
-	/**
-	* \brief Método que carrega a ortorretificação.
-	*/
-	void loadOrtho(char *filename);
+    void setInterMethod(int _mth) { inter_method = _mth; };
+    /**
+    * \brief Método que carrega a ortorretificação.
+    */
+    void loadOrtho(char *filename);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de Ortho.
+    */
+    void addOrthoToXML(string filename);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de Ortho.
+    */
+    void addOrthoToXML2(string filename);
 
 };
 

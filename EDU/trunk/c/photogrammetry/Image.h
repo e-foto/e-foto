@@ -45,7 +45,7 @@ class Image : public EObject
 	unsigned int height;
 	string filename;
 	string filepath;
-	double flightDirection;
+    double flightDirection;
 
 	string imageId;
 	ObjectSpaceCoordinate spatialCoordinates;

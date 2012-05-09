@@ -24,7 +24,7 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 	insSigmaDialogButton->setSigmaFormController(insSigmaController);
 	insSigmaDialogButton->setVisible(false);
 	metadataGroup->setVisible(false);
-	lastPath = ".";
+    lastPath = ".";
 
 	connect(fileImageButton,SIGNAL(clicked()),this,SLOT(loadImageFile()));
 	connect(viewButton,SIGNAL(clicked()),this,SLOT(startSingleViewer()));
@@ -39,8 +39,7 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
 	kappaDmsEdit->setDmsEditMode(DEG);
 
 	groupBox->setVisible(false);
-	groupBox_2->setVisible(false);
-
+    groupBox_2->setVisible(false);
 }
 
 void ImageForm::fillvalues(string values)
@@ -80,6 +79,8 @@ void ImageForm::fillvalues(string values)
 	//);
 
 	resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok) );
+
+    flightDirection = ede.elementByTagName("flightDirection").toDouble();
 
 	if (ede.elementByTagName("GNSS").getContent() == "")
 	{
@@ -167,6 +168,7 @@ string ImageForm::getvalues()
 	auxStream << "<filePath>" << filePathLine->text().toUtf8().data()<<"</filePath>\n";
 	//auxStream << "<flightId>" << flightIDSpin->value() << "</flightId>\n";
 	auxStream << "<resolution uom=\"#dpi\">"<< resolutionSpin->value() <<"</resolution>\n";
+    auxStream << "<flightDirection>" << Conversion::doubleToString(flightDirection) << "</flightDirection>\n";
 	if (gnssGroup->isChecked())
 	{
 		string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
@@ -369,6 +371,7 @@ void ImageForm::cleanForm()
 
 	gnssGroup->setChecked(false);
 	insGroup->setChecked(false);
+    flightDirection = 0.0;
 }
 
 void ImageForm::setFormLocale(QLocale locale)

@@ -255,11 +255,27 @@ public:
 	/**
 	* \brief Método que muda os parâmetros do LSM e NCC.	
 	*/
-	void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; };
-	/**
-	* \brief Método que calcula a resolução do DEM.	
-	*/
-	double calculateDemRes(double ds);
+    void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; };
+    /**
+    * \brief Método que calcula a resolução do DEM.
+    */
+    double calculateDemRes(double ds);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de matching.
+    */
+    void addPairsToXML(string filename);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de sementes para matching.
+    */
+    void addSeedsToXML(string filename);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de DEM.
+    */
+    void addDEMToXML(string filename);
+    /**
+    * \brief Registra no XML o endereço de um arquivo de DEM Quality.
+    */
+    void addDEMQualityToXML(string filename);
 
 };
 

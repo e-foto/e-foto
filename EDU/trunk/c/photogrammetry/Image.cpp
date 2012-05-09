@@ -29,7 +29,7 @@ Image::Image(int myId, int mySensorId)
 {
 	id = myId;
 	sensorId = mySensorId;
-	flightDirection = 3*M_PI;
+    flightDirection = 3*M_PI;
 }
 
 /**
@@ -519,8 +519,9 @@ void Image::xmlSetData(string xml)
 	height = root.elementByTagName("height").toInt();
 	filename = root.elementByTagName("fileName").toString();
 	filepath = root.elementByTagName("filePath").toString();
-	resolution = root.elementByTagName("resolution").toInt();
-	resolutionUnit = root.elementByTagName("resolution").attribute("uom");
+    resolution = root.elementByTagName("resolution").toInt();
+    resolutionUnit = root.elementByTagName("resolution").attribute("uom");
+    flightDirection = root.elementByTagName("flightDirection").toDouble();
 
 	//Isso deve ser corrigido...
 	//spatialCoordinates.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
@@ -587,7 +588,8 @@ string Image::xmlGetData()
 	result << "<height uom=\"#px\">" << Conversion::intToString(height) << "</height>\n";
 	result << "<fileName>" << filename << "</fileName>\n";
 	result << "<filePath>" << filepath << "</filePath>\n";
-	result << "<resolution uom=\"" << resolutionUnit << "\">" << Conversion::intToString(resolution) << "</resolution>\n";
+    result << "<resolution uom=\"" << resolutionUnit << "\">" << Conversion::intToString(resolution) << "</resolution>\n";
+    result << "<flightDirection>" << Conversion::doubleToString(flightDirection) << "</flightDirection>\n";
 
 	//Isso deve ser corrigido...
 	//result << spatialCoordinates.xmlGetData();
