@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EVMainWindow</class>
+ <widget class="QMainWindow" name="EVMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>820</width>
+    <height>530</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>E-FOTO Viewer</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resource/resource.qrc">
+    <normaloff>:/icon/WindowIcon.png</normaloff>:/icon/WindowIcon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>820</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <action name="actionZoom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/find.png</normaloff>:/icon/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Zoom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/exit2.png</normaloff>:/icon/exit2.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionFit_view">
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/fit.png</normaloff>:/icon/fit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fit &amp;view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionMove">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/move.png</normaloff>:/icon/move.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionImage_Tools">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Image Tools</string>
+   </property>
+  </action>
+  <action name="actionImage_coordinates">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Image coordinates</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/fileopen.png</normaloff>:/icon/fileopen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="icon">
+    <iconset resource="../resource/resource.qrc">
+     <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
+   </property>
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resource/resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>
