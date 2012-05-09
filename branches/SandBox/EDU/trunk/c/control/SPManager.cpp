@@ -89,6 +89,8 @@ int SPManager::loadFeatures(char *filename)
 void SPManager::saveFeatures(char *filename)
 {
 	spFeatures.saveFeatures(filename,0,false);
+    // Expanção do XML
+    addGeometryToXML(string(filename));
 }
 
 void SPManager::addFeature(string name, int feattype, int featclass)
@@ -580,6 +582,23 @@ void SPManager::changePair(int pos, int &lk, int &rk)
 	rk = rightKey;
 
 	updateProjections();
+}
+
+void SPManager::addGeometryToXML(string filename)
+{
+    stringstream add;
+    add << "<featuresFilename>";
+    add << filename;
+    add << "</featuresFilename>";
+
+    EDomElement newXml(manager->xmlGetData());
+
+    if (newXml.elementByTagName("features").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<features>\n</features>");
+    newXml.addChildAtTagName("features", add.str());
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
 }
 
 } // namespace efoto

@@ -553,6 +553,9 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 	if (filename=="")
 		return;
 
+    // Expanção do XML
+    manager->addDEMQualityToXML(filename.toStdString());
+
 	// Save last dir
 	int i=filename.lastIndexOf("/");
 	QDir dir(filename.left(i));
@@ -1017,6 +1020,8 @@ void SeedEditorUserInterface_Qt::saveSeeds()
 
 	// Save seeds
 	seeds.save((char *)filename.toStdString().c_str(), 0);
+    // Expanção do XML
+    manager->addSeedsToXML(filename.toStdString());
 }
 
 void SeedEditorUserInterface_Qt::loadSeeds()

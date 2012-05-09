@@ -100,10 +100,10 @@ void SRUserInterface_Qt::init()
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
-        flightDirectionForm = new FlightDirectionForm();
-        flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-        flightDirectionForm->imageLabel->setHidden(true);
-        connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+    flightDirectionForm = new FlightDirectionForm();
+    flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+    flightDirectionForm->imageLabel->setHidden(true);
+    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
 	markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
