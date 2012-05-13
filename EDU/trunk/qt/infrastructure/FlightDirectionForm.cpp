@@ -46,12 +46,12 @@ FlightDirectionForm::FlightDirectionForm(QWidget *parent) : QWidget(parent)
 void FlightDirectionForm::acceptValues()
 {
 	//setMarked(imagesFlightDirectionCombo->currentIndex());
-	int currentIndexCombo=imagesFlightDirectionCombo->currentIndex();
-	markedImages.push_back(currentIndexCombo);
-	updateMarkedLabel(currentIndexCombo);
-	updateItemCombo(currentIndexCombo);
+    emit valuesFlightDirectionForm(imagesFlightDirectionCombo->currentText(),flightDirectionSpin->value()*M_PI/180);
 
-	emit valuesFlightDirectionForm(imagesFlightDirectionCombo->currentText(),flightDirectionSpin->value()*M_PI/180);
+    int currentIndexCombo=imagesFlightDirectionCombo->currentIndex();
+    markedImages.push_back(currentIndexCombo);
+    updateMarkedLabel(currentIndexCombo);
+    updateItemCombo(currentIndexCombo);
 }
 
 void FlightDirectionForm::setSpinValue(int value)

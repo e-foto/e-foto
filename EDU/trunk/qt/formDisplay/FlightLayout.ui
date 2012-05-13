@@ -158,6 +158,9 @@ p, li { white-space: pre-wrap; }
                <property name="accelerated">
                 <bool>true</bool>
                </property>
+               <property name="maximum">
+                <double>100000.000000000000000</double>
+               </property>
               </widget>
              </item>
             </layout>
