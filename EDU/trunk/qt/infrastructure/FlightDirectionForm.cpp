@@ -49,7 +49,8 @@ void FlightDirectionForm::acceptValues()
     emit valuesFlightDirectionForm(imagesFlightDirectionCombo->currentText(),flightDirectionSpin->value()*M_PI/180);
 
     int currentIndexCombo=imagesFlightDirectionCombo->currentIndex();
-    markedImages.push_back(currentIndexCombo);
+    if(!isMarked(currentIndexCombo))
+        markedImages.push_back(currentIndexCombo);
     updateMarkedLabel(currentIndexCombo);
     updateItemCombo(currentIndexCombo);
 }
