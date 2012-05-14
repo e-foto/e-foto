@@ -1144,6 +1144,7 @@ void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
 {
 	markedImages=list;
+    qDebug("markedImages = %d \tnuimages = %d",markedImages.size(),listAllImages.size());
 	if (markedImages.size()==listAllImages.size())
 	{
 		actionCalculateFotoTri->setEnabled(true);
