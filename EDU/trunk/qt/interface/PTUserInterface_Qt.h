@@ -35,7 +35,11 @@ protected:
 	~PTUserInterface_Qt();
 
 	//StereoView *viewStereo;
-	SeparatedStereoViewer* viewer;
+    SeparatedStereoViewer* viewer;
+    Marker* mark;
+    Marker* selectedMark;
+    Marker* photoMark;
+    Marker* photoSelectedMark;
 
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;

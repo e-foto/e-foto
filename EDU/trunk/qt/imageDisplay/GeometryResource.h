@@ -30,7 +30,7 @@ public:
 
 	static QImage getTriangle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 	static QImage getCircle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
-	static QImage getSquare(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+    static QImage getSquare(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
 
 	static QImage getOpenHand();
 	static QImage getClosedHand();

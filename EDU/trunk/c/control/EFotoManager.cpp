@@ -735,7 +735,7 @@ void EFotoManager::stopIO(int id)
 bool EFotoManager::execSR(int id)
 {
 	bool result;
-	nextModule = 2;
+    nextModule = 2;
 	Image* srImage = instanceImage(id);
 	if (srImage == NULL)
 	{
@@ -756,7 +756,8 @@ bool EFotoManager::execSR(int id)
 	{
 
 	}
-	spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr);
+    instanceAllPoints();
+    spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr, points);
 
 	result = spatialRessection->exec();
 	/* precisa de um stop

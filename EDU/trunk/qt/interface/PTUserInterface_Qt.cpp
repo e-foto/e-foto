@@ -52,7 +52,11 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     //controlTool->addWidget(insertPointInButton);
     /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
     addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
-	toolsDockWidget->setHidden(true);
+    toolsDockWidget->setHidden(true);
+    mark = new Marker(SymbolsResource::getTriangle(QColor(255,255,0,255), QColor(Qt::transparent),QSize(24,24), 2, true));
+    selectedMark = new Marker(SymbolsResource::getTriangle(QColor(0,255,0,255), QColor(Qt::transparent),QSize(24,24), 2, true));
+    photoMark = new Marker(SymbolsResource::getSquare(QColor(255,255,0,255), QColor(Qt::transparent),QSize(19,19), 2, true));
+    photoSelectedMark = new Marker(SymbolsResource::getSquare(QColor(0,255,0,255), QColor(Qt::transparent),QSize(19,19), 2, true));
 
     // Escondendo a opção de ligar ou desligar o modo de vinculação de ponto a uma imagem.
     insertPointInButton->setHidden(true);
@@ -63,9 +67,9 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 	connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 
-	Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-	viewer->getLeftMarker().changeMarker(mark);
-	viewer->getRightMarker().changeMarker(mark);
+    //Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+    //viewer->getLeftMarker().changeMarker(mark);
+    //viewer->getRightMarker().changeMarker(mark);
 
     // Isso permanece aqui para permitir testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
     //SeparatedStereoToolsBar* tool = viewer->getToolBar();
@@ -627,9 +631,9 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		rightImageComboBox->addItems(listImageRight);
 		rightImageComboBox->setCurrentIndex(rightImageComboBox->findText(currentRightImage,Qt::MatchExactly));
 		rightImageComboBox->blockSignals(false);
-		viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
-		//viewer->getLeftDisplay()->getCurrentScene()->geometry()->clear();
+        viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
 		updateImageTable(leftImageTableWidget,leftImageString);
+        clearAllMarks(viewer->getLeftDisplay()); markAllpoints(viewer->getLeftDisplay());
 		viewer->getLeftDisplay()->updateAll();
 	}
 	else if(sender()==rightImageComboBox)
@@ -643,9 +647,9 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		leftImageComboBox->addItems(listImageLeft);
 		leftImageComboBox->setCurrentIndex(leftImageComboBox->findText(currentLefttImage,Qt::MatchExactly));
 		leftImageComboBox->blockSignals(false);
-		viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
-		//viewer->getRightDisplay()->getCurrentScene()->geometry()->clear();
+        viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
 		updateImageTable(rightImageTableWidget,rightImageString);
+        clearAllMarks(viewer->getRightDisplay()); markAllpoints(viewer->getRightDisplay());
 		viewer->getRightDisplay()->updateAll();
 	}
 }
@@ -686,8 +690,8 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		//qDebug("left image coord %dx%d",col,lin);
 		if (imageTable==leftImageTableWidget)
 		{
-			clearAllMarks(viewer->getLeftDisplay());
-			markAllpoints(viewer->getLeftDisplay());
+            //clearAllMarks(viewer->getLeftDisplay());
+            //markAllpoints(viewer->getLeftDisplay());
 			//qDebug("mark all left");
 			if (move)
 			{
@@ -699,8 +703,8 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		}
 		else
 		{
-			clearAllMarks(viewer->getRightDisplay());
-			markAllpoints(viewer->getRightDisplay());
+            //clearAllMarks(viewer->getRightDisplay());
+            //markAllpoints(viewer->getRightDisplay());
 			//qDebug("mark all right");
 			if (move)
 			{
@@ -834,7 +838,15 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 		QString pointId=leftImageTableWidget->item(pos,0)->text();
 		//scene->geometry()->removePoint(pointId); //scene->geometry()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
 		//qDebug("A %d",pointKey);
-		viewer->getLeftMarker().insertMark(pixel, pointKey, leftImageTableWidget->item(pos,0)->text());
+        Marker* pointMark;
+        int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointKey);
+        if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+            pointMark = selectedMark;
+        else
+            pointMark = photoSelectedMark;
+        clearAllMarks(viewer->getLeftDisplay());
+        markAllpoints(viewer->getLeftDisplay());
+        viewer->getLeftMarker().insertMark(pixel, pointKey, leftImageTableWidget->item(pos,0)->text(),pointMark);
 		viewer->getLeftDisplay()->update();
 
 				/*
@@ -863,7 +875,15 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 		QString pointId=rightImageTableWidget->item(pos,0)->text();
 		//scene->geometry()->removePoint(pointId); //scene->geometry()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
 		//qDebug("B %d",pointKey);
-		viewer->getRightMarker().insertMark(pixel, pointKey,rightImageTableWidget->item(pos,0)->text());
+        Marker* pointMark;
+        int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointKey);
+        if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+            pointMark = selectedMark;
+        else
+            pointMark = photoSelectedMark;
+        clearAllMarks(viewer->getRightDisplay());
+        markAllpoints(viewer->getRightDisplay());
+        viewer->getRightMarker().insertMark(pixel, pointKey,rightImageTableWidget->item(pos,0)->text(),pointMark);
 		viewer->getRightDisplay()->update();
 
 				/*
@@ -1045,7 +1065,13 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
 				//viewer->getLeftDisplay()->getCurrentScene()->geometry()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
 				int pointkey = leftImageTableWidget->item(pos,3)->text().toInt();
 				//qDebug("C %d", pointkey);
-				viewer->getLeftMarker().insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text());
+                Marker* pointMark;
+                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
+                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+                    pointMark = mark;
+                else
+                    pointMark = photoMark;
+                viewer->getLeftMarker().insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text(),pointMark);
 				viewer->getLeftDisplay()->update();
 			}
 		}
@@ -1066,12 +1092,17 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
 				//viewer->getRightDisplay()->getCurrentScene()->geometry()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
 				int pointkey = rightImageTableWidget->item(pos,3)->text().toInt();
 				//qDebug("D %d",pointkey);
-				viewer->getRightMarker().insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text());
-				viewer->getRightDisplay()->update();
+                Marker* pointMark;
+                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
+                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+                    pointMark = mark;
+                else
+                    pointMark = photoMark;
+                viewer->getRightMarker().insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text(),pointMark);
+                viewer->getRightDisplay()->update();
 			}
 		}
 	}
-
 }
 
 void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
@@ -1084,8 +1115,9 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 {
 	imagesPointTreeWidget->clear();
 	deque<string> appearances=ptManager->getImagesAppearances(pointKey);
+
 	if (appearances.size()==0)
-		return;
+        return pointIdLabel->setText(QString("Point %1").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
 
 	QList<QTreeWidgetItem*> treelist;
 	for(int i=0;i<appearances.size();i++)
@@ -1114,7 +1146,7 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 	imagesPointTreeWidget->resizeColumnToContents(0);
 	imagesPointTreeWidget->resizeColumnToContents(2);
 
-	pointIdLabel->setText(QString("Point %1 is in images").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
+    pointIdLabel->setText(QString("Point %1").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
 }
 
 void PTUserInterface_Qt::saveMarks()
@@ -1144,7 +1176,6 @@ void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
 {
 	markedImages=list;
-    qDebug("markedImages = %d \tnuimages = %d",markedImages.size(),listAllImages.size());
 	if (markedImages.size()==listAllImages.size())
 	{
 		actionCalculateFotoTri->setEnabled(true);
@@ -1179,22 +1210,40 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 
 	double leftCol,leftLin,rightCol,rightLin;
 
+    clearAllMarks(viewer->getLeftDisplay());
+    markAllpoints(viewer->getLeftDisplay());
+    clearAllMarks(viewer->getRightDisplay());
+    markAllpoints(viewer->getRightDisplay());
+
 	if (table==leftImageTableWidget)
-	{
+    {
 		setCurrentPointKey(leftImageTableWidget->item(tableRow,3)->text().toInt(&ok));
+        Marker* pointMark;
+        int pointsTableIndex = findKeyAppearances(pointsTableWidget,currentPointKey);
+        if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+            pointMark = selectedMark;
+        else
+            pointMark = photoSelectedMark;
 		leftCol=leftImageTableWidget->item(tableRow,1)->text().toDouble(&ok);
 		leftLin=leftImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
 		if (leftImageTableWidget->item(tableRow,1)->text()!="--" && leftImageTableWidget->item(tableRow,2)->text()!="--")
 		{
 			SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
-			scene->moveTo(QPointF(leftCol,leftLin));
+            scene->moveTo(QPointF(leftCol,leftLin));
+            scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(tableRow,0)->text(),pointMark);
 			scene->setDetailedPoint(QPointF(leftCol,leftLin));
 			viewer->getLeftDisplay()->update();
 		}
-	}
+    }
 	else if (table==rightImageTableWidget)
-	{
+    {
 		setCurrentPointKey(rightImageTableWidget->item(tableRow,3)->text().toInt(&ok));
+        Marker* pointMark;
+        int pointsTableIndex = findKeyAppearances(pointsTableWidget,currentPointKey);
+        if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+            pointMark = selectedMark;
+        else
+            pointMark = photoSelectedMark;
 		rightCol=rightImageTableWidget->item(tableRow,1)->text().toDouble(&ok);
 		rightLin=rightImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
 
@@ -1202,40 +1251,49 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 		{
 			SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
 			scene->moveTo(QPointF(rightCol,rightLin));
+            scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(tableRow,0)->text(),pointMark);
 			scene->setDetailedPoint(QPointF(rightCol,rightLin));
 			viewer->getRightDisplay()->update();
 		}
 	}
 	else if (table==pointsTableWidget)
 	{
-		setCurrentPointKey(pointsTableWidget->item(tableRow,5)->text().toInt(&ok));
+        setCurrentPointKey(pointsTableWidget->item(tableRow,5)->text().toInt(&ok));
+        Marker* pointMark;
+        int pointsTableIndex = findKeyAppearances(pointsTableWidget,currentPointKey);
+        if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+            pointMark = selectedMark;
+        else
+            pointMark = photoSelectedMark;
 		int leftTableIndex = findKeyAppearances(leftImageTableWidget,currentPointKey);
 		int rightTableIndex = findKeyAppearances(rightImageTableWidget,currentPointKey);
 		if (leftTableIndex >=0)
-		{
+        {
 			leftCol=leftImageTableWidget->item(leftTableIndex,1)->text().toDouble(&ok);
 			leftLin=leftImageTableWidget->item(leftTableIndex,2)->text().toDouble(&ok);
 			if (leftImageTableWidget->item(leftTableIndex,1)->text()!="--" && leftImageTableWidget->item(leftTableIndex,2)->text()!="--")
 			{
 				SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
 				scene->moveTo(QPointF(leftCol,leftLin));
+                scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(leftTableIndex,0)->text(),pointMark);
 				scene->setDetailedPoint(QPointF(leftCol,leftLin));
 				viewer->getLeftDisplay()->update();
 			}
 		}
 		if (rightTableIndex >=0)
-		{
+        {
 			rightCol=rightImageTableWidget->item(rightTableIndex,1)->text().toDouble(&ok);
 			rightLin=rightImageTableWidget->item(rightTableIndex,2)->text().toDouble(&ok);
 			if (rightImageTableWidget->item(rightTableIndex,1)->text()!="--" && rightImageTableWidget->item(rightTableIndex,2)->text()!="--")
 			{
 				SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
 				scene->moveTo(QPointF(rightCol,rightLin));
+                scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(rightTableIndex,0)->text(),pointMark);
 				scene->setDetailedPoint(QPointF(rightCol,rightLin));
 				viewer->getRightDisplay()->update();
 			}
 		}
-	}
+    }
 }
 
 void PTUserInterface_Qt::setMaxIteration(int iterations)
@@ -1268,6 +1326,10 @@ void PTUserInterface_Qt::addPoint()
 	ptManager->reloadPointsCoordinates();
 	updatePointsTable();
 	setCurrentPointKey(idNewPoint);
+    clearAllMarks(viewer->getLeftDisplay());
+    markAllpoints(viewer->getLeftDisplay());
+    clearAllMarks(viewer->getRightDisplay());
+    markAllpoints(viewer->getRightDisplay());
 }
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)

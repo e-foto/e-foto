@@ -103,7 +103,7 @@ QImage SymbolsResource::getTriangle(QColor color, QColor fillcolor, QSize size, 
 
 	double a = hotY - 1;
 	double b = a / 2.0;
-	double c = sqrt(2.0) * a / 2.0;
+    double c = sqrt(2.0) * a / 2.0;
 	QPointF A(hotX, 1);
 	QPointF B(hotX + c, hotY + b);
 	QPointF C(hotX - c, hotY + b);
@@ -148,8 +148,25 @@ QImage SymbolsResource::getCircle(QColor color, QColor fillcolor, QSize size, un
 	return img;
 }
 
-QImage SymbolsResource::getSquare(QColor color, QSize size, unsigned int weigth, bool pointingCenter)
+QImage SymbolsResource::getSquare(QColor color, QColor fillcolor, QSize size, unsigned int weigth, bool pointingCenter)
 {
+    QImage img(size, QImage::Format_ARGB32);
+    img.fill(QColor(0,0,0,0).rgba());
+    int hotX = size.width() / 2;
+    int hotY = size.height() / 2;
+
+    QPainter painter(&img);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setBrush(QBrush(fillcolor));
+    painter.drawRect(hotX - size.width()/2 + weigth, hotY - size.height()/2 + weigth, hotX + size.width()/2 - weigth-2, hotY + size.height()/2 - weigth-2);
+    painter.setPen(QPen(QBrush(color),weigth));
+    painter.setBrush(QBrush(Qt::transparent));
+    if (pointingCenter)
+        painter.drawPoint(hotX, hotY);
+    painter.drawRect(hotX - size.width()/2 + weigth, hotY - size.height()/2 + weigth, hotX + size.width()/2 - weigth-2, hotY + size.height()/2 - weigth-2);
+    painter.end();
+
+    return img;
 }
 
 QImage SymbolsResource::getOpenHand()

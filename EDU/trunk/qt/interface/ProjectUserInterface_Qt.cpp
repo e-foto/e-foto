@@ -367,8 +367,8 @@ namespace efoto {
 		manager->addComponent(text, "flights");
 
 		// Estas linhas fazem parte realmente deste cÃÂ³digo e nÃÂ£o sÃÂ£o parte da gambiarra a cima
-		saveFile();
-		controlButtons.editButton->click();
+        saveFile();
+        //controlButtons.editButton->click();
 		//treeWidget->setCurrentItem(treeItems.at(0));
 		//processTreeClick(treeWidget->currentIndex());
 	}
