@@ -107,14 +107,16 @@ void PointForm::fillvalues(string values)
 					colItem->setText(QString::number(colStr.toDouble(&ok),'f',3));
 				}
 			}
-		}
+        }
 
 		imageMeasurementsTable->setItem(i,0,keyItem);
 		imageMeasurementsTable->setCellWidget(i,1,checkItem);
 		imageMeasurementsTable->setItem(i,2,imageItem);
 		imageMeasurementsTable->setItem(i,3,linItem);
-		imageMeasurementsTable->setItem(i,4,colItem);
+        imageMeasurementsTable->setItem(i,4,colItem);
+        imageMeasurementsTable->setRowHidden(i,!checkItem->isChecked());
 	}
+    imageMeasurementsTable->setDisabled(true);
 }
 
 string PointForm::getvalues()

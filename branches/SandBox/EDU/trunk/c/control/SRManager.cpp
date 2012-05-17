@@ -33,7 +33,7 @@ SRManager::SRManager()
 	status = false;
 }
 
-SRManager::SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR)
+SRManager::SRManager(EFotoManager *manager, Terrain *myTerrain, Sensor *mySensor, Flight *myFlight, Image *myImage, InteriorOrientation *myIO, SpatialRessection *mySR, deque<Point *> myPoints)
 {
 	this->manager = manager;
 	this->mySensor = mySensor;
@@ -42,6 +42,7 @@ SRManager::SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor
 	this->myIO = myIO;
 	this->mySR = mySR;
 	this->myTerrain = myTerrain;
+    this->myPoints = myPoints;
 	started = false;
 	status = false;
 }
@@ -220,10 +221,11 @@ deque<string> SRManager::pointData(int index)
 	deque<string> result;
 	if (started)
 	{
-		Point* myPoint = myImage->getPointAt(index);
+        Point* myPoint = myPoints.at(index);
 		result.push_back(Conversion::intToString(myPoint->getId()));
-		result.push_back(myPoint->getPointId());
-		result.push_back(myPoint->getDescription());
+        result.push_back(myPoint->getType() == Point::CONTROL ? "true" : "false");
+        result.push_back(myPoint->getPointId());
+        result.push_back(myPoint->getDescription());
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getX(),3));
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getY(),3));
 		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getZ(),3));
@@ -364,7 +366,7 @@ bool SRManager::exec()
 			myFlight->setSensor(mySensor);
 			myIO->setImage(myImage);
 			mySR->setImage(myImage);
-			connectImagePoints();
+            connectImagePoints();
 			started = true;
 			if (myInterface != NULL)
 			{
