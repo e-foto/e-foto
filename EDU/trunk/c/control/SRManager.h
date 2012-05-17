@@ -64,7 +64,7 @@ public:
 	* \param myIO Ponteiro para os parâmetros de orientação interior.
 	* \param mySR Ponteiro para o objeto de cálculo utilizado.
 	*/
-	SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR);
+    SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR, deque<Point*> myPoints);
 	/**
 	* \brief Destrutor padrão.
 	*/

@@ -278,7 +278,7 @@ void ImageForm::startSingleViewer()
 	sv->show();
 	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
 
-	/*
+    /*
 	SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
 	v->show();
 	v->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
@@ -291,7 +291,7 @@ void ImageForm::startSingleViewer()
 	s->blockOpen();
 	s->blockSave();
 	//s->blockMark();
-	*/
+    */
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)

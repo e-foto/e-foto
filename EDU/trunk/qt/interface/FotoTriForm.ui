@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>1246</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuView">
@@ -322,7 +322,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>158</width>
-     <height>176</height>
+     <height>177</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -524,7 +524,7 @@ mode</string>
     </size>
    </property>
    <property name="windowTitle">
-    <string>Images Appearances</string>
+    <string>Images Measurements</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -627,12 +627,6 @@ mode</string>
        <attribute name="headerStretchLastSection">
         <bool>true</bool>
        </attribute>
-       <attribute name="headerShowSortIndicator" stdset="0">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="headerStretchLastSection">
-        <bool>true</bool>
-       </attribute>
        <column>
         <property name="text">
          <string>Image File</string>
@@ -675,7 +669,7 @@ mode</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resource/resource.qrc">
+    <iconset>
      <normaloff>:/icon/mark.png</normaloff>:/icon/mark.png</iconset>
    </property>
    <property name="text">
