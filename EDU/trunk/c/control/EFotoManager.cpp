@@ -287,7 +287,7 @@ void EFotoManager::instanceAllEOs()
 		if (xmlAllEOs.at(i).getContent().compare("") == 0)
 			continue;
 		bool notAvailable = true;
-		for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
+        for (unsigned int j = 0; j < EOs.size() && notAvailable; j++)
 			if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key")))
 				notAvailable = false;
 		//InteriorOrientation *pkj;
@@ -796,6 +796,8 @@ bool EFotoManager::execSP()
 
 	instanceAllImages();
 	instanceAllPoints();
+    instanceAllIOs();
+    instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
@@ -890,7 +892,9 @@ bool EFotoManager::execDEM()
 	nextModule = 2;
 
 	instanceAllImages();
-	instanceAllPoints();
+    instanceAllPoints();
+    instanceAllIOs();
+    instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
@@ -942,6 +946,8 @@ bool EFotoManager::execOrtho()
 	nextModule = 2;
 
 	instanceAllImages();
+    instanceAllIOs();
+    instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{

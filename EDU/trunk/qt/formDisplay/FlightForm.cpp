@@ -23,14 +23,31 @@ void FlightForm::fillvalues(string values)
 	edefrac = values.substr(index);
 	EDomElement edomfrac(edefrac);
 
-	flightIDLineEdit->setText(QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str()));
-	flightHeightDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
-	horizontalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").toString().c_str()).toDouble(&ok));
-	verticalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("transversal","uom","#%").toString().c_str()).toDouble(&ok));
-	descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
-	producerNameLineEdit->setText(QString::fromUtf8(ede.elementByTagName("producerName").toString().c_str()));
-	flightDateEdit->setDate(QDate::fromString(ede.elementByTagName("execution").toString().c_str(),Qt::ISODate));
-	nominalScaleSpinBox->setValue(QString::fromUtf8(edomfrac.elementByTagName("mml:mn").toString().c_str()).toInt(&ok,10));
+    flightIDLineEdit->setText(QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str()));
+    descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
+    producerNameLineEdit->setText(QString::fromUtf8(ede.elementByTagName("producerName").toString().c_str()));
+
+    flightHeightDoubleSpinBox->setValue(0);
+    horizontalOverlapDoubleSpinBox->setValue(4);
+    verticalOverlapDoubleSpinBox->setValue(4);
+    flightDateEdit->setDate(QDate(1900,1,1));
+    nominalScaleSpinBox->setValue(99);
+    flightHeightDoubleSpinBox->setSpecialValueText(" ");
+    horizontalOverlapDoubleSpinBox->setSpecialValueText(" ");
+    verticalOverlapDoubleSpinBox->setSpecialValueText(" ");
+    flightDateEdit->setSpecialValueText(" ");
+    nominalScaleSpinBox->setSpecialValueText(" ");
+
+    if (ede.elementByTagAtt("flightHeight","uom","#m").getContent() != "")
+        flightHeightDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagAtt("flightHeight","uom","#m").toString().c_str()).toDouble(&ok));
+    if (ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").getContent() != "")
+        horizontalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("longitudinal","uom","#%").toString().c_str()).toDouble(&ok));
+    if (ede.elementByTagName("overlap").elementByTagAtt("transversal","uom","#%").getContent() != "")
+        verticalOverlapDoubleSpinBox->setValue(QString::fromUtf8(ede.elementByTagName("overlap").elementByTagAtt("transversal","uom","#%").toString().c_str()).toDouble(&ok));
+    if (ede.elementByTagName("execution").getContent() != "")
+        flightDateEdit->setDate(QDate::fromString(ede.elementByTagName("execution").toString().c_str(),Qt::ISODate));
+    if (edomfrac.elementByTagName("mml:mn").getContent() != "")
+        nominalScaleSpinBox->setValue(QString::fromUtf8(edomfrac.elementByTagName("mml:mn").toString().c_str()).toInt(&ok,10));
 }
 
 string FlightForm::getvalues()

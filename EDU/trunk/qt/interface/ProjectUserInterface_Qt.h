@@ -166,8 +166,8 @@ public slots:
 
 	/*Paulo importar imagens em batch 26/01/12*/
 	void importImagesBatch();
-	string addImageXml(QString fileName, int keyImage);
-	string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages );
+    string addImageXml(QString fileName, int keyImage, int dpi = 0);
+    string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi = 0 );
 
 	/*Paulo importar Ois em batch 26/01/12*/
 	void importOIDigitalMarks();

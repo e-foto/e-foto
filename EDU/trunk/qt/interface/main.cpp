@@ -7,25 +7,14 @@ using namespace std;
 #include "LoadingScreen.h"
 #include "EFotoManager.h"
 
-
 int main( int argc, char ** argv )
 {
-
     QApplication efoto(argc, argv);
-	efoto.setStyle("plastique");
-	efoto.quitOnLastWindowClosed();
-/*
-    //Code for translations
-    QString locale = QLocale::system().name();
-    QTranslator translator;
-    translator.load(QString("FormProject_") + locale);
-    efoto.installTranslator(&translator);
+    efoto.setStyle("plastique");
+    efoto.quitOnLastWindowClosed();
 
-    efoto.connect(&efoto, SIGNAL(lastWindowClosed()), &efoto, SLOT(quit()));
-*/
-	//LoadingScreen::instance().show();
     qApp->processEvents();
-	br::uerj::eng::efoto::EFotoManager manager;
+    br::uerj::eng::efoto::EFotoManager manager;
     manager.setInterfaceType("Qt");
     if (argc==2){
         ++(argv);
@@ -35,6 +24,6 @@ int main( int argc, char ** argv )
     {
         manager.exec();
     }
-	return efoto.exec();
 
+    return efoto.exec();
 }
