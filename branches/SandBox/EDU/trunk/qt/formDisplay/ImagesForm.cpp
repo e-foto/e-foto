@@ -14,6 +14,7 @@ ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
 	imagesTable->setColumnWidth(1,80);
 	imagesTable->setColumnWidth(2,30);
 	imagesTable->setColumnWidth(3,30);
+
 }
 
 void ImagesForm::fillvalues(string values)

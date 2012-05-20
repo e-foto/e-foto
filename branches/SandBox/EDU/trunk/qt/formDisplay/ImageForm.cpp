@@ -76,9 +76,11 @@ void ImageForm::fillvalues(string values)
 						  );
 
 	//flightIDSpin->setValue( (QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str())).toInt(&ok)
-	//);
-
-	resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok) );
+    //);
+    resolutionSpin->setValue(0);
+    resolutionSpin->setSpecialValueText(" ");
+    if (ede.elementByTagAtt("resolution","uom","#dpi").getContent() != "" )
+        resolutionSpin->setValue( (QString::fromUtf8(ede.elementByTagAtt("resolution","uom","#dpi").toString().c_str())).toInt(&ok) );
 
     flightDirection = ede.elementByTagName("flightDirection").toDouble();
 
@@ -253,14 +255,16 @@ QString ImageForm::loadImageFile()
 			QImage img(fileImage);
 			w = img.width(); h = img.height();
 			if (w != 0 && h != 0)
-				success = true;
+            {
+                success = true;
+            }
 		}
 		if (!success)
 		{
 			QMessageBox* msgBox = new QMessageBox();
 			msgBox->setText("Error: The image loading process.");
 			msgBox->exec();
-		}
+        }
 		heightLine->setText(QString::number(h)+" px");
 		widthLine->setText(QString::number(w)+" px");
 		return fileImage;

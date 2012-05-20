@@ -54,8 +54,9 @@ namespace efoto {
 		this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 		this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 		this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
-		this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
-		this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+        this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
+        this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+        this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
 		this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 		this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 		this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT( validatingPoint()) );
@@ -78,8 +79,8 @@ namespace efoto {
 
 		connect(pointsForm.importButton, SIGNAL(clicked()), this, SLOT( importPointsFromTxt() ) );
 		connect(pointsForm.exportToTxtButton, SIGNAL(clicked()), this, SLOT(exportPointsToTxt()) );
-		connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesFromTxt() ) );
-		imagesForm.importButton->setEnabled(false);
+        connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesBatch() ) );
+        //imagesForm.importButton->setEnabled(false);
 
 		//setGeometry(qApp->desktop()->availableGeometry());
 		setWindowState(this->windowState() | Qt::WindowMaximized);
@@ -132,20 +133,20 @@ namespace efoto {
 		centralWidget()->layout()->addWidget(&controlButtons);
 
 		// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
-		QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
-		connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
+        //QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
+        //connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
 		// Inserido pelo Paulo 05/09/2011
 		// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
-		QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
-		connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
+        //QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
+        //connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
 
-		QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+I", "Import")),this);
-		connect(shortcut3, SIGNAL(activated()), this, SLOT(importImagesBatch()));
+        //QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+I", "Import")),this);
+        //connect(shortcut3, SIGNAL(activated()), this, SLOT(importImagesBatch()));
 
 
-		QShortcut* shortcut4 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
-		connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
+        //QShortcut* shortcut4 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
+        //connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
 
 
 		actionFoto_Tri->setEnabled(availablePhotoTri());
@@ -274,7 +275,7 @@ namespace efoto {
 		text +=	"<expiration></expiration>\n";
 		text +=	"</calibrationCertificate>\n";
 		text +=	"<focalDistance uom=\"#mm\">\n";
-		text +=	"<value></value>\n";
+        text +=	"<value></value>\n";
 		text +=	"<sigma></sigma>\n";
 		text +=	"</focalDistance>\n";
 		text +=	"<distortionCoefficients>\n";
@@ -353,14 +354,14 @@ namespace efoto {
 		text += "<producerName></producerName>\n";
 		text += "<nominalScale>\n";
 		text += "<mml:mfrac>\n";
-		text += "<mml:mn>1</mml:mn>\n";
-		text += "<mml:mn>10000</mml:mn>\n";
+        text += "<mml:mn></mml:mn>\n";
+        text += "<mml:mn></mml:mn>\n";
 		text += "</mml:mfrac>\n";
 		text += "</nominalScale>\n";
 		text += "<flightHeight uom=\"#m\"></flightHeight>\n";
 		text += "<overlap>\n";
-		text += "<longitudinal uom=\"#%\">60</longitudinal>\n";
-		text += "<transversal uom=\"#%\">20</transversal>\n";
+        text += "<longitudinal uom=\"#%\"></longitudinal>\n";
+        text += "<transversal uom=\"#%\"></transversal>\n";
 		text += "</overlap>\n";
 		text += "</flight>";
 
@@ -1283,7 +1284,7 @@ menuExecute->setEnabled(true);
 		}
 		else
 		{
-			imageForm.setVisible(false);
+            imageForm.groupBox->setVisible(false);
 			imageForm.setIOAvailable(false);
 		}
 
@@ -2010,7 +2011,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 	void ProjectUserInterface_Qt::validatingImage()
 	{
-		if ((imageForm.imageIDLine->text() == "") || (imageForm.fileNameLine->text() == "") || (!imageForm.gnssSigmaController->getValidate()) || (!imageForm.insSigmaController->getValidate())){
+        if ((imageForm.imageIDLine->text() == "") || (imageForm.resolutionSpin->text() == " ") || (imageForm.fileNameLine->text() == "") || (!imageForm.gnssSigmaController->getValidate()) || (!imageForm.insSigmaController->getValidate())){
 			controlButtons.saveButton->setEnabled(false);
 		}
 		else
@@ -2832,19 +2833,23 @@ bool ProjectUserInterface_Qt::availableOE()
 
 		QMessageBox msgBox;
 		msgBox.setText("Loading images");
-		msgBox.setInformativeText("All images has the same dimensions?");
+        msgBox.setInformativeText("All images has the same dimensions? (Yes to fast import)");
 		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		msgBox.setDefaultButton(QMessageBox::Yes);
 
 		int resp=msgBox.exec();
+
 		loadWidget->show();
 		if (resp==QMessageBox::No)
-		{
+        {
+            int dpi = 300;
 			for (int i=0; i<importFilesName.size();i++)
 			{
+                bool ok;
+                dpi = QInputDialog::getInt(this, tr("Inform images dpi"), QString("dpi for image ").append(importFilesName.at(i)).append(":"), dpi, 0, 10000, 1, &ok);
 				loading.setFormat(tr("Image %v/%m : %p%"));
 				// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
-				xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i);
+                xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,dpi);
 				loading.setValue(i+1);
 			}
 		}
@@ -2854,12 +2859,14 @@ bool ProjectUserInterface_Qt::availableOE()
 			int imageWidth=firstImage.width();
 			int imageHeight=firstImage.height();
 
+            bool ok;
+            int dpi = QInputDialog::getInt(this, tr("Inform images dpi"), tr("dpi for all images:"), 300, 0, 10000, 1, &ok);
 			for (int i=0; i<importFilesName.size();i++)
-			{
+            {
 				loading.setFormat(tr("Image %v/%m : %p%"));
 				//QFileInfo imageFileInfo(importFilesName.at(i));
 				// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
-				xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,imageWidth,imageHeight);
+                xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,imageWidth,imageHeight,dpi);
 				loading.setValue(i+1);
 			}
 		}
@@ -2873,7 +2880,7 @@ bool ProjectUserInterface_Qt::availableOE()
 
 	}
 
-	string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage)
+    string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int dpi)
 	{
 
 		stringstream imageXml;
@@ -2895,14 +2902,14 @@ bool ProjectUserInterface_Qt::availableOE()
 		imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(image.height())<<"</height>\n";
 		imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toStdString()<<"</fileName>\n";
 		imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
-		imageXml << "\t\t<resolution uom=\"#dpi\">N/A</resolution>\n";
+        imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
 		imageXml << "\t</image>\n";
 
 		return imageXml.str();
 	}
 
 
-	string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages )
+    string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi)
 	{
 
 		stringstream imageXml;
@@ -2922,7 +2929,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
 		imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
 		imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
-		imageXml << "\t\t<resolution uom=\"#dpi\">N/A</resolution>\n";
+        imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
 		imageXml << "\t</image>\n";
 
 		return imageXml.str();
