@@ -409,6 +409,16 @@ p, li { white-space: pre-wrap; }
            <property name="buttonSymbols">
             <enum>QAbstractSpinBox::UpDownArrows</enum>
            </property>
+           <property name="specialValueText">
+            <string/>
+           </property>
+           <property name="minimumDate">
+            <date>
+             <year>1900</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
            <property name="displayFormat">
             <string>dd/MM/yyyy</string>
            </property>
@@ -450,6 +460,16 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="buttonSymbols">
             <enum>QAbstractSpinBox::UpDownArrows</enum>
+           </property>
+           <property name="specialValueText">
+            <string/>
+           </property>
+           <property name="minimumDate">
+            <date>
+             <year>1900</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
            </property>
            <property name="displayFormat">
             <string>dd/MM/yyyy</string>
@@ -548,6 +568,9 @@ p, li { white-space: pre-wrap; }
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="accelerated">
                 <bool>true</bool>
                </property>
@@ -555,7 +578,7 @@ p, li { white-space: pre-wrap; }
                 <number>3</number>
                </property>
                <property name="minimum">
-                <double>1.000000000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>2000.000000000000000</double>
@@ -689,6 +712,9 @@ p, li { white-space: pre-wrap; }
                     <property name="buttonSymbols">
                      <enum>QAbstractSpinBox::NoButtons</enum>
                     </property>
+                    <property name="specialValueText">
+                     <string> </string>
+                    </property>
                     <property name="accelerated">
                      <bool>true</bool>
                     </property>
@@ -746,6 +772,9 @@ p, li { white-space: pre-wrap; }
                     </property>
                     <property name="buttonSymbols">
                      <enum>QAbstractSpinBox::NoButtons</enum>
+                    </property>
+                    <property name="specialValueText">
+                     <string> </string>
                     </property>
                     <property name="accelerated">
                      <bool>true</bool>

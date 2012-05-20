@@ -112,9 +112,19 @@ void SensorForm::fillvalues(string values)
 	descriptionTextEdit->setPlainText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
 	cameraNumberLineEdit->setText(QString::fromUtf8(ede.elementByTagName("number").toString().c_str()));
 
-	cameraDispatchDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("dispatch").toString().c_str()),Qt::ISODate));
-	cameraExpirationDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("expiration").toString().c_str()),Qt::ISODate));
-	calibratedFocalDistanceDoubleSpin->setValue(QString::fromUtf8(ede.elementByTagName("value").toString().c_str()).toDouble(&ok));
+    cameraDispatchDateEdit->setDate(QDate(1900,1,1));
+    cameraExpirationDateEdit->setDate(QDate(1900,1,1));
+    calibratedFocalDistanceDoubleSpin->setValue(0);
+    cameraDispatchDateEdit->setSpecialValueText(" ");
+    cameraExpirationDateEdit->setSpecialValueText(" ");
+    calibratedFocalDistanceDoubleSpin->setSpecialValueText(" ");
+
+    if (ede.elementByTagName("dispatch").getContent() != "")
+        cameraDispatchDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("dispatch").toString().c_str()),Qt::ISODate));
+    if (ede.elementByTagName("expiration").getContent() != "")
+        cameraExpirationDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("expiration").toString().c_str()),Qt::ISODate));
+    if (ede.elementByTagName("value").getContent() != "")
+        calibratedFocalDistanceDoubleSpin->setValue(QString::fromUtf8(ede.elementByTagName("value").toString().c_str()).toDouble(&ok));
 	calibratedSigmaController->fillValues(ede.elementByTagName("sigma").getContent());
 
 	EDomElement k;
@@ -189,7 +199,7 @@ void SensorForm::fillvalues(string values)
 	}
 	else
 	{
-		principalX0doubleSpin->setValue(0);
+        principalX0doubleSpin->setValue(0);
 		principalY0doubleSpin->setValue(0);
 	}
 	principalSigmaController->fillValues(pri.elementByTagName("sigma").getContent());

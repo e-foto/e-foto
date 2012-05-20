@@ -101,7 +101,7 @@ p, li { white-space: pre-wrap; }
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>
           <property name="specialValueText">
-           <string>N/A</string>
+           <string> </string>
           </property>
           <property name="accelerated">
            <bool>true</bool>
@@ -810,6 +810,11 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>br::uerj::eng::efoto::EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>br::uerj::eng::efoto::SigmaFormTypeSelector</class>
    <extends>QComboBox</extends>
    <header>SigmaForm.h</header>
@@ -819,11 +824,6 @@ p, li { white-space: pre-wrap; }
    <extends>QFrame</extends>
    <header>SigmaForm.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>br::uerj::eng::efoto::EfotoDoubleSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>EfotoDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>br::uerj::eng::efoto::SigmaFormDialogButton</class>
