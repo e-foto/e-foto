@@ -135,7 +135,7 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 {
 	if (p.x() < 0 || p.y() < 0)
 		return;
-	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), markOn);
+    imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
 
     points->setData(points->index(table1->currentIndex().row(), 7), QVariant(p.x()));
     points->setData(points->index(table1->currentIndex().row(), 8), QVariant(p.y()));
@@ -429,9 +429,9 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 {
 	for (int row = 0; row < points->rowCount() ;row++)
 	{
-        if (points->item(row,7)->text().isEmpty())
+        if (points->item(row,7)->text().isEmpty() || points->data(points->index(row, 1)).toString() == "false")
 			continue;
-		QString pointName = QString::number(row+1);
+        QString pointName = points->data(points->index(row, 2)).toString();
         QPointF location(points->item(row,7)->text().toDouble(),points->item(row,8)->text().toDouble());
         if (points->item(row,2)->checkState() == Qt::Checked)
 			imageView->getMarker()->insertMark(location, row+1, pointName, markOn);

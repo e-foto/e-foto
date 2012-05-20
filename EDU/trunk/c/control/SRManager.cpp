@@ -73,11 +73,13 @@ bool SRManager::measurePoint(int id, double col, double lin)
 	if (started)
 	{
 		Point* pointToMeasure = myImage->getPoint(id);
-		if (pointToMeasure != NULL)
-		{
-			pointToMeasure->putImageCoordinate(ImageSpaceCoordinate(myImage->getId(), col, lin));
-			mySR->selectPoint(id);
-		}
+        if (pointToMeasure == NULL)
+        {
+            pointToMeasure = manager->point(id);
+            myImage->putPoint(pointToMeasure);
+        }
+        pointToMeasure->putImageCoordinate(ImageSpaceCoordinate(myImage->getId(), col, lin));
+        mySR->selectPoint(id);
 		/* ERRO: ponto fora da imagem. */
 		return true;
 	}
@@ -161,7 +163,7 @@ deque<string> SRManager::listSelectedPoints()
 		deque<int> selectedPoints = mySR->getSelectedPoints();
 		for (unsigned int i = 0; i < selectedPoints.size(); i++)
 		{
-			Point* myPoint = myImage->getPoint(selectedPoints.at(i));
+            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
 			string value = Conversion::intToString(myPoint->getId());
 			value += " ";
 			value += myPoint->getPointId();
@@ -243,7 +245,7 @@ deque<string> SRManager::pointData(int index)
 
 unsigned int SRManager::countSelectedPoints()
 {
-	return listSelectedPoints().size();
+    return mySR->getSelectedPoints().size();
 }
 
 bool SRManager::connectImagePoints()
