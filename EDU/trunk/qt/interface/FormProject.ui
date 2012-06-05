@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -152,6 +152,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -301,7 +304,7 @@
   </action>
   <action name="actionSpatial_resection">
    <property name="text">
-    <string>Spatial &amp;Resection</string>
+    <string>Spatial R&amp;esection</string>
    </property>
    <property name="toolTip">
     <string>Spatial Resection</string>
@@ -363,7 +366,7 @@
   </action>
   <action name="actionFoto_Tri">
    <property name="text">
-    <string>&amp;Photo Triangulation</string>
+    <string>Photo &amp;Triangulation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -371,7 +374,7 @@
   </action>
   <action name="actionDEMExtraction">
    <property name="text">
-    <string>DEM-Extraction</string>
+    <string>&amp;DSM-Extraction</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
@@ -379,7 +382,7 @@
   </action>
   <action name="actionOrtho_rectification">
    <property name="text">
-    <string>Ortho-Rectification</string>
+    <string>Ortho-&amp;Rectification</string>
    </property>
    <property name="toolTip">
     <string>Ortho-Rectification</string>
@@ -390,7 +393,7 @@
   </action>
   <action name="actionStereo">
    <property name="text">
-    <string>Stereo Plotter</string>
+    <string>Stereo &amp;Plotter</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
