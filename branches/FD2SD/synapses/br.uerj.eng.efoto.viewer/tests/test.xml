@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<test xmlns="urn:br:mil:eb:cortex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:br:mil:eb:cortex ../test.xsd">
+
+	<info id="br.uerj.eng.efoto.viewer.test" version="1.0">
+
+		<title>
+			Unit Tests. e-foto viewer
+		</title>
+
+		<description>
+			Unit Tests. Base of photogrammetric image viewers
+		</description>
+
+	</info>
+
+	<synapses>
+		<consumes id="br.uerj.eng.efoto.engine" version="1.0"/>
+
+	</synapses>
+
+</test>
