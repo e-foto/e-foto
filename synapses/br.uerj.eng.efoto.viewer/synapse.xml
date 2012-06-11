@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<synapse xmlns="urn:br:mil:eb:cortex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:br:mil:eb:cortex ../synapse.xsd">
+
+	<info id="br.uerj.eng.efoto.viewer" version="1.0">
+
+		<title>
+			e-foto viewer
+		</title>
+
+		<description>
+			Base of photogrammetric image viewers
+		</description>
+
+	</info>
+
+	<initiator>false</initiator>
+
+	<singleton>false</singleton>
+
+	<synapses>
+		<consumes id="br.uerj.eng.efoto.engine" version="1.0"/>
+
+	</synapses>
+
+</synapse>
