@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<test xmlns="urn:br:mil:eb:cortex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:br:mil:eb:cortex ../test.xsd">
+
+	<info id="br.uerj.eng.efoto.engine.test" version="1.0">
+
+		<title>
+			Unit Tests. e-foto engine
+		</title>
+
+		<description>
+			Unit Tests. Base of photogrammetric project operators.
+		</description>
+
+	</info>
+
+	<synapses>
+
+	</synapses>
+
+</test>

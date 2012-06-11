@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<test xmlns="urn:br:mil:eb:cortex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:br:mil:eb:cortex ../test.xsd">
+
+	<info id="br.uerj.eng.efoto.app.test" version="1.0">
+
+		<title>
+			Unit Tests. e-foto application
+		</title>
+
+		<description>
+			Unit Tests. Service of e-foto application with all submodules.
+		</description>
+
+	</info>
+
+	<synapses>
+		<consumes id="br.uerj.eng.efoto.viewer" version="1.0"/>
+		<consumes id="br.uerj.eng.efoto.engine" version="1.0"/>
+
+	</synapses>
+
+</test>
