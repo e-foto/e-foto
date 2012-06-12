@@ -3,7 +3,6 @@
 
 #include "ui_Stereoplotter.h"
 #include "SPUserInterface.h"
-#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
 #include "TreeFeatures.h"
@@ -13,6 +12,10 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -32,10 +35,14 @@ protected:
 	SPUserInterface_Qt(SPManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SPUserInterface_Qt();
 	SPManager *manager;
+
+#ifdef INTEGRATED_EFOTO
 	SeparatedStereoViewer* viewerSeparated;
 	SeparatedStereoToolsBar* toolsSeparated;
 	StereoViewer* viewer;
 	StereoToolsBar* tools;
+#endif //INTEGRATED_EFOTO
+
     TreeFeatures *tree;
     void closeEvent(QCloseEvent *e);
 	void updateData();
@@ -59,9 +66,12 @@ public slots:
 	void onFeatureSelected();
 	void onCloseFeature();
 	void stereoClicked(QPointF, QPointF);
-	void stereoMoved(QPointF, QPointF);
-    void centerImages(ObjectSpaceCoordinate coord, double zoom);
+    void stereoMoved(QPointF, QPointF);
     void adjustFit(int width, int height);
+
+#ifdef INTEGRATED_EFOTO
+    void centerImages(ObjectSpaceCoordinate coord, double zoom);
+#endif //INTEGRATED_EFOTO
 
 private:
 	void init();

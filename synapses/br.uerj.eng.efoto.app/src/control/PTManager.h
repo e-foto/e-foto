@@ -2,11 +2,14 @@
 #define PTMANAGER_H
 
 #include "EObject.h"
-#include "BundleAdjustment.h"
 #include "Matrix.h"
 #include "ConvertionsSystems.h"
 #include <QStringList>
 #include <deque>
+
+#ifdef INTEGRATED_EFOTO
+#include "BundleAdjustment.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -47,20 +50,23 @@ protected:
 	EFotoManager* efotoManager;
 	PTUserInterface* myInterface;
 
-	Sensor *mySensor;
-	Flight *myFlight;
-	Terrain *myTerrain;
-	double flightScale;
-	/***/
-	deque<Image*> listAllImages;
-	deque<Point*> listAllPoints;
-	deque<InteriorOrientation*> listOis;
+    double flightScale;
 
-	deque<Image*> listSelectedImages;
-	deque<Point*> listSelectedPoints;
+    Matrix ENH,spareENH,AFP,MVC,residuos;
 
-	BundleAdjustment* pt;
-	Matrix ENH,spareENH,AFP,MVC,residuos;
+#ifdef INTEGRATED_EFOTO
+    Sensor *mySensor;
+    Flight *myFlight;
+    Terrain *myTerrain;
+    deque<Image*> listAllImages;
+    deque<Point*> listAllPoints;
+    deque<InteriorOrientation*> listOis;
+
+    deque<Image*> listSelectedImages;
+    deque<Point*> listSelectedPoints;
+
+    BundleAdjustment* pt;
+#endif //INTEGRATED_EFOTO
 
 public:
 		/**
@@ -245,12 +251,14 @@ public:
  */
 		string getPointId(int pointKey);
 
+#ifdef INTEGRATED_EFOTO
 		/**
  * \brief Metodo que retorna o objeto usado para o calculo da fototriangulaÃ§Ã£o
  * \return BundleAdjustment : Objeto usado para calcular a fototriangulaÃ§Ã£o
  * \attention NÃ£o use esse metodo antes de disparar o metodo de calculo
  */
 		BundleAdjustment* getBundleAdjustment();
+#endif //INTEGRATED_EFOTO
 
 		/**
  * \brief Metodo usado para organizar a lista de pontos selecionados, de forma que todos os pontos de controle sempre fiquem antes dos pontos fotogramÃ©tricos

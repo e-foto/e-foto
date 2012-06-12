@@ -7,16 +7,6 @@
 #define EFOTOMANAGER_H
 
 #include "EObject.h"
-//#include "Terrain.h"
-//#include "ProjectHeader.h"
-//#include "SensorWithFiducialMarks.h"
-//#include "SensorWithKnowDimensions.h"
-//#include "SensorWithKnowParameters.h"
-//#include "Flight.h"
-//#include "Image.h"
-//#include "Point.h"
-//#include "InteriorOrientation.h"
-//#include "SpatialRessection.h"
 
 #ifdef INTEGRATED_EFOTO
 #include "Project.h"
@@ -47,7 +37,10 @@ class SPManager;
 */
 class EFotoManager
 {
+
+#ifdef INTEGRATED_EFOTO
 	Project project;
+#endif INTEGRATED_EFOTO
 
 	int nextModule;
 	int nextImage;
@@ -238,8 +231,9 @@ public:
 	*/
 	void stopPT();
 
+#ifdef INTEGRATED_EFOTO
 	Project* getProject() {return &project;}
-
+#endif //INTEGRATED_EFOTO
 };
 
 } // namespace efoto

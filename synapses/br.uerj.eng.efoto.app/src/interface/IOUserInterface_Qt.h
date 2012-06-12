@@ -3,14 +3,16 @@
 
 #include "ui_IOForm.h"
 #include "IOUserInterface.h"
-//#include "ImageView.h"
-#include "ImageViewers.h"
 #include "LoadingScreen.h"
 
 #include <QPoint>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QStandardItemModel>
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -40,16 +42,18 @@ protected:
 	static IOUserInterface_Qt* ioInst;
 	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~IOUserInterface_Qt();
-	QWidget *windowReport;
-	//ImageView *oldImageView;
-	Marker *mark;
-	SingleViewer *imageView;
+    QWidget *windowReport;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	int selectedPoint;
 	int calculationMode;
 	IOManager *manager;
 	void closeEvent(QCloseEvent *e);
+
+#ifdef INTEGRATED_EFOTO
+    Marker *mark;
+    SingleViewer *imageView;
+#endif //INTEGRATED_EFOTO
 
 protected slots:
 	virtual void languageChange();
