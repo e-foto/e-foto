@@ -7,19 +7,14 @@
 #define SPMANAGER_H
 
 #include "EObject.h"
+#include "Features.h"
 #include <deque>
+
+#ifdef INTEGRATED_EFOTO
 #include "Image.h"
 #include "ExteriorOrientation.h"
-#include "Features.h"
 #include "SpatialIntersection.h"
-
-/*
-#include "Matrix.h"
-#include "ImageMatching.h"
-#include "MatchingPoints.h"
-#include "DemGrid.h"
-#include "SpatialIntersection.h"
-*/
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -52,6 +47,8 @@ class SPManager
 
 	SPUserInterface* myInterface;
 	EFotoManager* manager;
+
+#ifdef INTEGRATED_EFOTO
 	deque<Image*> listAllImages;
 	deque<Point*> listAllPoints;
 	deque<ExteriorOrientation*> listEOs;
@@ -60,6 +57,7 @@ class SPManager
 	Image* rightImage;
 	ProjectiveRay prL;
 	ProjectiveRay prR;
+#endif //INTEGRATED_EFOTO
 
 	/*
 		Image * getImage(int);
@@ -79,9 +77,17 @@ public:
 
 	// Constructors and Destructors
 	//
-	SPManager();
-	SPManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    SPManager();
 	~SPManager();
+
+
+#ifdef INTEGRATED_EFOTO
+    SPManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    ObjectSpaceCoordinate getBoundingBoxCenter();
+    ObjectSpaceCoordinate getCentralPoint();
+    ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
+    ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
+#endif //INTEGRATED_EFOTO
 
 	// Association Methods
 	//
@@ -99,7 +105,7 @@ public:
 	void removeAllFeatures();
 	int removePoint();
 	void setSelected(int feat_id, int pt_id);
-	void getSelected(int &fid, int &pid) { fid = spFeatures.selectedFeature(); pid = spFeatures.selectedPoint(); };
+    void getSelected(int &fid, int &pid) { fid = spFeatures.selectedFeature(); pid = spFeatures.selectedPoint(); }
 	Features* getFeaturesLink() { return &spFeatures; }
 	string getFeaturesList() { return spFeatures.getFeaturesList(); }
 	void updateProjections();
@@ -109,12 +115,8 @@ public:
 	void changePair(int pair, int &lk, int &rk);
 	void addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
 	void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
-	void setSelectedXYZ(double X, double Y, double Z);
-	ObjectSpaceCoordinate getBoundingBoxCenter();
-	double getBoundingBoxIdealZoom(int width, int height);
-	ObjectSpaceCoordinate getCentralPoint();
-	ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
-	ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
+    void setSelectedXYZ(double X, double Y, double Z);
+    double getBoundingBoxIdealZoom(int width, int height);
 
 	/**
 	* \brief Registra no XML o endereço de um arquivo de geometrias.

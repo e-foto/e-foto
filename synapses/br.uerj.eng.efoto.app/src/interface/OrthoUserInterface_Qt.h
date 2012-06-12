@@ -3,7 +3,6 @@
 
 #include "ui_OrthoForm.h"
 #include "OrthoUserInterface.h"
-#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
 
@@ -13,6 +12,10 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {

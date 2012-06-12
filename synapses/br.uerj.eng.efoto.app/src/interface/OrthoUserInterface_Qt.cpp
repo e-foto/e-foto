@@ -7,6 +7,7 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
+#include <QCloseEvent>
 
 namespace br {
 namespace uerj {
@@ -341,22 +342,26 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 
 void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
+#ifdef INTEGRATED_EFOTO
         SingleViewer* sv = new SingleViewer(this);
         sv->setOrtoImageMode(xi, dx, yi, dy);
         sv->loadImage(image, isGrayscale);
         sv->blockOpen();
         sv->blockMark();
         sv->show();
+#endif //INTEGRATED_EFOTO
 }
 
 void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
+#ifdef INTEGRATED_EFOTO
         SingleViewer* sv = new SingleViewer(this);
         sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
         sv->loadImage(image, isGrayscale);
         sv->blockOpen();
         sv->blockMark();
         sv->show();
+#endif //INTEGRATED_EFOTO
 }
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg)

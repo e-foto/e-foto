@@ -33,6 +33,7 @@ PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
 PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::WindowFlags fl)
 	:QMainWindow(parent, fl)
 {
+#ifdef INTEGRATED_EFOTO
 	leftImageTableWidget;
 	setupUi(this);
 	ptManager = manager;
@@ -115,6 +116,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	//qDebug("Construtor");
 	init();
 
+#endif //INTEGRATED_EFOTO
 }
 
 PTUserInterface_Qt::~PTUserInterface_Qt()
@@ -124,6 +126,7 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 
 void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 {
+#ifdef INTEGRATED_EFOTO
 	SingleViewer* graphicResults = new SingleViewer(0);
 
 	// Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e converta em matrix gerando um deque de matrizes
@@ -143,6 +146,7 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	//graphicResults->setOrtoImageMode(dim.get(1,1) ,dim.get(2,1) ,dim.get(3,1) ,dim.get(4,1));
 
 	graphicResults->show();
+#endif //INTEGRATED_EFOTO
 }
 
 deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
@@ -265,6 +269,7 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 
 bool PTUserInterface_Qt::exec()
 {
+#ifdef INTEGRATED_EFOTO
 	bool ok;
 	//qDebug("EXEC");
 	//	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
@@ -296,10 +301,12 @@ bool PTUserInterface_Qt::exec()
 	qApp->processEvents();
 
 	return true;
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::viewReport()
 {
+#ifdef INTEGRATED_EFOTO
 	QWidget *resultView = new QWidget();
 	resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400);
 	QHBoxLayout *horizontalLayout= new QHBoxLayout();
@@ -410,6 +417,7 @@ void PTUserInterface_Qt::viewReport()
 	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
 
 	resultView->setWindowModality(Qt::ApplicationModal);
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::showReportXml()
@@ -478,6 +486,7 @@ void PTUserInterface_Qt::showReportXml()
 
 bool PTUserInterface_Qt::calculatePT()
 {
+#ifdef INTEGRATED_EFOTO
 
 	ptManager->selectImages(selectionImagesView->getSelectedItens());
 	ptManager->selectPoints(selectionPointsView->getSelectedItens());
@@ -503,6 +512,7 @@ bool PTUserInterface_Qt::calculatePT()
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::showSelectionWindow()
@@ -612,6 +622,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 // Atualiza a tabela das imagens e garante que a mesma imagem não apareça nas duas comboBoxes
 void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 {
+#ifdef INTEGRATED_EFOTO
 	int index=0;
 	for(int i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)==imageFilename)
@@ -652,11 +663,13 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
         clearAllMarks(viewer->getRightDisplay()); markAllpoints(viewer->getRightDisplay());
 		viewer->getRightDisplay()->updateAll();
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 //Atualiza a tabela de imagens
 void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string imageFilename, bool move)
 {
+#ifdef INTEGRATED_EFOTO
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
 	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
@@ -716,7 +729,7 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		}
 	}
 	imageTable->setSortingEnabled(true);
-
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::updatePointsTable()
@@ -813,6 +826,8 @@ int PTUserInterface_Qt::findKeyAppearances(ETableWidget *table, int searchedPoin
 	}
 }
 
+#ifdef INTEGRATED_EFOTO
+
 void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int pointKey, QPointF pixel)
 {
 	bool ok;
@@ -897,8 +912,77 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 		}
 				*/
 	}
-	ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
+    ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin );
 }
+
+void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
+{
+    double col,lin;
+    bool ok;
+
+    if (display == viewer->getLeftDisplay())
+    {
+        int pnts=leftImageTableWidget->rowCount();
+        for(int i=0;i<pnts;i++)
+        {
+            col=leftImageTableWidget->item(i,1)->text().toDouble(&ok);
+            lin=leftImageTableWidget->item(i,2)->text().toDouble(&ok);
+            //colocar as marcas no display
+            int pos=findKeyAppearances(leftImageTableWidget, leftImageTableWidget->item(i,3)->text().toInt(&ok));
+            if (pos >=0 && (leftImageTableWidget->item(i,1)->text()!="--" && leftImageTableWidget->item(i,2)->text()!="--"))
+            {
+                //qDebug("left lin: %.3f  col: %.3f",lin,col);
+                QPointF pixel(col,lin);
+                //viewer->getLeftDisplay()->getCurrentScene()->geometry()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
+                int pointkey = leftImageTableWidget->item(pos,3)->text().toInt();
+                //qDebug("C %d", pointkey);
+                Marker* pointMark;
+                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
+                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+                    pointMark = mark;
+                else
+                    pointMark = photoMark;
+                viewer->getLeftMarker().insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text(),pointMark);
+                viewer->getLeftDisplay()->update();
+            }
+        }
+    }
+    else if (display == viewer->getRightDisplay())
+    {
+        int pnts=rightImageTableWidget->rowCount();
+        for(int i=0;i<pnts;i++)
+        {
+            col=rightImageTableWidget->item(i,1)->text().toDouble(&ok);
+            lin=rightImageTableWidget->item(i,2)->text().toDouble(&ok);
+            //colocar as marcas no display
+            int pos=findKeyAppearances(rightImageTableWidget, rightImageTableWidget->item(i,3)->text().toInt(&ok));
+            if (pos >=0 && (rightImageTableWidget->item(i,1)->text()!="--" && rightImageTableWidget->item(i,2)->text()!="--"))
+            {
+                //qDebug("right lin: %.3f  col: %.3f",lin,col);
+                QPointF pixel(col,lin);
+                //viewer->getRightDisplay()->getCurrentScene()->geometry()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
+                int pointkey = rightImageTableWidget->item(pos,3)->text().toInt();
+                //qDebug("D %d",pointkey);
+                Marker* pointMark;
+                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
+                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
+                    pointMark = mark;
+                else
+                    pointMark = photoMark;
+                viewer->getRightMarker().insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text(),pointMark);
+                viewer->getRightDisplay()->update();
+            }
+        }
+    }
+}
+
+void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
+{
+    display->getCurrentScene()->geometry()->clear();
+    display->update();
+}
+
+#endif //INTEGRATED_EFOTO
 
 void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 {
@@ -910,6 +994,7 @@ void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 
 void PTUserInterface_Qt::imageClicked(QPointF pixel)
 {
+#ifdef INTEGRATED_EFOTO
 	if (sender() == &viewer->getLeftMarker())
 	{
 		if (insertionMode)
@@ -941,6 +1026,7 @@ void PTUserInterface_Qt::imageClicked(QPointF pixel)
 		//previsionMark(currentPointKey,pixel);
 	}
 	showImagesAppearances(currentPointKey);
+#endif //INTEGRATED_EFOTO
 }
 
 
@@ -1044,73 +1130,6 @@ void PTUserInterface_Qt::acceptResults()
 		viewReportToolButton->setEnabled(false);
 }
 
-void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
-{
-	double col,lin;
-	bool ok;
-
-	if (display == viewer->getLeftDisplay())
-	{
-		int pnts=leftImageTableWidget->rowCount();
-		for(int i=0;i<pnts;i++)
-		{
-			col=leftImageTableWidget->item(i,1)->text().toDouble(&ok);
-			lin=leftImageTableWidget->item(i,2)->text().toDouble(&ok);
-			//colocar as marcas no display
-			int pos=findKeyAppearances(leftImageTableWidget, leftImageTableWidget->item(i,3)->text().toInt(&ok));
-			if (pos >=0 && (leftImageTableWidget->item(i,1)->text()!="--" && leftImageTableWidget->item(i,2)->text()!="--"))
-			{
-				//qDebug("left lin: %.3f  col: %.3f",lin,col);
-				QPointF pixel(col,lin);
-				//viewer->getLeftDisplay()->getCurrentScene()->geometry()->addPoint(pixel,leftImageTableWidget->item(pos,0)->text(),&mark);
-				int pointkey = leftImageTableWidget->item(pos,3)->text().toInt();
-				//qDebug("C %d", pointkey);
-                Marker* pointMark;
-                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
-                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
-                    pointMark = mark;
-                else
-                    pointMark = photoMark;
-                viewer->getLeftMarker().insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text(),pointMark);
-				viewer->getLeftDisplay()->update();
-			}
-		}
-	}
-	else if (display == viewer->getRightDisplay())
-	{
-		int pnts=rightImageTableWidget->rowCount();
-		for(int i=0;i<pnts;i++)
-		{
-			col=rightImageTableWidget->item(i,1)->text().toDouble(&ok);
-			lin=rightImageTableWidget->item(i,2)->text().toDouble(&ok);
-			//colocar as marcas no display
-			int pos=findKeyAppearances(rightImageTableWidget, rightImageTableWidget->item(i,3)->text().toInt(&ok));
-			if (pos >=0 && (rightImageTableWidget->item(i,1)->text()!="--" && rightImageTableWidget->item(i,2)->text()!="--"))
-			{
-				//qDebug("right lin: %.3f  col: %.3f",lin,col);
-				QPointF pixel(col,lin);
-				//viewer->getRightDisplay()->getCurrentScene()->geometry()->addPoint(pixel,rightImageTableWidget->item(pos,0)->text(),&mark);
-				int pointkey = rightImageTableWidget->item(pos,3)->text().toInt();
-				//qDebug("D %d",pointkey);
-                Marker* pointMark;
-                int pointsTableIndex = findKeyAppearances(pointsTableWidget,pointkey);
-                if (pointsTableWidget->item(pointsTableIndex,1)->text() == "Control")
-                    pointMark = mark;
-                else
-                    pointMark = photoMark;
-                viewer->getRightMarker().insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text(),pointMark);
-                viewer->getRightDisplay()->update();
-			}
-		}
-	}
-}
-
-void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
-{
-	display->getCurrentScene()->geometry()->clear();
-	display->update();
-}
-
 void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 {
 	imagesPointTreeWidget->clear();
@@ -1204,6 +1223,7 @@ void PTUserInterface_Qt::exportToKml()
 
 void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 {
+#ifdef INTEGRATED_EFOTO
 	bool ok;
 	ETableWidget * table = (ETableWidget*)item->tableWidget();
 	int tableRow=item->row();
@@ -1294,6 +1314,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 			}
 		}
     }
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::setMaxIteration(int iterations)
@@ -1321,6 +1342,7 @@ void PTUserInterface_Qt::setCurrentPointKey(int newPointKey)
 
 void PTUserInterface_Qt::addPoint()
 {
+#ifdef INTEGRATED_EFOTO
 	int idNewPoint = ptManager->createNewPoint();
 	ptManager->setENH();
 	ptManager->reloadPointsCoordinates();
@@ -1330,6 +1352,7 @@ void PTUserInterface_Qt::addPoint()
     markAllpoints(viewer->getLeftDisplay());
     clearAllMarks(viewer->getRightDisplay());
     markAllpoints(viewer->getRightDisplay());
+#endif //INTEGRATED_EFOTO
 }
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)

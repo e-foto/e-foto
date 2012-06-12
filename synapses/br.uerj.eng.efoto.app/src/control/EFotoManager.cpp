@@ -80,13 +80,17 @@ bool EFotoManager::is(string s)
 void EFotoManager::setXml(string xml)
 {
 	//xmlData = xml;
+#ifdef INTEGRATED_EFOTO
 	project.setXml(xml);
+#endif //INTEGRATED_EFOTO
 }
 
 string EFotoManager::getXml()
 {
 	//return xmlData;
+#ifdef INTEGRATED_EFOTO
 	return project.getXml();
+#endif //INTEGRATED_EFOTO
 }
 
 

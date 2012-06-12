@@ -19,7 +19,9 @@ ProjectManager::ProjectManager()
 	this->manager = NULL;
 	//this->xmlFile = NULL;
 	this->treeModel = NULL;
+#ifdef INTEGRATED_EFOTO
 	this->updater = NULL;
+#endif //INTEGRATED_EFOTO
 }
 
 ProjectManager::ProjectManager(EFotoManager* manager)
@@ -27,17 +29,19 @@ ProjectManager::ProjectManager(EFotoManager* manager)
 	this->manager = manager;
 	//this->xmlFile = NULL;
 	this->treeModel = NULL;
+#ifdef INTEGRATED_EFOTO
 	this->updater = NULL;
+#endif //INTEGRATED_EFOTO
 }
 
 ProjectManager::~ProjectManager()
 {
 	if (treeModel != NULL)
 		delete treeModel;
+#ifdef INTEGRATED_EFOTO
 	if (updater != NULL)
 		delete updater;
-	//if (xmlFile != NULL)
-	//delete xmlFile;
+#endif //INTEGRATED_EFOTO
 }
 
 // Other Methods
@@ -138,8 +142,10 @@ bool ProjectManager::newProject(string filename)
   */
 		xmlData += "</efotoPhotogrammetricProject>";
 
+#ifdef INTEGRATED_EFOTO
         manager->getProject()->closeProject();
         manager->getProject()->setXml(xmlData);
+#endif //INTEGRATED_EFOTO
 
 		if (treeModel != NULL)
 			delete treeModel;
@@ -173,6 +179,7 @@ bool ProjectManager::loadFile(string filename)
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		stringstream myData;
 		ifstream myFile(filename.c_str());
 		if (updater != NULL)
@@ -235,6 +242,7 @@ bool ProjectManager::loadFile(string filename)
 		}
 		//else cout << "Unable to open file"; // for debugs
 		return false;
+#endif //INTEGRATED_EFOTO
 	}
 
 	return false;
@@ -244,6 +252,7 @@ bool ProjectManager::saveFile(string filename)
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		ofstream myFile (filename.c_str());
 		if (myFile.is_open())
 		{
@@ -256,30 +265,28 @@ bool ProjectManager::saveFile(string filename)
 		}
 		else cout << "Unable to open file";
 		return false;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }
 
 int ProjectManager::informFileVersionError()
 {
+#ifdef INTEGRATED_EFOTO
 	if (manager != NULL && updater != NULL)
-	{
-		//EDomElement ede(manager->xmlGetData()); //deprecated
-		//if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))//deprecated
-		//return true;//deprecated
-		return updater->getError();
-	}
+    {
+        return updater->getError();
+    }
+#endif //INTEGRATED_EFOTO
+
 	return 0;
 }
 
 bool ProjectManager::addComponent(string data, string parent)
 {
 	if (manager != NULL)
-	{
-		//EDomElement newXml(manager->xmlGetData());
-		//newXml.addChildAtTagName(parent, data);
-		//manager->xmlSetData(newXml.getContent());
-
+    {
+#ifdef INTEGRATED_EFOTO
 		if (parent == "sensors")
 		{
 			manager->getProject()->addSensor(data);
@@ -310,6 +317,7 @@ bool ProjectManager::addComponent(string data, string parent)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
 		return true;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }
@@ -319,6 +327,7 @@ bool ProjectManager::removeComponent(string type, int id)
     // Rever o uso deste método. E habilitar os botões para isso funcionar.
 	if (manager != NULL)
     {
+#ifdef INTEGRATED_EFOTO
         if (type == "Sensor")
             manager->getProject()->deleteSensor(id);
         else if (type == "Flight")
@@ -338,6 +347,7 @@ bool ProjectManager::removeComponent(string type, int id)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
 		return true;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }
@@ -346,6 +356,7 @@ bool ProjectManager::editComponent(string type, string data)
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		//EDomElement newXml(manager->xmlGetData());
 		if (type == "Header")
 		{
@@ -364,6 +375,7 @@ bool ProjectManager::editComponent(string type, string data)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
 		return true;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }
@@ -373,6 +385,7 @@ bool ProjectManager::editComponent(string type, int id, string data)
 	//EDomElement newXml(manager->xmlGetData());
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		if (type == "Sensor")
 		{
 			//newXml.replaceChildByTagAtt("sensor", "key", Conversion::intToString(id), data);
@@ -416,6 +429,7 @@ bool ProjectManager::editComponent(string type, int id, string data)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
 		return true;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }
@@ -424,6 +438,7 @@ EObject* ProjectManager::viewComponent(string type, int id)
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		if (type == "Sensor")
 			return (EObject*) manager->getProject()->sensor(id);
 		else if (type == "Flight")
@@ -436,6 +451,7 @@ EObject* ProjectManager::viewComponent(string type, int id)
 			return (EObject*) manager->getProject()->IO(id);
 		else if (type == "EO")
 			return (EObject*) manager->getProject()->EO(id);
+#endif //INTEGRATED_EFOTO
 	}
 	return NULL;
 }
@@ -471,12 +487,16 @@ int ProjectManager::getImageId(string imageName)
 
 int ProjectManager::getFreeImageId()
 {
+#ifdef INTEGRATED_EFOTO
 	return manager->getProject()->getFreeImageId();
+#endif //INTEGRATED_EFOTO
 }
 
 int ProjectManager::getFreePointId()
 {
+#ifdef INTEGRATED_EFOTO
 	return manager->getProject()->getFreePointId();
+#endif //INTEGRATED_EFOTO
 }
 
 bool ProjectManager::startModule(string module, int image)
@@ -539,19 +559,25 @@ bool ProjectManager::reload()
 
 string ProjectManager::getXml(string tagname)
 {
+#ifdef INTEGRATED_EFOTO
 	return manager->getProject()->getXml(tagname);
+#endif //INTEGRATED_EFOTO
 }
 
 string ProjectManager::getXml(string tagname, string att, string value)
 {
+#ifdef INTEGRATED_EFOTO
 	return manager->getProject()->getXml(tagname, att, value);
+#endif //INTEGRATED_EFOTO
 }
 
 bool ProjectManager::getSavedState()
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		return manager->getProject()->getSaveState();
+#endif //INTEGRATED_EFOTO
 	}
 	return true;
 }
@@ -560,6 +586,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 {
 	if (manager != NULL)
 	{
+#ifdef INTEGRATED_EFOTO
 		if (image1 == image2 || filename == "")
 		{
 			return false;
@@ -573,7 +600,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		InteriorOrientation* io2 = manager->getProject()->IO(image2);
 		SpatialRessection* sr1 = (SpatialRessection*)manager->getProject()->EO(image1);
 		SpatialRessection* sr2 = (SpatialRessection*)manager->getProject()->EO(image2);
-		SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)manager->getProject()->sensor(manager->getProject()->image(image1)->getSensorId());
+        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)manager->getProject()->sensor(manager->getProject()->image(image1)->getSensorId());
 		Flight* flight = manager->getProject()->flight(manager->getProject()->image(image1)->getFlightId());
 		Terrain* terrain = manager->getProject()->terrain();
 
@@ -649,6 +676,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		}
 		else cout << "Unable to open file";
 		return false;
+#endif //INTEGRATED_EFOTO
 	}
 	return false;
 }

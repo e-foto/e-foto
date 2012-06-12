@@ -4,11 +4,14 @@
 
 
 #include "EDom.h"
-#include "Point.h"
 #include "OrthoManager.h"
 #include "EFotoManager.h"
 #include "OrthoUserInterface.h"
 #include "OrthoUserInterface_Qt.h"
+
+#ifdef INTEGRATED_EFOTO
+#include "Point.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -25,6 +28,8 @@ OrthoManager::OrthoManager()
 	status = false;
 }
 
+#ifdef INTEGRATED_EFOTO
+
 OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
 {
 	this->manager = manager;
@@ -39,13 +44,17 @@ OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<Ext
 	inter_method = 0;
 }
 
+#endif //INTEGRATED_EFOTO
+
 OrthoManager::~OrthoManager()
 {
+#ifdef INTEGRATED_EFOTO
 	if (grid != NULL)
 		delete grid;
 
 	if (ortho != NULL)
 		delete ortho;
+#endif //INTEGRATED_EFOTO
 }
 
 // Association Methods
@@ -80,12 +89,14 @@ bool OrthoManager::exec()
 		}
 	}
 
+#ifdef INTEGRATED_EFOTO
 	if (listAllImages.size() < 1)
 	{
 		OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 		oui->showErrorMessage("There is no image to run this application");
 		returnProject();
 	}
+#endif //INTEGRATED_EFOTO
 
 
 	return status;
@@ -95,12 +106,15 @@ void OrthoManager::addImagesToForm()
 {
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 
+#ifdef INTEGRATED_EFOTO
 	for (int i=1; i<=listAllImages.size(); i++)
 		oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
+#endif //INTEGRATED_EFOTO
 }
 
 int OrthoManager::loadDemGrid(char * filename, int fileType)
 {
+#ifdef INTEGRATED_EFOTO
 	if (grid != NULL)
 		delete grid;
 
@@ -124,12 +138,13 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
 				oui->showImage3D(img,Xi , res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
-
+#endif //INTEGRATED_EFOTO
 	return 1;
 }
 
 void OrthoManager::loadOrtho(char *filename)
 {
+#ifdef INTEGRATED_EFOTO
 	if (ortho != NULL)
 		delete ortho;
 
@@ -148,10 +163,12 @@ void OrthoManager::loadOrtho(char *filename)
 			oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
 			delete img;
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 void OrthoManager::runAllOrthoTogheter()
 {
+#ifdef INTEGRATED_EFOTO
 	// List of all centers
 	vector <int> Cx;
 	vector <int> Cy;
@@ -265,10 +282,12 @@ void OrthoManager::runAllOrthoTogheter()
 						oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
 				}
 		}
+#endif //INTEGRATED_EFOTO
 }
 
 void OrthoManager::runOrthoIndividual(int image)
 {
+#ifdef INTEGRATED_EFOTO
 	if (image < 1 || image > listAllImages.size())
 		return;
 
@@ -369,10 +388,12 @@ void OrthoManager::runOrthoIndividual(int image)
 		}
 		oui->setProgress(int(100.0*((Y-Yi_img)/(Yf_img-Yi_img-1))));
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
 {
+#ifdef INTEGRATED_EFOTO
 	// Create new orthoimage
 	if (ortho != NULL)
 		delete ortho;
@@ -445,6 +466,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 
     // Expanção do XML
     addOrthoToXML(string(filename));
+#endif //INTEGRATED_EFOTO
 
 	return 1;
 }

@@ -86,6 +86,7 @@ void IOUserInterface_Qt::informState()
 
 void IOUserInterface_Qt::receiveMark(QPointF p)
 {
+#ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
 	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
@@ -98,12 +99,15 @@ void IOUserInterface_Qt::receiveMark(QPointF p)
 
 	table1->selectRow(table1->currentIndex().row() + 1);
 	testActivateIO();
+#endif //INTEGRATED_EFOTO
 }
 
 void IOUserInterface_Qt::makeRepaint()
 {
+#ifdef INTEGRATED_EFOTO
 	imageView->update();
 	table1->repaint();
+#endif //INTEGRATED_EFOTO
 }
 
 void IOUserInterface_Qt::activeSetMode()
@@ -128,6 +132,7 @@ void IOUserInterface_Qt::fitView()
 
 void IOUserInterface_Qt::init()
 {
+#ifdef INTEGRATED_EFOTO
 	// Insert image into layout
 	QWidget* centralwidget = new QWidget(this);
 	QGridLayout* gridLayout = new QGridLayout(centralwidget);
@@ -156,6 +161,7 @@ void IOUserInterface_Qt::init()
 
 	//this->showNormal();
 	//myImageView->fitView();
+#endif //INTEGRATED_EFOTO
 }
 
 bool IOUserInterface_Qt::measureMark(int id, double col, double lin)
@@ -336,16 +342,19 @@ void IOUserInterface_Qt::acceptIO()
 
 void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
+#ifdef INTEGRATED_EFOTO
 	LoadingScreen::instance().show();
 	qApp->processEvents();
 	delete(imageView);
 	delete(mark);
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
+#endif //INTEGRATED_EFOTO
 }
 
 bool IOUserInterface_Qt::exec()
 {
+#ifdef INTEGRATED_EFOTO
 	calculationMode = manager->getCalculationMode();
 	if (calculationMode == 1)
 	{
@@ -538,6 +547,7 @@ bool IOUserInterface_Qt::exec()
 	//return false;
 	//delete(myImageView); precisa de um stop
 	return true;
+#endif //INTEGRATED_EFOTO
 }
 
 } // namespace efoto

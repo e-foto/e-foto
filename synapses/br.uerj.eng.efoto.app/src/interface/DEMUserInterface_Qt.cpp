@@ -7,6 +7,7 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
+#include <QCloseEvent>
 
 namespace br {
 namespace uerj {
@@ -213,22 +214,26 @@ void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
 
 void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
+#ifdef INTEGRATED_EFOTO
 	SingleViewer* sv = new SingleViewer(this);
         sv->setOrtoImageMode(xi, dx, yi, dy);
 	sv->loadImage(image, isGrayscale);
 	sv->blockOpen();
 	sv->blockMark();
 	sv->show();
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
+#ifdef INTEGRATED_EFOTO
         SingleViewer* sv = new SingleViewer(this);
         sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
         sv->loadImage(image, isGrayscale);
         sv->blockOpen();
         sv->blockMark();
         sv->show();
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMUserInterface_Qt::disableOptions()
@@ -690,6 +695,7 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 	setupUi(this);
 	this->manager = manager;
 
+#ifdef INTEGRATED_EFOTO
 	viewer = new SeparatedStereoViewer(0);
 	viewer->blockOpen();
 	viewer->blockSave();
@@ -698,6 +704,20 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 	viewer->getRightMarker().setToOnlyEmitClickedMode();
 	connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 	connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+
+    Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
+    viewer->getLeftMarker().changeMarker(mark);
+    viewer->getRightMarker().changeMarker(mark);
+
+    setCentralWidget(viewer);
+
+    // Create image marks
+    mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
+    mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
+    mark_empty = new Marker(SymbolsResource::getText(""));
+
+#endif //INTEGRATED_EFOTO
+
 	connect(saveButton,SIGNAL(clicked()),this,SLOT(saveSeeds()));
 	connect(loadButton,SIGNAL(clicked()),this,SLOT(loadSeeds()));
 	connect(addButton,SIGNAL(clicked()),this,SLOT(onAddButtonClicked()));
@@ -709,20 +729,11 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 	connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
 	connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
 
-	Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
-	viewer->getLeftMarker().changeMarker(mark);
-	viewer->getRightMarker().changeMarker(mark);
-
-	setCentralWidget(viewer);
-
-	// Create image marks
-	mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
-	mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
-	mark_empty = new Marker(SymbolsResource::getText(""));
-
 	// Copy seed and pair lists
 	pw.setAllowClose(false);
+#ifdef INTEGRATED_EFOTO
 	manager->getPointList(seeds,pairs);
+#endif //INTEGRATED_EFOTO
 	addPairs();
 	updateData(0);
 
@@ -751,6 +762,7 @@ int SeedEditorUserInterface_Qt::findKey(int seed_id)
  */
 void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 {
+#ifdef INTEGRATED_EFOTO
 	checkSelectedSeeds();
 
 	if (sel_seeds.size() < 1)
@@ -793,6 +805,7 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 		seeds.get(seed_id)->right_x = double(p.x());
 		seeds.get(seed_id)->right_y = double(p.y());
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -800,6 +813,7 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
  */
 void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
 {
+#ifdef INTEGRATED_EFOTO
 	checkSelectedSeeds();
 
 	if (sel_seeds.size() != 1)
@@ -821,10 +835,12 @@ void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
 	viewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(x2,y2));
 
 	viewer->update();
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
 {
+#ifdef INTEGRATED_EFOTO
 	int i = comboBox1->currentIndex();
 
 	deque<int> listPairs = manager->getImagesPairs();
@@ -834,10 +850,12 @@ void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
 	int no_imgs = listAllImages.size();
 	left_id = 1 + (listPairs.at(i) % no_imgs);
 	right_id = 1 + (listPairs.at(i) / no_imgs);
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::onAddButtonClicked()
 {
+#ifdef INTEGRATED_EFOTO
 	// Add new line
 	int key = tableWidget->rowCount();
 	QTableWidgetItem *newItem;
@@ -869,10 +887,12 @@ void SeedEditorUserInterface_Qt::onAddButtonClicked()
 	viewer->getRightMarker().insertMark(QPointF(-1,-1), key, "", mark_empty);
 
 	no_seeds++;
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
 {
+#ifdef INTEGRATED_EFOTO
 	checkSelectedSeeds();
 
 	// No items selected
@@ -904,6 +924,7 @@ void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
 	addSeedsAndTable();
 
 	viewer->update();
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -965,6 +986,7 @@ void SeedEditorUserInterface_Qt::onCheckBoxChanged(int state)
 
 void SeedEditorUserInterface_Qt::closeOk()
 {
+#ifdef INTEGRATED_EFOTO
 	// Check if there are no unmeasured points
 	if (seeds.hasEmptyPairs())
 	{
@@ -976,6 +998,7 @@ void SeedEditorUserInterface_Qt::closeOk()
 	manager->overwriteSeedsList(seeds);
 
 	close();
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -983,6 +1006,7 @@ void SeedEditorUserInterface_Qt::closeOk()
  */
 void SeedEditorUserInterface_Qt::addPairs()
 {
+#ifdef INTEGRATED_EFOTO
 	deque<int> listPairs = manager->getImagesPairs();
 	deque<Image*> listAllImages = manager->getImages();
 
@@ -1003,10 +1027,12 @@ void SeedEditorUserInterface_Qt::addPairs()
 		txt << "Images " << str_left << " and " << str_right;
 		comboBox1->addItem(QString::fromAscii((char *)txt.str().c_str()));
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::saveSeeds()
 {
+#ifdef INTEGRATED_EFOTO
 	QString filename;
 
 	filename = QFileDialog::getSaveFileName(this, tr("Save seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
@@ -1022,10 +1048,12 @@ void SeedEditorUserInterface_Qt::saveSeeds()
 	seeds.save((char *)filename.toStdString().c_str(), 0);
     // Expanção do XML
     manager->addSeedsToXML(filename.toStdString());
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::loadSeeds()
 {
+#ifdef INTEGRATED_EFOTO
 	QString filename;
 
 	filename = QFileDialog::getOpenFileName(this, tr("Load seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
@@ -1042,6 +1070,7 @@ void SeedEditorUserInterface_Qt::loadSeeds()
 
 	// Update data
 	updateData(comboBox1->currentIndex());
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::onComboBox1Changed(int index)
@@ -1054,6 +1083,7 @@ void SeedEditorUserInterface_Qt::onComboBox1Changed(int index)
  */
 void SeedEditorUserInterface_Qt::addMatchingPoints()
 {
+#ifdef INTEGRATED_EFOTO
 	MatchingPoints *mp;
 	QPointF left_coord, right_coord;
 	int left_id, right_id;
@@ -1087,6 +1117,7 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
 	pw.hide();
 
 	pairsLabel->setText(QString::number(no_pairs)+"/"+QString::number(pairs.size()));
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -1095,6 +1126,7 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
  */
 void SeedEditorUserInterface_Qt::addSeedsAndTable()
 {
+#ifdef INTEGRATED_EFOTO
 	MatchingPoints *mp;
 	QPointF left_coord, right_coord;
 	int left_id, right_id;
@@ -1156,10 +1188,12 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
 	}
 
 	seedsLabel->setText(QString::number(no_seeds)+"/"+QString::number(seeds.size())+"  ");
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::updateMarks()
 {
+#ifdef INTEGRATED_EFOTO
 	//
 	//  Clear marks
 	//
@@ -1185,10 +1219,12 @@ void SeedEditorUserInterface_Qt::updateMarks()
 	// Update viewer
 	//
 	viewer->update();
+#endif //INTEGRATED_EFOTO
 }
 
 void SeedEditorUserInterface_Qt::updateData(int i)
 {
+#ifdef INTEGRATED_EFOTO
 	//
 	// Update current images
 	//
@@ -1209,6 +1245,7 @@ void SeedEditorUserInterface_Qt::updateData(int i)
 	// Update marks
 	//
 	updateMarks();
+#endif //INTEGRATED_EFOTO
 }
 
 } // namespace efoto

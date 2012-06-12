@@ -3,7 +3,6 @@
 
 #include "ui_SRForm.h"
 #include "SRUserInterface.h"
-#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "FlightDirectionForm.h"
 
@@ -11,6 +10,10 @@
 #include <QGridLayout>
 #include <QInputDialog>
 #include <QStandardItemModel>
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -52,14 +55,18 @@ protected:
 	SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SRUserInterface_Qt();
 	QWidget *windowReport;
-	//ImageView *oldImageView;
-	Marker *markOn;
-	Marker *markOff;
-	SingleViewer *imageView;
+    //ImageView *oldImageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	bool flightAvailable;
 	FlightDirectionForm *flightDirectionForm;
+
+#ifdef INTEGRATED_EFOTO
+    Marker *markOn;
+    Marker *markOff;
+    SingleViewer *imageView;
+#endif //INTEGRATED_EFOTO
+
 	void closeEvent(QCloseEvent *e);
 
 public:
