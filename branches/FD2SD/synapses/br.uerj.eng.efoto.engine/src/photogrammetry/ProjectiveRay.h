@@ -50,7 +50,7 @@ public:
 
         // Constructors
         //
-        ProjectiveRay(Image* myImage);
+        ProjectiveRay(Image* myImage = NULL);
 
         // Other methods
         //

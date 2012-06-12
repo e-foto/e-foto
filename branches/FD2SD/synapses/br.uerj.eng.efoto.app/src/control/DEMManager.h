@@ -60,18 +60,39 @@ class DEMManager : public ProgressPublisher
 	double over_it_dist;
 	DEMUserInterface* myInterface;
 	EFotoManager* manager;
+    deque<int> listPairs;
+
+#ifdef INTEGRATED_EFOTO
 	deque<Image*> listAllImages;
-	deque<Point*> listAllPoints;
-	deque<int> listPairs;
+    deque<Point*> listAllPoints;
 	deque<ExteriorOrientation*> listEOs;
+    MatchingPointsList seeds, pairs;
+    ImageMatching *im;
+    DemGrid *grid;
+    StereoPair sp;
+
+    /**
+    * \brief Método privado que retorna um ponteiro para uma instância Image.
+    */
+    Image * getImage(int);
+    /**
+    * \brief Metodo que realiza uma reamostragem nas coordenadas dos pontos, caso exista uma redução de qualidade da imagem. As coordenadas dos pontos devem ser ajustadas para a imagem em dimensoes reduzidas. Depois da correlacao, as coordenadas devem ser corrigidas por um fator igual a 1/taxa de reamostragem.
+    */
+    void resamplePoints(MatchingPointsList *list, double resample);
+
+    /**
+    * \brief Método que converte pontos e linhas em lista de pares
+    * \param df - feição de onde serão extraidos os pontos e linhas
+    * \param mpl - lista a ser preenchida
+    * \param usePPolygons - determina o uso de linhas dos poligonos
+    */
+    void addFeaturesToPairList(Features* df, MatchingPointsList *mpl, bool usePolygons = false);
+#endif //INTEGRATED_EFOTO
+
 	/**
 	* \brief Método privado que atualiza os número de sementes de dados.
 	*/
-	void updateNoSeeds();
-	/**
-	* \brief Método privado que retorna um ponteiro para uma instância Image.
-	*/
-	Image * getImage(int);
+    void updateNoSeeds();
 	/**
 	* \brief Método privado que refaz a lista de pontos do projeto.
 	*/
@@ -79,8 +100,7 @@ class DEMManager : public ProgressPublisher
 	/**
 	* \brief Método privado que conecta pontos às imagens correspondentes.
 	*/
-	bool connectImagePoints();
-	MatchingPointsList seeds, pairs;
+    bool connectImagePoints();
 	/**
 	* \brief Método privado que retorna os identificadores das imagens através do identificador do par dessas imagens.
 	*/
@@ -88,11 +108,7 @@ class DEMManager : public ProgressPublisher
 	/**
 	* \brief Método privado que adiciona um par à interface.
 	*/
-	void addPairsToInterface();
-	/**
-	* \brief Metodo que realiza uma reamostragem nas coordenadas dos pontos, caso exista uma redução de qualidade da imagem. As coordenadas dos pontos devem ser ajustadas para a imagem em dimensoes reduzidas. Depois da correlacao, as coordenadas devem ser corrigidas por um fator igual a 1/taxa de reamostragem.
-	*/
-	void resamplePoints(MatchingPointsList *list, double resample);
+    void addPairsToInterface();
 	/**
 	* \brief Método que adiciona pontos de controle, fotogramétricos e de verificação à lista de sementes.
 	*/
@@ -118,23 +134,7 @@ class DEMManager : public ProgressPublisher
 	*/
 	bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
 
-	/*
-	 * This function converts points and lines to pair list
-	 * usePolygons enable using polygons too
-	 * The pair list is not cleared !
-	 */
-	/**
-	* \brief Método que converte pontos e linhas em lista de pares
- * \param df - feição de onde serão extraidos os pontos e linhas
- * \param mpl - lista a ser preenchida
- * \param usePPolygons - determina o uso de linhas dos poligonos
-	*/
-	void addFeaturesToPairList(Features* df, MatchingPointsList *mpl, bool usePolygons = false);
-
-	ImageMatching *im;
-	DemGrid *grid;
-	Features *df;
-	StereoPair sp;
+    Features *df;
 	int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step, ncc_temp_max_size;
 	double dem_total_elapsed_time;
 
@@ -145,15 +145,33 @@ public:
 	/**
 	* \brief Construtor padrão.
 	*/
-	DEMManager();
-	/**
-	* \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
-	*/
-	DEMManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    DEMManager();
 	/**
 	* \brief Destrutor padrão.
 	*/
 	~DEMManager();
+
+
+
+#ifdef INTEGRATED_EFOTO
+    /**
+    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
+    */
+    DEMManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    /**
+    * \brief Método que adiciona pares às sementes.
+    */
+    void getPointList(MatchingPointsList &sd, MatchingPointsList &pr);
+    /**
+    * \brief Método que retorna uma lista de instâncias da classe Image.
+    */
+    deque<Image*> getImages() { return listAllImages; }
+    /**
+    * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
+    */
+    void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); }
+#endif //INTEGRATED_EFOTO
+
 
 	// Association Methods
 	//
@@ -231,39 +249,27 @@ public:
 	/**
 	* \brief Método que altera o flag showImage. Se selecionado, após a extração do DEM ou interpolação da grade, uma janela surge mostrando os resultados.
 	*/
-	void setShowImage(int _state) { isShowImage = _state; };
+    void setShowImage(int _state) { isShowImage = _state; }
 	/**
 	* \brief Método que define a eliminação de pontos ruins.
 	*/
-	void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; };
+    void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; }
 	/**
 	* \brief Método que verifica se alguma operação foi cancelada.
 	*/
-	bool cancelFlag() { return cancel_flag; };
+    bool cancelFlag() { return cancel_flag; }
 	/**
 	* \brief Método que verifica se a DEM foi salva.
 	*/
-	bool isDemUnsaved() { return dem_unsaved; };
+    bool isDemUnsaved() { return dem_unsaved; }
 	/**
 	* \brief Método que verifica se a grade foi salva.
 	*/
-	bool isGridUnsaved() { return grid_unsaved; };
-	/**
-	* \brief Método que adiciona pares às sementes.
-	*/
-	void getPointList(MatchingPointsList &sd, MatchingPointsList &pr);
-	/**
-	* \brief Método que retorna uma lista de instâncias da classe Image.
-	*/
-	deque<Image*> getImages() { return listAllImages; };
-	/**
+    bool isGridUnsaved() { return grid_unsaved; }
+    /**
 	* \brief Método que retorna uma lista de pares de imagens.
 	*/
-	deque<int> getImagesPairs() { return listPairs; };
-	/**
-	* \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
-	*/
-	void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); };
+    deque<int> getImagesPairs() { return listPairs; }
 	/**
 	* \brief Método que carrega as feições do DEM.
 	*/
@@ -275,7 +281,7 @@ public:
 	/**
 	* \brief Método que muda os parâmetros do LSM e NCC.
 	*/
-	void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; };
+    void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; }
 	/**
 	* \brief Método que calcula a resolução do DEM.
 	*/

@@ -7,14 +7,17 @@
 #define ORTHOMANAGER_H
 
 #include "EObject.h"
+#include "Matrix.h"
 #include <deque>
+
+#ifdef INTEGRATED_EFOTO
 #include "Image.h"
 #include "ExteriorOrientation.h"
-#include "Matrix.h"
 #include "DemGrid.h"
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
 #include "Interpolation.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -40,14 +43,18 @@ class OrthoManager
 	bool status;
 	OrthoUserInterface* myInterface;
 	EFotoManager* manager;
+
+#ifdef INTEGRATED_EFOTO
 	deque<Image*> listAllImages;
-	deque<ExteriorOrientation*> listEOs;
+    deque<ExteriorOrientation*> listEOs;
 	DemGrid *grid;
+    Orthorectification *ortho;
+#endif //INTEGRATED_EFOTO
+
 	/**
 	* \brief Método que inclui os dados das imagens no formulário.
 	*/
-	void addImagesToForm();
-	Orthorectification *ortho;
+    void addImagesToForm();
 	/**
 	* \brief Método que executa a ortoimagem para uma imagem.
 	*/
@@ -67,15 +74,18 @@ public:
 	/**
 	* \brief Construtor padrão.
 	*/
-	OrthoManager();
-	/**
-	* \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
-	*/
-	OrthoManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    OrthoManager();
 	/**
 	* \brief Destrutor padrão.
 	*/
 	~OrthoManager();
+
+#ifdef INTEGRATED_EFOTO
+    /**
+    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
+    */
+    OrthoManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+#endif //INTEGRATED_EFOTO
 
 	// Association Methods
 	//

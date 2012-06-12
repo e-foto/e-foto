@@ -3,12 +3,14 @@
 
 #include "ui_FotoTriForm.h"
 #include "PTUserInterface.h"
-//#include "ImageView.h"
 #include "LoadingScreen.h"
 #include "ETableWidget.h"
 #include "WindowsSelectPage.h"
-#include "ImageViewers.h"
 #include "FlightDirectionForm.h"
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -34,12 +36,13 @@ protected:
 	PTUserInterface_Qt(PTManager* manager,QWidget* parent=0, Qt::WindowFlags fl = Qt::Window);
 	~PTUserInterface_Qt();
 
-	//StereoView *viewStereo;
+#ifdef INTEGRATED_EFOTO
     SeparatedStereoViewer* viewer;
     Marker* mark;
     Marker* selectedMark;
     Marker* photoMark;
     Marker* photoSelectedMark;
+#endif //INTEGRATED_EFOTO
 
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;
@@ -189,6 +192,7 @@ public slots:
  */
 	void updateCoordinatesInfo(QPointF* pixel);
 
+#ifdef INTEGRATED_EFOTO
 	/**
  * \brief Metodo que reponsavel por atualizar no display a posição da marca de um ponto
  * \param display : Objeto display a ser atualizado
@@ -204,6 +208,7 @@ public slots:
  */
 	void markAllpoints(SingleDisplay *display);
 	void clearAllMarks(SingleDisplay *display);
+#endif //INTEGRATED_EFOTO
 
 	/**
  * \brief Metodo que exporta os pontos e croqui do bloco para um arquivo xml que o GoogleEarth interprete

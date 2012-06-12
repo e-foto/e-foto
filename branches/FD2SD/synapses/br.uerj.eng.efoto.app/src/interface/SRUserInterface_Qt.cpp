@@ -84,6 +84,7 @@ void SRUserInterface_Qt::languageChange()
 
 void SRUserInterface_Qt::init()
 {
+#ifdef INTEGRATED_EFOTO
 	// Insert image into layout
 	QWidget* centralwidget = new QWidget(this);
 
@@ -111,6 +112,7 @@ void SRUserInterface_Qt::init()
 	// Make some connections
 	imageView->getMarker()->setToOnlyEmitClickedMode();
     connect(imageView->getMarker(),SIGNAL(clicked(QPointF)), this, SLOT(receivePoint(QPointF)));
+#endif //INTEGRATED_EFOTO
 }
 
 void SRUserInterface_Qt::informState()
@@ -123,6 +125,7 @@ void SRUserInterface_Qt::informState()
 
 void SRUserInterface_Qt::receivePoint(QPointF p)
 {
+#ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
     imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
@@ -138,6 +141,7 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 
 	table1->selectRow(table1->currentIndex().row() + 1);
 	testActivateSR();
+#endif //INTEGRATED_EFOTO
 }
 
 void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
@@ -177,8 +181,10 @@ void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
 
 void SRUserInterface_Qt::makeRepaint()
 {
+#ifdef INTEGRATED_EFOTO
 	imageView->repaint();
 	table1->repaint();
+#endif //INTEGRATED_EFOTO
 }
 
 void SRUserInterface_Qt::activeSetMode()
@@ -213,6 +219,7 @@ bool SRUserInterface_Qt::measurePoint(int id, double col, double lin)
 
 void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
+#ifdef INTEGRATED_EFOTO
 	LoadingScreen::instance().show();
 	qApp->processEvents();
 	delete(imageView);
@@ -220,6 +227,7 @@ void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
 	delete(markOff);
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRUserInterface_Qt::calculateSR()
@@ -417,6 +425,7 @@ void SRUserInterface_Qt::acceptSR()
 
 void SRUserInterface_Qt::actualizeDisplayedPoints()
 {
+#ifdef INTEGRATED_EFOTO
 	for (int row = 0; row < points->rowCount() ;row++)
 	{
         if (points->item(row,7)->text().isEmpty() || points->data(points->index(row, 1)).toString() == "false")
@@ -428,10 +437,12 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 		else
 			imageView->getMarker()->insertMark(location, row+1, pointName, markOff);
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRUserInterface_Qt::exec()
 {
+#ifdef INTEGRATED_EFOTO
     //int numberOfPoints = manager->listImagePoints().size();
     int numberOfPoints = manager->listAllPoints().size();
 
@@ -506,6 +517,7 @@ bool SRUserInterface_Qt::exec()
 	//return false;
 	//delete(oldImageView);
 	return true;
+#endif //INTEGRATED_EFOTO
 }
 
 } // namespace efoto

@@ -4,10 +4,8 @@
 #include "ui_DemExtraction.h"
 #include "ui_SeedEditor.h"
 #include "DEMUserInterface.h"
-#include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
-#include "MatchingPoints.h"
 #include "ProgressWindow_Qt.h"
 #include <QPoint>
 #include <QGridLayout>
@@ -16,6 +14,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QList>
+
+#ifdef INTEGRATED_EFOTO
+#include "ImageViewers.h"
+#include "MatchingPoints.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -87,13 +90,13 @@ public:
 	void setGridData(double Xi, double Yi, double Xf, double Yf, double Zi, double Zf, double res_x, double res_y, int width, int height);
 	void setProgress(int);
 	void setMathcingHistogram(int *);
-	void setAllowClose(bool _b) { allow_close = _b; };
+    void setAllowClose(bool _b) { allow_close = _b; }
 	void showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale = true);
 	void showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale = true);
 	void disableOptions();
 	void enableOptions();
 	void showFatalErrorMessage(QString msg, bool abort);
-	void showErrorMessage(QString msg) { showFatalErrorMessage(msg, false); };
+    void showErrorMessage(QString msg) { showFatalErrorMessage(msg, false); }
 	void setElapsedTime(double t, int opt);
 };
 
@@ -102,9 +105,13 @@ class SeedEditorUserInterface_Qt : public QMainWindow, public Ui::SeedWindow
 private:
 	Q_OBJECT
 	DEMManager *manager;
+
+#ifdef INTEGRATED_EFOTO
 	SeparatedStereoViewer* viewer;
 	MatchingPointsList seeds, pairs;
 	Marker *mark_seeds, *mark_pairs, *mark_empty;
+#endif //INTEGRATED_EFOTO
+
 	ProgressWindow pw;
 	void getImagesIds(int &left_id, int &right_id);
 	void updateMarks();

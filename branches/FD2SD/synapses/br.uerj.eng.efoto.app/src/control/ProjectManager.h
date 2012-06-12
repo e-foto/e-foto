@@ -10,7 +10,10 @@
 #include "ETreeModel.h"
 #include "PositionMatrix.h"
 #include "ProjectUserInterface.h"
+
+#ifdef INTEGRATED_EFOTO
 #include "XmlUpdater.h"
+#endif //INTEGRATED_EFOTO
 
 namespace br {
 namespace uerj {
@@ -32,9 +35,12 @@ class ProjectManager
 
 	EFotoManager* manager;
 	ProjectUserInterface* myInterface;
-	//FILE* xmlFile; // attribute banned for lack of use
-	XmlUpdater* updater;
+    //FILE* xmlFile; // attribute banned for lack of use
 	ETreeModel* treeModel;
+
+#ifdef INTEGRATED_EFOTO
+    XmlUpdater* updater;
+#endif //INTEGRATED_EFOTO
 
 public:
 	/**

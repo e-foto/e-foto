@@ -17,39 +17,94 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+
+#ifdef INTEGRATED_EFOTO
+
+DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
+{
+    this->manager = manager;
+    started = false;
+    status = false;
+    cancel_flag = false;
+    listAllImages = images;
+    listEOs = eos;
+    grid = NULL;
+    im = NULL;
+    df = NULL;
+    isShowImage = false;
+    dem_unsaved = false;
+    grid_unsaved = false;
+    elim_bad_pts = false;
+    bb_empty = true;
+        lsm_temp_growth_step = 2;
+        lsm_temp_max_size = 50;
+        ncc_temp_growth_step = 2;
+        ncc_temp_max_size = 50;
+    setListPoint();
+}
+
+Image * DEMManager::getImage(int id)
+{
+    for (int i=0; i<listAllImages.size(); i++)
+    {
+        if (listAllImages.at(i)->getId() == id)
+            return listAllImages.at(i);
+    }
+
+    return NULL;
+}
+
+void DEMManager::addFeaturesToPairList(Features *features, MatchingPointsList *mpl, bool usePolygons)
+{
+    // Search for features
+    for (int f=1; f<=features->getNumFeatures(); f++)
+    {
+        Feature *df =  features->getFeatureLink(f);
+
+        if (!usePolygons && df->feature_type == 3)
+            continue;
+
+        // Add point
+        for (int k=0; k<df->points.size(); k++)
+            mpl->add(df->points.at(k).X, df->points.at(k).Y, df->points.at(k).Z);
+
+    }
+}
+
+void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
+{
+    MatchingPoints *mp;
+    for (int i=1; i<=list->size(); i++)
+    {
+        mp = list->get(i);
+        mp->left_x = mp->left_x * resample;
+        mp->left_y = mp->left_y * resample;
+        mp->right_x = mp->right_x * resample;
+        mp->right_y = mp->right_y * resample;
+    }
+}
+
+void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
+{
+    sd = seeds;
+    pr = pairs;
+}
+
+#endif //INTEGRATED_EFOTO
+
+
 DEMManager::DEMManager()
 {
 	started = false;
 	status = false;
 }
 
-DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
-{
-	this->manager = manager;
-	started = false;
-	status = false;
-	cancel_flag = false;
-	listAllImages = images;
-	listEOs = eos;
-	grid = NULL;
-	im = NULL;
-	df = NULL;
-	isShowImage = false;
-	dem_unsaved = false;
-	grid_unsaved = false;
-	elim_bad_pts = false;
-	bb_empty = true;
-		lsm_temp_growth_step = 2;
-		lsm_temp_max_size = 50;
-		ncc_temp_growth_step = 2;
-		ncc_temp_max_size = 50;
-	setListPoint();
-}
-
 DEMManager::~DEMManager()
 {
+#ifdef INTEGRATED_EFOTO
 	if (grid != NULL)
 		delete grid;
+#endif //INTEGRATED_EFOTO
 }
 
 // Association Methods
@@ -97,19 +152,9 @@ void DEMManager::returnProject()
 	manager->reloadProject();
 }
 
-Image * DEMManager::getImage(int id)
-{
-	for (int i=0; i<listAllImages.size(); i++)
-	{
-		if (listAllImages.at(i)->getId() == id)
-			return listAllImages.at(i);
-	}
-
-	return NULL;
-}
-
 void DEMManager::setListPoint()
 {
+#ifdef INTEGRATED_EFOTO
 	EDomElement xmlPoints(manager->getProject()->getXml("points"));
 	deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 	for(int i=0;i<allPoints.size();i++)
@@ -118,10 +163,12 @@ void DEMManager::setListPoint()
 		if (point != NULL)
 			listAllPoints.push_back(point);
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 bool DEMManager::connectImagePoints() // Deprecated
 {
+#ifdef INTEGRATED_EFOTO
 	if (!(started))
 	{
 		qApp->processEvents();
@@ -152,12 +199,15 @@ bool DEMManager::connectImagePoints() // Deprecated
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMManager::updateNoSeeds()
 {
+#ifdef INTEGRATED_EFOTO
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->updateSeedsLabel(seeds.size());
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -214,6 +264,7 @@ bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolera
 
 int DEMManager::getPairs()
 {
+#ifdef INTEGRATED_EFOTO
 	//
 	// List Pairs description (0 - N-1):
 	//
@@ -310,12 +361,14 @@ int DEMManager::getPairs()
 	}
 
 	addPairsToInterface();
+#endif //INTEGRATED_EFOTO
 
 	return 1;
 }
 
 void DEMManager::addPairsToInterface()
 {
+#ifdef INTEGRATED_EFOTO
 	// Add pairs to the interface
 	int left_id, right_id;
 	string str_left, str_right;
@@ -331,11 +384,13 @@ void DEMManager::addPairsToInterface()
 		dui->addImagePair((char *)txt.str().c_str());
 	}
 	dui->setStatus((char *)"None");
+#endif //INTEGRATED_EFOTO
 }
 
 // Internal function. Pos from 0 - N-1.
 void DEMManager::getImagesId(int pos, int &left, int &right)
 {
+#ifdef INTEGRATED_EFOTO
 	// Check pos
 	left = -1;
 	right = -1;
@@ -346,6 +401,7 @@ void DEMManager::getImagesId(int pos, int &left, int &right)
 	int no_imgs = listAllImages.size();
 	left = 1 + (listPairs.at(pos) % no_imgs);
 	right = 1 + (listPairs.at(pos) / no_imgs);
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, double downs)
@@ -395,8 +451,10 @@ void DEMManager::setCancel()
 {
 	cancel_flag = true;
 
+#ifdef INTEGRATED_EFOTO
 	if (im != NULL)
 		im->setCancel();
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
@@ -421,6 +479,7 @@ void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
 
 void DEMManager::createInitialSeeds()
 {
+#ifdef INTEGRATED_EFOTO
 	// Clear seeds list before adding measured point as seeds
 	seeds.clear();
 
@@ -459,6 +518,7 @@ void DEMManager::createInitialSeeds()
 	// Update informations
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->setAutoExtInfo(seeds.size(),0,0.0,0.0);
+#endif //INTEGRATED_EFOTO
 }
 
 /*
@@ -467,23 +527,29 @@ void DEMManager::createInitialSeeds()
 
 void DEMManager::saveDem(char * filename, int fileType)
 {
+#ifdef INTEGRATED_EFOTO
 	pairs.save(filename,fileType);
 	// Expanção do XML
 	addPairsToXML(string(filename));
 
 	dem_unsaved = false;
+
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMManager::saveDemGrid(char * filename, int fileType)
 {
+#ifdef INTEGRATED_EFOTO
 	grid->saveDem(filename,fileType);
 	grid_unsaved = false;
 	// Expanção do XML
 	addDEMToXML(string(filename));
+#endif //INTEGRATED_EFOTO
 }
 
 int DEMManager::loadDem(char * filename, int fileType)
 {
+#ifdef INTEGRATED_EFOTO
 	pairs.clear();
 	if (pairs.load(filename,fileType) != 1)
 		return 0;
@@ -510,13 +576,14 @@ int DEMManager::loadDem(char * filename, int fileType)
 	}
 
 	dem_unsaved = false;
+#endif //INTEGRATED_EFOTO
 
 	return 1;
 }
 
 int DEMManager::loadDemGrid(char * filename, int fileType)
 {
-
+#ifdef INTEGRATED_EFOTO
 		// Create custom grid. Load will fix these values.
 		if (grid != NULL)
 			delete grid;
@@ -539,29 +606,14 @@ int DEMManager::loadDemGrid(char * filename, int fileType)
 				dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
 				delete img;
 		}
+#endif //INTEGRATED_EFOTO
 
 		return 1;
 }
 
-void DEMManager::addFeaturesToPairList(Features *features, MatchingPointsList *mpl, bool usePolygons)
-{
-	// Search for features
-	for (int f=1; f<=features->getNumFeatures(); f++)
-	{
-		Feature *df =  features->getFeatureLink(f);
-
-		if (!usePolygons && df->feature_type == 3)
-			continue;
-
-		// Add point
-		for (int k=0; k<df->points.size(); k++)
-			mpl->add(df->points.at(k).X, df->points.at(k).Y, df->points.at(k).Z);
-
-	}
-}
-
 int DEMManager::loadDemFeature(char *filename)
 {
+#ifdef INTEGRATED_EFOTO
 	if (df != NULL)
 		delete df;
 
@@ -592,6 +644,7 @@ int DEMManager::loadDemFeature(char *filename)
 	dui->progressBar->setValue(0);
 	dui->setManualExtInfo(ptLineList.size(),Zi,Zf);
 	dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
+#endif //INTEGRATED_EFOTO
 
 	return 1;
 }
@@ -602,6 +655,8 @@ int DEMManager::loadDemFeature(char *filename)
 
 void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
 {
+
+#ifdef INTEGRATED_EFOTO
 	double Zi, Zf;
 
 	cancel_flag = false;
@@ -689,10 +744,12 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 				dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 void DEMManager::calcPointsXYZ()
 {
+#ifdef INTEGRATED_EFOTO
 	// Calculate pair list XYZ coordinates
 	MatchingPoints *mp;
 	SpatialIntersection spc_inter;
@@ -715,23 +772,12 @@ void DEMManager::calcPointsXYZ()
 		mp->Y = object.getY();
 		mp->Z = object.getZ();
 	}
-}
-
-void DEMManager::resamplePoints(MatchingPointsList *list, double resample)
-{
-	MatchingPoints *mp;
-	for (int i=1; i<=list->size(); i++)
-	{
-		mp = list->get(i);
-		mp->left_x = mp->left_x * resample;
-		mp->left_y = mp->left_y * resample;
-		mp->right_x = mp->right_x * resample;
-		mp->right_y = mp->right_y * resample;
-	}
+#endif //INTEGRATED_EFOTO
 }
 
 int DEMManager::extractDEM(int option, bool clearMList)
 {
+#ifdef INTEGRATED_EFOTO
 	cancel_flag = false;
 
 		// Reset extraction time
@@ -817,12 +863,14 @@ int DEMManager::extractDEM(int option, bool clearMList)
 				dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
 		delete img;
 	}
+#endif //INTEGRATED_EFOTO
 
 	return 1;
 }
 
 void DEMManager::extractDEMPair(int pair)
 {
+#ifdef INTEGRATED_EFOTO
 	if (pair < 0 || pair > listPairs.size()-1)
 		return;
 
@@ -887,16 +935,12 @@ void DEMManager::extractDEMPair(int pair)
 		dem_total_elapsed_time += im->getElapsedTime();
 
 	delete im;
-}
-
-void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
-{
-	sd = seeds;
-	pr = pairs;
+#endif //INTEGRATED_EFOTO
 }
 
 string DEMManager::getDemQuality(char *filename, int option)
 {
+#ifdef INTEGRATED_EFOTO
 	MatchingPointsList mpl;
 	Features df2;
 
@@ -916,10 +960,12 @@ string DEMManager::getDemQuality(char *filename, int option)
 		return "";
 
 	return grid->calculateDemQuality(mpl);
+#endif //INTEGRATED_EFOTO
 }
 
 double DEMManager::calculateDemRes(double ds)
 {
+#ifdef INTEGRATED_EFOTO
 		if (listAllImages.size() < 1)
 			return 0.0;
 
@@ -940,6 +986,7 @@ double DEMManager::calculateDemRes(double ds)
 		double resolution = resolution_mm * scale;
 
 		return resolution*ds;
+#endif //INTEGRATED_EFOTO
 }
 
 //#include <QDebug>

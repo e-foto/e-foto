@@ -5,13 +5,16 @@
 #include "SRManager.h"
 #include "EFotoManager.h"
 #include "EDom.h"
+#include "SRUserInterface_Qt.h"
+
+#ifdef INTEGRATED_EFOTO
 #include "Terrain.h"
 #include "SensorWithFiducialMarks.h"
 #include "Image.h"
 #include "Point.h"
 #include "InteriorOrientation.h"
 #include "SpatialRessection.h"
-#include "SRUserInterface_Qt.h"
+#endif //INTEGRATED_EFOTO
 
 // Constructors and destructors
 //
@@ -70,6 +73,7 @@ SRUserInterface* SRManager::getInterface()
 
 bool SRManager::measurePoint(int id, double col, double lin)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		Point* pointToMeasure = myImage->getPoint(id);
@@ -84,34 +88,42 @@ bool SRManager::measurePoint(int id, double col, double lin)
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 void SRManager::selectPoint(int id)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		mySR->selectPoint(id);
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 void SRManager::unselectPoint(int id)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		mySR->unselectPoint(id);
 	}
+#endif //INTEGRATED_EFOTO
 }
 
 deque<double> SRManager::pointToDetector(double col, double lin)
 {
+#ifdef INTEGRATED_EFOTO
 	deque<double> result;
 	result.push_back(myIO->imageToDetector(col, lin).getXi());
 	result.push_back(myIO->imageToDetector(col, lin).getEta());
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::removePoint(int id)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		Point* pointToRemove = myImage->getPoint(id);
@@ -123,10 +135,12 @@ bool SRManager::removePoint(int id)
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::insertPointOnImage(int id) // Deprecated
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		Point* pointToInsert = manager->getProject()->point(id);
@@ -139,10 +153,12 @@ bool SRManager::insertPointOnImage(int id) // Deprecated
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::removePointFromImage(int id)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		Point* pointToRemove = manager->getProject()->point(id);
@@ -154,10 +170,12 @@ bool SRManager::removePointFromImage(int id)
 		/* ERRO: ponto nÃ£o existe. */
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 deque<string> SRManager::listSelectedPoints()
 {
+#ifdef INTEGRATED_EFOTO
 	deque<string> result;
 	if (started)
 	{
@@ -174,10 +192,12 @@ deque<string> SRManager::listSelectedPoints()
 		}
 	}
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 deque<string> SRManager::listImagePoints()
 {
+#ifdef INTEGRATED_EFOTO
 	deque<string> result;
 	if (started)
 	{
@@ -193,10 +213,12 @@ deque<string> SRManager::listImagePoints()
 		}
 	}
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 deque<string> SRManager::listAllPoints()
 {
+#ifdef INTEGRATED_EFOTO
 	deque<string> result;
 	if (started)
 	{
@@ -217,10 +239,12 @@ deque<string> SRManager::listAllPoints()
 		}
 	}
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 deque<string> SRManager::pointData(int index)
 {
+#ifdef INTEGRATED_EFOTO
 	deque<string> result;
 	if (started)
 	{
@@ -242,15 +266,19 @@ deque<string> SRManager::pointData(int index)
 		}
 	}
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 unsigned int SRManager::countSelectedPoints()
 {
+#ifdef INTEGRATED_EFOTO
     return mySR->getSelectedPoints().size();
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::connectImagePoints()
 {
+#ifdef INTEGRATED_EFOTO
 	if (!(started)) /* Sim, esse método é executado antes do módulo ser iniciado, e não deve ser executado depois. */
 	{
 		EDomElement xmlPoints(manager->getProject()->getXml("points"));
@@ -270,6 +298,7 @@ bool SRManager::connectImagePoints()
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::updatePointsTable()
@@ -283,36 +312,43 @@ bool SRManager::updatePointsTable()
 
 bool SRManager::flightDirection(int MarkId)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		mySR->selectFiducialMarkForFlightDirection(MarkId);
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::flightDirection(double col, double lin)
 {
+#ifdef INTEGRATED_EFOTO
 		if (started)
 		{
 				mySR->setPointForFlightDirection(col, lin);
 				return true;
 		}
 		return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::flightDirection(double kappa0)
 {
+#ifdef INTEGRATED_EFOTO
 		if (started)
 		{
 				mySR->setFlightDirection(kappa0);
 				return true;
 		}
 		return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrecision)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		if (mySR->countSelectedPoints() > 3)
@@ -323,18 +359,22 @@ bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrec
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::exteriorDone()
 {
+#ifdef INTEGRATED_EFOTO
 	if (mySR->getXa().getRows() != 6)
 		return false;
 	return true;
+#endif //INTEGRATED_EFOTO
 }
 
 deque<string> SRManager::makeReport()
 {
 
+#ifdef INTEGRATED_EFOTO
 	// Modificado em 27/06/2011 a pedido do Prof Nunes para exibir La e Sigma La se existirem. A saber o codigo anterior exibia Lb e sigma de Lb.
 	deque<string> result;
 	result.push_back(mySR->getXa().xmlGetData());
@@ -349,10 +389,12 @@ deque<string> SRManager::makeReport()
 	else
 		result.push_back("no");
 	return result;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::exec()
 {
+#ifdef INTEGRATED_EFOTO
 	if (manager != NULL && mySensor != NULL && myFlight != NULL && myImage != NULL && myIO != NULL && mySR != NULL)
 		if (myImage->getSensorId() == mySensor->getId() && myImage->getFlightId() == myFlight->getId() &&
 				myFlight->getSensorId() == mySensor->getId() && myIO->getImageId() == myImage->getId() &&
@@ -377,15 +419,18 @@ bool SRManager::exec()
 			}
 		}
 	return status;
+#endif //INTEGRATED_EFOTO
 }
 
 int SRManager::getId()
 {
+#ifdef INTEGRATED_EFOTO
 	if (myImage != NULL)
 	{
 		return myImage->getId();
 	}
 	return 0;
+#endif //INTEGRATED_EFOTO
 }
 
 void SRManager::returnProject()
@@ -395,6 +440,7 @@ void SRManager::returnProject()
 
 bool SRManager::save(string path)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		FILE* pFile;
@@ -426,10 +472,12 @@ bool SRManager::save(string path)
 		return true;
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 bool SRManager::load(string path)
 {
+#ifdef INTEGRATED_EFOTO
 	if (started)
 	{
 		FILE* pFile;
@@ -470,10 +518,12 @@ bool SRManager::load(string path)
 		free (buffer);
 	}
 	return false;
+#endif //INTEGRATED_EFOTO
 }
 
 string SRManager::getImageFile()
 {
+#ifdef INTEGRATED_EFOTO
 	if (myImage->getFilepath() == ".")
 		return myImage->getFilename();
 	else
@@ -483,7 +533,8 @@ string SRManager::getImageFile()
 		result += "/";
 		result += myImage->getFilename();
 		return result;
-	}
+    }
+#endif //INTEGRATED_EFOTO
 }
 
 void SRManager::acceptSR()
