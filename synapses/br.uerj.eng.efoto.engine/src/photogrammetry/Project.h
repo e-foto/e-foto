@@ -14,14 +14,20 @@
 #include "SpatialRessection.h"
 #include "Dummies.h"
 
+#ifdef SYNAPSE_EFOTO
+#include "IProject.h"
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
 class Project
+#ifdef SYNAPSE_EFOTO
+: public engine::IProject
+#endif //SYNAPSE_EFOTO
 {
-
 	string xmlData;
 	string xmlState;
 
@@ -133,7 +139,7 @@ public:
 	/**
 	* \brief Destrutor padrão.
 	*/
-	~Project();
+    ~Project() {}
 
 	ProjectHeader* header();
 

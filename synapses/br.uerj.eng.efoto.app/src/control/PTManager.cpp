@@ -780,8 +780,8 @@ void PTManager::saveResults()
 	saveBundleAdjustment();
     saveImages();
 	saveMarks();
-	setMarksSavedState(true);
-	efotoManager->setSavedState(false);
+    setMarksSavedState(true);
+    //rever
 }
 
 Matrix PTManager::getMVC()
@@ -957,8 +957,8 @@ string PTManager::getUsedImagesXml()
 void PTManager::setMarksSavedState(bool marksState)
 {
 	marksSaveState=marksState;
-	if (marksSaveState)
-		efotoManager->setSavedState(false);
+    //if (marksSaveState)
+        //efotoManager->setSavedState(false); //rever
 }
 
 bool PTManager::getMarksSavedState()

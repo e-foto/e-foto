@@ -17,6 +17,9 @@ Photogrammetry::~Photogrammetry()
 
 bool Photogrammetry::start()
 {
+    manager.setInterfaceType("Qt");
+    manager.exec();
+
 	//TODO Automatically generated implementation
 	return true;
 }

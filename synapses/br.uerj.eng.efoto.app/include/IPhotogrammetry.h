@@ -2,6 +2,8 @@
 #define BR_UERJ_ENG_EFOTO_APP_IPHOTOGRAMMETRY_H
 
 #include "ISynapse.h"
+#include <string>
+using namespace std;
 
 namespace br {
 namespace uerj {

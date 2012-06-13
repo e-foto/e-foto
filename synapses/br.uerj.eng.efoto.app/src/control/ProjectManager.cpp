@@ -548,8 +548,7 @@ bool ProjectManager::reload()
 	if (manager != NULL)
 	{
 		if (myInterface != NULL)
-		{
-			manager->getSavedState();
+        {
 			return myInterface->exec();
 		}
 		return false;

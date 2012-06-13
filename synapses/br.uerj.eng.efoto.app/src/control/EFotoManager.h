@@ -12,7 +12,8 @@
 #include "Project.h"
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
-	// Aqui vai entrar uma referência para a Project na sinapse engine
+#include <IPhotogrammetricEngine.h>
+#include <IProject.h>
 #endif //SYNAPSE_EFOTO
 
 namespace br {
@@ -39,8 +40,12 @@ class EFotoManager
 {
 
 #ifdef INTEGRATED_EFOTO
-	Project project;
-#endif INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IPhotogrammetricEnginePtr enginePtr;
+    engine::IProject* project;
+#endif //SYNAPSE_EFOTO
 
 	int nextModule;
 	int nextImage;
@@ -57,14 +62,6 @@ class EFotoManager
 	OrthoManager* ortho;
 	SPManager* sp;
 
-	//Terrain* theTerrain;
-	//deque<Sensor*> sensors;
-	//deque<Flight*> flights;
-	//deque<Image*> images;
-	//deque<Point*> points;
-	//deque<InteriorOrientation*> IOs;
-	//deque<ExteriorOrientation*> EOs;
-
 public:
 
 	/**
@@ -78,26 +75,6 @@ public:
 	~EFotoManager();
 
 	/**
-	* \brief Método para emitir o nome de classe.
-	* \return string	Retorna o nome de classe do objeto.
-	*/
-	string objectType(void);
-
-	/**
-	* \brief Método para emitir as associações de uma instância.
-	* \return string	Retorna vazio para esta classe.
-	* \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
-	*/
-	string objectAssociations(void);
-
-	/**
-	* \brief Método de teste para o nome/tipo de instância.
-	* \param s	Texto com o nome da classe que é esperado.
-	* \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
-	*/
-	bool is(string s);
-
-	/**
 	* \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
 	* \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe EFotoManager.
 	*/
@@ -108,18 +85,6 @@ public:
 	* \return string	Retorna o string contendo o xml para uma instância da classe EFotoManager.
 	*/
 	string getXml();
-
-	/**
-	* \brief Método usado após aceitar uma IO ou SR para setar como default que o projeto ainda não foi salvo.
-	* \param state Estado do projeto se foi ou não salvo.
-	*/
-	void setSavedState(bool state);
-
-	/**
-	* \brief Método que retorna se o projeto foi salvo ou não.
-	* \return bool Retorna verdadeiro caso o projeto tenha sido salvo. Retorna falso, caso contrário.
-	*/
-	bool getSavedState();
 
 	/**
 	* \brief Método que seta o tipo de interface em que o programa irá rodar.
@@ -232,8 +197,11 @@ public:
 	void stopPT();
 
 #ifdef INTEGRATED_EFOTO
-	Project* getProject() {return &project;}
+    Project* getProject() {return project;}
 #endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProject* getProject() {return project;}
+#endif //SYNAPSE_EFOTO
 };
 
 } // namespace efoto

@@ -9,10 +9,13 @@ namespace eng {
 namespace efoto {
 namespace engine {
 
+class IProject;
+
 class IPhotogrammetricEngine: public cortex::ISynapse
 {
 public:
 	virtual ~IPhotogrammetricEngine(){}
+    virtual IProject* getProject() = 0;
 
 };
 

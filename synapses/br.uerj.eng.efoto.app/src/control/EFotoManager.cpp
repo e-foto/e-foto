@@ -13,6 +13,12 @@
 
 #include <QApplication>
 
+#ifdef SYNAPSE_EFOTO
+#include <IPhotogrammetricEngine.h>
+#include <ICortex.h>
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -26,17 +32,23 @@ namespace efoto {
  */
 EFotoManager::EFotoManager()
 {
-	//xmlData = "";
-	//savedState = true;
 	projectManager = NULL;
 	interiorOrientation = NULL;
 	spatialRessection = NULL;
 	fotoTri = NULL;
 	dem = NULL;
 	ortho = NULL;
-	sp = NULL;
-	//rtheTerrain = NULL;
+    sp = NULL;
 	nextModule = 1;
+
+#ifdef INTEGRATED_EFOTO
+    project = new Project();
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    enginePtr = ICortex::getInstance()->getSynapse<engine::IPhotogrammetricEngine>();
+    project = enginePtr->getProject();
+#endif //SYNAPSE_EFOTO
+
 }
 
 /**
@@ -47,65 +59,21 @@ EFotoManager::~EFotoManager()
 
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-string EFotoManager::objectType(void)
-{
-	return "EFotoManager";
-}
-
-/**
- *
- */
-string EFotoManager::objectAssociations(void)
-{
-	return "";
-}
-
-/**
- *
- */
-bool EFotoManager::is(string s)
-{
-	return (s == "EFotoManager" ? true : false);
-}
-
-
 // XML methods
 //
 void EFotoManager::setXml(string xml)
 {
-	//xmlData = xml;
-#ifdef INTEGRATED_EFOTO
-	project.setXml(xml);
-#endif //INTEGRATED_EFOTO
+    project->setXml(xml);
 }
 
 string EFotoManager::getXml()
 {
-	//return xmlData;
-#ifdef INTEGRATED_EFOTO
-	return project.getXml();
-#endif //INTEGRATED_EFOTO
+    return project->getXml();
 }
 
 
 //Other methods
 //
-
-void EFotoManager::setSavedState(bool state)
-{
-	//savedState = state;
-}
-
-bool EFotoManager::getSavedState()
-{
-	//return savedState; // Rever
-}
 
 /**
  *
@@ -507,9 +475,7 @@ bool EFotoManager::exec(string filename)
 	if (filename != "")
 	{
 		execProject(filename);
-	}
-	//while (nextModule != 0)
-	//{
+    }
 	switch (nextModule)
 	{
 	case 1:
@@ -518,34 +484,27 @@ bool EFotoManager::exec(string filename)
 	case 2:
 		reloadProject();
 		break;
-	case 3:
-		//savedState = true;
+    case 3:
 		execIO(nextImage);
 		break;
-	case 4:
-		//savedState = true;
+    case 4:
 		execSR(nextImage);
 		break;
-	case 5:
-		//savedState = true;
+    case 5:
 		execPT();
 		break;
-	case 6:
-		//savedState = true;
+    case 6:
 		execDEM();
 		break;
-	case 7:
-		//savedState = true;
+    case 7:
 		execOrtho();
 		break;
-	case 8:
-		//savedState = true;
+    case 8:
 		execSP();
 		break;
 	default:
 		nextModule = 0;
-	}
-	//}
+    }
 
 	return true;
 }
