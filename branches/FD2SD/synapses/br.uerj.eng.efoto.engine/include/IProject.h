@@ -1,14 +1,13 @@
 #ifndef BR_UERJ_ENG_EFOTO_ENGINE_IPROJECT_H
 #define BR_UERJ_ENG_EFOTO_ENGINE_IPROJECT_H
 
-#include "ISynapse.h"
 #include <deque>
+using namespace std;
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
-namespace engine {
 
 class ProjectHeader;
 class Terrain;
@@ -19,11 +18,12 @@ class Point;
 class InteriorOrientation;
 class ExteriorOrientation;
 
+namespace engine {
 
-class IProject: public cortex::ISynapse
+
+class IProject
 {
 public:
-        virtual ~IProject(){}
         virtual ProjectHeader* header()=0;
         virtual Terrain* terrain()=0;
         virtual Sensor* sensor(int id)=0;
@@ -62,18 +62,12 @@ public:
         virtual void setProcessStates(string state)=0;
         virtual void closeProject()=0;
 
-
 };
-
-typedef QSharedPointer<IProject> IProjectPtr;
-
 
 }
 }
 }
 }
 } //namespace
-
-Q_DECLARE_INTERFACE(br::uerj::eng::efoto::engine::IProject, "br.uerj.eng.efoto.engine.IProject/1.0")
 
 #endif // BR_UERJ_ENG_EFOTO_ENGINE_IPROJECT_H

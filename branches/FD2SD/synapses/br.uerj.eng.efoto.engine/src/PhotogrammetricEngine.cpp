@@ -1,5 +1,7 @@
 #include "PhotogrammetricEngine.h"
 
+#include "Project.h"
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -25,6 +27,12 @@ bool PhotogrammetricEngine::stop()
 {
 	//TODO Automatically generated implementation
 	return true;
+}
+
+IProject* PhotogrammetricEngine::getProject()
+{
+    project.push_front((IProject*) new Project());
+    return project.at(0);
 }
 
 // IPhotogrammetricEngine interface:
