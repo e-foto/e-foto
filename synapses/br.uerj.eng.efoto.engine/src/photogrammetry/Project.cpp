@@ -24,10 +24,9 @@ Project::Project()
 /**
  *
  */
-Project::~Project()
-{
-
-}
+//Project::~Project()
+//{
+//}
 
 
 // Instance objects accessor methods

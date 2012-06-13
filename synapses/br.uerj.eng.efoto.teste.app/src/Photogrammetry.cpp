@@ -4,7 +4,8 @@ namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
-namespace appV1 {
+namespace teste {
+namespace app {
 
 
 Photogrammetry::Photogrammetry()
@@ -32,8 +33,9 @@ bool Photogrammetry::stop()
 
 // IPhotogrammetry interface:
 
-Q_EXPORT_PLUGIN2(br.uerj.eng.efoto.appV1, Photogrammetry)
+Q_EXPORT_PLUGIN2(br.uerj.eng.efoto.teste.app, Photogrammetry)
 
+}
 }
 }
 }

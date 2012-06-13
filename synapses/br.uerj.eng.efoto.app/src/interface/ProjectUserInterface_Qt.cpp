@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QDesktopWidget>
 #include <QProgressBar>
+#include <QTranslator>
 
 #include "EDomValidator.h"
 
@@ -82,8 +83,7 @@ namespace efoto {
         connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesBatch() ) );
         //imagesForm.importButton->setEnabled(false);
 
-		//setGeometry(qApp->desktop()->availableGeometry());
-		setWindowState(this->windowState() | Qt::WindowMaximized);
+        setWindowState(this->windowState() | Qt::WindowMaximized); //rever mas acho que já resolvi
 		qApp->processEvents();
 		// Bloqueia alguns dos dipositivos
 		this->removeDockWidget(debuggerDockWidget);
@@ -2491,6 +2491,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 	bool ProjectUserInterface_Qt::availablePhotoTri()
 	{
+        /* rever
 		EDomElement ois(manager->getXml("interiorOrientation"));
 		EDomElement images(manager->getXml(("images")));
 		//qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
@@ -2498,6 +2499,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		if(images.children().size()<=ois.children().size())
 			return true;
 		return false;
+        */
 	}
 
 	/*

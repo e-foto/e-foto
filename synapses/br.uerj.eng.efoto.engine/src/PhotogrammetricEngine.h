@@ -2,6 +2,8 @@
 #define BR_UERJ_ENG_EFOTO_ENGINE
 
 #include "IPhotogrammetricEngine.h"
+#include <deque>
+using namespace std;
 
 namespace br {
 namespace uerj {
@@ -14,6 +16,8 @@ class Q_DECL_EXPORT PhotogrammetricEngine: public QObject, public IPhotogrammetr
 		Q_OBJECT
 		Q_INTERFACES(cortex::ISynapse br::uerj::eng::efoto::engine::IPhotogrammetricEngine)
 
+        deque<IProject*> project;
+
 	public:
 		Q_INVOKABLE PhotogrammetricEngine();
 		virtual ~PhotogrammetricEngine();
@@ -22,6 +26,7 @@ class Q_DECL_EXPORT PhotogrammetricEngine: public QObject, public IPhotogrammetr
 		virtual bool start();
 		virtual bool stop();
 
+        IProject* getProject();
 };
 
 }
