@@ -11,7 +11,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "Point.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -44,7 +44,7 @@ OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<Ext
 	inter_method = 0;
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 OrthoManager::~OrthoManager()
 {
@@ -54,7 +54,7 @@ OrthoManager::~OrthoManager()
 
 	if (ortho != NULL)
 		delete ortho;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Association Methods
@@ -96,7 +96,7 @@ bool OrthoManager::exec()
 		oui->showErrorMessage("There is no image to run this application");
 		returnProject();
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 
 	return status;
@@ -109,7 +109,7 @@ void OrthoManager::addImagesToForm()
 #ifdef INTEGRATED_EFOTO
 	for (int i=1; i<=listAllImages.size(); i++)
 		oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int OrthoManager::loadDemGrid(char * filename, int fileType)
@@ -138,7 +138,7 @@ int OrthoManager::loadDemGrid(char * filename, int fileType)
 				oui->showImage3D(img,Xi , res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return 1;
 }
 
@@ -163,7 +163,7 @@ void OrthoManager::loadOrtho(char *filename)
 			oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
 			delete img;
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void OrthoManager::runAllOrthoTogheter()
@@ -282,7 +282,7 @@ void OrthoManager::runAllOrthoTogheter()
 						oui->setProgress(int(100.0*((Y-Yi)/(Yf-Yi-1))));
 				}
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void OrthoManager::runOrthoIndividual(int image)
@@ -388,7 +388,7 @@ void OrthoManager::runOrthoIndividual(int image)
 		}
 		oui->setProgress(int(100.0*((Y-Yi_img)/(Yf_img-Yi_img-1))));
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
@@ -466,7 +466,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 
     // Expanção do XML
     addOrthoToXML(string(filename));
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	return 1;
 }
@@ -485,7 +485,7 @@ void OrthoManager::setProgress(int progress)
 //#include <QDebug>
 void OrthoManager::addOrthoToXML(string filename)
 {
-    //Rever
+    //Rever!
     /*
     stringstream add;
     add << "<eoiFilename>";

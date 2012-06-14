@@ -157,7 +157,7 @@ bool SPUserInterface_Qt::exec()
 
 	LoadingScreen::instance().close();
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::updateData()
@@ -166,7 +166,7 @@ void SPUserInterface_Qt::updateData()
 	updateTable();
 	viewer->getDisplay()->updateAll();
 	viewerSeparated->update();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::updateTable()
@@ -316,7 +316,7 @@ void SPUserInterface_Qt::onAddPtButton()
 		selButton->setChecked(false);
 
 	measure_mode = addPtButton->isChecked();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::onEditPtButton()
@@ -331,7 +331,7 @@ void SPUserInterface_Qt::onEditPtButton()
 		selButton->setChecked(false);
 
 	editPtButton->isChecked() ? measure_mode = 2 : measure_mode = 0;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::onSelPtButton()
@@ -346,7 +346,7 @@ void SPUserInterface_Qt::onSelPtButton()
 		editPtButton->setChecked(false);
 
 	selButton->isChecked() ? measure_mode = 3 : measure_mode = 0;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::onRemovePtButton()
@@ -377,7 +377,7 @@ void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
 	onFeatureSelected();
 
 	viewer->getDisplay()->updateAll();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::onFeatureSelected()
@@ -464,7 +464,7 @@ void SPUserInterface_Qt::stereoMoved(QPointF lPos, QPointF rPos)
 	double lx = lPos.x(), ly = lPos.y(), rx = rPos.x(), ry = rPos.y(), X , Y, Z;
 	manager->computeIntersection(lx, ly, rx, ry, X, Y, Z);
 	viewer->getToolBar()->actualizeStereoInfoLabel(X, Y, Z);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 #ifdef INTEGRATED_EFOTO
@@ -490,7 +490,7 @@ void SPUserInterface_Qt::centerImages(ObjectSpaceCoordinate coord, double zoom)
     //msg->show();
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
 {
@@ -498,7 +498,7 @@ void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
 	viewer->loadLeftImage(QString(manager->getFullImagePath(leftKey).c_str()));
 	viewer->loadRightImage(QString(manager->getFullImagePath(rightKey).c_str()));
 	viewer->update();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::onChangePair(int pos)
@@ -509,14 +509,14 @@ void SPUserInterface_Qt::onChangePair(int pos)
     changePair(lk, rk);
     centerImages(manager->getCentralPoint(), 1.0);
     viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(viewer->getDisplay()->width(),viewer->getDisplay()->height()));
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPUserInterface_Qt::adjustFit(int width, int height)
 {
 #ifdef INTEGRATED_EFOTO
     viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(width,height));
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 } // namespace efoto

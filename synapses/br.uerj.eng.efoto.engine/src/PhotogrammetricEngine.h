@@ -16,7 +16,7 @@ class Q_DECL_EXPORT PhotogrammetricEngine: public QObject, public IPhotogrammetr
 		Q_OBJECT
 		Q_INTERFACES(cortex::ISynapse br::uerj::eng::efoto::engine::IPhotogrammetricEngine)
 
-        deque<IProject*> project;
+        deque<IProjectPtr> project;
 
 	public:
 		Q_INVOKABLE PhotogrammetricEngine();
@@ -26,7 +26,7 @@ class Q_DECL_EXPORT PhotogrammetricEngine: public QObject, public IPhotogrammetr
 		virtual bool start();
 		virtual bool stop();
 
-        IProject* getProject();
+        IProjectPtr getProject();
 };
 
 }

@@ -8,7 +8,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ProjectiveRay.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -102,7 +102,7 @@ ImageSpaceCoordinate SPManager::getRightPoint(ObjectSpaceCoordinate coord)
     return ImageSpaceCoordinate(prR.objectToImage(coord,false));
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 SPManager::~SPManager()
 {
@@ -143,7 +143,7 @@ bool SPManager::exec()
 		}
 	}
 	return status;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPManager::returnProject()
@@ -278,7 +278,7 @@ void SPManager::updateProjections()
 			df->points.at(j).right_y = pR0.getLin();
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPManager::computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z)
@@ -301,7 +301,7 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
 	X = obj.getX();
 	Y = obj.getY();
 	Z = obj.getZ();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string SPManager::getFullImagePath(int imagekey)
@@ -313,7 +313,7 @@ string SPManager::getFullImagePath(int imagekey)
 	result.append("/");
 	result.append(img->getFilename());
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 /*
@@ -461,7 +461,7 @@ int SPManager::getPairs()
 	addPairsToInterface();
 
 	return 1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPManager::addPairsToInterface()
@@ -482,7 +482,7 @@ void SPManager::addPairsToInterface()
 		txt << "Images " << str_left << " and " << str_right;
 		spui->addImagePair((char *)txt.str().c_str());
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPManager::addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
@@ -574,7 +574,7 @@ double SPManager::getBoundingBoxIdealZoom(int width, int height)
 	zoom = wscale < hscale ? wscale : hscale;
 
 	return zoom;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Internal function. Pos from 0 - N-1.
@@ -591,7 +591,7 @@ void SPManager::getImagesId(int pos, int &left, int &right)
 	int no_imgs = listAllImages.size();
 	left = 1 + (listPairs.at(pos) % no_imgs);
 	right = 1 + (listPairs.at(pos) / no_imgs);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SPManager::changePair(int pos, int &lk, int &rk)
@@ -605,7 +605,7 @@ void SPManager::changePair(int pos, int &lk, int &rk)
 
 void SPManager::addGeometryToXML(string filename)
 {
-	//Rever
+    //Rever!
 	/*
 	stringstream add;
 	add << "<featuresFilename>";

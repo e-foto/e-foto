@@ -15,7 +15,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -41,7 +41,7 @@ protected:
 	SeparatedStereoToolsBar* toolsSeparated;
 	StereoViewer* viewer;
 	StereoToolsBar* tools;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
     TreeFeatures *tree;
     void closeEvent(QCloseEvent *e);
@@ -71,7 +71,7 @@ public slots:
 
 #ifdef INTEGRATED_EFOTO
     void centerImages(ObjectSpaceCoordinate coord, double zoom);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 private:
 	void init();

@@ -83,7 +83,7 @@ namespace efoto {
         connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesBatch() ) );
         //imagesForm.importButton->setEnabled(false);
 
-        setWindowState(this->windowState() | Qt::WindowMaximized); //rever mas acho que já resolvi
+        setWindowState(this->windowState() | Qt::WindowMaximized);
 		qApp->processEvents();
 		// Bloqueia alguns dos dipositivos
 		this->removeDockWidget(debuggerDockWidget);
@@ -228,6 +228,8 @@ namespace efoto {
 	{
 		if (!confirmToClose())
 			return;
+
+        manager->newProject("");
 
 		if (!saveFileAs(true))
 			return;
@@ -448,16 +450,9 @@ namespace efoto {
 			return;
 		else
 		{
-			if (manager->loadFile(filename.toStdString()))
-			{
-				/*//deprecated
-   if (!manager->testFileVersion())
-   {
-		QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
-		alert->show();
-		return;
-   }
-   */
+            if (manager->loadProject(filename.toStdString()))
+            {
+
 				EDomElement imagesXml(manager->getXml("images").c_str());
 				deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
 
@@ -495,8 +490,7 @@ namespace efoto {
 				controlButtons.setVisible(true);
 				offset.setVisible(true);
 
-				savedIn = filename.toStdString();
-				//qDebug("load savedIn: %s",savedIn.c_str());
+                savedIn = filename.toStdString();
 
 				actionSave_file->setEnabled(false);
 				actionSave_file_as->setEnabled(true);
@@ -559,7 +553,7 @@ namespace efoto {
 			//headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
 			headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
 			manager->editComponent("Header", headerForm.getvalues());
-			if (manager->saveFile(savedIn))
+            if (manager->saveProject(savedIn))
 			{
 				actionSave_file->setEnabled(false);
 			}
@@ -614,7 +608,7 @@ namespace efoto {
 			manager->editComponent("Header", headerForm.getvalues());
 			//***************************************************************************************************
 
-			if (manager->saveFile(filename.toStdString()))
+            if (manager->saveProject(filename.toStdString()))
 			{
 				savedIn = filename.toStdString();
 				actionSave_file->setEnabled(false);
@@ -2081,6 +2075,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 				return false;
 			}
 		}
+        manager->closeProject();
 		return true;
 	}
 
@@ -2491,7 +2486,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 	bool ProjectUserInterface_Qt::availablePhotoTri()
 	{
-        /* rever
+        /* rever!
 		EDomElement ois(manager->getXml("interiorOrientation"));
 		EDomElement images(manager->getXml(("images")));
 		//qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
@@ -2737,7 +2732,7 @@ bool ProjectUserInterface_Qt::availableOE()
 				//	allPoints << pnts.at(i).getContent();
 				//qDebug("%s",pnts.at(i).getContent().c_str()) ;
 				//	cont++;
-				manager->editComponent("point",Conversion::stringToInt(pnts.at(i).attribute("key")),"");
+                manager->editComponent("Point",Conversion::stringToInt(pnts.at(i).attribute("key")),"");
 			}
 		}
 		//qDebug("%d",cont);

@@ -10,7 +10,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -25,7 +25,7 @@ class PointMark;
 * \class PTUserInterface_Qt
 * \brief Classe que gerencia a interface grafica com o usuario
 * \copyright E-Foto group
-* \author Paulo André Batista Pupim
+* \author Paulo Andr Batista Pupim
 */
 class PTUserInterface_Qt: public QMainWindow, public Ui::PTMainWindow, public PTUserInterface
 {
@@ -42,7 +42,7 @@ protected:
     Marker* selectedMark;
     Marker* photoMark;
     Marker* photoSelectedMark;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;
@@ -194,7 +194,7 @@ public slots:
 
 #ifdef INTEGRATED_EFOTO
 	/**
- * \brief Metodo que reponsavel por atualizar no display a posição da marca de um ponto
+ * \brief Metodo que reponsavel por atualizar no display a posio da marca de um ponto
  * \param display : Objeto display a ser atualizado
  * \param imageKey: Key da imagem contida no display
  * \param pointKey: Key do ponto a ter sua marca atualizada
@@ -208,7 +208,7 @@ public slots:
  */
 	void markAllpoints(SingleDisplay *display);
 	void clearAllMarks(SingleDisplay *display);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	/**
  * \brief Metodo que exporta os pontos e croqui do bloco para um arquivo xml que o GoogleEarth interprete

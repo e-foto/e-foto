@@ -349,7 +349,7 @@ void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, dou
         sv->blockOpen();
         sv->blockMark();
         sv->show();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
@@ -361,7 +361,7 @@ void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, dou
         sv->blockOpen();
         sv->blockMark();
         sv->show();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg)

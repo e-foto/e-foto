@@ -34,7 +34,7 @@ public:
     virtual bool exec() = 0;
 #ifdef INTEGRATED_EFOTO
     virtual void centerImages(ObjectSpaceCoordinate coord, double zoom) = 0;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 };
 

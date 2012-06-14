@@ -5,6 +5,7 @@
 #include "ui_ImagesLayout.h"
 #include "AbstractForm.h"
 #include "EDom.h"
+#include <QTranslator>
 
 namespace br {
 namespace uerj {

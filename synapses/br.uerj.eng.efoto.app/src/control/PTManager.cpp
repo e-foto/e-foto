@@ -13,7 +13,7 @@
 #include "Image.h"
 #include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 #define NUNES
 
@@ -36,7 +36,7 @@ PTManager::PTManager()
 #ifdef INTEGRATED_EFOTO
     mySensor = NULL;
     myFlight = NULL;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 #ifdef INTEGRATED_EFOTO
@@ -79,7 +79,7 @@ BundleAdjustment* PTManager::getBundleAdjustment()
     return pt;
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 double PTManager::getFlightScale()
 {
@@ -175,7 +175,7 @@ bool PTManager::exec()
 			myInterface->exec();
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return status=true;
 }
 
@@ -199,7 +199,7 @@ string PTManager::getImagefile(int imageKey)
 #ifdef INTEGRATED_EFOTO
     Image *img = efotoManager->getProject()->image(imageKey);
 	return img->getFilename();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -260,7 +260,7 @@ if (localTopocentricMode)
 	}
 	else
 		return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::setMatrixAFP(Matrix afp)
@@ -286,7 +286,7 @@ Matrix PTManager::getMatrixOE()
 	{
 		return Matrix(0,0);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return AFP;
 }
 
@@ -324,7 +324,7 @@ void PTManager::setENH()
 	ENH=points;
 	spareENH=ENH;
 	spareENH.putMatrix(pointKeys,1,ENH.getCols()+1);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 Matrix PTManager::getENH()
@@ -363,7 +363,7 @@ bool PTManager::connectImagePoints() // Deprecated
 		}
 		//qDebug("\n\n");
 		return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	}
 	return false;
 }
@@ -379,7 +379,7 @@ void PTManager::setListPoint()
 		if (point != NULL)// && !point->getType() == Point::CHECKING)
 			listAllPoints.push_back(point);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // retorna uma lista com os nomes das imagens
@@ -391,7 +391,7 @@ deque<string> PTManager::getStringImages()
 	for (int i=0;i<numImages;i++)
 		list.push_back(listAllImages.at(i)->getFilename());
 	return list;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string PTManager::getFilePath(string fileName)
@@ -404,7 +404,7 @@ string PTManager::getFilePath(string fileName)
 			string file = listAllImages.at(i)->getFilepath() + "/" +fileName;
 			return file;
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return "";
 }
 
@@ -418,7 +418,7 @@ string PTManager::getFilePath(int imageKey)
 			string file = listAllImages.at(i)->getFilepath() + "/" + listAllImages.at(i)->getFilename();
 			return file;
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return "";
 }
 
@@ -470,7 +470,7 @@ deque<string> PTManager::getStringTypePoints(string imageFileName)
 			}
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // preenche a lista de imagens selecionadas(listSelectedImages) atraves de um deque de strings com os caminhos das imagens
@@ -489,7 +489,7 @@ void PTManager::selectImages(deque<string> selectedImagesList)
 				listSelectedImages.push_back(listAllImages.at(j));
 				//qDebug("IdImage: %d",listAllImages.at(j)->getId());
 			}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // preenche a lista de pontos selecionados(listSelectedPoints) atraves de um deque de strings com Ids dos pontos
@@ -510,14 +510,14 @@ void PTManager::selectPoints(deque<string> selectedPointsList)
 				listSelectedPoints.push_back(listAllPoints.at(j));
 				//qDebug("Achei IdPoint: %s",listAllPoints.at(j)->getPointId().c_str());
 			}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string PTManager::getPointId(int pointKey)
 {
 #ifdef INTEGRATED_EFOTO
     return efotoManager->getProject()->point(pointKey)->getPointId();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -572,7 +572,7 @@ deque<string> PTManager::getStringIdPoints(string imageFileName, string cond)
 		}
 	}
 	return list;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> PTManager::getStringKeysPoints(string imageFileName)
@@ -611,7 +611,7 @@ deque<string> PTManager::getStringKeysPoints(string imageFileName)
 			}
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 Matrix PTManager::getColLin(string imageFilename)
@@ -639,7 +639,7 @@ Matrix PTManager::getColLin(string imageFilename)
 			return result;
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 Matrix PTManager::getColLin(int imageKey)
@@ -667,7 +667,7 @@ Matrix PTManager::getColLin(int imageKey)
 			return result;
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -679,7 +679,7 @@ void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey, double 
 	pnt->deleteImageCoordinate(imageId);
 	ImageSpaceCoordinate temp = ImageSpaceCoordinate(imageId,col,lin);
     pnt->putImageCoordinate(temp);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -688,7 +688,7 @@ bool PTManager::isAvailablePoint(int imageId, int pointKey)
 	//	Point *pnt=efotoManager->instancePoint(pointKey);
 #ifdef INTEGRATED_EFOTO
     return efotoManager->getProject()->point(pointKey)->getImageCoordinate(imageId).isAvailable();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
@@ -700,7 +700,7 @@ int PTManager::getImageId(string imageFilename)
 		if(listAllImages.at(i)->getFilename() == imageFilename)
 			return listAllImages.at(i)->getId();
 	return -1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::sortPointsSelected()
@@ -716,7 +716,7 @@ void PTManager::sortPointsSelected()
 			listCtrl.push_back(pnt);
 	}
 	listSelectedPoints=listCtrl;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // retorna o ENH dos pontos Fotogrammetricos
@@ -739,7 +739,7 @@ Matrix PTManager::getPhotogrammetricENH()
 		}
 	}
 	return enh;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 Matrix PTManager::getResiduoPhotogrammetric()
@@ -757,7 +757,7 @@ Matrix PTManager::getResiduoPhotogrammetric()
 		}
 	}
 	return residuos;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> PTManager::getSelectedPointIdPhotogrammetric()
@@ -772,7 +772,7 @@ deque<string> PTManager::getSelectedPointIdPhotogrammetric()
 			selected.push_back(pnt->getPointId());
 	}
 	return selected;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::saveResults()
@@ -781,14 +781,14 @@ void PTManager::saveResults()
     saveImages();
 	saveMarks();
     setMarksSavedState(true);
-    //rever
+    //rever!
 }
 
 Matrix PTManager::getMVC()
 {
 #ifdef INTEGRATED_EFOTO
 	return pt->getMVC();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Retorna uma lista dos fileNames das imagens que contem o ponto
@@ -801,13 +801,13 @@ deque<string> PTManager::getImagesAppearances(int pointKey)
 	for(int i=0;i<numImages;i++)
 		appearance.push_back(pnt->getImageAt(i)->getFilename());
 	return appearance;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::saveMarks()
 {
     //qDebug("Chamado metodo para salvar as marcas");
-    // Rever o uso deste método, pois as marcas já estão sendo atualizadas por default.
+    // Rever! o uso deste método, pois as marcas já estão sendo atualizadas por default.
     // Pode-se prever um rollback ou mesmo fazer um modo especializado para realizar a permanencia só das marcas.
     /*
     string points="<points>\n";
@@ -824,7 +824,7 @@ void PTManager::saveMarks()
 
 void PTManager::saveImages()
 {
-    // Rever o uso deste método, pois as imagens já estão sendo atualizadas por default.
+    // Rever! o uso deste método, pois as imagens já estão sendo atualizadas por default.
     // Pode-se prever um rollback ou mesmo fazer um modo especializado para realizar a permanencia só das imagens.
     /*
     string images="<images>\n";
@@ -840,7 +840,7 @@ void PTManager::saveImages()
 
 void PTManager::saveBundleAdjustment()
 {
-    //Rever, pois a seção phototriangulation está hoje numa parte inacessível da classe Project.
+    //Rever!, pois a seção phototriangulation está hoje numa parte inacessível da classe Project.
     /*
 	EDomElement newExteriorOrientationXml(createOESXml());
     EDomElement oldExteriorOrientationXml(efotoManager->getProject()->getXml("exteriorOrientation"));
@@ -900,7 +900,7 @@ string PTManager::createOESXml()
 
 	//qDebug("Metodo chamado create varias OEs");
 	return fotoTriXml.str();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string PTManager::getPhotoTriXml()
@@ -921,7 +921,7 @@ string PTManager::getPhotoTriXml()
 
 	return fotoTriXml.str();
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string PTManager::getUsedPointsXml()
@@ -936,7 +936,7 @@ string PTManager::getUsedPointsXml()
 	}
 	usedPoints << "\t</usedPoints>\n";
 	return usedPoints.str();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string PTManager::getUsedImagesXml()
@@ -951,14 +951,14 @@ string PTManager::getUsedImagesXml()
 	}
 	usedImages << "\t</usedImages>\n";
 	return usedImages.str();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::setMarksSavedState(bool marksState)
 {
 	marksSaveState=marksState;
     //if (marksSaveState)
-        //efotoManager->setSavedState(false); //rever
+        //efotoManager->setSavedState(false); //rever!
 }
 
 bool PTManager::getMarksSavedState()
@@ -995,7 +995,7 @@ void PTManager::setImageFlightDirection(string imageFile, double flightDirection
 			listAllImages.at(i)->setFlightDirection(flightDirection);
 			//qDebug("File %s kappa0 = %.7f",imageFile.c_str(),flightDirection);
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::setImageFlightDirection(int imageKey, double flightDirection)
@@ -1004,7 +1004,7 @@ void PTManager::setImageFlightDirection(int imageKey, double flightDirection)
     Image *img =efotoManager->getProject()->image(imageKey);
 	if (img!=NULL)
 		img->setFlightDirection(flightDirection);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -1018,7 +1018,7 @@ double PTManager::getImageFlightDirection(string imageFile)
 			return listAllImages.at(i)->getFlightDirection();
 		}
 	return -1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getImageFlightDirection(int imageKey)
@@ -1029,7 +1029,7 @@ double PTManager::getImageFlightDirection(int imageKey)
 		return img->getFlightDirection();
 
 	return 3*M_PI;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -1041,7 +1041,7 @@ double PTManager::getLongitudinalOverlap(string imageFile)
 		if(listAllImages.at(i)->getFilename() == imageFile)
 			return listAllImages.at(i)->getFlight()->getLongitudinalOverlap();
 	return -1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 }
 
@@ -1290,7 +1290,7 @@ string PTManager::exportBlockTokml(string fileName)
 
 	EDomElement xmlgoogle(aux.str());
 	return xmlgoogle.indent('\t').getContent();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 }
 
@@ -1425,7 +1425,7 @@ void PTManager::convertToUTM(deque<Point*> points, GeoSystem sys)
 
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 void PTManager::setMetricConvergencyValue(double value)
 {
@@ -1463,7 +1463,7 @@ void PTManager::reloadPointsCoordinates()
 	int numPoints=listAllPoints.size();
 	for (int i=0;i<numPoints;i++)
 	{
-        Point *pnt=efotoManager->getProject()->point(spareENH.getInt(i+1,4)); // rever Aqui eu posso precisar escrever código que de roolback nos pontos
+        Point *pnt=efotoManager->getProject()->point(spareENH.getInt(i+1,4)); // rever! Aqui eu posso precisar escrever código que de roolback nos pontos
 
 		double x=spareENH.get(i+1,1);
 		double y=spareENH.get(i+1,2);
@@ -1473,7 +1473,7 @@ void PTManager::reloadPointsCoordinates()
 		pnt->getObjectCoordinate().setY(y);
 		pnt->getObjectCoordinate().setZ(z);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Retorna a posiÃ§ao de 'img' no deque de imagens selecionadas, se nao estiver retorna -1
@@ -1486,7 +1486,7 @@ int PTManager::whereInSelectedImages(Image *img)
 			return i;
 	}
 	return -1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 // Retorna a posiÃ§ao de 'img' no deque de imagens, se nao estiver retorna -1
@@ -1499,7 +1499,7 @@ int PTManager::whereInImages(Image *img)
 			return i;
 	}
 	return -1;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
@@ -1515,7 +1515,7 @@ deque<string> PTManager::getPointsWithLesserThanOverlap(int overlap)
 				ids.push_back(pnt->getPointId());
 	}
 	return ids;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int PTManager::createNewPoint()
@@ -1537,7 +1537,7 @@ int PTManager::createNewPoint()
     listAllPoints.push_back(efotoManager->getProject()->point(currentItemId));
 
 	return currentItemId;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::connectPointInImage(int pointKey, int imageKey)
@@ -1548,7 +1548,7 @@ void PTManager::connectPointInImage(int pointKey, int imageKey)
 	point->putImage(image);
 	image->putPoint(point);
 	image->sortPoints();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool PTManager::allKappaSet()
@@ -1562,7 +1562,7 @@ bool PTManager::allKappaSet()
 			return false;
 	}
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> PTManager::getImagesKappaSet()
@@ -1577,7 +1577,7 @@ deque<string> PTManager::getImagesKappaSet()
 			list.push_back(img->getFilename());
 	}
 	return list;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -1591,7 +1591,7 @@ Matrix PTManager::getDigitalCoordinate(int imageKey, int pointKey)
 	result.set(1,1,coord.getCol());
 	result.set(1,2,coord.getLin());
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 /** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
@@ -1678,7 +1678,7 @@ bool PTManager::hasAllImagesInitialValues()
 			return false;
 	}
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getPhiTerrain()
@@ -1692,7 +1692,7 @@ double PTManager::getPhiTerrain()
 
 	//printf("phi0 : %s\tDMS: %s\n",myterrain->getCentralCoordLat().c_str(),lat.toString(5).c_str());
 	return lat.dmsToRadiano();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getLambdaTerrain()
@@ -1706,14 +1706,14 @@ double PTManager::getLambdaTerrain()
 		longi.setSignal(true);
 
 	return longi.dmsToRadiano();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getAltitudeMedia()
 {
 #ifdef INTEGRATED_EFOTO
 	return myTerrain->getMeanAltitude();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool PTManager::hasEODone()
@@ -1723,7 +1723,7 @@ bool PTManager::hasEODone()
 	if(exteriorXml.hasTagName("imageEO"))
 		return true;
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 Matrix PTManager::eoParametersFromXml()
@@ -1759,14 +1759,14 @@ Matrix PTManager::eoParametersFromXml()
 		oesMatrix.set(i+1,7,z0);
 	}
 	return oesMatrix;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getRMSE()
 {
 #ifdef INTEGRATED_EFOTO
 	return pt->calculateRMSE();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int PTManager::getPreviousTotalIterationsXml()
@@ -1774,7 +1774,7 @@ int PTManager::getPreviousTotalIterationsXml()
 #ifdef INTEGRATED_EFOTO
     EDomElement exteriorXml(efotoManager->getProject()->getXml("phototriangulation"));
 	return Conversion::stringToInt(exteriorXml.elementByTagName("iterations").toString());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool PTManager::getPreviousConvergedXML()
@@ -1784,7 +1784,7 @@ bool PTManager::getPreviousConvergedXML()
 	if (exteriorXml.elementByTagName("converged").toString()=="true")
 		return true;
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 double PTManager::getPreviousRmseXML()
@@ -1792,7 +1792,7 @@ double PTManager::getPreviousRmseXML()
 #ifdef INTEGRATED_EFOTO
     EDomElement exteriorXml(efotoManager->getProject()->getXml("phototriangulation"));
 	return exteriorXml.elementByTagName("rmse").toDouble();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int PTManager::getTerrainLatHemisphere()
@@ -1801,7 +1801,7 @@ int PTManager::getTerrainLatHemisphere()
     EDomElement terrain = efotoManager->getProject()->getXml("terrain");
 	int hemi=terrain.elementByTagName("Lat").attribute("direction")=="S" ? -1:1;
 	return hemi;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int PTManager::getTerrainLongHemisphere()
@@ -1810,21 +1810,21 @@ int PTManager::getTerrainLongHemisphere()
     EDomElement terrain = efotoManager->getProject()->getXml("terrain");
 	int hemi=terrain.elementByTagName("Long").attribute("direction")=="W" ? -1:1;
 	return hemi;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int PTManager::getTerrainZone()
 {
 #ifdef INTEGRATED_EFOTO
 	return myTerrain->getUtmFuse();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 GeoSystem PTManager::getTerrainDatum()
 {
 #ifdef INTEGRATED_EFOTO
 	return GeoSystem(myTerrain->getGRS());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTManager::setLocalTopocentricMode(bool status)

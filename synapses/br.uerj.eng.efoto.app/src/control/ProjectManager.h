@@ -12,8 +12,11 @@
 #include "ProjectUserInterface.h"
 
 #ifdef INTEGRATED_EFOTO
-#include "XmlUpdater.h"
+#include "Project.h"
 #endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include <IProject.h>
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -34,13 +37,15 @@ class ProjectManager
 {
 
 	EFotoManager* manager;
-	ProjectUserInterface* myInterface;
-    //FILE* xmlFile; // attribute banned for lack of use
+    ProjectUserInterface* myInterface;
 	ETreeModel* treeModel;
 
 #ifdef INTEGRATED_EFOTO
-    XmlUpdater* updater;
+    Project* project;
 #endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
 
 public:
 	/**
@@ -55,51 +60,35 @@ public:
 	/**
 	* \brief Destrutor padrão.
 	*/
-	~ProjectManager();
-	/**
-	* \brief Método que será implementado futuramente.
-	* \todo  Será usado para conectar a um futuro banco de dados.
-	*/
-	bool connectDatabase();
-	/**
-	* \brief Método que será implementado futuramente.
-	* \todo  Será usado para desconectar a um futuro banco de dados.
-	*/
-	bool disconnectDatabase();
-	/**
-	* \brief Método que inicia um novo projeto, inicia um xml vazio para ser preenchido posteriormente ao longo do projeto.
-	* \param filename Nome do arquivo.
-	* \return bool Retorna verdadeiro se o novo projeto foi iniciado corretamente. Retorna falso, caso contrário.
-	*/
-	bool newProject(string filename);
-	/**
-	* \brief Método que será implementado futuramente.
-	* \todo  Será usado para carregar um projeto a partir de um banco de dados.
-	*/
-	bool loadProject();
-	/**
-	* \brief Método que será implementado futuramente.
-	* \todo  Será usado para salvar um projeto a partir de um banco de dados.
-	*/
-	bool saveProject();
-	/**
-	* \brief Método que carrega um projeto a partir de um arquivo do tipo *.epp.
-	* \param  filename Nome do arquivo.
-	* \return  bool Retorna verdadeiro se o projeto foi carregado corretamente. Retorna falso, caso contrário.
-	*/
-	bool loadFile(string filename);
-	/**
-	* \brief Método que salva um projeto em um arquivo do tipo *.epp.
-	* \param  filename Nome do arquivo.
-	* \return  bool Retorna verdadeiro se o projeto foi salvado corretamente. Retorna falso, caso contrário.
-	*/
-	bool saveFile(string filename);
-	/**
-	* \brief Método que retorna um inteiro informando que tipo de erro tem o arquivo.
-	* \return  int Código de erro que tem o arquivo.
-	*/
-	int informFileVersionError();
-	/**
+    ~ProjectManager();
+    /**
+    * \brief Método que retorna um inteiro informando que tipo de erro tem o arquivo.
+    * \return  int Código de erro que tem o arquivo.
+    */
+    int informFileVersionError();
+
+    /**
+    * \brief Método para iniciar um novo projeto.
+    * \return  bool Verdadeiro se a operação foi bem sucedida e falso em caso contrário.
+    */
+    bool newProject(string filename) {return project->newProject(filename);}
+    /**
+    * \brief Método para carregar um projeto.
+    * \return  bool Verdadeiro se a operação foi bem sucedida e falso em caso contrário.
+    */
+    bool loadProject(string filename) {return project->loadFile(filename);}
+    /**
+    * \brief Método para salvar um projeto.
+    * \return  bool Verdadeiro se a operação foi bem sucedida e falso em caso contrário.
+    */
+    bool saveProject(string filename) {return project->saveFile(filename);}
+    /**
+    * \brief Método para fechar um projeto.
+    * \return  bool Verdadeiro se a operação foi bem sucedida e falso em caso contrário.
+    */
+    bool closeProject() {return project->closeProject();}
+
+    /**
 	* \brief Método que adiciona um nó no xml do projeto.
 	* \param data : String com os dados a serem inseridos no XML.
 	* \param parent : String com a tag na qual sera inseridos os dados
@@ -135,14 +124,13 @@ public:
 	* \return EObject Retorna a instância solicitada.
 	*/
 	EObject* viewComponent(string type, int id);
-	/**
+
+    /**
 	* \brief Método que retorna o atual modelo de dados do projeto..
 	* \return ETreeModel Modelo de dados do projeto.
 	*/
-	ETreeModel* getTreeModel();
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
-	/**Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys */
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
+    ETreeModel* getTreeModel();
+
 	/**
 	* \brief Método que retorna o deque de Image Keys.
 	* \return deque<int> O deque de Image Keys.
@@ -159,7 +147,8 @@ public:
 	* \return int Identificador solicitado da imagem.
 	*/
 	int getImageId(string imageName);
-	/**
+
+    /**
 	* \brief Método que retorna um identificador de imagens que ainda não foi utilizado.
 	* \return int Identificador da imagem que ainda não foi utilizado.
 	*/
@@ -169,7 +158,8 @@ public:
 	* \return int Identificador de ponto  que ainda não foi utilizado.
 	*/
 	int getFreePointId();
-	/**
+
+    /**
 	* \brief Método que inicia um módulo de Orientação Interior ou Resseção Espacial a partir de um identificador de imagem.
 	* \param module Módulo a ser iniciado.
 	* \param image Identificador da imagem.
@@ -186,7 +176,8 @@ public:
 	* \return bool Retorna verdadeiro se o módulo ProjectManager tiver recarregado com sucesso. Retorna falso, caso contrário.
 	*/
 	bool reload();
-	/**
+
+    /**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
 	* \return string Valores do Nó do XML que foi requisitado.
@@ -204,7 +195,8 @@ public:
 	* \todo Método que será implementado futuramente.
 	*/
 	bool getSavedState();
-	/**
+
+    /**
 	* \brief Método que cria arquivos a serem usados no módulo de Stereoplotter.
 	* \param filename Nome do arquivo que será salvo.
 	* \param image1 Identificador da primeira imagem.

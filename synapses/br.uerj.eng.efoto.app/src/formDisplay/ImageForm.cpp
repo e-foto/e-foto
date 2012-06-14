@@ -5,8 +5,8 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#include "ProjectUserInterface_Qt.h" // Rever o uso desta classe para substituição deste include por um da classe Project
-#endif //INTEGRATED_EFOTO
+#include "ProjectUserInterface_Qt.h" // Rever! o uso desta classe para substituição deste include por um da classe Project
+#endif //INTEGRATED_EFOTO REVER!
 #ifdef SYNAPSE_EFOTO
 	// Aqui vai entrar uma referência para a Project na sinapse engine
 #endif //SYNAPSE_EFOTO
@@ -236,9 +236,9 @@ QString ImageForm::loadImageFile()
 
 #ifdef INTEGRATED_EFOTO
 	QDir absolutePath (proj->getSavedIn());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
-	// Rever esse ponto, pois o método acessado no objeto proj que hoje é da classe ProjectUUserInterface_Qt passará a ser utilizado,
+    // Rever! esse ponto, pois o método acessado no objeto proj que hoje é da classe ProjectUserInterface_Qt passará a ser utilizado,
 	// com um objeto da classe Project acessível somente por intermédio da comunicação com a sinapse engine.
 #ifdef SYNAPSE_EFOTO
 	QDir absolutePath;
@@ -298,7 +298,7 @@ void ImageForm::startSingleViewer()
 	sv->blockMark();
 	sv->show();
 	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 #ifdef SYNAPSE_EFOTO
 

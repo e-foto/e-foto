@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QLayout>
+#include <QTranslator>
 
 class ControlButtons : public QWidget
 {

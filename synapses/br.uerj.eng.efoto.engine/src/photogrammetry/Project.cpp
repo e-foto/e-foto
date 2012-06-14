@@ -7,34 +7,184 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors and destructor
-//
-
-/**
- *
- */
 Project::Project()
 {
 	xmlData = "";
 	processStates = "";
 	theTerrain = NULL;
 	theHeader = NULL;
+    updater = NULL;
 }
 
-/**
- *
- */
-//Project::~Project()
-//{
-//}
+Project::~Project()
+{
+    //rever!
+}
 
 
-// Instance objects accessor methods
-//
 
-/**
- *
- */
+bool Project::connectDatabase()
+{ // Rever! esse trecho que prevê uso de base
+    return false;
+}
+bool Project::disconnectDatabase()
+{ // Rever! esse trecho que prevê uso de base
+    return false;
+}
+bool Project::loadProject()
+{ // Rever! esse trecho que prevê uso de base
+    return false;
+}
+bool Project::saveProject()
+{ // Rever! esse trecho que prevê uso de base
+    return false;
+}
+
+bool Project::newProject(string filename)
+{
+    string xmlData = "";
+    xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
+    xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+    xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
+    xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
+    xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
+    xmlData += "<projectHeader>\n";
+    xmlData += "<name></name>\n";
+    xmlData += "<description></description>\n";
+
+    int i = filename.rfind('/');
+    string filePath = "<filePath>"+filename.substr(0,i)+"</filePath>\n";
+    string fileName = "<fileName>"+filename.erase(0,i+1)+"</fileName>\n";
+
+    xmlData += fileName;
+    xmlData += filePath;
+
+    xmlData += "<creation></creation>\n";
+    xmlData += "<modification></modification>\n";
+    xmlData += "<owner></owner>\n";
+    xmlData += "<aims></aims>\n";
+    xmlData += "<context></context>\n";
+    xmlData += "</projectHeader>\n";
+    xmlData += "<terrain>\n";
+    xmlData += "<meanAltitude uom=\"#m\"></meanAltitude>\n";
+    xmlData += "<minAltitude uom=\"#m\"></minAltitude>\n";
+    xmlData += "<maxAltitude uom=\"#m\"></maxAltitude>\n";
+    xmlData += "<GRS>WGS84</GRS>\n";
+    xmlData += "<CPS>UTM</CPS>\n";
+    xmlData += "<workAreaCenterCoordinates>\n";
+    xmlData += "<Lat direction=\"S\">\n";
+    xmlData += "<degrees></degrees>\n";
+    xmlData += "<minutes></minutes>\n";
+    xmlData += "<seconds></seconds>\n";
+    xmlData += "</Lat>\n";
+    xmlData += "<Long direction=\"W\">\n";
+    xmlData += "<degrees></degrees>\n";
+    xmlData += "<minutes></minutes>\n";
+    xmlData += "<seconds></seconds>\n";
+    xmlData += "</Long>\n";
+    xmlData += "<utmFuse></utmFuse>\n";
+    xmlData += "</workAreaCenterCoordinates>\n";
+    xmlData += "</terrain>\n";
+    xmlData += "<sensors>\n";
+    xmlData += "</sensors>\n";
+    xmlData += "<flights>\n";
+    xmlData += "</flights>\n";
+    xmlData += "<points>\n";
+    xmlData += "</points>\n";
+    xmlData += "<images>\n";
+    xmlData += "</images>\n";
+    xmlData += "<interiorOrientation>\n";
+    xmlData += "</interiorOrientation>\n";
+    xmlData += "<exteriorOrientation>\n";
+    xmlData += "</exteriorOrientation>\n";
+    xmlData += "</efotoPhotogrammetricProject>";
+
+    closeProject();
+    setXml(xmlData);
+
+    //if (treeModel != NULL)// rever! a colocação destas 3 linhas na classe ProjectManager
+    //delete treeModel;
+    //treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
+
+    return true;
+}
+
+bool Project::loadFile(string filename)
+{
+
+    stringstream myData;
+    ifstream myFile(filename.c_str());
+    if (updater != NULL)
+    {
+        delete updater;
+        updater = NULL;
+    }
+    if (myFile.is_open())
+    {
+        string line;
+        while (!myFile.eof())
+        {
+            getline (myFile,line);
+            myData << line << endl;
+        }
+        myFile.close();
+
+        string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
+
+        updater = new XmlUpdater(xmlData);
+        if (updater->isUpdated())
+        {
+            xmlData = updater->getAllXml().getContent();
+        }
+        else
+        {
+            return false;
+        }
+        closeProject();
+        setXml(xmlData);
+
+        //if (treeModel != NULL) // rever! a colocação destas 3 linhas na classe ProjectManager
+            //delete treeModel;
+        //treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
+
+        return true;
+    }
+    return false;
+}
+
+bool Project::saveFile(string filename)
+{
+    ofstream myFile(filename.c_str());
+    if (myFile.is_open())
+    {
+        EDomElement xml(getXml());
+        myFile << xml.removeBlankLines(true).indent('\t').getContent();
+        myFile.close();
+        return true;
+    }
+    return false;
+}
+
+int Project::getError()
+{
+    if (updater != NULL)
+        return updater->getError();
+    return 0;
+}
+
+bool Project::getSaveState()
+{
+    if (xmlData == "")
+        return true;
+    return xmlData.compare(getXml()) == 0;
+}
+
+bool Project::closeProject()
+{
+    //Rever!
+}
+
 ProjectHeader *Project::instanceHeader()
 {
 	if (theHeader != NULL)
@@ -62,9 +212,6 @@ Terrain* Project::instanceTerrain()
 	return theTerrain;
 }
 
-/**
- *
- */
 Sensor* Project::instanceSensor(int id)
 {
 	for (unsigned int i = 0; i < sensors.size(); i++)
@@ -101,9 +248,6 @@ Sensor* Project::instanceSensor(int id)
 	return NULL;
 }
 
-/**
- *
- */
 Flight* Project::instanceFlight(int id)
 {
 	for (unsigned int i = 0; i < flights.size(); i++)
@@ -119,9 +263,6 @@ Flight* Project::instanceFlight(int id)
 	return newFlight;
 }
 
-/**
- *
- */
 Image* Project::instanceImage(int id)
 {
 	for (unsigned int i = 0; i < images.size(); i++)
@@ -159,9 +300,6 @@ void Project::instanceAllImages()
 	}
 }
 
-/**
- *
- */
 void Project::instanceAllPoints()
 {
 	EDomElement root(xmlData);
@@ -204,9 +342,6 @@ Point* Project::instancePoint(int id)
 	return (Point*) newPoint;
 }
 
-/**
- *
- */
 InteriorOrientation* Project::instanceIO(int imageId)
 {
 	for (unsigned int i = 0; i < IOs.size(); i++)
@@ -250,9 +385,6 @@ void Project::instanceAllIOs()
 	}
 }
 
-/**
- *
- */
 ExteriorOrientation* Project::instanceEO(int imageId)
 {
 	for (unsigned int i = 0; i < EOs.size(); i++)
@@ -310,10 +442,6 @@ void Project::deleteHeader(bool makeReconnections)
 		linkAll();
 }
 
-
-/**
- *
- */
 void Project::deleteTerrain(bool makeReconnections)
 {
 	if (theTerrain != NULL)
@@ -325,9 +453,6 @@ void Project::deleteTerrain(bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deleteSensor(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -354,9 +479,6 @@ void Project::deleteSensor(int id, bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deleteFlight(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -376,9 +498,6 @@ void Project::deleteFlight(int id, bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deleteImage(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -398,9 +517,6 @@ void Project::deleteImage(int id, bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deletePoint(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -421,9 +537,6 @@ void Project::deletePoint(int id, bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deleteIO(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -443,9 +556,6 @@ void Project::deleteIO(int id, bool makeReconnections)
 		linkAll();
 }
 
-/**
- *
- */
 void Project::deleteEO(int id, bool makeReconnections)
 {
 	unsigned int i;
@@ -457,9 +567,7 @@ void Project::deleteEO(int id, bool makeReconnections)
 			break;
 		}
 	if (myEO != NULL)
-	{
-		//EDomElement xmlEO(myEO->xmlGetData());
-		//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
+    {
 		if (myEO->is("SpatialRessection"))
 		{
 			SpatialRessection* mySR = (SpatialRessection*) myEO;
@@ -469,11 +577,6 @@ void Project::deleteEO(int id, bool makeReconnections)
 	}
 	if (makeReconnections)
 		linkAll();
-}
-
-void Project::closeProject()
-{
-	//Rever
 }
 
 void Project::addSensor(string data, bool makeReconnections)
@@ -639,13 +742,10 @@ void Project::addEO(string data, bool makeReconnections)
 ProjectHeader *Project::header()
 {
 	if (theHeader != NULL)
-		return theHeader;
+        return theHeader;
 	return NULL;
 }
 
-/**
- *
- */
 Terrain* Project::terrain()
 {
 	if (theTerrain != NULL)
@@ -653,9 +753,6 @@ Terrain* Project::terrain()
 	return NULL;
 }
 
-/**
- *
- */
 Sensor* Project::sensor(int id)
 {
 	for (unsigned int i = 0; i < sensors.size(); i++)
@@ -664,9 +761,6 @@ Sensor* Project::sensor(int id)
 	return NULL;
 }
 
-/**
- *
- */
 Flight* Project::flight(int id)
 {
 	for (unsigned int i = 0; i < flights.size(); i++)
@@ -675,9 +769,6 @@ Flight* Project::flight(int id)
 	return NULL;
 }
 
-/**
- *
- */
 Image* Project::image(int id)
 {
 	for (unsigned int i = 0; i < images.size(); i++)
@@ -686,9 +777,6 @@ Image* Project::image(int id)
 	return NULL;
 }
 
-/**
- *
- */
 Point* Project::point(int id)
 {
 	for (unsigned int i = 0; i < points.size(); i++)
@@ -697,9 +785,6 @@ Point* Project::point(int id)
 	return NULL;
 }
 
-/**
- *
- */
 InteriorOrientation* Project::IO(int id)
 {
 	for (unsigned int i = 0; i < IOs.size(); i++)
@@ -708,9 +793,6 @@ InteriorOrientation* Project::IO(int id)
 	return NULL;
 }
 
-/**
- *
- */
 ExteriorOrientation* Project::EO(int id)
 {
 	for (unsigned int i = 0; i < EOs.size(); i++)
@@ -718,209 +800,6 @@ ExteriorOrientation* Project::EO(int id)
 			return EOs.at(i);
 	return NULL;
 }
-
-/**
- *
- */
-string Project::getXml(string tagname)
-{
-	EDomElement root(getXml());
-	return root.elementByTagName(tagname).getContent();
-}
-
-/**
- *
- */
-string Project::getXml(string tagname, string att, string value)
-{
-	EDomElement root(getXml());
-	return root.elementByTagAtt(tagname, att, value).getContent();
-}
-
-
-// EObject methods
-//
-
-/**
- *
- */
-string Project::objectType(void)
-{
-	return "Project";
-}
-
-/**
- *
- */
-string Project::objectAssociations(void)
-{
-	return "";
-}
-
-/**
- *
- */
-bool Project::is(string s)
-{
-	return (s == "Project" ? true : false);
-}
-
-
-// XML methods
-//
-void Project::setXml(string xml)
-{
-	xmlData = xml;
-
-	EDomElement ede(xmlData);
-	//EDomElement dem = ede.elementByTagName("DEMs");
-	//EDomElement eoi = ede.elementByTagName("orthoImages");
-	//EDomElement feat = ede.elementByTagName("features");
-	EDomElement pt = ede.elementByTagName("phototriangulation");
-	EDomElement sr = ede.elementByTagName("spatialRessections");
-
-	// Rever a parte de estados de processos... armazenados e acessados na string processStates
-	processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ pt.getContent() + sr.getContent();
-	xmlData = ede.indent('\t').getContent();
-
-	instanceAllImages();
-	instanceAllPoints();
-	instanceAllIOs();
-	instanceAllEOs();
-
-	instanceHeader();
-	instanceTerrain();
-	instanceSensor(1);
-	instanceFlight(1);
-
-	//Rever a criação dos instance DEMs, EOIs e FEATs.
-
-	linkAll();
-}
-
-void Project::linkAll()
-{
-	Sensor *sns = sensor(1);
-	Flight *flt = flight(1);
-
-	if (flt)
-	{
-		flt->setTerrain(theTerrain);
-		flt->setSensor(sns);
-		flt->clearImages();
-	}
-	if (sns)
-	{
-
-		sns->clearImages();
-		sns->clearFlights();
-		sns->putFlight(flt);
-	}
-
-	for (unsigned int i = 0; i < points.size(); i++)
-	{
-		Point* point = points.at(i);
-		point->clearImages();
-	}
-
-	for (unsigned int j = 0; j < images.size(); j++)
-	{
-		Image *img = images.at(j);
-		img->clearPoints();
-
-		for (unsigned int i = 0; i < points.size(); i++)
-		{
-			Point* pointToInsert = points.at(i);
-
-			if (pointToInsert->hasImageCoordinate(img->getId()))
-			{
-				img->putPoint(pointToInsert);
-				pointToInsert->putImage(img);
-			}
-		}
-
-		img->setSensor(sns);
-		img->setFlight(flt);
-		if (sns) sns->putImage(img);
-		if (flt) flt->putImage(img);
-
-	}
-
-	for (int i=0;i<IOs.size();i++)
-	{
-		InteriorOrientation *io=IOs.at(i);
-		Image *img = image(io->getImageId());
-		io->setImage(img);
-		if (img) img->setIO(io);
-	}
-
-	for (int i=0;i<EOs.size();i++)
-	{
-		ExteriorOrientation *eo=EOs.at(i);
-		Image *img = image(eo->getImageId());
-		eo->setImage(img);
-		if (img) img->setEO((SpatialRessection*)eo);
-	}
-}
-
-string Project::getXml()
-{
-	if (xmlData.empty())
-		return "";
-
-	string xmlData = "";
-	xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-	xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
-	xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
-	xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
-	xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
-	xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
-	xmlData += header() ? header()->xmlGetData() : "";
-	xmlData += terrain() ? terrain()->xmlGetData() : "";
-	xmlData += "<sensors>\n";
-	xmlData += sensor(1) ? sensor(1)->xmlGetData() : "";
-	xmlData += "</sensors>\n";
-	xmlData += "<flights>\n";
-	xmlData += flight(1) ? flight(1)->xmlGetData() : "";
-	xmlData += "</flights>\n";
-	xmlData += "<points>\n";
-	for(int i=0; i<points.size(); i++)
-	{
-		xmlData += points.at(i)->xmlGetData();
-	}
-	xmlData += "</points>\n";
-	xmlData += "<images>\n";
-	for(int i=0; i<images.size(); i++)
-	{
-		xmlData += images.at(i)->xmlGetData();
-	}
-	xmlData += "</images>\n";
-	xmlData += "<interiorOrientation>\n";
-	for(int i=0; i<IOs.size(); i++)
-	{
-		xmlData += IOs.at(i)->xmlGetData();
-	}
-	xmlData += "</interiorOrientation>\n";
-	xmlData += "<exteriorOrientation>\n";
-	for(int i=0; i<EOs.size(); i++)
-	{
-		SpatialRessection* sp = (SpatialRessection*) EOs.at(i);
-		xmlData += sp->xmlGetDataEO();
-	}
-	xmlData += "</exteriorOrientation>\n";
-
-	// Rever aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
-
-	xmlData += processStates;
-
-	xmlData += "</efotoPhotogrammetricProject>";
-
-	EDomElement xml(xmlData);
-	xmlData = xml.indent('\t').getContent();
-
-	return xmlData;
-}
-
 
 int Project::getFreeSensorId()
 {
@@ -966,9 +845,169 @@ int Project::getFreePointId()
 	return result;
 }
 
-bool Project::getSaveState()
+string Project::getXml(string tagname)
 {
-	return xmlData.compare(getXml()) == 0;
+    EDomElement root(getXml());
+    return root.elementByTagName(tagname).getContent();
+}
+
+string Project::getXml(string tagname, string att, string value)
+{
+    EDomElement root(getXml());
+    return root.elementByTagAtt(tagname, att, value).getContent();
+}
+
+string Project::getXml()
+{
+    if (xmlData.empty())
+        return "";
+
+    string xmlData = "";
+    xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
+    xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+    xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
+    xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
+    xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
+    xmlData += header() ? header()->xmlGetData() : "";
+    xmlData += terrain() ? terrain()->xmlGetData() : "";
+    xmlData += "<sensors>\n";
+    xmlData += sensor(1) ? sensor(1)->xmlGetData() : "";
+    xmlData += "</sensors>\n";
+    xmlData += "<flights>\n";
+    xmlData += flight(1) ? flight(1)->xmlGetData() : "";
+    xmlData += "</flights>\n";
+    xmlData += "<points>\n";
+    for(int i=0; i<points.size(); i++)
+    {
+        xmlData += points.at(i)->xmlGetData();
+    }
+    xmlData += "</points>\n";
+    xmlData += "<images>\n";
+    for(int i=0; i<images.size(); i++)
+    {
+        xmlData += images.at(i)->xmlGetData();
+    }
+    xmlData += "</images>\n";
+    xmlData += "<interiorOrientation>\n";
+    for(int i=0; i<IOs.size(); i++)
+    {
+        xmlData += IOs.at(i)->xmlGetData();
+    }
+    xmlData += "</interiorOrientation>\n";
+    xmlData += "<exteriorOrientation>\n";
+    for(int i=0; i<EOs.size(); i++)
+    {
+        SpatialRessection* sp = (SpatialRessection*) EOs.at(i);
+        xmlData += sp->xmlGetDataEO();
+    }
+    xmlData += "</exteriorOrientation>\n";
+
+    // Rever! aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
+
+    xmlData += processStates;
+
+    xmlData += "</efotoPhotogrammetricProject>";
+
+    EDomElement xml(xmlData);
+    xmlData = xml.indent('\t').getContent();
+
+    return xmlData;
+}
+
+void Project::setXml(string xml)
+{
+    xmlData = xml;
+
+    EDomElement ede(xmlData);
+    //EDomElement dem = ede.elementByTagName("DEMs");
+    //EDomElement eoi = ede.elementByTagName("orthoImages");
+    //EDomElement feat = ede.elementByTagName("features");
+    EDomElement pt = ede.elementByTagName("phototriangulation");
+    EDomElement sr = ede.elementByTagName("spatialRessections");
+
+    // Rever! a parte de estados de processos... armazenados e acessados na string processStates
+    processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ pt.getContent() + sr.getContent();
+    xmlData = ede.indent('\t').getContent();
+
+    instanceAllImages();
+    instanceAllPoints();
+    instanceAllIOs();
+    instanceAllEOs();
+
+    instanceHeader();
+    instanceTerrain();
+    instanceSensor(1);
+    instanceFlight(1);
+
+    //Rever! a criação dos instance DEMs, EOIs e FEATs.
+
+    linkAll();
+}
+
+void Project::linkAll()
+{
+    Sensor *sns = sensor(1);
+    Flight *flt = flight(1);
+
+    if (flt)
+    {
+        flt->setTerrain(theTerrain);
+        flt->setSensor(sns);
+        flt->clearImages();
+    }
+    if (sns)
+    {
+
+        sns->clearImages();
+        sns->clearFlights();
+        sns->putFlight(flt);
+    }
+
+    for (unsigned int i = 0; i < points.size(); i++)
+    {
+        Point* point = points.at(i);
+        point->clearImages();
+    }
+
+    for (unsigned int j = 0; j < images.size(); j++)
+    {
+        Image *img = images.at(j);
+        img->clearPoints();
+
+        for (unsigned int i = 0; i < points.size(); i++)
+        {
+            Point* pointToInsert = points.at(i);
+
+            if (pointToInsert->hasImageCoordinate(img->getId()))
+            {
+                img->putPoint(pointToInsert);
+                pointToInsert->putImage(img);
+            }
+        }
+
+        img->setSensor(sns);
+        img->setFlight(flt);
+        if (sns) sns->putImage(img);
+        if (flt) flt->putImage(img);
+
+    }
+
+    for (int i=0;i<IOs.size();i++)
+    {
+        InteriorOrientation *io=IOs.at(i);
+        Image *img = image(io->getImageId());
+        io->setImage(img);
+        if (img) img->setIO(io);
+    }
+
+    for (int i=0;i<EOs.size();i++)
+    {
+        ExteriorOrientation *eo=EOs.at(i);
+        Image *img = image(eo->getImageId());
+        eo->setImage(img);
+        if (img) img->setEO((SpatialRessection*)eo);
+    }
 }
 
 } // namespace efoto

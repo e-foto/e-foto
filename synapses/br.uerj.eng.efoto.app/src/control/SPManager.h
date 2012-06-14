@@ -14,7 +14,7 @@
 #include "Image.h"
 #include "ExteriorOrientation.h"
 #include "SpatialIntersection.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -57,7 +57,7 @@ class SPManager
 	Image* rightImage;
 	ProjectiveRay prL;
 	ProjectiveRay prR;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	/*
 		Image * getImage(int);
@@ -87,7 +87,7 @@ public:
     ObjectSpaceCoordinate getCentralPoint();
     ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
     ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	// Association Methods
 	//

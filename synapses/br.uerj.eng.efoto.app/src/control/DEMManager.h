@@ -19,7 +19,7 @@
 #include "MatchingPoints.h"
 #include "DemGrid.h"
 #include "SpatialIntersection.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 #ifdef SYNAPSE_EFOTO
 	// Aqui vai entrar uma referência para classes da sinapse engine
 #endif //SYNAPSE_EFOTO
@@ -87,7 +87,7 @@ class DEMManager : public ProgressPublisher
     * \param usePPolygons - determina o uso de linhas dos poligonos
     */
     void addFeaturesToPairList(Features* df, MatchingPointsList *mpl, bool usePolygons = false);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	/**
 	* \brief Método privado que atualiza os número de sementes de dados.
@@ -170,7 +170,7 @@ public:
     * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
     */
     void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); }
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 
 	// Association Methods

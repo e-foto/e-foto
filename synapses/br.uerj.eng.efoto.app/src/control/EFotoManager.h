@@ -44,14 +44,12 @@ class EFotoManager
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
     engine::IPhotogrammetricEnginePtr enginePtr;
-    engine::IProject* project;
+    engine::IProjectPtr project;
 #endif //SYNAPSE_EFOTO
 
 	int nextModule;
 	int nextImage;
 
-	//bool savedState;
-	//string xmlData;
 	string interfaceType;
 
 	ProjectManager* projectManager;
@@ -200,7 +198,7 @@ public:
     Project* getProject() {return project;}
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
-    engine::IProject* getProject() {return project;}
+    engine::IProjectPtr getProject() {return project;}
 #endif //SYNAPSE_EFOTO
 };
 

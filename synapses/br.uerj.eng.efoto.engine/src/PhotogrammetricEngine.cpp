@@ -29,10 +29,11 @@ bool PhotogrammetricEngine::stop()
 	return true;
 }
 
-IProject* PhotogrammetricEngine::getProject()
+IProjectPtr PhotogrammetricEngine::getProject()
 {
-    project.push_front((IProject*) new Project());
-    return project.at(0);
+    IProjectPtr proj = IProjectPtr((IProject*) new Project());
+    project.push_front(proj);
+    return proj;
 }
 
 // IPhotogrammetricEngine interface:

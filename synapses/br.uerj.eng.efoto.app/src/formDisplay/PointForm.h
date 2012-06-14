@@ -5,6 +5,7 @@
 #include "AbstractForm.h"
 #include "SigmaForm.h"
 #include "EDom.h"
+#include <QTranslator>
 
 
 namespace br {

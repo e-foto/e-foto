@@ -5,6 +5,7 @@
 #include "AbstractForm.h"
 #include "EDom.h"
 #include <QStringList>
+#include <QTranslator>
 
 namespace br {
 namespace uerj {
