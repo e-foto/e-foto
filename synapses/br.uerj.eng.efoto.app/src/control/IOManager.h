@@ -9,14 +9,18 @@
 #include "EObject.h"
 #include "PositionMatrix.h"
 
+#ifdef INTEGRATED_EFOTO
+#include "Project.h"
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include <IProject.h>
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-class Sensor;
-class Image;
-class InteriorOrientation;
 class IOUserInterface;
 class EFotoManager;
 
@@ -33,11 +37,15 @@ class IOManager
 	//
 	bool started;
 	bool status;
-	EFotoManager* manager;
-	Sensor* mySensor;
-	Image* myImage;
-	InteriorOrientation* myIO;
+    EFotoManager* manager;
 	IOUserInterface* myInterface;
+    int imageId;
+#ifdef INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
 
 public:
 
@@ -54,14 +62,14 @@ public:
 	* \param myImage Ponteiro para o objeto imagem utilizado.
 	* \param myIO Ponteiro para o objeto de cálculo utilizado.
 	*/
-	IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
+    IOManager(EFotoManager* manager, int id);
 	/**
 	* \brief Destrutor padrão.
 	*/
 	~IOManager();
 
 	// Association Methods
-	//
+    //
 	/**
 	* \brief Método de associação que seta uma interface.
 	* \param newInterface Interface que será usada.
@@ -118,10 +126,8 @@ public:
 	* \brief Método que diz se a Orientação Interior está pronta.
 	* \return bool Retorna verdadeiro se a Orientação Interior está pronta. Retorna falso, caso contrário.
 	*/
-	bool interiorDone();
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
-	/**Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa */
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
+    bool interiorDone();
+
 	/**
 	* \brief Método que armazena num deque os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa vindos de um xml para exibir o relatório na interface gráfica.
 	* \return deque<string> Os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa.

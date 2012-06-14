@@ -106,7 +106,11 @@ HEADERS =  include/IPhotogrammetry.h \
                    ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
                    ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
                    ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h
 
 
 SOURCES =  src/Photogrammetry.cpp \

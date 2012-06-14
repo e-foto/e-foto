@@ -128,10 +128,9 @@ public:
 	bool execIO(int id);
 
 	/**
-	* \brief Método que encerra o módulo de InteriorOrientation.
-	* \param id Identificador da Imagem.
+    * \brief Método que encerra o módulo de InteriorOrientation.
 	*/
-	void stopIO(int id);
+    void stopIO();
 
 	/**
 	* \brief Método que carrega o módulo de ExteriorOrientation.
