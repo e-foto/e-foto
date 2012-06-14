@@ -112,7 +112,7 @@ bool EFotoManager::reloadProject()
 		}
 		if (interiorOrientation != NULL)
 		{
-			stopIO(interiorOrientation->getId());
+            stopIO();
 		}
 		if (spatialRessection != NULL)
 		{
@@ -140,41 +140,16 @@ bool EFotoManager::reloadProject()
 
 bool EFotoManager::execIO(int id)
 {
-	bool result;
-    /* rever!
-	nextModule = 2;
-	Image* ioImage = instanceImage(id);
-	if (ioImage == NULL)
-	{
-		return false;
-	}
-	Sensor* ioSensor = instanceSensor(ioImage->getSensorId());
-	InteriorOrientation* io = instanceIO(id);
-	if (io == NULL)
-	{
-		io = new InteriorOrientation(id);
-		IOs.push_back(io);
-	}
-	else
-	{
-
-	}
-	interiorOrientation = new IOManager(this, ioSensor, ioImage, io);
-	result = interiorOrientation->exec();
-	*/
-	return result;
+    nextModule = 2;
+    interiorOrientation = new IOManager(this, id);
+    return interiorOrientation->exec();
 }
 
-void EFotoManager::stopIO(int id)
+void EFotoManager::stopIO()
 {
-    /* rever!
-	Image* ioImage = instanceImage(id);
-	delete interiorOrientation;
-	interiorOrientation = NULL;
-	deleteIO(id);
-	deleteSensor(ioImage->getSensorId());
-	deleteImage(id);
-	*/
+    if (interiorOrientation)
+        delete interiorOrientation;
+    interiorOrientation = NULL;
 }
 
 bool EFotoManager::execSR(int id)

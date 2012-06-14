@@ -7,13 +7,11 @@
 #include "IOUserInterface.h"
 #include "IOUserInterface_Qt.h"
 
-#ifdef INTEGRATED_EFOTO
+#include "Image.h"
+#include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
 #include "SensorWithKnowDimensions.h"
 #include "SensorWithKnowParameters.h"
-#include "Image.h"
-#include "InteriorOrientation.h"
-#endif //INTEGRATED_EFOTO REVER!
 
 // Constructors and destructors
 //
@@ -25,22 +23,22 @@ namespace efoto {
 
 IOManager::IOManager()
 {
-	manager = NULL;
-	mySensor = NULL;
-	myImage = NULL;
-	myIO = NULL;
+    manager = NULL;
+#ifdef INTEGRATED_EFOTO
+    project = NULL;
+#endif //INTEGRATED_EFOTO
 	started = false;
 	status = false;
+    imageId = 0;
 }
 
-IOManager::IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO)
+IOManager::IOManager(EFotoManager* manager, int id)
 {
-	this->manager = manager;
-	this->mySensor = mySensor;
-	this->myImage = myImage;
-	this->myIO = myIO;
+    this->manager = manager;
+    project = manager->getProject();
 	started = false;
 	status = false;
+    imageId = id;
 }
 
 IOManager::~IOManager()
@@ -67,8 +65,13 @@ IOUserInterface* IOManager::getInterface()
 PositionMatrix IOManager::getAnalogMarks()
 {
 #ifdef INTEGRATED_EFOTO
-	if (mySensor != NULL)
+    if (project != NULL && project->sensor(1) != NULL)
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    if (!project.isNull() && project->image(imageId) != NULL && project->image(imageId)->getSensor() != NULL)
+#endif //SYNAPSE_EFOTO
 	{
+        Sensor* mySensor = project->image(imageId)->getSensor();
 		if (mySensor->is("SensorWithFiducialMarks"))
 		{
 			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
@@ -79,20 +82,17 @@ PositionMatrix IOManager::getAnalogMarks()
 			SensorWithKnowDimensions* mySensorWithKnowDimensions = (SensorWithKnowDimensions*) mySensor;
 			return PositionMatrix(mySensorWithKnowDimensions->forgeLb());
 		}
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 	return PositionMatrix();
 }
 
 bool IOManager::measureMark(int id, double col, double lin)
 {
 	if (started)
-	{
-#ifdef INTEGRATED_EFOTO
-		ImageFiducialMark* myMark = new ImageFiducialMark(id, myImage->getId(), col, lin);
-		myImage->deleteDigFidMark(id);
-		myImage->putDigFidMark(*myMark);
-#endif //INTEGRATED_EFOTO REVER!
+    {
+        ImageFiducialMark* myMark = new ImageFiducialMark(id, imageId, col, lin);
+        project->image(imageId)->deleteDigFidMark(id);
+        project->image(imageId)->putDigFidMark(*myMark);
 		return true;
 	}
 	return false;
@@ -100,9 +100,7 @@ bool IOManager::measureMark(int id, double col, double lin)
 
 unsigned int IOManager::countMarks()
 {
-#ifdef INTEGRATED_EFOTO
-	return myImage->countDigFidMarks();
-#endif //INTEGRATED_EFOTO REVER!
+    return project->image(imageId)->countDigFidMarks();
 }
 
 deque<string> IOManager::markData(int index)
@@ -113,15 +111,13 @@ deque<string> IOManager::markData(int index)
 		PositionMatrix analogMarks = getAnalogMarks();
 
 		result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 1),3));
-		result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 2),3));  
-#ifdef INTEGRATED_EFOTO
-		ImageFiducialMark myMark = myImage->getDigFidMark(index + 1);
+        result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 2),3));
+        ImageFiducialMark myMark = project->image(imageId)->getDigFidMark(index + 1);
 		if (myMark.isAvailable())
 		{
 			result.push_back(Conversion::doubleToString(myMark.getCol()));
 			result.push_back(Conversion::doubleToString(myMark.getLin()));
-		}
-#endif //INTEGRATED_EFOTO REVER!
+        }
 	}
 	return result;
 }
@@ -133,102 +129,90 @@ unsigned int IOManager::getTotalMarks()
 
 int IOManager::getCalculationMode()
 {
-#ifdef INTEGRATED_EFOTO
-	string mode = mySensor->getCalculationMode();
-	return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
-#endif //INTEGRATED_EFOTO REVER!
+    string mode = project->image(imageId)->getSensor()->getCalculationMode();
+    return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
 }
 
 bool IOManager::calculateIO()
 {
 	if (started)
-	{
-#ifdef INTEGRATED_EFOTO
-		if (mySensor->is("SensorWithFiducialMarks"))
+    {
+        if (project->image(imageId)->getSensor()->is("SensorWithFiducialMarks"))
 		{
-			SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
-			if ((unsigned int) myImage->countDigFidMarks() == (unsigned int) mySensorWithFiducialMarks->getLb().getRows() / 2) // Comparação entre o número de marcas digitais e analógicas. "mySensorWithFiducialMarks->getLb()->getCols() / 2" dá o número de marcas analógicas validadas, tendo Lb sido carregado direto ou através das marcas.
+            SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) project->image(imageId)->getSensor();
+            if ((unsigned int) project->image(imageId)->countDigFidMarks() == (unsigned int) mySensorWithFiducialMarks->getLb().getRows() / 2) // Comparação entre o número de marcas digitais e analógicas. "mySensorWithFiducialMarks->getLb()->getCols() / 2" dá o número de marcas analógicas validadas, tendo Lb sido carregado direto ou através das marcas.
 			{
-				myIO->calculate();
+                project->image(imageId)->getIO()->calculate();
 				status = true;
 			}
 		}
-		else if (mySensor->is("SensorWithKnowDimensions"))
+        else if (project->image(imageId)->getSensor()->is("SensorWithKnowDimensions"))
 		{
 			//SensorWithKnowDimensions* mySensorWithKnowDimensions = (SensorWithKnowDimensions*) mySensor;
-			myIO->calculate();
+            project->image(imageId)->getIO()->calculate();
 			status = true;
 		}
-		else if (mySensor->is("SensorWithKnowParameters"))
+        else if (project->image(imageId)->getSensor()->is("SensorWithKnowParameters"))
 		{
 			//SensorWithKnowParameters* mySensorWithKnowParameters = (SensorWithKnowParameters*) mySensor;
-			myIO->calculate();
+            project->image(imageId)->getIO()->calculate();
 			status = true;
-		}
-#endif //INTEGRATED_EFOTO REVER!
+        }
 	}
 	return status;
 }
 
 bool IOManager::interiorDone()
 {
-#ifdef INTEGRATED_EFOTO
-	if (myIO->getXa().getRows() != 6)
-		return false;
-#endif //INTEGRATED_EFOTO REVER!
+    if (project->image(imageId)->getIO()->getXa().getRows() != 6)
+        return false;
 	return true;
 }
 
 deque<string> IOManager::makeReport()
 {
-	deque<string> result;
-#ifdef INTEGRATED_EFOTO
+    deque<string> result;
+    InteriorOrientation* myIO = project->image(imageId)->getIO();
 	result.push_back(myIO->getXa().xmlGetData());
 	result.push_back(myIO->getLa().xmlGetData());
 	result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
 	result.push_back(myIO->getQuality().getV().xmlGetData());
 	result.push_back(myIO->getQuality().getSigmaXa().xmlGetData());
-	result.push_back(myIO->getQuality().getSigmaLa().xmlGetData());
-#endif //INTEGRATED_EFOTO REVER!
+    result.push_back(myIO->getQuality().getSigmaLa().xmlGetData());
 	return result;
 }
 
 bool IOManager::exec()
 {
 #ifdef INTEGRATED_EFOTO
-	if (manager != NULL && mySensor != NULL && myImage != NULL && myIO != NULL)
-		if (myImage->getSensorId() == mySensor->getId() && myIO->getImageId() == myImage->getId())
+    if (manager != NULL && project != NULL)
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    if (manager != NULL && !project.isNull())
+#endif //SYNAPSE_EFOTO
+        if (project->image(imageId) != NULL && project->image(imageId)->getSensor() != NULL)
 		{
+            if (project->image(imageId)->getIO() == NULL)
+            {
+                InteriorOrientation io(imageId);
+                project->addIO(io.xmlGetData());
+            }
 			if (manager->getInterfaceType().compare("Qt") == 0)
-			{
-				//myInterface = new IOUserInterface_Qt(this);
+            {
 				myInterface = IOUserInterface_Qt::instance(this);
-			}
-			myImage->setSensor(mySensor);
-			myIO->setImage(myImage);
+            }
 			started = true;
 			if (myInterface != NULL)
 			{
 				myInterface->exec();
-			}
-			//if (manager->getInterfaceType().compare("Qt") == 0)
-			//{
-			//IOUserInterface_Qt::createInstance(this)->exec();
-			//}
-		}
-#endif //INTEGRATED_EFOTO REVER!
+            }
+        }
 	return status;
 }
 
-int IOManager::getId()
+int IOManager::getId() //Deprecated
 {
-#ifdef INTEGRATED_EFOTO
-	if (myImage != NULL)
-	{
-		return myImage->getId();
-	}
-#endif //INTEGRATED_EFOTO REVER!
-	return 0;
+    return imageId;
 }
 
 void IOManager::returnProject()
@@ -239,16 +223,15 @@ void IOManager::returnProject()
 bool IOManager::save(string path)
 {
 	if (started)
-	{
-#ifdef INTEGRATED_EFOTO
+    {
 		FILE* pFile;
-		string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
+        string output = "IO state data for Image " + Conversion::intToString(project->image(imageId)->getId()) + "\n\n";
 
-		output += mySensor->xmlGetData();
+        output += project->image(imageId)->getSensor()->xmlGetData();
 		output += "\n";
-		output += myImage->xmlGetData();
+        output += project->image(imageId)->xmlGetData();
 		output += "\n";
-		output += myIO->xmlGetData();
+        output += project->image(imageId)->getIO()->xmlGetData();
 		output += "\n";
 
 		EDomElement e(output);
@@ -258,89 +241,49 @@ bool IOManager::save(string path)
 		pFile = fopen (path.c_str(), "wb");
 		fwrite (buffer, 1, output.length(), pFile);
 		fclose (pFile);
-		return true;
-#endif //INTEGRATED_EFOTO REVER!
+        return true;
 	}
 	return false;
 }
 
-bool IOManager::load(string path)
+bool IOManager::load(string path) // Deprecated
 {
-	if (started)
-	{
-		FILE* pFile;
-		long lSize;
-		char* buffer;
-		size_t result;
-
-		pFile = fopen (path.c_str(), "rb");
-		if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
-
-		fseek (pFile , 0 , SEEK_END);
-		lSize = ftell (pFile);
-		rewind (pFile);
-
-		buffer = (char*) malloc (sizeof(char)*lSize);
-		if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
-
-		result = fread (buffer,1,lSize,pFile);
-		if ((unsigned int) result != (unsigned int) lSize) {fputs ("Reading error",stderr); exit (3);}
-
-
-		string strxml(buffer);
-		EDomElement xml(strxml);
-
-#ifdef INTEGRATED_EFOTO
-		mySensor->xmlSetData(xml.elementByTagName("Sensor").getContent());
-		myImage->xmlSetData(xml.elementByTagName("image").getContent());
-		myIO->xmlSetData(xml.elementByTagName("imageIO").getContent());
-#endif //INTEGRATED_EFOTO REVER!
-
-		fclose (pFile);
-		free (buffer);
-	}
 	return false;
 }
 
 string IOManager::getImageFile()
 {
-#ifdef INTEGRATED_EFOTO
-	if (myImage->getFilepath() == ".")
-		return myImage->getFilename();
+    if (project->image(imageId)->getFilepath() == ".")
+        return project->image(imageId)->getFilename();
 	else
 	{
 		string result = "";
-		result += myImage->getFilepath();
+        result += project->image(imageId)->getFilepath();
 		result += "/";
-		result += myImage->getFilename();
+        result += project->image(imageId)->getFilename();
 		return result;
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 }
 
 int IOManager::getFrameRows()
 {
-	int rows = 0;
-#ifdef INTEGRATED_EFOTO
-	if (mySensor->is("SensorWithKnowDimensions"))
-	{
-		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+    int rows = 0;
+    if (project->image(imageId)->getSensor()->is("SensorWithKnowDimensions"))
+    {
+        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)project->image(imageId)->getSensor();
 		rows = sensor->getFrameRows();
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 	return rows;
 }
 
 int IOManager::getFrameColumns()
 {
-	int cols = 0;
-#ifdef INTEGRATED_EFOTO
-	if (mySensor->is("SensorWithKnowDimensions"))
+    int cols = 0;
+    if (project->image(imageId)->getSensor()->is("SensorWithKnowDimensions"))
 	{
-		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*) project->image(imageId)->getSensor();
 		cols = sensor->getFrameColumns();
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 	return cols;
 }
 
