@@ -13,7 +13,7 @@
 #include "SensorWithKnowParameters.h"
 #include "Image.h"
 #include "InteriorOrientation.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 // Constructors and destructors
 //
@@ -80,7 +80,7 @@ PositionMatrix IOManager::getAnalogMarks()
 			return PositionMatrix(mySensorWithKnowDimensions->forgeLb());
 		}
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return PositionMatrix();
 }
 
@@ -92,7 +92,7 @@ bool IOManager::measureMark(int id, double col, double lin)
 		ImageFiducialMark* myMark = new ImageFiducialMark(id, myImage->getId(), col, lin);
 		myImage->deleteDigFidMark(id);
 		myImage->putDigFidMark(*myMark);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 		return true;
 	}
 	return false;
@@ -102,7 +102,7 @@ unsigned int IOManager::countMarks()
 {
 #ifdef INTEGRATED_EFOTO
 	return myImage->countDigFidMarks();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> IOManager::markData(int index)
@@ -121,7 +121,7 @@ deque<string> IOManager::markData(int index)
 			result.push_back(Conversion::doubleToString(myMark.getCol()));
 			result.push_back(Conversion::doubleToString(myMark.getLin()));
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	}
 	return result;
 }
@@ -136,7 +136,7 @@ int IOManager::getCalculationMode()
 #ifdef INTEGRATED_EFOTO
 	string mode = mySensor->getCalculationMode();
 	return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool IOManager::calculateIO()
@@ -165,7 +165,7 @@ bool IOManager::calculateIO()
 			myIO->calculate();
 			status = true;
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	}
 	return status;
 }
@@ -175,7 +175,7 @@ bool IOManager::interiorDone()
 #ifdef INTEGRATED_EFOTO
 	if (myIO->getXa().getRows() != 6)
 		return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return true;
 }
 
@@ -189,7 +189,7 @@ deque<string> IOManager::makeReport()
 	result.push_back(myIO->getQuality().getV().xmlGetData());
 	result.push_back(myIO->getQuality().getSigmaXa().xmlGetData());
 	result.push_back(myIO->getQuality().getSigmaLa().xmlGetData());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return result;
 }
 
@@ -216,7 +216,7 @@ bool IOManager::exec()
 			//IOUserInterface_Qt::createInstance(this)->exec();
 			//}
 		}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return status;
 }
 
@@ -227,7 +227,7 @@ int IOManager::getId()
 	{
 		return myImage->getId();
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return 0;
 }
 
@@ -259,7 +259,7 @@ bool IOManager::save(string path)
 		fwrite (buffer, 1, output.length(), pFile);
 		fclose (pFile);
 		return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	}
 	return false;
 }
@@ -294,7 +294,7 @@ bool IOManager::load(string path)
 		mySensor->xmlSetData(xml.elementByTagName("Sensor").getContent());
 		myImage->xmlSetData(xml.elementByTagName("image").getContent());
 		myIO->xmlSetData(xml.elementByTagName("imageIO").getContent());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 		fclose (pFile);
 		free (buffer);
@@ -315,7 +315,7 @@ string IOManager::getImageFile()
 		result += myImage->getFilename();
 		return result;
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int IOManager::getFrameRows()
@@ -327,7 +327,7 @@ int IOManager::getFrameRows()
 		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
 		rows = sensor->getFrameRows();
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return rows;
 }
 
@@ -340,13 +340,13 @@ int IOManager::getFrameColumns()
 		SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
 		cols = sensor->getFrameColumns();
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	return cols;
 }
 
 void IOManager::acceptIO()
 {
-    // Rever, pois o accept agora é quase o automático. E deve ser previsto um rollback.
+    // Rever!, pois o accept agora é quase o automático. E deve ser previsto um rollback.
     /*
 	EDomElement newXml(manager->xmlGetData());
 	if (newXml.elementByTagAtt("imageIO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")

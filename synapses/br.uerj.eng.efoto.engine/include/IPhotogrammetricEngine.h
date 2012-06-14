@@ -2,6 +2,7 @@
 #define BR_UERJ_ENG_EFOTO_ENGINE_IPHOTOGRAMMETRICENGINE_H
 
 #include "ISynapse.h"
+#include "IProject.h"
 
 namespace br {
 namespace uerj {
@@ -9,13 +10,11 @@ namespace eng {
 namespace efoto {
 namespace engine {
 
-class IProject;
-
 class IPhotogrammetricEngine: public cortex::ISynapse
 {
 public:
 	virtual ~IPhotogrammetricEngine(){}
-    virtual IProject* getProject() = 0;
+    virtual IProjectPtr getProject() = 0;
 
 };
 

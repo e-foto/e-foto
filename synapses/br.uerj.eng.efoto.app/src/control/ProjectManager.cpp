@@ -6,6 +6,15 @@
 #include "EFotoManager.h"
 #include "ProjectUserInterface_Qt.h"
 
+#include "ProjectHeader.h"
+#include "Terrain.h"
+#include "Sensor.h"
+#include "Flight.h"
+#include "Image.h"
+#include "Point.h"
+#include "InteriorOrientation.h"
+#include "ExteriorOrientation.h"
+
 // Constructors and Destructor
 //
 
@@ -16,268 +25,37 @@ namespace efoto {
 
 ProjectManager::ProjectManager()
 {
-	this->manager = NULL;
-	//this->xmlFile = NULL;
-	this->treeModel = NULL;
-#ifdef INTEGRATED_EFOTO
-	this->updater = NULL;
-#endif //INTEGRATED_EFOTO
+    this->manager = NULL;
+    this->treeModel = NULL;
 }
 
 ProjectManager::ProjectManager(EFotoManager* manager)
 {
-	this->manager = manager;
-	//this->xmlFile = NULL;
+    this->manager = manager;
 	this->treeModel = NULL;
-#ifdef INTEGRATED_EFOTO
-	this->updater = NULL;
-#endif //INTEGRATED_EFOTO
+    project = manager->getProject();
 }
 
 ProjectManager::~ProjectManager()
 {
 	if (treeModel != NULL)
-		delete treeModel;
-#ifdef INTEGRATED_EFOTO
-	if (updater != NULL)
-		delete updater;
-#endif //INTEGRATED_EFOTO
+        delete treeModel;
 }
 
 // Other Methods
 //
 
-bool ProjectManager::connectDatabase()
-{
-	if (manager != NULL)
-	{
-
-	}
-	return false;
-}
-
-bool ProjectManager::disconnectDatabase()
-{
-	if (manager != NULL)
-	{
-
-	}
-	return false;
-}
-
-bool ProjectManager::newProject(string filename)
-{
-	if (manager != NULL)
-	{
-		string xmlData = "";
-		xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-		xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
-		xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
-		xmlData += "xsi:noNamespaceSchemaLocation=\"EPPSchema/epp_structure.xsd\"\n";
-		xmlData += "xmlns:gml=\"http://www.opengis.net/gml\"\n";
-		xmlData += "xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
-		xmlData += "<projectHeader>\n";
-		xmlData += "<name></name>\n";
-		xmlData += "<description></description>\n";
-
-		int i = filename.rfind('/');
-
-		string filePath = "<filePath>"+filename.substr(0,i)+"</filePath>\n";
-		string fileName = "<fileName>"+filename.erase(0,i+1)+"</fileName>\n";
-
-		xmlData += fileName;
-		xmlData += filePath;
-
-		xmlData += "<creation></creation>\n";
-		xmlData += "<modification></modification>\n";
-		xmlData += "<owner></owner>\n";
-		xmlData += "<aims></aims>\n";
-		xmlData += "<context></context>\n";
-		xmlData += "</projectHeader>\n";
-		xmlData += "<terrain>\n";
-		xmlData += "<meanAltitude uom=\"#m\"></meanAltitude>\n";
-		xmlData += "<minAltitude uom=\"#m\"></minAltitude>\n";
-		xmlData += "<maxAltitude uom=\"#m\"></maxAltitude>\n";
-		xmlData += "<GRS>WGS84</GRS>\n";
-		xmlData += "<CPS>UTM</CPS>\n";
-		xmlData += "<workAreaCenterCoordinates>\n";
-		xmlData += "<Lat direction=\"S\">\n";
-		xmlData += "<degrees></degrees>\n";
-		xmlData += "<minutes></minutes>\n";
-		xmlData += "<seconds></seconds>\n";
-		xmlData += "</Lat>\n";
-		xmlData += "<Long direction=\"W\">\n";
-		xmlData += "<degrees></degrees>\n";
-		xmlData += "<minutes></minutes>\n";
-		xmlData += "<seconds></seconds>\n";
-		xmlData += "</Long>\n";
-		xmlData += "<utmFuse></utmFuse>\n";
-		xmlData += "</workAreaCenterCoordinates>\n";
-		xmlData += "</terrain>\n";
-		xmlData += "<sensors>\n";
-		xmlData += "</sensors>\n";
-		xmlData += "<flights>\n";
-		xmlData += "</flights>\n";
-		xmlData += "<points>\n";
-		xmlData += "</points>\n";
-		xmlData += "<images>\n";
-		xmlData += "</images>\n";
-		xmlData += "<interiorOrientation>\n";
-		xmlData += "</interiorOrientation>\n";
-		xmlData += "<exteriorOrientation>\n";
-		xmlData += "</exteriorOrientation>\n";
-		/*
-  xmlData += "<photogrammetricBlock>\n";
-  xmlData += "</photogrammetricBlock>\n";
-  xmlData += "<stereoPairs>\n";
-  xmlData += "</stereoPairs>\n";
-  xmlData += "<normalization>\n";
-  xmlData += "</normalization>\n";
-  xmlData += "<stereoPloting>\n";
-  xmlData += "</stereoPloting>\n";
-  xmlData += "<dem>\n";
-  xmlData += "</dem>\n";
-  xmlData += "<orthorectification>\n";
-  xmlData += "</orthorectification>\n";
-  */
-		xmlData += "</efotoPhotogrammetricProject>";
-
-#ifdef INTEGRATED_EFOTO
-        manager->getProject()->closeProject();
-        manager->getProject()->setXml(xmlData);
-#endif //INTEGRATED_EFOTO
-
-		if (treeModel != NULL)
-			delete treeModel;
-
-		treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
-
-		return true;
-	}
-	return false;
-}
-
-bool ProjectManager::loadProject()
-{
-	if (manager != NULL)
-	{
-
-	}
-	return false;
-}
-
-bool ProjectManager::saveProject()
-{
-	if (manager != NULL)
-	{
-
-	}
-	return false;
-}
-
-bool ProjectManager::loadFile(string filename)
-{
-	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
-		stringstream myData;
-		ifstream myFile(filename.c_str());
-		if (updater != NULL)
-		{
-			delete updater;
-			updater = NULL;
-		}
-		if (myFile.is_open())
-		{
-			string line;
-			while (!myFile.eof())
-			{
-				getline (myFile,line);
-				myData << line << endl;
-			}
-			myFile.close();
-
-			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
-			updater = new XmlUpdater(xmlData);
-			if (updater->isUpdated())
-			{
-				xmlData = updater->getAllXml().getContent();
-
-				/* Paulo 6/3/12 : Se deu um update salva o arquivo automaticamente.*/
-				//manager->xmlSetData(xmlData);
-				//saveFile(filename);
-			}
-			else
-			{
-				/* for debugs
-	int error = updater.getError();
-	if (error == 1)
-	{
-	 cout << "(referenceBuild < thisXmlBuid) is not supported";
-	}
-	if (error == 2)
-	{
-	 cout << "buildOne (referenceBuild) is invalid";
-	}
-	if (error == 3)
-	{
-	 cout << "buildTwo (thisXmlBuild) is invalid";
-	}
-	if (error == 4)
-	{
-	 cout << "xml string passed is empty";
-	}
-   */
-				return false;
-            }
-            manager->getProject()->closeProject();
-            manager->getProject()->setXml(xmlData);
-
-
-			if (treeModel != NULL)
-				delete treeModel;
-
-			treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
-			return true;
-		}
-		//else cout << "Unable to open file"; // for debugs
-		return false;
-#endif //INTEGRATED_EFOTO
-	}
-
-	return false;
-}
-
-bool ProjectManager::saveFile(string filename)
-{
-	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
-		ofstream myFile (filename.c_str());
-		if (myFile.is_open())
-		{
-            //Rever isso, pois em breve new, load e save deverão ser tarefas da própria classe project
-            EDomElement xml(manager->getProject()->getXml());
-			//myFile << xml.indent('\t').getContent(); // O adequado é que em breve a linha a baixo possa ser substituida por esta aqui.
-			myFile << xml.removeBlankLines(true).indent('\t').getContent();
-			myFile.close();
-			return true;
-		}
-		else cout << "Unable to open file";
-		return false;
-#endif //INTEGRATED_EFOTO
-	}
-	return false;
-}
-
 int ProjectManager::informFileVersionError()
 {
 #ifdef INTEGRATED_EFOTO
-	if (manager != NULL && updater != NULL)
-    {
-        return updater->getError();
-    }
+    if (manager != NULL && project != NULL)
 #endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    if (manager != NULL && !project.isNull())
+#endif //SYNAPSE_EFOTO
+    {
+        return project->getError();
+    }
 
 	return 0;
 }
@@ -286,68 +64,55 @@ bool ProjectManager::addComponent(string data, string parent)
 {
 	if (manager != NULL)
     {
-#ifdef INTEGRATED_EFOTO
 		if (parent == "sensors")
 		{
-			manager->getProject()->addSensor(data);
+            project->addSensor(data);
 		}
 		else if (parent == "flights")
 		{
-			manager->getProject()->addFlight(data);
+            project->addFlight(data);
 		}
 		else if (parent == "images")
 		{
-			manager->getProject()->addImage(data);
+            project->addImage(data);
 		}
 		else if (parent == "points")
 		{
-			manager->getProject()->addPoint(data);
-		}
-		else if (parent == "interiorOrientation")
-		{
-			manager->getProject()->addIO(data);
-		}
-		else if (parent == "exteriorOrientation")
-		{
-			manager->getProject()->addEO(data);
-		}
+            project->addPoint(data);
+        }
 
-        EDomElement newXml(manager->getProject()->getXml());
+        EDomElement newXml(project->getXml());
 		if (treeModel != NULL)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
-		return true;
-#endif //INTEGRATED_EFOTO
+        return true;
 	}
 	return false;
 }
 
 bool ProjectManager::removeComponent(string type, int id)
 {
-    // Rever o uso deste método. E habilitar os botões para isso funcionar.
+    // Rever! o uso deste método. E habilitar os botões para isso funcionar.
 	if (manager != NULL)
     {
-#ifdef INTEGRATED_EFOTO
         if (type == "Sensor")
-            manager->getProject()->deleteSensor(id);
+            project->deleteSensor(id);
         else if (type == "Flight")
-            manager->getProject()->deleteFlight(id);
+            project->deleteFlight(id);
         else if (type == "Image")
-            manager->getProject()->deleteImage(id);
+        {
+            project->deleteImage(id);
+            project->deleteIO(id);
+            project->deleteEO(id);
+        }
         else if (type == "Point")
-            manager->getProject()->deletePoint(id);
-        else if (type == "IO")
-            manager->getProject()->deleteIO(id);
-        else if (type == "EO")
-            manager->getProject()->deleteEO(id);
+            project->deletePoint(id);
 
-
-        EDomElement newXml(manager->getProject()->getXml());
+        EDomElement newXml(project->getXml());
 		if (treeModel != NULL)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
-		return true;
-#endif //INTEGRATED_EFOTO
+        return true;
 	}
 	return false;
 }
@@ -355,104 +120,57 @@ bool ProjectManager::removeComponent(string type, int id)
 bool ProjectManager::editComponent(string type, string data)
 {
 	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
-		//EDomElement newXml(manager->xmlGetData());
+    {
 		if (type == "Header")
-		{
-			//newXml.replaceChildByTagName("projectHeader", data);
-			manager->getProject()->header()->xmlSetData(data);
+        {
+            project->header()->xmlSetData(data);
 		}
 		else if (type == "Terrain")
-		{
-			//newXml.replaceChildByTagName("terrain", data);
-			manager->getProject()->terrain()->xmlSetData(data);
-		}
-		//manager->xmlSetData(newXml.getContent());
+        {
+            project->terrain()->xmlSetData(data);
+        }
 
-        EDomElement newXml(manager->getProject()->getXml());
+        EDomElement newXml(project->getXml());
 		if (treeModel != NULL)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
-		return true;
-#endif //INTEGRATED_EFOTO
+        return true;
 	}
-	return false;
+    return false;
 }
 
 bool ProjectManager::editComponent(string type, int id, string data)
 {
-	//EDomElement newXml(manager->xmlGetData());
 	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
+    {
 		if (type == "Sensor")
-		{
-			//newXml.replaceChildByTagAtt("sensor", "key", Conversion::intToString(id), data);
-            //manager->getProject()->sensor(id)->xmlSetData(data);
-            manager->getProject()->addSensor(data);
+        {
+            project->addSensor(data); // Uso add aqui, pois o tipo do sensor pode mudar e necessitar de uma reconstrução do objeto correto.
 		}
 		else if (type == "Flight")
-		{
-            //newXml.replaceChildByTagAtt("flight", "key", Conversion::intToString(id), data)
-            //manager->getProject()->flight(id)->xmlSetData(data);;
-            manager->getProject()->addFlight(data);
+        {
+            project->flight(1)->xmlSetData(data);
 		}
 		else if (type == "Image")
-		{
-            //newXml.replaceChildByTagAtt("image", "key", Conversion::intToString(id), data);
-            manager->getProject()->image(id)->xmlSetData(data);
-            //manager->getProject()->addImage(data);
+        {
+            project->image(id)->xmlSetData(data);
 		}
 		else if (type == "Point")
-		{
-			//newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(id), data);
-            manager->getProject()->point(id)->xmlSetData(data);
-            //manager->getProject()->addPoint(data);
-		}
-		else if (type == "IO")
-		{
-			//newXml.replaceChildByTagAtt("imageIO", "image_key", Conversion::intToString(id), data);
-            //manager->getProject()->IO(id)->xmlSetData(data);
-            manager->getProject()->addIO(data);
-		}
-		else if (type == "EO")
-		{
-			//newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(id), data);
-            //manager->getProject()->EO(id)->xmlSetData(data);
-            manager->getProject()->addEO(data);
-		}
-		//manager->xmlSetData(newXml.getContent());
+        {
+            project->point(id)->xmlSetData(data);
+        }
 
-        EDomElement newXml(manager->getProject()->getXml());
+        EDomElement newXml(project->getXml());
 		if (treeModel != NULL)
 			delete treeModel;
 		treeModel = new ETreeModel(newXml.elementByTagName("efotoPhotogrammetricProject").getContent());
-		return true;
-#endif //INTEGRATED_EFOTO
+        return true;
 	}
-	return false;
+    return false;
 }
 
-EObject* ProjectManager::viewComponent(string type, int id)
+EObject* ProjectManager::viewComponent(string type, int id) // Deprecated
 {
-	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
-		if (type == "Sensor")
-			return (EObject*) manager->getProject()->sensor(id);
-		else if (type == "Flight")
-			return (EObject*) manager->getProject()->flight(id);
-		else if (type == "Image")
-			return (EObject*) manager->getProject()->image(id);
-		else if (type == "Point")
-			return (EObject*) manager->getProject()->point(id);
-		else if (type == "IO")
-			return (EObject*) manager->getProject()->IO(id);
-		else if (type == "EO")
-			return (EObject*) manager->getProject()->EO(id);
-#endif //INTEGRATED_EFOTO
-	}
 	return NULL;
 }
 
@@ -487,16 +205,12 @@ int ProjectManager::getImageId(string imageName)
 
 int ProjectManager::getFreeImageId()
 {
-#ifdef INTEGRATED_EFOTO
-	return manager->getProject()->getFreeImageId();
-#endif //INTEGRATED_EFOTO
+    return project->getFreeImageId();
 }
 
 int ProjectManager::getFreePointId()
 {
-#ifdef INTEGRATED_EFOTO
-	return manager->getProject()->getFreePointId();
-#endif //INTEGRATED_EFOTO
+    return project->getFreePointId();
 }
 
 bool ProjectManager::startModule(string module, int image)
@@ -558,30 +272,29 @@ bool ProjectManager::reload()
 
 string ProjectManager::getXml(string tagname)
 {
-#ifdef INTEGRATED_EFOTO
-	return manager->getProject()->getXml(tagname);
-#endif //INTEGRATED_EFOTO
+    return project->getXml(tagname);
 }
 
 string ProjectManager::getXml(string tagname, string att, string value)
 {
-#ifdef INTEGRATED_EFOTO
-	return manager->getProject()->getXml(tagname, att, value);
-#endif //INTEGRATED_EFOTO
+    return project->getXml(tagname, att, value);
 }
 
 bool ProjectManager::getSavedState()
 {
-	if (manager != NULL)
-	{
 #ifdef INTEGRATED_EFOTO
-		return manager->getProject()->getSaveState();
+    if (manager != NULL && project != NULL)
 #endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    if (manager != NULL && !project.isNull())
+#endif //SYNAPSE_EFOTO
+    {
+        return project->getSaveState();
 	}
 	return true;
 }
 
-bool ProjectManager::makeSPFile(string filename, int image1, int image2)
+bool ProjectManager::makeSPFile(string filename, int image1, int image2) // Deprecated
 {
 	if (manager != NULL)
 	{
@@ -675,7 +388,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		}
 		else cout << "Unable to open file";
 		return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 	}
 	return false;
 }

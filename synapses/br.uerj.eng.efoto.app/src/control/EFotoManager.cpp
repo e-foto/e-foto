@@ -27,9 +27,6 @@ namespace efoto {
 // Constructors and destructor
 //
 
-/**
- *
- */
 EFotoManager::EFotoManager()
 {
 	projectManager = NULL;
@@ -51,9 +48,6 @@ EFotoManager::EFotoManager()
 
 }
 
-/**
- *
- */
 EFotoManager::~EFotoManager()
 {
 
@@ -75,41 +69,26 @@ string EFotoManager::getXml()
 //Other methods
 //
 
-/**
- *
- */
 void EFotoManager::setInterfaceType(string newInterfaceType)
 {
 	interfaceType = newInterfaceType;
 }
 
-/**
- *
- */
 string EFotoManager::getInterfaceType()
 {
 	return interfaceType;
 }
 
-/**
- *
- */
 void EFotoManager::setNextModule(int newModule)
 {
 	nextModule = newModule;
 }
 
-/**
- *
- */
 void EFotoManager::setNextImage(int newImage)
 {
 	nextImage = newImage;
 }
 
-/**
- *
- */
 bool EFotoManager::execProject(string filename)
 {
 	bool result;
@@ -122,9 +101,6 @@ bool EFotoManager::execProject(string filename)
 	return result;
 }
 
-/**
- *
- */
 bool EFotoManager::reloadProject()
 {
 	nextModule = 0;
@@ -162,13 +138,10 @@ bool EFotoManager::reloadProject()
 	}
 }
 
-/**
- *
- */
 bool EFotoManager::execIO(int id)
 {
 	bool result;
-	/* rever
+    /* rever!
 	nextModule = 2;
 	Image* ioImage = instanceImage(id);
 	if (ioImage == NULL)
@@ -194,7 +167,7 @@ bool EFotoManager::execIO(int id)
 
 void EFotoManager::stopIO(int id)
 {
-	/* rever
+    /* rever!
 	Image* ioImage = instanceImage(id);
 	delete interiorOrientation;
 	interiorOrientation = NULL;
@@ -204,13 +177,10 @@ void EFotoManager::stopIO(int id)
 	*/
 }
 
-/**
- *
- */
 bool EFotoManager::execSR(int id)
 {
 	bool result;
-	/* rever
+    /* rever!
 	nextModule = 2;
 	Image* srImage = instanceImage(id);
 	if (srImage == NULL)
@@ -242,7 +212,7 @@ bool EFotoManager::execSR(int id)
 
 void EFotoManager::stopSR(int id)
 {
-	/* rever
+    /* rever!
 	Image* srImage = instanceImage(id);
 	delete spatialRessection;
 	spatialRessection = NULL;
@@ -255,13 +225,10 @@ void EFotoManager::stopSR(int id)
 	*/
 }
 
-/**
- *
- */
 bool EFotoManager::execSP()
 {
 	bool result;
-	/* rever
+    /* rever!
 	nextModule = 2;
 
 	instanceAllImages();
@@ -295,7 +262,7 @@ bool EFotoManager::execSP()
 
 void EFotoManager::stopSP()
 {
-	/* rever
+    /* rever!
 	delete sp;
 	sp = NULL;
 	//deleteSensor(images.at(0)->getSensorId());
@@ -316,7 +283,7 @@ void EFotoManager::stopSP()
 bool EFotoManager::execPT()
 {
 	bool result;
-	/* rever
+    /* rever!
 	nextModule = 2;
 
 	instanceAllImages();
@@ -338,7 +305,7 @@ bool EFotoManager::execPT()
 
 void EFotoManager::stopPT()
 {
-/* rever
+/* rever!
 	delete fotoTri;
 	fotoTri = NULL;
 	deleteSensor(images.at(0)->getSensorId());
@@ -360,7 +327,7 @@ void EFotoManager::stopPT()
 bool EFotoManager::execDEM()
 {
 	bool result;
-/* rever
+/* rever!
 	nextModule = 2;
 
 	instanceAllImages();
@@ -394,7 +361,7 @@ bool EFotoManager::execDEM()
 
 void EFotoManager::stopDEM()
 {
-	/* rever
+    /* rever!
 	delete dem;
 	dem = NULL;
 	//deleteSensor(images.at(0)->getSensorId());
@@ -416,7 +383,7 @@ void EFotoManager::stopDEM()
 bool EFotoManager::execOrtho()
 {
 	bool result;
-/* rever
+/* rever!
 	nextModule = 2;
 
 	instanceAllImages();
@@ -449,7 +416,7 @@ bool EFotoManager::execOrtho()
 
 void EFotoManager::stopOrtho()
 {
-	/* rever
+    /* rever!
 	delete ortho;
 	ortho = NULL;
 	//deleteSensor(images.at(0)->getSensorId());
@@ -467,9 +434,6 @@ void EFotoManager::stopOrtho()
 	}*/
 }
 
-/**
- *
- */
 bool EFotoManager::exec(string filename)
 {
 	if (filename != "")

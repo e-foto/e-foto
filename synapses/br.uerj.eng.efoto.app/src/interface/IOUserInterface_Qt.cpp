@@ -99,7 +99,7 @@ void IOUserInterface_Qt::receiveMark(QPointF p)
 
 	table1->selectRow(table1->currentIndex().row() + 1);
 	testActivateIO();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void IOUserInterface_Qt::makeRepaint()
@@ -107,7 +107,7 @@ void IOUserInterface_Qt::makeRepaint()
 #ifdef INTEGRATED_EFOTO
 	imageView->update();
 	table1->repaint();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void IOUserInterface_Qt::activeSetMode()
@@ -161,7 +161,7 @@ void IOUserInterface_Qt::init()
 
 	//this->showNormal();
 	//myImageView->fitView();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool IOUserInterface_Qt::measureMark(int id, double col, double lin)
@@ -349,7 +349,7 @@ void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 	delete(mark);
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool IOUserInterface_Qt::exec()
@@ -547,7 +547,7 @@ bool IOUserInterface_Qt::exec()
 	//return false;
 	//delete(myImageView); precisa de um stop
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 } // namespace efoto

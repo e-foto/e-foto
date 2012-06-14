@@ -9,7 +9,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "BundleAdjustment.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -66,7 +66,7 @@ protected:
     deque<Point*> listSelectedPoints;
 
     BundleAdjustment* pt;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 public:
 		/**
@@ -258,7 +258,7 @@ public:
  * \attention NÃ£o use esse metodo antes de disparar o metodo de calculo
  */
 		BundleAdjustment* getBundleAdjustment();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 		/**
  * \brief Metodo usado para organizar a lista de pontos selecionados, de forma que todos os pontos de controle sempre fiquem antes dos pontos fotogramÃ©tricos

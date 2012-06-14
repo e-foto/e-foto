@@ -112,7 +112,7 @@ void SRUserInterface_Qt::init()
 	// Make some connections
 	imageView->getMarker()->setToOnlyEmitClickedMode();
     connect(imageView->getMarker(),SIGNAL(clicked(QPointF)), this, SLOT(receivePoint(QPointF)));
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRUserInterface_Qt::informState()
@@ -141,7 +141,7 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 
 	table1->selectRow(table1->currentIndex().row() + 1);
 	testActivateSR();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
@@ -184,7 +184,7 @@ void SRUserInterface_Qt::makeRepaint()
 #ifdef INTEGRATED_EFOTO
 	imageView->repaint();
 	table1->repaint();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRUserInterface_Qt::activeSetMode()
@@ -227,7 +227,7 @@ void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
 	delete(markOff);
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRUserInterface_Qt::calculateSR()
@@ -437,7 +437,7 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 		else
 			imageView->getMarker()->insertMark(location, row+1, pointName, markOff);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRUserInterface_Qt::exec()
@@ -517,7 +517,7 @@ bool SRUserInterface_Qt::exec()
 	//return false;
 	//delete(oldImageView);
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 } // namespace efoto
