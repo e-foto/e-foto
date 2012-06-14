@@ -116,7 +116,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	//qDebug("Construtor");
 	init();
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 PTUserInterface_Qt::~PTUserInterface_Qt()
@@ -146,7 +146,7 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	//graphicResults->setOrtoImageMode(dim.get(1,1) ,dim.get(2,1) ,dim.get(3,1) ,dim.get(4,1));
 
 	graphicResults->show();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
@@ -301,7 +301,7 @@ bool PTUserInterface_Qt::exec()
 	qApp->processEvents();
 
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::viewReport()
@@ -417,7 +417,7 @@ void PTUserInterface_Qt::viewReport()
 	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
 
 	resultView->setWindowModality(Qt::ApplicationModal);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::showReportXml()
@@ -512,7 +512,7 @@ bool PTUserInterface_Qt::calculatePT()
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::showSelectionWindow()
@@ -663,7 +663,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
         clearAllMarks(viewer->getRightDisplay()); markAllpoints(viewer->getRightDisplay());
 		viewer->getRightDisplay()->updateAll();
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 //Atualiza a tabela de imagens
@@ -729,7 +729,7 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		}
 	}
 	imageTable->setSortingEnabled(true);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::updatePointsTable()
@@ -982,7 +982,7 @@ void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
     display->update();
 }
 
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 {
@@ -1026,7 +1026,7 @@ void PTUserInterface_Qt::imageClicked(QPointF pixel)
 		//previsionMark(currentPointKey,pixel);
 	}
 	showImagesAppearances(currentPointKey);
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 
@@ -1314,7 +1314,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 			}
 		}
     }
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::setMaxIteration(int iterations)
@@ -1352,7 +1352,7 @@ void PTUserInterface_Qt::addPoint()
     markAllpoints(viewer->getLeftDisplay());
     clearAllMarks(viewer->getRightDisplay());
     markAllpoints(viewer->getRightDisplay());
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)

@@ -18,7 +18,7 @@
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
 #include "MatchingPoints.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -110,7 +110,7 @@ private:
 	SeparatedStereoViewer* viewer;
 	MatchingPointsList seeds, pairs;
 	Marker *mark_seeds, *mark_pairs, *mark_empty;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	ProgressWindow pw;
 	void getImagesIds(int &left_id, int &right_id);

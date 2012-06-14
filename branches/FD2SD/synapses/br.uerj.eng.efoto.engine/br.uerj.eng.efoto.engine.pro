@@ -13,12 +13,17 @@ include(../../runtime/synapse.pri)
 # ------------------------------------------------
 # Extensions
 # ------------------------------------------------
+
+DEFINES += SYNAPSE_EFOTO
+
 INCLUDEPATH += src \
     src/photogrammetry \
     src/imageProcessing \
     src/infrastructure \
     src/xml_definitions
+
 DEPENDPATH += $${INCLUDEPATH}
+
 HEADERS = include/IPhotogrammetricEngine.h \
     src/PhotogrammetricEngine.h \
     src/photogrammetry/DetectorFiducialMark.h \
@@ -76,6 +81,7 @@ HEADERS = include/IPhotogrammetricEngine.h \
     src/infrastructure/ProgressPublisher.h \
     src/xml_definitions/XmlUpdater.h \
     include/IProject.h
+
 SOURCES = src/PhotogrammetricEngine.cpp \
     src/photogrammetry/DetectorFiducialMark.cpp \
     src/photogrammetry/DetectorSpaceCoordinate.cpp \

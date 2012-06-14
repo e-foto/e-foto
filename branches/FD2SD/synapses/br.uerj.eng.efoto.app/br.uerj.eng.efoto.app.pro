@@ -24,8 +24,9 @@ INCLUDEPATH += src \
 			   src/interface \
 			   src/formDisplay \
 			   src/infrastructure \
-			   src/resource \
-			   ../br.uerj.eng.efoto.engine/src/infrastructure
+                           src/resource \
+                           ../br.uerj.eng.efoto.engine/src/infrastructure \
+                           ../br.uerj.eng.efoto.engine/src/photogrammetry
 
 DEPENDPATH += $${INCLUDEPATH}
 
@@ -96,7 +97,17 @@ HEADERS =  include/IPhotogrammetry.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h
+                   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
+                   #
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.h" \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h
+
 
 SOURCES =  src/Photogrammetry.cpp \
 		   #

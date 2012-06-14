@@ -12,7 +12,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -53,7 +53,7 @@ protected:
 #ifdef INTEGRATED_EFOTO
     Marker *mark;
     SingleViewer *imageView;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 protected slots:
 	virtual void languageChange();

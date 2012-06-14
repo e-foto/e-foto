@@ -13,7 +13,7 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -65,7 +65,7 @@ protected:
     Marker *markOn;
     Marker *markOff;
     SingleViewer *imageView;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 	void closeEvent(QCloseEvent *e);
 

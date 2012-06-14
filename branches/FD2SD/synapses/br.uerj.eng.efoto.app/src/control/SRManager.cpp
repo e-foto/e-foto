@@ -14,7 +14,7 @@
 #include "Point.h"
 #include "InteriorOrientation.h"
 #include "SpatialRessection.h"
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 
 // Constructors and destructors
 //
@@ -88,7 +88,7 @@ bool SRManager::measurePoint(int id, double col, double lin)
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRManager::selectPoint(int id)
@@ -98,7 +98,7 @@ void SRManager::selectPoint(int id)
 	{
 		mySR->selectPoint(id);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRManager::unselectPoint(int id)
@@ -108,7 +108,7 @@ void SRManager::unselectPoint(int id)
 	{
 		mySR->unselectPoint(id);
 	}
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<double> SRManager::pointToDetector(double col, double lin)
@@ -118,7 +118,7 @@ deque<double> SRManager::pointToDetector(double col, double lin)
 	result.push_back(myIO->imageToDetector(col, lin).getXi());
 	result.push_back(myIO->imageToDetector(col, lin).getEta());
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::removePoint(int id)
@@ -135,7 +135,7 @@ bool SRManager::removePoint(int id)
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::insertPointOnImage(int id) // Deprecated
@@ -153,7 +153,7 @@ bool SRManager::insertPointOnImage(int id) // Deprecated
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::removePointFromImage(int id)
@@ -170,7 +170,7 @@ bool SRManager::removePointFromImage(int id)
 		/* ERRO: ponto nÃ£o existe. */
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> SRManager::listSelectedPoints()
@@ -192,7 +192,7 @@ deque<string> SRManager::listSelectedPoints()
 		}
 	}
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> SRManager::listImagePoints()
@@ -213,7 +213,7 @@ deque<string> SRManager::listImagePoints()
 		}
 	}
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> SRManager::listAllPoints()
@@ -239,7 +239,7 @@ deque<string> SRManager::listAllPoints()
 		}
 	}
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> SRManager::pointData(int index)
@@ -266,14 +266,14 @@ deque<string> SRManager::pointData(int index)
 		}
 	}
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 unsigned int SRManager::countSelectedPoints()
 {
 #ifdef INTEGRATED_EFOTO
     return mySR->getSelectedPoints().size();
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::connectImagePoints()
@@ -298,7 +298,7 @@ bool SRManager::connectImagePoints()
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::updatePointsTable()
@@ -319,7 +319,7 @@ bool SRManager::flightDirection(int MarkId)
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::flightDirection(double col, double lin)
@@ -331,7 +331,7 @@ bool SRManager::flightDirection(double col, double lin)
 				return true;
 		}
 		return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::flightDirection(double kappa0)
@@ -343,7 +343,7 @@ bool SRManager::flightDirection(double kappa0)
 				return true;
 		}
 		return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrecision)
@@ -359,7 +359,7 @@ bool SRManager::calculateSR(int iterations, double gnssPrecision, double insPrec
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::exteriorDone()
@@ -368,7 +368,7 @@ bool SRManager::exteriorDone()
 	if (mySR->getXa().getRows() != 6)
 		return false;
 	return true;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 deque<string> SRManager::makeReport()
@@ -389,7 +389,7 @@ deque<string> SRManager::makeReport()
 	else
 		result.push_back("no");
 	return result;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::exec()
@@ -419,7 +419,7 @@ bool SRManager::exec()
 			}
 		}
 	return status;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 int SRManager::getId()
@@ -430,7 +430,7 @@ int SRManager::getId()
 		return myImage->getId();
 	}
 	return 0;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRManager::returnProject()
@@ -472,7 +472,7 @@ bool SRManager::save(string path)
 		return true;
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 bool SRManager::load(string path)
@@ -518,7 +518,7 @@ bool SRManager::load(string path)
 		free (buffer);
 	}
 	return false;
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 string SRManager::getImageFile()
@@ -534,12 +534,12 @@ string SRManager::getImageFile()
 		result += myImage->getFilename();
 		return result;
     }
-#endif //INTEGRATED_EFOTO
+#endif //INTEGRATED_EFOTO REVER!
 }
 
 void SRManager::acceptSR()
 {
-    //Rever, pois a seção spatialRessections ainda está inacessível na classe Project
+    //Rever!, pois a seção spatialRessections ainda está inacessível na classe Project
     /*
     EDomElement newXml(manager->xmlGetData());
     if (newXml.elementByTagName("spatialRessections").getContent() == "")
