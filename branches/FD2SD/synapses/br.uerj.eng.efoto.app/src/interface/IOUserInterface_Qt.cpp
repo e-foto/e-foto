@@ -342,19 +342,18 @@ void IOUserInterface_Qt::acceptIO()
 
 void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
-#ifdef INTEGRATED_EFOTO
 	LoadingScreen::instance().show();
 	qApp->processEvents();
+#ifdef INTEGRATED_EFOTO
 	delete(imageView);
 	delete(mark);
-	manager->returnProject();
-	QMainWindow::closeEvent(e);
 #endif //INTEGRATED_EFOTO REVER!
+	manager->returnProject();
+    QMainWindow::closeEvent(e);
 }
 
 bool IOUserInterface_Qt::exec()
 {
-#ifdef INTEGRATED_EFOTO
 	calculationMode = manager->getCalculationMode();
 	if (calculationMode == 1)
 	{
@@ -403,8 +402,9 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
 
+#ifdef INTEGRATED_EFOTO
+        imageView->loadImage(QString(manager->getImageFile().c_str()));
 		for (int row = 0; row < points->rowCount() ;row++)
 		{
 			if (points->item(row,2)->text().isEmpty())
@@ -413,6 +413,8 @@ bool IOUserInterface_Qt::exec()
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
 			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
 		}
+#endif //INTEGRATED_EFOTO REVER!
+
 		makeRepaint();
 		actionMove->trigger();
 	}
@@ -468,8 +470,9 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
 
+#ifdef INTEGRATED_EFOTO
+		imageView->loadImage(QString(manager->getImageFile().c_str()));
 		for (int row = 0; row < points->rowCount() ;row++)
 		{
 			if (points->item(row,2)->text().isEmpty())
@@ -478,6 +481,7 @@ bool IOUserInterface_Qt::exec()
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
 			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
 		}
+#endif //INTEGRATED_EFOTO REVER!
 
 		table1->selectRow(0);
 		table1->setFocus();
@@ -535,7 +539,10 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
+
+#ifdef INTEGRATED_EFOTO
 		imageView->loadImage(QString(manager->getImageFile().c_str()));
+#endif //INTEGRATED_EFOTO REVER!
 
 		makeRepaint();
 		actionMove->trigger();
@@ -546,8 +553,7 @@ bool IOUserInterface_Qt::exec()
 	//if (qApp->exec())
 	//return false;
 	//delete(myImageView); precisa de um stop
-	return true;
-#endif //INTEGRATED_EFOTO REVER!
+    return true;
 }
 
 } // namespace efoto
