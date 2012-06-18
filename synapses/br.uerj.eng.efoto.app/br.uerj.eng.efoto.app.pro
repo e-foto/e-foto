@@ -3,9 +3,8 @@
 #------------------------------------------------
 SYNAPSE_ID = br.uerj.eng.efoto.app
 SYNAPSE_VERSION = 1.0
-QT +=
-RESOURCES +=
 include(../../runtime/synapse.pri)
+
 #------------------------------------------------
 # Synapses
 #------------------------------------------------
@@ -24,9 +23,10 @@ INCLUDEPATH += src \
 			   src/interface \
 			   src/formDisplay \
 			   src/infrastructure \
-                           src/resource \
-                           ../br.uerj.eng.efoto.engine/src/infrastructure \
-                           ../br.uerj.eng.efoto.engine/src/photogrammetry
+			   src/resource \
+			   ../br.uerj.eng.efoto.engine/src/infrastructure \
+			   ../br.uerj.eng.efoto.engine/src/photogrammetry \
+			   ../br.uerj.eng.efoto.viewer/src/imageDisplay
 
 DEPENDPATH += $${INCLUDEPATH}
 
@@ -97,20 +97,22 @@ HEADERS =  include/IPhotogrammetry.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.h \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
-                   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
-                   #
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.h" \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h
+		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
+		   #
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
+		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h \
+		   #
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h
 
 
 SOURCES =  src/Photogrammetry.cpp \
@@ -176,7 +178,7 @@ SOURCES =  src/Photogrammetry.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp
+		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp \
 
 FORMS =   src/formDisplay/FeatEditor.ui \
 		  src/formDisplay/FeatsEditor.ui \
@@ -207,3 +209,6 @@ FORMS =   src/formDisplay/FeatEditor.ui \
 
 RESOURCES += resource.qrc
 
+QT += opengl
+
+unix {LIBS += -lGL -lGLU}

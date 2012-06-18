@@ -89,7 +89,7 @@ void IOUserInterface_Qt::receiveMark(QPointF p)
 #ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
-	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
+	imageView->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
 
 	points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
 	points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
@@ -139,8 +139,8 @@ void IOUserInterface_Qt::init()
 
 	//oldImageView = new ImageView(centralwidget);
 	imageView = new SingleViewer();
-	imageView->blockOpen();
-	imageView->blockSave();
+	imageView->hideOpen(true);
+	imageView->hideSave(true);
 	imageView->addToolBar(Qt::TopToolBarArea,toolBar);
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
@@ -151,8 +151,7 @@ void IOUserInterface_Qt::init()
 	//resize(1024,800);
 
 	// Make some connections
-	imageView->getMarker()->setToOnlyEmitClickedMode();
-	connect(imageView->getMarker(),SIGNAL(clicked(QPointF)), this, SLOT(receiveMark(QPointF)));
+	imageView->installListener(this);
 	//connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
 	//connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
 	//connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
@@ -276,18 +275,18 @@ bool IOUserInterface_Qt::viewReport()
 
 	aux1+="=";
 	aux1+=QString::number(Conversion::stringToDouble(myValues.at(2)),'f',6);
-    aux1+=QString::fromUtf8(" mm<sup>2</sup></font>");
+	aux1+=QString::fromUtf8(" mm<sup>2</sup></font>");
 	QLabel* myValueLabel1 = new QLabel(aux1);
 	myValueLabel1->setTextFormat(Qt::RichText);
 
 	QString aux2=QString::fromUtf8("<font size=5>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 	aux2+="=";
 	aux2+=QString::number(sqrt(Conversion::stringToDouble(myValues.at(2))),'f',6);
-    aux2+=" mm</font>";
+	aux2+=" mm</font>";
 	QLabel* myValueLabel2 = new QLabel(aux2);
 	myValueLabel2->setTextFormat(Qt::RichText);
 
-    QLabel* vLabel= new QLabel("<font size=5>V(mm)</font>");
+	QLabel* vLabel= new QLabel("<font size=5>V(mm)</font>");
 	vLabel->setTextFormat(Qt::RichText);
 	vLabel->setAlignment(Qt::AlignHCenter);
 	QVBoxLayout *vTableLayout= new QVBoxLayout();
@@ -349,7 +348,7 @@ void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 	delete(mark);
 #endif //INTEGRATED_EFOTO REVER!
 	manager->returnProject();
-    QMainWindow::closeEvent(e);
+	QMainWindow::closeEvent(e);
 }
 
 bool IOUserInterface_Qt::exec()
@@ -404,14 +403,14 @@ bool IOUserInterface_Qt::exec()
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
 
 #ifdef INTEGRATED_EFOTO
-        imageView->loadImage(QString(manager->getImageFile().c_str()));
+		imageView->loadImage(QString(manager->getImageFile().c_str()));
 		for (int row = 0; row < points->rowCount() ;row++)
 		{
 			if (points->item(row,2)->text().isEmpty())
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
+			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
 		}
 #endif //INTEGRATED_EFOTO REVER!
 
@@ -479,7 +478,7 @@ bool IOUserInterface_Qt::exec()
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->getMarker()->insertMark(location, row+1, pointName, mark);
+			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
 		}
 #endif //INTEGRATED_EFOTO REVER!
 
@@ -553,7 +552,7 @@ bool IOUserInterface_Qt::exec()
 	//if (qApp->exec())
 	//return false;
 	//delete(myImageView); precisa de um stop
-    return true;
+	return true;
 }
 
 } // namespace efoto

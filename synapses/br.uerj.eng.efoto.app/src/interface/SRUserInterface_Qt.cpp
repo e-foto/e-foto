@@ -92,26 +92,26 @@ void SRUserInterface_Qt::init()
 
 	//oldImageView = new ImageView(centralwidget);
 	imageView = new SingleViewer();
-	imageView->blockOpen();
-	imageView->blockSave();
+	imageView->hideOpen(true);
+	imageView->hideSave(true);
 	imageView->addToolBar(Qt::TopToolBarArea,toolBar);
 
 	//gridLayout->addWidget(oldImageView, 0, 0, 1, 1);
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
-    flightDirectionForm = new FlightDirectionForm();
-    flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-    flightDirectionForm->imageLabel->setHidden(true);
-    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+	flightDirectionForm = new FlightDirectionForm();
+	flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+	flightDirectionForm->imageLabel->setHidden(true);
+	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
 	markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	//imageView->getMarker()->changeMarker(mark);
 
 	// Make some connections
-	imageView->getMarker()->setToOnlyEmitClickedMode();
-    connect(imageView->getMarker(),SIGNAL(clicked(QPointF)), this, SLOT(receivePoint(QPointF)));
+	//imageView->getMarker()->setToOnlyEmitClickedMode();
+	imageView->installListener(this);
 #endif //INTEGRATED_EFOTO REVER!
 }
 
@@ -123,19 +123,19 @@ void SRUserInterface_Qt::informState()
 		//oldImageView->selectPoint("-1");
 }
 
-void SRUserInterface_Qt::receivePoint(QPointF p)
+void SRUserInterface_Qt::receiveMark(QPointF p)
 {
 #ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
-    imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
+	imageView->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
 
-    points->setData(points->index(table1->currentIndex().row(), 7), QVariant(p.x()));
-    points->setData(points->index(table1->currentIndex().row(), 8), QVariant(p.y()));
-    points->setData(points->index(table1->currentIndex().row(), 9), QVariant(manager->pointToDetector(p.x(), p.y()).at(0)));
-    points->setData(points->index(table1->currentIndex().row(), 10), QVariant(manager->pointToDetector(p.x(), p.y()).at(1)));
-    points->setData(points->index(table1->currentIndex().row(), 11), QVariant(true));
-    points->item(table1->currentIndex().row(),2)->setCheckState(Qt::Checked);
+	points->setData(points->index(table1->currentIndex().row(), 7), QVariant(p.x()));
+	points->setData(points->index(table1->currentIndex().row(), 8), QVariant(p.y()));
+	points->setData(points->index(table1->currentIndex().row(), 9), QVariant(manager->pointToDetector(p.x(), p.y()).at(0)));
+	points->setData(points->index(table1->currentIndex().row(), 10), QVariant(manager->pointToDetector(p.x(), p.y()).at(1)));
+	points->setData(points->index(table1->currentIndex().row(), 11), QVariant(true));
+	points->item(table1->currentIndex().row(),2)->setCheckState(Qt::Checked);
 
 	measurePoint(points->data(points->index(table1->currentIndex().row(), 0)).toInt(),p.x(),p.y());
 
@@ -146,16 +146,16 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 
 void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
-        manager->flightDirection(kappa0);
+		manager->flightDirection(kappa0);
 	flightAvailable = true;
 	actionSpatialRessection->setEnabled(true);
 }
 
 void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
 {
-    if (item->column() == 2)
+	if (item->column() == 2)
 	{
-        if (points->data(points->index(item->row(),11)).toBool())
+		if (points->data(points->index(item->row(),11)).toBool())
 		{
 			if (item->checkState() == Qt::Checked)
 			{
@@ -343,14 +343,14 @@ bool SRUserInterface_Qt::viewReport()
 	QString aux1=QString::fromUtf8("<font size=5>σ<sub>0</sub><sup>2</sup>=V<sup>T</sup>PV/(n-m)");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 	aux1+="=";
 	aux1+=QString::number(Conversion::stringToDouble(myValues.at(2)),'f',6);
-    aux1+=QString::fromUtf8(" mm<sup>2</sup></font>");
+	aux1+=QString::fromUtf8(" mm<sup>2</sup></font>");
 	QLabel* myValueLabel1 = new QLabel(aux1);
 	myValueLabel1->setTextFormat(Qt::RichText);
 
 	QString aux2=QString::fromUtf8("<font size=5>σ<sub>0</sub>");//σ² hexadecimal 03C3 0342//\sigma_{0}^{2} = frac{V^{T} * P * V}{n - m}\F
 	aux2+="=";
 	aux2+=QString::number(sqrt(Conversion::stringToDouble(myValues.at(2))),'f',6);
-    aux2+=" mm</font>";
+	aux2+=" mm</font>";
 	QLabel* myValueLabel2 = new QLabel(aux2);
 	myValueLabel2->setTextFormat(Qt::RichText);
 
@@ -428,14 +428,14 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 #ifdef INTEGRATED_EFOTO
 	for (int row = 0; row < points->rowCount() ;row++)
 	{
-        if (points->item(row,7)->text().isEmpty() || points->data(points->index(row, 1)).toString() == "false")
+		if (points->item(row,7)->text().isEmpty() || points->data(points->index(row, 1)).toString() == "false")
 			continue;
-        QString pointName = points->data(points->index(row, 2)).toString();
-        QPointF location(points->item(row,7)->text().toDouble(),points->item(row,8)->text().toDouble());
-        if (points->item(row,2)->checkState() == Qt::Checked)
-			imageView->getMarker()->insertMark(location, row+1, pointName, markOn);
+		QString pointName = points->data(points->index(row, 2)).toString();
+		QPointF location(points->item(row,7)->text().toDouble(),points->item(row,8)->text().toDouble());
+		if (points->item(row,2)->checkState() == Qt::Checked)
+			imageView->insertMark(location.x(), location.y(), row+1, pointName, markOn);
 		else
-			imageView->getMarker()->insertMark(location, row+1, pointName, markOff);
+			imageView->insertMark(location.x(), location.y(), row+1, pointName, markOff);
 	}
 #endif //INTEGRATED_EFOTO REVER!
 }
@@ -443,56 +443,56 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 bool SRUserInterface_Qt::exec()
 {
 #ifdef INTEGRATED_EFOTO
-    //int numberOfPoints = manager->listImagePoints().size();
-    int numberOfPoints = manager->listAllPoints().size();
+	//int numberOfPoints = manager->listImagePoints().size();
+	int numberOfPoints = manager->listAllPoints().size();
 
-    points = new QStandardItemModel(numberOfPoints, 12);
-    points->setHeaderData(0, Qt::Horizontal, QVariant("Number"));
-    points->setHeaderData(1, Qt::Horizontal, QVariant("isControl"));
-    points->setHeaderData(2, Qt::Horizontal, QVariant("Id"));
-    points->setHeaderData(3, Qt::Horizontal, QVariant("Description"));
-    points->setHeaderData(4, Qt::Horizontal, QVariant("E"));
-    points->setHeaderData(5, Qt::Horizontal, QVariant("N"));
-    points->setHeaderData(6, Qt::Horizontal, QVariant("H"));
-    points->setHeaderData(7, Qt::Horizontal, QVariant("col"));
-    points->setHeaderData(8, Qt::Horizontal, QVariant("lin"));
-    points->setHeaderData(9, Qt::Horizontal, QVariant(QChar(0x03BE)));
-    points->setHeaderData(10, Qt::Horizontal, QVariant(QChar(0x03B7)));
-    points->setHeaderData(11, Qt::Horizontal, QVariant("Used"));
-    table1->setModel(points);
-    table1->setColumnHidden(0,true);
-    table1->setColumnHidden(1,true);
-    table1->setColumnHidden(11,true);
+	points = new QStandardItemModel(numberOfPoints, 12);
+	points->setHeaderData(0, Qt::Horizontal, QVariant("Number"));
+	points->setHeaderData(1, Qt::Horizontal, QVariant("isControl"));
+	points->setHeaderData(2, Qt::Horizontal, QVariant("Id"));
+	points->setHeaderData(3, Qt::Horizontal, QVariant("Description"));
+	points->setHeaderData(4, Qt::Horizontal, QVariant("E"));
+	points->setHeaderData(5, Qt::Horizontal, QVariant("N"));
+	points->setHeaderData(6, Qt::Horizontal, QVariant("H"));
+	points->setHeaderData(7, Qt::Horizontal, QVariant("col"));
+	points->setHeaderData(8, Qt::Horizontal, QVariant("lin"));
+	points->setHeaderData(9, Qt::Horizontal, QVariant(QChar(0x03BE)));
+	points->setHeaderData(10, Qt::Horizontal, QVariant(QChar(0x03B7)));
+	points->setHeaderData(11, Qt::Horizontal, QVariant("Used"));
+	table1->setModel(points);
+	table1->setColumnHidden(0,true);
+	table1->setColumnHidden(1,true);
+	table1->setColumnHidden(11,true);
 	for (int row = 0; row < numberOfPoints; row++)
 	{
-        deque<string> pointData = manager->pointData(row);
+		deque<string> pointData = manager->pointData(row);
 		for (unsigned int col = 0; col < pointData.size(); col++)
 		{
 			QStandardItem* item = new QStandardItem(QString(pointData.at(col).c_str()));
-            if (col == 2)
+			if (col == 2)
 			{
-                item->setCheckable(true);
+				item->setCheckable(true);
 			}
 			points->setItem(row, col, item);
 		}
-        for (int col = pointData.size(); col < 11; col++)
+		for (int col = pointData.size(); col < 11; col++)
 		{
 			QStandardItem* item = new QStandardItem(QString(""));
 			points->setItem(row, col, item);
-        }
-        QStandardItem* item = new QStandardItem();
-        points->setItem(row, 11, item);
-        if (points->data(points->index(row,7)).toString() != "")
-        {
-            points->setData(points->index(row, 11), QVariant(true));
-        }
-        else
-        {
-            points->setData(points->index(row, 11), QVariant(false));
-        }
-        if (pointData.at(1) == "false")
-            table1->setRowHidden(row,true);
-    }
+		}
+		QStandardItem* item = new QStandardItem();
+		points->setItem(row, 11, item);
+		if (points->data(points->index(row,7)).toString() != "")
+		{
+			points->setData(points->index(row, 11), QVariant(true));
+		}
+		else
+		{
+			points->setData(points->index(row, 11), QVariant(false));
+		}
+		if (pointData.at(1) == "false")
+			table1->setRowHidden(row,true);
+	}
 	table1->selectRow(0);
 	table1->setFocus();
 
