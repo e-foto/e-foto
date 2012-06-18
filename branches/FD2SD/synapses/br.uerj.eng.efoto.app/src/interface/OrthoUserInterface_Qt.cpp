@@ -63,7 +63,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
 	QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
 	QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
-        QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
+		QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
 	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
 
 	setWindowState(this->windowState());
@@ -185,22 +185,22 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
 
 void OrthoUserInterface_Qt::onLoadOrthoClicked()
 {
-        // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), ".", tr("EOI (*.eoi);; All files (*.*)")) ;
-        // if no file name written, return
-        if (filename=="")
-                return;
+		// File open dialog
+		QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), ".", tr("EOI (*.eoi);; All files (*.*)")) ;
+		// if no file name written, return
+		if (filename=="")
+				return;
 
-        // Save last dir
-        int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+		// Save last dir
+		int i=filename.lastIndexOf("/");
+		QDir dir(filename.left(i));
+		dir.setCurrent(dir.absolutePath());
 
-        // Add file to line edit
-        lineEdit->setText(filename);
+		// Add file to line edit
+		lineEdit->setText(filename);
 
-        // Load Ortho
-        manager->loadOrtho((char *)lineEdit->text().toStdString().c_str());
+		// Load Ortho
+		manager->loadOrtho((char *)lineEdit->text().toStdString().c_str());
 }
 
 void OrthoUserInterface_Qt::onOrthoClicked()
@@ -243,7 +243,7 @@ void OrthoUserInterface_Qt::disableOptions()
 	doubleSpinBox2->setEnabled(false);
 	orthoButton->setEnabled(false);
 	doneButton->setEnabled(false);
-        loadButton->setEnabled(false);
+		loadButton->setEnabled(false);
 }
 
 void OrthoUserInterface_Qt::enableOptions()
@@ -255,7 +255,7 @@ void OrthoUserInterface_Qt::enableOptions()
 	doubleSpinBox2->setEnabled(true);
 	orthoButton->setEnabled(true);
 	doneButton->setEnabled(true);
-        loadButton->setEnabled(true);
+		loadButton->setEnabled(true);
 }
 
 void OrthoUserInterface_Qt::setProgress(int progress)
@@ -294,8 +294,8 @@ void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 	int height = int(img.height()*sample);
 	int pixel;
 
-        // Resize Matrix
-        I.resize(height, width);
+		// Resize Matrix
+		I.resize(height, width);
 
 	progressBar->setValue(0);
 	for (unsigned int i=1; i<=height; i++)
@@ -307,7 +307,7 @@ void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 			//                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3; // Simple color to gray 8-bit
 			//                        pixel = pixel & 0xFF; // Gray 24-bit to 8-bit
 			//                        I->set(i, j, pixel/double(levels-1));
-                        I.set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
+						I.set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
 		}
 		progressBar->setValue((100*i)/height);
 	}
@@ -332,8 +332,8 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 		}
 	}
 
-    // Expanção do XML
-    manager->addOrthoToXML2(string(filename));
+	// Expanção do XML
+	manager->addOrthoToXML2(string(filename));
 
 	img.save(filename,"BMP");
 
@@ -343,24 +343,24 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-        SingleViewer* sv = new SingleViewer(this);
-        sv->setOrtoImageMode(xi, dx, yi, dy);
-        sv->loadImage(image, isGrayscale);
-        sv->blockOpen();
-        sv->blockMark();
-        sv->show();
+		SingleViewer* sv = new SingleViewer(this);
+		sv->setOrtoImageMode(xi, dx, yi, dy);
+		sv->loadImage(image, isGrayscale);
+		sv->hideOpen(true);
+		sv->hideSave(true);
+		sv->show();
 #endif //INTEGRATED_EFOTO REVER!
 }
 
 void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-        SingleViewer* sv = new SingleViewer(this);
-        sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
-        sv->loadImage(image, isGrayscale);
-        sv->blockOpen();
-        sv->blockMark();
-        sv->show();
+		SingleViewer* sv = new SingleViewer(this);
+		sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
+		sv->loadImage(image, isGrayscale);
+		sv->hideOpen(true);
+		sv->hideSave(true);
+		sv->show();
 #endif //INTEGRATED_EFOTO REVER!
 }
 

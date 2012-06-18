@@ -2,6 +2,9 @@
 #define BR_UERJ_ENG_EFOTO_VIEWER_IVIEWERSERVICE_H
 
 #include "ISynapse.h"
+#include "ISingleViewer.h"
+#include "IDoubleViewer.h"
+#include "IStereoViewer.h"
 
 namespace br {
 namespace uerj {
@@ -12,7 +15,10 @@ namespace viewer {
 class IViewerService: public cortex::ISynapse
 {
 public:
-	virtual ~IViewerService(){}
+    virtual ~IViewerService() {}
+	virtual ISingleViewerPtr instanceSingleViewer() = 0;
+    virtual IDoubleViewerPtr instanceDoubleViewer() = 0;
+    virtual IStereoViewerPtr instanceStereoViewer() = 0;
 
 };
 

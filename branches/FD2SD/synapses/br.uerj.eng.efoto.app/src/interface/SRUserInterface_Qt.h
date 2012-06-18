@@ -13,7 +13,10 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include "SingleViewer.h"
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -21,7 +24,7 @@ namespace eng {
 namespace efoto {
 
 
-class SRUserInterface_Qt : public QMainWindow, public Ui::SRMainWindow, public SRUserInterface
+class SRUserInterface_Qt : public QMainWindow, public Ui::SRMainWindow, public SRUserInterface, public MarkerListener
 {
 	Q_OBJECT
 
@@ -30,8 +33,8 @@ protected slots:
 
 public slots:
 	virtual void informState();
-        virtual void receivePoint(QPointF p);
-        virtual void setFlightDirection(QString,double);
+	virtual void receiveMark(QPointF p);
+	virtual void setFlightDirection(QString,double);
 	virtual void actualizeDisplayedPoints();
 	virtual void actualizeSelection(QStandardItem* item);
 	virtual void makeRepaint();
@@ -55,16 +58,16 @@ protected:
 	SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SRUserInterface_Qt();
 	QWidget *windowReport;
-    //ImageView *oldImageView;
+	//ImageView *oldImageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	bool flightAvailable;
 	FlightDirectionForm *flightDirectionForm;
 
 #ifdef INTEGRATED_EFOTO
-    Marker *markOn;
-    Marker *markOff;
-    SingleViewer *imageView;
+	Marker *markOn;
+	Marker *markOff;
+	SingleViewer *imageView;
 #endif //INTEGRATED_EFOTO REVER!
 
 	void closeEvent(QCloseEvent *e);

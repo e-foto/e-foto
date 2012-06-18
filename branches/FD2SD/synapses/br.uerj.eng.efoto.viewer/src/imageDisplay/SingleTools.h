@@ -17,6 +17,7 @@
 #include <QObject>
 
 #include "GeometryResource.h"
+#include "SingleViewer.h"
 
 namespace br {
 namespace uerj {
@@ -69,8 +70,8 @@ protected:
 	SingleTool* _propagateScaleTo;
 
 	QPointF _autoPan;
-    QPoint _lastMousePosition;
-    QPointF _fixedPointOnImage;
+	QPoint _lastMousePosition;
+	QPointF _fixedPointOnImage;
 	QPoint _fixedPoint;
 	double _scale;
 
@@ -283,6 +284,8 @@ public:
 
 public slots:
 	void executeAction(QAction *action);
+	bool nearIsVisible() {return showNearview->isChecked();}
+	bool overIsVisible() {return showOverview->isChecked();}
 
 	void rescaleDisplay();
 	void changeDetailZoom(int nz);

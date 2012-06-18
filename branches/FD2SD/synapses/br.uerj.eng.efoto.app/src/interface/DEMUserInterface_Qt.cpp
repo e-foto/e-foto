@@ -41,7 +41,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	QObject::connect(saveButton2, SIGNAL(clicked()), this, SLOT(onDemSaveClicked()));
 	QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onDemGridSaveClicked()));
 	QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
-        QObject::connect(loadButton2, SIGNAL(clicked()), this, SLOT(onDemGridLoadClicked()));
+		QObject::connect(loadButton2, SIGNAL(clicked()), this, SLOT(onDemGridLoadClicked()));
 	QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
 	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
@@ -53,11 +53,11 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	QObject::connect(comboBox4, SIGNAL(currentIndexChanged(int)), this, SLOT(onMatchingMethodChanged(int)));
 	QObject::connect(loadPtsButton, SIGNAL(clicked()), this, SLOT(onLoadPtsButtonClicked()));
 	QObject::connect(saveQButton, SIGNAL(clicked()), this, SLOT(onSavePtsButtonClicked()));
-        QObject::connect(spinBox3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
-        QObject::connect(spinBox11, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
-        QObject::connect(spinBox3_3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
-        QObject::connect(spinBox11_3, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
-        QObject::connect(doubleSpinBox0, SIGNAL(valueChanged(double)), this, SLOT(onDownValueChanged(double)));
+		QObject::connect(spinBox3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
+		QObject::connect(spinBox11, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
+		QObject::connect(spinBox3_3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
+		QObject::connect(spinBox11_3, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
+		QObject::connect(doubleSpinBox0, SIGNAL(valueChanged(double)), this, SLOT(onDownValueChanged(double)));
 
 	setWindowState(this->windowState());
 	sed = NULL;
@@ -85,7 +85,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	onGridAreaLimitsStateChanged(0);
 	onInterStateChanged(0);
 	manager->setShowImage(checkBox_3->isChecked());
-        downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
+		downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
 
 	allow_close = true;
 
@@ -187,19 +187,19 @@ void DEMUserInterface_Qt::onAbortClicked()
 
 void DEMUserInterface_Qt::onLSMTemplateSizeChanged(int ts)
 {
-    if (spinBox3->value() > spinBox3_3->value())
-        spinBox3_3->setValue(spinBox3->value() + spinBox3_2->value());
+	if (spinBox3->value() > spinBox3_3->value())
+		spinBox3_3->setValue(spinBox3->value() + spinBox3_2->value());
 }
 
 void DEMUserInterface_Qt::onCorrTemplateSizeChanged(int ts)
 {
-    if (spinBox11->value() > spinBox11_3->value())
-        spinBox11_3->setValue(spinBox11->value() + spinBox11_2->value());
+	if (spinBox11->value() > spinBox11_3->value())
+		spinBox11_3->setValue(spinBox11->value() + spinBox11_2->value());
 }
 
 void DEMUserInterface_Qt::onDownValueChanged(double value)
 {
-    downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
+	downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
 }
 
 void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
@@ -216,10 +216,10 @@ void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, doubl
 {
 #ifdef INTEGRATED_EFOTO
 	SingleViewer* sv = new SingleViewer(this);
-        sv->setOrtoImageMode(xi, dx, yi, dy);
+		sv->setOrtoImageMode(xi, dx, yi, dy);
 	sv->loadImage(image, isGrayscale);
-	sv->blockOpen();
-	sv->blockMark();
+	sv->hideOpen(true);
+	sv->hideMark(true);
 	sv->show();
 #endif //INTEGRATED_EFOTO REVER!
 }
@@ -227,12 +227,12 @@ void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, doubl
 void DEMUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-        SingleViewer* sv = new SingleViewer(this);
-        sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
-        sv->loadImage(image, isGrayscale);
-        sv->blockOpen();
-        sv->blockMark();
-        sv->show();
+		SingleViewer* sv = new SingleViewer(this);
+		sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
+		sv->loadImage(image, isGrayscale);
+		sv->hideOpen(true);
+		sv->hideMark(true);
+		sv->show();
 #endif //INTEGRATED_EFOTO REVER!
 }
 
@@ -374,23 +374,23 @@ void DEMUserInterface_Qt::onDemLoadClicked()
 
 void DEMUserInterface_Qt::onDemGridLoadClicked()
 {
-        // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), ".", tr("DSM (*.dsm);; Text File (*.txt);; All files (*.*)")) ;
-        // if no file name written, return
-        if (filename=="")
-                return;
+		// File open dialog
+		QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), ".", tr("DSM (*.dsm);; Text File (*.txt);; All files (*.*)")) ;
+		// if no file name written, return
+		if (filename=="")
+				return;
 
-        // Save last dir
-        int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+		// Save last dir
+		int i=filename.lastIndexOf("/");
+		QDir dir(filename.left(i));
+		dir.setCurrent(dir.absolutePath());
 
-        // Load DEM Grid
-        if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
-        {
-                QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
-                return;
-        }
+		// Load DEM Grid
+		if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
+		{
+				QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
+				return;
+		}
 }
 
 void DEMUserInterface_Qt::enableAfterDEM(int sender)
@@ -408,10 +408,10 @@ void DEMUserInterface_Qt::enableAfterDEM(int sender)
 			comboBox0->setCurrentIndex(1);
 	}
 	else
-        {
+		{
 		comboBox0->setEnabled(true);
-                comboBox0->setCurrentIndex(2);
-        }
+				comboBox0->setCurrentIndex(2);
+		}
 }
 
 void DEMUserInterface_Qt::enableAfterGrid()
@@ -446,21 +446,21 @@ void DEMUserInterface_Qt::setElapsedTime(double t, int opt)
 	s = s + (t-floor(t));
 
 	QString str_time;
-        QString h_str, m_str, s_str;
+		QString h_str, m_str, s_str;
 
-        (int(h) != 1) ? h_str = " hours, " : h_str = " hour, ";
-        (int(m) != 1) ? m_str = " minutes, " : m_str = " minute, ";
-        (int(s) != 1) ? s_str = " seconds." : s_str = " second.";
+		(int(h) != 1) ? h_str = " hours, " : h_str = " hour, ";
+		(int(m) != 1) ? m_str = " minutes, " : m_str = " minute, ";
+		(int(s) != 1) ? s_str = " seconds." : s_str = " second.";
 
-        if (h>0) str_time = QString::number(h) + h_str;
-        if (h>0 || m>0) str_time += QString::number(m) + m_str;
-        str_time += QString::number(s) + s_str;
+		if (h>0) str_time = QString::number(h) + h_str;
+		if (h>0 || m>0) str_time += QString::number(m) + m_str;
+		str_time += QString::number(s) + s_str;
 
-        switch (opt)
-        {
-            case 1 : timeLabel->setText(str_time); break;
-            default : matchingTimeLabel->setText(str_time);
-        }
+		switch (opt)
+		{
+			case 1 : timeLabel->setText(str_time); break;
+			default : matchingTimeLabel->setText(str_time);
+		}
 }
 
 void DEMUserInterface_Qt::onLSMCheckChanged(int state)
@@ -558,8 +558,8 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 	if (filename=="")
 		return;
 
-    // Expanção do XML
-    manager->addDEMQualityToXML(filename.toStdString());
+	// Expanção do XML
+	manager->addDEMQualityToXML(filename.toStdString());
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
@@ -579,9 +579,9 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
-        manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value());
-        manager->setEliminateBadPoints(checkBox_4->isChecked());
-        manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), doubleSpinBox0->value());
+		manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value());
+		manager->setEliminateBadPoints(checkBox_4->isChecked());
+		manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), doubleSpinBox0->value());
 	manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
 	manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
 	int DEMflag = manager->extractDEM(comboBox5->currentIndex(), checkBox_2->checkState());
@@ -606,8 +606,8 @@ void DEMUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 	int height = int(img.height()*sample);
 	int pixel;
 
-        // Resize Matrix
-        I.resize(height, width);
+		// Resize Matrix
+		I.resize(height, width);
 
 	progressBar->setValue(0);
 	for (unsigned int i=1; i<=height; i++)
@@ -616,7 +616,7 @@ void DEMUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 		{
 			pixel = img.pixel((j-1)*step,(i-1)*step);
 			pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3;
-                        I.set(i, j, pixel/double(levels-1));
+						I.set(i, j, pixel/double(levels-1));
 		}
 		progressBar->setValue((100*i)/height);
 	}
@@ -705,16 +705,16 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 	connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 	connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 
-    Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
-    viewer->getLeftMarker().changeMarker(mark);
-    viewer->getRightMarker().changeMarker(mark);
+	Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
+	viewer->getLeftMarker().changeMarker(mark);
+	viewer->getRightMarker().changeMarker(mark);
 
-    setCentralWidget(viewer);
+	setCentralWidget(viewer);
 
-    // Create image marks
-    mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
-    mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
-    mark_empty = new Marker(SymbolsResource::getText(""));
+	// Create image marks
+	mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
+	mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
+	mark_empty = new Marker(SymbolsResource::getText(""));
 
 #endif //INTEGRATED_EFOTO REVER!
 
@@ -1046,8 +1046,8 @@ void SeedEditorUserInterface_Qt::saveSeeds()
 
 	// Save seeds
 	seeds.save((char *)filename.toStdString().c_str(), 0);
-    // Expanção do XML
-    manager->addSeedsToXML(filename.toStdString());
+	// Expanção do XML
+	manager->addSeedsToXML(filename.toStdString());
 #endif //INTEGRATED_EFOTO REVER!
 }
 
@@ -1108,8 +1108,8 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
 		left_coord.setY(double(mp->left_y));
 		right_coord.setX(double(mp->right_x));
 		right_coord.setY(double(mp->right_y));
-                viewer->getLeftMarker().addMark(left_coord, no_pairs+1, "", mark_pairs);
-                viewer->getRightMarker().addMark(right_coord, no_pairs+1, "", mark_pairs);
+				viewer->getLeftMarker().addMark(left_coord, no_pairs+1, "", mark_pairs);
+				viewer->getRightMarker().addMark(right_coord, no_pairs+1, "", mark_pairs);
 
 		no_pairs++;
 	}
@@ -1152,14 +1152,14 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
 		right_coord.setY(double(mp->right_y));
 
 		if (mp->left_x > 0 || mp->left_y > 0)
-                        viewer->getLeftMarker().addMark(left_coord, key, QString::number(i+1), mark_seeds);
+						viewer->getLeftMarker().addMark(left_coord, key, QString::number(i+1), mark_seeds);
 		else
-                        viewer->getLeftMarker().addMark(left_coord, key, "", mark_empty);
+						viewer->getLeftMarker().addMark(left_coord, key, "", mark_empty);
 
 		if (mp->right_x > 0 || mp->right_y > 0)
-                        viewer->getRightMarker().addMark(right_coord, key, QString::number(i+1), mark_seeds);
+						viewer->getRightMarker().addMark(right_coord, key, QString::number(i+1), mark_seeds);
 		else
-                        viewer->getRightMarker().addMark(right_coord, key, "", mark_empty);
+						viewer->getRightMarker().addMark(right_coord, key, "", mark_empty);
 
 		// Table
 		tableWidget->insertRow(no_seeds);
