@@ -9,9 +9,6 @@ namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
-
-//class QImage;
-
 namespace viewer {
 
 class ISingleViewer
