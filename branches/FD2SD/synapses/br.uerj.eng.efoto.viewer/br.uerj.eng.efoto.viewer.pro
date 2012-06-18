@@ -49,7 +49,11 @@ HEADERS = include/IViewerService.h \
     ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
     ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
     include/ISingleViewer.h \
-    src/SingleViewer.h
+    src/SingleViewer.h \
+    include/IDoubleViewer.h \
+    src/DoubleViewer.h \
+    include/IStereoViewer.h \
+    src/StereoViewer.h
 SOURCES = src/ViewerService.cpp \
     src/imageDisplay/GeometryResource.cpp \
     src/imageDisplay/ImageViewers.cpp \
@@ -76,7 +80,9 @@ SOURCES = src/ViewerService.cpp \
     ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
     ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
     ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp \
-    src/SingleViewer.cpp
+    src/SingleViewer.cpp \
+    src/DoubleViewer.cpp \
+    src/StereoViewer.cpp
 RESOURCES += resource.qrc
 QT += opengl
 unix:LIBS += -lGL \
