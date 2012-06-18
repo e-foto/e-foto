@@ -6,7 +6,7 @@ namespace eng {
 namespace efoto {
 namespace viewer {
 
- SingleViewer::SingleViewer()
+SingleViewer::SingleViewer()
 {
 }
 
@@ -66,11 +66,11 @@ void SingleViewer::loadImage(QImage* image)
 {
 }
 
-QImage SingleViewer::getPrintScreen(bool rasterOnly = false)
+QImage SingleViewer::getPrintScreen(bool rasterOnly)
 {
 }
 
-void SingleViewer::insertMark(double x, double  y, unsigned int key, string label, QImage *marker = NULL, int hotX = -1, int hotY = -1)
+void SingleViewer::insertMark(double x, double  y, unsigned int key, string label, QImage *marker, int hotX, int hotY)
 {
 }
 
@@ -82,15 +82,15 @@ void SingleViewer::deleteMark(unsigned int key)
 {
 }
 
-void SingleViewer::setDefaultMarker(QImage marker, int hotX = -1, int hotY = -1)
+void SingleViewer::setDefaultMarker(QImage marker, int hotX, int hotY)
 {
 }
 
-void SingleViewer::setSelectedMarker(QImage marker, int hotX = -1, int hotY = -1)
+void SingleViewer::setSelectedMarker(QImage marker, int hotX, int hotY)
 {
 }
 
-void SingleViewer::setSelectedMark(unsigned int key = 0)
+void SingleViewer::setSelectedMark(unsigned int key)
 {
 }
 
