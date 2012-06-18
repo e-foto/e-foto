@@ -39,8 +39,6 @@ public:
     void setDetailTracking(bool status);
     void setZoom(double zoom);
     void moveTo(double x, double y);
-
-
 };
 
 }
