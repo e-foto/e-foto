@@ -7,6 +7,10 @@
 #include "EDom.h"
 #include <QTranslator>
 
+#ifdef SYNAPSE_EFOTO
+#include "IViewerService.h"
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -22,6 +26,11 @@ class ImageForm : public AbstractForm, public Ui::ImageView
 	QString lastPath;
 	bool activeGNSS; bool activeINS;
 	double flightDirection;
+
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    ISingleViewerPtr singleViewer;
+#endif //SYNAPSE_EFOTO
 
 public:
 	ProjectUserInterface_Qt* proj;

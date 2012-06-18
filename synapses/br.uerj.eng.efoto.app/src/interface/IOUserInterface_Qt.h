@@ -12,14 +12,17 @@
 
 #ifdef INTEGRATED_EFOTO
 #include "ImageViewers.h"
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include "SingleViewer.h"
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public IOUserInterface
+class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public IOUserInterface, public MarkerListener
 {
 	Q_OBJECT
 
@@ -42,7 +45,7 @@ protected:
 	static IOUserInterface_Qt* ioInst;
 	IOUserInterface_Qt(IOManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~IOUserInterface_Qt();
-    QWidget *windowReport;
+	QWidget *windowReport;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	int selectedPoint;
@@ -51,8 +54,8 @@ protected:
 	void closeEvent(QCloseEvent *e);
 
 #ifdef INTEGRATED_EFOTO
-    Marker *mark;
-    SingleViewer *imageView;
+	Marker *mark;
+	SingleViewer *imageView;
 #endif //INTEGRATED_EFOTO REVER!
 
 protected slots:

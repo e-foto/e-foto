@@ -8,6 +8,8 @@
 #include "ProjectUserInterface_Qt.h" // Rever! o uso desta classe para substituição deste include por um da classe Project
 #endif //INTEGRATED_EFOTO REVER!
 #ifdef SYNAPSE_EFOTO
+#include "ICortex.h"
+using namespace cortex;
 	// Aqui vai entrar uma referência para a Project na sinapse engine
 #endif //SYNAPSE_EFOTO
 
@@ -238,7 +240,7 @@ QString ImageForm::loadImageFile()
 	QDir absolutePath (proj->getSavedIn());
 #endif //INTEGRATED_EFOTO REVER!
 
-    // Rever! esse ponto, pois o método acessado no objeto proj que hoje é da classe ProjectUserInterface_Qt passará a ser utilizado,
+	// Rever! esse ponto, pois o método acessado no objeto proj que hoje é da classe ProjectUserInterface_Qt passará a ser utilizado,
 	// com um objeto da classe Project acessível somente por intermédio da comunicação com a sinapse engine.
 #ifdef SYNAPSE_EFOTO
 	QDir absolutePath;
@@ -293,15 +295,24 @@ void ImageForm::startSingleViewer()
 {
 #ifdef INTEGRATED_EFOTO
 	SingleViewer* sv = new SingleViewer(this);
-	sv->blockOpen();
-	sv->blockSave();
-	sv->blockMark();
+	sv->hideOpen(true);
+	sv->hideSave(true);
+	sv->hideMark(true);
 	sv->show();
 	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
 #endif //INTEGRATED_EFOTO REVER!
 
 #ifdef SYNAPSE_EFOTO
-
+    if (true)//viewerService.isNull())
+    {
+        viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+    }
+    singleViewer = viewerService->instanceSingleViewer();
+    singleViewer->hideOpen(true);
+    singleViewer->hideSave(true);
+    singleViewer->hideMark(true);
+    singleViewer->show();
+    singleViewer->loadImage(filePathLine->text() + "/" + fileNameLine->text());
 #endif //SYNAPSE_EFOTO
 }
 
