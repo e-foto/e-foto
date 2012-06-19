@@ -4,7 +4,7 @@
 #include "HeaderForm.h"
 
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "SingleViewer.h"
 #include "ProjectUserInterface_Qt.h" // Rever! o uso desta classe para substituição deste include por um da classe Project
 #endif //INTEGRATED_EFOTO REVER!
 #ifdef SYNAPSE_EFOTO
@@ -294,7 +294,7 @@ QString ImageForm::loadImageFile()
 void ImageForm::startSingleViewer()
 {
 #ifdef INTEGRATED_EFOTO
-	SingleViewer* sv = new SingleViewer(this);
+    SingleViewer* sv = new SingleViewer(/*this*/);
 	sv->hideOpen(true);
 	sv->hideSave(true);
 	sv->hideMark(true);
@@ -303,10 +303,7 @@ void ImageForm::startSingleViewer()
 #endif //INTEGRATED_EFOTO REVER!
 
 #ifdef SYNAPSE_EFOTO
-    if (true)//viewerService.isNull())
-    {
-        viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
-    }
+    viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
     singleViewer = viewerService->instanceSingleViewer();
     singleViewer->hideOpen(true);
     singleViewer->hideSave(true);
