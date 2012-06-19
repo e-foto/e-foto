@@ -111,8 +111,11 @@ HEADERS =  include/IPhotogrammetry.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h \
-		   #
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h
+                   #
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.h
 
 
 SOURCES =  src/Photogrammetry.cpp \
@@ -179,6 +182,8 @@ SOURCES =  src/Photogrammetry.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
 		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp \
+                   #
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.cpp
 
 FORMS =   src/formDisplay/FeatEditor.ui \
 		  src/formDisplay/FeatsEditor.ui \

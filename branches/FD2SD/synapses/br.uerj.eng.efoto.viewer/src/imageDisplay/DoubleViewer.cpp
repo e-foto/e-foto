@@ -9,7 +9,7 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-SeparatedStereoViewer::SeparatedStereoViewer()
+SeparatedStereoViewer::SeparatedStereoViewer(QWidget *parent)
 {
 	QWidget* centerWidget = new QWidget(this);
 	QMainWindow* leftPart = new QMainWindow(this);

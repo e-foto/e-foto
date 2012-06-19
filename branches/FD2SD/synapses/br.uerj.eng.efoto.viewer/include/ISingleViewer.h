@@ -46,8 +46,8 @@ public:
 	virtual unsigned int addMark(double x, double  y, QString label, Marker *marker = NULL) = 0;
 	virtual void deleteMark(unsigned int key) = 0;
 	virtual void setSelectedMark(unsigned int key = 0) = 0;
-	virtual void setSelectedMarker(QImage marker, int hotX = -1, int hotY = -1) = 0;
-	virtual void setDefaultMarker(QImage marker, int hotX = -1, int hotY = -1) = 0;
+    virtual void setSelectedMarker(Marker* marker) = 0;
+    virtual void setDefaultMarker(Marker* marker) = 0;
 
 	virtual void setImageMode() = 0;
 	virtual void setOrtoImageMode(double xi, double dx, double yi, double dy) = 0;

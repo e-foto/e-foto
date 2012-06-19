@@ -3,6 +3,11 @@
 
 #include "ETableWidget.h"
 
+#ifdef SYNAPSE_EFOTO
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -84,35 +89,42 @@ void SRUserInterface_Qt::languageChange()
 
 void SRUserInterface_Qt::init()
 {
-#ifdef INTEGRATED_EFOTO
 	// Insert image into layout
 	QWidget* centralwidget = new QWidget(this);
 
 	QGridLayout* gridLayout = new QGridLayout(centralwidget);
 
-	//oldImageView = new ImageView(centralwidget);
-	imageView = new SingleViewer();
-	imageView->hideOpen(true);
-	imageView->hideSave(true);
-	imageView->addToolBar(Qt::TopToolBarArea,toolBar);
+    markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+    markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 
-	//gridLayout->addWidget(oldImageView, 0, 0, 1, 1);
-	gridLayout->addWidget(imageView, 0, 0, 1, 1);
-	setCentralWidget(centralwidget);
+#ifdef INTEGRATED_EFOTO
+    //oldImageView = new ImageView(centralwidget);
+    imageView = new SingleViewer();
+    imageView->hideOpen(true);
+    imageView->hideSave(true);
+    imageView->addToolBar(Qt::TopToolBarArea,toolBar);
 
-	flightDirectionForm = new FlightDirectionForm();
-	flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-	flightDirectionForm->imageLabel->setHidden(true);
-	connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+    imageView->installListener(this);
+    gridLayout->addWidget(imageView, 0, 0, 1, 1);
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+    singleViewer = viewerService->instanceSingleViewer();
+    singleViewer->hideOpen(true);
+    singleViewer->hideSave(true);
+    singleViewer->addToolBar(Qt::TopToolBarArea,toolBar);
 
-	markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-	markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-	//imageView->getMarker()->changeMarker(mark);
+    singleViewer->installListener(this);
+    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
+#endif //SYNAPSE_EFOTO
 
-	// Make some connections
-	//imageView->getMarker()->setToOnlyEmitClickedMode();
-	imageView->installListener(this);
-#endif //INTEGRATED_EFOTO REVER!
+    setCentralWidget(centralwidget);
+
+    flightDirectionForm = new FlightDirectionForm();
+    flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+    flightDirectionForm->imageLabel->setHidden(true);
+    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+
 }
 
 void SRUserInterface_Qt::informState()

@@ -1,6 +1,7 @@
 #include "IOUserInterface_Qt.h"
 
 #include <qapplication.h>
+#include <QGridLayout>
 #include <qvariant.h>
 #include <qimage.h>
 #include <qpixmap.h>
@@ -8,6 +9,11 @@
 #include <qstring.h>
 
 #include "ETableWidget.h"
+
+#ifdef SYNAPSE_EFOTO
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -132,35 +138,36 @@ void IOUserInterface_Qt::fitView()
 
 void IOUserInterface_Qt::init()
 {
-#ifdef INTEGRATED_EFOTO
-	// Insert image into layout
-	QWidget* centralwidget = new QWidget(this);
-	QGridLayout* gridLayout = new QGridLayout(centralwidget);
+    // Insert image into layout
+    QWidget* centralwidget = new QWidget(this);
+    QGridLayout* gridLayout = new QGridLayout(centralwidget);
 
+    calculationMode = 0;
+
+    mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24), 1, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
+
+#ifdef INTEGRATED_EFOTO
 	//oldImageView = new ImageView(centralwidget);
 	imageView = new SingleViewer();
 	imageView->hideOpen(true);
 	imageView->hideSave(true);
-	imageView->addToolBar(Qt::TopToolBarArea,toolBar);
-	gridLayout->addWidget(imageView, 0, 0, 1, 1);
-	setCentralWidget(centralwidget);
+    imageView->addToolBar(Qt::TopToolBarArea,toolBar);
 
-	mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24), 1, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-	//imageView->getMarker()->changeMarker(mark);
+    imageView->installListener(this);
+    gridLayout->addWidget(imageView, 0, 0, 1, 1);
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+    singleViewer = viewerService->instanceSingleViewer();
+    singleViewer->hideOpen(true);
+    singleViewer->hideSave(true);
+    singleViewer->addToolBar(Qt::TopToolBarArea,toolBar);
 
-	//resize(1024,800);
+    singleViewer->installListener(this);
+    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
+#endif //SYNAPSE_EFOTO
 
-	// Make some connections
-	imageView->installListener(this);
-	//connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
-	//connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
-	//connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
-
-	calculationMode = 0;
-
-	//this->showNormal();
-	//myImageView->fitView();
-#endif //INTEGRATED_EFOTO REVER!
+    setCentralWidget(centralwidget);
 }
 
 bool IOUserInterface_Qt::measureMark(int id, double col, double lin)
@@ -412,7 +419,18 @@ bool IOUserInterface_Qt::exec()
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
 			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
 		}
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
+        for (int row = 0; row < points->rowCount() ;row++)
+        {
+            if (points->item(row,2)->text().isEmpty())
+                continue;
+            QString pointName = QString::number(row+1);
+            QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
+            singleViewer->insertMark(location.x(), location.y(), row+1, pointName, mark);
+        }
+#endif //SYNAPSE_EFOTO
 
 		makeRepaint();
 		actionMove->trigger();
@@ -480,7 +498,18 @@ bool IOUserInterface_Qt::exec()
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
 			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
 		}
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
+        for (int row = 0; row < points->rowCount() ;row++)
+        {
+            if (points->item(row,2)->text().isEmpty())
+                continue;
+            QString pointName = QString::number(row+1);
+            QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
+            singleViewer->insertMark(location.x(), location.y(), row+1, pointName, mark);
+        }
+#endif //SYNAPSE_EFOTO
 
 		table1->selectRow(0);
 		table1->setFocus();
@@ -541,7 +570,10 @@ bool IOUserInterface_Qt::exec()
 
 #ifdef INTEGRATED_EFOTO
 		imageView->loadImage(QString(manager->getImageFile().c_str()));
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
+#endif //SYNAPSE_EFOTO
 
 		makeRepaint();
 		actionMove->trigger();
