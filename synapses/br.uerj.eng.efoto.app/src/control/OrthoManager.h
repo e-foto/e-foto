@@ -80,12 +80,10 @@ public:
 	*/
 	~OrthoManager();
 
-#ifdef INTEGRATED_EFOTO
     /**
     * \brief Construtor que j identifica o seu gerenciador, as imagens que sero usadas e os dados de uma orientao exterior a ser extradas.
     */
-    OrthoManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
-#endif //INTEGRATED_EFOTO REVER!
+    OrthoManager(EFotoManager* manager);
 
 	// Association Methods
 	//

@@ -14,7 +14,8 @@
 #include <QMessageBox>
 
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "DoubleViewer.h"
+#include "StereoViewer.h"
 #endif //INTEGRATED_EFOTO REVER!
 
 namespace br {

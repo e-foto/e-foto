@@ -146,6 +146,10 @@ public:
 	* \brief Construtor padrão.
 	*/
     DEMManager();
+    /**
+    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
+    */
+    DEMManager(EFotoManager* manager);
 	/**
 	* \brief Destrutor padrão.
 	*/
@@ -154,10 +158,6 @@ public:
 
 
 #ifdef INTEGRATED_EFOTO
-    /**
-    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
-    */
-    DEMManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
     /**
     * \brief Método que adiciona pares às sementes.
     */

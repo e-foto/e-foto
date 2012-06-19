@@ -97,8 +97,10 @@ HEADERS += \
 		   #
 		   #
 		   #../br.uerj.eng.efoto.viewer/src/imageDisplay/
-		   GeometryResource.h \
-		   ImageViewers.h \
+                   GeometryResource.h \
+                   SingleViewer.h \
+                   DoubleViewer.h \
+                   StereoViewer.h \
 		   RasterResource.h \
 		   SingleDisplay.h \
 		   SingleScene.h \
@@ -220,8 +222,10 @@ SOURCES += \
 		   #
 		   #
 		   #../br.uerj.eng.efoto.viewer/src/imageDisplay/
-		   GeometryResource.cpp \
-		   ImageViewers.cpp \
+                   GeometryResource.cpp \
+                   SingleViewer.cpp \
+                   DoubleViewer.cpp \
+                   StereoViewer.cpp \
 		   RasterResource.cpp \
 		   SingleDisplay.cpp \
 		   SingleScene.cpp \

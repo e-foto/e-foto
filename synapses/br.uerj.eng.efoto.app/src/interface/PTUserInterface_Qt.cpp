@@ -127,7 +127,7 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 {
 #ifdef INTEGRATED_EFOTO
-	SingleViewer* graphicResults = new SingleViewer(0);
+    SingleViewer* graphicResults = new SingleViewer(/*0*/);
 
 	// Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e converta em matrix gerando um deque de matrizes
 	deque<Matrix*> imgs = getImageMatrixes();

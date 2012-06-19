@@ -13,19 +13,36 @@ namespace efoto {
 
 SingleViewer::SingleViewer()
 {
-	sd = new SingleDisplay(this);
-	setCentralWidget(sd);
-	tool = new SingleToolsBar(sd, this);
-	addToolBar(Qt::TopToolBarArea,tool);
-	statusBar()->addWidget(tool->getInfo());
-	addDockWidget(Qt::RightDockWidgetArea, tool->getNearview());
-	addDockWidget(Qt::RightDockWidgetArea, tool->getOverview());
+    sd = new SingleDisplay(this);
+    setCentralWidget(sd);
+    tool = new SingleToolsBar(sd, this);
+    addToolBar(Qt::TopToolBarArea,tool);
+    statusBar()->addWidget(tool->getInfo());
+    addDockWidget(Qt::RightDockWidgetArea, tool->getNearview());
+    addDockWidget(Qt::RightDockWidgetArea, tool->getOverview());
 
-	QRect desktop = QDesktopWidget().screenGeometry();
-	move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
+    QRect desktop = QDesktopWidget().screenGeometry();
+    move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
 
-	connect(&tool->mark, SIGNAL(clicked(QPointF)), this, SLOT(emitMark(QPointF)));
+    connect(&tool->mark, SIGNAL(clicked(QPointF)), this, SLOT(emitMark(QPointF)));
 }
+/*
+SingleViewer::SingleViewer(QWidget *parent)
+{
+    sd = new SingleDisplay(this);
+    setCentralWidget(sd);
+    tool = new SingleToolsBar(sd, this);
+    addToolBar(Qt::TopToolBarArea,tool);
+    statusBar()->addWidget(tool->getInfo());
+    addDockWidget(Qt::RightDockWidgetArea, tool->getNearview());
+    addDockWidget(Qt::RightDockWidgetArea, tool->getOverview());
+
+    QRect desktop = QDesktopWidget().screenGeometry();
+    move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
+
+    connect(&tool->mark, SIGNAL(clicked(QPointF)), this, SLOT(emitMark(QPointF)));
+}
+*/
 
 void SingleViewer::closeEvent(QCloseEvent *)
 {
@@ -71,18 +88,18 @@ void SingleViewer::setDetailTracking(bool status)
 
 void SingleViewer::hideOpen(bool status)
 {
-	tool->setOpenVisible(status);
+    tool->setOpenVisible(!status);
 }
 
 void SingleViewer::hideSave(bool status)
 {
-	tool->setSaveVisible(status);
+    tool->setSaveVisible(!status);
 }
 
 void SingleViewer::hideMark(bool status)
 {
-	tool->setMarkVisible(status);
-	if (!status)
+    tool->setMarkVisible(!status);
+    if (status)
 		tool->near_.setNearCursor(QCursor(Qt::ArrowCursor));
 	else
 		tool->near_.setNearCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)))));
@@ -169,22 +186,22 @@ unsigned int SingleViewer::addMark(double x, double  y, QString label, Marker *m
 
 void SingleViewer::deleteMark(unsigned int key)
 {
-//rever!
+    tool->mark.deleteMark(key);
 }
 
 void SingleViewer::setSelectedMark(unsigned int key)
 {
-//rever!
+    sd->getCurrentScene()->geometry()->setSelectedMark(key);
 }
 
-void SingleViewer::setSelectedMarker(QImage marker, int hotX, int hotY)
+void SingleViewer::setSelectedMarker(Marker* marker)
 {
-//rever!
+    sd->getCurrentScene()->geometry()->setSelectedMarker(marker);
 }
 
-void SingleViewer::setDefaultMarker(QImage marker, int hotX, int hotY)
+void SingleViewer::setDefaultMarker(Marker *marker)
 {
-//rever!
+    sd->getCurrentScene()->geometry()->setDefaultMarker(marker);
 }
 
 

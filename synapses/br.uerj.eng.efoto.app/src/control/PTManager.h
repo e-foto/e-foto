@@ -78,12 +78,8 @@ public:
 		/**
  * \brief Construtor completo da classe para gerenciamento total
  * \param newManager : Gerente geral do software e-foto
- * \param images : Lista com todos os objetos Image cadastrados no projeto atual
- * \param ois : Lista com todos os objetos InteriorOrientation, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
- * \param sensor : Objeto Sensor, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
- * \param flight : Objeto Flight, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  */
-		PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
+        PTManager(EFotoManager* newManager);
 
 		/**
   * \brief Destrutor do objeto

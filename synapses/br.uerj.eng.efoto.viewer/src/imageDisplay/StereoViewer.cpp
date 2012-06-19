@@ -9,7 +9,7 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-StereoViewer::StereoViewer()
+StereoViewer::StereoViewer(QWidget *parent)
 {
 	stereoDisplay = new StereoDisplay(this);
 	stereoTool = new StereoToolsBar(stereoDisplay, this);

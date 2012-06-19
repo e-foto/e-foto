@@ -9,7 +9,7 @@
 #include "FlightDirectionForm.h"
 
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "DoubleViewer.h"
 #endif //INTEGRATED_EFOTO REVER!
 
 namespace br {

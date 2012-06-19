@@ -8,18 +8,18 @@
 
 #include "EObject.h"
 
+#ifdef INTEGRATED_EFOTO
+#include "Project.h"
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include <IProject.h>
+#endif //SYNAPSE_EFOTO
+
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-class Terrain;
-class Sensor;
-class Flight;
-class Image;
-class InteriorOrientation;
-class SpatialRessection;
-class Point;
 class SRUserInterface;
 class EFotoManager;
 
@@ -36,15 +36,16 @@ class SRManager
 	//
 	bool started;
 	bool status;
-	EFotoManager* manager;
-	Terrain* myTerrain;
-	Sensor* mySensor;
-	Flight* myFlight;
-	Image* myImage;
-	InteriorOrientation* myIO;
-	SpatialRessection* mySR;
-	deque<Point*> myPoints;
+    EFotoManager* manager;
 	SRUserInterface* myInterface;
+    int imageId;
+#ifdef INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
+
 
 public:
 
@@ -56,15 +57,9 @@ public:
 	SRManager();
 	/**
 	* \brief Construtor padrão.
-	* \param manager manager Ponteiro para o controlador central da aplicação.
-	* \param myTerrain Ponteiro para o objeto terreno utilizado.
-	* \param mySensor Ponteiro para o objeto sensor utilizado.
-	* \param myFlight Ponteiro para o objeto voo utilizado.
-	* \param myImage Ponteiro para o objeto imagem utilizado.
-	* \param myIO Ponteiro para os parâmetros de orientação interior.
-	* \param mySR Ponteiro para o objeto de cálculo utilizado.
+    * \param manager manager Ponteiro para o controlador central da aplicação.
 	*/
-    SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR, deque<Point*> myPoints);
+    SRManager(EFotoManager* manager, int id);
 	/**
 	* \brief Destrutor padrão.
 	*/
@@ -92,7 +87,7 @@ public:
 	* \param lin Valor da quantidade de linhas da imagem.
 	* \return bool Retorna verdadeiro se o ponto está dentro das dimensões da imagem. Retorna falso, caso contrário.
 	*/
-	bool measurePoint(int id, double col, double lin);
+    bool measurePoint(int id, double col, double lin);
 	/**
 	* \brief Método que seleciona um ponto para a Orientação Exterior.
 	* \param id Identificador do ponto.

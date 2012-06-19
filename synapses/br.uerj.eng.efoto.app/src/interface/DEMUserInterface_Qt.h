@@ -16,7 +16,8 @@
 #include <QList>
 
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "SingleViewer.h"
+#include "DoubleViewer.h"
 #include "MatchingPoints.h"
 #endif //INTEGRATED_EFOTO REVER!
 

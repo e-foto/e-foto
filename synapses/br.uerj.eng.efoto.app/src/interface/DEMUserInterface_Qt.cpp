@@ -215,7 +215,7 @@ void DEMUserInterface_Qt::setMathcingHistogram(int *hist)
 void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-	SingleViewer* sv = new SingleViewer(this);
+    SingleViewer* sv = new SingleViewer(/*this*/);
 		sv->setOrtoImageMode(xi, dx, yi, dy);
 	sv->loadImage(image, isGrayscale);
 	sv->hideOpen(true);
@@ -227,7 +227,7 @@ void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, doubl
 void DEMUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-		SingleViewer* sv = new SingleViewer(this);
+        SingleViewer* sv = new SingleViewer(/*this*/);
 		sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
 		sv->loadImage(image, isGrayscale);
 		sv->hideOpen(true);

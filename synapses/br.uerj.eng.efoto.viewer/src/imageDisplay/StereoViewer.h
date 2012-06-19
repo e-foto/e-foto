@@ -38,11 +38,14 @@ class Q_DECL_EXPORT StereoViewer : public IStereoViewer
 	void closeEvent(QCloseEvent *);
 
 public:
-	StereoViewer();
+    StereoViewer(QWidget* parent = 0);
 	~StereoViewer() {}
 	StereoDisplay* getDisplay() {return stereoDisplay;}
 	MarkStereoTool& getMarker() {return stereoTool->_mark;}
 	StereoToolsBar* getToolBar() {return stereoTool;}
+#ifdef INTEGRATED_EFOTO
+    enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
+#endif //INTEGRATED_EFOTO
 
 public slots:
 	void loadLeftImage(QString filename);

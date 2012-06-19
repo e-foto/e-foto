@@ -11,11 +11,13 @@
 #include <QInputDialog>
 #include <QStandardItemModel>
 
+#include "SingleViewer.h"
+#include "GeometryResource.h"
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "SingleDisplay.h" //rever!
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
-#include "SingleViewer.h"
+#include "IViewerService.h"
 #endif //SYNAPSE_EFOTO
 
 namespace br {
@@ -64,11 +66,16 @@ protected:
 	bool flightAvailable;
 	FlightDirectionForm *flightDirectionForm;
 
+    Marker *markOn;
+    Marker *markOff;
 #ifdef INTEGRATED_EFOTO
-	Marker *markOn;
-	Marker *markOff;
 	SingleViewer *imageView;
 #endif //INTEGRATED_EFOTO REVER!
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    ISingleViewerPtr singleViewer;
+#endif //SYNAPSE_EFOTO
+
 
 	void closeEvent(QCloseEvent *e);
 

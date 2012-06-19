@@ -40,7 +40,8 @@ class Q_DECL_EXPORT SingleViewer : public ISingleViewer
 	void closeEvent(QCloseEvent *);
 
 public:
-	SingleViewer();
+    SingleViewer();
+    //SingleViewer(QWidget* parent);
     ~SingleViewer() {}
 	SingleDisplay* getDisplay() {return sd;}
 	//MarkTool* getMarker() {return &tool->mark;}
@@ -75,8 +76,8 @@ public slots:
 	unsigned int addMark(double x, double  y, QString label, Marker *marker = NULL);
 	void deleteMark(unsigned int key);
 	void setSelectedMark(unsigned int key = 0);
-	void setSelectedMarker(QImage marker, int hotX = -1, int hotY = -1);
-	void setDefaultMarker(QImage marker, int hotX = -1, int hotY = -1);
+    void setSelectedMarker(Marker *marker);
+    void setDefaultMarker(Marker* marker);
 
 	void setImageMode();
 	void setOrtoImageMode(double xi, double dx, double yi, double dy);

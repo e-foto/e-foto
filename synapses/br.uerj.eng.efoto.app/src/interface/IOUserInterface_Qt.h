@@ -10,11 +10,13 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 
+#include "SingleViewer.h"
+#include "GeometryResource.h"
 #ifdef INTEGRATED_EFOTO
-#include "ImageViewers.h"
+#include "SingleDisplay.h"//rever!
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
-#include "SingleViewer.h"
+#include "IViewerService.h"
 #endif //SYNAPSE_EFOTO
 
 namespace br {
@@ -53,10 +55,15 @@ protected:
 	IOManager *manager;
 	void closeEvent(QCloseEvent *e);
 
+    Marker *mark;
 #ifdef INTEGRATED_EFOTO
-	Marker *mark;
 	SingleViewer *imageView;
 #endif //INTEGRATED_EFOTO REVER!
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    ISingleViewerPtr singleViewer;
+#endif //SYNAPSE_EFOTO
+
 
 protected slots:
 	virtual void languageChange();

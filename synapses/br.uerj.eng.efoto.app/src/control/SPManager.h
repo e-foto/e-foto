@@ -78,11 +78,11 @@ public:
 	// Constructors and Destructors
 	//
     SPManager();
+    SPManager(EFotoManager* manager);
 	~SPManager();
 
 
 #ifdef INTEGRATED_EFOTO
-    SPManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
     ObjectSpaceCoordinate getBoundingBoxCenter();
     ObjectSpaceCoordinate getCentralPoint();
     ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);

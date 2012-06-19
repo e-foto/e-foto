@@ -42,13 +42,17 @@ class Q_DECL_EXPORT SeparatedStereoViewer : public IDoubleViewer
 	void closeEvent(QCloseEvent *);
 
 public:
-	SeparatedStereoViewer();
+    SeparatedStereoViewer(QWidget* parent = 0);
     ~SeparatedStereoViewer() {}
 	SingleDisplay* getLeftDisplay() {return leftDisplay;}
 	SingleDisplay* getRightDisplay() {return rightDisplay;}
 	MarkTool& getLeftMarker() {return (tool->leftMark);}
 	MarkTool& getRightMarker() {return (tool->rightMark);}
 	SeparatedStereoToolsBar* getToolBar() {return tool;}
+#ifdef INTEGRATED_EFOTO
+    enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
+#endif //INTEGRATED_EFOTO
+
 
 public slots:
 	void loadLeftImage(QString filename);
