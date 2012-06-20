@@ -11,17 +11,17 @@
 #include "ProgressPublisher.h"
 #include "Features.h"
 
-#ifdef INTEGRATED_EFOTO
 #include "Point.h"
-#include "Image.h"
-#include "ExteriorOrientation.h"
+#include "DemGrid.h"
 #include "ImageMatching.h"
 #include "MatchingPoints.h"
-#include "DemGrid.h"
 #include "SpatialIntersection.h"
-#endif //INTEGRATED_EFOTO REVER!
+
+#ifdef INTEGRATED_EFOTO
+#include "Project.h"
+#endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
-	// Aqui vai entrar uma referência para classes da sinapse engine
+#include "IProject.h"
 #endif //SYNAPSE_EFOTO
 
 namespace br {
@@ -62,14 +62,18 @@ class DEMManager : public ProgressPublisher
 	EFotoManager* manager;
     deque<int> listPairs;
 
-#ifdef INTEGRATED_EFOTO
-	deque<Image*> listAllImages;
-    deque<Point*> listAllPoints;
-	deque<ExteriorOrientation*> listEOs;
-    MatchingPointsList seeds, pairs;
+    MatchingPointsList *seeds, *pairs;
     ImageMatching *im;
     DemGrid *grid;
-    StereoPair sp;
+    StereoPair *sp;
+
+#ifdef INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
+
 
     /**
     * \brief Método privado que retorna um ponteiro para uma instância Image.
@@ -87,7 +91,6 @@ class DEMManager : public ProgressPublisher
     * \param usePPolygons - determina o uso de linhas dos poligonos
     */
     void addFeaturesToPairList(Features* df, MatchingPointsList *mpl, bool usePolygons = false);
-#endif //INTEGRATED_EFOTO REVER!
 
 	/**
 	* \brief Método privado que atualiza os número de sementes de dados.
@@ -157,21 +160,18 @@ public:
 
 
 
-#ifdef INTEGRATED_EFOTO
     /**
     * \brief Método que adiciona pares às sementes.
     */
-    void getPointList(MatchingPointsList &sd, MatchingPointsList &pr);
+    void getPointList(MatchingPointsList* sd, MatchingPointsList* pr);
     /**
     * \brief Método que retorna uma lista de instâncias da classe Image.
     */
-    deque<Image*> getImages() { return listAllImages; }
+    deque<Image*> getImages() { return project->allImages(); }
     /**
     * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
     */
-    void overwriteSeedsList(MatchingPointsList sedlist) { seeds = sedlist; updateNoSeeds(); }
-#endif //INTEGRATED_EFOTO REVER!
-
+    void overwriteSeedsList(MatchingPointsList* sedlist) { *seeds = *sedlist; updateNoSeeds(); }
 
 	// Association Methods
 	//

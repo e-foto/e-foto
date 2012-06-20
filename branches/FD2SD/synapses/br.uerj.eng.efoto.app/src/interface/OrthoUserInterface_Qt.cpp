@@ -343,25 +343,33 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-        SingleViewer* sv = new SingleViewer(/*this*/);
-		sv->setOrtoImageMode(xi, dx, yi, dy);
-		sv->loadImage(image, isGrayscale);
-		sv->hideOpen(true);
-		sv->hideSave(true);
-		sv->show();
-#endif //INTEGRATED_EFOTO REVER!
+        singleViewer = new SingleViewer(/*this*/);
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+        viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+        singleViewer = viewerService->instanceSingleViewer();
+#endif //SYNAPSE_EFOTO
+        singleViewer->setOrtoImageMode(xi, dx, yi, dy);
+        singleViewer->getDisplay()->getCurrentScene()->loadImage(image, isGrayscale);
+        singleViewer->hideOpen(true);
+        singleViewer->hideSave(true);
+        singleViewer->show();
 }
 
 void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale)
 {
 #ifdef INTEGRATED_EFOTO
-        SingleViewer* sv = new SingleViewer(/*this*/);
-		sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
-		sv->loadImage(image, isGrayscale);
-		sv->hideOpen(true);
-		sv->hideSave(true);
-		sv->show();
-#endif //INTEGRATED_EFOTO REVER!
+        singleViewer = new SingleViewer(/*this*/);
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+        viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+        singleViewer = viewerService->instanceSingleViewer();
+#endif //SYNAPSE_EFOTO
+        singleViewer->setElevationImageMode(xi, dx, yi, dy, zi, dz);
+        singleViewer->getDisplay()->getCurrentScene()->loadImage(image, isGrayscale);
+        singleViewer->hideOpen(true);
+        singleViewer->hideSave(true);
+        singleViewer->show();
 }
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg)

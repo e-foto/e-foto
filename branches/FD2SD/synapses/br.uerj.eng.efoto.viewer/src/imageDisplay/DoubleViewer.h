@@ -15,15 +15,17 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-#ifndef DOUBLEMARKERLISTENER
-#define DOUBLEMARKERLISTENER
+class DoubleToolsBar : public SeparatedStereoToolsBar
+{
+    Q_OBJECT
+};
+
 class DoubleMarkerListener
 {
 public:
 	virtual void receiveLeftMark(QPointF) = 0;
 	virtual void receiveRightMark(QPointF) = 0;
 };
-#endif //DOUBLEMARKERLISTENER
 
 #ifdef INTEGRATED_EFOTO
 class SeparatedStereoViewer : public QMainWindow
@@ -45,10 +47,10 @@ public:
     SeparatedStereoViewer(QWidget* parent = 0);
     ~SeparatedStereoViewer() {}
 	SingleDisplay* getLeftDisplay() {return leftDisplay;}
-	SingleDisplay* getRightDisplay() {return rightDisplay;}
-	MarkTool& getLeftMarker() {return (tool->leftMark);}
-	MarkTool& getRightMarker() {return (tool->rightMark);}
-	SeparatedStereoToolsBar* getToolBar() {return tool;}
+    SingleDisplay* getRightDisplay() {return rightDisplay;}
+    DoubleToolsBar* getToolBar() {return (DoubleToolsBar*) tool;}
+    //MarkTool& getLeftMarker() {return (tool->leftMark);}
+    //MarkTool& getRightMarker() {return (tool->rightMark);}
 #ifdef INTEGRATED_EFOTO
     enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
 #endif //INTEGRATED_EFOTO
@@ -102,7 +104,6 @@ public slots:
 	void setDefaultMarker(TargetDisplay target, QImage marker, int hotX = -1, int hotY = -1) {}
 
 	void installListener(DoubleMarkerListener* listener) {}
-
 };
 
 } // namespace efoto

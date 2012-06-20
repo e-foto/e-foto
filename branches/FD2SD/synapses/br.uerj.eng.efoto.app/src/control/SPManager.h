@@ -10,11 +10,15 @@
 #include "Features.h"
 #include <deque>
 
-#ifdef INTEGRATED_EFOTO
 #include "Image.h"
-#include "ExteriorOrientation.h"
 #include "SpatialIntersection.h"
-#endif //INTEGRATED_EFOTO REVER!
+
+#ifdef INTEGRATED_EFOTO
+#include "Project.h"
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include <IProject.h>
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -48,30 +52,17 @@ class SPManager
 	SPUserInterface* myInterface;
 	EFotoManager* manager;
 
-#ifdef INTEGRATED_EFOTO
-	deque<Image*> listAllImages;
-	deque<Point*> listAllPoints;
-	deque<ExteriorOrientation*> listEOs;
-
 	Image* leftImage;
 	Image* rightImage;
-	ProjectiveRay prL;
-	ProjectiveRay prR;
-#endif //INTEGRATED_EFOTO REVER!
+    ProjectiveRay* prL;
+    ProjectiveRay* prR;
 
-	/*
-		Image * getImage(int);
-		void setListPoint();
-		bool connectImagePoints();
-		MatchingPointsList seeds, pairs;
-		void getImagesId(int, int&, int&);
-		void resamplePoints(MatchingPointsList *list, double resample);
-		void createInitialSeeds();
-		void extractDEMPair(int);
-		void calcPointsXYZ();
-		DemGrid *grid;
-		StereoPair sp;
-		*/
+#ifdef INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
 
 public:
 
@@ -81,13 +72,10 @@ public:
     SPManager(EFotoManager* manager);
 	~SPManager();
 
-
-#ifdef INTEGRATED_EFOTO
     ObjectSpaceCoordinate getBoundingBoxCenter();
     ObjectSpaceCoordinate getCentralPoint();
     ImageSpaceCoordinate getLeftPoint(ObjectSpaceCoordinate coord);
     ImageSpaceCoordinate getRightPoint(ObjectSpaceCoordinate coord);
-#endif //INTEGRATED_EFOTO REVER!
 
 	// Association Methods
 	//

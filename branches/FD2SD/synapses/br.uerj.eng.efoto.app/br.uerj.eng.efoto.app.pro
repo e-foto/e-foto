@@ -24,8 +24,9 @@ INCLUDEPATH += src \
 			   src/formDisplay \
 			   src/infrastructure \
 			   src/resource \
-			   ../br.uerj.eng.efoto.engine/src/infrastructure \
-			   ../br.uerj.eng.efoto.engine/src/photogrammetry \
+                           ../br.uerj.eng.efoto.engine/src/infrastructure \
+                           ../br.uerj.eng.efoto.engine/src/photogrammetry \
+                           ../br.uerj.eng.efoto.engine/src/imageProcessing \
 			   ../br.uerj.eng.efoto.viewer/src/imageDisplay
 
 DEPENDPATH += $${INCLUDEPATH}
@@ -108,13 +109,27 @@ HEADERS =  include/IPhotogrammetry.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
 		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/DemGrid.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/StereoPair.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialIntersection.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPoints.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectiveRay.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Orthorectification.h \
+                   ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.h \
+                   #
+                   ../br.uerj.eng.efoto.engine/src/imageProcessing/ImageMatching.h \
+                   ../br.uerj.eng.efoto.engine/src/imageProcessing/Interpolation.h \
                    #
                    ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h \
                    ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.h \
                    ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.h \
+                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.h \
                    ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.h
 
 

@@ -41,6 +41,8 @@ public:
 	virtual QColor getColor(QPoint at) = 0;
 	virtual unsigned int getGrayColor(QPointF at, bool linear = false) = 0;
 
+    virtual bool loadImage(Matrix* image, bool isGrayscale = true) = 0;
+
 	virtual RasterResource* rasters(int &rastersCount) = 0;
 	virtual GeometryResource* geometries(int &geometriesCount) = 0;
 	virtual RasterResource* raster(int at = -1) = 0;

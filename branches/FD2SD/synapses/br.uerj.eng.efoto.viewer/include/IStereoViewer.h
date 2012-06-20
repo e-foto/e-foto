@@ -12,6 +12,8 @@ namespace efoto {
 
 class Marker;
 class StereoMarkerListener;
+class StereoDisplay;
+class StereoToolsBar;
 
 class IStereoViewer : public QMainWindow
 {
@@ -55,6 +57,8 @@ public:
 	virtual void setDefaultMarker(QImage marker, int hotX = -1, int hotY = -1) = 0;
 
 	virtual void installListener(StereoMarkerListener* listener) = 0;
+    virtual StereoDisplay* getDisplay() = 0;
+    virtual StereoToolsBar* getToolBar() = 0;
 
 };
 
