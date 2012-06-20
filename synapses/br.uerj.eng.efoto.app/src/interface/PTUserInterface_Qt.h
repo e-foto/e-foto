@@ -8,9 +8,14 @@
 #include "WindowsSelectPage.h"
 #include "FlightDirectionForm.h"
 
-#ifdef INTEGRATED_EFOTO
+#include "SingleDisplay.h"
 #include "DoubleViewer.h"
-#endif //INTEGRATED_EFOTO REVER!
+
+#ifdef SYNAPSE_EFOTO
+#include "IViewerService.h"
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -36,13 +41,17 @@ protected:
 	PTUserInterface_Qt(PTManager* manager,QWidget* parent=0, Qt::WindowFlags fl = Qt::Window);
 	~PTUserInterface_Qt();
 
-#ifdef INTEGRATED_EFOTO
-    SeparatedStereoViewer* viewer;
     Marker* mark;
     Marker* selectedMark;
     Marker* photoMark;
     Marker* photoSelectedMark;
-#endif //INTEGRATED_EFOTO REVER!
+#ifdef INTEGRATED_EFOTO
+    SeparatedStereoViewer* doubleViewer;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    IDoubleViewerPtr doubleViewer;
+#endif //SYNAPSE_EFOTO
 
 	QLabel *leftCoordinatesInfoLabel;
 	QLabel *rightCoordinatesInfoLabel;
@@ -192,7 +201,6 @@ public slots:
  */
 	void updateCoordinatesInfo(QPointF* pixel);
 
-#ifdef INTEGRATED_EFOTO
 	/**
  * \brief Metodo que reponsavel por atualizar no display a posio da marca de um ponto
  * \param display : Objeto display a ser atualizado
@@ -206,9 +214,8 @@ public slots:
  * \brief Metodo que coloca todas as marcaçoes de ponto no display
  * \param display : Display em que as marcas serao colocadas
  */
-	void markAllpoints(SingleDisplay *display);
-	void clearAllMarks(SingleDisplay *display);
-#endif //INTEGRATED_EFOTO REVER!
+    void markAllpoints(SingleDisplay *display);
+    void clearAllMarks(SingleDisplay *display);
 
 	/**
  * \brief Metodo que exporta os pontos e croqui do bloco para um arquivo xml que o GoogleEarth interprete

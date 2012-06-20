@@ -33,27 +33,35 @@ PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
 PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::WindowFlags fl)
 	:QMainWindow(parent, fl)
 {
-#ifdef INTEGRATED_EFOTO
 	leftImageTableWidget;
 	setupUi(this);
 	ptManager = manager;
 	saveMarksButton->setDisabled(true);
 
-	viewer = new SeparatedStereoViewer(this); // Inserção do novo display
-	viewer->blockOpen();
-	viewer->blockSave();
-	viewerLayout->addWidget(viewer);
+#ifdef INTEGRATED_EFOTO
+    doubleViewer = new SeparatedStereoViewer();
+    viewerLayout->addWidget(doubleViewer);
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
+    doubleViewer = viewerService->instanceDoubleViewer();
+    viewerLayout->addWidget(doubleViewer.data());
+#endif //SYNAPSE_EFOTO
+
+    doubleViewer->hideOpen(true);
+    doubleViewer->hideSave(true);
+
 	QToolBar* controlTool = new QToolBar("Control Tools");
 	controlTool->addWidget(markToolButton);
 	controlTool->addWidget(flightDirectionToolButton);
 	controlTool->addWidget(calculateFotoTriToolButton);
 	controlTool->addWidget(saveMarksButton);
 	controlTool->addWidget(viewReportToolButton);
-	controlTool->addWidget(exportToKmlButton);
-    //controlTool->addWidget(insertPointInButton);
-    /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
-    addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
+    controlTool->addWidget(exportToKmlButton);
+    addToolBar(Qt::LeftToolBarArea,controlTool);
+    addToolBar(Qt::LeftToolBarArea,(QToolBar*) doubleViewer->getToolBar());
     toolsDockWidget->setHidden(true);
+
     mark = new Marker(SymbolsResource::getTriangle(QColor(255,255,0,255), QColor(Qt::transparent),QSize(24,24), 2, true));
     selectedMark = new Marker(SymbolsResource::getTriangle(QColor(0,255,0,255), QColor(Qt::transparent),QSize(24,24), 2, true));
     photoMark = new Marker(SymbolsResource::getSquare(QColor(255,255,0,255), QColor(Qt::transparent),QSize(19,19), 2, true));
@@ -63,22 +71,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     insertPointInButton->setHidden(true);
     insertionMode=true;
 
-	viewer->getLeftMarker().setToOnlyEmitClickedMode(); // Pluges para que o novo display funcione
-	viewer->getRightMarker().setToOnlyEmitClickedMode();
-	connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
-	connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
-
-    //Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-    //viewer->getLeftMarker().changeMarker(mark);
-    //viewer->getRightMarker().changeMarker(mark);
-
-    // Isso permanece aqui para permitir testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
-    //SeparatedStereoToolsBar* tool = viewer->getToolBar();
-    //QAction* showFotoIndice = new QAction("Results",tool);
-    //showFotoIndice->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Show Results</span></p></body></html>");
-    //tool->addSeparator();
-    //tool->addAction(showFotoIndice);
-    //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
+    connect(&doubleViewer->getToolBar()->leftMark,SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+    connect(&doubleViewer->getToolBar()->rightMark,SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 
 	setWindowTitle("E-foto - Phototriangulation");
 
@@ -115,8 +109,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	qApp->processEvents();
 	//qDebug("Construtor");
 	init();
-
-#endif //INTEGRATED_EFOTO REVER!
 }
 
 PTUserInterface_Qt::~PTUserInterface_Qt()
@@ -126,11 +118,10 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 
 void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 {
-#ifdef INTEGRATED_EFOTO
-    SingleViewer* graphicResults = new SingleViewer(/*0*/);
+    //SingleViewer* graphicResults = new SingleViewer(/*0*/);
 
 	// Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e converta em matrix gerando um deque de matrizes
-	deque<Matrix*> imgs = getImageMatrixes();
+    //deque<Matrix*> imgs = getImageMatrixes();
 	//deque<Matrix> IOs = getImageIOs();
 	//deque<Matrix> EOs = getImageEOs();
 
@@ -139,14 +130,13 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	// Passo 3: Pegue a matrix resultante e carregue-a no visualizador.
 	//Matrix dim;
 	//graphicResults->loadImage(manager->getFotoIndice( imgs, IOs, EOs, 3000, 1000, dim));
-	for (int i = 0; i < imgs.size(); i++)
-		delete(imgs.at(i));
+    //for (int i = 0; i < imgs.size(); i++)
+        //delete(imgs.at(i));
 
 	// Passo 4: Dê a métrica correta ao visualizador usando o resumo das dimensões da imagem de fotoindice
 	//graphicResults->setOrtoImageMode(dim.get(1,1) ,dim.get(2,1) ,dim.get(3,1) ,dim.get(4,1));
 
-	graphicResults->show();
-#endif //INTEGRATED_EFOTO REVER!
+    //graphicResults->show();
 }
 
 deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
@@ -269,44 +259,34 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
 
 bool PTUserInterface_Qt::exec()
 {
-#ifdef INTEGRATED_EFOTO
-	bool ok;
-	//qDebug("EXEC");
-	//	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
-	/*
- deque<string>  ids  = ptManager->getStringIdPoints();
- deque<string> types = ptManager->getStringTypePoints();
- deque<string> keys  = ptManager->getStringKeysPoints();
- headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";*/
+    bool ok;
 
 	/** carregar imagem da esquerda*/
-	viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
-	viewer->getLeftDisplay()->getCurrentScene()->scaleTo(1);
+    doubleViewer->loadImage(IDoubleViewer::LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
+    doubleViewer->getLeftDisplay()->getCurrentScene()->scaleTo(1);
 
 	/** carregar imagem da direita*/
-	viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
-	viewer->getRightDisplay()->getCurrentScene()->scaleTo(1);
+    doubleViewer->loadImage(IDoubleViewer::RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
+    doubleViewer->getRightDisplay()->getCurrentScene()->scaleTo(1);
 
 	updateImageTable(leftImageTableWidget, leftImageString);
 	updatePointsTable();
 	//pointsTableWidget->resizeTable();
 	updateImageTable(rightImageTableWidget, rightImageString);
 
-	markAllpoints(viewer->getLeftDisplay());
-	markAllpoints(viewer->getRightDisplay());
+    markAllpoints(doubleViewer->getLeftDisplay());
+    markAllpoints(doubleViewer->getRightDisplay());
 
 	setCurrentPointKey(pointsTableWidget->item(0,5)->text().toInt(&ok));
 	this->show();
 	LoadingScreen::instance().close();
 	qApp->processEvents();
 
-	return true;
-#endif //INTEGRATED_EFOTO REVER!
+    return true;
 }
 
 void PTUserInterface_Qt::viewReport()
 {
-#ifdef INTEGRATED_EFOTO
 	QWidget *resultView = new QWidget();
 	resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400);
 	QHBoxLayout *horizontalLayout= new QHBoxLayout();
@@ -416,8 +396,7 @@ void PTUserInterface_Qt::viewReport()
 	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
 	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
 
-	resultView->setWindowModality(Qt::ApplicationModal);
-#endif //INTEGRATED_EFOTO REVER!
+    resultView->setWindowModality(Qt::ApplicationModal);
 }
 
 void PTUserInterface_Qt::showReportXml()
@@ -486,8 +465,6 @@ void PTUserInterface_Qt::showReportXml()
 
 bool PTUserInterface_Qt::calculatePT()
 {
-#ifdef INTEGRATED_EFOTO
-
 	ptManager->selectImages(selectionImagesView->getSelectedItens());
 	ptManager->selectPoints(selectionPointsView->getSelectedItens());
 
@@ -511,8 +488,7 @@ bool PTUserInterface_Qt::calculatePT()
 	{
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
-	return result;
-#endif //INTEGRATED_EFOTO REVER!
+    return result;
 }
 
 void PTUserInterface_Qt::showSelectionWindow()
@@ -622,7 +598,6 @@ void PTUserInterface_Qt::showSelectionWindow()
 // Atualiza a tabela das imagens e garante que a mesma imagem não apareça nas duas comboBoxes
 void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 {
-#ifdef INTEGRATED_EFOTO
 	int index=0;
 	for(int i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)==imageFilename)
@@ -642,10 +617,10 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		rightImageComboBox->addItems(listImageRight);
 		rightImageComboBox->setCurrentIndex(rightImageComboBox->findText(currentRightImage,Qt::MatchExactly));
 		rightImageComboBox->blockSignals(false);
-        viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
+        doubleViewer->loadImage(IDoubleViewer::LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
 		updateImageTable(leftImageTableWidget,leftImageString);
-        clearAllMarks(viewer->getLeftDisplay()); markAllpoints(viewer->getLeftDisplay());
-		viewer->getLeftDisplay()->updateAll();
+        clearAllMarks(doubleViewer->getLeftDisplay()); markAllpoints(doubleViewer->getLeftDisplay());
+        doubleViewer->getLeftDisplay()->updateAll();
 	}
 	else if(sender()==rightImageComboBox)
 	{
@@ -658,18 +633,16 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		leftImageComboBox->addItems(listImageLeft);
 		leftImageComboBox->setCurrentIndex(leftImageComboBox->findText(currentLefttImage,Qt::MatchExactly));
 		leftImageComboBox->blockSignals(false);
-        viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
+        doubleViewer->loadImage(IDoubleViewer::RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
 		updateImageTable(rightImageTableWidget,rightImageString);
-        clearAllMarks(viewer->getRightDisplay()); markAllpoints(viewer->getRightDisplay());
-		viewer->getRightDisplay()->updateAll();
-	}
-#endif //INTEGRATED_EFOTO REVER!
+        clearAllMarks(doubleViewer->getRightDisplay()); markAllpoints(doubleViewer->getRightDisplay());
+        doubleViewer->getRightDisplay()->updateAll();
+    }
 }
 
 //Atualiza a tabela de imagens
 void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string imageFilename, bool move)
 {
-#ifdef INTEGRATED_EFOTO
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
 	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
@@ -703,33 +676,32 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 		//qDebug("left image coord %dx%d",col,lin);
 		if (imageTable==leftImageTableWidget)
 		{
-            //clearAllMarks(viewer->getLeftDisplay());
-            //markAllpoints(viewer->getLeftDisplay());
+            //clearAllMarks(doubleViewer->getLeftDisplay());
+            //markAllpoints(doubleViewer->getLeftDisplay());
 			//qDebug("mark all left");
 			if (move)
 			{
-				SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+                SingleScene* scene = (SingleScene*)doubleViewer->getLeftDisplay()->getCurrentScene();
 				scene->moveTo(pixel);
 				scene->setDetailedPoint(pixel);
 			}
-			viewer->getLeftDisplay()->update();
+            doubleViewer->getLeftDisplay()->update();
 		}
 		else
 		{
-            //clearAllMarks(viewer->getRightDisplay());
-            //markAllpoints(viewer->getRightDisplay());
+            //clearAllMarks(doubleViewer->getRightDisplay());
+            //markAllpoints(doubleViewer->getRightDisplay());
 			//qDebug("mark all right");
 			if (move)
 			{
-				SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+                SingleScene* scene = (SingleScene*)doubleViewer->getRightDisplay()->getCurrentScene();
 				scene->moveTo(pixel);
 				scene->setDetailedPoint(pixel);
 			}
-			viewer->getRightDisplay()->update();
+            doubleViewer->getRightDisplay()->update();
 		}
 	}
-	imageTable->setSortingEnabled(true);
-#endif //INTEGRATED_EFOTO REVER!
+    imageTable->setSortingEnabled(true);
 }
 
 void PTUserInterface_Qt::updatePointsTable()
@@ -826,7 +798,6 @@ int PTUserInterface_Qt::findKeyAppearances(ETableWidget *table, int searchedPoin
 	}
 }
 
-#ifdef INTEGRATED_EFOTO
 
 void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int pointKey, QPointF pixel)
 {
@@ -837,10 +808,10 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 	if (col<0 || lin<0 || currentPointKey<0)
 		return;
 
-	if (display == viewer->getLeftDisplay())
+    if (display == doubleViewer->getLeftDisplay())
 	{
 		int pos=findKeyAppearances(leftImageTableWidget, pointKey);
-		SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+        SingleScene* scene = (SingleScene*)doubleViewer->getLeftDisplay()->getCurrentScene();
 		if(pos<0 || col>scene->imageSize().width() || lin>scene->imageSize().height())
 			return;
 		saveMarksButton->setEnabled(true);
@@ -859,10 +830,10 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
             pointMark = selectedMark;
         else
             pointMark = photoSelectedMark;
-        clearAllMarks(viewer->getLeftDisplay());
-        markAllpoints(viewer->getLeftDisplay());
-        viewer->getLeftMarker().insertMark(pixel, pointKey, leftImageTableWidget->item(pos,0)->text(),pointMark);
-		viewer->getLeftDisplay()->update();
+        clearAllMarks(doubleViewer->getLeftDisplay());
+        markAllpoints(doubleViewer->getLeftDisplay());
+        doubleViewer->getToolBar()->leftMark.insertMark(pixel, pointKey, leftImageTableWidget->item(pos,0)->text(),pointMark);
+        doubleViewer->getLeftDisplay()->update();
 
 				/*
 		if(leftImageTableWidget->getItemSpinBox()!=NULL)
@@ -874,10 +845,10 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
 				leftImageTableWidget->getItemSpinBox()->setValue(lin);
 		}
 				*/
-	}else if(display == viewer->getRightDisplay())
+    }else if(display == doubleViewer->getRightDisplay())
 	{
 		int pos=findKeyAppearances(rightImageTableWidget, pointKey);
-		SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+        SingleScene* scene = (SingleScene*)doubleViewer->getRightDisplay()->getCurrentScene();
 		if(pos<0 || col>scene->imageSize().width() || lin>scene->imageSize().height())
 			return;
 		saveMarksButton->setEnabled(true);
@@ -896,10 +867,10 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
             pointMark = selectedMark;
         else
             pointMark = photoSelectedMark;
-        clearAllMarks(viewer->getRightDisplay());
-        markAllpoints(viewer->getRightDisplay());
-        viewer->getRightMarker().insertMark(pixel, pointKey,rightImageTableWidget->item(pos,0)->text(),pointMark);
-		viewer->getRightDisplay()->update();
+        clearAllMarks(doubleViewer->getRightDisplay());
+        markAllpoints(doubleViewer->getRightDisplay());
+        doubleViewer->getToolBar()->rightMark.insertMark(pixel, pointKey,rightImageTableWidget->item(pos,0)->text(),pointMark);
+        doubleViewer->getRightDisplay()->update();
 
 				/*
 		if(rightImageTableWidget->getItemSpinBox()!=NULL)
@@ -920,7 +891,7 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
     double col,lin;
     bool ok;
 
-    if (display == viewer->getLeftDisplay())
+    if (display == doubleViewer->getLeftDisplay())
     {
         int pnts=leftImageTableWidget->rowCount();
         for(int i=0;i<pnts;i++)
@@ -942,12 +913,12 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
                     pointMark = mark;
                 else
                     pointMark = photoMark;
-                viewer->getLeftMarker().insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text(),pointMark);
-                viewer->getLeftDisplay()->update();
+                doubleViewer->getToolBar()->leftMark.insertMark(pixel, pointkey,leftImageTableWidget->item(pos,0)->text(),pointMark);
+                doubleViewer->getLeftDisplay()->update();
             }
         }
     }
-    else if (display == viewer->getRightDisplay())
+    else if (display == doubleViewer->getRightDisplay())
     {
         int pnts=rightImageTableWidget->rowCount();
         for(int i=0;i<pnts;i++)
@@ -969,8 +940,8 @@ void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
                     pointMark = mark;
                 else
                     pointMark = photoMark;
-                viewer->getRightMarker().insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text(),pointMark);
-                viewer->getRightDisplay()->update();
+                doubleViewer->getToolBar()->rightMark.insertMark(pixel, pointkey, rightImageTableWidget->item(pos,0)->text(),pointMark);
+                doubleViewer->getRightDisplay()->update();
             }
         }
     }
@@ -982,7 +953,6 @@ void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
     display->update();
 }
 
-#endif //INTEGRATED_EFOTO REVER!
 
 void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 {
@@ -994,8 +964,7 @@ void PTUserInterface_Qt::updateCoordinatesInfo(QPointF *pixel)
 
 void PTUserInterface_Qt::imageClicked(QPointF pixel)
 {
-#ifdef INTEGRATED_EFOTO
-	if (sender() == &viewer->getLeftMarker())
+    if (sender() == &doubleViewer->getToolBar()->leftMark)
 	{
 		if (insertionMode)
 		{
@@ -1006,10 +975,10 @@ void PTUserInterface_Qt::imageClicked(QPointF pixel)
 				//conecte o ponto corrente na imagem da direita
 			}
 		}
-		updateMark(viewer->getLeftDisplay(),ptManager->getImageId(leftImageString),currentPointKey,pixel);
+        updateMark(doubleViewer->getLeftDisplay(),ptManager->getImageId(leftImageString),currentPointKey,pixel);
 		//leftView->moveTo(*pixel);
 	}
-	else if (sender() == &viewer->getRightMarker())
+    else if (sender() == &doubleViewer->getToolBar()->rightMark)
 	{
 		if (insertionMode)
 		{
@@ -1021,12 +990,11 @@ void PTUserInterface_Qt::imageClicked(QPointF pixel)
 				updateImageTable(rightImageTableWidget,rightImageString,false);
 			}
 		}
-		updateMark(viewer->getRightDisplay(),ptManager->getImageId(rightImageString),currentPointKey,pixel);
+        updateMark(doubleViewer->getRightDisplay(),ptManager->getImageId(rightImageString),currentPointKey,pixel);
 		//rightView->moveTo(*pixel);
 		//previsionMark(currentPointKey,pixel);
 	}
-	showImagesAppearances(currentPointKey);
-#endif //INTEGRATED_EFOTO REVER!
+    showImagesAppearances(currentPointKey);
 }
 
 
@@ -1050,7 +1018,7 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
 		//if (leftImageTableWidget->getPreviousValue()==value)
 		//              return;
-		SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+        SingleScene* scene = (SingleScene*)doubleViewer->getLeftDisplay()->getCurrentScene();
 		if(tableCol==1)
 		{
 			if (value > scene->imageSize().width())
@@ -1074,9 +1042,9 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 			//leftImageTableWidget->avaliateType(tableRow+1 == leftImageTableWidget->rowCount() ? tableRow:tableRow+1,1);
 		}
 		//qDebug("updateLeftimage %dx%d",col,lin);
-		updateMark(viewer->getLeftDisplay(),imageKey,pointKey,QPointF(col,lin));
-		viewer->getLeftDisplay()->getCurrentScene()->moveTo(QPointF(col,lin));
-		viewer->getLeftDisplay()->update();
+        updateMark(doubleViewer->getLeftDisplay(),imageKey,pointKey,QPointF(col,lin));
+        doubleViewer->getLeftDisplay()->getCurrentScene()->moveTo(QPointF(col,lin));
+        doubleViewer->getLeftDisplay()->update();
 		//ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin);
 		//qDebug("col %d lin %d",col,lin);
 	} else if (sender()==rightImageTableWidget)
@@ -1087,7 +1055,7 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 		// Se os valores forem iguais então não houve alteração e não há o que ser alterado
 		//if (rightImageTableWidget->getPreviousValue()==value)
 		//                return;
-		SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+        SingleScene* scene = (SingleScene*)doubleViewer->getRightDisplay()->getCurrentScene();
 		if(tableCol==1)
 		{
 			if (value > scene->imageSize().width())
@@ -1110,9 +1078,9 @@ void PTUserInterface_Qt::updatePoint(int tableRow,int tableCol, double value)
 			col=rightImageTableWidget->item(tableRow,1)->text().toDouble(&ok);
 			//rightImageTableWidget->avaliateType( tableRow+1 == rightImageTableWidget->rowCount() ? tableRow:tableRow+1,1);
 		}
-		updateMark(viewer->getRightDisplay(),imageKey,pointKey,QPointF(col,lin));
-		viewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(col,lin));
-		viewer->getRightDisplay()->update();
+        updateMark(doubleViewer->getRightDisplay(),imageKey,pointKey,QPointF(col,lin));
+        doubleViewer->getRightDisplay()->getCurrentScene()->moveTo(QPointF(col,lin));
+        doubleViewer->getRightDisplay()->update();
 		//ptManager->updateDigitalCoordinatesPoint(imageKey,pointKey,col,lin);
 		//qDebug("col %d lin %d",col,lin);
 	}
@@ -1223,17 +1191,16 @@ void PTUserInterface_Qt::exportToKml()
 
 void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 {
-#ifdef INTEGRATED_EFOTO
 	bool ok;
 	ETableWidget * table = (ETableWidget*)item->tableWidget();
 	int tableRow=item->row();
 
 	double leftCol,leftLin,rightCol,rightLin;
 
-    clearAllMarks(viewer->getLeftDisplay());
-    markAllpoints(viewer->getLeftDisplay());
-    clearAllMarks(viewer->getRightDisplay());
-    markAllpoints(viewer->getRightDisplay());
+    clearAllMarks(doubleViewer->getLeftDisplay());
+    markAllpoints(doubleViewer->getLeftDisplay());
+    clearAllMarks(doubleViewer->getRightDisplay());
+    markAllpoints(doubleViewer->getRightDisplay());
 
 	if (table==leftImageTableWidget)
     {
@@ -1248,11 +1215,11 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 		leftLin=leftImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
 		if (leftImageTableWidget->item(tableRow,1)->text()!="--" && leftImageTableWidget->item(tableRow,2)->text()!="--")
 		{
-			SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+            SingleScene* scene = (SingleScene*)doubleViewer->getLeftDisplay()->getCurrentScene();
             scene->moveTo(QPointF(leftCol,leftLin));
             scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(tableRow,0)->text(),pointMark);
 			scene->setDetailedPoint(QPointF(leftCol,leftLin));
-			viewer->getLeftDisplay()->update();
+            doubleViewer->getLeftDisplay()->update();
 		}
     }
 	else if (table==rightImageTableWidget)
@@ -1269,11 +1236,11 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 
 		if (rightImageTableWidget->item(tableRow,1)->text()!="--" && rightImageTableWidget->item(tableRow,2)->text()!="--")
 		{
-			SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+            SingleScene* scene = (SingleScene*)doubleViewer->getRightDisplay()->getCurrentScene();
 			scene->moveTo(QPointF(rightCol,rightLin));
             scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(tableRow,0)->text(),pointMark);
 			scene->setDetailedPoint(QPointF(rightCol,rightLin));
-			viewer->getRightDisplay()->update();
+            doubleViewer->getRightDisplay()->update();
 		}
 	}
 	else if (table==pointsTableWidget)
@@ -1293,12 +1260,12 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 			leftLin=leftImageTableWidget->item(leftTableIndex,2)->text().toDouble(&ok);
 			if (leftImageTableWidget->item(leftTableIndex,1)->text()!="--" && leftImageTableWidget->item(leftTableIndex,2)->text()!="--")
 			{
-				SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+                SingleScene* scene = (SingleScene*)doubleViewer->getLeftDisplay()->getCurrentScene();
 				scene->moveTo(QPointF(leftCol,leftLin));
                 scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(leftTableIndex,0)->text(),pointMark);
 				scene->setDetailedPoint(QPointF(leftCol,leftLin));
-				viewer->getLeftDisplay()->update();
-			}
+                doubleViewer->getLeftDisplay()->update();
+            }
 		}
 		if (rightTableIndex >=0)
         {
@@ -1306,15 +1273,14 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 			rightLin=rightImageTableWidget->item(rightTableIndex,2)->text().toDouble(&ok);
 			if (rightImageTableWidget->item(rightTableIndex,1)->text()!="--" && rightImageTableWidget->item(rightTableIndex,2)->text()!="--")
 			{
-				SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+                SingleScene* scene = (SingleScene*)doubleViewer->getRightDisplay()->getCurrentScene();
 				scene->moveTo(QPointF(rightCol,rightLin));
                 scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(rightTableIndex,0)->text(),pointMark);
 				scene->setDetailedPoint(QPointF(rightCol,rightLin));
-				viewer->getRightDisplay()->update();
+                doubleViewer->getRightDisplay()->update();
 			}
 		}
     }
-#endif //INTEGRATED_EFOTO REVER!
 }
 
 void PTUserInterface_Qt::setMaxIteration(int iterations)
@@ -1342,17 +1308,15 @@ void PTUserInterface_Qt::setCurrentPointKey(int newPointKey)
 
 void PTUserInterface_Qt::addPoint()
 {
-#ifdef INTEGRATED_EFOTO
 	int idNewPoint = ptManager->createNewPoint();
 	ptManager->setENH();
 	ptManager->reloadPointsCoordinates();
 	updatePointsTable();
 	setCurrentPointKey(idNewPoint);
-    clearAllMarks(viewer->getLeftDisplay());
-    markAllpoints(viewer->getLeftDisplay());
-    clearAllMarks(viewer->getRightDisplay());
-    markAllpoints(viewer->getRightDisplay());
-#endif //INTEGRATED_EFOTO REVER!
+    clearAllMarks(doubleViewer->getLeftDisplay());
+    markAllpoints(doubleViewer->getLeftDisplay());
+    clearAllMarks(doubleViewer->getRightDisplay());
+    markAllpoints(doubleViewer->getRightDisplay());
 }
 
 void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode)

@@ -27,6 +27,9 @@ class ImageForm : public AbstractForm, public Ui::ImageView
 	bool activeGNSS; bool activeINS;
 	double flightDirection;
 
+#ifdef INTEGRATED_EFOTO
+    SingleViewer* singleViewer;
+#endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
     viewer::IViewerServicePtr viewerService;
     ISingleViewerPtr singleViewer;

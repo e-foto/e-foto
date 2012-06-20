@@ -40,9 +40,9 @@ class Q_DECL_EXPORT StereoViewer : public IStereoViewer
 public:
     StereoViewer(QWidget* parent = 0);
 	~StereoViewer() {}
-	StereoDisplay* getDisplay() {return stereoDisplay;}
-	MarkStereoTool& getMarker() {return stereoTool->_mark;}
+    StereoDisplay* getDisplay() {return stereoDisplay;}
 	StereoToolsBar* getToolBar() {return stereoTool;}
+    //MarkStereoTool& getMarker() {return stereoTool->_mark;}
 #ifdef INTEGRATED_EFOTO
     enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
 #endif //INTEGRATED_EFOTO

@@ -16,7 +16,12 @@
 #ifdef INTEGRATED_EFOTO
 #include "DoubleViewer.h"
 #include "StereoViewer.h"
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include "IViewerService.h"
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -38,11 +43,16 @@ protected:
 	SPManager *manager;
 
 #ifdef INTEGRATED_EFOTO
-	SeparatedStereoViewer* viewerSeparated;
-	SeparatedStereoToolsBar* toolsSeparated;
-	StereoViewer* viewer;
-	StereoToolsBar* tools;
-#endif //INTEGRATED_EFOTO REVER!
+    SeparatedStereoViewer* separatedViewer;
+    SeparatedStereoToolsBar* separatedTool;
+    StereoViewer* stereoViewer;
+    StereoToolsBar* stereoTools;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    IDoubleViewerPtr doubleViewer;
+    IStereoViewerPtr stereoViewer;
+#endif //SYNAPSE_EFOTO
 
     TreeFeatures *tree;
     void closeEvent(QCloseEvent *e);
@@ -70,9 +80,7 @@ public slots:
     void stereoMoved(QPointF, QPointF);
     void adjustFit(int width, int height);
 
-#ifdef INTEGRATED_EFOTO
     void centerImages(ObjectSpaceCoordinate coord, double zoom);
-#endif //INTEGRATED_EFOTO REVER!
 
 private:
 	void init();
