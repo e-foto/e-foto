@@ -6,9 +6,7 @@
 #include "EFotoManager.h"
 #include "SPUserInterface_Qt.h"
 
-#ifdef INTEGRATED_EFOTO
 #include "ProjectiveRay.h"
-#endif //INTEGRATED_EFOTO REVER!
 
 namespace br {
 namespace uerj {
@@ -21,11 +19,15 @@ namespace efoto {
 SPManager::SPManager()
 {
 	started = false;
-	status = false;
+    status = false;
+    prL = new ProjectiveRay();
+    prR = new ProjectiveRay();
+#ifdef INTEGRATED_EFOTO
+    project = NULL;
+#endif //INTEGRATED_EFOTO
 }
 
-#ifdef INTEGRATED_EFOTO
-SPManager::SPManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
+SPManager::SPManager(EFotoManager* manager)
 {
 	this->manager = manager;
 	started = false;
@@ -33,8 +35,7 @@ SPManager::SPManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorO
 	spFeatures.createClassesFromSp165();
 	leftKey = 1;
     rightKey = 2;
-    listAllImages = images;
-    listEOs = eos;
+    project = manager->getProject();
 }
 
 ObjectSpaceCoordinate SPManager::getBoundingBoxCenter()
@@ -43,23 +44,23 @@ ObjectSpaceCoordinate SPManager::getBoundingBoxCenter()
     double xmax, ymax, xmin, ymin;
     double zm = manager->getProject()->terrain()->getMeanAltitude();
 
-    x[0] = prL.imageToObject(0,0,zm,false).getPosition().get(1);
-    x[1] = prL.imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(1);
-    x[2] = prL.imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(1);
-    x[3] = prL.imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(1);
-    x[4] = prR.imageToObject(0,0,zm,false).getPosition().get(1);
-    x[5] = prR.imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(1);
-    x[6] = prR.imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(1);
-    x[7] = prR.imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(1);
+    x[0] = prL->imageToObject(0,0,zm,false).getPosition().get(1);
+    x[1] = prL->imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(1);
+    x[2] = prL->imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(1);
+    x[3] = prL->imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(1);
+    x[4] = prR->imageToObject(0,0,zm,false).getPosition().get(1);
+    x[5] = prR->imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(1);
+    x[6] = prR->imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(1);
+    x[7] = prR->imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(1);
 
-    y[0] = prL.imageToObject(0,0,zm,false).getPosition().get(2);
-    y[1] = prL.imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(2);
-    y[2] = prL.imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(2);
-    y[3] = prL.imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(2);
-    y[4] = prR.imageToObject(0,0,zm,false).getPosition().get(2);
-    y[5] = prR.imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(2);
-    y[6] = prR.imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(2);
-    y[7] = prR.imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(2);
+    y[0] = prL->imageToObject(0,0,zm,false).getPosition().get(2);
+    y[1] = prL->imageToObject(0,leftImage->getHeight(),zm,false).getPosition().get(2);
+    y[2] = prL->imageToObject(leftImage->getWidth(),0,zm,false).getPosition().get(2);
+    y[3] = prL->imageToObject(leftImage->getWidth(),leftImage->getHeight(),zm,false).getPosition().get(2);
+    y[4] = prR->imageToObject(0,0,zm,false).getPosition().get(2);
+    y[5] = prR->imageToObject(0,rightImage->getHeight(),zm,false).getPosition().get(2);
+    y[6] = prR->imageToObject(rightImage->getWidth(),0,zm,false).getPosition().get(2);
+    y[7] = prR->imageToObject(rightImage->getWidth(),rightImage->getHeight(),zm,false).getPosition().get(2);
 
     xmax = xmin = x[0];
     ymax = ymin = y[0];
@@ -94,15 +95,14 @@ ObjectSpaceCoordinate SPManager::getCentralPoint()
 
 ImageSpaceCoordinate SPManager::getLeftPoint(ObjectSpaceCoordinate coord)
 {
-    return ImageSpaceCoordinate(prL.objectToImage(coord,false));
+    return ImageSpaceCoordinate(prL->objectToImage(coord,false));
 }
 
 ImageSpaceCoordinate SPManager::getRightPoint(ObjectSpaceCoordinate coord)
 {
-    return ImageSpaceCoordinate(prR.objectToImage(coord,false));
+    return ImageSpaceCoordinate(prR->objectToImage(coord,false));
 }
 
-#endif //INTEGRATED_EFOTO REVER!
 
 SPManager::~SPManager()
 {
@@ -128,7 +128,11 @@ SPUserInterface* SPManager::getInterface()
 bool SPManager::exec()
 {
 #ifdef INTEGRATED_EFOTO
-	if (manager != NULL)
+    if (manager != NULL && project != NULL && project->allImages().size() == project->allIOs().size() && project->allImages().size() == project->allEOs().size() && project->allImages().size() > 1)
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    if (manager != NULL && !project.isNull() && project->allImages().size() == project->allIOs().size() && project->allImages().size() == project->allEOs().size() &&  project->allImages().size() > 1)
+#endif //SYNAPSE_EFOTO
 	{
 		if (manager->getInterfaceType().compare("Qt") == 0)
 		{
@@ -142,8 +146,7 @@ bool SPManager::exec()
 			myInterface->centerImages(getCentralPoint(), 1.0);
 		}
 	}
-	return status;
-#endif //INTEGRATED_EFOTO REVER!
+    return status;
 }
 
 void SPManager::returnProject()
@@ -248,9 +251,8 @@ void SPManager::getFeatureData(string &fname, int &ftype, int &fclass)
 
 void SPManager::updateProjections()
 {
-#ifdef INTEGRATED_EFOTO
-	leftImage = listAllImages.at(leftKey-1);
-	rightImage = listAllImages.at(rightKey-1);
+    leftImage = project->allImages().at(leftKey-1);
+    rightImage = project->allImages().at(rightKey-1);
 	Sensor* sensor = leftImage->getSensor();
 	InteriorOrientation* lio = leftImage->getIO();
 	InteriorOrientation* rio = rightImage->getIO();
@@ -259,9 +261,13 @@ void SPManager::updateProjections()
 	leftImage->setSensor(sensor); leftImage->setIO(lio); leftImage->setEO(lsr);
 	rightImage->setSensor(sensor); rightImage->setIO(rio); rightImage->setEO(rsr);
 	if (leftImage == NULL || rightImage == NULL)
-		return;
-	prL = ProjectiveRay(leftImage);
-	prR = ProjectiveRay(rightImage);
+        return;
+    if (prL == NULL)
+        delete prL;
+    if (prR == NULL)
+        delete prR;
+    prL = new ProjectiveRay(leftImage);
+    prR = new ProjectiveRay(rightImage);
 
 	// Aqui enquanto não definimos uma estrutura para as geometrias 2d eu vou coordenar a tradução para o que eu já possuia no display para pontos e retas.
 	for (int i = 0; i < spFeatures.getNumFeatures(); i++)
@@ -270,22 +276,20 @@ void SPManager::updateProjections()
 		for (int j = 0; j < df->points.size(); j++)
 		{
 			// Isso vai ficar um pouco ruim, mas vai melhorar em breve quando a classe DigitalImageCoordinates for substituida por algo equivalente usando double (completando o suporte a subpixels)
-			ImageSpaceCoordinate pL0 = prL.objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
-			ImageSpaceCoordinate pR0 = prR.objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
+            ImageSpaceCoordinate pL0 = prL->objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
+            ImageSpaceCoordinate pR0 = prR->objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
 			df->points.at(j).left_x = pL0.getCol();
 			df->points.at(j).left_y = pL0.getLin();
 			df->points.at(j).right_x = pR0.getCol();
 			df->points.at(j).right_y = pR0.getLin();
 		}
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 }
 
 void SPManager::computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z)
 {
-#ifdef INTEGRATED_EFOTO
-	Image* leftImage = listAllImages.at(leftKey-1);
-	Image* rightImage = listAllImages.at(rightKey-1);
+    Image* leftImage = project->allImages().at(leftKey-1);
+    Image* rightImage = project->allImages().at(rightKey-1);
 	Sensor* sensor = leftImage->getSensor();
 	InteriorOrientation* lio = leftImage->getIO();
 	InteriorOrientation* rio = rightImage->getIO();
@@ -300,20 +304,17 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
 	ObjectSpaceCoordinate obj = si.calculateIntersectionSubPixel(xl,yl,xr,yr);
 	X = obj.getX();
 	Y = obj.getY();
-	Z = obj.getZ();
-#endif //INTEGRATED_EFOTO REVER!
+    Z = obj.getZ();
 }
 
 string SPManager::getFullImagePath(int imagekey)
 {
-#ifdef INTEGRATED_EFOTO
-	Image* img = listAllImages.at(imagekey-1);
+    Image* img = project->allImages().at(imagekey-1);
 	string result;
 	result.append(img->getFilepath());
 	result.append("/");
 	result.append(img->getFilename());
-	return result;
-#endif //INTEGRATED_EFOTO REVER!
+    return result;
 }
 
 /*
@@ -376,7 +377,6 @@ bool SPManager::checkAnglesAlligned(double angle1, double angle2, double toleran
 
 int SPManager::getPairs()
 {
-#ifdef INTEGRATED_EFOTO
 	//
 	// List Pairs description (0 - N-1):
 	//
@@ -395,7 +395,7 @@ int SPManager::getPairs()
 
 	// Calculate Image Radius
 	ObjectSpaceCoordinate osc;
-	img = listAllImages.at(0);
+    img = project->allImages().at(0);
 	ProjectiveRay pr(img);
 	Xa = img->getEO()->getXa();
 	X1 = Xa.get(1,1);
@@ -407,10 +407,10 @@ int SPManager::getPairs()
 	Y2 = osc.getY();
 	R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
-	for (int i=0; i<listAllImages.size()-1; i++)
+    for (int i=0; i<project->allImages().size()-1; i++)
 	{
 		// Get base image center
-		img = listAllImages.at(i);
+        img = project->allImages().at(i);
 		Xa = img->getEO()->getXa();
 		X1 = Xa.get(1,1);
 		Y1 = Xa.get(2,1);
@@ -419,12 +419,12 @@ int SPManager::getPairs()
 		best_dist = 10e100;
 
 		// Calculate the shortest image center
-		for (int j=i+1; j<listAllImages.size(); j++)
+        for (int j=i+1; j<project->allImages().size(); j++)
 		{
 			if (i==j)
 				continue;
 
-			img = listAllImages.at(j);
+            img = project->allImages().at(j);
 			Xa = img->getEO()->getXa();
 			X2 = Xa.get(1,1);
 			Y2 = Xa.get(2,1);
@@ -454,19 +454,17 @@ int SPManager::getPairs()
 			continue;
 
 		// Add images to list
-		img_code = i + listAllImages.size()*best_img;
+        img_code = i + project->allImages().size()*best_img;
 		listPairs.push_back(img_code);
 	}
 
 	addPairsToInterface();
 
-	return 1;
-#endif //INTEGRATED_EFOTO REVER!
+    return 1;
 }
 
 void SPManager::addPairsToInterface()
 {
-#ifdef INTEGRATED_EFOTO
 	// Add pairs to the interface
 	int left_id, right_id;
 	string str_left, str_right;
@@ -476,13 +474,12 @@ void SPManager::addPairsToInterface()
 	for (int i=0; i<listPairs.size(); i++)
 	{
 		getImagesId(i,left_id,right_id);
-		str_left = listAllImages.at(left_id-1)->getImageId();
-		str_right = listAllImages.at(right_id-1)->getImageId();
+        str_left = project->allImages().at(left_id-1)->getImageId();
+        str_right = project->allImages().at(right_id-1)->getImageId();
 		txt.str(""); // Clear stream
 		txt << "Images " << str_left << " and " << str_right;
 		spui->addImagePair((char *)txt.str().c_str());
-	}
-#endif //INTEGRATED_EFOTO REVER!
+    }
 }
 
 void SPManager::addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
@@ -522,7 +519,6 @@ void SPManager::setSelectedXYZ(double X, double Y, double Z)
 
 double SPManager::getBoundingBoxIdealZoom(int width, int height)
 {
-#ifdef INTEGRATED_EFOTO
 	double zoom = 1.0;
 
 	ImageSpaceCoordinate leftCenter = getLeftPoint(getBoundingBoxCenter());
@@ -573,14 +569,12 @@ double SPManager::getBoundingBoxIdealZoom(int width, int height)
 	double hscale = height / ymax;
 	zoom = wscale < hscale ? wscale : hscale;
 
-	return zoom;
-#endif //INTEGRATED_EFOTO REVER!
+    return zoom;
 }
 
 // Internal function. Pos from 0 - N-1.
 void SPManager::getImagesId(int pos, int &left, int &right)
 {
-#ifdef INTEGRATED_EFOTO
 	// Check pos
 	left = -1;
 	right = -1;
@@ -588,10 +582,9 @@ void SPManager::getImagesId(int pos, int &left, int &right)
 		return;
 
 	// Decode
-	int no_imgs = listAllImages.size();
+    int no_imgs = project->allImages().size();
 	left = 1 + (listPairs.at(pos) % no_imgs);
-	right = 1 + (listPairs.at(pos) / no_imgs);
-#endif //INTEGRATED_EFOTO REVER!
+    right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
 void SPManager::changePair(int pos, int &lk, int &rk)

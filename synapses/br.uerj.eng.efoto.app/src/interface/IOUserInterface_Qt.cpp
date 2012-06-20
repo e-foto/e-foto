@@ -20,8 +20,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-//#include <iostream>
-
 IOUserInterface_Qt* IOUserInterface_Qt::ioInst = NULL;
 
 IOUserInterface_Qt* IOUserInterface_Qt::instance(IOManager* manager)
@@ -61,11 +59,7 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 	table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
-	QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
-	//QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-	//QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-	//QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-	//QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
+    QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
 
 	this->manager = manager;
 	if (manager->interiorDone())
@@ -92,10 +86,9 @@ void IOUserInterface_Qt::informState()
 
 void IOUserInterface_Qt::receiveMark(QPointF p)
 {
-#ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
-	imageView->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
+    singleViewer->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
 
 	points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
 	points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
@@ -104,36 +97,29 @@ void IOUserInterface_Qt::receiveMark(QPointF p)
 	measureMark(table1->currentIndex().row()+1,p.x(),p.y());
 
 	table1->selectRow(table1->currentIndex().row() + 1);
-	testActivateIO();
-#endif //INTEGRATED_EFOTO REVER!
+    testActivateIO();
 }
 
 void IOUserInterface_Qt::makeRepaint()
 {
-#ifdef INTEGRATED_EFOTO
-	imageView->update();
-	table1->repaint();
-#endif //INTEGRATED_EFOTO REVER!
+    singleViewer->update();
+    table1->repaint();
 }
 
-void IOUserInterface_Qt::activeSetMode()
+void IOUserInterface_Qt::activeSetMode() //Deprecated
 {
-	//oldImageView->setViewMode(1);
 }
 
-void IOUserInterface_Qt::activePanMode()
+void IOUserInterface_Qt::activePanMode() //Deprecated
 {
-	//oldImageView->setViewMode(2);
 }
 
-void IOUserInterface_Qt::activeZoomMode()
+void IOUserInterface_Qt::activeZoomMode() //Deprecated
 {
-	//oldImageView->setViewMode(3);
 }
 
-void IOUserInterface_Qt::fitView()
+void IOUserInterface_Qt::fitView() //Deprecated
 {
-	//oldImageView->fitView();
 }
 
 void IOUserInterface_Qt::init()
@@ -147,25 +133,19 @@ void IOUserInterface_Qt::init()
     mark = new Marker(SymbolsResource::getCross(Qt::green, QSize(24, 24), 1, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 
 #ifdef INTEGRATED_EFOTO
-	//oldImageView = new ImageView(centralwidget);
-	imageView = new SingleViewer();
-	imageView->hideOpen(true);
-	imageView->hideSave(true);
-    imageView->addToolBar(Qt::TopToolBarArea,toolBar);
-
-    imageView->installListener(this);
-    gridLayout->addWidget(imageView, 0, 0, 1, 1);
+    singleViewer = new SingleViewer();
+    gridLayout->addWidget(singleViewer, 0, 0, 1, 1);
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
     viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
     singleViewer = viewerService->instanceSingleViewer();
+    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
+#endif //SYNAPSE_EFOTO
+
     singleViewer->hideOpen(true);
     singleViewer->hideSave(true);
     singleViewer->addToolBar(Qt::TopToolBarArea,toolBar);
-
     singleViewer->installListener(this);
-    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
-#endif //SYNAPSE_EFOTO
 
     setCentralWidget(centralwidget);
 }
@@ -350,10 +330,12 @@ void IOUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
 	LoadingScreen::instance().show();
 	qApp->processEvents();
+
 #ifdef INTEGRATED_EFOTO
-	delete(imageView);
+    delete(singleViewer);
+#endif //INTEGRATED_EFOTO
 	delete(mark);
-#endif //INTEGRATED_EFOTO REVER!
+
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
 }
@@ -405,32 +387,17 @@ bool IOUserInterface_Qt::exec()
 
 		this->show();
 		LoadingScreen::instance().close();
-		qApp->processEvents();
-		//myImageView = new ImageView(centralwidget);
-		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
+        qApp->processEvents();
 
-#ifdef INTEGRATED_EFOTO
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
+        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
 		for (int row = 0; row < points->rowCount() ;row++)
 		{
 			if (points->item(row,2)->text().isEmpty())
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
-		}
-#endif //INTEGRATED_EFOTO
-#ifdef SYNAPSE_EFOTO
-        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
-        for (int row = 0; row < points->rowCount() ;row++)
-        {
-            if (points->item(row,2)->text().isEmpty())
-                continue;
-            QString pointName = QString::number(row+1);
-            QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
             singleViewer->insertMark(location.x(), location.y(), row+1, pointName, mark);
         }
-#endif //SYNAPSE_EFOTO
 
 		makeRepaint();
 		actionMove->trigger();
@@ -484,32 +451,17 @@ bool IOUserInterface_Qt::exec()
 
 		this->show();
 		LoadingScreen::instance().close();
-		qApp->processEvents();
-		//myImageView = new ImageView(centralwidget);
-		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
+        qApp->processEvents();
 
-#ifdef INTEGRATED_EFOTO
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
+        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
 		for (int row = 0; row < points->rowCount() ;row++)
 		{
 			if (points->item(row,2)->text().isEmpty())
 				continue;
 			QString pointName = QString::number(row+1);
 			QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
-			imageView->insertMark(location.x(), location.y(), row+1, pointName, mark);
-		}
-#endif //INTEGRATED_EFOTO
-#ifdef SYNAPSE_EFOTO
-        singleViewer->loadImage(QString(manager->getImageFile().c_str()));
-        for (int row = 0; row < points->rowCount() ;row++)
-        {
-            if (points->item(row,2)->text().isEmpty())
-                continue;
-            QString pointName = QString::number(row+1);
-            QPointF location(points->item(row,2)->text().toDouble(),points->item(row,3)->text().toDouble());
             singleViewer->insertMark(location.x(), location.y(), row+1, pointName, mark);
         }
-#endif //SYNAPSE_EFOTO
 
 		table1->selectRow(0);
 		table1->setFocus();
@@ -518,72 +470,21 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 	if (calculationMode == 3)
-	{
-		/*
-  PositionMatrix analogMarks = manager->getAnalogMarks();
-  int numberOfMarks = analogMarks.getRows() / 2;
-
-  points = new QStandardItemModel(numberOfMarks, 5);
-  for (int row = 0; row < numberOfMarks; row++)
-  {
-   deque<string> markData = manager->markData(row);
-   for (unsigned int col = 0; col < markData.size(); col++)
-   {
-	QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
-	points->setItem(row, col, item);
-   }
-   for (int col = markData.size(); col < 4; col++)
-   {
-	QStandardItem* item = new QStandardItem(QString(""));
-	points->setItem(row, col, item);
-   }
-   QStandardItem* item = new QStandardItem();
-   points->setItem(row, 4, item);
-   if (points->data(points->index(row,2)).toString() != "")
-   {
-	points->setData(points->index(row, 4), QVariant(true));
-   }
-   else
-   {
-	points->setData(points->index(row, 4), QVariant(false));
-   }
-  }
-  points->setHeaderData(0, Qt::Horizontal, QVariant("X"));
-  points->setHeaderData(1, Qt::Horizontal, QVariant("Y"));
-  points->setHeaderData(2, Qt::Horizontal, QVariant("Col"));
-  points->setHeaderData(3, Qt::Horizontal, QVariant("Row"));
-  points->setHeaderData(4, Qt::Horizontal, QVariant("Used"));
-  table1->setModel(points);
-  table1->setColumnHidden(4,true);
-  table1->selectRow(0);
-  table1->setFocus();
-  */
+    {
 		actionSet_mark->setDisabled(true);
 		removeDockWidget(dockWidget);
 		actionInterior_orientation->setEnabled(true);
 
 		this->show();
 		LoadingScreen::instance().close();
-		qApp->processEvents();
-		//myImageView = new ImageView(centralwidget);
-		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
+        qApp->processEvents();
 
-#ifdef INTEGRATED_EFOTO
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
-#endif //INTEGRATED_EFOTO
-#ifdef SYNAPSE_EFOTO
         singleViewer->loadImage(QString(manager->getImageFile().c_str()));
-#endif //SYNAPSE_EFOTO
 
 		makeRepaint();
 		actionMove->trigger();
 	}
 
-	//LoadingScreen::instance().close();
-
-	//if (qApp->exec())
-	//return false;
-	//delete(myImageView); precisa de um stop
 	return true;
 }
 

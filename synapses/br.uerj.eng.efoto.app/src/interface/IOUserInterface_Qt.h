@@ -57,8 +57,8 @@ protected:
 
     Marker *mark;
 #ifdef INTEGRATED_EFOTO
-	SingleViewer *imageView;
-#endif //INTEGRATED_EFOTO REVER!
+    SingleViewer *singleViewer;
+#endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
     viewer::IViewerServicePtr viewerService;
     ISingleViewerPtr singleViewer;

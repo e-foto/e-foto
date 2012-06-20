@@ -13,9 +13,16 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "SingleDisplay.h"
+
 #ifdef INTEGRATED_EFOTO
 #include "SingleViewer.h"
-#endif //INTEGRATED_EFOTO REVER!
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include "IViewerService.h"
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -37,6 +44,14 @@ protected:
 	OrthoManager *manager;
 	void closeEvent(QCloseEvent *e);
 	int dem_load_flag;
+
+#ifdef INTEGRATED_EFOTO
+    SingleViewer *singleViewer;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    ISingleViewerPtr singleViewer;
+#endif //SYNAPSE_EFOTO
 
 protected slots:
 	virtual void languageChange();

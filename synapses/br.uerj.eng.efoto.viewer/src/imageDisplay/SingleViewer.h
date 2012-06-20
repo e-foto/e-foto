@@ -43,8 +43,9 @@ public:
     SingleViewer();
     //SingleViewer(QWidget* parent);
     ~SingleViewer() {}
-	SingleDisplay* getDisplay() {return sd;}
-	//MarkTool* getMarker() {return &tool->mark;}
+    SingleDisplay* getDisplay() {return sd;}
+    SingleToolsBar* getToolBar() {return tool;}
+    //MarkTool* getMarker() {return &tool->mark;}
 
 public slots:
 	void markMode();

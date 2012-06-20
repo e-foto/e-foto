@@ -12,6 +12,8 @@ namespace efoto {
 
 class Marker;
 class MarkerListener;
+class SingleDisplay;
+class SingleToolsBar;
 
 class ISingleViewer : public QMainWindow
 {
@@ -54,6 +56,8 @@ public:
 	virtual void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz) = 0;
 
     virtual void installListener(MarkerListener* listener) = 0;
+    virtual SingleDisplay* getDisplay() = 0;
+    virtual SingleToolsBar* getToolBar() = 0;
 };
 
 typedef QSharedPointer<ISingleViewer> ISingleViewerPtr;

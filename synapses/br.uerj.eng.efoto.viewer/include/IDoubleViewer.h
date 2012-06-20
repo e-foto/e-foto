@@ -12,6 +12,8 @@ namespace efoto {
 
 class Marker;
 class DoubleMarkerListener;
+class SingleDisplay;
+class DoubleToolsBar;
 
 class IDoubleViewer : public QMainWindow
 {
@@ -56,8 +58,10 @@ public slots:
 	virtual void setSelectedMarker(TargetDisplay target, QImage marker, int hotX = -1, int hotY = -1) = 0;
 	virtual void setDefaultMarker(TargetDisplay target, QImage marker, int hotX = -1, int hotY = -1) = 0;
 
-	virtual void installListener(DoubleMarkerListener* listener) = 0;
-
+    virtual void installListener(DoubleMarkerListener* listener) = 0;
+    virtual SingleDisplay* getLeftDisplay() = 0;
+    virtual SingleDisplay* getRightDisplay() = 0;
+    virtual DoubleToolsBar* getToolBar() = 0;
 };
 
 typedef QSharedPointer<IDoubleViewer> IDoubleViewerPtr;

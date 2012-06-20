@@ -15,11 +15,18 @@
 #include <QMessageBox>
 #include <QList>
 
-#ifdef INTEGRATED_EFOTO
+#include "MatchingPoints.h"
+
+#include "SingleDisplay.h"
+
+#include "SingleDisplay.h"
 #include "SingleViewer.h"
 #include "DoubleViewer.h"
-#include "MatchingPoints.h"
-#endif //INTEGRATED_EFOTO REVER!
+#ifdef SYNAPSE_EFOTO
+#include "IViewerService.h"
+#include "ICortex.h"
+using namespace cortex;
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -45,6 +52,14 @@ protected:
 	void closeEvent(QCloseEvent *e);
 	int checkBoundingBox();
 	int demSource;
+
+#ifdef INTEGRATED_EFOTO
+    SingleViewer* singleViewer;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    ISingleViewerPtr singleViewer;
+#endif //SYNAPSE_EFOTO
 
 protected slots:
 	virtual void languageChange();
@@ -107,11 +122,16 @@ private:
 	Q_OBJECT
 	DEMManager *manager;
 
+    MatchingPointsList *seeds, *pairs;
+    Marker *mark_seeds, *mark_pairs, *mark_empty;
+
 #ifdef INTEGRATED_EFOTO
-	SeparatedStereoViewer* viewer;
-	MatchingPointsList seeds, pairs;
-	Marker *mark_seeds, *mark_pairs, *mark_empty;
-#endif //INTEGRATED_EFOTO REVER!
+    SeparatedStereoViewer* doubleViewer;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    viewer::IViewerServicePtr viewerService;
+    IDoubleViewerPtr doubleViewer;
+#endif //SYNAPSE_EFOTO
 
 	ProgressWindow pw;
 	void getImagesIds(int &left_id, int &right_id);

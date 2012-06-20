@@ -294,23 +294,17 @@ QString ImageForm::loadImageFile()
 void ImageForm::startSingleViewer()
 {
 #ifdef INTEGRATED_EFOTO
-    SingleViewer* sv = new SingleViewer(/*this*/);
-	sv->hideOpen(true);
-	sv->hideSave(true);
-	sv->hideMark(true);
-	sv->show();
-	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
+    SingleViewer* singleViewer = new SingleViewer(/*this*/);
 #endif //INTEGRATED_EFOTO REVER!
-
 #ifdef SYNAPSE_EFOTO
     viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
     singleViewer = viewerService->instanceSingleViewer();
+#endif //SYNAPSE_EFOTO
     singleViewer->hideOpen(true);
     singleViewer->hideSave(true);
     singleViewer->hideMark(true);
     singleViewer->show();
     singleViewer->loadImage(filePathLine->text() + "/" + fileNameLine->text());
-#endif //SYNAPSE_EFOTO
 }
 
 void ImageForm::metadataVisibleChanged(QString newText)

@@ -14,6 +14,10 @@
 #include "Point.h"
 #include "InteriorOrientation.h"
 #include "ExteriorOrientation.h"
+#include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
+#include "SpatialRessection.h"
 
 // Constructors and Destructor
 //
@@ -33,7 +37,7 @@ ProjectManager::ProjectManager(EFotoManager* manager)
 {
     this->manager = manager;
 	this->treeModel = NULL;
-    project = manager->getProject();
+    project = project;
 }
 
 ProjectManager::~ProjectManager()
@@ -297,8 +301,7 @@ bool ProjectManager::getSavedState()
 bool ProjectManager::makeSPFile(string filename, int image1, int image2) // Deprecated
 {
 	if (manager != NULL)
-	{
-#ifdef INTEGRATED_EFOTO
+    {
 		if (image1 == image2 || filename == "")
 		{
 			return false;
@@ -308,20 +311,20 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2) // Depr
 			return false;
 		}
 
-		InteriorOrientation* io1 = manager->getProject()->IO(image1);
-		InteriorOrientation* io2 = manager->getProject()->IO(image2);
-		SpatialRessection* sr1 = (SpatialRessection*)manager->getProject()->EO(image1);
-		SpatialRessection* sr2 = (SpatialRessection*)manager->getProject()->EO(image2);
-        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)manager->getProject()->sensor(manager->getProject()->image(image1)->getSensorId());
-		Flight* flight = manager->getProject()->flight(manager->getProject()->image(image1)->getFlightId());
-		Terrain* terrain = manager->getProject()->terrain();
+        InteriorOrientation* io1 = project->IO(image1);
+        InteriorOrientation* io2 = project->IO(image2);
+        SpatialRessection* sr1 = (SpatialRessection*)project->EO(image1);
+        SpatialRessection* sr2 = (SpatialRessection*)project->EO(image2);
+        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)project->sensor(project->image(image1)->getSensorId());
+        Flight* flight = project->flight(project->image(image1)->getFlightId());
+        Terrain* terrain = project->terrain();
 
 		if (io1 == NULL || io2 == NULL || sr1 == NULL || sr2 == NULL || sensor == NULL || flight == NULL || terrain == NULL)
 		{
 			return false;
 		}
 
-        EDomElement xml(manager->getProject()->getXml());
+        EDomElement xml(project->getXml());
 		string value = "";
 		// O texto aqui de baixo esta escrito errado de proposito para ficar compativel com o teste que o Marcelo
 		// programou no stereoplotter. La ele procura por "Mesure" quando o correto seria "Measure".
@@ -387,8 +390,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2) // Depr
 			return true;
 		}
 		else cout << "Unable to open file";
-		return false;
-#endif //INTEGRATED_EFOTO REVER!
+        return false;
 	}
 	return false;
 }

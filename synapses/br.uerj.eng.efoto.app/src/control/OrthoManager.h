@@ -10,14 +10,19 @@
 #include "Matrix.h"
 #include <deque>
 
-#ifdef INTEGRATED_EFOTO
 #include "Image.h"
-#include "ExteriorOrientation.h"
 #include "DemGrid.h"
+#include "ExteriorOrientation.h"
+#include "Interpolation.h"
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
-#include "Interpolation.h"
-#endif //INTEGRATED_EFOTO REVER!
+
+#ifdef INTEGRATED_EFOTO
+#include "Project.h"
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+#include <IProject.h>
+#endif //SYNAPSE_EFOTO
 
 namespace br {
 namespace uerj {
@@ -44,12 +49,15 @@ class OrthoManager
 	OrthoUserInterface* myInterface;
 	EFotoManager* manager;
 
-#ifdef INTEGRATED_EFOTO
-	deque<Image*> listAllImages;
-    deque<ExteriorOrientation*> listEOs;
 	DemGrid *grid;
     Orthorectification *ortho;
-#endif //INTEGRATED_EFOTO REVER!
+
+#ifdef INTEGRATED_EFOTO
+    Project* project;
+#endif //INTEGRATED_EFOTO
+#ifdef SYNAPSE_EFOTO
+    engine::IProjectPtr project;
+#endif //SYNAPSE_EFOTO
 
 	/**
 	* \brief Mtodo que inclui os dados das imagens no formulrio.
@@ -88,7 +96,7 @@ public:
 	// Association Methods
 	//
 	/**
-	* \brief Mtodo de associao que seta uma interface.
+    * \brief Mtodo de associao que seta uma interface.
 	*/
 	void setInterface(OrthoUserInterface* newInterface);
 	/**
@@ -121,15 +129,15 @@ public:
 	/**
 	* \brief Mtodo que interrompe a ortorretificao.
 	*/
-	void setFlagCancel() { flag_cancel = true; };
+    void setFlagCancel() { flag_cancel = true; }
 	/**
 	* \brief Construtor.
 	*/
-	void setShowImage(bool _shw) { show_image = _shw; };
+    void setShowImage(bool _shw) { show_image = _shw; }
 	/**
 	* \brief Mtodo que altera o mtodo de interpolao.
 	*/
-    void setInterMethod(int _mth) { inter_method = _mth; };
+    void setInterMethod(int _mth) { inter_method = _mth; }
     /**
     * \brief Mtodo que carrega a ortorretificao.
     */

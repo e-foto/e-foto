@@ -57,12 +57,7 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 	actionSpatialRessection->setEnabled(false);
 	table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-	QObject::connect(actionSpatialRessection, SIGNAL(triggered()), this, SLOT(calculateSR()));
-	//QObject::connect(actionSet, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-	//QObject::connect(actionUnset, SIGNAL(triggered()), this, SLOT(activeUnsetMode()));
-	//QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-	//QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-	//QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
+    QObject::connect(actionSpatialRessection, SIGNAL(triggered()), this, SLOT(calculateSR()));
 	QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
 	QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
 
@@ -98,25 +93,19 @@ void SRUserInterface_Qt::init()
     markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 
 #ifdef INTEGRATED_EFOTO
-    //oldImageView = new ImageView(centralwidget);
-    imageView = new SingleViewer();
-    imageView->hideOpen(true);
-    imageView->hideSave(true);
-    imageView->addToolBar(Qt::TopToolBarArea,toolBar);
-
-    imageView->installListener(this);
-    gridLayout->addWidget(imageView, 0, 0, 1, 1);
+    singleViewer = new SingleViewer();
+    gridLayout->addWidget(singleViewer, 0, 0, 1, 1);
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
     viewerService = ICortex::getInstance()->getSynapse<viewer::IViewerService>();
     singleViewer = viewerService->instanceSingleViewer();
+    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
+#endif //SYNAPSE_EFOTO
+
     singleViewer->hideOpen(true);
     singleViewer->hideSave(true);
     singleViewer->addToolBar(Qt::TopToolBarArea,toolBar);
-
     singleViewer->installListener(this);
-    gridLayout->addWidget(singleViewer.data(), 0, 0, 1, 1);
-#endif //SYNAPSE_EFOTO
 
     setCentralWidget(centralwidget);
 
@@ -127,20 +116,15 @@ void SRUserInterface_Qt::init()
 
 }
 
-void SRUserInterface_Qt::informState()
+void SRUserInterface_Qt::informState() //Deprecated
 {
-	//if (oldImageView->getViewMode() != 4)
-		//oldImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
-	//else
-		//oldImageView->selectPoint("-1");
 }
 
 void SRUserInterface_Qt::receiveMark(QPointF p)
 {
-#ifdef INTEGRATED_EFOTO
 	if (p.x() < 0 || p.y() < 0)
 		return;
-	imageView->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
+    singleViewer->insertMark(p.x(), p.y(), table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
 
 	points->setData(points->index(table1->currentIndex().row(), 7), QVariant(p.x()));
 	points->setData(points->index(table1->currentIndex().row(), 8), QVariant(p.y()));
@@ -152,8 +136,7 @@ void SRUserInterface_Qt::receiveMark(QPointF p)
 	measurePoint(points->data(points->index(table1->currentIndex().row(), 0)).toInt(),p.x(),p.y());
 
 	table1->selectRow(table1->currentIndex().row() + 1);
-	testActivateSR();
-#endif //INTEGRATED_EFOTO REVER!
+    testActivateSR();
 }
 
 void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
@@ -193,35 +176,28 @@ void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
 
 void SRUserInterface_Qt::makeRepaint()
 {
-#ifdef INTEGRATED_EFOTO
-	imageView->repaint();
-	table1->repaint();
-#endif //INTEGRATED_EFOTO REVER!
+    singleViewer->repaint();
+    table1->repaint();
 }
 
-void SRUserInterface_Qt::activeSetMode()
+void SRUserInterface_Qt::activeSetMode() //Deprecated
 {
-	//oldImageView->setViewMode(1);
 }
 
-void SRUserInterface_Qt::activeUnsetMode()
+void SRUserInterface_Qt::activeUnsetMode() //Deprecated
 {
-	//oldImageView->setViewMode(4);
 }
 
-void SRUserInterface_Qt::activePanMode()
+void SRUserInterface_Qt::activePanMode() //Deprecated
 {
-	//oldImageView->setViewMode(2);
 }
 
-void SRUserInterface_Qt::activeZoomMode()
+void SRUserInterface_Qt::activeZoomMode() //Deprecated
 {
-	//oldImageView->setViewMode(3);
 }
 
-void SRUserInterface_Qt::fitView()
+void SRUserInterface_Qt::fitView() //Deprecated
 {
-	//oldImageView->fitView();
 }
 
 bool SRUserInterface_Qt::measurePoint(int id, double col, double lin)
@@ -231,15 +207,15 @@ bool SRUserInterface_Qt::measurePoint(int id, double col, double lin)
 
 void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
-#ifdef INTEGRATED_EFOTO
 	LoadingScreen::instance().show();
 	qApp->processEvents();
-	delete(imageView);
+#ifdef INTEGRATED_EFOTO
+    delete(singleViewer);
+#endif //INTEGRATED_EFOTO
 	delete(markOn);
 	delete(markOff);
 	manager->returnProject();
-	QMainWindow::closeEvent(e);
-#endif //INTEGRATED_EFOTO REVER!
+    QMainWindow::closeEvent(e);
 }
 
 bool SRUserInterface_Qt::calculateSR()
@@ -437,7 +413,6 @@ void SRUserInterface_Qt::acceptSR()
 
 void SRUserInterface_Qt::actualizeDisplayedPoints()
 {
-#ifdef INTEGRATED_EFOTO
 	for (int row = 0; row < points->rowCount() ;row++)
 	{
 		if (points->item(row,7)->text().isEmpty() || points->data(points->index(row, 1)).toString() == "false")
@@ -445,17 +420,14 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 		QString pointName = points->data(points->index(row, 2)).toString();
 		QPointF location(points->item(row,7)->text().toDouble(),points->item(row,8)->text().toDouble());
 		if (points->item(row,2)->checkState() == Qt::Checked)
-			imageView->insertMark(location.x(), location.y(), row+1, pointName, markOn);
+            singleViewer->insertMark(location.x(), location.y(), row+1, pointName, markOn);
 		else
-			imageView->insertMark(location.x(), location.y(), row+1, pointName, markOff);
-	}
-#endif //INTEGRATED_EFOTO REVER!
+            singleViewer->insertMark(location.x(), location.y(), row+1, pointName, markOff);
+    }
 }
 
 bool SRUserInterface_Qt::exec()
 {
-#ifdef INTEGRATED_EFOTO
-	//int numberOfPoints = manager->listImagePoints().size();
 	int numberOfPoints = manager->listAllPoints().size();
 
 	points = new QStandardItemModel(numberOfPoints, 12);
@@ -512,24 +484,13 @@ bool SRUserInterface_Qt::exec()
 
 	this->show();
 	LoadingScreen::instance().close();
-	qApp->processEvents();
-	//oldImageView = new ImageView(centralwidget);
-	imageView->loadImage(QString(manager->getImageFile().c_str()));
-	{
-		//oldImageView->createPoints(points,2);
-		//oldImageView->drawPoints(points,2);
-		//oldImageView->fitView();
-	}
+    qApp->processEvents();
+    singleViewer->loadImage(QString(manager->getImageFile().c_str()));
 	actualizeDisplayedPoints();
 	makeRepaint();
 	actionMove->trigger();
 
-	//LoadingScreen::instance().close();
-	//if (qApp->exec())
-	//return false;
-	//delete(oldImageView);
-	return true;
-#endif //INTEGRATED_EFOTO REVER!
+    return true;
 }
 
 } // namespace efoto
