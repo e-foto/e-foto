@@ -18,25 +18,25 @@ Project::Project()
 
 Project::~Project()
 {
-    //rever!
+    closeProject();
 }
 
 
 
 bool Project::connectDatabase()
-{ // Rever! esse trecho que prevê uso de base
+{ // Rever. esse trecho que prevê uso de base
     return false;
 }
 bool Project::disconnectDatabase()
-{ // Rever! esse trecho que prevê uso de base
+{ // Rever. esse trecho que prevê uso de base
     return false;
 }
 bool Project::loadProject()
-{ // Rever! esse trecho que prevê uso de base
+{ // Rever. esse trecho que prevê uso de base
     return false;
 }
 bool Project::saveProject()
-{ // Rever! esse trecho que prevê uso de base
+{ // Rever. esse trecho que prevê uso de base
     return false;
 }
 
@@ -801,6 +801,26 @@ ExteriorOrientation* Project::EO(int id)
 	return NULL;
 }
 
+bool Project::allImageHasIO()
+{
+    for (int i = 0; i < images.size(); i++)
+    {
+        if (images.at(i)->getIO() == NULL || !images.at(i)->getIO()->isValid())
+            return false;
+    }
+    return true;
+}
+
+bool Project::allImageHasEO()
+{
+    for (int i = 0; i < images.size(); i++)
+    {
+        if (images.at(i)->getEO() == NULL || !images.at(i)->getEO()->isValid())
+            return false;
+    }
+    return true;
+}
+
 int Project::getFreeSensorId()
 {
 	int result = 1;
@@ -903,7 +923,7 @@ string Project::getXml()
     }
     xmlData += "</exteriorOrientation>\n";
 
-    // Rever! aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
+    // Rever. aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
 
     xmlData += processStates;
 
@@ -926,7 +946,7 @@ void Project::setXml(string xml)
     EDomElement pt = ede.elementByTagName("phototriangulation");
     EDomElement sr = ede.elementByTagName("spatialRessections");
 
-    // Rever! a parte de estados de processos... armazenados e acessados na string processStates
+    // Rever. a parte de estados de processos... armazenados e acessados na string processStates
     processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ pt.getContent() + sr.getContent();
     xmlData = ede.indent('\t').getContent();
 
@@ -940,7 +960,7 @@ void Project::setXml(string xml)
     instanceSensor(1);
     instanceFlight(1);
 
-    //Rever! a criação dos instance DEMs, EOIs e FEATs.
+    //Rever. a criação dos instance DEMs, EOIs e FEATs.
 
     linkAll();
 }

@@ -107,7 +107,7 @@ public:
 
 	void setLinkPointsMode(int mode);
     void setFeatures(Features* features, int projection) {df = features; featureProjection = projection;}
-    void setSelectedMark(unsigned int key) {selected = key;} //rever! o draw (sem features) de modo a usar isso.
+    void setSelectedMark(unsigned int key) {selected = key;} //rever. o draw (sem features) de modo a usar isso.
     void setSelectedMarker(Marker* mark) {selectedMark = mark;}
     void setDefaultMarker(Marker* mark) {defaultMark = mark;}
 };

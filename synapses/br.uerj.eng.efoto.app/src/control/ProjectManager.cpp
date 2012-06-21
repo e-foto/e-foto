@@ -37,7 +37,7 @@ ProjectManager::ProjectManager(EFotoManager* manager)
 {
     this->manager = manager;
 	this->treeModel = NULL;
-    project = project;
+    project = manager->getProject();
 }
 
 ProjectManager::~ProjectManager()
