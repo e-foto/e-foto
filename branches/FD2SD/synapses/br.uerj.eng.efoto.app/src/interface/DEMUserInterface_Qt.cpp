@@ -741,10 +741,8 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 	connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
 
 	// Copy seed and pair lists
-	pw.setAllowClose(false);
-#ifdef INTEGRATED_EFOTO
-	manager->getPointList(seeds,pairs);
-#endif //INTEGRATED_EFOTO REVER!
+    pw.setAllowClose(false);
+    manager->getPointList(seeds,pairs);
 	addPairs();
 	updateData(0);
 
@@ -1224,8 +1222,8 @@ void SeedEditorUserInterface_Qt::updateData(int i)
 	string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
 	string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
 
-    doubleViewer->loadImage(IDoubleViewer::LEFT_DISPLAY, QString::fromStdString(left_file));
-    doubleViewer->loadImage(IDoubleViewer::RIGHT_DISPLAY, QString::fromStdString(right_file));
+    doubleViewer->loadImage(LEFT_DISPLAY, QString::fromStdString(left_file));
+    doubleViewer->loadImage(RIGHT_DISPLAY, QString::fromStdString(right_file));
 
 	//
 	// Update marks

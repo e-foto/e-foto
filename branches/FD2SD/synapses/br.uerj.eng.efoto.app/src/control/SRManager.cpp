@@ -391,6 +391,7 @@ string SRManager::getImageFile()
 
 void SRManager::acceptSR()
 {
+    project->image(imageId)->getEO()->setValidate(true);
     //Rever!, pois a seção spatialRessections ainda está inacessível na classe Project
     /*
     EDomElement newXml(manager->xmlGetData());

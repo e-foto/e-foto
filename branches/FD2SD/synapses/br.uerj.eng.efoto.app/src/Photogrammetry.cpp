@@ -1,4 +1,5 @@
 #include "Photogrammetry.h"
+#include <QApplication>
 
 namespace br {
 namespace uerj {
@@ -17,6 +18,7 @@ Photogrammetry::~Photogrammetry()
 
 bool Photogrammetry::start()
 {
+    qApp->setStyle("plastique");
     manager.setInterfaceType("Qt");
     manager.exec();
 

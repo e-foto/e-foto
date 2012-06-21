@@ -164,7 +164,7 @@ bool SPUserInterface_Qt::exec()
 void SPUserInterface_Qt::updateData()
 {
 	updateTable();
-    //stereoViewer->getDisplay()->updateAll();  //rever! para capturar estes eventos
+    stereoViewer->getDisplay()->updateAll();  //rever. para capturar estes eventos
 }
 
 void SPUserInterface_Qt::updateTable()
@@ -469,8 +469,8 @@ void SPUserInterface_Qt::centerImages(ObjectSpaceCoordinate coord, double zoom)
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
 {
-    stereoViewer->loadImage(IStereoViewer::LEFT_CHANNEL, QString(manager->getFullImagePath(leftKey).c_str()));
-    stereoViewer->loadImage(IStereoViewer::LEFT_CHANNEL,QString(manager->getFullImagePath(rightKey).c_str()));
+    stereoViewer->loadImage(LEFT_CHANNEL, QString(manager->getFullImagePath(leftKey).c_str()));
+    stereoViewer->loadImage(RIGHT_CHANNEL,QString(manager->getFullImagePath(rightKey).c_str()));
     stereoViewer->update();
 }
 

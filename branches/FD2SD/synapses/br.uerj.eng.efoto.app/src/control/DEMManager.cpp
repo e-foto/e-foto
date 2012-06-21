@@ -129,8 +129,7 @@ bool DEMManager::exec()
 		if (manager->getInterfaceType().compare("Qt") == 0)
 		{
 			myInterface = DEMUserInterface_Qt::instance(this);
-		}
-        //connectImagePoints(); //rever!
+        }
 		started = true;
 		if (myInterface != NULL)
 		{

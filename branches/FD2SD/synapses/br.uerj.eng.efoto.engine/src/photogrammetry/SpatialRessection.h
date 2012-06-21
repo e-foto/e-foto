@@ -41,6 +41,7 @@ class SpatialRessection : public ExteriorOrientation
 	Matrix L0;
 	Matrix Lb;
 	Matrix lastL0;
+    bool valid;
 
 	RayTester* rt;
 
@@ -140,6 +141,8 @@ public:
 	void generateX0();
 	void initialize();
 	bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
+    bool isValid() {return valid;}
+    void setValidate(bool status) {valid = status;}
 
 	// Private support methods
 	//

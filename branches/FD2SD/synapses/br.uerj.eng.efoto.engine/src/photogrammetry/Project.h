@@ -286,6 +286,18 @@ public:
 
 
     /**
+    * \brief Método que verifica se todas as imagens possuem Orientação Interior.
+    * \return bool Retorna verdadeiro se todas as imagens do projeto possuem uma IO válida e falso em caso contrário.
+    */
+    bool allImageHasIO();
+
+    /**
+    * \brief Método que verifica se todas as imagens possuem Orientação Exterior.
+    * \return bool Retorna verdadeiro se todas as imagens do projeto possuem uma EO válida e falso em caso contrário.
+    */
+    bool allImageHasEO();
+
+    /**
     * \brief Método que retorna um identificador de sensor que ainda não foi utilizado.
     * \return int Identificador da sensor.
     */
@@ -427,7 +439,7 @@ public:
 
     void setProcessStates(string state) {processStates = state;}
 
-    // Rever! e adicionar aqui os métodos de add, instance e delete dos itens Dem, EOI e Feat.
+    // Rever. e adicionar aqui os métodos de add, instance e delete dos itens Dem, EOI e Feat.
 };
 
 } // namespace efoto

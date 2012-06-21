@@ -35,6 +35,7 @@ PTManager::PTManager()
 PTManager::PTManager(EFotoManager *newManager)
 {
     efotoManager = newManager;
+    project = efotoManager->getProject();
 	marksSaveState= true;
 	started = false;
 	status = false;

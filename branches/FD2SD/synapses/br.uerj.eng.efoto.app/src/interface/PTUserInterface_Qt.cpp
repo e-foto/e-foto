@@ -262,11 +262,11 @@ bool PTUserInterface_Qt::exec()
     bool ok;
 
 	/** carregar imagem da esquerda*/
-    doubleViewer->loadImage(IDoubleViewer::LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
+    doubleViewer->loadImage(LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
     doubleViewer->getLeftDisplay()->getCurrentScene()->scaleTo(1);
 
 	/** carregar imagem da direita*/
-    doubleViewer->loadImage(IDoubleViewer::RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
+    doubleViewer->loadImage(RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
     doubleViewer->getRightDisplay()->getCurrentScene()->scaleTo(1);
 
 	updateImageTable(leftImageTableWidget, leftImageString);
@@ -617,7 +617,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		rightImageComboBox->addItems(listImageRight);
 		rightImageComboBox->setCurrentIndex(rightImageComboBox->findText(currentRightImage,Qt::MatchExactly));
 		rightImageComboBox->blockSignals(false);
-        doubleViewer->loadImage(IDoubleViewer::LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
+        doubleViewer->loadImage(LEFT_DISPLAY, QString::fromStdString(ptManager->getFilePath(leftImageString)));
 		updateImageTable(leftImageTableWidget,leftImageString);
         clearAllMarks(doubleViewer->getLeftDisplay()); markAllpoints(doubleViewer->getLeftDisplay());
         doubleViewer->getLeftDisplay()->updateAll();
@@ -633,7 +633,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 		leftImageComboBox->addItems(listImageLeft);
 		leftImageComboBox->setCurrentIndex(leftImageComboBox->findText(currentLefttImage,Qt::MatchExactly));
 		leftImageComboBox->blockSignals(false);
-        doubleViewer->loadImage(IDoubleViewer::RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
+        doubleViewer->loadImage(RIGHT_DISPLAY, QString::fromStdString(ptManager->getFilePath(rightImageString)));
 		updateImageTable(rightImageTableWidget,rightImageString);
         clearAllMarks(doubleViewer->getRightDisplay()); markAllpoints(doubleViewer->getRightDisplay());
         doubleViewer->getRightDisplay()->updateAll();

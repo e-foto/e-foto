@@ -7,6 +7,9 @@
 #include "EDom.h"
 #include <QTranslator>
 
+#ifdef INTEGRATED_EFOTO
+#include "SingleViewer.h"
+#endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
 #include "IViewerService.h"
 #endif //SYNAPSE_EFOTO
