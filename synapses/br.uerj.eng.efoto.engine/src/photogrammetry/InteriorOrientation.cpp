@@ -30,6 +30,7 @@ InteriorOrientation::InteriorOrientation()
 InteriorOrientation::InteriorOrientation(int myImageId) // Constructor with ids only, needed in project use.
 {
 		imageId = myImageId;
+        valid= false;
 }
 
 /**
@@ -157,15 +158,21 @@ bool InteriorOrientation::is(string s)
 void InteriorOrientation::xmlSetData(string xml)
 {
 		EDomElement root(xml);
-		imageId = Conversion::stringToInt(root.attribute("image_key"));
-		Xa.resize(6,1);
+        imageId = Conversion::stringToInt(root.attribute("image_key"));
 		EDomElement xmlXa = root.elementByTagName("Xa");
-		Xa.set(1,1, xmlXa.elementByTagName("a0").toDouble());
-		Xa.set(2,1, xmlXa.elementByTagName("a1").toDouble());
-		Xa.set(3,1, xmlXa.elementByTagName("a2").toDouble());
-		Xa.set(4,1, xmlXa.elementByTagName("b0").toDouble());
-		Xa.set(5,1, xmlXa.elementByTagName("b1").toDouble());
-		Xa.set(6,1, xmlXa.elementByTagName("b2").toDouble());
+        if (xmlXa.getContent() != "")
+        {
+            Xa.resize(6,1);
+            Xa.set(1,1, xmlXa.elementByTagName("a0").toDouble());
+            Xa.set(2,1, xmlXa.elementByTagName("a1").toDouble());
+            Xa.set(3,1, xmlXa.elementByTagName("a2").toDouble());
+            Xa.set(4,1, xmlXa.elementByTagName("b0").toDouble());
+            Xa.set(5,1, xmlXa.elementByTagName("b1").toDouble());
+            Xa.set(6,1, xmlXa.elementByTagName("b2").toDouble());
+            valid = true;
+        }
+        else
+            valid = false;
 		//La.xmlSetData(root.elementByTagName("La"));
 		myQuality.xmlSetData(root.elementByTagName("quality").getContent());
 
@@ -190,14 +197,17 @@ string InteriorOrientation::xmlGetData()
 		stringstream result;
 		result << "<imageIO type=\"Affine\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
 		result << "<parameters>\n";
-		result << "<Xa>\n";
-		result << "<a0>" << Conversion::doubleToString(Xa.get(1,1)) << "</a0>\n";
-		result << "<a1>" << Conversion::doubleToString(Xa.get(2,1)) << "</a1>\n";
-		result << "<a2>" << Conversion::doubleToString(Xa.get(3,1)) << "</a2>\n";
-		result << "<b0>" << Conversion::doubleToString(Xa.get(4,1)) << "</b0>\n";
-		result << "<b1>" << Conversion::doubleToString(Xa.get(5,1)) << "</b1>\n";
-		result << "<b2>" << Conversion::doubleToString(Xa.get(6,1)) << "</b2>\n";
-		result << "</Xa>\n";
+        if (valid && Xa.getRows() == 6)
+        {
+            result << "<Xa>\n";
+            result << "<a0>" << Conversion::doubleToString(Xa.get(1,1)) << "</a0>\n";
+            result << "<a1>" << Conversion::doubleToString(Xa.get(2,1)) << "</a1>\n";
+            result << "<a2>" << Conversion::doubleToString(Xa.get(3,1)) << "</a2>\n";
+            result << "<b0>" << Conversion::doubleToString(Xa.get(4,1)) << "</b0>\n";
+            result << "<b1>" << Conversion::doubleToString(Xa.get(5,1)) << "</b1>\n";
+            result << "<b2>" << Conversion::doubleToString(Xa.get(6,1)) << "</b2>\n";
+            result << "</Xa>\n";
+        }
 		result << "</parameters>\n";
 		//result << "<La>\n";
 		//result << La.xmlGetData();
@@ -311,7 +321,7 @@ void InteriorOrientation::calculate()
 						//Calculate La is unnecessary.
 						//La = Lb + (myQuality.getV());
 				}
-		}
+        }
 }
 
 /**

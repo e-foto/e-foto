@@ -2485,16 +2485,8 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	}
 
 	bool ProjectUserInterface_Qt::availablePhotoTri()
-	{
-        /* rever!
-		EDomElement ois(manager->getXml("interiorOrientation"));
-		EDomElement images(manager->getXml(("images")));
-		//qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
-
-		if(images.children().size()<=ois.children().size())
-			return true;
-		return false;
-        */
+    {
+        return manager->photoTriAvailable();
 	}
 
 	/*

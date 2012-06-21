@@ -46,10 +46,6 @@ SingleViewer::SingleViewer(QWidget *parent)
 
 void SingleViewer::closeEvent(QCloseEvent *)
 {
-	if (tool->showNearview->isChecked())
-		tool->showNearview->trigger();
-	if (tool->showOverview->isChecked())
-		tool->showOverview->trigger();
 	delete tool;
 	delete sd;
 }
@@ -77,12 +73,22 @@ void SingleViewer::zoomOutMode()
 
 void SingleViewer::setDetailRelation(double zoom)
 {
-//rever!
+    if (zoom == 1.0)
+        tool->detailComboBox->setCurrentIndex(0);
+    else if (zoom == 2.0)
+        tool->detailComboBox->setCurrentIndex(1);
+    else if (zoom == 4.0)
+        tool->detailComboBox->setCurrentIndex(2);
+    else if (zoom == 8.0)
+        tool->detailComboBox->setCurrentIndex(3);
+    else
+        tool->addCustomizedZoom(zoom);
 }
 
 void SingleViewer::setDetailTracking(bool status)
 {
-//rever!
+    if (tool->useFixedNearview->isChecked() == status)
+        tool->executeAction(tool->useFixedNearview);
 }
 
 
@@ -153,8 +159,10 @@ void SingleViewer::loadImage(Matrix* image, bool isGrayscale)
 
 QImage SingleViewer::getPrintScreen(bool rasterOnly)
 {
-    return QImage();
-//rever!
+    QImage result;
+    if (!rasterOnly)
+        sd->render(&result);
+    return result;
 }
 
 void SingleViewer::fit()

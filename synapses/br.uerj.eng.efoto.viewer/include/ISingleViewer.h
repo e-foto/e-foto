@@ -19,7 +19,8 @@ class ISingleViewer : public QMainWindow
 {
 	Q_OBJECT
 
-public:
+public slots:
+
 	virtual void markMode() = 0;
 	virtual void moveMode() = 0;
 	virtual void zoomInMode() = 0;

@@ -141,6 +141,9 @@ public:
 	* \return deque<string> O deque de imagens.
 	*/
 	deque<string> listImages();
+
+    bool photoTriAvailable() {return project->allImages().size() > 1 && project->allImageHasIO();}
+
 	/**
 	* \brief Método que retorna o identificador de uma imagem.
 	* \param imageName O nome da imagem.

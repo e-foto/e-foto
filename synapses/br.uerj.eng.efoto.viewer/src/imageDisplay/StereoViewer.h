@@ -15,14 +15,15 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-#ifndef STEREOMARKERLISTENER
-#define STEREOMARKERLISTENER
+#ifdef INTEGRATED_EFOTO
+enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
+#endif //INTEGRATED_EFOTO
+
 class StereoMarkerListener
 {
 public:
 	virtual void receiveStereoMark(QPointF, QPointF) = 0;
 };
-#endif //STEREOMARKERLISTENER
 
 #ifdef INTEGRATED_EFOTO
 class StereoViewer : public QMainWindow
@@ -43,9 +44,6 @@ public:
     StereoDisplay* getDisplay() {return stereoDisplay;}
 	StereoToolsBar* getToolBar() {return stereoTool;}
     //MarkStereoTool& getMarker() {return stereoTool->_mark;}
-#ifdef INTEGRATED_EFOTO
-    enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
-#endif //INTEGRATED_EFOTO
 
 public slots:
 	void loadLeftImage(QString filename);
@@ -78,8 +76,8 @@ public slots:
 	void startSaveLeftImageDialog() {}
 	void startSaveRightImageDialog() {}
 
-	bool loadImage(TargetChannel target, QString filename) {}
-	void loadImage(TargetChannel target, QImage* image) {}
+    bool loadImage(TargetChannel target, QString filename) {if (LEFT_CHANNEL == target) loadLeftImage(filename); if (RIGHT_CHANNEL == target) loadRightImage(filename);}
+    void loadImage(TargetChannel target, QImage* image) {if (LEFT_CHANNEL == target) loadLeftImage(image);if (RIGHT_CHANNEL == target) loadRightImage(image);}
 
 	QImage getPrintScreen(TargetChannel target, bool rasterOnly = false) {}
 	void fit() {}

@@ -1223,6 +1223,12 @@ void SingleToolsBar::changeDetailZoom(int nz)
 	}
 }
 
+void SingleToolsBar::addCustomizedZoom(double zoom)
+{
+    SingleScene* scene = (SingleScene*)_display->getCurrentScene();
+    scene->setDetailZoom(zoom);
+}
+
 void SingleToolsBar::setImageMode()
 {
 	zoom.setImageMode();

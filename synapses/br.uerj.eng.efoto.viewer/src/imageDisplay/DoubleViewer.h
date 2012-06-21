@@ -15,6 +15,10 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+#ifdef INTEGRATED_EFOTO
+enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
+#endif //INTEGRATED_EFOTO
+
 class DoubleToolsBar : public SeparatedStereoToolsBar
 {
     Q_OBJECT
@@ -51,10 +55,6 @@ public:
     DoubleToolsBar* getToolBar() {return (DoubleToolsBar*) tool;}
     //MarkTool& getLeftMarker() {return (tool->leftMark);}
     //MarkTool& getRightMarker() {return (tool->rightMark);}
-#ifdef INTEGRATED_EFOTO
-    enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
-#endif //INTEGRATED_EFOTO
-
 
 public slots:
 	void loadLeftImage(QString filename);
@@ -89,8 +89,8 @@ public slots:
 	void startSaveLeftImageDialog() {}
 	void startSaveRightImageDialog() {}
 
-	bool loadImage(TargetDisplay target, QString filename) {}
-	void loadImage(TargetDisplay target, QImage* image) {}
+    bool loadImage(TargetDisplay target, QString filename) {if (LEFT_DISPLAY == target) loadLeftImage(filename);if (RIGHT_DISPLAY == target) loadRightImage(filename);}
+    void loadImage(TargetDisplay target, QImage* image) {if (LEFT_DISPLAY == target) loadLeftImage(image);if (RIGHT_DISPLAY == target) loadRightImage(image);}
 
 	QImage getPrintScreen(TargetDisplay target, bool rasterOnly = false) {}
 	void fit(TargetDisplay target) {}

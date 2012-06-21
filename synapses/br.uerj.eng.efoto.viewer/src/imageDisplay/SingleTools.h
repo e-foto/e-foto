@@ -287,13 +287,13 @@ public slots:
 	bool nearIsVisible() {return showNearview->isChecked();}
 	bool overIsVisible() {return showOverview->isChecked();}
 
-	void rescaleDisplay();
-	void changeDetailZoom(int nz);
+    void rescaleDisplay();
+    void changeDetailZoom(int nz);
+    void addCustomizedZoom(double zoom);
 
 	void setImageMode();
 	void setOrtoImageMode(double xi, double dx, double yi, double dy);
 	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
-
 };
 
 class SeparatedStereoToolsBar : public QToolBar

@@ -36,6 +36,7 @@ SpatialRessection::SpatialRessection()
 		rt = NULL;
 
 	useDistortions = true;
+    valid = false;
 }
 
 /**
@@ -55,6 +56,7 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
 		rt = NULL;
 
 	useDistortions = true;
+    valid = false;
 }
 
 /**
@@ -384,14 +386,20 @@ void SpatialRessection::xmlSetData(string xml)
 
 	Lb.xmlSetData(root.elementByTagName("Lb").elementByTagName("mml:matrix").getContent());
 
-	Xa.resize(6,1);
 	EDomElement xmlXa = root.elementByTagName("Xa");
-	Xa.set(1,1, xmlXa.elementByTagName("X0").toDouble());
-	Xa.set(2,1, xmlXa.elementByTagName("Y0").toDouble());
-	Xa.set(3,1, xmlXa.elementByTagName("Z0").toDouble());
-	Xa.set(4,1, xmlXa.elementByTagName("phi").toDouble());
-	Xa.set(5,1, xmlXa.elementByTagName("omega").toDouble());
-	Xa.set(6,1, xmlXa.elementByTagName("kappa").toDouble());
+    if (xmlXa.getContent() != "")
+    {
+        Xa.resize(6,1);
+        Xa.set(1,1, xmlXa.elementByTagName("X0").toDouble());
+        Xa.set(2,1, xmlXa.elementByTagName("Y0").toDouble());
+        Xa.set(3,1, xmlXa.elementByTagName("Z0").toDouble());
+        Xa.set(4,1, xmlXa.elementByTagName("phi").toDouble());
+        Xa.set(5,1, xmlXa.elementByTagName("omega").toDouble());
+        Xa.set(6,1, xmlXa.elementByTagName("kappa").toDouble());
+        valid = true;
+    }
+    else
+        valid = false;
 
 	L0.xmlSetData(root.elementByTagName("L0").elementByTagName("mml:matrix").getContent());
 
@@ -458,14 +466,17 @@ string SpatialRessection::xmlGetDataEO()
 {
     stringstream result;
     result << "<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
-    result << "<Xa>\n";
-    result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
-    result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
-    result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(3,1)) << "</Z0>\n";
-    result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa.get(4,1)) << "</phi>\n";
-    result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa.get(5,1)) << "</omega>\n";
-    result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa.get(6,1)) << "</kappa>\n";
-    result << "</Xa>\n";
+    if (valid && Xa.getRows() == 6)
+    {
+        result << "<Xa>\n";
+        result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
+        result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
+        result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(3,1)) << "</Z0>\n";
+        result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa.get(4,1)) << "</phi>\n";
+        result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa.get(5,1)) << "</omega>\n";
+        result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa.get(6,1)) << "</kappa>\n";
+        result << "</Xa>\n";
+    }
     result << "</imageEO>\n";
 	return result.str();
 }

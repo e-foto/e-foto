@@ -14,7 +14,7 @@
 #include "SingleViewer.h"
 #include "GeometryResource.h"
 #ifdef INTEGRATED_EFOTO
-#include "SingleDisplay.h" //rever!
+#include "SingleDisplay.h" //rever.
 #endif //INTEGRATED_EFOTO
 #ifdef SYNAPSE_EFOTO
 #include "IViewerService.h"

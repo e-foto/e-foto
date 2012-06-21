@@ -49,6 +49,8 @@ public:
     virtual deque<InteriorOrientation*> allIOs()=0;
     virtual deque<ExteriorOrientation*> allEOs()=0;
 
+    virtual bool allImageHasIO()=0;
+    virtual bool allImageHasEO()=0;
     virtual int getFreeSensorId()=0;
     virtual int getFreeFlightId()=0;
     virtual int getFreeImageId()=0;

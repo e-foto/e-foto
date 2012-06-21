@@ -289,6 +289,7 @@ int IOManager::getFrameColumns()
 
 void IOManager::acceptIO()
 {
+    project->image(imageId)->getIO()->setValidate(true);
     // Rever!, pois o accept agora é quase o automático. E deve ser previsto um rollback.
     /*
 	EDomElement newXml(manager->xmlGetData());

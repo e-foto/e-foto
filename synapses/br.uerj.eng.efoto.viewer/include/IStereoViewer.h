@@ -15,12 +15,13 @@ class StereoMarkerListener;
 class StereoDisplay;
 class StereoToolsBar;
 
+enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
+
 class IStereoViewer : public QMainWindow
 {
 	Q_OBJECT
 
-public:
-	enum TargetChannel {LEFT_CHANNEL, RIGHT_CHANNEL};
+public slots:
 
 	virtual void markMode() = 0;
 	virtual void moveMode() = 0;

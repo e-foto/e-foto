@@ -15,12 +15,11 @@ class DoubleMarkerListener;
 class SingleDisplay;
 class DoubleToolsBar;
 
+enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
+
 class IDoubleViewer : public QMainWindow
 {
 	Q_OBJECT
-
-public:
-	enum TargetDisplay {LEFT_DISPLAY, RIGHT_DISPLAY};
 
 public slots:
 	virtual void markMode() = 0;

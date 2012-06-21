@@ -42,6 +42,7 @@ class InteriorOrientation : public EObject
         Matrix La;
         Matrix A;
         Matrix P;
+        bool valid;
 
         // Composed objects
         //
@@ -72,7 +73,6 @@ public:
         Matrix getA();
         Matrix getP();
 
-
         // Composed objects accessors
         //
 
@@ -99,6 +99,8 @@ public:
         //
 
         void calculate();
+        bool isValid() {return valid;}
+        void setValidate(bool status) {valid = status;}
         DetectorSpaceCoordinate imageToDetector(double col, double lin);
         DetectorSpaceCoordinate imageToDetector(ImageSpaceCoordinate myDigitalCoordinate);
         PositionMatrix imageToDetector(const PositionMatrix& myDigitalPositions);
