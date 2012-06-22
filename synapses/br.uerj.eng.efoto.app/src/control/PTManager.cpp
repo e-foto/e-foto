@@ -809,9 +809,7 @@ string PTManager::getUsedImagesXml()
 
 void PTManager::setMarksSavedState(bool marksState)
 {
-	marksSaveState=marksState;
-    //if (marksSaveState)
-        //efotoManager->setSavedState(false); //rever!
+    marksSaveState=marksState;
 }
 
 bool PTManager::getMarksSavedState()
@@ -1301,7 +1299,7 @@ void PTManager::reloadPointsCoordinates()
     int numPoints=project->allPoints().size();
 	for (int i=0;i<numPoints;i++)
 	{
-        Point *pnt=project->point(spareENH.getInt(i+1,4)); // rever! Aqui eu posso precisar escrever código que de roolback nos pontos
+        Point *pnt=project->point(spareENH.getInt(i+1,4));
 
 		double x=spareENH.get(i+1,1);
 		double y=spareENH.get(i+1,2);
@@ -1364,7 +1362,7 @@ int PTManager::createNewPoint()
 	text += "</point>";
 
     project->addPoint(text);
-    project->allPoints().push_back(project->point(currentItemId));
+    //project->allPoints().push_back(project->point(currentItemId));
 
     return currentItemId;
 }

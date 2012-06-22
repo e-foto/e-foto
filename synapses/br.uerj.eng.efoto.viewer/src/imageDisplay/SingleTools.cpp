@@ -1011,8 +1011,7 @@ SingleToolsBar::SingleToolsBar(SingleDisplay *display, QWidget *parent) :
 	move(display),
 	mark(display),
 	near_(display),
-	over(display)//,
-  //info(display)
+    over(display)
 {
 	_display = display;
 
@@ -1267,37 +1266,15 @@ SeparatedStereoToolsBar::SeparatedStereoToolsBar(SingleDisplay *leftDisplay, Sin
 	leftMove(leftDisplay),
 	leftMark(leftDisplay),
 	leftNear(leftDisplay),
-	leftOver(leftDisplay),
-	//leftInfo(leftDisplay),
+    leftOver(leftDisplay),
 	rightZoom(rightDisplay),
 	rightMove(rightDisplay),
 	rightMark(rightDisplay),
 	rightNear(rightDisplay),
-	rightOver(rightDisplay)//,
-  //rightInfo(rightDisplay)
+    rightOver(rightDisplay)
 {
 	_leftDisplay = leftDisplay;
-	_rightDisplay = rightDisplay;
-	//_leftDisplay->setActivatedTool(&leftInfo);
-	//_rightDisplay->setActivatedTool(&rightInfo);
-
-	/* Modificado Paulo :Tool Tips
-		setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),"Zoom", this);
-		setMoveTool = new QAction(QIcon(":/icon/moveIcon"),"Move", this);
-		setMarkTool = new QAction(QIcon(":/icon/markIcon"),"Mark", this);
-		setFitLeftView = new QAction(QIcon(":/icon/fitleftIcon.png"),"Fit Left", this);
-		setFitRightView = new QAction(QIcon(":/icon/fitrightIcon.png"),"Fit Right", this);
-		setFitBothView = new QAction(QIcon(":/icon/fitbothIcon.png"),"Fit Both", this);
-		showOverview = new QAction(QIcon(":/icon/overIcon"),"Overview", this);
-		showNearview = new QAction(QIcon(":/icon/detailIcon"),"Nearview", this);
-		useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),"Antialias", this);
-		openLeftImage = new QAction(QIcon(":/icon/fileopen.png"),"Open Left", this);
-		openRightImage = new QAction(QIcon(":/icon/fileopen.png"),"Open Left", this);
-		saveLeftImage = new QAction(QIcon(":/icon/disquette.png"),"Save Left", this);
-		saveRightImage = new QAction(QIcon(":/icon/disquette.png"),"Save Right", this);
-		setEqualMovements = new QAction(QIcon(":/icon/equalmoveIcon.png"),"Equal Movements", this);
-		setEqualScales = new QAction(QIcon(":/icon/equalzoomIcon.png"),"Equal Scales", this);
-		*/
+    _rightDisplay = rightDisplay;
 
 	setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Zoom</span></p></body></html>", this);
 	setMoveTool = new QAction(QIcon(":/icon/moveIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Move</span></p></body></html>", this);
@@ -1409,6 +1386,8 @@ SeparatedStereoToolsBar::SeparatedStereoToolsBar(SingleDisplay *leftDisplay, Sin
 	_leftDisplay->setShowDetailedArea(true);
 	_rightDisplay->setShowDetailedArea(true);
 
+    leftMark.setToOnlyEmitClickedMode();
+    rightMark.setToOnlyEmitClickedMode();
 	leftNear.setMarker(&leftMark);
 	rightNear.setMarker(&rightMark);
 
