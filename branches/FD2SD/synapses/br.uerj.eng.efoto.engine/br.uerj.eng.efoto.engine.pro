@@ -13,6 +13,7 @@ include(../../runtime/synapse.pri)
 # ------------------------------------------------
 
 DEFINES += SYNAPSE_EFOTO
+DEFINES += EFOTO_ENGINE
 
 INCLUDEPATH += src \
 	src/photogrammetry \

@@ -66,7 +66,7 @@ protected slots:
 	virtual void validatingFlight();
 	virtual void validatingImage();
 	virtual void validatingPoint();
-	virtual bool confirmToClose();
+    virtual bool confirmToClose(bool makeClose);
 
 public:
 

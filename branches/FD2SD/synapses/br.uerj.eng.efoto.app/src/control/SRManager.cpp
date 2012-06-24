@@ -332,6 +332,8 @@ int SRManager::getId()
 
 void SRManager::returnProject()
 {
+    if (!project->image(imageId)->getEO()->isValid())
+        project->deleteEO(imageId);
 	manager->reloadProject();
 }
 

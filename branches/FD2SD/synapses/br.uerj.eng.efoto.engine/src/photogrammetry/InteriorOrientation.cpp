@@ -21,7 +21,8 @@ namespace efoto {
  */
 InteriorOrientation::InteriorOrientation()
 {
-
+    myImage = NULL;
+    valid= false;
 }
 
 /**
@@ -30,6 +31,7 @@ InteriorOrientation::InteriorOrientation()
 InteriorOrientation::InteriorOrientation(int myImageId) // Constructor with ids only, needed in project use.
 {
 		imageId = myImageId;
+        myImage = NULL;
         valid= false;
 }
 

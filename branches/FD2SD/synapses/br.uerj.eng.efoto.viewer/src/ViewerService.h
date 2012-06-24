@@ -17,7 +17,9 @@ namespace viewer {
 class Q_DECL_EXPORT ViewerService: public QObject, public IViewerService
 {
 	Q_OBJECT
-	Q_INTERFACES(cortex::ISynapse br::uerj::eng::efoto::viewer::IViewerService)
+#ifdef EFOTO_VIEWER
+    Q_INTERFACES(cortex::ISynapse br::uerj::eng::efoto::viewer::IViewerService)
+#endif //EFOTO_VIEWER
 
 	deque<ISingleViewerPtr> single;
     deque<IDoubleViewerPtr> separated;
