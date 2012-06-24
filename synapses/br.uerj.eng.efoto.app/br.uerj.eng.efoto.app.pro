@@ -17,6 +17,7 @@ INCLUDEPATH += $$synapseIncludePath(br.uerj.eng.efoto.engine)
 #------------------------------------------------
 
 DEFINES += SYNAPSE_EFOTO
+DEFINES += EFOTO_APP
 
 INCLUDEPATH += src \
 			   src/control \
@@ -27,6 +28,7 @@ INCLUDEPATH += src \
                            ../br.uerj.eng.efoto.engine/src/infrastructure \
                            ../br.uerj.eng.efoto.engine/src/photogrammetry \
                            ../br.uerj.eng.efoto.engine/src/imageProcessing \
+                           ../br.uerj.eng.efoto.engine/src/xml_definitions \
 			   ../br.uerj.eng.efoto.viewer/src/imageDisplay
 
 DEPENDPATH += $${INCLUDEPATH}
@@ -80,57 +82,74 @@ HEADERS =  include/IPhotogrammetry.h \
 		   src/infrastructure/LoadingScreen.h \
 		   src/infrastructure/ScienceSpinBox.h \
 		   src/infrastructure/SigmaForm.h \
-		   src/infrastructure/WindowsSelectPage.h \
-		   #
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractDetectorCoordinate.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractImageCoordinate.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ConvertionsSystems.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Coordinate.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Dms.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/EDom.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/EDomValidator.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/EObject.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ETreeModel.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/GeoSystem.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Matrix.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/PositionMatrix.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/RectSupport.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
-		   #
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
-		   ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/DemGrid.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/StereoPair.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialIntersection.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPoints.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectiveRay.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/Orthorectification.h \
-                   ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.h \
+                   src/infrastructure/WindowsSelectPage.h \
                    #
-                   ../br.uerj.eng.efoto.engine/src/imageProcessing/ImageMatching.h \
-                   ../br.uerj.eng.efoto.engine/src/imageProcessing/Interpolation.h \
-                   #
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.h \
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.h
+        ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractDetectorCoordinate.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractImageCoordinate.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ConvertionsSystems.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Coordinate.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Dms.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/EDom.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/EDomValidator.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/EObject.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ETreeModel.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/GeoSystem.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Matrix.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/PositionMatrix.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/RectSupport.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorFiducialMark.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorSpaceCoordinate.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DemGrid.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageSpaceCoordinate.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/EOQuality.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/FrameSensor.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/IOQuality.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPoints.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPointsGrid.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ObjectSpaceCoordinate.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Orthorectification.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectiveRay.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/RayTester.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialIntersection.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialRessection.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/StereoPair.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Dummies.h \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Project.h \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/ImageMatching.h \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/Interpolation.h \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/LeastSquaresMatching.h \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/NormalizedCrossCorrelation.h \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/RadiometricTransformation.h \
+        ../br.uerj.eng.efoto.engine/src/xml_definitions/XmlUpdater.h \
+        #
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/RasterResource.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleTools.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.h \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.h
 
 
 SOURCES =  src/Photogrammetry.cpp \
@@ -180,25 +199,73 @@ SOURCES =  src/Photogrammetry.cpp \
 		   src/infrastructure/ScienceSpinBox.cpp \
 		   src/infrastructure/SigmaForm.cpp \
 		   src/infrastructure/WindowsSelectPage.cpp \
-		   #
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractDetectorCoordinate.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractImageCoordinate.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ConvertionsSystems.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Coordinate.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Dms.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/EDom.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/EDomValidator.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ETreeModel.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/GeoSystem.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Matrix.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/PositionMatrix.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/RectSupport.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
-		   ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp \
                    #
-                   ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.cpp
+        ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractDetectorCoordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/AbstractImageCoordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ConvertionsSystems.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Coordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Dms.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/EDom.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/EDomValidator.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ETreeModel.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/GeoSystem.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Matrix.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/PositionMatrix.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/RectSupport.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/SparseMatrix.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp\
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorFiducialMark.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorSpaceCoordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/DemGrid.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageFiducialMark.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ImageSpaceCoordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/EOQuality.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ExteriorOrientation.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Flight.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/FrameSensor.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Image.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/InteriorOrientation.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/IOQuality.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPoints.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/MatchingPointsGrid.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ObjectSpaceCoordinate.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Orthorectification.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Point.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectHeader.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/ProjectiveRay.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/RayTester.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Sensor.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithFiducialMarks.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowDimensions.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SensorWithKnowParameters.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialIntersection.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/SpatialRessection.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/StereoPair.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Terrain.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Dummies.cpp \
+        ../br.uerj.eng.efoto.engine/src/photogrammetry/Project.cpp \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/ImageMatching.cpp \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/Interpolation.cpp \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/LeastSquaresMatching.cpp \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/NormalizedCrossCorrelation.cpp \
+        ../br.uerj.eng.efoto.engine/src/imageProcessing/RadiometricTransformation.cpp \
+        ../br.uerj.eng.efoto.engine/src/xml_definitions/XmlUpdater.cpp \
+        #
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/RasterResource.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleTools.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.cpp \
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.cpp
+
 
 FORMS =   src/formDisplay/FeatEditor.ui \
 		  src/formDisplay/FeatsEditor.ui \

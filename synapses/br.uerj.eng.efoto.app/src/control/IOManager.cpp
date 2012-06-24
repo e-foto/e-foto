@@ -190,6 +190,9 @@ bool IOManager::exec()
 #ifdef SYNAPSE_EFOTO
     if (manager != NULL && !project.isNull())
 #endif //SYNAPSE_EFOTO
+    {
+        Image* img = project->image(imageId);
+        Sensor* sns = project->image(imageId)->getSensor();
         if (project->image(imageId) != NULL && project->image(imageId)->getSensor() != NULL)
 		{
             if (project->image(imageId)->getIO() == NULL)
@@ -207,6 +210,7 @@ bool IOManager::exec()
 				myInterface->exec();
             }
         }
+    }
 	return status;
 }
 
@@ -217,6 +221,8 @@ int IOManager::getId() //Deprecated
 
 void IOManager::returnProject()
 {
+    if (!project->image(imageId)->getIO()->isValid())
+        project->deleteIO(imageId);
 	manager->reloadProject();
 }
 

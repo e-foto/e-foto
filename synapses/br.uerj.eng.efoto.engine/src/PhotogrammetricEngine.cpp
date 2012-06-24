@@ -37,9 +37,9 @@ IProjectPtr PhotogrammetricEngine::getProject()
 }
 
 // IPhotogrammetricEngine interface:
-
+#ifdef EFOTO_ENGINE
 Q_EXPORT_PLUGIN2(br.uerj.eng.efoto.engine, PhotogrammetricEngine)
-
+#endif //EFOTO_ENGINE
 }
 }
 }

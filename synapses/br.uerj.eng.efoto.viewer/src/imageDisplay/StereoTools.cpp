@@ -973,6 +973,7 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
 	showOverview->setChecked(true);
 	showNearview->setChecked(true);
 
+    _mark.setToOnlyEmitClickedMode();
 	_display->setActivatedTool(&_near);
 
 	QActionGroup* navegation = new QActionGroup(this);

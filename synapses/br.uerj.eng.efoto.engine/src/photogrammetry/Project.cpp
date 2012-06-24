@@ -182,7 +182,42 @@ bool Project::getSaveState()
 
 bool Project::closeProject()
 {
-    //Rever!
+    if (xmlData != "")
+    {
+        delete theHeader;
+        theHeader = NULL;
+        delete theTerrain;
+        theTerrain = NULL;
+        delete sensor(1);
+        sensors.clear();
+        delete flight(1);
+        flights.clear();
+        for (int i = points.size() - 1; i >= 0; i--)
+            delete points.at(i);
+        points.clear();
+        for (int i = images.size() - 1; i >= 0; i--)
+            delete images.at(i);
+        images.clear();
+        for (int i = IOs.size() - 1; i >= 0; i--)
+            delete IOs.at(i);
+        IOs.clear();
+        for (int i = EOs.size() - 1; i >= 0; i--)
+            delete EOs.at(i);
+        EOs.clear();
+        /*
+        for (int i = DEMs.size() - 1; i >= 0; i--)
+            delete DEMs.at(i);
+        DEMs.clear();
+        for (int i = orthos.size() - 1; i >= 0; i--)
+            delete orthos.at(i);
+        orthos.clear();
+        for (int i = feats.size() - 1; i >= 0; i--)
+            delete feats.at(i);
+        feats.clear();
+        */
+        xmlData = "";
+        processStates = "";
+    }
 }
 
 ProjectHeader *Project::instanceHeader()
@@ -1010,7 +1045,8 @@ void Project::linkAll()
         img->setFlight(flt);
         if (sns) sns->putImage(img);
         if (flt) flt->putImage(img);
-
+        img->setIO(NULL);
+        img->setEO(NULL);
     }
 
     for (int i=0;i<IOs.size();i++)

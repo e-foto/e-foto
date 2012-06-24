@@ -33,8 +33,9 @@ bool Photogrammetry::stop()
 }
 
 // IPhotogrammetry interface:
-
+#ifdef EFOTO_APP
 Q_EXPORT_PLUGIN2(br.uerj.eng.efoto.app, Photogrammetry)
+#endif //EFOTO_APP
 
 }
 }

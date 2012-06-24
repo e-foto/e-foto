@@ -49,9 +49,9 @@ IStereoViewerPtr ViewerService::instanceStereoViewer()
 }
 
 // IViewerService interface:
-
+#ifdef EFOTO_VIEWER
 Q_EXPORT_PLUGIN2(br.uerj.eng.efoto.viewer, ViewerService)
-
+#endif //EFOTO_VIEWER
 }
 }
 }
