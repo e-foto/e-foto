@@ -160,65 +160,8 @@ namespace efoto {
 
 	void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
 	{
-		/*
- if (editState || addNewState)
- {
-  if (controlButtons.saveButton->isEnabled())
-  {
-   QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-						"Do you want to keep all changes?",
-						QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-   if (reply == QMessageBox::Yes)
-   {
-		controlButtons.saveButton->click();
-   }
-   else if (reply == QMessageBox::No)
-   {
-		controlButtons.cancelButton->click();
-   }
-   else
-   {
-		event->ignore();
-		return;
-   }
-  }
-  else
-  {
-   QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(this, tr(" Warning: leaving form in edit mode"),
-						"Registration data is not complete and will be lost. Continue?",
-						QMessageBox::Yes | QMessageBox::Cancel);
-   if (reply == QMessageBox::Yes)
-   {
-		controlButtons.cancelButton->click();
-   }
-   else
-   {
-		event->ignore();
-		return;
-   }
-  }
- }
- if (actionSave_file->isEnabled())
- {
-  QMessageBox::StandardButton reply;
-  reply = QMessageBox::question(this, tr(" Warning: You have unsaved data"),
-				   tr("Do you want to save all changes?"),
-				   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-  if (reply == QMessageBox::Yes)
-  {
-   actionSave_file->trigger();
-  }
-  else if (reply == QMessageBox::Cancel)
-  {
-   event->ignore();
-   return;
-  }
- }
- */
 		//qDebug() << changeModule;
-		if (changeModule || confirmToClose())
+        if (changeModule || confirmToClose(true))
 			event->accept();
 		else
 			event->ignore();
@@ -226,7 +169,7 @@ namespace efoto {
 
 	void ProjectUserInterface_Qt::newProject()
 	{
-		if (!confirmToClose())
+        if (!confirmToClose(false))
 			return;
 
         manager->newProject("");
@@ -378,7 +321,7 @@ namespace efoto {
 
 	void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
 	{
-		if (!confirmToClose())
+        if (!confirmToClose(false))
 			return;
 
 		/*
@@ -646,7 +589,7 @@ namespace efoto {
 			if (value != -1)
 			{
 				changeModule = true;
-				confirmToClose();
+                confirmToClose(false);
 				LoadingScreen::instance().show();
 				qApp->processEvents();
 				this->close();
@@ -670,7 +613,7 @@ namespace efoto {
 			if (value != -1)
 			{
 				changeModule = true;
-				confirmToClose();
+                confirmToClose(false);
 				LoadingScreen::instance().show();
 				qApp->processEvents();
 				this->close();
@@ -683,7 +626,7 @@ namespace efoto {
 	void ProjectUserInterface_Qt::executeDEM()
 	{
 		changeModule = true;
-		confirmToClose();
+        confirmToClose(false);
 		LoadingScreen::instance().show();
 		qApp->processEvents();
 		this->close();
@@ -694,7 +637,7 @@ namespace efoto {
 	void ProjectUserInterface_Qt::executeSP()
 	{
 		changeModule = true;
-		confirmToClose();
+        confirmToClose(false);
 		LoadingScreen::instance().show();
 		qApp->processEvents();
 		this->close();
@@ -703,30 +646,9 @@ namespace efoto {
 	}
 
 	void ProjectUserInterface_Qt::executeFT()
-	{
-		//bool ok;
-		/*
- QStringList items;
- deque<string> strItems = manager->listImages();
- for (unsigned int i = 0; i < strItems.size(); i++)
-  items << strItems.at(i).c_str();
- QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
- if (ok)
- {
-  int value = manager->getImageId(chosen.toStdString());
-  if (value != -1)
-  {
-   changeModule = true;
-   confirmToClose();
-   LoadingScreen::instance().show();
-   qApp->processEvents();
-   this->close();
-   manager->startModule("FotoTri", value);
-   changeModule = false;
-  }
- }*/
+    {
 		changeModule = true;
-		confirmToClose();
+        confirmToClose(false);
 		LoadingScreen::instance().show();
 		qApp->processEvents();
 		this->close();
@@ -738,7 +660,7 @@ namespace efoto {
 	void ProjectUserInterface_Qt::executeOrtho()
 	{
 		changeModule = true;
-		confirmToClose();
+        confirmToClose(false);
 		LoadingScreen::instance().show();
 		qApp->processEvents();
 		this->close();
@@ -2020,7 +1942,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			controlButtons.saveButton->setEnabled(true);
 	}
 
-	bool ProjectUserInterface_Qt::confirmToClose()
+    bool ProjectUserInterface_Qt::confirmToClose(bool makeClose)
 	{
 		if (editState || addNewState)
 		{
@@ -2058,8 +1980,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 					return false;
 				}
 			}
-		}
-		//qDebug() << actionSave_file->isEnabled();
+        }
 		if (actionSave_file->isEnabled())
 		{
 			QMessageBox::StandardButton reply;
@@ -2075,21 +1996,14 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 				return false;
 			}
 		}
-        manager->closeProject();
+        if (makeClose)
+            manager->closeProject();
 		return true;
 	}
 
 	QString ProjectUserInterface_Qt::getSavedIn()
-	{
-		//HeaderForm* parent =(HeaderForm*)&(this->headerForm);
-		//qDebug("saved in %s",savedIn.c_str());
-
-		//cout<< "cout "<<savedIn.c_str()<<"\n"<<endl;
-		//qDebug()<<headerForm.lineEditFilePath->text();
-
+    {
 		return  QString(savedIn.c_str()).left(savedIn.find_last_of('/'));
-
-		//return parent->lineEditFilePath->text();
 	}
 
 	/** This function import points from a *.txt file with a one point in each line
@@ -2108,8 +2022,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		while(!importFile->atEnd())
 		{
 			QByteArray line = importFile->readLine();
-			QString aux(line);
-			//pointsList << aux.left(aux.lastIndexOf('\n'));
+            QString aux(line);
 			pointsList << aux.remove('\n');
 		}
 		importFile->close();
@@ -2135,13 +2048,9 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		{
 			loading.setFormat(tr("%v/%m : %p%"));
 			loading.setValue(i+1);
-			newPointXML+=pointTxtToXml(pointsList.at(i),manager->getFreePointId()+i,i+1);
-			/*if ( newPointXML.hasTagName("pointId") )
-  {
-   manager->addComponent(newPointXML.getContent().data(),"points");
-  }*/
-		}
-		manager->addComponent(newPointXML,"points");
+            newPointXML=pointTxtToXml(pointsList.at(i),manager->getFreePointId()+i,i+1);
+            manager->addComponent(newPointXML,"points");
+        }
 		loadWidget->close();
 
 		updateTree();
@@ -2154,22 +2063,13 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
 	{
 		stringstream aux;
-		string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+        string gcpIdField, eField, nField, hField, dEField, dNField, dHField;
 		QStringList fields= point.split("\t");
 		// check	control	 tie
 		if (fields.length() == 7)
 		{
 
-			gcpIdField = fields.at(0).toStdString().c_str();
-			/*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
+            gcpIdField = fields.at(0).toStdString().c_str();
 			eField = fields.at(1).toStdString();
 			nField = fields.at(2).toStdString();
 			hField = fields.at(3).toStdString();
@@ -2201,18 +2101,8 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			aux << "</point>";
 		}
 		else if (point.split("\t").length() == 4)
-		{
-			//gcpIdField = point.split("\t").at(0).toStdString().c_str();
-			gcpIdField = fields.at(0).toStdString();
-			/*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
+        {
+            gcpIdField = fields.at(0).toStdString();
 			eField = fields.at(1).toStdString();
 			nField = fields.at(2).toStdString();
 			hField = fields.at(3).toStdString();
@@ -2227,13 +2117,14 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			aux << "<imagesMeasurements>\n";
 			aux << "</imagesMeasurements>\n";
 			aux << "</point>";
-		}else{
+        }
+        else
+        {
 			QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
 			return "";
 		}
 
-		return aux.str();
-		//EDomElement newPointXml(newXml.c_str());
+        return aux.str();
 
 	}
 
@@ -2281,8 +2172,6 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loadWidget->close();
 		exportFileName->close();
 
-		//exportDigitalCoordinates();
-
 	}
 
 	/** This function convert a EDomElement children Point in a line *.txt point format
@@ -2292,8 +2181,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		stringstream aux;
 		stringstream stdev;
 		QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
-		aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
-		//aux << points.attribute("type")<< "\t";
+        aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
 
 		aux << (gmlpos.split(" ").at(0)).toStdString().c_str() <<"\t"<<(gmlpos.split(" ").at(1)).toStdString().c_str()<<"\t"<<(gmlpos.split(" ").at(2)).toStdString().c_str();
 
@@ -2301,12 +2189,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		stdevMatrix.xmlSetData(points.elementByTagName("mml:matrix").getContent());
 
 		if (points.hasTagName("mml:matrix"))
-		{
-			/*
-		aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
-		aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
-		aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
-		*/
+        {
 			aux << "\t" << stdevMatrix.get(1,1) <<"\t";
 			aux << stdevMatrix.get(2,2) <<"\t";
 			aux << stdevMatrix.get(3,3);
@@ -2315,7 +2198,6 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		aux <<"\n";
 		string result=aux.str();
 		//qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
-
 		//qDebug("stdev:%s",stdev.str().c_str());
 		//qDebug("result:%s",result.c_str());
 
@@ -2352,7 +2234,6 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		}
 		updateTree();
 		viewImages();
-
 	}
 
 	/** This function convert image data from a *.txt line in a children image XML valid
@@ -2626,13 +2507,9 @@ bool ProjectUserInterface_Qt::availableOE()
 		{
 			loading.setFormat(tr("%v/%m : %p%"));
 			loading.setValue(i+1);
-			newPointXML+=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i,i+1);
-			/*if ( newPointXML.hasTagName("pointId") )
-  {
-   manager->addComponent(newPointXML.getContent().data(),"points");
-  }*/
-		}
-		manager->addComponent(newPointXML,"points");
+            newPointXML=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i,i+1);
+            manager->addComponent(newPointXML,"points");
+        }
 		loadWidget->close();
 		updateTree();
 		viewPoints();
@@ -2646,20 +2523,11 @@ bool ProjectUserInterface_Qt::availableOE()
 	{
 		bool ok;
 		stringstream aux;
-		string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+        string gcpIdField, eField, nField, hField, dEField, dNField, dHField;
 		QStringList fields= point.split("\t");
 		int numImagesInPoint=fields.size()/4-1;
 
-		gcpIdField = fields.at(0).toStdString().c_str();
-		/*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
+        gcpIdField = fields.at(0).toStdString().c_str();
 		eField = fields.at(1).toStdString();
 		nField = fields.at(2).toStdString();
 		hField = fields.at(3).toStdString();
@@ -2798,11 +2666,6 @@ bool ProjectUserInterface_Qt::availableOE()
 
 	void ProjectUserInterface_Qt::importImagesBatch()
 	{
-		//primeiro arquivo
-		//QString importDirName = QFileDialog::getExistingDirectory(this,tr("Open directory of images"),".",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-		//if(importDirName=="")
-		//return;
-
 		QStringList importFilesName = QFileDialog::getOpenFileNames(this, "Select all images files", ".", "*.tif *.png *.bmp *.jpg");
 		if(importFilesName.size()==0)
 			return;
@@ -2838,7 +2701,8 @@ bool ProjectUserInterface_Qt::availableOE()
                 dpi = QInputDialog::getInt(this, tr("Inform images dpi"), QString("dpi for image ").append(importFilesName.at(i)).append(":"), dpi, 0, 10000, 1, &ok);
 				loading.setFormat(tr("Image %v/%m : %p%"));
 				// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
-                xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,dpi);
+                xmlImages=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,dpi);
+                manager->addComponent(xmlImages,"images");
 				loading.setValue(i+1);
 			}
 		}
@@ -2855,12 +2719,11 @@ bool ProjectUserInterface_Qt::availableOE()
 				loading.setFormat(tr("Image %v/%m : %p%"));
 				//QFileInfo imageFileInfo(importFilesName.at(i));
 				// Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
-                xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,imageWidth,imageHeight,dpi);
+                xmlImages=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,imageWidth,imageHeight,dpi);
+                manager->addComponent(xmlImages,"images");
 				loading.setValue(i+1);
 			}
 		}
-
-		manager->addComponent(xmlImages,"images");
 
 		loadWidget->close();
 		updateTree();
@@ -2967,11 +2830,11 @@ bool ProjectUserInterface_Qt::availableOE()
 
 			QStringList OIMarks;
 			OIMarks<<marksList.at(i)<<marksList.at(i+1)<<marksList.at(i+2)<<marksList.at(i+3);
-			newOIXML+=OIToXml(OIMarks,imagescount++);
+            newOIXML=OIToXml(OIMarks,imagescount++);
+            manager->addComponent(newOIXML,"interiorOrientation");
 			loading.setValue(i+1);
 		}
 
-		manager->addComponent(newOIXML,"interiorOrientation");
 		loadWidget->close();
 
 		updateTree();
@@ -3033,4 +2896,3 @@ bool ProjectUserInterface_Qt::availableOE()
 } // namespace eng
 } // namespace uerj
 } // namespace br
-

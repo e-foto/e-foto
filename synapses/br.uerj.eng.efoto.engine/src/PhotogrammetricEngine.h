@@ -13,8 +13,10 @@ namespace engine {
 
 class Q_DECL_EXPORT PhotogrammetricEngine: public QObject, public IPhotogrammetricEngine
 {
-		Q_OBJECT
+        Q_OBJECT
+#ifdef EFOTO_ENGINE
 		Q_INTERFACES(cortex::ISynapse br::uerj::eng::efoto::engine::IPhotogrammetricEngine)
+#endif //EFOTO_ENGINE
 
         deque<IProjectPtr> project;
 

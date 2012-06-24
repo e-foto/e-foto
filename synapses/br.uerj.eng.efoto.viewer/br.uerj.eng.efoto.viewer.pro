@@ -15,6 +15,7 @@ INCLUDEPATH += $$synapseIncludePath(br.uerj.eng.efoto.engine)
 # ------------------------------------------------
 
 DEFINES += SYNAPSE_EFOTO
+DEFINES += EFOTO_VIEWER
 
 INCLUDEPATH += src \
 	src/imageDisplay \

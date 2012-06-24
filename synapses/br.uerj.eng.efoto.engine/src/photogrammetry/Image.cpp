@@ -19,7 +19,8 @@ namespace efoto {
  */
 Image::Image()
 {
-
+    myIO = NULL;
+    myEO = NULL;
 }
 
 /**
@@ -30,6 +31,8 @@ Image::Image(int myId, int mySensorId)
 	id = myId;
 	sensorId = mySensorId;
     flightDirection = 3*M_PI;
+    myIO = NULL;
+    myEO = NULL;
 }
 
 /**
