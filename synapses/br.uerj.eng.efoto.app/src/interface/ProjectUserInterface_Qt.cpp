@@ -37,7 +37,7 @@ namespace efoto {
 		actionSave_file->setEnabled(false);
 		actionSave_file_as->setEnabled(false);
 
-		setWindowTitle(tr("efoto[Project Manager]"));
+        setWindowTitle(tr("MFD[Project Manager]"));
 		imageForm.proj = this;
 
 		// Realiza as conexÃÂµes necessÃÂ¡rias
@@ -823,9 +823,9 @@ namespace efoto {
 				projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
 		}
 		if (headerForm.lineEditName->text() != "")
-			setWindowTitle(headerForm.lineEditName->text() + tr(" - efoto[Project Manager]"));
+            setWindowTitle(headerForm.lineEditName->text() + tr(" - MFD[Project Manager]"));
 		else
-			setWindowTitle(tr("efoto[Project Manager]"));
+            setWindowTitle(tr("MFD[Project Manager]"));
 
 		ETreeModel* etm = manager->getTreeModel();
 
@@ -877,9 +877,9 @@ namespace efoto {
 			updateLabelFileName();
 		}
 		if (headerForm.lineEditName->text() != "")
-			setWindowTitle(headerForm.lineEditName->text() + tr(" - efoto[Project Manager]"));
+            setWindowTitle(headerForm.lineEditName->text() + tr(" - MFD[Project Manager]"));
 		else
-			setWindowTitle(tr("efoto[Project Manager]"));
+            setWindowTitle(tr("MFD[Project Manager]"));
 
 		ETreeModel* etm = manager->getTreeModel();
 
