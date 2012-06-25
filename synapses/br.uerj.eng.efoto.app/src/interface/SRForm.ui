@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Spatial Ressection</string>
+   <string>Spatial Resection</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resource/resource.qrc">
@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -147,7 +147,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSet">
    <property name="icon">
-    <iconset resource="../resource/resource.qrc">
+    <iconset>
      <normaloff>:/icon/mark.png</normaloff>:/icon/mark.png</iconset>
    </property>
    <property name="text">
@@ -203,7 +203,7 @@ p, li { white-space: pre-wrap; }
     <string>Exterior &amp;orientation</string>
    </property>
    <property name="iconText">
-    <string>Spatial Ressection</string>
+    <string>Spatial Resection</string>
    </property>
    <property name="toolTip">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;

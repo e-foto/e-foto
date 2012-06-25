@@ -1295,7 +1295,7 @@ menuExecute->setEnabled(true);
 			imageForm.setEOAvailable(true);
 
 			if (node3.attribute("type")=="spatialRessection")
-				imageForm.groupBox_2->setTitle("OE Parameters (Spatial Ressection)");
+                imageForm.groupBox_2->setTitle("OE Parameters (Spatial Resection)");
 			else
 				imageForm.groupBox_2->setTitle("OE Parameters (Phototriangulation)");
 
