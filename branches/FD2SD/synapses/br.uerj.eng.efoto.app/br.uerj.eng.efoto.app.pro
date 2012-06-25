@@ -144,12 +144,9 @@ HEADERS =  include/IPhotogrammetry.h \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.h \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.h \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleTools.h \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.h \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.h \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.h \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.h \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.h \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.h
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.h
 
 
 SOURCES =  src/Photogrammetry.cpp \
@@ -259,12 +256,9 @@ SOURCES =  src/Photogrammetry.cpp \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleDisplay.cpp \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleScene.cpp \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleTools.cpp \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/SingleViewer.cpp \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoDisplay.cpp \
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoScene.cpp \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.cpp \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/DoubleViewer.cpp \
-        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoViewer.cpp
+        ../br.uerj.eng.efoto.viewer/src/imageDisplay/StereoTools.cpp
 
 
 FORMS =   src/formDisplay/FeatEditor.ui \
