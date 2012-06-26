@@ -90,6 +90,71 @@ Matrix InteriorOrientation::getP()
 		return P;
 }
 
+/**
+ * Get the value of a0
+ * @return the value of a0
+ */
+double InteriorOrientation::getXaa0()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(1,1);
+    return 0;
+}
+
+/**
+ * Get the value of a1
+ * @return the value of a1
+ */
+double InteriorOrientation::getXaa1()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(2,1);
+    return 0;
+}
+
+/**
+ * Get the value of a2
+ * @return the value of a2
+ */
+double InteriorOrientation::getXaa2()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(3,1);
+    return 0;
+}
+
+/**
+ * Get the value of b0
+ * @return the value of b0
+ */
+double InteriorOrientation::getXab0()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(4,1);
+    return 0;
+}
+
+/**
+ * Get the value of b1
+ * @return the value of b1
+ */
+double InteriorOrientation::getXab1()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(5,1);
+    return 0;
+}
+
+/**
+ * Get the value of b2
+ * @return the value of b2
+ */
+double InteriorOrientation::getXab2()
+{
+    if (Xa.getRows() == 6)
+        return Xa.get(6,1);
+    return 0;
+}
 
 // Composed object accessors
 //

@@ -216,6 +216,73 @@ Matrix SpatialRessection::getLastL0()
 }
 
 /**
+ * Get the value of X0
+ * @return the value of X0
+ */
+double SpatialRessection::getXaX0()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(1,1);
+    return 0;
+}
+
+/**
+ * Get the value of Y0
+ * @return the value of Y0
+ */
+double SpatialRessection::getXaY0()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(2,1);
+    return 0;
+}
+
+/**
+ * Get the value of Z0
+ * @return the value of Z0
+ */
+double SpatialRessection::getXaZ0()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(3,1);
+    return 0;
+}
+
+/**
+ * Get the value of phi
+ * @return the value of phi
+ */
+double SpatialRessection::getXaphi()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(4,1);
+    return 0;
+}
+
+
+/**
+ * Get the value of omega
+ * @return the value of omega
+ */
+double SpatialRessection::getXaomega()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(5,1);
+    return 0;
+}
+
+/**
+ * Get the value of kappa
+ * @return the value of kappa
+ */
+double SpatialRessection::getXakappa()
+{
+    if(Xa.getRows()==6)
+        return Xa.get(6,1);
+    return 0;
+}
+
+/**
  *
  */
 deque<int> SpatialRessection::getSelectedPoints()

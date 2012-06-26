@@ -8,7 +8,7 @@
 
 #include "EObject.h"
 #include "Project.h"
-
+#include "Dms.h"
 #include <QtGui>
 
 namespace br {
@@ -78,14 +78,17 @@ public:
         EDomElement getTerrainXml();        
         EDomElement getSensorXml();
         EDomElement getFlightXml();
+        EDomElement getImageXml(int id);
+        EDomElement getInteriorOrientationXml(int id);
+        EDomElement getExteriorOrientationXml(int id);
         string getAllXml();
 
         string eprHeader();
         string eprTerrain();
         string eprSensors();
         string eprFlights();
-        string eprImages();
-        string eprBlockPoints();
+        string eprImages(QList<QTreeWidgetItem*> treeItems);
+        string eprBlockPoints(QList<QTreeWidgetItem*> treeItems);
         string eprAffineTransformation();
         string eprSpatialRessection();
         string eprPhotogrammetricBlock();
@@ -97,6 +100,7 @@ public:
         string eprOrthorectification();
 
         bool makeFile(string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
+        bool makeXslt(int idExt, string path);
 };
 
 } // namespace efoto
