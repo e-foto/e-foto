@@ -29,12 +29,12 @@ class Project
 	Terrain* theTerrain;
 	deque<Sensor*> sensors;
 	deque<Flight*> flights;
-    deque<Image*> images;
-    deque<Point*> points;
-    deque<DEM*> DEMs;
-    deque<OrthoImage*> orthos;
-    deque<featuresFile*> feats;
-    string processStates;
+        deque<Image*> images;
+        deque<Point*> points;
+        deque<DEM*> DEMs;
+        deque<OrthoImage*> orthos;
+        deque<featuresFile*> feats;
+        string processStates;
 	deque<InteriorOrientation*> IOs;
 	deque<ExteriorOrientation*> EOs;
 

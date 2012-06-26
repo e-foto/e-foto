@@ -72,6 +72,12 @@ public:
         Matrix getA();
         Matrix getP();
 
+        double getXaa0();
+        double getXaa1();
+        double getXaa2();
+        double getXab0();
+        double getXab1();
+        double getXab2();
 
         // Composed objects accessors
         //

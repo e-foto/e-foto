@@ -87,6 +87,12 @@ public:
 	Matrix getL0();
 	Matrix getLb();
 	Matrix getLastL0();
+        double getXaX0();
+        double getXaY0();
+        double getXaZ0();
+        double getXaphi();
+        double getXaomega();
+        double getXakappa();
 
 	deque<int> getSelectedPoints();
 	ImageSpaceCoordinate* getPointForFlightDirection();

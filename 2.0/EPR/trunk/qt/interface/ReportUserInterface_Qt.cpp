@@ -402,7 +402,7 @@ bool ReportUserInterface_Qt::saveEPR()
         } else {
             if(radioHtmlButton->isChecked())
             {
-                idExt = 2;
+                idExt = 2;                
             }
         }
         //filename.append(chosenExtension);
@@ -414,8 +414,23 @@ bool ReportUserInterface_Qt::saveEPR()
     QString filePath = filename.left(i);
 
     bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
+    bool doneXslt = false;
 
-    if(done == true)
+    if(idExt == 1)
+    {
+        doneXslt = manager->makeXslt(1,filePath.toStdString());
+    } else {
+        if(idExt == 2)
+        {
+            doneXslt = manager->makeXslt(2,filePath.toStdString());
+        }
+        else
+        {
+            doneXslt = true;
+        }
+    }
+
+    if(done == true && doneXslt == true)
     {
         QMessageBox msgBox;
         msgBox.setText("Foi salvo com sucesso.");

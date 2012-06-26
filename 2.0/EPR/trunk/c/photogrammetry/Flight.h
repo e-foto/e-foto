@@ -43,8 +43,9 @@ private:
 
 public:
 
-	/**
+    /**
  * \brief Construtor vazio.
+ * \todo: revisar
  */
 	Flight();
 
@@ -61,10 +62,16 @@ public:
 	virtual ~Flight();
 
 	/**
- * \brief Método de acesso que seta a id do vôo.
- * \param newId	Novo identificador.
+ * \brief Método de acesso que seta a chave interna do vôo.
+ * \param newId	Nova chave interna.
  */
 	void setId(int newId);
+
+        /**
+         * \brief Método de acesso que seta o identificador do vôo.
+         * \param nickname Novo identificador.
+        */
+        void setFlightId(string nickname);
 
 	/**
  * \brief Método de acesso que seta a id do sensor associado ao vôo.
@@ -102,23 +109,30 @@ public:
  */
 	void setHeight(double newHeight);
 
-	/**
- * \brief Método de acesso que seta a sobreposição longitudinal.
- * \param newLongitudinalOverlap	Nova sobreposição longitudinal.
- */
+        /**
+        * \brief Método de acesso que seta a sobreposição longitudinal.
+        * \param newLongitudinalOverlap	Nova sobreposição longitudinal.
+        */
 	void setLongitudinalOverlap(double newLongitudinalOverlap);
 
-	/**
- * \brief Método de acesso que seta a sobreposição transversal.
- * \param newTransversalOverlap	Nova sobreposição transversal.
- */
+        /**
+        * \brief Método de acesso que seta a sobreposição transversal.
+        * \param newTransversalOverlap	Nova sobreposição transversal.
+        */
 	void setTransversalOverlap(double newTransversalOverlap);
 
 	/**
- * \brief Método de acesso que retorna a id do vôo.
- * \return int	Identificador do voo.
- */
+        * \brief Método de acesso que retorna a chave interna do vôo.
+        * \return int	Chave interna do voo.
+        */
 	int getId();
+
+        /**
+        * \brief Método de acesso que retorna o identificador do vôo.
+        * \return string Identificador do voo.
+        */
+
+        string getFlightId();
 
 	/**
  * \brief Método de acesso que retorna a id do sensor associado ao vôo.

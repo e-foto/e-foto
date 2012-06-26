@@ -43,6 +43,10 @@ void Sensor::setId(int newId)
 {
 	id = newId;
 }
+
+void Sensor::setSensorId(string nickname) {
+        sensorId = nickname;
+}
 /*
 void Sensor::setFocalDistance(double newFocalDistance)
 {
@@ -72,6 +76,10 @@ void Sensor::setCalculationMode(string newCalculationMode)
 int Sensor::getId()
 {
 	return id;
+}
+string Sensor::getSensorId()
+{
+        return sensorId;
 }
 /*
 double Sensor::getFocalDistance()

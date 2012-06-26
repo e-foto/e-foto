@@ -96,14 +96,16 @@ public:
 	virtual ~Sensor();
 
 	// Private attributes accessor methods
-	//
-	void setId(int newId);
+    //
+        void setId(int newId);
+        void setSensorId(string nickname);
 	//void setFocalDistance(double newFocalDistance);
 	//void setFocalDistanceSigma(double newFocalDistanceSigma);
 	//void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates);
 	void setDescription(string newDescription);
 	void setCalculationMode(string newCalculationMode);
 	int getId();
+        string getSensorId();
 	virtual double getFocalDistance() = 0;
 	virtual double getFocalDistanceSigma() = 0;
 	virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
@@ -114,8 +116,8 @@ public:
 	//
 	void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
 	void putFlight(Flight* newFligthAssociation);
-    void clearImages() {myImages.clear();} // Remove associations.
-    void clearFlights() {myFlights.clear();}
+        void clearImages() {myImages.clear();} // Remove associations.
+        void clearFlights() {myFlights.clear();}
 	Image* getImage(int imageId); // Get associated image or flight at sensor by id.
 	Flight* getFlight(int flightId);
 	int countImages(); // Inform the number of images or flights associated the sensor.
