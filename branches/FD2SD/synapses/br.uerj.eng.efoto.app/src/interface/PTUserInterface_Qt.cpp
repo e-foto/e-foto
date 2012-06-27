@@ -74,7 +74,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(&doubleViewer->getToolBar()->leftMark,SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
     connect(&doubleViewer->getToolBar()->rightMark,SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 
-	setWindowTitle("E-foto - Phototriangulation");
+    setWindowTitle("MFD - Phototriangulation");
 
 	connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));

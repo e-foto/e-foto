@@ -79,7 +79,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     //tool->addAction(showFotoIndice);
     //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
 
-	setWindowTitle("E-foto - Phototriangulation");
+    setWindowTitle("MFD - Phototriangulation");
 
 	connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
