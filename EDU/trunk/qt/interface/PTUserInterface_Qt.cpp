@@ -6,13 +6,11 @@
 #include <QMessageBox>
 #include "ConvertionsSystems.h"
 
-#include <QDebug>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
-
 
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 

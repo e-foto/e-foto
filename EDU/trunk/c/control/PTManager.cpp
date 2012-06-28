@@ -435,7 +435,8 @@ deque<string> PTManager::getStringTypePoints(string imageFileName)
 				//qDebug("Achou %s",imageFileName.c_str());
 				Image *temp=listAllImages.at(i);
 				int numpnts=temp->countPoints();
-				for (int j=0;j<numpnts;j++)
+
+                for (int j=0;j<numpnts;j++)
 				{
 					//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
 					if (temp && temp->getPointAt(j) && temp->getPointAt(j)->getType() == Point::CONTROL)
@@ -771,7 +772,6 @@ void PTManager::saveMarks()
     for (int i=0; i<listAllPoints.size(); i++)
         points += listAllPoints.at(i)->xmlGetData().c_str();
     points+="</points>\n";
-
     EDomElement newXml(efotoManager->xmlGetData());
     newXml.replaceChildByTagName("points",points);
     efotoManager->xmlSetData(newXml.getContent());
