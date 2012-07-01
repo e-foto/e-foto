@@ -69,6 +69,7 @@ protected:
 
 	QList<PointMark*> undoStack;
 
+	string fileExport;
 private:
 	/**
  * \brief Metodo que faz as primeiras configuraçoes da interface
@@ -254,6 +255,11 @@ public slots:
 	void FlightFormClosed(QList<int> list);
 		// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	//void updatePoint(int, int, double);
+
+	void exportCoordinatestoTxt();
+
+	void exportCoordinates();
+
 protected slots:
 
 	/**
