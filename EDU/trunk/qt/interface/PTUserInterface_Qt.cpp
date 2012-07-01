@@ -391,8 +391,10 @@ void PTUserInterface_Qt::viewReport()
 	QHBoxLayout *buttonsLayout= new QHBoxLayout();
 	QPushButton *acceptButton= new QPushButton(tr("Accept"));
 	QPushButton *discardButton= new QPushButton(tr("Discard"));
+	QPushButton *exportTxtButton= new QPushButton(tr("Export values"));
 	buttonsLayout->addWidget(acceptButton);
 	buttonsLayout->addWidget(discardButton);
+	buttonsLayout->addWidget(exportTxtButton);
 
 	QVBoxLayout *reportLayout= new QVBoxLayout;
 	//reportLayout->addLayout(infoLayout);
@@ -406,7 +408,7 @@ void PTUserInterface_Qt::viewReport()
 	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
 	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
 	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
-
+	connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinates));
 	resultView->setWindowModality(Qt::ApplicationModal);
 }
 
@@ -500,6 +502,7 @@ bool PTUserInterface_Qt::calculatePT()
 	{
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
+
 	return result;
 }
 
@@ -1181,6 +1184,52 @@ void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
 		//flightDirectionForm->close();
 	}
 }
+
+void PTUserInterface_Qt::exportCoordinates()
+{
+	QWidget *chooseSystem=new QWidget();
+
+	QHBoxLayout *hl1=new QHBoxLayout();
+	QHBoxLayout *hl2=new QHBoxLayout();
+	QVBoxLayout *vl1= new QVBoxLayout();
+
+	QLabel *lbl1= new QLabel("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose system(s) to export</p></body></html>");
+	QLabel *lbl2= new QLabel("File: ");
+	QCheckBox *geodesicCheckBox= new QCheckBox("Geodesic",this);
+	QCheckBox *topocentricCheckBox= new QCheckBox("Local Topocentric",this);
+	QLineEdit *fileLineEdit = new QLineEdit(this);
+	QToolButton *fileChooseButton= new QToolButton("...",this);
+	fileChooseButton->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#000000;\">Choose file and path to txt flie</span></p></body></html>");
+	QPushButton *exportButton =  new QPushButton("Export");
+
+	hl1->addWidget(geodesicCheckBox);
+	hl1->addWidget(topocentricCheckBox);
+	hl2->addWidget(lbl2);
+	hl2->addWidget(fileLineEdit);
+	hl2->addWidget(fileChooseButton);
+	vl1->addWidget(lbl1);
+	vl1->addLayout(hl1);
+	vl1->addLayout(hl2);
+
+	chooseSystem->setLayout(vl1);
+	fileLineEdit->setReadOnly(true);
+	chooseSystem->show();
+
+	qDebug() << "Entrou ";
+	connect(exportButton,SIGNAL(clicked()),this,SLOT(exportCoordinatestoTxt()));
+
+
+}
+
+
+void PTUserInterface_Qt::exportCoordinatestoTxt()
+{
+
+	fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt").toStdString();
+
+
+}
+
 
 
 void PTUserInterface_Qt::exportToKml()
