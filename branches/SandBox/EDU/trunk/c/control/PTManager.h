@@ -634,6 +634,9 @@ public:
 
 		deque<string> getImagesKappaSet();
 
+        string getCoordinatesGeodesic();
+        string getCoordinatesTopocentric();
+
 };
 
 } // namespace efoto
