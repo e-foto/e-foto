@@ -133,8 +133,8 @@ namespace efoto {
 		centralWidget()->layout()->addWidget(&controlButtons);
 
 		// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
-        //QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
-        //connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
+        QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
+        connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
 		// Inserido pelo Paulo 05/09/2011
 		// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
