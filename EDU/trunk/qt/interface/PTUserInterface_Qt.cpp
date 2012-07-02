@@ -408,7 +408,7 @@ void PTUserInterface_Qt::viewReport()
 	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
 	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
 	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
-	connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinates));
+    connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
 	resultView->setWindowModality(Qt::ApplicationModal);
 }
 
@@ -1195,10 +1195,11 @@ void PTUserInterface_Qt::exportCoordinates()
 
 	QLabel *lbl1= new QLabel("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose system(s) to export</p></body></html>");
 	QLabel *lbl2= new QLabel("File: ");
-	QCheckBox *geodesicCheckBox= new QCheckBox("Geodesic",this);
-	QCheckBox *topocentricCheckBox= new QCheckBox("Local Topocentric",this);
+    geodesicCheckBox= new QCheckBox("Geodesic",this);
+    topocentricCheckBox= new QCheckBox("Local Topocentric",this);
 	QLineEdit *fileLineEdit = new QLineEdit(this);
-	QToolButton *fileChooseButton= new QToolButton("...",this);
+    QToolButton *fileChooseButton= new QToolButton(this);
+    fileChooseButton->setText("...");
 	fileChooseButton->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#000000;\">Choose file and path to txt flie</span></p></body></html>");
 	QPushButton *exportButton =  new QPushButton("Export");
 
@@ -1210,26 +1211,37 @@ void PTUserInterface_Qt::exportCoordinates()
 	vl1->addWidget(lbl1);
 	vl1->addLayout(hl1);
 	vl1->addLayout(hl2);
-
+    vl1->addWidget(exportButton);
 	chooseSystem->setLayout(vl1);
 	fileLineEdit->setReadOnly(true);
 	chooseSystem->show();
 
 	qDebug() << "Entrou ";
-	connect(exportButton,SIGNAL(clicked()),this,SLOT(exportCoordinatestoTxt()));
+    connect(exportButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
 
 
 }
 
 
-void PTUserInterface_Qt::exportCoordinatestoTxt()
+void PTUserInterface_Qt::exportCoordinatesTxt()
 {
 
-	fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt").toStdString();
+    QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
+    if(!fileExport.endsWith(".txt"))
+        fileExport.append(".txt");
 
+    QFile *exportTxt=new QFile(fileExport);
+    exportTxt->setFileName(fileExport);
+    exportTxt->open(QIODevice::WriteOnly);
 
+    stringstream coordinates;
+
+    coordinates << ptManager->getCoordinatesGeodesic();
+    coordinates << ptManager->getCoordinatesTopocentric();
+
+    exportTxt->write(coordinates.str().data());
+    exportTxt->close();
 }
-
 
 
 void PTUserInterface_Qt::exportToKml()

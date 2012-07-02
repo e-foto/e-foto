@@ -9,6 +9,8 @@
 #include "WindowsSelectPage.h"
 #include "ImageViewers.h"
 #include "FlightDirectionForm.h"
+#include <QCheckBox>
+
 
 namespace br {
 namespace uerj {
@@ -69,6 +71,8 @@ protected:
 
 	QList<PointMark*> undoStack;
 
+    QCheckBox *geodesicCheckBox;
+    QCheckBox *topocentricCheckBox;
 	string fileExport;
 private:
 	/**
@@ -256,7 +260,7 @@ public slots:
 		// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
 	//void updatePoint(int, int, double);
 
-	void exportCoordinatestoTxt();
+    void exportCoordinatesTxt();
 
 	void exportCoordinates();
 

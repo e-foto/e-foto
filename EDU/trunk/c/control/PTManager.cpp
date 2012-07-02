@@ -1429,7 +1429,7 @@ bool PTManager::allKappaSet()
 
 deque<string> PTManager::getImagesKappaSet()
 {
-	deque<string> list;
+    deque<string> list;
 	int nImages= listAllImages.size();
 	for (int i=0;i<nImages;i++)
 	{
@@ -1437,7 +1437,76 @@ deque<string> PTManager::getImagesKappaSet()
 		if (img->getFlightDirection()<2.5*M_PI && img->getFlightDirection()>=0)
 			list.push_back(img->getFilename());
 	}
-	return list;
+    return list;
+}
+
+string PTManager::getCoordinatesGeodesic()
+{
+    int rows=listAllPoints.size();
+    string result;
+    result+= "\t\t\tCoordinates in geodesic\n";
+    result+="PointId\t\tPhi\t\t\tLambda\n";
+
+    int hemi = getTerrainLatHemisphere();
+    int zone=getTerrainZone();
+    GeoSystem sys=getTerrainDatum();
+
+    for (int i=0;i<rows;i++)
+    {
+        Point *pnt=listAllPoints.at(i);
+        ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+        double E = temp.getX();
+        double N = temp.getY();
+        double H = temp.getZ();
+
+        Matrix gc= ConvertionsSystems::utmToGeo(E,N,zone,hemi,sys);
+
+        result += pnt->getPointId();
+        result += "\t\t";
+        result += Conversion::doubleToString(gc.get(1,1)*180/M_PI,5);
+        result += "\t\t";
+        result += Conversion::doubleToString(gc.get(1,2)*180/M_PI,5);
+        result +="\n";
+    }
+    return result;
+}
+
+string PTManager::getCoordinatesTopocentric()
+{
+
+    int rows=listAllPoints.size();
+    string result;
+    result += "\t\t\tCoordinates in Local Topocentric\n";
+    result +="PointId\t\tE\t\t\t\tN\t\t\t\t\H\n";
+    int hemi = getTerrainLatHemisphere();
+    int zone=getTerrainZone();
+    double latterrain=getPhiTerrain();
+    double longterrain=getLambdaTerrain();
+    double h0=getAltitudeMedia();
+    GeoSystem sys=getTerrainDatum();
+
+
+    for (int i=0;i<rows;i++)
+        {
+            Point *pnt=listAllPoints.at(i);
+            ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+            double E = temp.getX();
+            double N = temp.getY();
+            double H = temp.getZ();
+
+            Matrix gc= ConvertionsSystems::utmToNunes(E,N,H,zone,hemi,latterrain,longterrain,h0,sys);
+
+            result += pnt->getPointId();
+            result += "\t\t";
+            result += Conversion::doubleToString(gc.get(1,1),3);
+            result += "\t\t\t";
+            result += Conversion::doubleToString(gc.get(1,2),3);
+            result += "\t\t\t";
+            result += Conversion::doubleToString(gc.get(1,3),3);
+            result +="\n";
+        }
+
+    return result;
 }
 
 
@@ -1451,74 +1520,6 @@ Matrix PTManager::getDigitalCoordinate(int imageKey, int pointKey)
 	result.set(1,2,coord.getLin());
 	return result;
 }
-
-/** Em teste de sort dos pontos fotogrametricos segundo Francisco,TFC.
-*/
-/*
-void PTManager::photogrammetricSort()
-{
- pt->calculateInicialsValues();
- Matrix oe=pt->getMatrixInicialValues();
- for (int i=0;i<listAllPoints.size();i++)
- {
-  Point *pnt=listAllPoints.at(i);
-  Image *img=pnt->getImageAt(0);
-  ImageSpaceCoordinate coord=pnt->getDigitalCoordinate(img->getId());
-  digitalToEN(img,coord.getCol(),coord.getLin(),oe);
- }
-}
-
-Matrix PTManager::digitalToEN(Image *img,int col, int row,Matrix oe)
-{
- //oe.show('f',3,"OE INICIAL");
- int index=whereInImages(img);
- if (index<0)
-  return Matrix(1,2);
-
- //int width=img->getWidth();
- //int height=img->getHeight();
- double Z0=oe.get(index+1,6);
- double c=img->getSensor()->getFocalDistance();
-
- double P1x=pt->digitalToAnalog(img->getIO(),row,col).get(1,1);
- double P1y=pt->digitalToAnalog(img->getIO(),row,col).get(1,2);
-
- double PPx=img->getSensor()->getPrincipalPointCoordinates().getXi();
- double PPy=img->getSensor()->getPrincipalPointCoordinates().getEta();
-
- //double P1y=pt->digitalToAnalog(listOis.at(i),0,width/2).get(1,2);
-
- double deltaE=Z0*(P1x-PPx)/c;
- double deltaN=Z0*(P1y-PPy)/c;
-
- //qDebug("deltaE : %.3f",deltaE);
- //qDebug("deltaN : %.3f",deltaN);
-
- double E1=oe.get(index+1,4)+deltaE;
- double N1=oe.get(index+1,5)+deltaN;
- //double E2=oe.get(i+1,4)+deltaE;
- //double N2=oe.get(i+1,5)-deltaN;
-
-
- //Matrix plh1=ConvertionsSystems::utmToGeoFran(E1,N1,0,zona,GeoSystem(),hemiLatitude);
- //Matrix plh2=ConvertionsSystems::utmToGeoFran(E2,N2,0,zona,GeoSystem(),hemiLatitude);
-/*
- double lat1 = plh1.get(1,1)*180/M_PI;
- lat1 = (hemiLatitude =='S'? -lat1 : lat1);
- double longi1 = plh1.get(1,2)*180/M_PI;
-/*
- double lat2 = plh2.get(1,1)*180/M_PI;
- lat2 = (hemiLatitude =='S'? -lat2 : lat2);
- double longi2 =plh2.get(1,2)*180/M_PI;*/
-/*
- Matrix result(1,2);
- result.set(1,1,E1);
- result.set(1,2,N1);
- //qDebug("imagem 1 ponto 1, col: %d \tlin:%d",col,row);
- result.show('f',4,"Matrix EN");
- return result;
-}
-*/
 
 bool PTManager::hasAllImagesInitialValues()
 {

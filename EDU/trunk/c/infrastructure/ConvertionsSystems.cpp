@@ -649,6 +649,36 @@ Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0,
 
 }
 
+Matrix ConvertionsSystems::nunesToGeoElips(double X, double Y, double Z, double phi0, double lambda0, double h0,GeoSystem system)
+{
+
+    Matrix rot(3,3);
+    rot.set(1,1,-sin(lambda0));            rot.set(1,2,cos(lambda0));              rot.set(1,3,0);
+    rot.set(2,1,-sin(phi0)*cos(lambda0));  rot.set(2,2,-sin(phi0)*sin(lambda0));   rot.set(2,3,cos(phi0));
+    rot.set(3,1,cos(phi0)*cos(lambda0));   rot.set(3,2,cos(phi0)*sin(lambda0));    rot.set(3,3,sin(phi0));
+
+    Matrix xyz(3,1);
+    xyz.set(1,1,X);
+    xyz.set(2,1,Y);
+    xyz.set(3,1,Z);
+
+    Matrix delta(3,1);
+    delta=rot.transpose()*xyz;
+
+    Matrix XYZ0=GeoelipToGeocentricCartesian(phi0,lambda0,h0,system);
+    double X0 = XYZ0.get(1,1);
+    double Y0 = XYZ0.get(1,2);
+    double Z0 = XYZ0.get(1,3);
+
+    double x = delta.get(1,1)+X0;
+    double y = delta.get(2,1)+Y0;
+    double z = delta.get(3,1)+Z0;
+
+    Matrix result=GeocentricCartesianToGeoelip(x,y,z,system);
+
+    return result;
+}
+
 //E o Lambda0 nao serve para nada??
 double ConvertionsSystems::getNunesRaio(double phi0, double lambda0, GeoSystem sys)
 {
