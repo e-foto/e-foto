@@ -7,7 +7,7 @@
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "EDom.h"
-
+#include <QProcess>
 #include <QPoint>
 #include <QGridLayout>
 #include <QPushButton>
@@ -31,7 +31,7 @@ public slots:
 
 	void selectAllChildren(QTreeWidgetItem* father);
 	void unselectFatherByKid(QTreeWidgetItem* kid);
-        bool saveEPR();       
+    bool saveEPR();
 
 protected:
 	static ReportUserInterface_Qt* ReportInst;

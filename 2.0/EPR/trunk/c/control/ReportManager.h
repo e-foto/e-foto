@@ -83,17 +83,18 @@ public:
         EDomElement getExteriorOrientationXml(int id);
         string getAllXml();
 
+        void checkTree(QList<QTreeWidgetItem*> treeItems);
         string eprHeader();
         string eprTerrain();
         string eprSensors();
         string eprFlights();
         string eprImages(QList<QTreeWidgetItem*> treeItems);
         string eprBlockPoints(QList<QTreeWidgetItem*> treeItems);
-        string eprAffineTransformation();
-        string eprSpatialRessection();
+        string eprAffineTransformation(QList<QTreeWidgetItem*> treeItems);
+        string eprSpatialRessection(QList<QTreeWidgetItem*> treeItems);
         string eprPhotogrammetricBlock();
-        string eprInteriorOrientation();
-        string eprExteriorOrientation();
+        string eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems);
+        string eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems);
         string eprStereoPairs();
         string eprStereoPlotting();
         string eprDSM();
