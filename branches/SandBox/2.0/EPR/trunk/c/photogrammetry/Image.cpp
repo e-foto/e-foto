@@ -539,7 +539,7 @@ void Image::xmlSetData(string xml)
 	//spatialCoordinates.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
 
 	EDomElement gnss = root.elementByTagName("GNSS");
-	deque<double> gnssPos = gnss.elementByTagName("gml:pos").toGmlPos();
+    deque<double> gnssPos = gnss.elementByTagName("gml:pos").toGmlPos();
 	if (gnssPos.size() == 3)
 	{
 		gnssAvailable = true;

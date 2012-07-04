@@ -187,15 +187,17 @@ public:
 	* \brief Método que retorna uma instância existente da classe InteriorOrientation.
 	* \param id Identificador da Orientação Interior.
 	* \return InteriorOrientation Instância da classe InteriorOrientation.
-	*/
-	InteriorOrientation* IO(int id);
+    */
+    InteriorOrientation* IO(int id);
+    deque<InteriorOrientation*> allIOs() {return IOs;}
 
 	/**
 	* \brief Método que retorna uma instância existente da classe ExteriorOrientation.
 	* \param id Identificador da Orientação Exterior.
 	* \return ExteriorOrientation Instância da classe ExteriorOrientation.
-	*/
-	ExteriorOrientation* EO(int id);
+    */
+    ExteriorOrientation* EO(int id);
+    deque<ExteriorOrientation*> allEOs() {return EOs;}
 
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
