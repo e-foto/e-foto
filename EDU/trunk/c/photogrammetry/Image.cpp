@@ -605,7 +605,7 @@ string Image::xmlGetData()
 	}
 	if (gnssSigmaAvailable)
 	{
-		result << "<sigma>" << gnssSigma.xmlGetData() << "</gml:sigma>\n";
+        result << "<sigma>" << gnssSigma.xmlGetData() << "</sigma>\n";
 	}
 	else
 	{
@@ -628,7 +628,7 @@ string Image::xmlGetData()
 	}
 	if (insSigmaAvailable)
 	{
-		result << "<sigma>" << insSigma.xmlGetData() << "</gml:sigma>\n";
+        result << "<sigma>" << insSigma.xmlGetData() << "</sigma>\n";
 	}
 	else
 	{

@@ -861,9 +861,9 @@ string PTManager::getPhotoTriXml()
 
 	fotoTriXml << "\t<iterations>"<< Conversion::intToString(pt->getTotalIterations()) <<"</iterations>\n";
 	fotoTriXml << "\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
-	fotoTriXml << "\t<metricConvergency>"<< pt->getMetricConvergencyValue()<<"</metricConvergency>\n";
-	fotoTriXml << "\t<rmse>" << pt->calculateRMSE() << "</rmse>\n";
-	fotoTriXml << "\t<angularConvergency>"<< pt->getAngularConvergencyValue()<<"</angularConvergency>\n";
+    fotoTriXml << "\t<metricConvergency uom=\#m\">"<< pt->getMetricConvergencyValue()<<"</metricConvergency>\n";
+    fotoTriXml << "\t<angularConvergency uom=\"#rad\">"<< pt->getAngularConvergencyValue()<<"</angularConvergency>\n";
+    fotoTriXml << "\t<rmse>" << pt->calculateRMSE() << "</rmse>\n";
 
 	fotoTriXml << getUsedPointsXml() << getUsedImagesXml();
 
