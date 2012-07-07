@@ -17,8 +17,9 @@ Project::Project()
 {
 	xmlData = "";
 	processStates = "";
-	theTerrain = NULL;
-	theHeader = NULL;
+    theTerrain = NULL;
+    theHeader = NULL;
+    thePhotoTri = NULL;
 }
 
 /**
@@ -300,6 +301,19 @@ void Project::instanceAllEOs()
 	}
 }
 
+PhotoTri *Project::instancePhotoTri()
+{
+    if (thePhotoTri != NULL)
+        return thePhotoTri;
+    EDomElement root(xmlData);
+    EDomElement xmlPhoto = root.elementByTagName("phototriangulation");
+    if (xmlPhoto.getContent().compare("") == 0)
+        return NULL;
+    thePhotoTri = new PhotoTri;
+    thePhotoTri->xmlSetData(xmlPhoto.getContent());
+    return thePhotoTri;
+}
+
 void Project::deleteHeader(bool makeReconnections)
 {
 	if (theHeader != NULL)
@@ -470,6 +484,17 @@ void Project::deleteEO(int id, bool makeReconnections)
 	}
 	if (makeReconnections)
 		linkAll();
+}
+
+void Project::deletePhotoTri(bool makeReconnections)
+{
+    if (thePhotoTri != NULL)
+    {
+        delete(thePhotoTri);
+        thePhotoTri = NULL;
+    }
+    if (makeReconnections)
+        linkAll();
 }
 
 void Project::closeProject()
@@ -720,6 +745,13 @@ ExteriorOrientation* Project::EO(int id)
 	return NULL;
 }
 
+PhotoTri *Project::photoTri()
+{
+    if (thePhotoTri != NULL)
+        return thePhotoTri;
+    return NULL;
+}
+
 /**
  *
  */
@@ -776,12 +808,11 @@ void Project::setXml(string xml)
 	EDomElement ede(xmlData);
 	//EDomElement dem = ede.elementByTagName("DEMs");
 	//EDomElement eoi = ede.elementByTagName("orthoImages");
-	//EDomElement feat = ede.elementByTagName("features");
-	EDomElement pt = ede.elementByTagName("phototriangulation");
+    //EDomElement feat = ede.elementByTagName("features");
 	EDomElement sr = ede.elementByTagName("spatialRessections");
 
 	// Rever a parte de estados de processos... armazenados e acessados na string processStates
-	processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ pt.getContent() + sr.getContent();
+    processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ sr.getContent();
 	xmlData = ede.indent('\t').getContent();
 
 	instanceAllImages();
@@ -793,6 +824,7 @@ void Project::setXml(string xml)
 	instanceTerrain();
 	instanceSensor(1);
 	instanceFlight(1);
+    instancePhotoTri();
 
 	//Rever a criação dos instance DEMs, EOIs e FEATs.
 
@@ -812,7 +844,6 @@ void Project::linkAll()
 	}
 	if (sns)
 	{
-
 		sns->clearImages();
 		sns->clearFlights();
 		sns->putFlight(flt);
@@ -862,6 +893,23 @@ void Project::linkAll()
 		eo->setImage(img);
 		if (img) img->setEO((SpatialRessection*)eo);
 	}
+
+    if (thePhotoTri)
+    {
+        thePhotoTri->clearImages();
+        for (int i=0; i<thePhotoTri->getImageKeys().size(); i++)
+        {
+            Image *img = image(thePhotoTri->getImageKeys().at(i));
+            if (img) thePhotoTri->putImage(img);
+        }
+
+        thePhotoTri->clearPoints();
+        for (int i=0; i<thePhotoTri->getPointKeys().size(); i++)
+        {
+            Point *pt = point(thePhotoTri->getPointKeys().at(i));
+            if (pt) thePhotoTri->putPoint(pt);
+        }
+    }
 }
 
 string Project::getXml()
@@ -970,6 +1018,61 @@ int Project::getFreePointId()
 bool Project::getSaveState()
 {
 	return xmlData.compare(getXml()) == 0;
+}
+
+
+PhotoTri::PhotoTri()
+{
+
+}
+
+string PhotoTri::xmlGetData()
+{
+    // Em branco por enquanto;
+}
+
+void PhotoTri::xmlSetData(string xml)
+{
+    EDomElement root(xml);
+
+    totalIterations = root.elementByTagName("iterations").toInt();
+    converged = root.elementByTagName("converged").toString() == "true";
+    metricConvergency = root.elementByTagName("metricConvergency").toDouble();
+    angularConvergency = root.elementByTagName("angularConvergency").toDouble();
+    rmse = root.elementByTagName("rmse").toDouble();
+
+    deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
+    for (int i = 0; i <pts.size(); i++)
+        pointKey.push_back(pts.at(i).elementByTagName("pointKey").toInt());
+
+    deque<EDomElement> imgs = root.elementByTagName("usedImages").children();
+    for (int i = 0; i <imgs.size(); i++)
+        imageKey.push_back(imgs.at(i).elementByTagName("imageKey").toInt());
+
+}
+
+void PhotoTri::putImage(Image *img)
+{
+    bool insert = true;
+    // Eliminamos primeiro a possibilidade duplicar uma associação.
+    for (unsigned int i = 0; i < image.size(); i++)
+        if (image.at(i) == img)
+            insert = false;
+    // Fazemos a nova associação.
+    if (insert)
+        image.push_back(img);
+}
+
+void PhotoTri::putPoint(Point *pt)
+{
+    bool insert = true;
+    // Eliminamos primeiro a possibilidade duplicar uma associação.
+    for (unsigned int i = 0; i < point.size(); i++)
+        if (point.at(i) == pt)
+            insert = false;
+    // Fazemos a nova associação.
+    if (insert)
+        point.push_back(pt);
 }
 
 } // namespace efoto
