@@ -73,7 +73,6 @@ public:
 
 
         //EFotoManager* getEfotoManager();
-
         EDomElement getHeaderXml();
         EDomElement getTerrainXml();        
         EDomElement getSensorXml();
@@ -92,7 +91,7 @@ public:
         string eprBlockPoints(QList<QTreeWidgetItem*> treeItems);
         string eprAffineTransformation(QList<QTreeWidgetItem*> treeItems);
         string eprSpatialRessection(QList<QTreeWidgetItem*> treeItems);
-        string eprPhotogrammetricBlock();
+        string eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems);
         string eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems);
         string eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems);
         string eprStereoPairs();
