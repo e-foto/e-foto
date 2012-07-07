@@ -109,7 +109,7 @@ void BundleAdjustment::fillDetectorCoordinates()
 }
 
 //Professor Nunes mandou matar a iteraÃÂ§ao sobre os residuos para evitar os valores "NANs"
-bool BundleAdjustment::calculate()
+bool BundleAdjustment::calculate(bool makeReport)
 {
 		if (!userInitialValues)
 		{
@@ -141,7 +141,7 @@ bool BundleAdjustment::calculate()
 
 		//qDebug("%s",printAll().c_str());
 
-		matAdjust.show('f',5,"matAdjust Inicial Values");
+        //matAdjust.show('f',5,"matAdjust Inicial Values");
 
 		//matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
 		//matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
@@ -169,56 +169,56 @@ bool BundleAdjustment::calculate()
 						{
 								ptime.start();
 								createA1();
-								int A1time=ptime.restart();
+                                //int A1time=ptime.restart();
 								//A1.show('f',3,"A1");
 
 								createA2();
 								//A2.show('f',3,"A2");
-								int A2time=ptime.restart();
+                                //int A2time=ptime.restart();
 
 								createL0();
 								//L0.show('f',3,"L0");
-								int l0time=ptime.restart();
+                                //int l0time=ptime.restart();
 
 								createLb();
 								//Lb.show('f',3,"Lb");
-								int lbtime=ptime.restart();
+                                //int lbtime=ptime.restart();
 
 								Matrix l=Lb-L0;
 
 								ptime.start();
 								/*Matrix*/ n11=getN11();
-								int n11time=ptime.restart();
+                                //int n11time=ptime.restart();
 								//n11.show('f',3,"N11=A1^T*P*A1");
 
 
 								/*Matrix*/ n12=getN12();
 								//n12.show('f',3,"N12=A1^T*P*A2");
-								int n12time=ptime.restart();
+                                //int n12time=ptime.restart();
 
 								/*Matrix*/ n22=getN22();
 								//n22.show('f',3,"N22==A2^T*P*A2");
-								int n22time=ptime.restart();
+                                //int n22time=ptime.restart();
 
 
 								//int invN22time=ptime.restart();
 
 								/*Matrix*/ n1=getn1(l);
 								//n1.show('f',3,"n1=A1^T*P*L");
-								int n1time=ptime.restart();
+                                //int n1time=ptime.restart();
 
 								/*Matrix*/ n2=getn2(l);
 								//n2.show('f',3,"n2==A2^T*P*L");
-								int n2time=ptime.restart();
+                                //int n2time=ptime.restart();
 #ifdef PAULO
 								setInverseN11(n11);
-								int invN11time=ptime.restart();
+                                //int invN11time=ptime.restart();
 								setx2(n12,n22,n2,n1);
-								int x2time=ptime.restart();
+                                //int x2time=ptime.restart();
 								//x2.show();
 
 								setx1(n12,n1);
-								int x1time=ptime.restart();
+                                //int x1time=ptime.restart();
 								//x1.show();
 #endif
 
@@ -277,6 +277,13 @@ bool BundleAdjustment::calculate()
 
 								//matAdjust.show('f',5,"matAdjust Iterando");
 								totalIterations++;
+
+                                if(makeReport)
+                                {
+                                    calculateResiduos();
+                                    listRMSE.push_back(calculateRMSE());
+                                }
+
 								qDebug("iteration %d/%d",totalIterations,maxIterations);
 						}
 						//qDebug("numero iterations %d=%d",changePesos,iterations);
@@ -1535,7 +1542,12 @@ Matrix BundleAdjustment::getSparseN11()
 Matrix BundleAdjustment::getMatRes()
 {
 		//matRes.show('f',8,"MatRes");
-		return matRes;
+    return matRes;
+}
+
+deque<double> BundleAdjustment::getListRMSE()
+{
+    return listRMSE;
 }
 
 bool BundleAdjustment::getConvergencyStatus()

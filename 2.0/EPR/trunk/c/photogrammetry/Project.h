@@ -19,6 +19,45 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+class PhotoTri : public EObject
+{
+    int totalIterations;
+    bool converged;
+    double metricConvergency;
+    double angularConvergency;
+    double rmse;
+    deque<int> imageKey;
+    deque<int> pointKey;
+    deque<Image*> image;
+    deque<Point*> point;
+
+public:
+    PhotoTri();
+    string xmlGetData();
+    void xmlSetData(string xml);
+
+    virtual string objectType(void) {return "PhotoTri";}
+    virtual string objectAssociations(void) {return "";}
+    virtual bool is(string s) {return s.compare("PhotoTri");}
+
+    int getTotalIterations() {return totalIterations;}
+    bool getConverged() {return converged;}
+    double getMetricConvergency() {return metricConvergency;}
+    double getAngularConvergency() {return angularConvergency;}
+    double getRmse() {return rmse;}
+
+    deque<int> getImageKeys() {return imageKey;}
+    deque<int> getPointKeys() {return pointKey;}
+    deque<Image*> getImages() {return image;}
+    deque<Point*> getPoints() {return point;}
+
+    void putImage(Image* img);
+    void putPoint(Point* pt);
+
+    void clearImages(){image.clear();}
+    void clearPoints(){point.clear();}
+};
+
 class Project
 {
 
@@ -26,17 +65,18 @@ class Project
 	string xmlState;
 
 	ProjectHeader* theHeader;
-	Terrain* theTerrain;
-	deque<Sensor*> sensors;
-	deque<Flight*> flights;
-        deque<Image*> images;
-        deque<Point*> points;
-        deque<DEM*> DEMs;
-        deque<OrthoImage*> orthos;
-        deque<featuresFile*> feats;
-        string processStates;
+    Terrain* theTerrain;
+    deque<Sensor*> sensors;
+    deque<Flight*> flights;
+    deque<Image*> images;
+    deque<Point*> points;
+    deque<DEM*> DEMs;
+    deque<OrthoImage*> orthos;
+    deque<featuresFile*> feats;
+    string processStates;
 	deque<InteriorOrientation*> IOs;
 	deque<ExteriorOrientation*> EOs;
+    PhotoTri* thePhotoTri;
 
 protected:
 
@@ -111,6 +151,8 @@ protected:
 	*/
 	ExteriorOrientation* instanceEO(int imageId);
 
+    PhotoTri* instancePhotoTri();
+
 	/**
 	* \brief Método que apaga uma instância da classe ProjectHeader.
 	*/
@@ -120,6 +162,8 @@ protected:
 	* \brief Método que apaga uma instância da classe Terrain.
 	*/
 	void deleteTerrain(bool makeReconnections = true);
+
+    void deletePhotoTri(bool makeReconnections = true);
 
 	void linkAll();
 
@@ -198,6 +242,8 @@ public:
     */
     ExteriorOrientation* EO(int id);
     deque<ExteriorOrientation*> allEOs() {return EOs;}
+
+    PhotoTri* photoTri();
 
 	/**
 	* \brief Método que retorna os valores de um nó do XML.

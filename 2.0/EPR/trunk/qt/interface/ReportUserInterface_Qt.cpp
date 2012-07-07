@@ -64,7 +64,7 @@ void ReportUserInterface_Qt::init()
 
 void ReportUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
-    //LoadingScreen::instance().show();
+    LoadingScreen::instance().show();
 	qApp->processEvents();
 	manager->returnProject();
 	QMainWindow::closeEvent(e);
@@ -186,11 +186,6 @@ void ReportUserInterface_Qt::newTree()
         item = new QTreeWidgetItem(n1RootItem);
         item->setCheckState(0,Qt::Checked);
         item->setText(0, "Initialization data");
-        treeItems.push_back(item);
-
-        item = new QTreeWidgetItem(n1RootItem);
-        item->setCheckState(0,Qt::Checked);
-        item->setText(0, "Quality data");
         treeItems.push_back(item);
 
         item = new QTreeWidgetItem(n1RootItem);
@@ -463,6 +458,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->start("rm " + outxsl);
                 pro->waitForFinished(1000);
                 pro->start("rm " + filename);
+                pro->waitForFinished(1000);
             }
         }
 

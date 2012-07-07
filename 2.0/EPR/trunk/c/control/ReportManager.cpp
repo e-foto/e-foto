@@ -8,6 +8,8 @@
 #include "ReportUserInterface_Qt.h"
 #include "ProjectiveRay.h"
 
+#include "BundleAdjustment.h"
+
 
 
 // Constructors and destructors
@@ -204,17 +206,17 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
         treeItems.at(13)->setCheckState(0,Qt::Unchecked);
         treeItems.at(13)->setDisabled(true);
         //InteriorOrientation
+        treeItems.at(21)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(21)->setDisabled(true);
+        //InteriorOrientation/Xa
         treeItems.at(22)->setCheckState(0,Qt::Unchecked);
         treeItems.at(22)->setDisabled(true);
-        //InteriorOrientation/Xa
+        //InteriorOrientation/MatrixV
         treeItems.at(23)->setCheckState(0,Qt::Unchecked);
         treeItems.at(23)->setDisabled(true);
-        //InteriorOrientation/MatrixV
+        //InteriorOrientation/SigmaXa
         treeItems.at(24)->setCheckState(0,Qt::Unchecked);
         treeItems.at(24)->setDisabled(true);
-        //InteriorOrientation/SigmaXa
-        treeItems.at(25)->setCheckState(0,Qt::Unchecked);
-        treeItems.at(25)->setDisabled(true);
     }
     if(project->allEOs().size() < 1)
     {
@@ -230,24 +232,33 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
         //SpatialRessection/Values at each iteration
         treeItems.at(17)->setCheckState(0,Qt::Unchecked);
         treeItems.at(17)->setDisabled(true);
+        //Phototriangulation
+        treeItems.at(18)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(18)->setDisabled(true);
+        //Phototriangulation/InitializationData
+        treeItems.at(19)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(19)->setDisabled(true);
+        //Phototriangulation/Values at each iteration
+        treeItems.at(20)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(20)->setDisabled(true);
         //ExteriorOrientation
+        treeItems.at(25)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(25)->setDisabled(true);
+        //ExteriorOrientation/EOType
         treeItems.at(26)->setCheckState(0,Qt::Unchecked);
         treeItems.at(26)->setDisabled(true);
-        //ExteriorOrientation/EOType
+        //ExteriorOrientation/NumberofIterationsForConvergence
         treeItems.at(27)->setCheckState(0,Qt::Unchecked);
         treeItems.at(27)->setDisabled(true);
-        //ExteriorOrientation/NumberofIterationsForConvergence
+        //ExteriorOrientation/Xa
         treeItems.at(28)->setCheckState(0,Qt::Unchecked);
         treeItems.at(28)->setDisabled(true);
-        //ExteriorOrientation/Xa
+        //ExteriorOrientation/MatrixV
         treeItems.at(29)->setCheckState(0,Qt::Unchecked);
         treeItems.at(29)->setDisabled(true);
-        //ExteriorOrientation/MatrixV
+        //ExteriorOrientation/SigmaXa
         treeItems.at(30)->setCheckState(0,Qt::Unchecked);
         treeItems.at(30)->setDisabled(true);
-        //ExteriorOrientation/SigmaXa
-        treeItems.at(31)->setCheckState(0,Qt::Unchecked);
-        treeItems.at(31)->setDisabled(true);
     }
 }
 
@@ -436,14 +447,17 @@ string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
             for(unsigned int j=0;j < pnt->getImageCoordinates().size();j++)
             {
                 img = project->image(pnt->getImageCoordinateAt(j).getImageId());
-                txt += "<imageCoordinates>\n";
-                txt += "<imageId>" + img->getImageId() + "</imageId>\n";
-                txt += "<position>\n";
-                txt += "<lin>" + Conversion::doubleToString(pnt->getImageCoordinateAt(j).getLin()) + "</lin>\n";
-                txt += "<col>" + Conversion::doubleToString(pnt->getImageCoordinateAt(j).getCol()) + "</col>\n";
-                txt += "<unit>" + pnt->getImageCoordinateAt(j).getUnit().substr(1, pnt->getImageCoordinateAt(j).getUnit().size())+ "</unit>\n";
-                txt += "</position>\n";                
-                txt += "</imageCoordinates>\n";
+                if (img)
+                {
+                    txt += "<imageCoordinates>\n";
+                    txt += "<imageId>" + img->getImageId() + "</imageId>\n";
+                    txt += "<position>\n";
+                    txt += "<lin>" + Conversion::doubleToString(pnt->getImageCoordinateAt(j).getLin()) + "</lin>\n";
+                    txt += "<col>" + Conversion::doubleToString(pnt->getImageCoordinateAt(j).getCol()) + "</col>\n";
+                    txt += "<unit>" + pnt->getImageCoordinateAt(j).getUnit().substr(1, pnt->getImageCoordinateAt(j).getUnit().size())+ "</unit>\n";
+                    txt += "</position>\n";
+                    txt += "</imageCoordinates>\n";
+                }
             }
             txt += "</imagesMeasurements>\n";
         }
@@ -462,68 +476,70 @@ string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
         InteriorOrientation* io = project->allIOs().at(i);
         if( NULL != io)
         {
-            txt += "<IO>\n";
-            txt += "<imageId>" + io->getImage()->getImageId() + "</imageId>\n";
-            if(treeItems.at(12)->checkState(0)==2)
+            if(NULL != io->getImage())
             {
-                txt += "<initializationData>\n";
-                txt += "<calculationMode>" + io->getImage()->getSensor()->getCalculationMode() + "</calculationMode>\n";
-                if (io->getImage()->getSensor()->getCalculationMode() == "With Fiducial Marks")
+                txt += "<IO>\n";
+                txt += "<imageId>" + io->getImage()->getImageId() + "</imageId>\n";
+                if(treeItems.at(12)->checkState(0)==2)
                 {
-                    deque<ImageFiducialMark> fidMarks = io->getImage()->getDigFidMarks();
-                    SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*) io->getImage()->getSensor();
-                    //deque<DetectorFiducialMark> sensorMarks = sensor->getAnaFidMarks();
-                    txt += "<fidMarks>\n";
-                    for(unsigned int j = 0; j < fidMarks.size(); j++)
+                    txt += "<initializationData>\n";
+                    txt += "<calculationMode>" + io->getImage()->getSensor()->getCalculationMode() + "</calculationMode>\n";
+                    if (io->getImage()->getSensor()->getCalculationMode() == "With Fiducial Marks")
                     {
-                        txt += "<fidMark>\n";
-                        QStringList gmlpos = QString::fromStdString(sensor->getAnaFidMarkAt(j).getGmlPos()).split(" ");
-                        txt += "<gmlX>" + gmlpos.at(0).toStdString() + "</gmlX>\n";
-                        txt += "<gmlY>" + gmlpos.at(1).toStdString() + "</gmlY>\n";
-                        txt += "<lin>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getLin()) + "</lin>\n";
-                        txt += "<col>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getCol()) + "</col>\n";
-                        txt += "</fidMark>\n";
+                        deque<ImageFiducialMark> fidMarks = io->getImage()->getDigFidMarks();
+                        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*) io->getImage()->getSensor();
+                        txt += "<fidMarks>\n";
+                        for(unsigned int j = 0; j < fidMarks.size(); j++)
+                        {
+                            txt += "<fidMark>\n";
+                            QStringList gmlpos = QString::fromStdString(sensor->getAnaFidMarkAt(j).getGmlPos()).split(" ");
+                            txt += "<gmlX>" + gmlpos.at(0).toStdString() + "</gmlX>\n";
+                            txt += "<gmlY>" + gmlpos.at(1).toStdString() + "</gmlY>\n";
+                            txt += "<lin>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getLin()) + "</lin>\n";
+                            txt += "<col>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getCol()) + "</col>\n";
+                            txt += "</fidMark>\n";
+                        }
+                        txt += "</fidMarks>\n";
                     }
-                    txt += "</fidMarks>\n";
+                    else if (io->getImage()->getSensor()->getCalculationMode() == "With Sensor Dimensions")
+                    {
+                        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*) io->getImage()->getSensor();
+                        txt += "<sensorCols>" + Conversion::intToString(sensor->getFrameColumns()) + "</sensorCols>\n";
+                        txt += "<sensorRows>" + Conversion::intToString(sensor->getFrameRows()) + "</sensorRows>\n";
+                        txt += "<sensorPxsize>" + Conversion::doubleToString(sensor->getPixelSize()) + "</sensorPxsize>\n";
+                    }
+                    else if (io->getImage()->getSensor()->getCalculationMode() == "Fixed Parameters")
+                    {
+                        SensorWithKnowParameters* sensor = (SensorWithKnowParameters*) io->getImage()->getSensor();
+                        txt += "<Xa>\n";
+                        txt += "<a0>" + Conversion::doubleToString(sensor->getXa().get(1,1)) + "</a0>\n";
+                        txt += "<a1>" + Conversion::doubleToString(sensor->getXa().get(2,1)) + "</a1>\n";
+                        txt += "<a2>" + Conversion::doubleToString(sensor->getXa().get(3,1)) + "</a2>\n";
+                        txt += "<b0>" + Conversion::doubleToString(sensor->getXa().get(4,1)) + "</b0>\n";
+                        txt += "<b1>" + Conversion::doubleToString(sensor->getXa().get(5,1)) + "</b1>\n";
+                        txt += "<b2>" + Conversion::doubleToString(sensor->getXa().get(6,1)) + "</b2>\n";
+                        txt += "</Xa>\n";
+                    }
+                    txt += "</initializationData>\n";
                 }
-                else if (io->getImage()->getSensor()->getCalculationMode() == "With Sensor Dimensions")
-                {
-                    SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*) io->getImage()->getSensor();
-                    txt += "<sensorCols>" + Conversion::intToString(sensor->getFrameColumns()) + "</sensorCols>\n";
-                    txt += "<sensorRows>" + Conversion::intToString(sensor->getFrameRows()) + "</sensorRows>\n";
-                    txt += "<sensorPxsize>" + Conversion::doubleToString(sensor->getPixelSize()) + "</sensorPxsize>\n";
-                }
-                else if (io->getImage()->getSensor()->getCalculationMode() == "Fixed Parameters")
-                {
-                    SensorWithKnowParameters* sensor = (SensorWithKnowParameters*) io->getImage()->getSensor();
-                    txt += "<Xa>\n";
-                    txt += "<a0>" + Conversion::doubleToString(sensor->getXa().get(1,1)) + "</a0>\n";
-                    txt += "<a1>" + Conversion::doubleToString(sensor->getXa().get(2,1)) + "</a1>\n";
-                    txt += "<a2>" + Conversion::doubleToString(sensor->getXa().get(3,1)) + "</a2>\n";
-                    txt += "<b0>" + Conversion::doubleToString(sensor->getXa().get(4,1)) + "</b0>\n";
-                    txt += "<b1>" + Conversion::doubleToString(sensor->getXa().get(5,1)) + "</b1>\n";
-                    txt += "<b2>" + Conversion::doubleToString(sensor->getXa().get(6,1)) + "</b2>\n";
-                    txt += "</Xa>\n";
-                }
-                txt += "</initializationData>\n";
-            }
 
-            if(treeItems.at(13)->checkState(0)==2)
-            {
-                txt += "<qualityData>\n";
-                txt += "<V>\n";
-                txt += io->getQuality().getV().xmlGetData();
-                txt += "</V>\n";
-                txt += "<sigmaXa>\n";
-                txt += io->getQuality().getSigmaXa().xmlGetData();
-                txt += "</sigmaXa>\n";
-                txt += "<sigmaLa>\n";
-                txt += io->getQuality().getSigmaLa().xmlGetData();
-                txt += "</sigmaLa>\n";
-                txt += "<sigma0Squared>" + Conversion::doubleToString(io->getQuality().getsigma0Squared()) + "</sigma0Squared>\n";
-                txt += "</qualityData>\n";
+                if(treeItems.at(13)->checkState(0)==2)
+                {
+                    txt += "<qualityData>\n";
+                    txt += "<V>\n";
+                    txt += io->getQuality().getV().xmlGetData();
+                    txt += "</V>\n";
+                    txt += "<sigmaXa>\n";
+                    txt += io->getQuality().getSigmaXa().xmlGetData();
+                    txt += "</sigmaXa>\n";
+                    txt += "<sigmaLa>\n";
+                    txt += io->getQuality().getSigmaLa().xmlGetData();
+                    txt += "</sigmaLa>\n";
+                    txt += "<sigma0Squared>" + Conversion::doubleToString(io->getQuality().getsigma0Squared()) + "</sigma0Squared>\n";
+                    txt += "</qualityData>\n";
+                }
+                txt += "</IO>\n";
             }
-            txt += "</IO>\n";
         }
     }
 
@@ -616,10 +632,61 @@ string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprPhotogrammetricBlock()
+string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems)
 {
     string txt;
-    txt = "<photogrammetricBlock>Teste 09</photogrammetricBlock>\n";
+    if (project->photoTri() == NULL)
+        return "";
+
+    deque<Image*> usedImages = project->photoTri()->getImages();
+    deque<Point*> usedPoints = project->photoTri()->getPoints();
+    BundleAdjustment* bundle = new BundleAdjustment(usedImages, usedPoints);
+
+    txt = "<photogrammetricBlock>\n";
+
+    if(treeItems.at(19)->checkState(0)==2)
+    {
+        txt += "<totalIterations>" + Conversion::doubleToString(project->photoTri()->getTotalIterations()) + "</totalIterations>\n";
+        txt += "<angularConvergency>" + Conversion::doubleToString(project->photoTri()->getAngularConvergency()) + "</angularConvergency>\n";
+        txt += "<metricConvergency>" + Conversion::doubleToString(project->photoTri()->getMetricConvergency()) + "</metricConvergency>\n";
+
+        bundle->calculateInicialsValues();
+        Matrix inicialValues = bundle->getMatrixInicialValues();
+        Image* img;
+        for(unsigned int i = 1; i < inicialValues.getRows()+1;i++)
+        {
+            img = usedImages.at(i-1);
+            txt += "<initialValues>\n";
+            txt += "<imageId>" + img->getImageId() + "</imageId>\n";
+            txt += "<matrix>\n";
+            txt += "<omega>" + Conversion::doubleToString(inicialValues.get(i,1)) + "</omega>\n";
+            txt += "<phi>" + Conversion::doubleToString(inicialValues.get(i,2)) + "</phi>\n";
+            txt += "<kappa>" + Conversion::doubleToString(inicialValues.get(i,3)) + "</kappa>\n";
+            txt += "<x0>" + Conversion::doubleToString(inicialValues.get(i,4)) + "</x0>\n";
+            txt += "<y0>" + Conversion::doubleToString(inicialValues.get(i,5)) + "</y0>\n";
+            txt += "<z0>" + Conversion::doubleToString(inicialValues.get(i,6)) + "</z0>\n";
+            txt += "</matrix>\n";
+            txt += "</initialValues>\n";
+        }
+    }
+
+    if(treeItems.at(20)->checkState(0)==2)
+    {
+        bundle->setAngularConvergencyValue(project->photoTri()->getAngularConvergency());
+        bundle->setMetricConvergencyValue(project->photoTri()->getMetricConvergency());
+        bundle->setMaxNumberIterations(project->photoTri()->getTotalIterations());
+        bundle->calculate(true);
+        deque<double> RMSEs = bundle->getListRMSE();
+        txt += "<rmseOfEachIteration>\n";
+        for(unsigned int j=0;j<RMSEs.size();j++)
+        {
+            txt += "<rmse"+Conversion::intToString(j)+">" + Conversion::doubleToString(RMSEs.at(j)) + "</rmse"+Conversion::intToString(j)+">\n";
+        }
+        txt += "</rmseOfEachIteration>\n";
+
+    }
+
+    txt += "</photogrammetricBlock>\n";
     return txt;
 }
 
@@ -638,7 +705,7 @@ string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
             txt += "<IO>\n";
             txt += "<imageId>" + img->getImageId() + "</imageId>\n";
             txt += "<ioType>Affine</ioType>\n";
-            if(treeItems.at(23)->checkState(0)==2)
+            if(treeItems.at(22)->checkState(0)==2)
             {
                 txt += "<Xa>\n";
                 txt +=  "<a0>" + Conversion::doubleToString(io->getXaa0()) + "</a0>\n";
@@ -649,13 +716,13 @@ string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
                 txt +=  "<b2>" + Conversion::doubleToString(io->getXab2()) + "</b2>\n";
                 txt += "</Xa>\n";
             }
-            if(treeItems.at(24)->checkState(0)==2)
+            if(treeItems.at(23)->checkState(0)==2)
             {
                 txt += "<V>\n";
                 txt += io->getQuality().getV().xmlGetData();
                 txt += "</V>\n";
             }
-            if(treeItems.at(25)->checkState(0)==2)
+            if(treeItems.at(24)->checkState(0)==2)
             {
                 txt += "<sigmaXa>\n";
                 txt += io->getQuality().getSigmaXa().xmlGetData();
@@ -682,18 +749,18 @@ string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems)
         {
             txt += "<EO>\n";
             txt += "<imageId>" + img->getImageId() + "</imageId>\n";
-            if(treeItems.at(27)->checkState(0)==2)
+            if(treeItems.at(26)->checkState(0)==2)
             {
                 // Pensar! Pegar o EO Type
                 txt += "<eoType>Spatial Ressection</eoType>\n";
             }
-            if(treeItems.at(28)->checkState(0)==2)
+            if(treeItems.at(27)->checkState(0)==2)
             {
                 // Pensar! Pegar o Total Iterations
                 //txt += "<noIterations>" + Conversion::intToString(eo->getTotalIterations()) + "</noIterations>\n";
                 txt += "<noIterations>0</noIterations>\n";
             }
-            if(treeItems.at(29)->checkState(0)==2)
+            if(treeItems.at(28)->checkState(0)==2)
             {
                 txt +=  "<Xa>\n";
                 txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
@@ -704,13 +771,13 @@ string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems)
                 txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
                 txt +=  "</Xa>\n";
             }
-            if(treeItems.at(30)->checkState(0)==2)
+            if(treeItems.at(29)->checkState(0)==2)
             {
                 txt +=  "<V>\n";
                 txt +=  eo->getQuality().getV().xmlGetData();
                 txt +=  "</V>\n";
             }
-            if(treeItems.at(31)->checkState(0)==2)
+            if(treeItems.at(30)->checkState(0)==2)
             {
                 txt +=  "<sigmaXa>\n";
                 txt +=  eo->getQuality().getSigmaXa().xmlGetData();
@@ -931,24 +998,24 @@ bool ReportManager::makeFile(string filename, int idExt, QList<QTreeWidgetItem*>
                        out << eprSpatialRessection(treeItems);
                     break;
                     case 18:
-                       out << eprPhotogrammetricBlock();
+                       out << eprPhotogrammetricBlock(treeItems);
                     break;
-                    case 22:
+                    case 21:
                        out << eprInteriorOrientation(treeItems);
                     break;
-                    case 26:
+                    case 25:
                        out << eprExteriorOrientation(treeItems);
                     break;
-                    case 32:
+                    case 31:
                        out << eprStereoPairs();
                     break;
-                    case 33:
+                    case 32:
                        out << eprStereoPlotting();
                     break;
-                    case 34:
+                    case 33:
                        out << eprDSM();
                     break;
-                    case 35:
+                    case 34:
                        out << eprOrthorectification();
                     break;
                 }
