@@ -278,7 +278,7 @@ void ReportUserInterface_Qt::newTree()
 bool ReportUserInterface_Qt::exec()
 {
 	this->show();
-    //LoadingScreen::instance().close();
+        LoadingScreen::instance().close();
 	qApp->processEvents();
 	return true;
 }
