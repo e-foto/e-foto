@@ -259,6 +259,15 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
         //ExteriorOrientation/SigmaXa
         treeItems.at(30)->setCheckState(0,Qt::Unchecked);
         treeItems.at(30)->setDisabled(true);
+        //StereoPairs
+        treeItems.at(31)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(31)->setDisabled(true);
+    }
+    if(project->allEOs().size() < 1 && project->allIOs().size() < 1)
+    {
+        //images/orientation parameters
+        treeItems.at(7)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(7)->setDisabled(true);
     }
 }
 
@@ -370,35 +379,41 @@ string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
         }
         if(treeItems.at(7)->checkState(0)==2)
         {
-            InteriorOrientation* io = img->getIO();
-            if (NULL != io)
+            if(project->allIOs().size() > 0)
             {
-                txt += "<interiorOrientation>\n";
-                txt += "<ioType>Affine</ioType>\n";
-                txt +=  "<Xa>\n";
-                txt +=  "<a0>" + Conversion::doubleToString(io->getXaa0()) + "</a0>\n";
-                txt +=  "<a1>" + Conversion::doubleToString(io->getXaa1()) + "</a1>\n";
-                txt +=  "<a2>" + Conversion::doubleToString(io->getXaa2()) + "</a2>\n";
-                txt +=  "<b0>" + Conversion::doubleToString(io->getXab0()) + "</b0>\n";
-                txt +=  "<b1>" + Conversion::doubleToString(io->getXab1()) + "</b1>\n";
-                txt +=  "<b2>" + Conversion::doubleToString(io->getXab2()) + "</b2>\n";
-                txt +=  "</Xa>\n";
-                txt += "</interiorOrientation>\n";
+                InteriorOrientation* io = img->getIO();
+                if (NULL != io)
+                {
+                    txt += "<interiorOrientation>\n";
+                    txt += "<ioType>Affine</ioType>\n";
+                    txt +=  "<Xa>\n";
+                    txt +=  "<a0>" + Conversion::doubleToString(io->getXaa0()) + "</a0>\n";
+                    txt +=  "<a1>" + Conversion::doubleToString(io->getXaa1()) + "</a1>\n";
+                    txt +=  "<a2>" + Conversion::doubleToString(io->getXaa2()) + "</a2>\n";
+                    txt +=  "<b0>" + Conversion::doubleToString(io->getXab0()) + "</b0>\n";
+                    txt +=  "<b1>" + Conversion::doubleToString(io->getXab1()) + "</b1>\n";
+                    txt +=  "<b2>" + Conversion::doubleToString(io->getXab2()) + "</b2>\n";
+                    txt +=  "</Xa>\n";
+                    txt += "</interiorOrientation>\n";
+                }
             }
-            SpatialRessection* eo = img->getEO();
-            if (NULL != eo)
+            if(project->allEOs().size() > 0)
             {
-                txt += "<exteriorOrientation>\n";
-                txt += "<eoType>Spatial Ressection</eoType>\n";
-                txt +=  "<Xa>\n";
-                txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
-                txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
-                txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
-                txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
-                txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
-                txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
-                txt +=  "</Xa>\n";
-                txt += "</exteriorOrientation>\n";
+                SpatialRessection* eo = img->getEO();
+                if (NULL != eo)
+                {
+                    txt += "<exteriorOrientation>\n";
+                    txt += "<eoType>Spatial Ressection</eoType>\n";
+                    txt +=  "<Xa>\n";
+                    txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
+                    txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
+                    txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
+                    txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
+                    txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
+                    txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
+                    txt +=  "</Xa>\n";
+                    txt += "</exteriorOrientation>\n";
+                }
             }
         }
         txt += "</image>\n";
@@ -854,6 +869,9 @@ string ReportManager::eprStereoPairs()
     if (project->allImages().size() < 2)
         return "<stereoPairs></stereoPairs>\n";
 
+    if(project->allEOs().size() < 1)
+        return "<stereoPairs></stereoPairs>\n";
+
     Image *img;
     double X1, Y1, X2, Y2, R, dist, best_dist, bX2, bY2, overlap, align_ang, kappa;
     int p1, p2, best_img;
@@ -978,49 +996,49 @@ bool ReportManager::makeFile(string filename, int idExt, QList<QTreeWidgetItem*>
                 switch(i)
                 {
                     case 1:
-						out << eprHeader();
+                        out << eprHeader();
                     break;
                     case 2:
-						out << eprTerrain();
+                        out << eprTerrain();
                     break;
                     case 3:
-						out << eprSensors();
+                        out << eprSensors();
                     break;
                     case 4:
-						out << eprFlights();
+                        out << eprFlights();
                     break;
                     case 5:
-						out << eprImages(treeItems);
+                        out << eprImages(treeItems);
                     break;
                     case 8:
-						out << eprBlockPoints(treeItems);
+                        out << eprBlockPoints(treeItems);
                     break;
                     case 11:
-						out << eprAffineTransformation(treeItems);
+                        out << eprAffineTransformation(treeItems);
                     break;
                     case 14:
-						out << eprSpatialRessection(treeItems);
+                        out << eprSpatialRessection(treeItems);
                     break;
                     case 18:
-						out << eprPhotogrammetricBlock(treeItems);
+                        out << eprPhotogrammetricBlock(treeItems);
                     break;
                     case 21:
-						out << eprInteriorOrientation(treeItems);
+                        out << eprInteriorOrientation(treeItems);
                     break;
                     case 25:
-						out << eprExteriorOrientation(treeItems);
+                        out << eprExteriorOrientation(treeItems);
                     break;
                     case 31:
-						out << eprStereoPairs();
+                        out << eprStereoPairs();
                     break;
                     case 32:
-						out << eprStereoPlotting();
+                        out << eprStereoPlotting();
                     break;
                     case 33:
-						out << eprDSM();
+                        out << eprDSM();
                     break;
                     case 34:
-						out << eprOrthorectification();
+                        out << eprOrthorectification();
                     break;
                 }
             }
