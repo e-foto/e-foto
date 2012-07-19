@@ -610,17 +610,32 @@ bool Matrix::is(string s)
 
 string Matrix::xmlGetData()
 {
-	stringstream result;
-	result << "<mml:matrix>\n";
-	for (unsigned int i = 1; i <= getRows(); i++)
-	{
-		result << "<mml:matrixrow>\n";
-		for (unsigned int j = 1; j <= getCols(); j++)
-			result << "<mml:cn>" << Conversion::doubleToString(get(i, j)) << "</mml:cn>\n";
-		result << "</mml:matrixrow>\n";
-	}
-	result << "</mml:matrix>\n";
-	return result.str();
+    stringstream result;
+    result << "<mml:matrix>\n";
+    for (unsigned int i = 1; i <= getRows(); i++)
+    {
+        result << "<mml:matrixrow>\n";
+        for (unsigned int j = 1; j <= getCols(); j++)
+            result << "<mml:cn>" << Conversion::doubleToString(get(i, j)) << "</mml:cn>\n";
+        result << "</mml:matrixrow>\n";
+    }
+    result << "</mml:matrix>\n";
+    return result.str();
+}
+
+string Matrix::xmlGetData(int prec)
+{
+    stringstream result;
+    result << "<mml:matrix>\n";
+    for (unsigned int i = 1; i <= getRows(); i++)
+    {
+        result << "<mml:matrixrow>\n";
+        for (unsigned int j = 1; j <= getCols(); j++)
+            result << "<mml:cn>" << Conversion::doubleToString(get(i, j),prec) << "</mml:cn>\n";
+        result << "</mml:matrixrow>\n";
+    }
+    result << "</mml:matrix>\n";
+    return result.str();
 }
 
 void Matrix::xmlSetData(string xml)

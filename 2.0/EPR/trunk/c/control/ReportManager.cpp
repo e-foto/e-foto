@@ -9,6 +9,7 @@
 #include "ProjectiveRay.h"
 
 #include "BundleAdjustment.h"
+#include "SingleScene.h"
 
 
 
@@ -59,29 +60,6 @@ ReportUserInterface* ReportManager::getInterface()
 
 bool ReportManager::exec()
 {
-	/*
-	if (manager != NULL && mySensor != NULL && myImage != NULL && myIO != NULL)
-		if (myImage->getSensorId() == mySensor->getId() && myIO->getImageId() == myImage->getId())
-		{
-			if (manager->getInterfaceType().compare("Qt") == 0)
-			{
-				//myInterface = new IOUserInterface_Qt(this);
-				myInterface = IOUserInterface_Qt::instance(this);
-			}
-			myImage->setSensor(mySensor);
-			myIO->setImage(myImage);
-			started = true;
-			if (myInterface != NULL)
-			{
-				myInterface->exec();
-			}
-			//if (manager->getInterfaceType().compare("Qt") == 0)
-			//{
-			//IOUserInterface_Qt::createInstance(this)->exec();
-			//}
-		}
-	return status;
-	*/
 
         if (efotoManager != NULL)
         {
@@ -104,48 +82,10 @@ void ReportManager::returnProject()
         LoadingScreen::instance().close();
 }
 
-string ReportManager::getAllXml()
-{
-    return project->getXml();
-}
-
-EDomElement ReportManager::getHeaderXml()
-{
-    return EDomElement (project->header()->xmlGetData());
-}
-
-EDomElement ReportManager::getTerrainXml()
-{
-    return EDomElement (project->terrain()->xmlGetData());
-}
-
-EDomElement ReportManager::getSensorXml()
-{
-    return EDomElement (project->sensor(1)->xmlGetData());
-}
-
-EDomElement ReportManager::getFlightXml()
-{
-    return EDomElement (project->flight(1)->xmlGetData());
-}
-
-EDomElement ReportManager::getImageXml(int id)
-{
-    return EDomElement (project->image(id)->xmlGetData());
-}
-
-EDomElement ReportManager::getInteriorOrientationXml(int id)
-{
-    return EDomElement (project->IO(id)->xmlGetData());
-}
-
-EDomElement ReportManager::getExteriorOrientationXml(int id)
-{
-    return EDomElement (project->EO(id)->xmlGetData());
-}
-
 void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
 {
+    int spatialResectionCounter = 0;
+    int phototriCounter = 0;
     if(NULL == project->header())
     {
         //header
@@ -220,16 +160,16 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
     }
     if(project->allEOs().size() < 1)
     {
-        //SpatialRessection
+        //SpatialResection
         treeItems.at(14)->setCheckState(0,Qt::Unchecked);
         treeItems.at(14)->setDisabled(true);
-        //SpatialRessection/InitializationData
+        //SpatialResection/InitializationData
         treeItems.at(15)->setCheckState(0,Qt::Unchecked);
         treeItems.at(15)->setDisabled(true);
-        //SpatialRessection/QualityData
+        //SpatialResection/QualityData
         treeItems.at(16)->setCheckState(0,Qt::Unchecked);
         treeItems.at(16)->setDisabled(true);
-        //SpatialRessection/Values at each iteration
+        //SpatialResection/Values at each iteration
         treeItems.at(17)->setCheckState(0,Qt::Unchecked);
         treeItems.at(17)->setDisabled(true);
         //Phototriangulation
@@ -268,6 +208,42 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
         //images/orientation parameters
         treeItems.at(7)->setCheckState(0,Qt::Unchecked);
         treeItems.at(7)->setDisabled(true);
+    }
+    for(unsigned int i = 0; i < project->allEOs().size(); i++)
+    {
+        SpatialRessection* sr = (SpatialRessection*) project->allEOs().at(i);
+        if (sr->getType() == "spatialResection")
+            spatialResectionCounter++;
+        else
+            if(sr->getType() == "photoTriangulation")
+                phototriCounter++;
+    }
+    if(spatialResectionCounter==0)
+    {
+        //SpatialResection
+        treeItems.at(14)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(14)->setDisabled(true);
+        //SpatialResection/InitializationData
+        treeItems.at(15)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(15)->setDisabled(true);
+        //SpatialResection/QualityData
+        treeItems.at(16)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(16)->setDisabled(true);
+        //SpatialResection/Values at each iteration
+        treeItems.at(17)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(17)->setDisabled(true);
+    }
+    if(phototriCounter==0)
+    {
+        //Phototriangulation
+        treeItems.at(18)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(18)->setDisabled(true);
+        //Phototriangulation/InitializationData
+        treeItems.at(19)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(19)->setDisabled(true);
+        //Phototriangulation/Values at each iteration
+        treeItems.at(20)->setCheckState(0,Qt::Unchecked);
+        treeItems.at(20)->setDisabled(true);
     }
 }
 
@@ -360,66 +336,73 @@ string ReportManager::eprFlights()
 
 string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
-    Image *img;
-    txt = "<images>\n";    
-    for(unsigned int i=0;i<project->allImages().size();i++)
-    {
-        txt += "<image>\n";
-        img = project->allImages().at(i);
-        if(treeItems.at(6)->checkState(0)==2)
-        {
-            txt += "<imageId>" + img->getImageId() + "</imageId>\n";            
-            txt += "<width>" + Conversion::intToString(img->getWidth()) + "</width>\n";
-            txt += "<heigth>" + Conversion::intToString(img->getHeight()) + "</heigth>\n";
-            txt += "<fileName>" + img->getFilename() + "</fileName>\n";
-            txt += "<filePath>" + img->getFilepath() + "</filePath>\n";
-            // Pensar! adicionar o caminho absoluto            
-            txt += "<resolution>" + Conversion::intToString(img->getResolution()) + "</resolution>\n";
-        }
-        if(treeItems.at(7)->checkState(0)==2)
-        {
-            if(project->allIOs().size() > 0)
-            {
-                InteriorOrientation* io = img->getIO();
-                if (NULL != io)
-                {
-                    txt += "<interiorOrientation>\n";
-                    txt += "<ioType>Affine</ioType>\n";
-                    txt +=  "<Xa>\n";
-                    txt +=  "<a0>" + Conversion::doubleToString(io->getXaa0()) + "</a0>\n";
-                    txt +=  "<a1>" + Conversion::doubleToString(io->getXaa1()) + "</a1>\n";
-                    txt +=  "<a2>" + Conversion::doubleToString(io->getXaa2()) + "</a2>\n";
-                    txt +=  "<b0>" + Conversion::doubleToString(io->getXab0()) + "</b0>\n";
-                    txt +=  "<b1>" + Conversion::doubleToString(io->getXab1()) + "</b1>\n";
-                    txt +=  "<b2>" + Conversion::doubleToString(io->getXab2()) + "</b2>\n";
-                    txt +=  "</Xa>\n";
-                    txt += "</interiorOrientation>\n";
-                }
-            }
-            if(project->allEOs().size() > 0)
-            {
-                SpatialRessection* eo = img->getEO();
-                if (NULL != eo)
-                {
-                    txt += "<exteriorOrientation>\n";
-                    txt += "<eoType>Spatial Ressection</eoType>\n";
-                    txt +=  "<Xa>\n";
-                    txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
-                    txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
-                    txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
-                    txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
-                    txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
-                    txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
-                    txt +=  "</Xa>\n";
-                    txt += "</exteriorOrientation>\n";
-                }
-            }
-        }
-        txt += "</image>\n";
-    }
-    txt += "</images>\n";
-    return txt;
+	string txt;
+	Image *img;
+	txt = "<images>\n";
+	for(unsigned int i=0;i<project->allImages().size();i++)
+	{
+		txt += "<image>\n";
+		img = project->allImages().at(i);
+		if(treeItems.at(6)->checkState(0)==2)
+		{
+			txt += "<imageId>" + img->getImageId() + "</imageId>\n";
+			txt += "<width>" + Conversion::intToString(img->getWidth()) + "</width>\n";
+			txt += "<heigth>" + Conversion::intToString(img->getHeight()) + "</heigth>\n";
+			txt += "<fileName>" + img->getFilename() + "</fileName>\n";
+			txt += "<filePath>" + img->getFilepath() + "</filePath>\n";
+			// Pensar! adicionar o caminho absoluto
+			txt += "<resolution>" + Conversion::intToString(img->getResolution()) + "</resolution>\n";
+		}
+		if(treeItems.at(7)->checkState(0)==2)
+		{
+			if(project->allIOs().size() > 0)
+			{
+				InteriorOrientation* io = img->getIO();
+				if (NULL != io)
+				{
+					txt += "<interiorOrientation>\n";
+					txt += "<ioType>Affine</ioType>\n";
+					txt +=  "<Xa>\n";
+					txt +=  "<a0>" + Conversion::doubleToString(io->getXaa0()) + "</a0>\n";
+					txt +=  "<a1>" + Conversion::doubleToString(io->getXaa1()) + "</a1>\n";
+					txt +=  "<a2>" + Conversion::doubleToString(io->getXaa2()) + "</a2>\n";
+					txt +=  "<b0>" + Conversion::doubleToString(io->getXab0()) + "</b0>\n";
+					txt +=  "<b1>" + Conversion::doubleToString(io->getXab1()) + "</b1>\n";
+					txt +=  "<b2>" + Conversion::doubleToString(io->getXab2()) + "</b2>\n";
+					txt +=  "</Xa>\n";
+					txt += "</interiorOrientation>\n";
+				}
+			}
+			if(project->allEOs().size() > 0)
+			{
+				SpatialRessection* eo = img->getEO();
+				if (NULL != eo)
+				{
+					txt += "<exteriorOrientation>\n";
+                                        txt += "<eoType>" + eo->getType() + "</eoType>\n";
+					txt +=  "<Xa>\n";
+					txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
+					txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
+					txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
+					txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
+					txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
+					txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
+					txt +=  "</Xa>\n";
+					txt += "</exteriorOrientation>\n";
+				}
+			}
+        /*    string reportPath = "";
+            txt += "<img src=\"" + reportPath + "thumb_" + img->getFilename() + "\">";
+            QImage thumb = makeThumbnail(QString(img->getFilepath().c_str()).append("/").append(img->getFilename().c_str()),200,200);
+            thumb.save(QString::fromStdString(reportPath + "thumb_" + img->getFilename()));
+        */
+		}
+
+		txt += "</image>\n";
+
+	}
+	txt += "</images>\n";
+	return txt;
 }
 
 string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
@@ -543,13 +526,13 @@ string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
                 {
                     txt += "<qualityData>\n";
                     txt += "<V>\n";
-                    txt += io->getQuality().getV().xmlGetData();
+                    txt += io->getQuality().getV().xmlGetData(6);
                     txt += "</V>\n";
                     txt += "<sigmaXa>\n";
-                    txt += io->getQuality().getSigmaXa().xmlGetData();
+                    txt += io->getQuality().getSigmaXa().xmlGetData(6);
                     txt += "</sigmaXa>\n";
                     txt += "<sigmaLa>\n";
-                    txt += io->getQuality().getSigmaLa().xmlGetData();
+                    txt += io->getQuality().getSigmaLa().xmlGetData(6);
                     txt += "</sigmaLa>\n";
                     txt += "<sigma0Squared>" + Conversion::doubleToString(io->getQuality().getsigma0Squared()) + "</sigma0Squared>\n";
                     txt += "</qualityData>\n";
@@ -566,10 +549,12 @@ string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
 string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
 {
     string txt;
-    txt = "<spatialRessection>\n";
+    txt = "<spatialResection>\n";
     for(unsigned int i = 0; i < project->allEOs().size(); i++)
     {
         SpatialRessection* sr = (SpatialRessection*) project->allEOs().at(i);
+        if (sr->getType() != "spatialResection")
+            continue;
         txt += "<SR>\n";
         txt += "<imageId>" + sr->getImage()->getImageId() + "</imageId>\n";
         txt += "<flightDirection>" + Conversion::doubleToString(sr->getImage()->getFlightDirection()) + "</flightDirection>\n";
@@ -627,24 +612,37 @@ string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
         {
             txt += "<qualityData>\n";
             txt += "<V>\n";
-            txt += sr->getQuality().getV().xmlGetData();
+            txt += sr->getQuality().getV().xmlGetData(6);
             txt += "</V>\n";
             txt += "<sigmaXa>\n";
-            txt += sr->getQuality().getSigmaXa().xmlGetData();
+            txt += sr->getQuality().getSigmaXa().xmlGetData(6);
             txt += "</sigmaXa>\n";
             txt += "<sigmaLa>\n";
-            txt += sr->getQuality().getSigmaLa().xmlGetData();
+            txt += sr->getQuality().getSigmaLa().xmlGetData(6);
             txt += "</sigmaLa>\n";
             txt += "<sigma0Squared>" + Conversion::doubleToString(sr->getQuality().getsigma0Squared()) + "</sigma0Squared>\n";
             txt += "</qualityData>\n";
         }
         if(treeItems.at(17)->checkState(0)==2)
         {
-            txt += "<valuesOfEachIteration></valuesOfEachIteration>\n";
+
+            sr->initialize();
+            sr->calculate(sr->getTotalIterations(),0.001,0.001);
+            deque<double> rmse = sr->getRMSE();
+            txt += "<rmseOfEachIteration>\n";
+            for (int a = 0; a < rmse.size(); a++)
+            {
+                //qDebug("%f",rmse.at(a));
+                txt += "<rmse>\n";
+                txt += "<iteration>" + Conversion::intToString(a) + "</iteration>\n";
+                txt += "<value>" + Conversion::doubleToString(rmse.at(a)) + "</value>\n";
+                txt += "</rmse>\n";
+            }
+            txt += "</rmseOfEachIteration>\n";
         }
         txt += "</SR>\n";
     }
-    txt += "</spatialRessection>\n";
+    txt += "</spatialResection>\n";
     return txt;
 }
 
@@ -738,13 +736,13 @@ string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
             if(treeItems.at(23)->checkState(0)==2)
             {
                 txt += "<V>\n";
-                txt += io->getQuality().getV().xmlGetData();
+                txt += io->getQuality().getV().xmlGetData(6);
                 txt += "</V>\n";
             }
             if(treeItems.at(24)->checkState(0)==2)
             {
                 txt += "<sigmaXa>\n";
-                txt += io->getQuality().getSigmaXa().xmlGetData();
+                txt += io->getQuality().getSigmaXa().xmlGetData(6);
                 txt += "</sigmaXa>\n";
             }
             txt += "</IO>\n";
@@ -756,57 +754,61 @@ string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
 
 string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
-    Image *img;
-    SpatialRessection* eo;
-    txt = "<exteriorOrientation>\n";
-    for(unsigned int i=0;i<project->allImages().size();i++)
-    {
-        img = project->allImages().at(i);
-        eo = img->getEO();
-        if(NULL != eo)
-        {
-            txt += "<EO>\n";
-            txt += "<imageId>" + img->getImageId() + "</imageId>\n";
-            if(treeItems.at(26)->checkState(0)==2)
-            {
-                // Pensar! Pegar o EO Type
-                txt += "<eoType>Spatial Ressection</eoType>\n";
-            }
-            if(treeItems.at(27)->checkState(0)==2)
-            {
-                // Pensar! Pegar o Total Iterations
-                //txt += "<noIterations>" + Conversion::intToString(eo->getTotalIterations()) + "</noIterations>\n";
-                txt += "<noIterations>0</noIterations>\n";
-            }
-            if(treeItems.at(28)->checkState(0)==2)
-            {
-                txt +=  "<Xa>\n";
-                txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
-                txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
-                txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
-                txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
-                txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
-                txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
-                txt +=  "</Xa>\n";
-            }
-            if(treeItems.at(29)->checkState(0)==2)
-            {
-                txt +=  "<V>\n";
-                txt +=  eo->getQuality().getV().xmlGetData();
-                txt +=  "</V>\n";
-            }
-            if(treeItems.at(30)->checkState(0)==2)
-            {
-                txt +=  "<sigmaXa>\n";
-                txt +=  eo->getQuality().getSigmaXa().xmlGetData();
-                txt +=  "</sigmaXa>\n";
-            }
-            txt += "</EO>\n";
-        }
-    }
-    txt += "</exteriorOrientation>\n";
-    return txt;
+	string txt;
+	Image *img;
+	SpatialRessection* eo;
+	txt = "<exteriorOrientation>\n";
+	for(unsigned int i=0;i<project->allImages().size();i++)
+	{
+		img = project->allImages().at(i);
+		eo = img->getEO();
+		if(NULL != eo)
+		{
+			txt += "<EO>\n";
+			txt += "<imageId>" + img->getImageId() + "</imageId>\n";
+			if(treeItems.at(26)->checkState(0)==2)
+			{
+                                txt += "<eoType>" + eo->getType() + "</eoType>\n";
+			}
+			if(treeItems.at(27)->checkState(0)==2)
+			{
+				txt += "<noIterations>";
+				if (eo->getType() == "photoTriangulation" && project->photoTri())
+					txt += Conversion::intToString(project->photoTri()->getTotalIterations());
+				else if (eo->getType() == "spatialResection")
+					txt += Conversion::intToString(eo->getTotalIterations());
+				else
+					txt += "unknow";
+				txt += "</noIterations>\n";
+			}
+			if(treeItems.at(28)->checkState(0)==2)
+			{
+				txt +=  "<Xa>\n";
+				txt +=  "<X0>" + Conversion::doubleToString(eo->getXaX0()) + "</X0>\n";
+				txt +=  "<Y0>" + Conversion::doubleToString(eo->getXaY0()) + "</Y0>\n";
+				txt +=  "<Z0>" + Conversion::doubleToString(eo->getXaZ0()) + "</Z0>\n";
+				txt +=  "<phi>" + Conversion::doubleToString(eo->getXaphi()) + "</phi>\n";
+				txt +=  "<omega>" + Conversion::doubleToString(eo->getXaomega()) + "</omega>\n";
+				txt +=  "<kappa>" + Conversion::doubleToString(eo->getXakappa()) + "</kappa>\n";
+				txt +=  "</Xa>\n";
+			}
+			if(treeItems.at(29)->checkState(0)==2)
+			{
+				txt +=  "<V>\n";
+                                txt +=  eo->getQuality().getV().xmlGetData(6);
+				txt +=  "</V>\n";
+			}
+			if(treeItems.at(30)->checkState(0)==2)
+			{
+				txt +=  "<sigmaXa>\n";
+                                txt +=  eo->getQuality().getSigmaXa().xmlGetData(6);
+				txt +=  "</sigmaXa>\n";
+			}
+			txt += "</EO>\n";
+		}
+	}
+	txt += "</exteriorOrientation>\n";
+	return txt;
 }
 
 double fixAngle(double angle)
@@ -1170,7 +1172,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "\n\n";
         outxsl << "<xsl:if test=\"blockPoints\">\n";
         outxsl << "    =======================================\n";
-        outxsl << "    Block Of Points:\n\n";
+        outxsl << "    Points:\n\n";
         outxsl << "    ---------------------------------------\n";
         outxsl << "<xsl:for-each select=\"blockPoints/point\">\n";        
         outxsl << "    Point Id: <xsl:value-of select=\"pointId\"/>\n";
@@ -1268,12 +1270,12 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "    =======================================\n";
         outxsl << "</xsl:if>\n";
         outxsl << "\n";
-        outxsl << "<xsl:if test=\"spatialRessection\">\n";
+        outxsl << "<xsl:if test=\"spatialResection\">\n";
         outxsl << "    =======================================\n";
         outxsl << "    Spatial Ressection:\n";
         outxsl << "\n";
         outxsl << "    ---------------------------------------\n";
-        outxsl << "<xsl:for-each select=\"spatialRessection/SR\">\n";
+        outxsl << "<xsl:for-each select=\"spatialResection/SR\">\n";
         outxsl << "    Image Id: <xsl:value-of select=\"imageId\"/>\n";
         outxsl << "    Flight Direction: <xsl:value-of select=\"flightDirection\"/> <xsl:if test=\"unit = 'rad'\"> Radian</xsl:if>\n";
         outxsl << "<xsl:if test=\"initializationData\">\n";
@@ -1310,6 +1312,26 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</xsl:for-each>\n";
         outxsl << "\n";
         outxsl << "</xsl:if>\n";
+        outxsl << "<xsl:if test=\"qualityData\">\n";
+        outxsl << "\n";
+        outxsl << "    Matrix V\n";
+        outxsl << "<xsl:for-each select=\"qualityData/sigmaXa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "    | <xsl:value-of select=\"mml:cn\"/> |\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "\n";
+        outxsl << "    Sigma Xa\n";
+        outxsl << "<xsl:for-each select=\"qualityData/sigmaXa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "    | <xsl:value-of select=\"*[1]\"/> | <xsl:value-of select=\"*[2]\"/> | <xsl:value-of select=\"*[3]\"/> | <xsl:value-of select=\"*[4]\"/> | <xsl:value-of select=\"*[5]\"/> | <xsl:value-of select=\"*[6]\"/> |\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "\n";
+        outxsl << "    Sigma La\n";
+        outxsl << "<xsl:for-each select=\"qualityData/sigmaLa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "    | <xsl:value-of select=\"*[1]\"/> | <xsl:value-of select=\"*[2]\"/> | <xsl:value-of select=\"*[3]\"/> | <xsl:value-of select=\"*[4]\"/> | <xsl:value-of select=\"*[5]\"/> | <xsl:value-of select=\"*[6]\"/> | <xsl:value-of select=\"*[7]\"/> | <xsl:value-of select=\"*[8]\"/> |\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "\n";
+        outxsl << "    Sigma0Squared: <xsl:value-of select=\"qualityData/sigma0Squared\"/>\n";
+        outxsl << "\n";
+        outxsl << "</xsl:if>\n";
         outxsl << "</xsl:if>\n";
         outxsl << "    ---------------------------------------\n";
         outxsl << "</xsl:for-each>\n";
@@ -1322,7 +1344,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "\n";
         outxsl << "    Total Iterations: <xsl:value-of select=\"photogrammetricBlock/totalIterations\"/>\n";
         outxsl << "    Angular Convergency: <xsl:value-of select=\"photogrammetricBlock/angularConvergency\"/> Radian\n";
-        outxsl << "    Metric Convergency: <xsl:value-of select=\"photogrammetricBlock/metricConvergency\"/> Radian\n";
+        outxsl << "    Metric Convergency: <xsl:value-of select=\"photogrammetricBlock/metricConvergency\"/> Meters\n";
         outxsl << "\n";
         outxsl << "<xsl:if test=\"photogrammetricBlock/initialValues\">\n";
         outxsl << "        Initial Values:\n";
@@ -1400,7 +1422,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "<xsl:for-each select=\"exteriorOrientation/EO\">\n";
         outxsl << "\n";
         outxsl << "    Image Id: <xsl:value-of select=\"imageId\"/>\n";
-        outxsl << "    EO Type: <xsl:value-of select=\"ioType\"/>\n";
+        outxsl << "    EO Type: <xsl:value-of select=\"eoType\"/>\n";
         outxsl << "    Number Of Iterations: <xsl:value-of select=\"noIterations\"/>\n";
         outxsl << "<xsl:if test=\"Xa\">\n";
         outxsl << "\n";
@@ -1411,6 +1433,22 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "    |   Omega   |  <xsl:value-of select=\"Xa/omega\"/>\n";
         outxsl << "    |   Phi     |  <xsl:value-of select=\"Xa/phi\"/>\n";
         outxsl << "    |   Kappa   |  <xsl:value-of select=\"Xa/kappa\"/>\n";
+        outxsl << "\n";
+        outxsl << "</xsl:if>\n";
+        outxsl << "<xsl:if test=\"V\">\n";
+        outxsl << "\n";
+        outxsl << "    Matrix V\n";
+        outxsl << "<xsl:for-each select=\"V/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "    | <xsl:value-of select=\"mml:cn\"/> |\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "\n";
+        outxsl << "</xsl:if>\n";
+        outxsl << "\n";
+        outxsl << "<xsl:if test=\"sigmaXa\">\n";
+        outxsl << "    Sigma Xa\n";
+        outxsl << "<xsl:for-each select=\"sigmaXa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "    | <xsl:value-of select=\"*[1]\"/> | <xsl:value-of select=\"*[2]\"/> | <xsl:value-of select=\"*[3]\"/> | <xsl:value-of select=\"*[4]\"/> | <xsl:value-of select=\"*[5]\"/> | <xsl:value-of select=\"*[6]\"/> |\n";
+        outxsl << "</xsl:for-each>\n";
         outxsl << "\n";
         outxsl << "</xsl:if>\n";
         outxsl << "    ---------------------------------------\n";
@@ -1599,7 +1637,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</div>\n";
         outxsl << "</xsl:if>\n";
         outxsl << "<xsl:if test=\"blockPoints\">\n";
-        outxsl << "<a onclick =\"javascript:ShowHide('blockOfPoints')\" href=\"javascript:;\"><h3>Block Of Points</h3></a>\n";
+        outxsl << "<a onclick =\"javascript:ShowHide('blockOfPoints')\" href=\"javascript:;\"><h3>Points</h3></a>\n";
         outxsl << "<div id=\"blockOfPoints\" style=\"DISPLAY: none\">\n";
         outxsl << "<xsl:for-each select=\"blockPoints/point\">\n";
         outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('blockPoints_point_<xsl:value-of select=\"pointId\" />')</xsl:attribute>Point Id <xsl:value-of select=\"pointId\"/></a><br/><br/>\n";
@@ -1791,19 +1829,19 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "<a href=\"#top\">Top</a>\n";
         outxsl << "</div>\n";
         outxsl << "</xsl:if>\n";
-        outxsl << "<xsl:if test=\"spatialRessection\">\n";
-        outxsl << "<a onclick =\"javascript:ShowHide('spatialRessection')\" href=\"javascript:;\"><h3>Spatial Ressection</h3></a>\n";
-        outxsl << "<div id=\"spatialRessection\" style=\"DISPLAY: none\">\n";
-        outxsl << "<xsl:for-each select=\"spatialRessection/SR\">\n";
-        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialRessection_image_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Image Id <xsl:value-of select=\"imageId\"/></a>\n";
+        outxsl << "<xsl:if test=\"spatialResection\">\n";
+        outxsl << "<a onclick =\"javascript:ShowHide('spatialResection')\" href=\"javascript:;\"><h3>Spatial Ressection</h3></a>\n";
+        outxsl << "<div id=\"spatialResection\" style=\"DISPLAY: none\">\n";
+        outxsl << "<xsl:for-each select=\"spatialResection/SR\">\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_image_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Image Id <xsl:value-of select=\"imageId\"/></a>\n";
         outxsl << "<br/><br/>\n";
-        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialRessection_image_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_image_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
         outxsl << "Flight Direction: <xsl:value-of select=\"flightDirection\"/> <xsl:if test=\"unit = 'rad'\"> Radian</xsl:if><br/>\n";
         outxsl << "<xsl:if test=\"initializationData\">\n";
         outxsl << "<xsl:if test=\"initializationData/gnss\">\n";
-        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialRessection_gnss_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Ground Coordinates</a>\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_gnss_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Ground Coordinates</a>\n";
         outxsl << "<br/><br/>\n";
-        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialRessection_gnss_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_gnss_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
         outxsl << "<br/>\n";
         outxsl << "Type: <xsl:value-of select=\"initializationData/gnss/type\"/><br/>\n";
         outxsl << "E<sub>0</sub>: <xsl:value-of select=\"initializationData/gnss/x0\"/><br/>\n";
@@ -1813,9 +1851,9 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</div>\n";
         outxsl << "</xsl:if>\n";
         outxsl << "<xsl:if test=\"initializationData/ins\">\n";
-        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialRessection_ins_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Inertial Navigation System</a>\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_ins_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Inertial Navigation System</a>\n";
         outxsl << "<br/><br/>\n";
-        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialRessection_ins_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_ins_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
         outxsl << "<br/>\n";
         outxsl << "Type: <xsl:value-of select=\"initializationData/ins/type\"/><br/>\n";
         outxsl << "&#x3C9;: <xsl:value-of select=\"initializationData/ins/omega\"/><br/>\n";
@@ -1825,9 +1863,9 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</div>\n";
         outxsl << "</xsl:if>\n";
         outxsl << "<xsl:if test=\"initializationData/selectedPoints\">\n";
-        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialRessection_selectedPoints_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Selected Points</a>\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_selectedPoints_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Selected Points</a>\n";
         outxsl << "<br/><br/>\n";
-        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialRessection_selectedPoints_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_selectedPoints_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
         outxsl << "<br/>\n";
         outxsl << "<table border=\"1\">\n";
         outxsl << "<tr>\n";
@@ -1851,6 +1889,52 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</xsl:if>\n";
         outxsl << "<br/>\n";
         outxsl << "</xsl:if>\n";
+        outxsl << "<xsl:if test=\"qualityData\">\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_quality_V_<xsl:value-of select=\"imageId\" />')</xsl:attribute><i>Matrix V</i></a>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_quality_V_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";        
+        outxsl << "<br/>\n";
+        outxsl << "<table border=\"1\">\n";
+        outxsl << "<xsl:for-each select=\"qualityData/V/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "<tr><td align=\"center\"><xsl:value-of select=\"mml:cn\"/></td></tr>\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "</table>\n";
+        outxsl << "</div><br/><br/>\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_quality_sigmaXa_<xsl:value-of select=\"imageId\" />')</xsl:attribute><i>&#x3A3;X<sub>a</sub></i></a>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_quality_sigmaXa_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<br/>\n";
+        outxsl << "<table border=\"1\">\n";
+        outxsl << "<xsl:for-each select=\"qualityData/sigmaXa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "<tr>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[1]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[2]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[3]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[4]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[5]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[6]\"/></td>\n";
+        outxsl << "</tr>\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "</table>\n";
+        outxsl << "</div><br/><br/>\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('spatialResection_quality_sigmaLa_<xsl:value-of select=\"imageId\" />')</xsl:attribute><i>&#x3A3;L<sub>a</sub></i></a>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">spatialResection_quality_sigmaLa_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<br/>\n";
+        outxsl << "<table border=\"1\">\n";
+        outxsl << "<xsl:for-each select=\"qualityData/sigmaLa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "<tr>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[1]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[2]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[3]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[4]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[5]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[6]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[7]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[8]\"/></td>\n";
+        outxsl << "</tr>\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "</table>\n";
+        outxsl << "</div><br/><br/>\n";
+        outxsl << "&#x3C3;<sub>0</sub><sup>2</sup>: <xsl:value-of select=\"qualityData/sigma0Squared\"/><br/>\n";
+        outxsl << "</xsl:if><br/>\n";
         outxsl << "</div>\n";
         outxsl << "</xsl:for-each>\n";
         outxsl << "<a href=\"#top\">Top</a>\n";
@@ -1861,7 +1945,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "<div id=\"photogrammetricBlock\" style=\"DISPLAY: none\">\n";
         outxsl << "Total Iterations: <xsl:value-of select=\"photogrammetricBlock/totalIterations\"/><br/>\n";
         outxsl << "Angular Convergency: <xsl:value-of select=\"photogrammetricBlock/angularConvergency\"/> Radian<br/>\n";
-        outxsl << "Metric Convergency: <xsl:value-of select=\"photogrammetricBlock/metricConvergency\"/> Radian<br/>\n";
+        outxsl << "Metric Convergency: <xsl:value-of select=\"photogrammetricBlock/metricConvergency\"/> Meters<br/>\n";
         outxsl << "<xsl:if test=\"photogrammetricBlock/initialValues\"><br/>\n";
         outxsl << "<a onclick =\"javascript:ShowHide('photogrammetricBlock_initialValues')\" href=\"javascript:;\"><i>Initial Values</i></a><br/>\n";
         outxsl << "<div id=\"photogrammetricBlock_initialValues\" style=\"DISPLAY: none\">\n";
@@ -2025,6 +2109,35 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</table>\n";
         outxsl << "</div><br/>\n";
         outxsl << "</xsl:if>\n";
+        outxsl << "<xsl:if test=\"V\">\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('exteriorOrientation_V_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Matrix V</a>\n";
+        outxsl << "<br/><br/>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">exteriorOrientation_V_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<table border=\"1\">\n";
+        outxsl << "<xsl:for-each select=\"V/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "<tr><td align=\"center\"><xsl:value-of select=\"mml:cn\"/></td></tr>\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "</table>\n";
+        outxsl << "</div><br/>\n";
+        outxsl << "</xsl:if>\n";
+        outxsl << "<xsl:if test=\"sigmaXa\">\n";
+        outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('exteriorOrientation_sigmaXa_<xsl:value-of select=\"imageId\" />')</xsl:attribute>&#x3A3;X<sub>a</sub></a>\n";
+        outxsl << "<br/><br/>\n";
+        outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">exteriorOrientation_sigmaXa_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
+        outxsl << "<table border=\"1\">\n";
+        outxsl << "<xsl:for-each select=\"sigmaXa/mml:matrix/mml:matrixrow\">\n";
+        outxsl << "<tr>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[1]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[2]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[3]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[4]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[5]\"/></td>\n";
+        outxsl << "<td align=\"center\"><xsl:value-of select=\"*[6]\"/></td>\n";
+        outxsl << "</tr>\n";
+        outxsl << "</xsl:for-each>\n";
+        outxsl << "</table>\n";
+        outxsl << "</div><br/>\n";
+        outxsl << "</xsl:if>\n";
         outxsl << "</div>\n";
         outxsl << "</xsl:for-each>\n";
         outxsl << "<a href=\"#top\">Top</a>\n";
@@ -2061,6 +2174,12 @@ bool ReportManager::makeXslt(int idExt, string path)
     }
 
     return true;
+}
+
+QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
+{
+    SingleScene ss(0, filename);
+    return ss.getThumb(QSize(maxW, maxH));
 }
 
 /*string ReportManager::getImageIds(int )

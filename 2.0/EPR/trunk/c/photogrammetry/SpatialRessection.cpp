@@ -29,13 +29,10 @@ SpatialRessection::SpatialRessection()
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
-
-	if (myImage != NULL)
-		rt = new RayTester(myImage);
-	else
-		rt = NULL;
-
+	type = "";
 	useDistortions = true;
+    myImage = NULL;
+    rt = NULL;
 }
 
 /**
@@ -44,17 +41,14 @@ SpatialRessection::SpatialRessection()
 SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only, needed in project use.
 {
 	imageId = myImageId;
-		pointForFlightDirectionAvailable = flightDirectionAvailable = false;
+    myImage = NULL;
+    pointForFlightDirectionAvailable = flightDirectionAvailable = false;
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
-
-	if (myImage != NULL)
-		rt = new RayTester(myImage);
-	else
-		rt = NULL;
-
+	type = "";
 	useDistortions = true;
+    rt = NULL;
 }
 
 /**
@@ -406,7 +400,7 @@ void SpatialRessection::unsetPointForFlightDirection()
 string SpatialRessection::objectType(void)
 {
 	stringstream result;
-	result << "SpatialRessection " << imageId;
+    result << "SpatialResection " << imageId;
 	return result.str();
 }
 
@@ -423,7 +417,7 @@ string SpatialRessection::objectAssociations(void)
  */
 bool SpatialRessection::is(string s)
 {
-	return (s == "SpatialRessection" ? true : false);
+    return (s == "SpatialResection" ? true : false);
 }
 
 // XML methods
@@ -434,8 +428,9 @@ bool SpatialRessection::is(string s)
  */
 void SpatialRessection::xmlSetData(string xml)
 {
-	EDomElement root(xml);
-	imageId = Conversion::stringToInt(root.attribute("image_key"));
+    EDomElement root(xml);
+    imageId = Conversion::stringToInt(root.attribute("image_key"));
+    type = root.attribute("type");
 	totalIterations = root.elementByTagName("iterations").toInt();
 	if (root.elementByTagName("converged").toString() == "true")
 		gnssConverged = insConverged = true;
@@ -524,7 +519,7 @@ string SpatialRessection::xmlGetData()
 string SpatialRessection::xmlGetDataEO()
 {
     stringstream result;
-    result << "<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
+    result << "<imageEO type=\"" << type << "\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
     result << "<Xa>\n";
     result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
     result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
@@ -631,7 +626,7 @@ void SpatialRessection::generateA()
 			double Z = myCoordinate.getZ();
 
 			A.set(j,1,c*cos(kappa0)*cos(phi0)/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))-c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*sin(phi0));
-			A.set(j,2,-c*(-sin(kappa0)*cos(omega0)-cos(kappa0)*sin(phi0)*sin(omega0))/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))+c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*cos(phi0)*sin(omega0));
+            A.set(j,2,-c*(-sin(kappa0)*cos(omega0)-cos(kappa0)*sin(phi0)*sin(omega0))/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))+c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*cos(phi0)*sin(omega0));
 			A.set(j,3,-c*(-sin(kappa0)*sin(omega0)+cos(kappa0)*sin(phi0)*cos(omega0))/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))-c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*cos(phi0)*cos(omega0));
 			A.set(j,4,-c*(-cos(kappa0)*sin(phi0)*(X-X00)+cos(kappa0)*cos(phi0)*sin(omega0)*(Y-Y00)-cos(kappa0)*cos(phi0)*cos(omega0)*(Z-Z00))/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))+c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*(cos(phi0)*(X-X00)+sin(phi0)*sin(omega0)*(Y-Y00)-sin(phi0)*cos(omega0)*(Z-Z00)));
 			A.set(j,5,-c*((-sin(kappa0)*sin(omega0)+cos(kappa0)*sin(phi0)*cos(omega0))*(Y-Y00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Z-Z00))/(sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00))+c*(cos(kappa0)*cos(phi0)*(X-X00)+(sin(kappa0)*cos(omega0)+cos(kappa0)*sin(phi0)*sin(omega0))*(Y-Y00)+(sin(kappa0)*sin(omega0)-cos(kappa0)*sin(phi0)*cos(omega0))*(Z-Z00))/pow((sin(phi0)*(X-X00)-cos(phi0)*sin(omega0)*(Y-Y00)+cos(phi0)*cos(omega0)*(Z-Z00)),2)*(-cos(phi0)*cos(omega0)*(Y-Y00)-cos(phi0)*sin(omega0)*(Z-Z00)));
@@ -696,6 +691,18 @@ void SpatialRessection::generateL0()
 	}
 }
 
+void SpatialRessection::generateRMSE()
+{
+    double sum = 0;
+    for (int i = 0; i < L0.getRows(); i++)
+    {
+        sum += pow(L0.get(i+1,1),2);
+        //qDebug("%f",sum);
+    }
+    //qDebug("%f",sqrt(sum/(selectedPoints.size()*2-6)));
+    rmse.push_back(sqrt(sum/(selectedPoints.size()*2-6)));
+}
+
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
   Aqui tem codigo da PR
   ////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -747,8 +754,10 @@ void SpatialRessection::generateX0()
 
 void SpatialRessection::initialize()
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+        if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && myImage->isFlightDirectionAvailable())
 	{
+        if (rt == NULL)
+            rt = new RayTester(myImage);
 		rt->setImage(myImage);
 		rt->setIOParameters(myImage->getIO()->getXa());
 
@@ -851,7 +860,8 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 {
 	gnssConverged = false;
 	insConverged = false;
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+    rmse.clear();
+    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && myImage->isFlightDirectionAvailable())
 	{
 		int iterations = 0;
 
@@ -902,9 +912,10 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 							insConverged=false;
 					}
 				}
+                generateRMSE();
 
-				generateX0();
-				generateL0();
+                generateX0();
+                generateL0();
 				iterations++;
 			}
 		}

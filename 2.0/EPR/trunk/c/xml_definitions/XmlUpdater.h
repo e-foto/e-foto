@@ -101,7 +101,12 @@ public:
 	/**
  * \brief Método para aplicar a atualização para a versão 1.0.266 do arquivo .epp.
  */
-    void updateToBuild1_0_266();
+	void updateToBuild1_0_266();
+
+	/**
+ * \brief Método para aplicar a atualização para a versão 1.0.325 do arquivo .epp.
+ */
+	void updateToBuild1_0_325();
 
 	/**
 	  * \brief Metodo para substituir uma palavra por outra no texto

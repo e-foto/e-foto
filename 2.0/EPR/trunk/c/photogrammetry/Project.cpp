@@ -279,6 +279,7 @@ void Project::instanceAllEOs()
 {
 	EDomElement root(xmlData);
 	deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
+	deque<EDomElement> xmlAllSRs = root.elementsByTagName("imageSR");
 	for (unsigned int i = 0 ;i < xmlAllEOs.size();i++)
 	{
 		qApp->processEvents();
@@ -292,9 +293,19 @@ void Project::instanceAllEOs()
 		//pkj->getImageId()
 		if (notAvailable)
 		{
-			SpatialRessection* newEO = new SpatialRessection(); // SpatialRessection vai virar ExteriorOrientation em breve.
+			SpatialRessection* newEO = new SpatialRessection();
 			newEO->setImage(image(Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key"))));
-			newEO->xmlSetData(xmlAllEOs.at(i).getContent());
+
+			bool hasSR = false;
+			for (unsigned int k = 0; k < xmlAllSRs.size() && !hasSR; k++)
+				if (xmlAllEOs.at(i).attribute("image_key") == xmlAllSRs.at(k).attribute("image_key"))
+				{
+					hasSR = true;
+					newEO->xmlSetData(xmlAllEOs.at(i).getContent()+xmlAllSRs.at(k).getContent());
+					xmlAllSRs.erase(xmlAllSRs.begin()+k);
+				}
+			if (!hasSR)
+				newEO->xmlSetData(xmlAllEOs.at(i).getContent());
 			newEO->setImage(NULL);
 			EOs.push_back(newEO);
 		}
@@ -960,7 +971,16 @@ string Project::getXml()
 
 	// Rever aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
 
-	xmlData += processStates;
+	xmlData += "<spatialResections>\n";
+	for(int i=0; i<EOs.size(); i++)
+	{
+		SpatialRessection* sp = (SpatialRessection*) EOs.at(i);
+		xmlData += sp->xmlGetDataEO();
+	}
+	xmlData += "</spatialResections>\n";
+
+	if (photoTri())
+		xmlData += photoTri()->xmlGetData();
 
 	xmlData += "</efotoPhotogrammetricProject>";
 
