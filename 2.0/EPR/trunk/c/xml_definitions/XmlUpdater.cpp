@@ -10,9 +10,10 @@ namespace efoto {
 
 XmlUpdater::XmlUpdater(string xml,string referenceBuild)
 {
-    builds.push_back("1.0.20");
-    builds.push_back("1.0.42");
-    builds.push_back("1.0.266");
+	builds.push_back("1.0.20");
+	builds.push_back("1.0.42");
+	builds.push_back("1.0.266");
+	builds.push_back("1.0.325");
 
 	if(referenceBuild=="")
 	{
@@ -137,14 +138,18 @@ bool XmlUpdater::updateBuild(int* error)
 
 void XmlUpdater::executeUpdate()
 {
-    if (getXmlBuild().compare("1.0.20") == 0)
-    {
-        updateToBuild1_0_42();
-    }
-    if (getXmlBuild().compare("1.0.42") == 0)
-    {
-        updateToBuild1_0_266();
-    }
+	if (getXmlBuild().compare("1.0.20") == 0)
+	{
+		updateToBuild1_0_42();
+	}
+	if (getXmlBuild().compare("1.0.42") == 0)
+	{
+		updateToBuild1_0_266();
+	}
+	if (getXmlBuild().compare("1.0.266") == 0)
+	{
+		updateToBuild1_0_325();
+	}
 }
 
 bool XmlUpdater::buildIsValid(string build)
@@ -189,8 +194,8 @@ void XmlUpdater::updateToBuild1_0_266()
 
 	deque<EDomElement> eosXml = allXml.elementsByTagName("imageEO");
 
-    allXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
-    for(int i=0;i<eosXml.size();i++)
+	allXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
+	for(int i=0;i<eosXml.size();i++)
 	{
 		string total="";
 		EDomElement eoXml;
@@ -210,20 +215,32 @@ void XmlUpdater::updateToBuild1_0_266()
 			eoXml.replaceChildByTagName("Xa","");
 
 			stringstream newXmlSpatialRessection;
-            newXmlSpatialRessection << "<imageSR image_key=\""<< eoXml.attribute("image_key") << "\">\n";
+			newXmlSpatialRessection << "<imageSR image_key=\""<< eoXml.attribute("image_key") << "\">\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("iterations").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("converged").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("parameters").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("quality").getContent() << "\n";
-            newXmlSpatialRessection << "</imageSR>\n";
+			newXmlSpatialRessection << "</imageSR>\n";
 
-            allXml.replaceChildByTagAtt("imageEO","image_key",eoXml.attribute("image_key"),aux.str());
+			allXml.replaceChildByTagAtt("imageEO","image_key",eoXml.attribute("image_key"),aux.str());
 
-            allXml.addChildAtTagName("spatialRessections",newXmlSpatialRessection.str());
+			allXml.addChildAtTagName("spatialResections",newXmlSpatialRessection.str());
 		}
-    }
+	}
 
-    allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.266");
+	allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.266");
+}
+
+void XmlUpdater::updateToBuild1_0_325()
+{
+	string all= allXml.getContent();
+    while(replacer(all,"1.0.266","1.0.325"));
+    while(replacer(all,"Ressection","Resection"));
+    while(replacer(all,"<spatialResection ","<imageSR "));
+    while(replacer(all,"</spatialResection>","</imageSR>"));
+    while(replacer(all,"gml:sigma","sigma"));
+	allXml.setContent(all);
+	allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.325");
 }
 
 bool XmlUpdater::replacer(string &text,string oldWord,string newWord)

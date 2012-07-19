@@ -44,8 +44,9 @@ class Image : public EObject
 	unsigned int width;
 	unsigned int height;
 	string filename;
-	string filepath;
+    string filepath;
     double flightDirection;
+    bool flightDirectionAvailable;
 
 	string imageId;
 	ObjectSpaceCoordinate spatialCoordinates;
@@ -99,8 +100,8 @@ public:
 	string getFilename();
 	string getFilepath();
 	string getImageId();
-	bool isGnssAvailable();
-	bool isInsAvailable();
+    bool isGnssAvailable();
+    bool isInsAvailable();
 	double getGnssX0();
 	double getGnssY0();
 	double getGnssZ0();
@@ -112,6 +113,7 @@ public:
 
 	void setFlightDirection(double radianAngle);//Paulo 27/09/11
 	double getFlightDirection();//Paulo 27/09/11
+    bool isFlightDirectionAvailable() {return flightDirectionAvailable;}
 
 	// Composed objects accessor methods
 	//
