@@ -19,7 +19,7 @@ namespace efoto {
  */
 Image::Image()
 {
-
+    mySensor = NULL;
 }
 
 /**
@@ -28,8 +28,10 @@ Image::Image()
 Image::Image(int myId, int mySensorId)
 {
 	id = myId;
-	sensorId = mySensorId;
+    sensorId = mySensorId;
     flightDirection = 3*M_PI;
+    flightDirectionAvailable = false;
+    mySensor = NULL;
 }
 
 /**
@@ -37,7 +39,7 @@ Image::Image(int myId, int mySensorId)
  */
 Image::~Image()
 {
-
+    flightDirectionAvailable = false;
 }
 
 // Private attribute accessor methods
@@ -130,6 +132,7 @@ void Image::setFilepath(string newFilepath)
  */
 void Image::setFlightDirection(double radianAngle)
 {
+    flightDirectionAvailable = true;
 	flightDirection=radianAngle;
 }
 
@@ -533,7 +536,9 @@ void Image::xmlSetData(string xml)
 	filepath = root.elementByTagName("filePath").toString();
     resolution = root.elementByTagName("resolution").toInt();
     resolutionUnit = root.elementByTagName("resolution").attribute("uom");
-    flightDirection = root.elementByTagName("flightDirection").toDouble();
+    flightDirectionAvailable = root.elementByTagName("flightDirection").getContent() != "";
+    if (flightDirectionAvailable)
+        flightDirection = root.elementByTagName("flightDirection").toDouble();
 
 	//Isso deve ser corrigido...
 	//spatialCoordinates.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());

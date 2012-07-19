@@ -126,7 +126,7 @@ void ReportUserInterface_Qt::newTree()
 
         item = new QTreeWidgetItem(fatherTree);
         item->setCheckState(0,Qt::Checked);
-        item->setText(0, "Block Points");
+        item->setText(0, "Points");
         treeItems.push_back(item);
         n1RootItem = item;
 
@@ -158,7 +158,7 @@ void ReportUserInterface_Qt::newTree()
 
         item = new QTreeWidgetItem(fatherTree);
         item->setCheckState(0,Qt::Checked);
-        item->setText(0, "Spatial Ressection");
+        item->setText(0, "Spatial Resection");
         treeItems.push_back(item);
         n1RootItem = item;
 
@@ -250,7 +250,7 @@ void ReportUserInterface_Qt::newTree()
         item->setText(0, "Stereo Pairs");
         treeItems.push_back(item);
 
-        item = new QTreeWidgetItem(fatherTree);
+      /*  item = new QTreeWidgetItem(fatherTree);
         item->setCheckState(0,Qt::Checked);
         item->setText(0, "Stereo Plotting");
         treeItems.push_back(item);
@@ -263,7 +263,7 @@ void ReportUserInterface_Qt::newTree()
         item = new QTreeWidgetItem(fatherTree);
         item->setCheckState(0,Qt::Checked);
         item->setText(0, "Orthorectification");
-        treeItems.push_back(item);
+        treeItems.push_back(item);*/
 
     manager->checkTree(treeItems);
 
@@ -373,12 +373,9 @@ void ReportUserInterface_Qt::unselectFatherByKid(QTreeWidgetItem* kid)
 
 bool ReportUserInterface_Qt::saveEPR()
 {
-    //QMessageBox::information(this,"oi","ola");
-    //qDebug("oi");    
     QString* chosenExtension = new QString();
-    //QString filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html;;*.pdf"),chosenExtension);
     QString filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"),chosenExtension);
-    QString filenameOriginal;
+    QString filenameOriginal,filenameOriginalMask,filePathMask;
     int idExt = 0;
     if (filename == "")
     {
@@ -386,6 +383,13 @@ bool ReportUserInterface_Qt::saveEPR()
     }
     else
     {        
+        int j=filename.lastIndexOf("/");
+
+        filenameOriginal = filename.right(filename.length()-j-1);
+
+        if(!filename.endsWith(".xml"))
+            filename.append(".xml");
+
         chosenExtension->remove('*');
 
         if (chosenExtension->toStdString() == ".xml"){
@@ -393,23 +397,23 @@ bool ReportUserInterface_Qt::saveEPR()
         } else {
             if (chosenExtension->toStdString() == ".txt"){
                 idExt = 1;
+                filenameOriginalMask = filenameOriginal;
+                filenameOriginalMask.prepend("~");
+                filePathMask = filename.left(j);
+                filename = filePathMask + "/" + filenameOriginalMask;
             } else {
                 if (chosenExtension->toStdString() == ".html"){
                     idExt = 2;
-                }// else {
-                 //   if (chosenExtension->toStdString() == ".pdf"){
-                 //       idExt = 3;
-                 //   }
-                //}
+                    filenameOriginalMask = filenameOriginal;
+                    filenameOriginalMask.prepend("~");
+                    filePathMask = filename.left(j);
+                    filename = filePathMask + "/" + filenameOriginalMask;
+                }
             }
         }
-
-        int j=filename.lastIndexOf("/");
-        filenameOriginal = filename.right(filename.length()-j-1);        
-        filename.append(".xml");
     }
 
-    int i=filename.lastIndexOf("/");    
+    int i=filename.lastIndexOf("/");
     QString filePath = filename.left(i);
 
     bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
@@ -431,37 +435,66 @@ bool ReportUserInterface_Qt::saveEPR()
 
     if(done == true && doneXslt == true)
     {
-        QProcess *pro = new QProcess();
+        QProcess *pro = new QProcess();        
         if(idExt == 1)
         {            
             QString output;
-            output = filePath + "/" + filenameOriginal + ".txt";
+            if(filenameOriginal.endsWith(".txt"))
+                output = filePath + "/" + filenameOriginal;
+            else
+                output = filePath + "/" + filenameOriginal + ".txt";
             QString outxsl;
             outxsl = filePath + "/" + "epr_txt.xsl";
             QString outcmd;
-            outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
-            pro->start(outcmd);
-            pro->waitForFinished(1000);
-            pro->start("rm " + outxsl);
-            pro->waitForFinished(1000);
-            pro->start("rm " + filename);
-        } else {
-            if(idExt == 2){                   
-                QString output;
-                output = filePath + "/" + filenameOriginal + ".html";
-                QString outxsl;
-                outxsl = filePath + "/" + "epr_html.xsl";
-                QString outcmd;
+            #ifdef Q_WS_X11 //LINUX
                 outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
                 pro->start("rm " + outxsl);
                 pro->waitForFinished(1000);
                 pro->start("rm " + filename);
+            #endif
+            #ifdef Q_WS_WIN //WINDOWS
+                outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
+                pro->start(outcmd);
                 pro->waitForFinished(1000);
+                outxsl.replace("/","\\");
+                filename.replace("/","\\");
+                pro->start("cmd /C del \""+outxsl+"\"");
+                pro->waitForFinished(1000);
+                pro->start("cmd /C del \""+filename+"\"");
+            #endif
+        } else {
+            if(idExt == 2){                   
+                QString output;
+                if(filenameOriginal.endsWith(".html"))
+                    output = filePath + "/" + filenameOriginal;
+                else
+                    output = filePath + "/" + filenameOriginal + ".html";
+                QString outxsl;
+                outxsl = filePath + "/" + "epr_html.xsl";
+                QString outcmd;                
+                #ifdef Q_WS_X11 //LINUX
+                    outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
+                    pro->start(outcmd);
+                    pro->waitForFinished(1000);
+                    pro->start("rm " + outxsl);
+                    pro->waitForFinished(1000);
+                    pro->start("rm " + filename);
+                #endif
+                #ifdef Q_WS_WIN //WINDOWS
+                    outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
+                    pro->start(outcmd);
+                    pro->waitForFinished(1000);
+                    outxsl.replace("/","\\");
+                    filename.replace("/","\\");
+                    pro->start("cmd /C del \""+outxsl+"\"");
+                    pro->waitForFinished(1000);
+                    pro->start("cmd /C del \""+filename+"\"");
+                #endif
             }
         }
-
+        pro->kill();
         QMessageBox msgBox;
         msgBox.setText("Foi salvo com sucesso.");
         msgBox.exec();

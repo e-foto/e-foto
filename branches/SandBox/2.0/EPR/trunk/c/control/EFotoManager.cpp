@@ -123,17 +123,19 @@ bool EFotoManager::loadProject()
             }
             myFile.close();
 
-            string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
-            updater = XmlUpdater(xmlData);
-            if (updater.isUpdated())
-            {
-                xmlData = updater.getAllXml().getContent();
-            }
-            project.setXml(xmlData);
-            return true;
-        }
-    }
-    return false;
+			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
+			updater = XmlUpdater(xmlData);
+			if (updater.isUpdated())
+			{
+				xmlData = updater.getAllXml().getContent();
+			}
+			project.setXml(xmlData);
+			xmlData = EDomElement(xmlData).indent('\t').getContent();
+            //qDebug("%s",xmlData.c_str());
+			return true;
+		}
+	}
+	return false;
 }
 
 } // namespace efoto
