@@ -175,6 +175,8 @@ SOURCES =  src/Photogrammetry.cpp \
 		   src/interface/PTUserInterface_Qt.cpp \
 		   src/interface/SPUserInterface_Qt.cpp \
 		   src/interface/SRUserInterface_Qt.cpp \
+		   #Tradução
+		   src/interface/main.cpp \
 		   #
 		   src/formDisplay/ControlButtons.cpp \
 		   src/formDisplay/FlightForm.cpp \

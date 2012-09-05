@@ -323,7 +323,9 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
 			QRect target = rect();
 			QSize targetSize = target.size();
 
-			QImage thumb = currentScene->getThumb(targetSize,&(_detail->rect()));
+                        //QImage thumb = currentScene->getThumb(targetSize,&(_detail->rect()));
+                        QRect detailRect = _detail->rect();
+                        QImage thumb = currentScene->getThumb(targetSize,&detailRect);
 			painter.drawImage((targetSize.width()-thumb.width())/2, (targetSize.height()-thumb.height())/2, thumb);
 			//painter.drawImage(0, 0, thumb);
 		}

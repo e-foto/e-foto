@@ -6,6 +6,7 @@
         <file alias="Pattern">pattern.png</file>
         <file>checked.png</file>
         <file>unchecked.png</file>
+	<file>patrocinadores.png</file>
     </qresource>
     <qresource prefix="/pin">
         <file alias="Arrow">ARROW32x32.png</file>

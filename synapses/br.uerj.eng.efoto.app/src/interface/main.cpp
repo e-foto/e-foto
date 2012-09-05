@@ -10,6 +10,7 @@ using namespace std;
 int main( int argc, char ** argv )
 {
     QApplication efoto(argc, argv);
+
     efoto.setStyle("plastique");
     efoto.quitOnLastWindowClosed();
 
