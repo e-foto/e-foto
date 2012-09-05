@@ -237,7 +237,7 @@ void SigmaFormController::toNotAvailable()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-			newLabel->setText("StDev");
+                        newLabel->setText(QObject::tr("StDev"));
 			newEdit->setSpecialValueText("Not Available");
 			newEdit->setTextValue("Not Available");
 			newEdit->setEnabled(false);
