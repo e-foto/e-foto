@@ -1,0 +1,11 @@
+Para que as synapses referentes ao Módulo de Fotogrametria Digital sejam traduzidas para o Português-BR, é necessário seguir os seguintes passos:
+1-Acrescentar ao arquivo "./cortex/runtime/cortex/src/main.cpp" os includes necessários e, dentro do método "main", as seguintes linhas de código:   
+  QString translatorFileName = QLatin1String("cortex_");
+  translatorFileName += QLocale::system().name();
+  QTranslator *translator = new QTranslator(QCoreApplication::instance());
+  if (translator->load(translatorFileName))
+  {
+     QCoreApplication::instance()->installTranslator(translator);
+  }
+
+2-Copiar o arquivo "cortex_pt_BR.qm" para o diretório onde se encontra o executável, gerado após compilação.
