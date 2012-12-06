@@ -27,6 +27,10 @@ protected:
 	QImage rtext;
 	QList< StereoTool* > _tool;
 
+        bool crl, cgl, cbl;//RGBA color left
+        bool crr, cgr, cbr;//RGBA color right
+        bool reverseLensGlasses;
+
 	QPointF _mouseScreenPos;
 	QImage _cursor;
     bool _onPainting;
@@ -57,6 +61,9 @@ public:
 	void setGLCursor(QImage cursor);
 	QImage getGLCursor();
 	void setGLBackground(QImage bg);
+        void setColorMaskLeft(int color);
+        void setColorMaskRight(int color);
+        void setReverseLensGlasses(int opt);
 
     bool painting();
 
@@ -131,6 +138,10 @@ public:
 
     bool painting();
     void resizeEvent(QResizeEvent *);
+
+    void setColorMaskLeft(int color);
+    void setColorMaskRight(int color);
+    void setReverseLensGlasses(int opt);
 
 signals:
     void mousePositionsChanged(QPointF*, QPointF*);

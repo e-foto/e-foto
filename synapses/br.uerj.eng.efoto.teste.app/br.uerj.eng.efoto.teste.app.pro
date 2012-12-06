@@ -27,7 +27,8 @@ INCLUDEPATH += . \
 						   src/c/imageDisplay \
 						   src/qt/formDisplay \
 						   src/qt/resource \
-						   src/c/xml_definitions
+                                                   src/c/xml_definitions \
+
 
 DEPENDPATH += $${INCLUDEPATH}
 
@@ -272,6 +273,16 @@ RESOURCES += resource.qrc
 
 QT += opengl
 
+#LIBS += -L/usr/local/lib/ -lterralib
+#INCLUDEPATH += $$PWD/../../../../../../../usr/local/lib
 unix {
 LIBS += -lGL -lGLU
 }
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/release/ -lterralib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/debug/ -lterralib
+else:symbian: LIBS += -lterralib
+else:unix: LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lterralib
+
+INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../../../../usr/local/include

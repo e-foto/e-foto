@@ -374,13 +374,38 @@ void OrthoManager::runOrthoIndividual(int image)
 int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
 {
 	// Create new orthoimage
+
 	if (ortho != NULL)
 		delete ortho;
-
+        //char * extGeoTiff(".tif");
+        string filenameGeoTiff(filename);
+        filenameGeoTiff+=".tif";
 	double Xi, Yi, Xf, Yf, res_x, res_y;
 	grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
 	ortho = new Orthorectification(Xi, Yi, Xf, Yf, user_res_x, user_res_y);
 		ortho->setNumberOfBands(3);
+                //Obter os dados XML do atributo manager e setar os atributos coord_system (CPS) e spheroid ou datum (GRS) de ortho
+                //EDomElement xml(manager->getXml());
+                //xml.elementByTagName();
+            Terrain* terrain = project->terrain();
+
+            ortho->setUtmFuse(terrain->getUtmFuse());
+
+            if (terrain->getCPS().compare("UTM"))
+                ortho->setCoordinateSystem(0);
+            else
+                ortho->setCoordinateSystem(0);
+
+            if (terrain->getGRS().compare("SAD69"))
+                ortho->setDatum(0);
+            else if (terrain->getGRS().compare("WGS84"))
+                ortho->setDatum(1);
+            else if (terrain->getGRS().compare("SIRGAS2000"))
+                ortho->setDatum(2);
+            else
+                ortho->setDatum(0);
+
+
 	flag_cancel = false;
 
 	if (option == 0)
@@ -394,6 +419,8 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 		}
 
 		ortho->saveOrtho(filename, 0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
+
 	}
 
 	if (option == 1)
@@ -418,6 +445,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 			}
 
 			ortho->saveOrtho((char *)fname.c_str(),0);
+                        ortho->saveOrthoGeoTiff((char *)fname.c_str(),0);
 		}
 	}
 
@@ -432,6 +460,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 		}
 
 		ortho->saveOrtho(filename, 0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
 	}
 
 	// Display results

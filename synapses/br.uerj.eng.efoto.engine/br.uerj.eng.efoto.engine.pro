@@ -18,6 +18,7 @@ DEFINES += EFOTO_ENGINE
 INCLUDEPATH += src \
 	src/photogrammetry \
 	src/imageProcessing \
+        #src/terraLib \
 	src/infrastructure \
 	src/xml_definitions
 
@@ -79,6 +80,10 @@ HEADERS = include/IPhotogrammetricEngine.h \
 	src/infrastructure/TreeFeatures.h \
 	src/infrastructure/Features.h \
 	src/infrastructure/ProgressPublisher.h \
+        src/infrastructure/Te3DPersistenceService.h \
+        src/infrastructure/Te3DGeometry.h \
+        #src/terraLib/Te3DGeometry.h \
+        #src/terraLib/Te3DPersistenceService.h \
 	src/xml_definitions/XmlUpdater.h
 
 SOURCES = src/PhotogrammetricEngine.cpp \
@@ -134,4 +139,18 @@ SOURCES = src/PhotogrammetricEngine.cpp \
 	src/infrastructure/TreeFeatures.cpp \
 	src/infrastructure/Features.cpp \
 	src/infrastructure/ProgressPublisher.cpp \
+        src/infrastructure/Te3DPersistenceService.cpp \
+        src/infrastructure/Te3DGeometry.cpp \
+        #src/terraLib/Te3DGeometry.cpp \
+        #src/terraLib/Te3DPersistenceService.cpp \
 	src/xml_definitions/XmlUpdater.cpp
+
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/release/ -lterralib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/debug/ -lterralib
+else:symbian: LIBS += -lterralib
+else:unix: LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lterralib
+
+INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../../../../usr/local/include

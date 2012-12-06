@@ -10,7 +10,6 @@
 #include "DEMUserInterface.h"
 #include "DEMUserInterface_Qt.h"
 
-
 // Constructors and destructors
 //
 
