@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>1062</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -434,6 +434,12 @@
     <layout class="QGridLayout" name="gridLayout_5">
      <item row="0" column="0">
       <widget class="QLabel" name="label">
+       <property name="maximumSize">
+        <size>
+         <width>157</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Pair:</string>
        </property>
@@ -444,6 +450,12 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>157</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Stereo mode:</string>
        </property>
@@ -465,6 +477,12 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
+       <property name="maximumSize">
+        <size>
+         <width>157</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Left anaglyph:</string>
        </property>
@@ -506,6 +524,12 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_7">
+       <property name="maximumSize">
+        <size>
+         <width>157</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Right anaglyph:</string>
        </property>
@@ -514,23 +538,8 @@
      <item row="3" column="1">
       <widget class="QComboBox" name="comboBox_6">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
-       <item>
-        <property name="text">
-         <string>Red</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Green</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Blue</string>
-        </property>
-       </item>
        <item>
         <property name="text">
          <string>Cyan</string>
@@ -546,27 +555,28 @@
          <string>Yellow</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Red</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Green</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Blue</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_8">
+     <item row="4" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox">
        <property name="text">
-        <string>Stereo mode:</string>
+        <string>Reverse lens glasses</string>
        </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="comboBox_7">
-       <item>
-        <property name="text">
-         <string>Direct</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Reverse</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>

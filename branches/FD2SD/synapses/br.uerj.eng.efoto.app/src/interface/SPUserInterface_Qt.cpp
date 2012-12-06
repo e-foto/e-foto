@@ -51,6 +51,12 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
 		QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
 		QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangePair(int)));
+                //Aqui entra a conexão do método para trcar as cores
+                QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskLeft(int)));
+                QObject::connect(comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskRight(int)));
+                QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), comboBox_6, SLOT(setCurrentIndex(int)));
+                QObject::connect(comboBox_6, SIGNAL(currentIndexChanged(int)), comboBox_5, SLOT(setCurrentIndex(int)));
+                QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(setReverseLensGlasses(int)));
 
 		// Edit mode = None
 		measure_mode = 0;
@@ -69,6 +75,19 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 
 		qApp->processEvents();
 		init();
+}
+
+void SPUserInterface_Qt::setReverseLensGlasses(int opt){
+    stereoViewer->getDisplay()->setReverseLensGlasses(opt);
+}
+
+void SPUserInterface_Qt::setColorMaskLeft(int color){
+    //stereoViewer->getDisplay()->
+    stereoViewer->getDisplay()->setColorMaskLeft(color);
+}
+
+void SPUserInterface_Qt::setColorMaskRight(int color){
+    stereoViewer->getDisplay()->setColorMaskRight(color);
 }
 
 SPUserInterface_Qt::~SPUserInterface_Qt()

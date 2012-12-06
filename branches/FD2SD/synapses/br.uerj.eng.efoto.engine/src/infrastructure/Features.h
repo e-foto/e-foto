@@ -79,6 +79,8 @@ private:
 	int img_left_width, img_left_height, img_right_width, img_right_height;
 	int loadFeatSp165(char *filename, bool append);
 	int saveFeatSp165(char *filename, bool append);
+        void teste3D();//Apagar
+        int saveFeatSp165BancoTerraLib(char *filename, bool append);
 	void convertClassesIdsFromSp165();
 	void calculateFeaturesAttributes();
 	void calculateFeatureAttributes(int featid);

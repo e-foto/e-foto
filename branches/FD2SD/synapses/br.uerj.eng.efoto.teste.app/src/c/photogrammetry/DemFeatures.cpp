@@ -956,7 +956,7 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 	{
 			df = features.at(i);
 			arq << i+1 << "\n"; // Feature ID
-			arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
+                        arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
 			arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
 			arq << df.name << "\n"; // Description (changed to name in this version)
 	}

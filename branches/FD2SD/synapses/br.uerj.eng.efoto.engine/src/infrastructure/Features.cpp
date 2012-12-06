@@ -1,4 +1,13 @@
 #include "Features.h"
+//#include <Te3DPersistenceService.h>
+//#include <Te3DGeometry.h>
+//#include <terraLib/Te3DPersistenceService.h>
+//#include <terraLib/Te3DGeometry.h>
+#include "Te3DPersistenceService.h"
+#include "Te3DGeometry.h"
+//#include "terraLib/Te3DPersistenceService.h"
+//#include "terraLib/Te3DGeometry.h"
+
 
 namespace br {
 namespace uerj {
@@ -56,9 +65,17 @@ int Features::loadFeatures(char *filename, int mode, bool append=false)
 
 int Features::saveFeatures(char *filename, int mode, bool append=false)
 {
-		// 0- SP 1.65
-		// 1- This version - To be developed
+                //método para salvar no banco TerraLib
+
+                //teste3D();
+                if(saveFeatSp165BancoTerraLib(filename, append))
+                    std::cout << "---------Salvou no banco" << std::endl;
+                else
+                    std::cout << "---------========NÂO Salvou no banco" << std::endl;
+                // 0- SP 1.65
+                // 1- This version - To be developed
 		return saveFeatSp165(filename, append);
+
 }
 
 // Feature id ranges from 1-N
@@ -934,6 +951,270 @@ int Features::loadFeatSp165(char *filename, bool append=false)
 	return 1;
 }
 
+void Features::teste3D()//Apagar
+{
+        Te3DPersistenceService pService;
+
+        TeDatabaseFactoryParams params;
+        //params.dbms_name_ = "Ado";
+        //params.database_ = "E:/funcate/temp/mario3D.mdb";
+        //params.dbms_name_ = "MySQL";
+        params.dbms_name_ = "PostgreSQL";
+
+        params.host_ = "localhost";
+        //params.user_ = "root";
+        params.user_ = "rodrigo";
+        params.password_ = "efoto";
+        //params.port_ = 3306;
+        params.port_ = 5432;
+        params.database_ = "teste3D";
+
+        if(pService.createDatabase(params) == false)
+        {
+                return;
+        }
+
+        if(pService.connect(params) == false)
+        {
+                return;
+        }
+
+        TeProjectionParams projParams;
+        projParams.datum = TeDatumFactory::make("SAD69");
+        projParams.name = "LatLong";
+
+        if(pService.layerExists("pontos3d") == false)
+        {
+                if(pService.createLayer3D("pontos3d", projParams, TePOINTS3D) == false)
+                {
+                        return;
+                }
+        }
+        if(pService.layerExists("linhas3d") == false)
+        {
+                if(pService.createLayer3D("linhas3d", projParams, TeLINES3D) == false)
+                {
+                        return;
+                }
+        }
+        if(pService.layerExists("poligonos3d") == false)
+        {
+                if(pService.createLayer3D("poligonos3d", projParams, TePOLYGONS3D) == false)
+                {
+                        return;
+                }
+        }
+
+        TePoint3D point3D(-54, 0, 100);
+        if(pService.addPoint("pontos3d", point3D, "casa") == false)
+        {
+                return;
+        }
+
+        TeLine3D line3D;
+        line3D.add(TeCoord3D(-54, 0, 100));
+        line3D.add(TeCoord3D(-53, -1, 90));
+        line3D.add(TeCoord3D(-54, -2, 80));
+        line3D.add(TeCoord3D(-53, -3, 70));
+        if(pService.addLine("linhas3d", line3D, "estrada") == false)
+        {
+                return;
+        }
+
+        TeLine3D ring3D;
+        ring3D.add(TeCoord3D(-54, 0, 100));
+        ring3D.add(TeCoord3D(-53, 0, 90));
+        ring3D.add(TeCoord3D(-53, -1, 80));
+        ring3D.add(TeCoord3D(-54, -1, 70));
+        ring3D.add(TeCoord3D(-54, 0, 100));
+
+        TePolygon3D polygon3D;
+        polygon3D.add(ring3D);
+        if(pService.addPolygon("poligonos3d", polygon3D, "hospital") == false)
+        {
+                return;
+        }
+
+        pService.disconnect();
+}
+
+
+int Features::saveFeatSp165BancoTerraLib(char *filename, bool append)
+{
+        // If list is empty, return
+        if (features.size() == 0)
+                        return 0;
+
+        Te3DPersistenceService pService;
+        TeDatabaseFactoryParams params;
+        //params.dbms_name_ = "Ado";
+
+        /*
+        //MySQL
+        params.dbms_name_ = "MySQL";
+        params.host_ = "localhost";
+        params.user_ = "root";
+        params.password_ = "efoto";
+        params.port_ = 3306;
+        params.database_ = "mario3D";
+        */
+
+        //params.database_ = "E:/funcate/temp/mario3D.mdb";
+        //params.database_ = "./temp/mario3D.mdb";
+        //params.database_ = "/home/rodrigo/mario3D.mdb";
+        //params.database_ = "./home/rodrigo/mario3D";
+        //params.database_ = "/home/rodrigo/Documentos/exempos_de_epp/eppsHomePage3/mario3D";
+        //params.database_ = filename;
+        //params.database_ = "/home/rodrigo/Documentos/exempos_de_epp/eppsHomePage3/mario3D.frm";
+        //params.database_ = "/home/rodrigo/Documentos/exempos_de_epp/eppsHomePage3/mario3D.myd";
+        //params.database_ = "./home/rodrigo/Documentos/exempos_de_epp/eppsHomePage3/mario3D.myi";
+
+
+        //PostgreSQL
+        params.dbms_name_ = "PostgreSQL";
+        params.host_ = "localhost";
+        params.user_ = "rodrigo";
+        params.password_ = "efoto";
+        params.port_ = 5432;
+        params.database_ = "mario3d";
+
+
+        if(pService.createDatabase(params) == false)
+        {
+                std::cout << "---------NÃO Criou o banco" << std::endl;
+                return 0;
+                //tratar aqui se o banco já existe
+        }
+
+        if(pService.connect(params) == false)
+        {
+                std::cout << "---------NÃO Conectou ao banco" << std::endl;
+                return 0;
+        }
+
+        TeProjectionParams projParams;
+        projParams.datum = TeDatumFactory::make("SAD69");
+        projParams.name = "LatLong";
+
+        if(pService.layerExists("pontos3d") == false)
+        {
+                std::cout << "---------Criando o Layer pontos3d" << std::endl;
+                if(pService.createLayer3D("pontos3d", projParams, TePOINTS3D) == false)
+                {
+                        std::cout << "---------NÃO Criou o Layer pontos3d" << std::endl;
+                        return 0;
+                }
+        }
+        if(pService.layerExists("linhas3d") == false)
+        {
+                std::cout << "---------Criando o Layer linhas3d" << std::endl;
+                if(pService.createLayer3D("linhas3d", projParams, TeLINES3D) == false)
+                {
+                        std::cout << "---------NÃO Criou o Layer linhas3d" << std::endl;
+                        return 0;
+                }
+        }
+        if(pService.layerExists("poligonos3d") == false)
+        {
+                std::cout << "---------Criando o Layer poligonos3d" << std::endl;
+                if(pService.createLayer3D("poligonos3d", projParams, TePOLYGONS3D) == false)
+                {
+                        std::cout << "---------NÃO Criou o Layer poligonos3d" << std::endl;
+                        return 0;
+                }
+        }
+
+        //Exemplo Mário
+        TePoint3D point3DTeste(-54, 0, 100);
+        if(pService.addPoint("pontos3d", point3DTeste, "casa") == false)
+        {
+                return 0;
+        }
+
+        TeLine3D line3DTeste;
+        line3DTeste.add(TeCoord3D(-54, 0, 100));
+        line3DTeste.add(TeCoord3D(-53, -1, 90));
+        line3DTeste.add(TeCoord3D(-54, -2, 80));
+        line3DTeste.add(TeCoord3D(-53, -3, 70));
+        if(pService.addLine("linhas3d", line3DTeste, "estrada") == false)
+        {
+                return 0;
+        }
+
+        TeLine3D ring3DTeste;
+        ring3DTeste.add(TeCoord3D(-54, 0, 100));
+        ring3DTeste.add(TeCoord3D(-53, 0, 90));
+        ring3DTeste.add(TeCoord3D(-53, -1, 80));
+        ring3DTeste.add(TeCoord3D(-54, -1, 70));
+        ring3DTeste.add(TeCoord3D(-54, 0, 100));
+
+        TePolygon3D polygon3DTeste;
+        polygon3DTeste.add(ring3DTeste);
+        if(pService.addPolygon("poligonos3d", polygon3DTeste, "hospital") == false)
+        {
+                return 0;
+        }
+
+        //Exemplo Mário - Fim
+
+        Feature df;
+        FeaturePoints dfp;
+
+        for (unsigned int i=0; i<features.size(); i++)
+        {
+            df = features.at(i);
+            if (df.feature_type==1)//Point
+            {
+                dfp = df.points.at(0);
+
+                TePoint3D point3D(dfp.X, dfp.Y, dfp.Z);
+                if(pService.addPoint("pontos3d", point3D, df.name) == false)
+                {
+                    std::cout << "---------NÃO Adicionou ao Layer pontos3d" << std::endl;
+                    return 0;
+                }
+            }
+            else
+            {
+                TeLine3D geometry3D;
+                for (unsigned int j=0; j<df.points.size(); j++)
+                {
+                    dfp = df.points.at(j);
+                    geometry3D.add(TeCoord3D(dfp.X, dfp.Y, dfp.Z));
+                }
+                if (df.feature_type==2)//Line
+                {
+                    if(pService.addLine("linhas3d", geometry3D, df.name) == false)
+                    {
+                        std::cout << "---------NÃO Adicionou ao Layer linhas3d" << std::endl;
+                        return 0;
+                    }
+                }
+                else if (df.feature_type==3)//Polygon
+                {
+                    dfp = df.points.at(0);
+                    geometry3D.add(TeCoord3D(dfp.X, dfp.Y, dfp.Z));
+                    TePolygon3D polygon3D;
+                    polygon3D.add(geometry3D);
+                    if(pService.addPolygon("poligonos3d", polygon3D, df.name) == false)
+                    {
+                        std::cout << "---------NÃO Adicionou ao Layer poligonos3d" << std::endl;
+                        return 0;
+                    }
+                }
+            }
+            //--arq << i+1 << "\n"; // Feature ID
+            //--arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type - Ponte, construção, estádio, etc...
+            //--arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature - Polygon=3, Line=2 ou Pont=1
+            //--arq << df.name << "\n"; // Description (changed to name in this version) Nome da feição
+        }
+
+
+        //--arq.precision(20);
+        pService.disconnect();
+        return 1;
+}
+
 int Features::saveFeatSp165(char *filename, bool append)
 {
 	// If list is empty, return
@@ -956,7 +1237,7 @@ int Features::saveFeatSp165(char *filename, bool append)
 	{
 			df = features.at(i);
 			arq << i+1 << "\n"; // Feature ID
-			arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
+                        arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
 			arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
 			arq << df.name << "\n"; // Description (changed to name in this version)
 	}
@@ -982,7 +1263,7 @@ int Features::saveFeatSp165(char *filename, bool append)
 					arq << dfp.left_y << "\n"; // Left Row
 					arq << dfp.right_x << "\n"; // Right Column
 					arq << dfp.right_y << "\n"; // Right Row
-					arq << dfp.X << "\n"; // X
+                                        arq << dfp.X << "\n"; // X
 					arq << dfp.Y << "\n"; // Y
 					arq << dfp.Z << "\n"; // Z
 			}

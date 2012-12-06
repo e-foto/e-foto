@@ -82,6 +82,10 @@ public slots:
 
     void centerImages(ObjectSpaceCoordinate coord, double zoom);
 
+    void setColorMaskLeft(int color);
+    void setColorMaskRight(int color);
+    void setReverseLensGlasses(int opt);
+
 private:
 	void init();
 	//void close();
