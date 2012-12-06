@@ -29,7 +29,9 @@ INCLUDEPATH += src \
                            ../br.uerj.eng.efoto.engine/src/photogrammetry \
                            ../br.uerj.eng.efoto.engine/src/imageProcessing \
                            ../br.uerj.eng.efoto.engine/src/xml_definitions \
-			   ../br.uerj.eng.efoto.viewer/src/imageDisplay
+                           #../br.uerj.eng.efoto.engine/src/terraLib \
+                           ../br.uerj.eng.efoto.viewer/src/imageDisplay \
+
 
 DEPENDPATH += $${INCLUDEPATH}
 
@@ -101,6 +103,8 @@ HEADERS =  include/IPhotogrammetry.h \
         ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.h \
         ../br.uerj.eng.efoto.engine/src/infrastructure/Features.h \
         ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.h \
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Te3DPersistenceService.h\
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Te3DGeometry.h\
         ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorFiducialMark.h \
         ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorSpaceCoordinate.h \
         ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.h \
@@ -137,6 +141,8 @@ HEADERS =  include/IPhotogrammetry.h \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/LeastSquaresMatching.h \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/NormalizedCrossCorrelation.h \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/RadiometricTransformation.h \
+        #../br.uerj.eng.efoto.engine/src/terraLib/Te3DGeometry.h \
+        #../br.uerj.eng.efoto.engine/src/terraLib/Te3DPersistenceService.h \
         ../br.uerj.eng.efoto.engine/src/xml_definitions/XmlUpdater.h \
         #
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.h \
@@ -215,6 +221,8 @@ SOURCES =  src/Photogrammetry.cpp \
         ../br.uerj.eng.efoto.engine/src/infrastructure/TreeFeatures.cpp \
         ../br.uerj.eng.efoto.engine/src/infrastructure/Features.cpp \
         ../br.uerj.eng.efoto.engine/src/infrastructure/ProgressPublisher.cpp\
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Te3DPersistenceService.cpp\
+        ../br.uerj.eng.efoto.engine/src/infrastructure/Te3DGeometry.cpp\
         ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorFiducialMark.cpp \
         ../br.uerj.eng.efoto.engine/src/photogrammetry/DetectorSpaceCoordinate.cpp \
         ../br.uerj.eng.efoto.engine/src/photogrammetry/BundleAdjustment.cpp \
@@ -251,6 +259,8 @@ SOURCES =  src/Photogrammetry.cpp \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/LeastSquaresMatching.cpp \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/NormalizedCrossCorrelation.cpp \
         ../br.uerj.eng.efoto.engine/src/imageProcessing/RadiometricTransformation.cpp \
+        #../br.uerj.eng.efoto.engine/src/terraLib/Te3DGeometry.cpp \
+        #../br.uerj.eng.efoto.engine/src/terraLib/Te3DPersistenceService.cpp \
         ../br.uerj.eng.efoto.engine/src/xml_definitions/XmlUpdater.cpp \
         #
         ../br.uerj.eng.efoto.viewer/src/imageDisplay/GeometryResource.cpp \
@@ -294,4 +304,16 @@ RESOURCES += resource.qrc
 
 QT += opengl
 
-unix {LIBS += -lGL -lGLU}
+#LIBS += -L/usr/local/lib/ -lterralib
+
+unix {
+LIBS += -lGL -lGLU
+}
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/release/ -lterralib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../usr/local/lib/debug/ -lterralib
+else:symbian: LIBS += -lterralib
+else:unix: LIBS += -L$$PWD/../../../../../../../usr/local/lib/ -lterralib
+
+INCLUDEPATH += $$PWD/../../../../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../../../../usr/local/include

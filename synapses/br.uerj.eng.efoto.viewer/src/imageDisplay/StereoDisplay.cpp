@@ -35,15 +35,108 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
 
 	QCursor cursor(NOCURSOR);
 	setCursor(cursor);
+
+        setColorMaskLeft(0);
+        setColorMaskRight(0);
+        setReverseLensGlasses(0);
 }
 
 GLDisplay::~GLDisplay()
 {
 	if(glIsTexture((GLuint)ltexture))
 		glDeleteTextures(1, (GLuint*)(&ltexture));
-	if(glIsTexture((GLuint)rtexture))
+        if(glIsTexture((GLuint)rtexture))
 		glDeleteTextures(1, (GLuint*)(&rtexture));
 }
+
+void GLDisplay::setReverseLensGlasses(int opt){
+    if (opt==0)
+        reverseLensGlasses=false;
+    else
+        reverseLensGlasses=true;
+}
+
+void GLDisplay::setColorMaskLeft(int color){
+    switch (color){
+        case 0://red
+            crl=true;
+            cgl=false;
+            cbl=false;
+        break;
+        case 1://green
+            crl=false;
+            cgl=true;
+            cbl=false;
+        break;
+        case 2://blue
+            crl=false;
+            cgl=false;
+            cbl=true;
+        break;
+        case 3://cyan
+            crl=false;
+            cgl=true;
+            cbl=true;
+        break;
+        case 4://magenta
+            crl=true;
+            cgl=false;
+            cbl=true;
+        break;
+        case 5://yellow
+            crl=true;
+            cgl=true;
+            cbl=false;
+        break;
+        default://red
+            crl=true;
+            cgl=false;
+            cbl=false;
+    }
+
+}
+
+
+void GLDisplay::setColorMaskRight(int color){
+    switch (color){
+        case 0://cyan
+            crr=false;
+            cgr=true;
+            cbr=true;
+        break;
+        case 1://magenta
+            crr=true;
+            cgr=false;
+            cbr=true;
+        break;
+        case 2://yellow
+            crr=true;
+            cgr=true;
+            cbr=false;
+        break;
+        case 3://red
+            crr=true;
+            cgr=false;
+            cbr=false;
+        break;
+        case 4://green
+            crr=false;
+            cgr=true;
+            cbr=false;
+        break;
+        case 5://blue
+            crr=false;
+            cgr=false;
+            cbr=true;
+        break;
+        default://cyan
+            crr=false;
+            cgr=true;
+            cbr=true;
+    }
+
+}
+
 
 QPointF GLDisplay::getMouseScreenPosition()
 {
@@ -219,7 +312,13 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-	glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+        //crl, cgl, cbl
+        //glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);//original
+        if(reverseLensGlasses)
+            glColorMask(!crl, !cgl, !cbl, GL_TRUE);
+        else
+            glColorMask(crl, cgl, cbl, GL_TRUE);
+
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
@@ -268,9 +367,15 @@ void GLDisplay::paintGL()
 		glTexImage2D( GL_TEXTURE_2D, 0, 3, rtext.width(), rtext.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, rtext.bits() );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        //crr, cgr, cbr
+        //glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE);//Original
+        //glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+        if(reverseLensGlasses)
+            glColorMask(!crr, !cgr, !cbr, GL_TRUE);
+        else
+            glColorMask(crr, cgr, cbr, GL_TRUE);
 
-	glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glBegin (GL_QUADS);
+        glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
         glVertex2f(rl, rt);
@@ -493,6 +598,18 @@ StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
 
 StereoDisplay::~StereoDisplay()
 {
+}
+
+void StereoDisplay::setReverseLensGlasses(int opt){
+    glDisplay_->setReverseLensGlasses(opt);
+}
+
+void StereoDisplay::setColorMaskLeft(int color){
+    glDisplay_->setColorMaskLeft(color);
+}
+
+void StereoDisplay::setColorMaskRight(int color){
+    glDisplay_->setColorMaskRight(color);
 }
 
 StereoScene* StereoDisplay::getCurrentScene()

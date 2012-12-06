@@ -1,4 +1,9 @@
 #include "Orthorectification.h"
+#include <QRgb>
+#include <terralib/kernel/TeProjection.h>
+#include <terralib/kernel/TeRaster.h>
+#include <terralib/kernel/TeDatum.h>
+#include <terralib/kernel/TeInitRasterDecoders.h>
 
 namespace br {
 namespace uerj {
@@ -131,6 +136,106 @@ void Orthorectification::loadOrtho(char * filename, int mode)
 	loadOrthoEfoto(filename);
 }
 
+void Orthorectification::saveOrthoGeoTiff(char * filename, int mode)
+{
+    saveOrthoGeoTiffEfoto(filename);
+}
+
+void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
+{
+    
+    TeRasterParams params;
+    params.setDummy(0);
+    params.boundingBoxLinesColumns(Xi, Yi, Xf, Yf,ortho_height,ortho_width);
+    //params.boundingBoxLinesColumns(Xi, Yi, Xf, Yf, ortho_width, ortho_height);//original
+    //Falta fazer um método para converter coord_system para um TeProjection
+    TeDatum teDatum= TeDatumFactory::make("WGS84");
+     std::cout << "--------Entrou no OrthoManager::orthoRectification: "<< Xi << " , "<< Yi << " , " << Xf << " , " << Yf << " , " << ortho_width << " , " << ortho_height << " , " << no_bands << " , " << utmFuse << " , " << filename << std::endl;
+    /*
+    if (datum==0){
+        teDatum = TeDatumFactory::make("SAD69");
+    }else if (datum==1){
+        teDatum = TeDatumFactory::make("WGS84");
+    }else if (datum==2){
+        teDatum = TeDatumFactory::make("SIRGAS2000");
+    }else{
+        teDatum = TeDatumFactory::make("SAD69");
+    }
+    */
+    //TeDatum teDatum = TeDatumFactory::make(datum);//nomeDoDatum: SAD69, WGS84 ou SIRGAS2000
+
+    TeProjectionParams projParams;
+    projParams.name = "UTM";
+    /*
+    if(coord_system==0){
+        projParams.name = "UTM";
+    }
+    */
+    //projParams.name = coord_system;//sistema de coordenadas "UTM" - pro enquanto trabalha-se apenas com UTM, mas no futuro serão acrescentados outros sistemas de coordenadas, e portanto, será necessário implementar outras formas de criar uma projeção TerraLib
+
+    projParams.datum = teDatum;
+    projParams.hemisphere = TeSOUTH_HEM;//enum: TeSOUTH_HEM ou TeNORTH_HEM
+    projParams.lon0 = -utmFuse * TeCDR;//zona é o fuso UTM
+    TeProjection* proj = TeProjectionFactory::make(projParams);
+    //if(proj == 0) { ABORTAR} //fazer o teste se a projection foi criada com sucesso
+    if (proj != 0)
+        std::cout << "Criou o proj" << std::endl;
+    //criar o atributo utmFuse
+    params.projection(proj);
+    params.setDataType(TeUNSIGNEDCHAR);
+    //params.nBands(no_bands);
+    params.nBands(1);
+    params.mode_ = 'c';
+    params.decoderIdentifier_ = "TIF";
+    //params.decoderIdentifier_ = "MEM";
+    params.fileName_=filename;
+    //params.fileName_="/home/rodrigo/arqGeoTiff.tif";
+
+    TeRaster* rasterMem = new TeRaster(params);
+    TeInitRasterDecoders();
+
+    std::cout << "-=00000000000000))))))))--Entrou no OrthoManager::orthoRectification: Criou o rasterMem" << std::endl;
+    //orthoimage.show('f',100,"Orto-imagem");
+
+
+    if(rasterMem->init() == true)
+    {
+         std::cout << "------------------Entrou no OrthoManager::orthoRectification: Entrou em rasterMem->init()" << std::endl;
+        //for(int i = 0; i < ortho_width; i++)//original
+        for(int i = 0; i < ortho_height; i++)
+        {
+            //for(int j = 0; j < ortho_height; j++)//original
+            for(int j = 0; j < ortho_width; j++)
+            {
+                //QRgb cell = orthoimage.get(j ,i);
+
+                //int rVal = qRed(cell);
+                //int gVal = qGreen(cell);
+                //int bVal = qBlue(cell);
+                //rasterMem->setElement(j, i, rVal, gVal, bVal);
+                //rasterMem->setElement(j, i, qGray(cell),0);
+
+                //int gVal = qGray(cell);
+                //rasterMem->setElement(j, i, gVal);
+
+                //rasterMem->setElement(j, i, (int)(orthoimage.get(j ,i)*255));\original
+                rasterMem->setElement(j, ortho_height-i-1, (int)(orthoimage.get(i+1 ,j+1)*255));
+
+
+                std::cout << "--------\t" << i << " , \t" << j << " , \tDouble:" << (int)(orthoimage.get(i ,j)*255) << " , \t\tUnidade:" << orthoimage.getUnit() << std::endl;
+                 //std::cout << "--------: "<< Xi << " , "<< Yi << " , " << Xf << " , " << Yf << " , " << ortho_width << " , " << ortho_height << " , " << no_bands << " , " << utmFuse << " , " << filename << std::endl;
+            }
+        }
+    }else
+        std::cout << "=-=-=-=Erro: " << params.errorMessage_ << std::endl;
+
+    delete(rasterMem);
+    //FILE *fp;
+    //fp = fopen(filename,"wb");
+    //fwrite(&header, 1, header_size_bytes, fp);
+    //fclose(fp);
+}
+
 void Orthorectification::saveOrthoEfoto(char * filename)
 {
 	FILE *fp;
@@ -158,7 +263,7 @@ void Orthorectification::saveOrthoEfoto(char * filename)
 
 	// Write DEM
 	int p=0;
-	unsigned int dem_size = ortho_width*ortho_height;
+        unsigned int dem_size = ortho_width*ortho_height;
 	unsigned int dem_size_bytes = dem_size * 8;
 	double *data = new double[dem_size];
 
