@@ -51,7 +51,7 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
 		QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
 		QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangePair(int)));
-                //Aqui entra a conexão do método para trcar as cores
+
                 QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskLeft(int)));
                 QObject::connect(comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskRight(int)));
                 QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), comboBox_6, SLOT(setCurrentIndex(int)));
@@ -79,15 +79,18 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 
 void SPUserInterface_Qt::setReverseLensGlasses(int opt){
     stereoViewer->getDisplay()->setReverseLensGlasses(opt);
+    updateData();
 }
 
 void SPUserInterface_Qt::setColorMaskLeft(int color){
     //stereoViewer->getDisplay()->
     stereoViewer->getDisplay()->setColorMaskLeft(color);
+    updateData();
 }
 
 void SPUserInterface_Qt::setColorMaskRight(int color){
     stereoViewer->getDisplay()->setColorMaskRight(color);
+    updateData();
 }
 
 SPUserInterface_Qt::~SPUserInterface_Qt()
@@ -294,14 +297,35 @@ void SPUserInterface_Qt::onSaveButton()
 
 void SPUserInterface_Qt::onAddButton()
 {
-	manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex());
+        if(nameEdit->text().isEmpty())
+        {
+            QMessageBox::critical(this,"Stereoplotter","Please enter a name for the feature.");
+        }else
+        {
+            manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, comboBox_4->currentIndex());
 
-	updateData();
+            updateData();
 
-	int fid, pid;
-	manager->getSelected(fid, pid);
+            int fid, pid;
+            manager->getSelected(fid, pid);
 
-	treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+            treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+
+            addButton->setDisabled(true);
+            treeView->setDisabled(true);
+        }
+
+
+        //treeView->enabledChange(false);
+        //treeView->grabKeyboard();
+        //treeView->releaseKeyboard();
+        //treeView->grabMouse();
+        //treeView->releaseMouse();
+        //treeView->setEnabled(false);
+        //treeView->setVisible(false);
+        //treeView->signalsBlocked();
+
+
 }
 
 void SPUserInterface_Qt::onRemoveButton()
@@ -309,6 +333,13 @@ void SPUserInterface_Qt::onRemoveButton()
 	manager->removeFeature();
 
 	updateData();
+
+        addButton->setDisabled(false);
+        treeView->setDisabled(false);
+        addPtButton->setChecked(false);
+        editPtButton->setChecked(false);
+        selButton->setChecked(false);
+        measure_mode = 0;
 }
 
 void SPUserInterface_Qt::onRemoveAllButton()
@@ -319,18 +350,27 @@ void SPUserInterface_Qt::onRemoveAllButton()
 	manager->removeAllFeatures();
 
 	updateData();
+
+        addButton->setDisabled(false);
+        treeView->setDisabled(false);
+        addPtButton->setChecked(false);
+        editPtButton->setChecked(false);
+        selButton->setChecked(false);
+        measure_mode = 0;
 }
 
 void SPUserInterface_Qt::onAddPtButton()
 {
     stereoViewer->getToolBar()->changeMode(1);
 	if (editPtButton->isChecked())
-		editPtButton->setChecked(false);
-
+                editPtButton->setChecked(false);
 	if (selButton->isChecked())
 		selButton->setChecked(false);
 
     measure_mode = addPtButton->isChecked();
+
+    addButton->setDisabled(true);
+    treeView->setDisabled(true);
 }
 
 void SPUserInterface_Qt::onEditPtButton()
@@ -338,11 +378,14 @@ void SPUserInterface_Qt::onEditPtButton()
     stereoViewer->getToolBar()->changeMode(1);
 	if (addPtButton->isChecked())
 		addPtButton->setChecked(false);
-
+    
 	if (selButton->isChecked())
 		selButton->setChecked(false);
 
     editPtButton->isChecked() ? measure_mode = 2 : measure_mode = 0;
+
+    addButton->setDisabled(true);
+    treeView->setDisabled(true);
 }
 
 void SPUserInterface_Qt::onSelPtButton()
@@ -361,6 +404,9 @@ void SPUserInterface_Qt::onRemovePtButton()
 {
 	manager->removePoint();
 	updateData();
+
+        addButton->setDisabled(true);
+        treeView->setDisabled(true);
 }
 
 void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
@@ -407,8 +453,31 @@ void SPUserInterface_Qt::addImagePair(char * item)
 
 void SPUserInterface_Qt::onCloseFeature()
 {
-	manager->setSelected(-1,-1);
-	treeView->clearSelection();
+        int fid, pid, ftype, fclass;
+        string fname;
+        manager->getSelected(fid, pid);
+        manager->getFeatureData(fname, ftype, fclass);
+
+        if(ftype==1 && manager->getFeaturesLink()->getFeatureLink(fid)->points.size()<1)
+        {
+            QMessageBox::critical(this,"Stereo Plotter","For the feature type point, measure a point.");
+        }else if((ftype==2 && manager->getFeaturesLink()->getFeatureLink(fid)->points.size()<2))
+        {
+            QMessageBox::critical(this,"Stereo Plotter","For the feature type line, measure at least two points.");
+        }else if((ftype==3 && manager->getFeaturesLink()->getFeatureLink(fid)->points.size()<3))
+        {
+            QMessageBox::critical(this,"Stereo Plotter","For the feature type polygon, measure at least three points.");
+        }else{
+            manager->setSelected(-1,-1);
+            treeView->clearSelection();
+            addButton->setDisabled(false);
+            treeView->setDisabled(false);
+            addPtButton->setChecked(false);
+            editPtButton->setChecked(false);
+            selButton->setChecked(false);
+            nameEdit->clear();
+            measure_mode = 0;
+        }
 }
 
 void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
@@ -500,6 +569,7 @@ void SPUserInterface_Qt::onChangePair(int pos)
     changePair(lk, rk);
     centerImages(manager->getCentralPoint(), 1.0);
     stereoViewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(stereoViewer->getDisplay()->width(),stereoViewer->getDisplay()->height()));
+    updateData();
 }
 
 void SPUserInterface_Qt::adjustFit(int width, int height)
