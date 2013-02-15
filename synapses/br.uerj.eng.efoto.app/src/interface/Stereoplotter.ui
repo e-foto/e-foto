@@ -41,7 +41,11 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTreeView" name="treeView">
+       <property name="editTriggers">
+        <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
