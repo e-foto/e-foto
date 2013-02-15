@@ -41,6 +41,8 @@ class SPManager
 	Features spFeatures;
 	int leftKey, rightKey;
 
+        //void get
+
 	void getImagesId(int pos, int &left, int &right);
 	void addPairsToInterface();
 	int getPairs();
