@@ -386,6 +386,9 @@ void DEMUserInterface_Qt::onDemGridLoadClicked()
                 QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
                 return;
         }
+
+        // Enable quality test
+        tabWidget->setTabEnabled(6,true);
 }
 
 void DEMUserInterface_Qt::enableAfterDEM(int sender)
@@ -574,7 +577,7 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
-        manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value());
+        manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value(), checkBox_5->isChecked());
         manager->setEliminateBadPoints(checkBox_4->isChecked());
         manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), doubleSpinBox0->value());
 	manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
