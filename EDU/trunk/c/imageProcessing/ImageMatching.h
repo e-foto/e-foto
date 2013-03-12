@@ -22,6 +22,7 @@
 * * * * * * * * * * * *
 * @date 18/08/2011
 * @version 1.0 - Marcelo Teixeira Silveira
+* @version 2.0 - Marcelo Teixeira Silveira
 */
 
 namespace br {
@@ -30,13 +31,28 @@ namespace eng {
 namespace efoto {
 
 class DEMManager;
-
+/*
+// INTEGER STACK
+// For integer stack usage, please check float stack and uncheck this class
+// It takes 8 x sizeof(stackCell*) bytes for each object
 class stackCell
 {
 public:
 	stackCell() { prev = NULL; };
 	int coord, scoord;
 	stackCell *prev;
+};
+*/
+
+// FLOAT STACK
+// For float stack usage, please check integer stack and uncheck this class
+// It takes 16 x sizeof(stackCell*) bytes for each object
+class stackCell
+{
+public:
+        stackCell() { prev = NULL; };
+        float ref_x, ref_y, cor_x, cor_y;
+        stackCell *prev;
 };
 
 class ImageMatching
@@ -65,9 +81,10 @@ public:
 	void setCancel() { cancel_flag = true; };
 	Matrix & getMap() { return map; };
         double getElapsedTime() { return elap_time; };
+        void setPerformRegionGrowing(bool _p_rg) { perform_RG = _p_rg; };
 
 private:
-	int image_depth;
+        int image_depth;
 	double coverage, max_size, num_visited;
 	double corr_th;
 	bool perform_readiometric, radiometric_mode;
@@ -83,15 +100,21 @@ private:
 	LeastSquaresMatching lsm;
 	NormalizedCrossCorrelation ncc;
 	Matrix map;
-	bool pop(int&, int&, int&, int&);
-	bool push(int,int,int,int);
-	void emptyStack();
-	void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy);
 	DEMManager *manager;
 	void init();
 	void fillMap(MatchingPointsList *);
 	bool elim_bad_pts;
+        bool perform_RG;
         double elap_time;
+        // INTEGER STACK
+/*	bool pop(int&, int&, int&, int&);
+        bool push(int,int,int,int);
+        void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy); */
+        // DOUBLE STACK
+        bool pop(double&, double&, double&, double&);
+        bool push(double,double,double,double);
+        void region_growing(Matrix *, Matrix *, MatchingPointsList *, double x, double y, double sx, double sy);
+        void emptyStack();
 };
 
 } // namespace efoto
