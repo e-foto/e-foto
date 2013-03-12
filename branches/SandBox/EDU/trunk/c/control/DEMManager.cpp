@@ -846,6 +846,7 @@ void DEMManager::extractDEMPair(int pair)
 	}
 
 	im = new ImageMatching(this);
+        im->setPerformRegionGrowing(perf_RG);
 	im->setImagesIds(left_id,right_id);
 	im->setCorrelationThreshold(corr_th);
 	im->setPerformRadiometric(rad_cor > 0);
