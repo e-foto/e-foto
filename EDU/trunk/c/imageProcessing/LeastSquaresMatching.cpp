@@ -47,8 +47,10 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	bool flag = true;
 	while (true)
 	{
+                // Uses the template standard deviation test, from "NCC class"
 		ncc.setTemplate(template_width,template_height);
 		ncc.setTemplateCenter(Tx,Ty);
+
 		if (!ncc.checkTemplateStd(img1))
 		{
                         template_width += temp_growth_step;
@@ -78,7 +80,7 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	// -3 - Max iterations achieved
 
 	// Check if template is out of bounds
-	if ((Tx - delta_tx < 0) || (Ty - delta_ty < 0) || (Tx + delta_tx_end > ref_w) || (Ty + delta_ty_end > ref_h))
+        if ((Tx - delta_tx <= 0) || (Ty - delta_ty <= 0) || (Tx + delta_tx_end >= ref_w-1) || (Ty + delta_ty_end >= ref_h-1))
 	{
 		template_width = ori_template_width;
 		template_height = ori_template_height;
@@ -86,7 +88,7 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	}
 
 	// Check if matching window is out of bounds
-	if ((Mx - delta_tx < 0) || (My - delta_ty < 0) || (Mx + delta_tx_end > s_w) || (My + delta_ty_end > s_h))
+        if ((Mx - delta_tx <= 0) || (My - delta_ty <= 0) || (Mx + delta_tx_end >= s_w-1) || (My + delta_ty_end >= s_h-1))
 	{
 		template_width = ori_template_width;
 		template_height = ori_template_height;
