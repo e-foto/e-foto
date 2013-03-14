@@ -24,7 +24,7 @@ NormalizedCrossCorrelation::NormalizedCrossCorrelation()
 int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchmat)
 {
 	double p;
-	best_p = -2.0;
+        best_p = 0.0;
 
 	//
 	// Check if data was correctly assigned - Notice that Matrix notation ranges from 1,1 to N,M
@@ -49,21 +49,26 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	int ori_template_width = template_width;
 	int ori_template_height = template_height;
 
-	// This infinite loop will be broken inside
 	bool flag = true;
-	int ref_w, ref_h, s_w, s_h, delta_tx, delta_ty, delta_tx_end, delta_ty_end;
+        int ref_w, ref_h, s_w, s_h, template_xi, template_yi, template_xf, template_yf;
+
+        // Read image matrices data
+        ref_w = refmat->getCols();
+        ref_h = refmat->getRows();
+        s_w = searchmat->getCols();
+        s_h = searchmat->getRows();
+
+        // Calculate ideal search window size based on standard deviation
 	while (flag)
 	{
-		// Read image matrices data
-		ref_w = refmat->getCols();
-		ref_h = refmat->getRows();
-		s_w = searchmat->getCols();
-		s_h = searchmat->getRows();
-		delta_tx = round(double(template_width)/2.0), delta_ty = round(double(template_height)/2.0);
-		delta_tx_end = template_width - delta_tx, delta_ty_end = template_height - delta_ty;
+                // Calculate template limits
+                template_xi = template_center_x - floor(double(template_width)/2.0);
+                template_yi = template_center_y - floor(double(template_height)/2.0);
+                template_xf = template_xi + template_width - 1;
+                template_yf = template_yi + template_height - 1;
 
 		// Check if template center is out of bounds
-		if ((template_center_x - delta_tx < 0) || (template_center_y - delta_ty < 0) || (template_center_x + delta_tx_end > ref_w) || (template_center_y + delta_ty_end > ref_h))
+                if ((template_xi <= 0) || (template_yi <= 0) || (template_xf >= ref_w - 1) || (template_yf >= ref_h - 1))
 			return -3;
 
 		// Check if low variance
@@ -88,16 +93,17 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	// Start searching
 	//
 
-	int template_xi = 1 + template_center_x - delta_tx, template_yi = 1 + template_center_y - delta_ty;
-	int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
-	int search_window_xi = 1 + search_window_center_x - round(double(search_window_width)/2.0), search_window_yi = 1 + search_window_center_y - round(double(search_window_height)/2.0);
+        // Calculate seach window limits
+        int search_window_xi = search_window_center_x - floor(double(search_window_width)/2.0), search_window_yi = search_window_center_y - floor(double(search_window_height)/2.0);
+        int delta_tx = floor(double(template_width)/2.0);
+        int delta_ty = floor(double(template_height)/2.0);
 
 	for (int sw_i = search_window_yi ; sw_i <= search_window_yi + (search_window_height - 1); sw_i++)
 	{
 		for (int sw_j = search_window_xi ; sw_j <= search_window_xi + (search_window_width - 1); sw_j++)
 		{
 			// Check if matching window is out of bounds
-			if ((sw_i < 0) || (sw_j < 0) || (sw_i > s_h) || (sw_j > s_w))
+                        if ((sw_i <= 0) || (sw_j <= 0) || (sw_i >= s_h-1) || (sw_j >= s_w-1))
 				continue;
 
 			// Calculate correlation
@@ -106,8 +112,8 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 			if (p > best_p)
 			{
 				best_p = p;
-				best_x = sw_j + (delta_tx-1);
-				best_y = sw_i + (delta_ty-1);
+                                best_x = sw_j + (delta_tx);
+                                best_y = sw_i + (delta_ty);
 			}
 		}
 	}
@@ -115,6 +121,9 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	// Return original template size
 	template_width = ori_template_width;
 	template_height = ori_template_height;
+
+        // Matching successful
+        return 1;
 }
 
 double NormalizedCrossCorrelation::average(Matrix *m, int row_i, int row_f, int col_i, int col_f)

@@ -386,7 +386,7 @@ void ImageMatching::emptyStack()
 
 void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsList *mpoints, double x, double y, double sx, double sy)
 {
-        int i,j,lsm_flag;
+        int i, j, ncc_flag, lsm_flag;
         double lx, ly, rx, ry;
         double new_x, new_y, p;
 
@@ -409,17 +409,26 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                 if (int(map.get(i,j)) != 0)
                         continue;
 
+                //
                 // Choose correlation method
+                //
+
+                // Normalized Cross Correlation  - Integer precision
                 if (matching_method == NCC)
                 {
-                        ncc.setTemplateCenter(lx, ly);
-                        ncc.setSearchWindowCenter(rx, ry);
-                        ncc.searchHomologous(img1,img2);
+                        // Truncate reference coordinates
+                        lx = floor(lx);
+                        ly = floor(ly);
+                        ncc.setTemplateCenter(int(lx), int(ly));
+                        ncc.setSearchWindowCenter(int(rx), int(ry));
+                        ncc_flag = ncc.searchHomologous(img1,img2);
                         p = ncc.getBestP();
-                        if (p < corr_th)
+
+                        if (p < corr_th || ncc_flag != 1)
                                 continue;
-                        new_x = ncc.getBestX();
-                        new_y = ncc.getBestY();
+
+                        new_x = (double) ncc.getBestX();
+                        new_y = (double) ncc.getBestY();
 
                         // Add 4-neighbor pixels - NCC - Faster if inside this 'if'
                         // If new seed are based on new_x and new_y, may diverge !!
@@ -429,10 +438,12 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                         push(lx, ly - double(step_y), rx, ry - double(step_y));
                 }
 
+                // Least Squares Matching - Double precision
                 if (matching_method == LSM)
                 {
-                        lsm_flag = lsm.searchHomologous(img1, img2, double(lx), double(ly), double(rx), double(ry));
+                        lsm_flag = lsm.searchHomologous(img1, img2, lx, ly, rx, ry);
                         p = lsm.getBestP();
+
                         if (p < corr_th || lsm_flag < 1)
                                 continue;
 
@@ -462,7 +473,10 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 
                 // If Region Growing is not selected, then perform matching only once for each seed
                 if ((cancel_flag) || (!perform_RG))
+                {
+                        emptyStack();
                         return;
+                }
         }
 }
 

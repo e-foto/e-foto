@@ -349,7 +349,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_7">
       <attribute name="title">
@@ -1333,7 +1333,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.100000000000000</double>
+             <double>0.050000000000000</double>
             </property>
            </widget>
           </item>
@@ -1773,7 +1773,7 @@
              <number>150</number>
             </property>
             <property name="value">
-             <number>50</number>
+             <number>25</number>
             </property>
            </widget>
           </item>
@@ -1845,7 +1845,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.150000000000000</double>
+             <double>0.050000000000000</double>
             </property>
            </widget>
           </item>
