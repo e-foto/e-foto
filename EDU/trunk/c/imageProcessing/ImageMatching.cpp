@@ -417,18 +417,16 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                 if (matching_method == NCC)
                 {
                         // Truncate reference coordinates
-                        lx = floor(lx);
-                        ly = floor(ly);
-                        ncc.setTemplateCenter(int(lx), int(ly));
-                        ncc.setSearchWindowCenter(int(rx), int(ry));
+                        ncc.setTemplateCenter(lx, ly);
+                        ncc.setSearchWindowCenter(rx, ry);
                         ncc_flag = ncc.searchHomologous(img1,img2);
                         p = ncc.getBestP();
 
                         if (p < corr_th || ncc_flag != 1)
                                 continue;
 
-                        new_x = (double) ncc.getBestX();
-                        new_y = (double) ncc.getBestY();
+                        new_x = ncc.getBestX();
+                        new_y = ncc.getBestY();
 
                         // Add 4-neighbor pixels - NCC - Faster if inside this 'if'
                         // If new seed are based on new_x and new_y, may diverge !!
