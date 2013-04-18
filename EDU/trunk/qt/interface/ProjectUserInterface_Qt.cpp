@@ -149,7 +149,11 @@ namespace efoto {
         //connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
 
 
+                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
 		actionFoto_Tri->setEnabled(availablePhotoTri());
+                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
 
 	}
 
@@ -522,7 +526,11 @@ namespace efoto {
 
 				newTree();
 				// Inserido pelo Paulo 05/09/2011
-				actionFoto_Tri->setEnabled(availablePhotoTri());
+                                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
+                                actionFoto_Tri->setEnabled(availablePhotoTri());
+                                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
 				//			actionInterior_Orientation->setEnabled(availabeOI());
 				//		actionSpatial_resection->setEnabled(availableOE());
 			}
@@ -1028,7 +1036,12 @@ namespace efoto {
 	bool ProjectUserInterface_Qt::exec()
 	{
 		actionSave_file->setEnabled(!manager->getSavedState());
-		actionFoto_Tri->setEnabled(availablePhotoTri());
+                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
+                actionFoto_Tri->setEnabled(availablePhotoTri());
+                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
+
 		//	actionInterior_Orientation->setEnabled(availabeOI());
 		//	actionSpatial_resection->setEnabled(availableOE());
 		//PAULO -> codigo para dar um refresh no formulario
@@ -2499,6 +2512,37 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			return true;
 		return false;
 	}
+
+        // ******
+        // Bug reported by Martin Veermer
+        // Big fixed by Marcelo Teixeira Silveira
+        bool ProjectUserInterface_Qt::availableSR()
+        {
+            return availablePhotoTri();
+        }
+
+
+        bool ProjectUserInterface_Qt::availableStereoPlotter()
+        {
+                EDomElement ois(manager->getXml("exteriorOrientation"));
+                EDomElement images(manager->getXml(("images")));
+
+                if(images.children().size()<=ois.children().size())
+                        return true;
+
+                return false;
+        }
+
+        bool ProjectUserInterface_Qt::availableDemExtraction()
+        {
+            return availableStereoPlotter();
+        }
+
+        bool ProjectUserInterface_Qt::availableOrthoImage()
+        {
+            return availableStereoPlotter();
+        }
+        //**********
 
 	/*
 // Se houver imagens cadastradas, poderÃÂ¡ se fazer a OrientaÃÂ§ÃÂ£o interior

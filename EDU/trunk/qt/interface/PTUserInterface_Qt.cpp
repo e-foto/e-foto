@@ -47,6 +47,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	controlTool->addWidget(saveMarksButton);
 	controlTool->addWidget(viewReportToolButton);
 	controlTool->addWidget(exportToKmlButton);
+        controlTool->addWidget(doneButton);
     //controlTool->addWidget(insertPointInButton);
     /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
     addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
@@ -87,6 +88,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(markToolButton,SIGNAL(clicked()),this,SLOT(addPoint()));
 	connect(insertPointInButton,SIGNAL(clicked(bool)),this,SLOT(toggleInsertPointMode(bool)));
 	connect(viewReportToolButton,SIGNAL(clicked(bool)),this,SLOT(showReportXml()));
+        connect(doneButton,SIGNAL(clicked(bool)),this,SLOT(FTdone()));
 	//connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	//connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
@@ -1438,6 +1440,11 @@ void PTUserInterface_Qt::putInStack(int oldCol,int oldLin,int pointKey, int imag
 	undoStack.push_back(markPoint);
 
 	//qDebug() << "Empilhando "<< markPoint->toString();
+}
+
+void PTUserInterface_Qt::FTdone()
+{
+    close();
 }
 
 void PTUserInterface_Qt::undoMark()

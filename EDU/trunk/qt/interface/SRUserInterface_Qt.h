@@ -42,6 +42,7 @@ public slots:
 	virtual void testActivateSR();
 	virtual void setFlight();
 	virtual void acceptSR();
+        virtual void EOdone();
 
 private:
 	void init();
