@@ -108,6 +108,11 @@ public slots:
 	Matrix* getImageMatrix(QImage img); // (GraphicWorkAround).
 
 	/**
+ * \brief Method to close photo-triangulation
+ */
+	void FTdone();
+
+	/**
  * \brief Metodo que mostra um widget com as informaçoes principais do resultado da fototriangulaçao
  */
 	void viewReport();

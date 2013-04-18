@@ -98,7 +98,11 @@ public:
 	// Inserido pelo Paulo 05/09/2011
 	//insere as coordenadas digitais no ponto
 	bool insertDigitalCoordinates(QString coordinates);
+        bool availableSR();
 	bool availablePhotoTri();
+        bool availableStereoPlotter();
+        bool availableDemExtraction();
+        bool availableOrthoImage();
 	void updateLabelFileName();
 	//bool availabeOI();
 	//bool availableOE();

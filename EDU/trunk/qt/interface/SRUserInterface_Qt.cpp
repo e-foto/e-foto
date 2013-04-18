@@ -61,6 +61,7 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 	//QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
 	QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
 	QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
+        QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
 
 	this->manager = manager;
 	if (manager->exteriorDone())
@@ -438,6 +439,11 @@ void SRUserInterface_Qt::actualizeDisplayedPoints()
 		else
 			imageView->getMarker()->insertMark(location, row+1, pointName, markOff);
 	}
+}
+
+void SRUserInterface_Qt::EOdone()
+{
+    close();
 }
 
 bool SRUserInterface_Qt::exec()
