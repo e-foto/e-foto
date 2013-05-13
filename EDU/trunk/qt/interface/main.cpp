@@ -11,6 +11,7 @@ int main( int argc, char ** argv )
 {
     QApplication efoto(argc, argv);
     efoto.setStyle("plastique");
+    efoto.setStyleSheet("QToolTip { color: #000000; background-color: #ffffdc; border: none; }");
     efoto.quitOnLastWindowClosed();
 
     qApp->processEvents();
