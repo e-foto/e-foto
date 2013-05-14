@@ -36,8 +36,8 @@ protected:
 	SeparatedStereoToolsBar* toolsSeparated;
 	StereoViewer* viewer;
 	StereoToolsBar* tools;
-    TreeFeatures *tree;
-    void closeEvent(QCloseEvent *e);
+        TreeFeatures *tree;
+        void closeEvent(QCloseEvent *e);
 	void updateData();
 	void updateTable();
 
@@ -75,6 +75,7 @@ public:
 	//
 	bool exec();
 	void addImagePair(char *);
+        void showErrorMessage(QString msg);
 
 };
 

@@ -66,9 +66,11 @@ public:
 	void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
 	string calculateDemQuality(MatchingPointsList mpl);
 	void overlayMap(Matrix * map);
+        void setCancel() { cancel_flag = true; };
 
 private:
 	Matrix DEM;
+        bool cancel_flag;
 	double Xi, Yi, Xf, Yf, res_x, res_y;
 	double elap_time;
 	int dem_width, dem_height;

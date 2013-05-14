@@ -112,6 +112,15 @@ class DEMManager
 	* \brief Método que verifica se dois ângulos tem alinhamento.
 	*/
 	bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
+        /**
+        * \brief Método para calcular o valor médio da altitude do terreno, baseado nos pontos de controle
+        */
+        double getTerrainMeanAltitude();
+        /**
+        * \brief Método para identificar se um par em questão já fora identificado
+        */
+        bool existPair(int &id1, int &id2);
+
 	ImageMatching *im;
 	DemGrid *grid;
 	DemFeatures *df;
