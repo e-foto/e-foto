@@ -494,6 +494,12 @@ void SPUserInterface_Qt::adjustFit(int width, int height)
     viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(width,height));
 }
 
+void SPUserInterface_Qt::showErrorMessage(QString msg)
+{
+        QMessageBox::critical(this, "Error",msg);
+        close();
+}
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

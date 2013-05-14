@@ -41,10 +41,10 @@ DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<Exterio
 	grid_unsaved = false;
 	elim_bad_pts = false;
 	bb_empty = true;
-		lsm_temp_growth_step = 2;
-		lsm_temp_max_size = 50;
-		ncc_temp_growth_step = 2;
-		ncc_temp_max_size = 50;
+        lsm_temp_growth_step = 2;
+        lsm_temp_max_size = 50;
+        ncc_temp_growth_step = 2;
+        ncc_temp_max_size = 50;
 	setListPoint();
 }
 
@@ -162,6 +162,21 @@ void DEMManager::updateNoSeeds()
 	dui->updateSeedsLabel(seeds.size());
 }
 
+double DEMManager::getTerrainMeanAltitude()
+{
+    double Z=0.0;
+    int num_points = listAllPoints.size();
+    Point *p;
+
+    for (int i=0; i<num_points; i++)
+    {
+        p = listAllPoints.at(i);
+        Z += p->getObjectCoordinate().getZ();
+    }
+
+    return Z / double(num_points);
+}
+
 /*
  * Pair detection / Angle functions
  */
@@ -216,105 +231,123 @@ bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolera
 
 int DEMManager::getPairs()
 {
-	//
-	// List Pairs description (0 - N-1):
-	//
-	// num = left + no_imgs*right // Encoding
-	// left = num % no_imgs // Decoding
-	// right =  num / no_imgs // Decoding
-	//  Image ID ranges from 1-N
+        //
+        // List Pairs description (0 - N-1):
+        //
+        // num = left + no_imgs*right // Encoding
+        // left = num % no_imgs // Decoding
+        // right =  num / no_imgs // Decoding
+        //  Image ID ranges from 1-N
 
-	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
+        // Clear list
+        listPairs.clear();
 
-	if (listAllImages.size() < 2)
-	{
-		dui->showFatalErrorMessage("Not enough images to run this application", true);
-		return 0;
-	}
+        Image *img;
+        double X1, Y1, X2, Y2, R, dist, bX2, bY2, overlap, align_ang, kappa, terrain_mean_Z;
+        int p1, p2, img_code, id1, id2;
+        Matrix Xa;
 
-	// Clear list
-	listPairs.clear();
+        // Calculate Images Radius, using the first image as reference
+        ObjectSpaceCoordinate osc;
+        img = listAllImages.at(0);
+        ProjectiveRay pr(img);
+        Xa = img->getEO()->getXa();
+        X1 = Xa.get(1,1);
+        Y1 = Xa.get(2,1);
+        p1 = img->getWidth();
+        p2 = img->getHeight()/2;
+        terrain_mean_Z = getTerrainMeanAltitude();
+        osc = pr.imageToObject(p1,p2,terrain_mean_Z,false);
+        X2 = osc.getX();
+        Y2 = osc.getY();
+        R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
-	Image *img;
-	double X1, Y1, X2, Y2, R, dist, best_dist, bX2, bY2, overlap, align_ang, kappa;
-	int p1, p2, best_img, img_code;
-	Matrix Xa;
+        for (int i=0; i<listAllImages.size(); i++)
+        {
+                // Get reference image data
+                img = listAllImages.at(i);
+                Xa = img->getEO()->getXa();
+                X1 = Xa.get(1,1);
+                Y1 = Xa.get(2,1);
+                kappa = fabs(Xa.get(6,1));
 
-	// Calculate Image Radius
-	ObjectSpaceCoordinate osc;
-	img = listAllImages.at(0);
-	ProjectiveRay pr(img);
-	Xa = img->getEO()->getXa();
-	X1 = Xa.get(1,1);
-	Y1 = Xa.get(2,1);
-	p1 = img->getWidth();
-	p2 = img->getHeight()/2;
-	osc = pr.imageToObject(p1,p2,img->getHeight(),false);
-	X2 = osc.getX();
-	Y2 = osc.getY();
-	R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+                // Calculate the shortest image center
+                for (int j=0; j<listAllImages.size(); j++)
+                {
+                        // Skip same image check
+                        if (i==j)
+                                continue;
 
-	for (int i=0; i<listAllImages.size()-1; i++)
-	{
-		// Get base image center
-		img = listAllImages.at(i);
-		Xa = img->getEO()->getXa();
-		X1 = Xa.get(1,1);
-		Y1 = Xa.get(2,1);
-		kappa = fabs(Xa.get(6,1));
+                        // Get test image data
+                        img = listAllImages.at(j);
+                        Xa = img->getEO()->getXa();
+                        X2 = Xa.get(1,1);
+                        Y2 = Xa.get(2,1);
 
-		best_dist = 10e100;
+                        // Calculate dist
+                        dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
-		// Calculate the shortest image center
-		for (int j=i+1; j<listAllImages.size(); j++)
-		{
-			if (i==j)
-				continue;
+                        // Check images overlapping
+                        overlap = 100*(2*R - dist)/(2*R);
 
-			img = listAllImages.at(j);
-			Xa = img->getEO()->getXa();
-			X2 = Xa.get(1,1);
-			Y2 = Xa.get(2,1);
+                        if (overlap < 60.0 || overlap > 100.0)
+                                continue;
 
-			// Calculate dist
-			dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+/*                        // Check images alignment and kappa
+                        align_ang = getAngleBetweenImages(X1, Y1, bX2, bY2);
 
-			if (dist < best_dist)
-			{
-				best_dist = dist;
-				best_img = j;
-				bX2 = X2;
-				bY2 = Y2;
-			}
-		}
+                        if (!checkAnglesAlligned(align_ang, kappa, 0.174532925)) // 10 Degrees
+                                continue;
+*/
+                        // Assign image ids (in this case, the verctor number - image id ranges from 1-N
+                        id1 = i+1;
+                        id2 = j+1;
 
-		// Check images overlapping
-		overlap = 100*(2*R-best_dist)/(2*R);
+                        // Check if pair exists
+                        if (!existPair(id1, id2))
+                        {
+                            // Add images to list
+                            img_code = (id1-1) + listAllImages.size()*(id2-1);
+                            listPairs.push_back(img_code);
+                        }
+                }
+        }
 
-		if (overlap < 60.0 || overlap > 100.0)
-			continue;
+        addPairsToInterface();
 
-		// Check images alignment and kappa
-		align_ang = getAngleBetweenImages(X1, Y1, bX2, bY2);
-
-		if (!checkAnglesAlligned(align_ang, kappa, 0.174532925)) // 10 Degrees
-			continue;
-
-		// Add images to list
-		img_code = i + listAllImages.size()*best_img;
-		listPairs.push_back(img_code);
-	}
-
-	if (listPairs.size() < 1)
-	{
-		dui->showFatalErrorMessage("Not enough pairs to run this application", true);
-		return 0;
-	}
-
-	addPairsToInterface();
-
-	return 1;
+        return (listPairs.size() > 0);
 }
+
+// Check if pair already exists and sort ids
+bool DEMManager::existPair(int &id1, int &id2)
+{
+    int aux, pair_id1, pair_id2;
+
+    if (listPairs.size() == 0)
+        return false;
+
+    // Sort id
+    if (id1 > id2)
+    {
+        aux = id1;
+        id1 = id2;
+        id2 = aux;
+    }
+
+    for (int i=0; i<listPairs.size(); i++)
+    {
+        // Decode image list
+        getImagesId(i, pair_id1, pair_id2);
+        if (pair_id1 == id1 && pair_id2 == id2)
+            return true;
+    }
+
+    return false;
+}
+
+/*
+ *  End of pair automatic identification
+ */
 
 void DEMManager::addPairsToInterface()
 {
@@ -399,6 +432,9 @@ void DEMManager::setCancel()
 
 	if (im != NULL)
 		im->setCancel();
+
+        if (grid != NULL)
+                grid->setCancel();
 }
 
 void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
@@ -629,21 +665,21 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 
 	switch (method)
 	{
-			case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
-			case 2: grid->interpolateTrendSurface(tsurface); break;
-			case 3: grid->interpolateNearestPoint(); break;
-			default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
+                case 1: grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface); break;
+                case 2: grid->interpolateTrendSurface(tsurface); break;
+                case 3: grid->interpolateNearestPoint(); break;
+                default : grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
 	}
 
-		// Add polygons, if selected
-		if (gridSource > 0)
-		{
-				Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
-				grid->overlayMap(&overMap);
-		}
+        // Add polygons, if selected
+        if (gridSource > 0)
+        {
+            Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+            grid->overlayMap(&overMap);
+        }
 
-		// Update Zi and Zf
-		grid->getMinMax(Zi, Zf);
+        // Update Zi and Zf
+        grid->getMinMax(Zi, Zf);
 
 	// Update info
 	double min, max;
@@ -669,9 +705,9 @@ void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, d
 	// Show image, if selected
 	if (isShowImage && !cancel_flag)
 	{
-				double res_z = (Zf-Zi)/255.0;
+                double res_z = (Zf-Zi)/255.0;
 		Matrix * img = grid->getDemImage();
-				dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
+                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
 		delete img;
 	}
 }

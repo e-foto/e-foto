@@ -48,6 +48,9 @@ class SPManager
 	bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
 	double getAngleBetweenImages(double X1, double Y1, double X2, double Y2);
 	double fixAngle(double angle);
+        bool existPair(int &id1, int &id2);
+        void setListPoint();
+        double getTerrainMeanAltitude();
 	deque<int> listPairs;
 
 	SPUserInterface* myInterface;
@@ -56,10 +59,10 @@ class SPManager
 	deque<Point*> listAllPoints;
 	deque<ExteriorOrientation*> listEOs;
 
-    Image* leftImage;
-    Image* rightImage;
-    ProjectiveRay prL;
-    ProjectiveRay prR;
+        Image* leftImage;
+        Image* rightImage;
+        ProjectiveRay prL;
+        ProjectiveRay prR;
 
 	/*
 		Image * getImage(int);
