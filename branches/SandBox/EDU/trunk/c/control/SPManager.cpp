@@ -405,7 +405,7 @@ int SPManager::getPairs()
                         // Check images overlapping
                         overlap = 100*(2*R - dist)/(2*R);
 
-                        if (overlap < 60.0 || overlap > 100.0)
+                        if (overlap < 55.0 || overlap > 100.0)
                                 continue;
 
 /*                        // Check images alignment and kappa
