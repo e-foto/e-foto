@@ -187,7 +187,7 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
 
 void DemGrid::interpolateNearestPoint()
 {
-	(chooseBestInterpolationMathod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+        (chooseBestInterpolationMathod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
 }
 
 void DemGrid::interpolateTrendSurface(int mode)
@@ -209,8 +209,12 @@ void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 }
 
 /*
- * 0- Normal
- * 1- Fast
+ * Input:
+ * nf- Structure matrix area in cells (new subdivision of the grid)
+ *
+ * Output:
+ * 0- Use normal interpolation
+ * 1- Use fast interpolation
  */
 int DemGrid::chooseBestInterpolationMathod(double nf)
 {
@@ -219,16 +223,18 @@ int DemGrid::chooseBestInterpolationMathod(double nf)
 	if (no_points < 1000)
 		return 0;
 
-        // Very large numbers !!
-        // Double prefered !!
-        double area = double(dem_width) * double (dem_height);
-	double density = double(no_points)/double(area);
-        if (density < 1.0)
-                density = 1.0;
+        // May have very large numbers - double prefered !!
+        double area = double(dem_width) * double (dem_height); // Calculate DEM matrix area - not terrain area
+        double grid_density = double(no_points)/double(area); // Points per area
 
-        // For not overfloating the "no_points^2", let's consider the sqtr for both equations
+        // If density is less than a cell size
+        if (grid_density < 1.0)
+                grid_density = 1.0;
+
+        // Let's calculate the computational effort for each grid cell
+        // For not overfloating values, we consider the sqtr for both equations
         double no_its_normal = no_points;           // no_points^2
-        double no_its_fast = sqrt(area*density*nf); // area*density*nf
+        double no_its_fast = sqrt(area*grid_density*nf); // area*density*nf
 
 	return (no_its_normal > no_its_fast);
 }
