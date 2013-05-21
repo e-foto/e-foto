@@ -187,7 +187,8 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
 
 void DemGrid::interpolateNearestPoint()
 {
-        (chooseBestInterpolationMathod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+        // nf set to 1.0 is the size of the matrix grid cell (not terrain)
+        (chooseBestInterpolationMethod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
 }
 
 void DemGrid::interpolateTrendSurface(int mode)
@@ -199,13 +200,13 @@ void DemGrid::interpolateTrendSurface(int mode)
 void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 {
 	double nf = (n/res_x)*(n/res_y);
-	(chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
+        (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
 }
 
 void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 {
 	double nf = (n/res_x)*(n/res_y);
-	(chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
+        (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
 }
 
 /*
@@ -216,7 +217,7 @@ void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
  * 0- Use normal interpolation
  * 1- Use fast interpolation
  */
-int DemGrid::chooseBestInterpolationMathod(double nf)
+int DemGrid::chooseBestInterpolationMethod(double nf)
 {
 	int no_points = point_list->size();
 
@@ -285,7 +286,7 @@ void DemGrid::interpolateNearestPointFast()
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Nearest Point ...\n");
+        printf("Interpolating using Nearest Point Fast ...\n");
 	gettimeofday(&begin,NULL);
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
 	{
@@ -353,7 +354,7 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Trend Surface ...\n");
+        printf("Interpolating using Trend Surface Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	// Size of the matrices
@@ -471,7 +472,7 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Moving Average ...\n");
+        printf("Interpolating using Moving Average Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
@@ -568,7 +569,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Moving Surface ...\n");
+        printf("Interpolating using Moving Surface Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
