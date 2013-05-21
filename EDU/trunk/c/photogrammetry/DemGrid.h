@@ -94,7 +94,7 @@ private:
 	void interpolateMovingAverageNormal(double, double, int);
 	void interpolateMovingSurfaceNormal(double, double, int, int);
 
-	int chooseBestInterpolationMathod(double nf);
+        int chooseBestInterpolationMethod(double nf);
 };
 
 } // namespace efoto
