@@ -97,18 +97,19 @@ public:
 	void returnProject();
 	int loadFeatures(char *filename);
 	void saveFeatures(char *filename);
+        void exportFeatures(char *filename);
 	void addFeature(string name, int feattype, int featclass);
 	int removeFeature();
 	void removeAllFeatures();
 	int removePoint();
-	void setSelected(int feat_id, int pt_id);
+        void setSelected(int feat_id, int pt_id);
 	void getSelected(int &fid, int &pid) { fid = spFeatures.selectedFeature(); pid = spFeatures.selectedPoint(); };
 	DemFeatures* getFeaturesLink() { return &spFeatures; }
 	string getFeaturesList() { return spFeatures.getFeaturesList(); }
 	void updateProjections();
 	void computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z);
 	string getFullImagePath(int imagekey);
-	void getFeatureData(string &fname, int &ftype, int &fclass);
+        void getSelectedFeatureData(int &sel_feat, string &fname, int &ftype, int &fclass, int &no_points, double &perimeter, double &area);
 	void changePair(int pair, int &lk, int &rk);
 	void addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
     void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);

@@ -107,6 +107,7 @@ public:
 	string getFeatureTypeName(int);
 	int loadFeatures(char *filename, int mode, bool append);
 	int saveFeatures(char *filename, int mode, bool append);
+        int exportFeatures(char *filename);
 	DemFeature getFeature(int feat); // Read only
 	DemFeature* getFeatureLink(int feat);
 	void showFeatures(bool full);

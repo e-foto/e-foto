@@ -46,6 +46,7 @@ class Image : public EObject
 	string filename;
 	string filepath;
     double flightDirection;
+    bool flightDirectionAvailable;
 
 	string imageId;
 	ObjectSpaceCoordinate spatialCoordinates;
@@ -112,6 +113,7 @@ public:
 
 	void setFlightDirection(double radianAngle);//Paulo 27/09/11
 	double getFlightDirection();//Paulo 27/09/11
+    bool isFlightDirectionAvailable() {return flightDirectionAvailable;}
 
 	// Composed objects accessor methods
 	//
@@ -140,6 +142,8 @@ public:
 	SpatialRessection* getEO(); // Get associated EO at image if there.
 
 	void putPoint(Point* newPointAssociation); // Set image association. Generally from zero to many points.
+    void clearPoints(); // Remove associations.
+    void removePoint(int id); // Remove one association;
 	Point* getPoint(int pointId); // Get associated point at image by id.
 	int countPoints(); // Inform the number of points associated the image.
 	Point* getPointAt(unsigned int index); // Get associated point at image by index in deque for iterations.

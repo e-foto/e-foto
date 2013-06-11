@@ -120,6 +120,7 @@ public slots:
 	virtual void executeDEM();
 	virtual void executeOrtho();
 	virtual void executeSP();
+        virtual void executeReport();
 	virtual void processTreeClick(QModelIndex);
 	virtual void exportSPFile();
 

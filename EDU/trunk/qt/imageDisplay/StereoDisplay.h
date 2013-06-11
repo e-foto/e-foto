@@ -29,7 +29,12 @@ protected:
 
 	QPointF _mouseScreenPos;
 	QImage _cursor;
-    bool _onPainting;
+        bool _onPainting;
+
+        // Anagliph filter
+        bool L_Red, L_Green, L_Blue;
+        bool R_Red, R_Green, R_Blue;
+        bool reverseLensGlasses;
 
 	void initializeGL();
 	void paintGL();
@@ -57,6 +62,9 @@ public:
 	void setGLCursor(QImage cursor);
 	QImage getGLCursor();
 	void setGLBackground(QImage bg);
+        void setReverseLensGlasses(bool opt);
+        void setColorMaskLeft(bool r, bool g, bool b);
+        void setColorMaskRight(bool r, bool g, bool b);
 
     bool painting();
 
@@ -131,6 +139,10 @@ public:
 
     bool painting();
     void resizeEvent(QResizeEvent *);
+
+    void setReverseLensGlasses(bool opt);
+    void setColorMaskLeft(bool r, bool g, bool b);
+    void setColorMaskRight(bool r, bool g, bool b);
 
 signals:
     void mousePositionsChanged(QPointF*, QPointF*);

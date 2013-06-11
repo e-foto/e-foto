@@ -46,8 +46,22 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 		QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onAddPtButton()));
 		QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onRemovePtButton()));
 		QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
-		QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
+                QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
 		QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangePair(int)));
+                QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskLeft(int)));
+                QObject::connect(comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskRight(int)));
+                QObject::connect(comboBox_7, SIGNAL(currentIndexChanged(int)), this, SLOT(setReverseLensGlasses(int)));
+                QObject::connect(saveTxtButton, SIGNAL(clicked()), this, SLOT(onSaveTxtButton()));
+                QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+
+                // Add color map
+                // Anagliph colors: Red, Green, Blue, Cyan, Magenta, Yellow
+                color_map[0][0] = 1; color_map[0][1] = 0; color_map[0][2] = 0;
+                color_map[1][0] = 0; color_map[1][1] = 1; color_map[1][2] = 0;
+                color_map[2][0] = 0; color_map[2][1] = 0; color_map[2][2] = 1;
+                color_map[3][0] = 0; color_map[3][1] = 1; color_map[3][2] = 1;
+                color_map[4][0] = 1; color_map[4][1] = 1; color_map[4][2] = 0;
+                color_map[5][0] = 1; color_map[5][1] = 0; color_map[5][2] = 1;
 
 		// Edit mode = None
 		measure_mode = 0;
@@ -127,7 +141,7 @@ bool SPUserInterface_Qt::exec()
 	viewer = new StereoViewer();
 	viewer->blockOpen();
 	viewer->blockSave();
-    viewer->setFeatures(manager->getFeaturesLink());
+        viewer->setFeatures(manager->getFeaturesLink());
 	viewer->getMarker().setToOnlyEmitClickedMode();
 
 	viewerSeparated = new SeparatedStereoViewer();
@@ -143,15 +157,15 @@ bool SPUserInterface_Qt::exec()
 	viewersTab->addTab(viewerSeparated,"SeparatedViewers");
 	setCentralWidget(viewersTab);
 
-    connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
-    connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
-    connect(viewer->getDisplay(),SIGNAL(resized(int,int)),this,SLOT(adjustFit(int,int)));
+        connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
+        connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
+        connect(viewer->getDisplay(),SIGNAL(resized(int,int)),this,SLOT(adjustFit(int,int)));
 
-    show();
-	qApp->processEvents();
-    changePair(1,2);
-    viewer->getToolBar()->executeAction(viewer->getToolBar()->setMoveTool);
-    viewer->getDisplay()->updateAll();
+        show();
+            qApp->processEvents();
+        changePair(1,2);
+        viewer->getToolBar()->executeAction(viewer->getToolBar()->setMoveTool);
+        viewer->getDisplay()->updateAll();
 
 	LoadingScreen::instance().close();
 	return true;
@@ -167,18 +181,18 @@ void SPUserInterface_Qt::updateData()
 void SPUserInterface_Qt::updateTable()
 {
 	QString txt = QString::fromStdString(manager->getFeaturesList());
-    TreeFeatures* newTree = new TreeFeatures(txt);
-    treeView->setModel(newTree);
-    delete tree;
-    tree = newTree;
+        TreeFeatures* newTree = new TreeFeatures(txt);
+        treeView->setModel(newTree);
+        delete tree;
+        tree = newTree;
 
-    int feat_id, pt_id;
-    manager->getSelected(feat_id, pt_id);
-    if (feat_id == -1) feat_id++;
-    if (pt_id == -1) pt_id++;
-    treeView->setCurrentIndex(tree->index(pt_id-1, 0, tree->index(feat_id-1, 0)));
-    treeView->setExpanded(tree->index(feat_id-1, 0),true);
-    treeView->setFocus();
+        int feat_id, pt_id;
+        manager->getSelected(feat_id, pt_id);
+        if (feat_id == -1) feat_id++;
+        if (pt_id == -1) pt_id++;
+        treeView->setCurrentIndex(tree->index(pt_id-1, 0, tree->index(feat_id-1, 0)));
+        treeView->setExpanded(tree->index(feat_id-1, 0),true);
+        treeView->setFocus();
 }
 
 void SPUserInterface_Qt::updateClass(int feat_type)
@@ -255,7 +269,7 @@ void SPUserInterface_Qt::onLoadButton()
 void SPUserInterface_Qt::onSaveButton()
 {
 	// File open dialog
-	QString filename = QFileDialog::getSaveFileName(this, tr("Save Fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 			return;
@@ -265,9 +279,25 @@ void SPUserInterface_Qt::onSaveButton()
 	QDir dir(filename.left(i));
 	dir.setCurrent(dir.absolutePath());
 
-	// Load DEM
+        // Save Features
 	manager->saveFeatures((char *)filename.toStdString().c_str());
+}
 
+void SPUserInterface_Qt::onSaveTxtButton()
+{
+        // File open dialog
+        QString filename = QFileDialog::getSaveFileName(this, tr("Export fetures as text file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        // if no file name written, return
+        if (filename=="")
+            return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        QDir dir(filename.left(i));
+        dir.setCurrent(dir.absolutePath());
+
+        // Export features
+        manager->exportFeatures((char *)filename.toStdString().c_str());
 }
 
 void SPUserInterface_Qt::onAddButton()
@@ -371,13 +401,29 @@ void SPUserInterface_Qt::onFeatureSelected()
 {
 	// Get Feature data
 	string fname;
-    int fclass, ftype, feat_id, pt_id;
+        int sel_feat, fclass, ftype, no_points;
+        double perimeter, area;
 
-	manager->getFeatureData(fname, ftype, fclass);
+        manager->getSelectedFeatureData(sel_feat, fname, ftype, fclass, no_points, perimeter, area);
 
+        // If no feature selected
+        if (sel_feat < 0)
+        {
+            featureIdLabel->setText("-");
+            noPointsLabel->setText("-");
+            perimeterLabel->setText("-");
+            areaLabel->setText("-");
+            return;
+        }
+
+        // If has feature selected
+        featureIdLabel->setText(QString::number(sel_feat));
 	nameEdit->setText(QString::fromStdString(fname));
 	comboBox_3->setCurrentIndex(ftype-1);
 	comboBox_4->setCurrentIndex(fclass);
+        noPointsLabel->setText(QString::number(no_points));
+        perimeterLabel->setText(QString::number(perimeter,'f',2) + " meters");
+        areaLabel->setText(QString::number(area,'f',2) + " square meters");
 }
 
 void SPUserInterface_Qt::addImagePair(char * item)
@@ -390,6 +436,7 @@ void SPUserInterface_Qt::onCloseFeature()
 {
 	manager->setSelected(-1,-1);
 	treeView->clearSelection();
+        updateData();
 }
 
 void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
@@ -487,6 +534,7 @@ void SPUserInterface_Qt::onChangePair(int pos)
     changePair(lk, rk);
     centerImages(manager->getCentralPoint(), 1.0);
     viewer->getDisplay()->adjustFit(QPointF(manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(1), manager->getLeftPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),QPointF(manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(1),manager->getRightPoint(manager->getBoundingBoxCenter()).getPosition().get(2)),manager->getBoundingBoxIdealZoom(viewer->getDisplay()->width(),viewer->getDisplay()->height()));
+    updateData();
 }
 
 void SPUserInterface_Qt::adjustFit(int width, int height)
@@ -499,6 +547,29 @@ void SPUserInterface_Qt::showErrorMessage(QString msg)
         QMessageBox::critical(this, "Error",msg);
         close();
 }
+
+//
+// Anagliph colors and reversion
+//
+
+void SPUserInterface_Qt::setReverseLensGlasses(int option)
+{
+    viewer->getDisplay()->setReverseLensGlasses((bool) option);
+    updateData();
+}
+
+void SPUserInterface_Qt::setColorMaskLeft(int option)
+{
+    viewer->getDisplay()->setColorMaskLeft(color_map[option][0], color_map[option][1], color_map[option][2]);
+    updateData();
+}
+
+void SPUserInterface_Qt::setColorMaskRight(int option)
+{
+    viewer->getDisplay()->setColorMaskRight(color_map[option][0], color_map[option][1], color_map[option][2]);
+    updateData();
+}
+
 
 } // namespace efoto
 } // namespace eng

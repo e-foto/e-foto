@@ -109,7 +109,7 @@ void BundleAdjustment::fillDetectorCoordinates()
 }
 
 //Professor Nunes mandou matar a iteraÃÂ§ao sobre os residuos para evitar os valores "NANs"
-bool BundleAdjustment::calculate()
+bool BundleAdjustment::calculate(bool makeReport)
 {
 		if (!userInitialValues)
 		{
@@ -277,6 +277,13 @@ bool BundleAdjustment::calculate()
 
 								//matAdjust.show('f',5,"matAdjust Iterando");
 								totalIterations++;
+
+                                if(makeReport)
+                                {
+                                    calculateResiduos();
+                                    listRMSE.push_back(calculateRMSE());
+                                }
+
 								qDebug("iteration %d/%d",totalIterations,maxIterations);
 						}
 						//qDebug("numero iterations %d=%d",changePesos,iterations);
@@ -1535,7 +1542,12 @@ Matrix BundleAdjustment::getSparseN11()
 Matrix BundleAdjustment::getMatRes()
 {
 		//matRes.show('f',8,"MatRes");
-		return matRes;
+    return matRes;
+}
+
+deque<double> BundleAdjustment::getListRMSE()
+{
+    return listRMSE;
 }
 
 bool BundleAdjustment::getConvergencyStatus()

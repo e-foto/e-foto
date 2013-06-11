@@ -52,6 +52,14 @@ void Flight::setId(int newId)
 }
 
 /**
+ * Sets the value of flight id
+ * @param nickname the new value of flight id
+ */
+void Flight::setFlightId(string nickname) {
+    flightId = nickname;
+}
+
+/**
  * Sets the value of sensorId
  * @param newSensorId the new value of sensorId
  */
@@ -130,6 +138,14 @@ void Flight::setTransversalOverlap(double newTransversalOverlap)
 int Flight::getId()
 {
 	return id;
+}
+
+/**
+ * Gets the value of flightId
+ * @return the value of flightId
+ */
+string Flight::getFlightId() {
+    return flightId;
 }
 
 /**

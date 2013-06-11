@@ -629,6 +629,18 @@ void SpatialRessection::generateL0()
 	}
 }
 
+void SpatialRessection::generateRMSE()
+{
+    double sum = 0;
+    for (int i = 0; i < L0.getRows(); i++)
+    {
+        sum += pow(L0.get(i+1,1),2);
+        //qDebug("%f",sum);
+    }
+    //qDebug("%f",sqrt(sum/(selectedPoints.size()*2-6)));
+    rmse.push_back(sqrt(sum/(selectedPoints.size()*2-6)));
+}
+
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
   Aqui tem codigo da PR
   ////////////////////////////////////////////////////////////////////////////////////////////////*/
