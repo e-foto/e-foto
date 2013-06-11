@@ -54,6 +54,7 @@ HEADERS += \
 		   OrthoManager.h \
 		   ProjectManager.h \
 		   PTManager.h \
+		   ReportManager.h \
 		   SPManager.h \
 		   SRManager.h \
 		   #c/imageDisplay/
@@ -85,6 +86,7 @@ HEADERS += \
 		   GeoSystem.h \
 		   Matrix.h \
 		   PositionMatrix.h \
+		   ProgressPublisher.h \
 		   RectSupport.h \
 		   SparseMatrix.h \
 		   TreeFeatures.h \
@@ -94,11 +96,13 @@ HEADERS += \
 		   OrthoUserInterface.h \
 		   ProjectUserInterface.h \
 		   PTUserInterface.h \
+		   ReportUserInterface.h \
 		   SPUserInterface.h \
 		   SRUserInterface.h \
 		   #c/photogrammetry/
 		   DetectorFiducialMark.h \
 		   DetectorSpaceCoordinate.h \
+		   Dummies.h \
 		   BundleAdjustment.h \
 		   DemFeatures.h \
 		   DemGrid.h \
@@ -116,6 +120,7 @@ HEADERS += \
 		   ObjectSpaceCoordinate.h \
 		   Orthorectification.h \
 		   Point.h \
+		   Project.h \
 		   ProjectHeader.h \
 		   ProjectiveRay.h \
 		   RayTester.h \
@@ -180,6 +185,7 @@ HEADERS += \
 		   ProgressWindow_Qt.h \
 		   ProjectUserInterface_Qt.h \
 		   PTUserInterface_Qt.h \
+		   ReportUserInterface_Qt.h \
 		   SPUserInterface_Qt.h \
 		   SRUserInterface_Qt.h
 
@@ -191,6 +197,7 @@ SOURCES += \
 		   OrthoManager.cpp \
 		   ProjectManager.cpp \
 		   PTManager.cpp \
+		   ReportManager.cpp \
 		   SPManager.cpp \
 		   SRManager.cpp \
 		   #c/imageDisplay/
@@ -221,6 +228,7 @@ SOURCES += \
 		   GeoSystem.cpp \
 		   Matrix.cpp \
 		   PositionMatrix.cpp \
+		   ProgressPublisher.cpp \
 		   RectSupport.cpp \
 		   SparseMatrix.cpp \
 		   TreeFeatures.cpp \
@@ -230,11 +238,13 @@ SOURCES += \
 		   OrthoUserInterface.cpp \
 		   ProjectUserInterface.cpp \
 		   PTUserInterface.cpp \
+		   ReportUserInterface.cpp \
 		   SPUserInterface.cpp \
 		   SRUserInterface.cpp \
 		   #c/photogrammetry/
 		   DetectorFiducialMark.cpp \
 		   DetectorSpaceCoordinate.cpp \
+		   Dummies.cpp \
 		   BundleAdjustment.cpp \
 		   DemFeatures.cpp \
 		   DemGrid.cpp \
@@ -252,6 +262,7 @@ SOURCES += \
 		   ObjectSpaceCoordinate.cpp \
 		   Orthorectification.cpp \
 		   Point.cpp \
+		   Project.cpp \
 		   ProjectHeader.cpp \
 		   ProjectiveRay.cpp \
 		   RayTester.cpp \
@@ -316,6 +327,7 @@ SOURCES += \
 		   ProgressWindow_Qt.cpp \
 		   ProjectUserInterface_Qt.cpp \
 		   PTUserInterface_Qt.cpp \
+		   ReportUserInterface_Qt.cpp \
 		   SPUserInterface_Qt.cpp \
 		   SRUserInterface_Qt.cpp
 
@@ -345,6 +357,7 @@ FORMS += \
 		  IOForm.ui \
 		  OrthoForm.ui \
 		  ProgressWindow.ui \
+		  ReportForm.ui \
 		  SeedEditor.ui \
 		  SRForm.ui \
 		  Stereoplotter.ui

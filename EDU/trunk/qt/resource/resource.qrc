@@ -72,5 +72,6 @@
         <file>ptedit.png</file>
         <file>removeall.png</file>
         <file>ptremove.png</file>
+        <file>featdone.png</file>
     </qresource>
 </RCC>

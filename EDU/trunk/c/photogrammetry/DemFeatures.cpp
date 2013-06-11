@@ -444,12 +444,12 @@ void DemFeatures::calculateArea(int featid)
 		return;
 	}
 
-    int num_points = df->points.size();
-    if (num_points < 3)
-    {
-        df->area = 0.0;
-        return;
-    }
+        int num_points = df->points.size();
+        if (num_points < 3)
+        {
+            df->area = 0.0;
+            return;
+        }
 
 	// Calculate normal vector
 	double NX, NY, NZ, X1, Y1, Z1, X2, Y2, Z2, VX, VY, VZ;
@@ -468,7 +468,7 @@ void DemFeatures::calculateArea(int featid)
 	}
 
 	// Calculate area
-	for (int i=0; i<num_points; i++)
+        for (int i=0; i<num_points - 1; i++)
 	{
 		X1 = df->points.at(i).X;
 		Y1 = df->points.at(i).Y;
@@ -481,7 +481,7 @@ void DemFeatures::calculateArea(int featid)
 		VZ += Z1-Z2;
 	}
 
-	df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2));
+        df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2)) / 2.0;
 }
 
 void DemFeatures::checkAllIsOnScreen()
@@ -1008,6 +1008,50 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 	return 1;
 }
 
+// Export features to text file
+int DemFeatures::exportFeatures(char *filename)
+{
+        // Open file to save
+        ofstream arq(filename);
+        if (arq.fail())
+        {
+            printf("Problems while saving ...\n");
+                    return 0;
+        }
+
+        arq << "E-FOTO Features File\n";
+        arq << "=====================\n\n";
+        arq << "Total features: " << features.size() << "\n\n";
+
+        // Change number precision
+        arq.precision(20);
+
+        DemFeature df;
+
+        for (int i=0; i<features.size(); i++)
+        {
+                df = features.at(i);
+                arq << "Feature # " << i+1 << "\n";
+                arq << " Type: " << getFeatureTypeName(df.feature_type).c_str() << "\n";
+                arq << " Class: " << getFeatureClass(df.feature_class)->name.c_str() << "\n";
+                arq << " Name: " << df.name.c_str() << "\n";
+                arq << " Description: " << df.description.c_str() << "\n";
+                arq << " Number of points: " << df.points.size() << "\n";
+                arq << " Centroid coordinates: " << df.centroid.X << ", " << df.centroid.Y << "," << df.centroid.Z << "\n";
+                arq << " Perimeter: " << df.perimeter << "\n";
+                arq << " Area: " << df.area << "\n";
+                arq << " Points: number, X, Y, Z\n";
+
+                for (int k=0; k<df.points.size(); k++)
+                    arq << "  " << k+1 << ", " << df.points.at(k).X << ", " << df.points.at(k).Y << ", " << df.points.at(k).Z << "\n";
+
+                arq << "\n";
+        }
+
+        arq.close();
+
+        return 1;
+}
 
 //
 // Output

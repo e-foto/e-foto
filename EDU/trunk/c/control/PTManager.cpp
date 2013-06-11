@@ -241,7 +241,7 @@ if (localTopocentricMode)
 		}
 
 
-		bool result=pt->calculate();
+                bool result=pt->calculate(false);
 		setMatrixAFP(pt->getAFP());
 
 		if (localTopocentricMode)
