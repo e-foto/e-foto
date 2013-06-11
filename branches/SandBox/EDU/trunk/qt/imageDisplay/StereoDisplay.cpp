@@ -27,7 +27,7 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
 	ctexture = 0;
 	btexture = 0;
 	_GLDisplayUpdate = false;
-    _onPainting = false;
+        _onPainting = false;
 	setAutoFillBackground(false);
 
 	setAttribute(Qt::WA_Hover, true);
@@ -35,6 +35,11 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
 
 	QCursor cursor(NOCURSOR);
 	setCursor(cursor);
+
+        // Default anagliph
+        L_Red = 1; L_Green = 0; L_Blue = 0;
+        R_Red = 0; R_Green = 1; R_Blue = 1;
+        reverseLensGlasses = false;
 }
 
 GLDisplay::~GLDisplay()
@@ -43,6 +48,25 @@ GLDisplay::~GLDisplay()
 		glDeleteTextures(1, (GLuint*)(&ltexture));
 	if(glIsTexture((GLuint)rtexture))
 		glDeleteTextures(1, (GLuint*)(&rtexture));
+}
+
+void GLDisplay::setReverseLensGlasses(bool opt)
+{
+    reverseLensGlasses = opt;
+}
+
+void GLDisplay::setColorMaskLeft(bool r, bool g, bool b)
+{
+    L_Red = r;
+    L_Green = g;
+    L_Blue = b;
+}
+
+void GLDisplay::setColorMaskRight(bool r, bool g, bool b)
+{
+    R_Red = r;
+    R_Green = g;
+    R_Blue = b;
 }
 
 QPointF GLDisplay::getMouseScreenPosition()
@@ -219,7 +243,9 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-	glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+        // Anagliph left len
+        (reverseLensGlasses) ? glColorMask(R_Red, R_Green, R_Blue, GL_TRUE) : glColorMask(L_Red, L_Green, L_Blue, GL_TRUE);
+
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
@@ -269,7 +295,9 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-	glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE);
+        // Anagliph right len
+        (reverseLensGlasses) ? glColorMask(L_Red, L_Green, L_Blue, GL_TRUE) : glColorMask(R_Red, R_Green, R_Blue, GL_TRUE);
+
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
@@ -493,6 +521,21 @@ StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
 
 StereoDisplay::~StereoDisplay()
 {
+}
+
+void StereoDisplay::setReverseLensGlasses(bool opt)
+{
+    glDisplay_->setReverseLensGlasses(opt);
+}
+
+void StereoDisplay::setColorMaskLeft(bool r, bool g, bool b)
+{
+    glDisplay_->setColorMaskLeft(r, g, b);
+}
+
+void StereoDisplay::setColorMaskRight(bool r, bool g, bool b)
+{
+    glDisplay_->setColorMaskRight(r, g, b);
 }
 
 StereoScene* StereoDisplay::getCurrentScene()

@@ -134,9 +134,14 @@ int SPManager::loadFeatures(char *filename)
 
 void SPManager::saveFeatures(char *filename)
 {
-	spFeatures.saveFeatures(filename,0,false);
+        spFeatures.saveFeatures(filename,0,false);
     // Expanção do XML
     addGeometryToXML(string(filename));
+}
+
+void SPManager::exportFeatures(char *filename)
+{
+        spFeatures.exportFeatures(filename);
 }
 
 void SPManager::addFeature(string name, int feattype, int featclass)
@@ -206,13 +211,13 @@ void SPManager::setSelected(int feat_id, int pt_id)
     spFeatures.setSelectedPoint(pt_id);
 }
 
-void SPManager::getFeatureData(string &fname, int &ftype, int &fclass)
+void SPManager::getSelectedFeatureData(int &sel_feat, string &fname, int &ftype, int &fclass, int &no_points, double &perimeter, double &area)
 {
     ftype = -1;
     fclass = -1;
     fname = "";
 
-    int sel_feat = spFeatures.selectedFeature();
+    sel_feat = spFeatures.selectedFeature();
 
     if (sel_feat < 1)
         return;
@@ -220,6 +225,9 @@ void SPManager::getFeatureData(string &fname, int &ftype, int &fclass)
     fname = spFeatures.getFeature(sel_feat).name;
     ftype = spFeatures.getFeature(sel_feat).feature_type;
     fclass = spFeatures.getClassIdToSp165(spFeatures.getFeature(sel_feat).feature_class);
+    no_points = spFeatures.getNumPoints(sel_feat);
+    perimeter = spFeatures.getFeature(sel_feat).perimeter;
+    area = spFeatures.getFeature(sel_feat).area;
 }
 
 void SPManager::updateProjections()

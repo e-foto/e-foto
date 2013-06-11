@@ -51,12 +51,13 @@ namespace efoto {
 		this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 		this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
 		this->connect(actionStereo, SIGNAL(triggered()), this, SLOT(executeSP()));
+                this->connect(actionReport, SIGNAL(triggered()), this, SLOT(executeReport()));
 		this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 		this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 		this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
-        this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
-        this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
-        this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+                this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
+                this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+                this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
 		this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 		this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 		this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT( validatingPoint()) );
@@ -715,6 +716,17 @@ namespace efoto {
 		manager->startModule("StereoPlotter",0);
 		changeModule = false;
 	}
+
+        void ProjectUserInterface_Qt::executeReport()
+        {
+                changeModule = true;
+                confirmToClose();
+                LoadingScreen::instance().show();
+                qApp->processEvents();
+                this->close();
+                manager->startModule("Report",0);
+                changeModule = false;
+        }
 
 	void ProjectUserInterface_Qt::executeFT()
 	{

@@ -117,6 +117,8 @@
     <addaction name="actionStereo"/>
     <addaction name="actionDEMExtraction"/>
     <addaction name="actionOrtho_rectification"/>
+    <addaction name="separator"/>
+    <addaction name="actionReport"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -397,6 +399,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="text">
+    <string>Rep&amp;ort</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>
