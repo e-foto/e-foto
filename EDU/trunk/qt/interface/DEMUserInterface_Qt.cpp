@@ -648,12 +648,17 @@ int DEMUserInterface_Qt::saveImage(char *filename, Matrix *I)
 
 void DEMUserInterface_Qt::onSeedsEditorClicked()
 {
-	if (sed)
-		delete sed;
 	sed = new SeedEditorUserInterface_Qt(manager, this);
 	this->setHidden(true);
-	connect(sed,SIGNAL(closed(bool)),this,SLOT(show()));
+        connect(sed,SIGNAL(closed(bool)),this,SLOT(onSeedEditorClosed()));
 	sed->showMaximized();
+}
+
+void DEMUserInterface_Qt::onSeedEditorClosed()
+{
+    if (sed)
+            delete sed;
+    show();
 }
 
 void DEMUserInterface_Qt::onStereoplotterClicked()

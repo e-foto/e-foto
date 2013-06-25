@@ -64,6 +64,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 	QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
 	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
+        QObject::connect(orthoQualityButton, SIGNAL(clicked()), this, SLOT(onOrthoQualityButtonClicked()));
 
 	setWindowState(this->windowState());
 
@@ -80,6 +81,8 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 
 	allow_close = true;
 	onShowImageChanged(checkBox->isChecked());
+
+        ortho_qual_form = NULL;
 
 	qApp->processEvents();
 	init();
@@ -233,6 +236,24 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 	setCurrentWork("Done");
 }
 
+void OrthoUserInterface_Qt::onOrthoQualityButtonClicked()
+{
+    // Open Ortho-image Quality Editor
+
+    ortho_qual_form = new OrthoQualityUserInterface_Qt(manager, this);
+    this->setHidden(true);
+    connect(ortho_qual_form,SIGNAL(closed(bool)),this,SLOT(onCloseOrthoQualityForm()));
+    ortho_qual_form->showMaximized();
+}
+
+void OrthoUserInterface_Qt::onCloseOrthoQualityForm()
+{
+    if (ortho_qual_form)
+        delete ortho_qual_form;
+
+    show();
+}
+
 void OrthoUserInterface_Qt::disableOptions()
 {
 	comboBox->setEnabled(false);
@@ -363,6 +384,282 @@ void OrthoUserInterface_Qt::showErrorMessage(QString msg)
 {
 	QMessageBox::critical(this, "Error",msg);
 	doneButton->click();
+}
+
+/*******************************************************************************************************
+
+
+*/
+
+OrthoQualityUserInterface_Qt::OrthoQualityUserInterface_Qt(OrthoManager *manager, QWidget *parent) : QMainWindow(parent)
+{
+        setupUi(this);
+        this->manager = manager;
+
+        viewer = new SingleViewer(0);
+        viewer->blockOpen();
+        viewer->blockSave();
+/*
+        viewer->getLeftMarker().setToOnlyEmitClickedMode(); // Pluges para que o novo display funcione
+        viewer->getRightMarker().setToOnlyEmitClickedMode();
+        connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+        connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
+        connect(saveButton,SIGNAL(clicked()),this,SLOT(saveSeeds()));
+*/
+        connect(loadButton,SIGNAL(clicked()),this,SLOT(loadPoints()));
+        connect(saveButton,SIGNAL(clicked()),this,SLOT(saveQuality()));
+//        connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
+//        connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
+//        connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
+
+//        Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
+//        viewer->getLeftMarker().changeMarker(mark);
+//        viewer->getRightMarker().changeMarker(mark);
+
+        setCentralWidget(viewer);
+/*
+        // Create image marks
+        mark_seeds = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
+        mark_pairs = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
+        mark_empty = new Marker(SymbolsResource::getText(""));
+
+        // Copy seed and pair lists
+        pw.setAllowClose(false);
+        manager->getPointList(seeds,pairs);
+        addPairs();
+        updateData(0);
+
+        // Empty list of selected seeds
+        sel_seeds.clear();
+*/
+}
+
+void OrthoQualityUserInterface_Qt::closeEvent(QCloseEvent *)
+{
+        emit closed(true);
+}
+
+void OrthoQualityUserInterface_Qt::saveQuality()
+{
+        QString filename;
+
+        filename = QFileDialog::getSaveFileName(this, tr("Save ortho-image quality report"), ".", tr("Text file (*.txt);; All files (*.*)"));
+        if (filename=="")
+                return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        QDir dir(filename.left(i));
+        dir.setCurrent(dir.absolutePath());
+
+        ofstream outfile((char *)filename.toStdString().c_str());
+
+        if (outfile.fail())
+                return;
+
+        outfile << "Terrain X\tTerrain Y\tOrtho-image X\tOrtho-image Y\tX error\tY Error\tPlanimetric Error\n";
+
+        outfile << fixed << setprecision(5);
+
+        // Save table (may be imported or pasted on Excel or Calc)
+        for (int i=0; i<tableWidget->rowCount(); i++)
+        {
+            outfile << getTableAt(i,0) << "\t" << getTableAt(i,1) << "\t" << getTableAt(i,2) << "\t" << getTableAt(i,3) << "\t" << getTableAt(i,4) << "\t" << getTableAt(i,5) << "\t" << getTableAt(i,6) << "\n";
+        }
+
+        outfile.close();
+}
+
+void OrthoQualityUserInterface_Qt::loadPoints()
+{
+    QString filename;
+
+    filename = QFileDialog::getOpenFileName(this, tr("Load points for testing quality"), ".", tr("Points (*.txt);; All files (*.*)"));
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    QDir dir(filename.left(i));
+    dir.setCurrent(dir.absolutePath());
+
+    // Check open option
+    (comboBox1->currentIndex() == 0) ? loadPointsFromTxt((char *)filename.toStdString().c_str()) : loadPointsFromSP((char *)filename.toStdString().c_str());
+}
+
+int OrthoQualityUserInterface_Qt::loadPointsFromSP(char *filename)
+{
+    // Use Dem feature in order to get points
+    DemFeatures sp_points;
+    if (!sp_points.loadFeatures(filename, 0, false))
+        return 0;
+
+    // Clear table
+    tableWidget->setRowCount(0);
+    QTableWidgetItem *newItem;
+    int tab_pos = 0;
+
+    // Copy XYZ to table
+    for (int i = 0; i < sp_points.getNumFeatures(); i++)
+    {
+        DemFeature* df = sp_points.getFeatureLink(i+1);
+
+        for (int j = 0; j < df->points.size(); j++)
+        {
+            // Add new table items
+            tableWidget->insertRow(tab_pos);
+            for (int k=0; k<7; k++)
+            {
+                switch (k)
+                {
+                    case 0 : newItem = new QTableWidgetItem(QString::number(df->points.at(j).X,'f',5)); break;
+                    case 1 : newItem = new QTableWidgetItem(QString::number(df->points.at(j).Y,'f',5)); break;
+                    default : newItem = new QTableWidgetItem(""); break;
+                }
+                newItem->setTextAlignment(Qt::AlignCenter);
+                tableWidget->setItem(tab_pos, k, newItem);
+            }
+            tab_pos++;
+        }
+    }
+
+    addTableEnding(tab_pos);
+
+    return 1;
+}
+
+int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename)
+{
+    // Use text in order to get points
+    // Tex file format:
+    // X1 Y1 Z1
+    // X2 Y2 Z2
+    // ...
+
+    ifstream arq(filename);
+
+    if (arq.fail())
+            return 0;
+
+    double X, Y, Z;
+    tableWidget->setRowCount(0);
+    QTableWidgetItem *newItem;
+    int tab_pos = 0;
+
+    while (!arq.fail())
+    {
+        arq >> X >> Y >> Z;
+
+        // Add new table items
+        tableWidget->insertRow(tab_pos);
+        for (int k=0; k<7; k++)
+        {
+            switch (k)
+            {
+                case 0 : newItem = new QTableWidgetItem(QString::number(X,'f',5)); break;
+                case 1 : newItem = new QTableWidgetItem(QString::number(Y,'f',5)); break;
+                default : newItem = new QTableWidgetItem(""); break;
+            }
+            newItem->setTextAlignment(Qt::AlignCenter);
+            tableWidget->setItem(tab_pos, k, newItem);
+        }
+
+        tab_pos++;
+    }
+
+    arq.close();
+
+    addTableEnding(tab_pos);
+
+    return 1;
+}
+
+void OrthoQualityUserInterface_Qt::addTableEnding(int tab_pos)
+{
+    QTableWidgetItem *newItem;
+
+    // Add average and standard deviation rows
+    tableWidget->insertRow(tab_pos);
+    newItem = new QTableWidgetItem("Average");
+    tableWidget->setItem(tab_pos, 3, newItem);
+    tableWidget->insertRow(tab_pos+1);
+    newItem = new QTableWidgetItem("Std dev");
+    tableWidget->setItem(tab_pos+1, 3, newItem);
+
+    // Add empty values
+    for (int i=0; i<3; i++)
+    {
+        newItem = new QTableWidgetItem("");
+        tableWidget->setItem(tab_pos, i, newItem);
+        newItem = new QTableWidgetItem("");
+        tableWidget->setItem(tab_pos+1, i, newItem);
+    }
+
+    // Add initial values
+    for (int i=4; i<7; i++)
+    {
+        newItem = new QTableWidgetItem("0.0");
+        newItem->setTextAlignment(Qt::AlignCenter);
+        tableWidget->setItem(tab_pos, i, newItem);
+        newItem = new QTableWidgetItem("0.0");
+        newItem->setTextAlignment(Qt::AlignCenter);
+        tableWidget->setItem(tab_pos+1, i, newItem);
+    }
+
+}
+
+string OrthoQualityUserInterface_Qt::getTableAt(int row, int col)
+{
+    QTableWidgetItem *selItem;
+    selItem = tableWidget->item(row, col);
+    return selItem->text().toStdString();
+}
+
+void OrthoQualityUserInterface_Qt::setTableAt(int row, int col, double value)
+{
+    QTableWidgetItem *selItem;
+    selItem = tableWidget->item(row, col);
+    selItem->setText(QString::number(value,'f',5));
+}
+
+void OrthoQualityUserInterface_Qt::calculateAll()
+{
+    int no_points = tableWidget->rowCount() - 2; // Discard average and std lines from table
+    double avg[3] = {0.0, 0.0, 0.0}, stddev[3] = {0.0, 0.0, 0.0};
+    double dX, dY, planerr;
+
+    // Calculate errors
+    for (int i=0; i<no_points; i++)
+    {
+        dX = atof(getTableAt(i,2).c_str()) - atof(getTableAt(i,0).c_str());
+        dY = atof(getTableAt(i,3).c_str()) - atof(getTableAt(i,1).c_str());
+        planerr = sqrt(dX*dX + dY*dY);
+        setTableAt(i,4,dX);
+        setTableAt(i,5,dY);
+        setTableAt(i,6,planerr);
+    }
+
+    // Calculate average based on errors
+    for (int i=0; i<no_points; i++)
+    {
+        avg[0] += atof(getTableAt(i,4).c_str());
+        avg[1] += atof(getTableAt(i,5).c_str());
+        avg[2] += atof(getTableAt(i,6).c_str());
+    }
+    avg[0] /= double(no_points);
+    avg[1] /= double(no_points);
+    avg[2] /= double(no_points);
+
+    // Calculate standard deviation based on errors
+    for (int i=0; i<no_points; i++)
+    {
+        stddev[0] += pow(atof(getTableAt(i,4).c_str()) - avg[0], 2);
+        stddev[1] += pow(atof(getTableAt(i,5).c_str()) - avg[1], 2);
+        stddev[2] += pow(atof(getTableAt(i,6).c_str()) - avg[2], 2);
+    }
+    stddev[0] = sqrt(stddev[0] / double(no_points));
+    stddev[1] = sqrt(stddev[1] / double(no_points));
+    stddev[2] = sqrt(stddev[2] / double(no_points));
 }
 
 } // namespace efoto

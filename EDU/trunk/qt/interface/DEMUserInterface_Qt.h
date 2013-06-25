@@ -65,6 +65,7 @@ protected slots:
     void onLSMTemplateSizeChanged(int ts);
     void onCorrTemplateSizeChanged(int ts);
     void onDownValueChanged(double value);
+    void onSeedEditorClosed();
 
 private:
     void init();
