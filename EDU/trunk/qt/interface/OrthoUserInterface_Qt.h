@@ -2,6 +2,7 @@
 #define ORTHOUSERINTERFACE_QT_H
 
 #include "ui_OrthoForm.h"
+#include "ui_OrthoQualityEditor.h"
 #include "OrthoUserInterface.h"
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
@@ -19,6 +20,8 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+class OrthoQualityUserInterface_Qt;
+
 class OrthoUserInterface_Qt : public QWidget, public Ui::OrthoForm, public OrthoUserInterface
 {
 	Q_OBJECT
@@ -34,6 +37,7 @@ protected:
 	OrthoManager *manager;
 	void closeEvent(QCloseEvent *e);
 	int dem_load_flag;
+        OrthoQualityUserInterface_Qt *ortho_qual_form;
 
 protected slots:
 	virtual void languageChange();
@@ -41,7 +45,9 @@ protected slots:
 	void onLoadDemClicked();
         void onLoadOrthoClicked();
 	void onOrthoClicked();
+        void onOrthoQualityButtonClicked();
 	void onShowImageChanged(int);
+        void onCloseOrthoQualityForm();
 
 private:
 	void init();
@@ -64,6 +70,41 @@ public:
         void showImage3D(Matrix* image, double xi, double dx, double yi, double dy, double zi, double dz, bool isGrayscale = true);
 	void showErrorMessage(QString msg);
 };
+
+// Ortho-image Quality Tool
+
+class OrthoQualityUserInterface_Qt : public QMainWindow, public Ui::OrthoQualityWindow
+{
+private:
+        Q_OBJECT
+        OrthoManager *manager;
+        SingleViewer* viewer;
+//        Marker *mark_seeds, *mark_pairs, *mark_empty;
+//        void updateMarks();
+//        void updateData(int i);
+        void closeEvent(QCloseEvent *);
+        int loadPointsFromSP(char *filename);
+        int loadPointsFromTxt(char *filename);
+        void addTableEnding(int tab_pos);
+        string getTableAt(int row, int col);
+        void setTableAt(int row, int col, double value);
+        void calculateAll();
+//        int findKey(int seed_id);
+
+public:
+        OrthoQualityUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0);
+
+public slots:
+//        void imageClicked(QPointF);
+        void saveQuality();
+        void loadPoints();
+
+signals:
+        void closed(bool);
+
+};
+
+
 
 } // namespace efoto
 } // namespace eng

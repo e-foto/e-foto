@@ -356,6 +356,7 @@ FORMS += \
 		  Imageview.ui \
 		  IOForm.ui \
 		  OrthoForm.ui \
+                  OrthoQualityEditor.ui \
 		  ProgressWindow.ui \
 		  ReportForm.ui \
 		  SeedEditor.ui \

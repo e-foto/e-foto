@@ -127,9 +127,9 @@ double SPManager::getTerrainMeanAltitude()
     return Z / double(num_points);
 }
 
-int SPManager::loadFeatures(char *filename)
+int SPManager::loadFeatures(char *filename, bool append)
 {
-	return spFeatures.loadFeatures(filename,0,false);
+        return spFeatures.loadFeatures(filename,0,append);
 }
 
 void SPManager::saveFeatures(char *filename)

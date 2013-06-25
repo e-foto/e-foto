@@ -243,23 +243,30 @@ void SPUserInterface_Qt::onLoadButton()
 {
 	// File open dialog
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open Fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
-	// if no file name written, return
-	if (filename=="")
-			return;
+
+        // if no file name written, return
+        if (filename=="")
+                return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
 	QDir dir(filename.left(i));
 	dir.setCurrent(dir.absolutePath());
 
+        // Ask if create new or append
+        bool append = false;
+
+        if (manager->getNumFeatures() > 0)
+            append = QMessageBox::question(this, "Open features", "Clear or append featues ?","Clear","Append");
+
 	// Load DEM
-	bool sp_load_flag = manager->loadFeatures((char *)filename.toStdString().c_str());
+        bool sp_load_flag = manager->loadFeatures((char *)filename.toStdString().c_str(), append);
 
 	// Report error
 	if (!sp_load_flag)
 	{
-			QMessageBox::critical(this,"Error","Invalid features file format.");
-			return;
+                QMessageBox::critical(this,"Error","Invalid features file format.");
+                return;
 	}
 
 	manager->updateProjections();
@@ -270,9 +277,10 @@ void SPUserInterface_Qt::onSaveButton()
 {
 	// File open dialog
         QString filename = QFileDialog::getSaveFileName(this, tr("Save fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
-	// if no file name written, return
+
+        // if no file name written, return
 	if (filename=="")
-			return;
+                return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");

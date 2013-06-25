@@ -50,7 +50,7 @@ string DemFeatures::getFeatureTypeName(int ftype)
 int DemFeatures::loadFeatures(char *filename, int mode, bool append=false)
 {
 	// 0- SP 1.65
-		// 1- This version - To be developed
+        // 1- This version - To be developed
 	return loadFeatSp165(filename, append);
 }
 
