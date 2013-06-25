@@ -355,6 +355,39 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="orthoQualityButton">
+       <property name="toolTip">
+        <string>Open Ortho-image Quality Tool</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resource/resource.qrc">
+         <normaloff>:/icon/markIcon.png</normaloff>:/icon/markIcon.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_10">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="abortButton">
        <property name="toolTip">
         <string>Abort current operation</string>
