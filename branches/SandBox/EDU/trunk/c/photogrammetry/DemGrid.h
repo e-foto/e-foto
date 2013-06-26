@@ -62,7 +62,10 @@ public:
 	int getWidth() { return dem_width; };
 	int getHeight() { return dem_height; };
 	void printData();
-	void getXYAt(int, int, double &, double &);
+        void getXYAt(int col, int row, double &X, double &Y);
+        void getXYAt(double col, double row, double &X, double &Y);
+        void getColRowAt(double X, double Y, int &col, int &row);
+        void getColRowAt(double X, double Y, double &col, double &row);
 	void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
 	string calculateDemQuality(MatchingPointsList mpl);
 	void overlayMap(Matrix * map);

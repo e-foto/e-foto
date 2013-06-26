@@ -356,6 +356,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="orthoQualityButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Open Ortho-image Quality Tool</string>
        </property>
