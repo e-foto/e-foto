@@ -65,6 +65,11 @@
              <string>E-FOTO Stereoplotter</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Ortho-image quality</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
@@ -146,6 +151,26 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QToolButton" name="doneButton">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Save ortho-image quality report</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resource/resource.qrc">
+           <normaloff>:/icon/done.png</normaloff>:/icon/done.png</iconset>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="0" column="1">
@@ -169,6 +194,9 @@
          <width>0</width>
          <height>192</height>
         </size>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
        </property>
        <property name="selectionBehavior">
         <enum>QAbstractItemView::SelectRows</enum>

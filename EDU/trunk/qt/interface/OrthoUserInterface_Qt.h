@@ -79,23 +79,26 @@ private:
         Q_OBJECT
         OrthoManager *manager;
         SingleViewer* viewer;
-//        Marker *mark_seeds, *mark_pairs, *mark_empty;
-//        void updateMarks();
+        Marker *mark_ortho, *mark_gnd;
+        void updateMarks();
 //        void updateData(int i);
         void closeEvent(QCloseEvent *);
         int loadPointsFromSP(char *filename);
         int loadPointsFromTxt(char *filename);
+        int loadPointsFromQuality(char *filename);
         void addTableEnding(int tab_pos);
         string getTableAt(int row, int col);
+        double getDoubleTableAt(int row, int col);
         void setTableAt(int row, int col, double value);
         void calculateAll();
 //        int findKey(int seed_id);
 
 public:
         OrthoQualityUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0);
+        void showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale = true);
 
 public slots:
-//        void imageClicked(QPointF);
+        void imageClicked(QPointF);
         void saveQuality();
         void loadPoints();
 

@@ -135,6 +135,11 @@ public:
     */
     void addOrthoToXML2(string filename);
 
+    /**
+    * \brief Registra no XML o endereço de um arquivo de Ortho.
+    */
+    Orthorectification * getOrtho() { return ortho; };
+
 };
 
 } // namespace efoto
