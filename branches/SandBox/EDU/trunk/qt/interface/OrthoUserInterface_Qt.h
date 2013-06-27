@@ -53,6 +53,7 @@ private:
 	void init();
 	void close();
 	bool allow_close;
+        QString lastDir;
 
 public:
 	static OrthoUserInterface_Qt* instance(OrthoManager* manager);
@@ -79,7 +80,7 @@ private:
         Q_OBJECT
         OrthoManager *manager;
         SingleViewer* viewer;
-        Marker *mark_ortho, *mark_gnd;
+        Marker *mark_ortho, *mark_gnd, *mark_empty;
         void updateMarks();
 //        void updateData(int i);
         void closeEvent(QCloseEvent *);
@@ -90,8 +91,7 @@ private:
         string getTableAt(int row, int col);
         double getDoubleTableAt(int row, int col);
         void setTableAt(int row, int col, double value);
-        void calculateAll();
-//        int findKey(int seed_id);
+        QString lastDir;
 
 public:
         OrthoQualityUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0);
@@ -101,6 +101,9 @@ public slots:
         void imageClicked(QPointF);
         void saveQuality();
         void loadPoints();
+        void onDeletePoint();
+        void calculateAll();
+        void onCheckBoxChanged(int state);
 
 signals:
         void closed(bool);
