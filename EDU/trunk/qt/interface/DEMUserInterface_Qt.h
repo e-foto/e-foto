@@ -41,6 +41,7 @@ protected:
     void closeEvent(QCloseEvent *e);
     int checkBoundingBox();
     int demSource;
+    QString lastDir;
 
 protected slots:
     virtual void languageChange();
@@ -118,6 +119,7 @@ private:
 	vector<int> sel_seeds;
 	void checkSelectedSeeds();
 	int no_seeds, no_pairs; // Number for each pair, not the total
+        QString lastDir;
 
 public:
 	SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);

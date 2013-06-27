@@ -84,6 +84,8 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 
         ortho_qual_form = NULL;
 
+        lastDir = ".";
+
 	qApp->processEvents();
 	init();
 }
@@ -161,15 +163,14 @@ void OrthoUserInterface_Qt::onAbortClicked()
 void OrthoUserInterface_Qt::onLoadDemClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), ".", tr("DEM (*.dsm);; Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("DEM (*.dsm);; Text file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Add file to line edit
 	lineEdit->setText(filename);
@@ -188,15 +189,14 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
 void OrthoUserInterface_Qt::onLoadOrthoClicked()
 {
         // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), ".", tr("EOI (*.eoi);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), lastDir, tr("EOI (*.eoi);; All files (*.*)")) ;
         // if no file name written, return
         if (filename=="")
                 return;
 
         // Save last dir
         int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
         // Add file to line edit
         lineEdit->setText(filename);
@@ -219,15 +219,14 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 
 	// Save dialog
 	// File open dialog
-	QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), ".", tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), lastDir, tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	disableOptions();
 	setAllowClose(false);
@@ -417,15 +416,18 @@ OrthoQualityUserInterface_Qt::OrthoQualityUserInterface_Qt(OrthoManager *manager
         connect(loadButton,SIGNAL(clicked()),this,SLOT(loadPoints()));
         connect(saveButton,SIGNAL(clicked()),this,SLOT(saveQuality()));
         connect(doneButton,SIGNAL(clicked()),this,SLOT(close()));
-
-//        Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
-//        viewer->getMarker().changeMarker(mark);
+        connect(deleteButton,SIGNAL(clicked()),this,SLOT(onDeletePoint()));
+        connect(calculateButton,SIGNAL(clicked()),this,SLOT(calculateAll()));
+        connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
 
         setCentralWidget(viewer);
 
         // Create image marks
         mark_ortho = new Marker(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2));
         mark_gnd = new Marker(SymbolsResource::getCross(Qt::red, QSize(24, 24),2));
+        mark_empty = new Marker(SymbolsResource::getText(""));
+
+        lastDir = ".";
 }
 
 void OrthoQualityUserInterface_Qt::closeEvent(QCloseEvent *)
@@ -462,10 +464,8 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
         setTableAt(sel_row,2,X);
         setTableAt(sel_row,3,Y);
 
-        // Update mark
-        viewer->getMarker()->insertMark(p, sel_row, QString::number(sel_row+1), mark_ortho);
-
-        calculateAll();
+        // Update marks
+        updateMarks();
 
         viewer->update();
 }
@@ -474,12 +474,15 @@ void OrthoQualityUserInterface_Qt::updateMarks()
 {
     double col, row, X, Y;
     QPointF p;
+    int no_points = tableWidget->rowCount()-2, key=1;
 
     // Clear marks
     viewer->getDisplay()->getCurrentScene()->geometry()->clear();
 
-    for(int i=0; i<tableWidget->rowCount()-2; i++)
+    for(int i=0; i<no_points; i++)
     {
+        // Reference points
+
         // Calculate col and row - ranges from 1-N
         X = getDoubleTableAt(i,0);
         Y = getDoubleTableAt(i,1);
@@ -491,24 +494,57 @@ void OrthoQualityUserInterface_Qt::updateMarks()
         p.setY(row);
 
         // Add mark
-        viewer->getMarker()->insertMark(p, i+1, QString::number(i+1), mark_gnd);
+        if (checkBox->isChecked())
+            viewer->getMarker()->addMark(p, key, QString::number(i+1), mark_gnd);
+        else
+            viewer->getMarker()->addMark(p, key, "", mark_empty);
+
+        // Ortho-image points
+
+        X = getDoubleTableAt(i,2);
+        Y = getDoubleTableAt(i,3);
+        manager->getOrtho()->getColRowAt(X, Y, col, row);
+        col--; // Images coordinates ranges from 0
+        row--;
+        row = manager->getOrtho()->getHeight() - row; // Convert matrix to image coordinate system
+        p.setX(col);
+        p.setY(row);
+
+        // Add mark
+        if ((fabs(X-0.0)<0.00000000001) && (fabs(Y-0.0)<0.00000000001))
+            viewer->getMarker()->addMark(p, key+1, "", mark_empty);
+        else
+            viewer->getMarker()->addMark(p, key+1, QString::number(i+1), mark_ortho);
+
+        key+=2;
     }
 
     viewer->update();
+}
+
+void OrthoQualityUserInterface_Qt::onCheckBoxChanged(int state)
+{
+    updateMarks();
+}
+
+void OrthoQualityUserInterface_Qt::onDeletePoint()
+{
+    int sel_row = tableWidget->currentRow();
+    tableWidget->removeRow(sel_row);
+    updateMarks();
 }
 
 void OrthoQualityUserInterface_Qt::saveQuality()
 {
         QString filename;
 
-        filename = QFileDialog::getSaveFileName(this, tr("Save ortho-image quality report"), ".", tr("Text file (*.txt);; All files (*.*)"));
+        filename = QFileDialog::getSaveFileName(this, tr("Save ortho-image quality report"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
         if (filename=="")
                 return;
 
         // Save last dir
         int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
         ofstream outfile((char *)filename.toStdString().c_str());
 
@@ -532,14 +568,13 @@ void OrthoQualityUserInterface_Qt::loadPoints()
 {
     QString filename;
 
-    filename = QFileDialog::getOpenFileName(this, tr("Load points for testing quality"), ".", tr("Points (*.txt);; All files (*.*)"));
+    filename = QFileDialog::getOpenFileName(this, tr("Load points for testing quality"), lastDir, tr("Points (*.txt);; All files (*.*)"));
     if (filename=="")
             return;
 
     // Save last dir
     int i=filename.lastIndexOf("/");
-    QDir dir(filename.left(i));
-    dir.setCurrent(dir.absolutePath());
+    lastDir = filename.left(i);
 
     // Check open option
     switch (comboBox1->currentIndex())
@@ -606,7 +641,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename)
     if (arq.fail())
             return 0;
 
-    double X, Y, Z;
+    double X=0.0, Y, Z;
     tableWidget->setRowCount(0);
     QTableWidgetItem *newItem;
     int tab_pos = 0;
@@ -615,7 +650,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename)
     {
         arq >> X >> Y >> Z;
 
-        if (X - 0.0 < 0.0000000001)
+        if (fabs(X - 0.0) < 0.0000000001)
             break;
 
         // Add new table items
@@ -632,6 +667,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename)
             tableWidget->setItem(tab_pos, k, newItem);
         }
 
+        X = 0.0; // Clear variable X
         tab_pos++;
     }
 
@@ -762,6 +798,9 @@ void OrthoQualityUserInterface_Qt::calculateAll()
     int no_points = tableWidget->rowCount() - 2; // Discard average and std lines from table
     double avg[3] = {0.0, 0.0, 0.0}, stddev[3] = {0.0, 0.0, 0.0};
     double dX, dY, planerr;
+
+    if (no_points < 1)
+        return;
 
     // Calculate errors
     for (int i=0; i<no_points; i++)

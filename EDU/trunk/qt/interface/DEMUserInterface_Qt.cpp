@@ -91,6 +91,8 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	comboBox0->setEnabled(false);
 	demSource = 0;
 
+        lastDir = ".";
+
 	qApp->processEvents();
 	init();
 }
@@ -310,14 +312,13 @@ void DEMUserInterface_Qt::setBoundingBox(double Xi, double Yi, double Xf, double
 void DEMUserInterface_Qt::onDemSaveClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), ".", tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)"));
+        QString filename = QFileDialog::getSaveFileName(this, tr("Open file"), lastDir, tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)"));
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Save DEM
 	manager->saveDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
@@ -329,16 +330,15 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
 	QString filename;
 
 	if (comboBox9->currentIndex() == 0)
-		filename = QFileDialog::getSaveFileName(this, tr("Save file"), ".", tr("DEM Grid (*.dsm);; All files (*.*)"));
+                filename = QFileDialog::getSaveFileName(this, tr("Save file"), lastDir, tr("DEM Grid (*.dsm);; All files (*.*)"));
 	else
-		filename = QFileDialog::getSaveFileName(this, tr("Save file"), ".", tr("ASCII DEM Grid (*.txt);; All files (*.*)"));
+                filename = QFileDialog::getSaveFileName(this, tr("Save file"), lastDir, tr("ASCII DEM Grid (*.txt);; All files (*.*)"));
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Save DEM
 	manager->saveDemGrid((char *)filename.toStdString().c_str(), comboBox9->currentIndex());
@@ -347,15 +347,14 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
 void DEMUserInterface_Qt::onDemLoadClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), ".", tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Load DEM
 	if (!manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
@@ -370,15 +369,13 @@ void DEMUserInterface_Qt::onDemLoadClicked()
 void DEMUserInterface_Qt::onDemGridLoadClicked()
 {
         // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), ".", tr("DSM (*.dsm);; Text File (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), lastDir, tr("DSM (*.dsm);; Text File (*.txt);; All files (*.*)")) ;
         // if no file name written, return
         if (filename=="")
                 return;
-
         // Save last dir
         int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
         // Load DEM Grid
         if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
@@ -535,15 +532,14 @@ void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
 void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toStdString().c_str(), comboBox->currentIndex())));
 }
@@ -551,18 +547,17 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getSaveFileName(this, tr("Save DEM quality"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save DEM quality"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
-    // Expanção do XML
-    manager->addDEMQualityToXML(filename.toStdString());
+        // Expanção do XML
+        manager->addDEMQualityToXML(filename.toStdString());
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	ofstream outfile(filename.toStdString().c_str());
 
@@ -664,15 +659,14 @@ void DEMUserInterface_Qt::onSeedEditorClosed()
 void DEMUserInterface_Qt::onStereoplotterClicked()
 {
 	// File open dialog
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open Stereoplotter file"), ".", tr("Stereoplotter file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Stereoplotter file"), lastDir, tr("Stereoplotter file (*.txt);; All files (*.*)")) ;
 	// if no file name written, return
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	if (manager->loadDemFeature((char *) filename.toStdString().c_str()))
 		enableAfterDEM(2);
@@ -736,6 +730,8 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
 
 	// Empty list of selected seeds
 	sel_seeds.clear();
+
+        lastDir = ".";
 }
 
 void SeedEditorUserInterface_Qt::closeEvent(QCloseEvent *)
@@ -783,7 +779,7 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 
 	if (sender() == &viewer->getLeftMarker())
 	{
-		viewer->getLeftMarker().insertMark(p, key, QString::number(seed_id), mark_seeds);
+                viewer->getLeftMarker().insertMark(p, key, QString::number(seed_id), mark_seeds);
 		item = tableWidget->item(sel_seeds.at(0),1);
 		item->setText(QString::number(p.x()));
 		item = tableWidget->item(sel_seeds.at(0),2);
@@ -793,7 +789,7 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 	}
 	else
 	{
-		viewer->getRightMarker().insertMark(p, key, QString::number(seed_id), mark_seeds);
+                viewer->getRightMarker().insertMark(p, key, QString::number(seed_id), mark_seeds);
 		item = tableWidget->item(sel_seeds.at(0),3);
 		item->setText(QString::number(p.x()));
 		item = tableWidget->item(sel_seeds.at(0),4);
@@ -847,7 +843,7 @@ void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
 void SeedEditorUserInterface_Qt::onAddButtonClicked()
 {
 	// Add new line
-	int key = tableWidget->rowCount();
+        int key = tableWidget->rowCount();
 	QTableWidgetItem *newItem;
 
 	tableWidget->insertRow(key);
@@ -873,8 +869,8 @@ void SeedEditorUserInterface_Qt::onAddButtonClicked()
 	seeds.add(left_id, right_id, -1.0, -1.0, -1.0, -1.0, 0.0);
 
 	// Add empty points to image pair
-	viewer->getLeftMarker().insertMark(QPointF(-1,-1), key, "", mark_empty);
-	viewer->getRightMarker().insertMark(QPointF(-1,-1), key, "", mark_empty);
+        viewer->getLeftMarker().insertMark(QPointF(-1,-1), key + 1, "", mark_empty);
+        viewer->getRightMarker().insertMark(QPointF(-1,-1), key + 1, "", mark_empty);
 
 	no_seeds++;
 }
@@ -1017,14 +1013,13 @@ void SeedEditorUserInterface_Qt::saveSeeds()
 {
 	QString filename;
 
-	filename = QFileDialog::getSaveFileName(this, tr("Save seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
+        filename = QFileDialog::getSaveFileName(this, tr("Save seeds"), lastDir, tr("Seeds (*.txt);; All files (*.*)"));
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Save seeds
 	seeds.save((char *)filename.toStdString().c_str(), 0);
@@ -1036,14 +1031,13 @@ void SeedEditorUserInterface_Qt::loadSeeds()
 {
 	QString filename;
 
-	filename = QFileDialog::getOpenFileName(this, tr("Load seeds"), ".", tr("Seeds (*.txt);; All files (*.*)"));
+        filename = QFileDialog::getOpenFileName(this, tr("Load seeds"), lastDir, tr("Seeds (*.txt);; All files (*.*)"));
 	if (filename=="")
 		return;
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
 	// Load seeds
 	seeds.load((char *)filename.toStdString().c_str(), 0);

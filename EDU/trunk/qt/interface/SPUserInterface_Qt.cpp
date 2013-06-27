@@ -78,6 +78,8 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
                 tree = new TreeFeatures("");
                 treeView->setModel(tree);
 
+                lastDir = ".";
+
 		qApp->processEvents();
 		init();
 }
@@ -242,7 +244,7 @@ void SPUserInterface_Qt::updateClass(int feat_type)
 void SPUserInterface_Qt::onLoadButton()
 {
 	// File open dialog
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open Fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Fetures file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 
         // if no file name written, return
         if (filename=="")
@@ -250,8 +252,7 @@ void SPUserInterface_Qt::onLoadButton()
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
         // Ask if create new or append
         bool append = false;
@@ -276,7 +277,7 @@ void SPUserInterface_Qt::onLoadButton()
 void SPUserInterface_Qt::onSaveButton()
 {
 	// File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Save fetures file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save fetures file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 
         // if no file name written, return
 	if (filename=="")
@@ -284,8 +285,8 @@ void SPUserInterface_Qt::onSaveButton()
 
 	// Save last dir
 	int i=filename.lastIndexOf("/");
-	QDir dir(filename.left(i));
-	dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
+
 
         // Save Features
 	manager->saveFeatures((char *)filename.toStdString().c_str());
@@ -294,15 +295,14 @@ void SPUserInterface_Qt::onSaveButton()
 void SPUserInterface_Qt::onSaveTxtButton()
 {
         // File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Export fetures as text file"), ".", tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Export fetures as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
         // if no file name written, return
         if (filename=="")
             return;
 
         // Save last dir
         int i=filename.lastIndexOf("/");
-        QDir dir(filename.left(i));
-        dir.setCurrent(dir.absolutePath());
+        lastDir = filename.left(i);
 
         // Export features
         manager->exportFeatures((char *)filename.toStdString().c_str());
