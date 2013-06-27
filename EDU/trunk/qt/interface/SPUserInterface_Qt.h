@@ -74,6 +74,7 @@ private:
 	int measure_mode; // 0 - None, 1- Add, 2- Edit, 3- Select
         // Anagliph colors: Red, Green, Blue, Cyan, Magenta, Yellow
         bool color_map[6][3];
+        QString lastDir;
 
 public:
 	static SPUserInterface_Qt* instance(SPManager* manager);

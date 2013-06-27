@@ -73,5 +73,6 @@
         <file>removeall.png</file>
         <file>ptremove.png</file>
         <file>featdone.png</file>
+        <file>calculate.png</file>
     </qresource>
 </RCC>

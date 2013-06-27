@@ -52,7 +52,7 @@
         <item row="0" column="1">
          <widget class="QPushButton" name="stereoButton">
           <property name="toolTip">
-           <string>Open Stereo Plotter</string>
+           <string>Open Stereo Plotter Feature</string>
           </property>
           <property name="text">
            <string/>
