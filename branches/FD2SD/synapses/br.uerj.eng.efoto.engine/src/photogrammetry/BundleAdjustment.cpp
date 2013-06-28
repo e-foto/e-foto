@@ -1689,7 +1689,7 @@ int BundleAdjustment::testConverged()
 						qDebug("numero e NAN");
 						return -1;
 				}
-				if (fabs(x2.get(i,1)>metricConvergency))
+                                if (fabs(x2.get(i,1))>metricConvergency)
 				{
 						return 0;
 				}
