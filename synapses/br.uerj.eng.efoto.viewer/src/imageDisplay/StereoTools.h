@@ -146,6 +146,7 @@ public:
 
 signals:
 	void clicked(QPointF, QPointF);
+        void clickedRightButton();
 };
 
 class NearStereoTool : public StereoTool
