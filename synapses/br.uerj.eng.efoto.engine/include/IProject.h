@@ -18,6 +18,9 @@ class Image;
 class Point;
 class InteriorOrientation;
 class ExteriorOrientation;
+class DatabaseConnection;
+//class Te3DPersistenceService;
+
 
 namespace engine {
 
@@ -25,6 +28,7 @@ namespace engine {
 class IProject
 {
 public:
+    virtual DatabaseConnection* getDatabase()=0;
     virtual bool connectDatabase()=0;
     virtual bool disconnectDatabase()=0;
     virtual bool newProject(string filename)=0;
