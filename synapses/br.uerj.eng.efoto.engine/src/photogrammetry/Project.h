@@ -14,6 +14,7 @@
 #include "SpatialRessection.h"
 #include "Dummies.h"
 #include "XmlUpdater.h"
+#include "DatabaseConnection.h"
 
 #ifdef SYNAPSE_EFOTO
 #include "IProject.h"
@@ -31,6 +32,7 @@ class Project
 class Q_DECL_EXPORT Project : public engine::IProject
 #endif //SYNAPSE_EFOTO
 {
+    DatabaseConnection database;
 	string xmlData;
 	string xmlState;
     XmlUpdater* updater;
@@ -50,7 +52,7 @@ class Q_DECL_EXPORT Project : public engine::IProject
 
 protected:
 
-	ProjectHeader* instanceHeader();
+        ProjectHeader* instanceHeader();
 
 	/**
 	* \brief Método que cria uma instância da classe Terrain.
@@ -438,6 +440,8 @@ public:
     string getProcessStates() {return processStates;}
 
     void setProcessStates(string state) {processStates = state;}
+
+    DatabaseConnection* getDatabase() {return &database;}
 
     // Rever. e adicionar aqui os métodos de add, instance e delete dos itens Dem, EOI e Feat.
 };
