@@ -222,6 +222,7 @@ void GLDisplay::paintGL()
 {
 	if (_GLDisplayUpdate)
 	{
+                //Fazer duas vezes para o caso de polarização passiva.
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDrawBuffer(GL_BACK);
 
@@ -233,6 +234,7 @@ void GLDisplay::paintGL()
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+                        // Pintando o plano de fundo
 			glBegin (GL_QUADS);
 			{
 				glTexCoord2f(0.0, 1.0);
@@ -293,6 +295,8 @@ void GLDisplay::paintGL()
 	cb = mousePos.y() - 16.0;
 	ct = mousePos.y() + 16.0;
 
+        // Somente em modo anaglifo
+        // if(...)
 	glEnable(GL_COLOR_LOGIC_OP);
 	glLogicOp(GL_OR);
 
@@ -312,6 +316,19 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+<<<<<<< .mine
+        //Troca o filtro de cor (para anaglifo) ou Troca o buffer de desenho (para polarização)
+        //if (...)
+        if(reverseLensGlasses)
+            glColorMask(!crl, !cgl, !cbl, GL_TRUE);
+        else
+            glColorMask(crl, cgl, cbl, GL_TRUE);
+        //else
+            //glDrawBuffer(GL_BACK_LEFT);
+
+        // Pintando imagem da esquerda
+        glBegin (GL_QUADS);
+=======
         //crl, cgl, cbl
         //glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);//original
         if(reverseLensGlasses)
@@ -320,6 +337,7 @@ void GLDisplay::paintGL()
             glColorMask(crl, cgl, cbl, GL_TRUE);
 
 	glBegin (GL_QUADS);
+>>>>>>> .r349
 	{
 		glTexCoord2f(0.0, 1.0);
         glVertex2f(ll, lt);
@@ -338,6 +356,8 @@ void GLDisplay::paintGL()
 	glBindTexture( GL_TEXTURE_2D, (GLuint)ctexture );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        // Pintando Cursor da esquerda
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
@@ -375,7 +395,21 @@ void GLDisplay::paintGL()
         else
             glColorMask(crr, cgr, cbr, GL_TRUE);
 
+<<<<<<< .mine
+        //Troca o filtro de cor (para anaglifo) ou Troca o buffer de desenho (para polarização)
+        //if (...)
+        if(reverseLensGlasses)
+            glColorMask(!crr, !cgr, !cbr, GL_TRUE);
+        else
+            glColorMask(crr, cgr, cbr, GL_TRUE);
+        //else
+            //glDrawBuffer(GL_BACK_RIGHT);
+
+        // Pintando imagem da direita
         glBegin (GL_QUADS);
+=======
+        glBegin (GL_QUADS);
+>>>>>>> .r349
 	{
 		glTexCoord2f(0.0, 1.0);
         glVertex2f(rl, rt);
@@ -394,6 +428,8 @@ void GLDisplay::paintGL()
 	glBindTexture( GL_TEXTURE_2D, (GLuint)ctexture );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        // Pintando o cursor da direita
 	glBegin (GL_QUADS);
 	{
 		glTexCoord2f(0.0, 1.0);
