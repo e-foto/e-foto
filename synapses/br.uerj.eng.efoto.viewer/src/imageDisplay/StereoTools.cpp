@@ -622,7 +622,10 @@ void MarkStereoTool::mousePressed(const QMouseEvent & event)
 		{
 			putClickOn(lLocal, rLocal);
 		}
-	}
+        }else if (event.buttons() & Qt::RightButton)
+        {
+                emit clickedRightButton();
+        }
 	StereoTool::mousePressed(event);
 }
 
