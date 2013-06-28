@@ -63,6 +63,7 @@ HEADERS =  include/IPhotogrammetry.h \
 		   src/interface/PTUserInterface_Qt.h \
 		   src/interface/SPUserInterface_Qt.h \
 		   src/interface/SRUserInterface_Qt.h \
+		   src/interface/DatabaseForm.h \
 		   #
 		   src/formDisplay/AbstractForm.h \
 		   src/formDisplay/ControlButtons.h \
@@ -181,6 +182,7 @@ SOURCES =  src/Photogrammetry.cpp \
 		   src/interface/PTUserInterface_Qt.cpp \
 		   src/interface/SPUserInterface_Qt.cpp \
 		   src/interface/SRUserInterface_Qt.cpp \
+		   src/interface/DatabaseForm.cpp \
 		   #Tradução
 		   src/interface/main.cpp \
 		   #
@@ -298,7 +300,8 @@ FORMS =   src/formDisplay/FeatEditor.ui \
 		  src/interface/ProgressWindow.ui \
 		  src/interface/SeedEditor.ui \
 		  src/interface/SRForm.ui \
-		  src/interface/Stereoplotter.ui
+		  src/interface/Stereoplotter.ui \
+		  src/interface/DatabaseForm.ui
 
 RESOURCES += resource.qrc
 
