@@ -53,6 +53,7 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
                 QObject::connect(comboBox_7, SIGNAL(currentIndexChanged(int)), this, SLOT(setReverseLensGlasses(int)));
                 QObject::connect(saveTxtButton, SIGNAL(clicked()), this, SLOT(onSaveTxtButton()));
                 QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+                QObject::connect(comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onStereoModeChanged(int)));
 
                 // Add color map
                 // Anagliph colors: Red, Green, Blue, Cyan, Magenta, Yellow
@@ -240,6 +241,11 @@ void SPUserInterface_Qt::updateClass(int feat_type)
 /*
  *  Button clicks
  **/
+
+void SPUserInterface_Qt::onStereoModeChanged(int option)
+{
+    viewer->getDisplay()->setStereoMode((bool)option);
+}
 
 void SPUserInterface_Qt::onLoadButton()
 {
