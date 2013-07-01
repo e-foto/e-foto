@@ -69,6 +69,24 @@ void GLDisplay::setColorMaskRight(bool r, bool g, bool b)
     R_Blue = b;
 }
 
+void GLDisplay::setStereoMode(bool mode)
+{
+    stereo_mode = mode;
+
+    QGLFormat fmt;
+    fmt.setAlpha(true);
+    fmt.setStereo(stereo_mode);
+    fmt.setDoubleBuffer(true);
+    fmt.setOverlay(true);
+    setFormat(fmt);
+
+    // Test if available
+    if ((stereo_mode == 1) && (!format().stereo()))
+        stereo_mode = 0;
+
+    updateGL();
+}
+
 QPointF GLDisplay::getMouseScreenPosition()
 {
 	return _mouseScreenPos;
@@ -227,8 +245,11 @@ void GLDisplay::paintGL()
 	glEnable(GL_COLOR_LOGIC_OP);
 	glLogicOp(GL_OR);
 
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//glDrawBuffer(GL_BACK);
+        if (stereo_mode)
+        {
+            glClear(GL_COLOR_BUFFER_BIT);
+            glDrawBuffer(GL_BACK);
+        }
 
 	glEnable(GL_TEXTURE_2D);
 	if (_GLDisplayUpdate)
@@ -244,7 +265,11 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
         // Anagliph left len
-        (reverseLensGlasses) ? glColorMask(R_Red, R_Green, R_Blue, GL_TRUE) : glColorMask(L_Red, L_Green, L_Blue, GL_TRUE);
+        if (stereo_mode == 0)
+            (reverseLensGlasses) ? glColorMask(R_Red, R_Green, R_Blue, GL_TRUE) : glColorMask(L_Red, L_Green, L_Blue, GL_TRUE);
+        else
+            (reverseLensGlasses) ? glDrawBuffer(GL_BACK_RIGHT) : glDrawBuffer(GL_BACK_LEFT);
+
 
 	glBegin (GL_QUADS);
 	{
@@ -296,7 +321,10 @@ void GLDisplay::paintGL()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
         // Anagliph right len
-        (reverseLensGlasses) ? glColorMask(L_Red, L_Green, L_Blue, GL_TRUE) : glColorMask(R_Red, R_Green, R_Blue, GL_TRUE);
+        if (stereo_mode == 0)
+            (reverseLensGlasses) ? glColorMask(L_Red, L_Green, L_Blue, GL_TRUE) : glColorMask(R_Red, R_Green, R_Blue, GL_TRUE);
+        else
+            (reverseLensGlasses) ? glDrawBuffer(GL_BACK_LEFT) : glDrawBuffer(GL_BACK_RIGHT);
 
 	glBegin (GL_QUADS);
 	{
@@ -493,15 +521,15 @@ void GLDisplay::wheelEvent(QWheelEvent *e)
 StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
 	QWidget(parent)
 {
-	//QGLFormat fmt;
-	//fmt.setAlpha(true);
-	//fmt.setStereo(true);
-	//fmt.setDoubleBuffer(true);
-	//fmt.setOverlay(true);
-	//QGLFormat::setDefaultFormat(fmt);
+        //QGLFormat fmt;
+        //fmt.setAlpha(true);
+        //fmt.setStereo(false);
+        //fmt.setDoubleBuffer(true);
+        //fmt.setOverlay(true);
+        //QGLFormat::setDefaultFormat(fmt);
 
 	leftDisplay_ = NULL;
-    rightDisplay_ = NULL;
+        rightDisplay_ = NULL;
 
 	if (currentScene)
 		currentScene_ = currentScene;
@@ -521,6 +549,11 @@ StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
 
 StereoDisplay::~StereoDisplay()
 {
+}
+
+void StereoDisplay::setStereoMode(bool mode)
+{
+    glDisplay_->setStereoMode(mode);
 }
 
 void StereoDisplay::setReverseLensGlasses(bool opt)
@@ -729,7 +762,7 @@ void StereoDisplay::fitView()
     currentScene_->getLeftScene()->moveTo(_centerOnLeft);
     currentScene_->getRightScene()->scaleTo(_fitScale);
     currentScene_->getRightScene()->moveTo(_centerOnRight);
-	updateAll();
+        updateAll();
 }
 
 void StereoDisplay::pan(int dx, int dy)

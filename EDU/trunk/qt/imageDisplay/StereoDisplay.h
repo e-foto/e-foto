@@ -30,6 +30,7 @@ protected:
 	QPointF _mouseScreenPos;
 	QImage _cursor;
         bool _onPainting;
+        bool stereo_mode;
 
         // Anagliph filter
         bool L_Red, L_Green, L_Blue;
@@ -65,6 +66,7 @@ public:
         void setReverseLensGlasses(bool opt);
         void setColorMaskLeft(bool r, bool g, bool b);
         void setColorMaskRight(bool r, bool g, bool b);
+        void setStereoMode(bool mode);
 
     bool painting();
 
@@ -107,6 +109,7 @@ public:
 	void loadRightImage(QImage* image);
 	void loadLeftImage(Matrix* image, bool isGrayscale = true);
 	void loadRightImage(Matrix* image, bool isGrayscale = true);
+        void setStereoMode(bool mode);
 
 	QPointF getLeftCursorOffset();
 	QPointF getRightCursorOffset();
