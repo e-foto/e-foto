@@ -66,6 +66,7 @@ public slots:
         void setReverseLensGlasses(int option);
         void setColorMaskLeft(int option);
         void setColorMaskRight(int option);
+        void onStereoModeChanged(int option);
 
 private:
 	void init();
