@@ -66,7 +66,7 @@ public:
         void setReverseLensGlasses(bool opt);
         void setColorMaskLeft(bool r, bool g, bool b);
         void setColorMaskRight(bool r, bool g, bool b);
-        void setStereoMode(bool mode);
+        int setStereoMode(bool mode);
 
     bool painting();
 
@@ -109,7 +109,7 @@ public:
 	void loadRightImage(QImage* image);
 	void loadLeftImage(Matrix* image, bool isGrayscale = true);
 	void loadRightImage(Matrix* image, bool isGrayscale = true);
-        void setStereoMode(bool mode);
+        int setStereoMode(bool mode);
 
 	QPointF getLeftCursorOffset();
 	QPointF getRightCursorOffset();
