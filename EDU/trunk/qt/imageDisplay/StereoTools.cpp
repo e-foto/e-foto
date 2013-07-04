@@ -946,6 +946,9 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
 	//_display->getCurrentScene()->setDetailZoom(2.0);
 	//connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
 
+        setMarkTool->setShortcut(Qt::CTRL + Qt::Key_Z);
+        setMoveTool->setShortcut(Qt::CTRL + Qt::Key_X);
+
 	addAction(openLeftImage);
 	addAction(openRightImage);
 	addAction(saveLeftImage);
