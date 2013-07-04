@@ -69,7 +69,7 @@ void GLDisplay::setColorMaskRight(bool r, bool g, bool b)
     R_Blue = b;
 }
 
-void GLDisplay::setStereoMode(bool mode)
+int GLDisplay::setStereoMode(bool mode)
 {
     stereo_mode = mode;
 
@@ -82,9 +82,13 @@ void GLDisplay::setStereoMode(bool mode)
 
     // Test if available
     if ((stereo_mode == 1) && (!format().stereo()))
+    {
         stereo_mode = 0;
+        return 0;
+    }
 
     updateGL();
+    return 1;
 }
 
 QPointF GLDisplay::getMouseScreenPosition()
@@ -551,9 +555,9 @@ StereoDisplay::~StereoDisplay()
 {
 }
 
-void StereoDisplay::setStereoMode(bool mode)
+int StereoDisplay::setStereoMode(bool mode)
 {
-    glDisplay_->setStereoMode(mode);
+    return glDisplay_->setStereoMode(mode);
 }
 
 void StereoDisplay::setReverseLensGlasses(bool opt)

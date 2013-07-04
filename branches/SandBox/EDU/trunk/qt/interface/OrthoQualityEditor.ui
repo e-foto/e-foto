@@ -229,7 +229,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Save ortho-image quality report</string>
+          <string>Exit</string>
          </property>
          <property name="text">
           <string/>
