@@ -236,7 +236,7 @@ void SRUserInterface_Qt::closeEvent(QCloseEvent *e)
 bool SRUserInterface_Qt::calculateSR()
 {
 	int iterations; double gnssPrecision, insPrecision;
-	iterations = QInputDialog::getInt(this,"Number of iterations","Set the number of iterations",10,1,50,1);
+        iterations = QInputDialog::getInt(this,"Max. of iterations","Set max. number of iterations",10,1,50,1);
 	gnssPrecision = QInputDialog::getDouble(this,"Precision","Set the precision for camera coordinates (meters)",0.001,0.000001,10,6);
 	insPrecision = QInputDialog::getDouble(this,"Precision","Set the precision for attitude angles (radians)",0.001,0.000001,1,6);
 	bool result = manager->calculateSR(iterations, gnssPrecision, insPrecision);

@@ -280,7 +280,12 @@ void ImageForm::startSingleViewer()
 	sv->blockSave();
 	sv->blockMark();
 	sv->show();
-	sv->loadImage(filePathLine->text() + "/" + fileNameLine->text());
+
+        QString path = filePathLine->text();
+        if (!path.isEmpty())
+            path = path + "/";
+
+        sv->loadImage(path + fileNameLine->text());
 
     /*
 	SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
