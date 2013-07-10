@@ -286,6 +286,10 @@ public:
     * \brief Registra no XML o endereço de um arquivo de DEM Quality.
     */
     void addDEMQualityToXML(string filename);
+    /**
+    * \brief Ativar eliminação de pontos ruins.
+    */
+    void eliminateBadPoints() { pairs.filterBadPoints2D(); };
 
 };
 

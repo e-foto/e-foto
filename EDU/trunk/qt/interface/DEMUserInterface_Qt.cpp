@@ -573,7 +573,7 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 void DEMUserInterface_Qt::onDemExtractionClicked()
 {
         manager->setStdParameters(spinBox3_2->value(), spinBox3_3->value(), spinBox11_2->value(), spinBox11_3->value(), checkBox_5->isChecked());
-        manager->setEliminateBadPoints(checkBox_4->isChecked());
+//        manager->setEliminateBadPoints(checkBox_4->isChecked()); // Works for images individually
         manager->setAutoExtractionSettings(comboBox3->currentIndex(), comboBox4->currentIndex(), spinBox1->value(), doubleSpinBox0->value());
 	manager->setLSMSettings(spinBox3->value(), spinBox4->value(), doubleSpinBox5->value(), doubleSpinBox6->value(), spinBox7->value(), doubleSpinBox8->value(), doubleSpinBox9->value(), doubleSpinBox10->value(), checkBox->isChecked(), doubleSpinBox17->value());
 	manager->setNCCSettings(spinBox11->value(), spinBox12->value(), doubleSpinBox13->value(), doubleSpinBox14->value());
@@ -581,6 +581,9 @@ void DEMUserInterface_Qt::onDemExtractionClicked()
 
 	if (!manager->cancelFlag() && DEMflag)
 		enableAfterDEM(1);
+
+        if (checkBox_4->isChecked())
+                manager->eliminateBadPoints();
 }
 
 /*
