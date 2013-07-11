@@ -104,6 +104,7 @@ public slots:
         void onDeletePoint();
         void calculateAll();
         void onCheckBoxChanged(int state);
+        void onTableClicked(int row, int col);
 
 signals:
         void closed(bool);
