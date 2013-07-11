@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>1062</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -502,10 +502,6 @@
          </widget>
         </item>
        </layout>
-       <zorder>removePtButton</zorder>
-       <zorder>addPtButton</zorder>
-       <zorder>selButton</zorder>
-       <zorder>editPtButton</zorder>
       </widget>
      </item>
      <item row="2" column="0">
@@ -742,17 +738,17 @@
        </item>
        <item>
         <property name="text">
-         <string>Cyan</string>
+         <string>Cyan (Green + Blue)</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Magenta</string>
+         <string>Yellow (Red + Green)</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Yellow</string>
+         <string>Magenta (Red + Blue)</string>
         </property>
        </item>
       </widget>
@@ -786,17 +782,17 @@
        </item>
        <item>
         <property name="text">
-         <string>Cyan</string>
+         <string>Cyan (Green + Blue)</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Magenta</string>
+         <string>Yellow (Red + Green)</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Yellow</string>
+         <string>Magenta (Red + Green)</string>
         </property>
        </item>
       </widget>

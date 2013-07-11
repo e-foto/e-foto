@@ -419,6 +419,7 @@ OrthoQualityUserInterface_Qt::OrthoQualityUserInterface_Qt(OrthoManager *manager
         connect(deleteButton,SIGNAL(clicked()),this,SLOT(onDeletePoint()));
         connect(calculateButton,SIGNAL(clicked()),this,SLOT(calculateAll()));
         connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
+        connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
 
         setCentralWidget(viewer);
 
@@ -445,8 +446,9 @@ void OrthoQualityUserInterface_Qt::showImage2D(Matrix* image, double xi, double 
 void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
 {
         int sel_row = tableWidget->currentRow();
+        int num_points = tableWidget->rowCount() - 2;
 
-        if (sel_row < 0)
+        if ((sel_row < 0) || (sel_row >= num_points))
         {
                 QMessageBox::warning(this,"Warning","There is no selected point to measure");
                 return;
@@ -467,6 +469,29 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
         // Update marks
         updateMarks();
 
+        viewer->update();
+}
+
+void OrthoQualityUserInterface_Qt::onTableClicked(int row, int col)
+{
+        int num_points = tableWidget->rowCount() - 2;
+
+        if (row >= num_points)
+            return;
+
+        // Center coordinates
+        double X, Y, rr, cc;
+
+        X = getDoubleTableAt(row,0);
+        Y = getDoubleTableAt(row,1);
+
+        manager->getOrtho()->getColRowAt(X, Y, cc, rr);
+
+        cc--; // Images coordinates ranges from 0
+        rr--;
+        rr = manager->getOrtho()->getHeight() - rr; // Convert matrix to image coordinate system
+
+        viewer->getDisplay()->getCurrentScene()->moveTo(QPointF(cc,rr));
         viewer->update();
 }
 
