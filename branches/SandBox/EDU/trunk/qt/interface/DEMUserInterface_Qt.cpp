@@ -99,8 +99,6 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 
 DEMUserInterface_Qt::~DEMUserInterface_Qt()
 {
-	if (sed)
-		delete sed;
 	// no need to delete child widgets, Qt does it all for us
 }
 
