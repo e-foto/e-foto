@@ -1327,7 +1327,7 @@ string DemFeatures::getFeaturesList()
 	{
 			df = features.at(i);
 
-			txt << "Feture #" << i+1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
+                        txt << "Feature #" << i+1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
 
 			for (int k=0; k<df.points.size(); k++)
 				txt << "\tPoint #" << k+1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";

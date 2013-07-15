@@ -39,7 +39,9 @@ GLDisplay::GLDisplay(StereoDisplay *parent):
         // Default anagliph
         L_Red = 1; L_Green = 0; L_Blue = 0;
         R_Red = 0; R_Green = 1; R_Blue = 1;
+
         reverseLensGlasses = false;
+        stereo_mode = false;
 }
 
 GLDisplay::~GLDisplay()

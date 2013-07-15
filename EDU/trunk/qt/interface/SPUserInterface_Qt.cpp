@@ -255,7 +255,7 @@ void SPUserInterface_Qt::onStereoModeChanged(int option)
 void SPUserInterface_Qt::onLoadButton()
 {
 	// File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open Fetures file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 
         // if no file name written, return
         if (filename=="")
@@ -288,7 +288,7 @@ void SPUserInterface_Qt::onLoadButton()
 void SPUserInterface_Qt::onSaveButton()
 {
 	// File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Save fetures file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save features file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
 
         // if no file name written, return
 	if (filename=="")
@@ -306,7 +306,7 @@ void SPUserInterface_Qt::onSaveButton()
 void SPUserInterface_Qt::onSaveTxtButton()
 {
         // File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Export fetures as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+        QString filename = QFileDialog::getSaveFileName(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
         // if no file name written, return
         if (filename=="")
             return;
