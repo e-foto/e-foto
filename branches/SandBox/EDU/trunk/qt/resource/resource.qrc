@@ -74,5 +74,6 @@
         <file>ptremove.png</file>
         <file>featdone.png</file>
         <file>calculate.png</file>
+        <file>report.png</file>
     </qresource>
 </RCC>

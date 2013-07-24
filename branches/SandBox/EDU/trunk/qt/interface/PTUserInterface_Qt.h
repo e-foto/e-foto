@@ -74,6 +74,8 @@ protected:
     QCheckBox *geodesicCheckBox;
     QCheckBox *topocentricCheckBox;
 	string fileExport;
+	int saveFtReport(char *filename);
+
 private:
 	/**
  * \brief Metodo que faz as primeiras configuraçoes da interface
@@ -106,6 +108,7 @@ public slots:
 	void makeTheSpell(); // Metodo da gambiarra inserida no construtor desta classe durante os testes de exibição de resultados gráficos (GraphicWorkAround).
 	deque<Matrix*> getImageMatrixes(); // (GraphicWorkAround).
 	Matrix* getImageMatrix(QImage img); // (GraphicWorkAround).
+	void onReportButtonClicked();
 
 	/**
  * \brief Method to close photo-triangulation
@@ -268,6 +271,7 @@ public slots:
     void exportCoordinatesTxt();
 
 	void exportCoordinates();
+
 
 protected slots:
 

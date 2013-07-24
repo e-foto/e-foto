@@ -51,6 +51,7 @@ namespace efoto {
 		this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 		this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
 		this->connect(actionStereo, SIGNAL(triggered()), this, SLOT(executeSP()));
+                this->connect(actionPTReport, SIGNAL(triggered()), this, SLOT(executePTReport()));
                 this->connect(actionReport, SIGNAL(triggered()), this, SLOT(executeReport()));
 		this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 		this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
@@ -155,7 +156,8 @@ namespace efoto {
                 actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
                 actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
                 actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
-
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
+                actionPTReport->setEnabled(availablePhotoTri());  // Bug fix by Marcelo
 	}
 
 	ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
@@ -725,6 +727,17 @@ namespace efoto {
                 qApp->processEvents();
                 this->close();
                 manager->startModule("Report",0);
+                changeModule = false;
+        }
+
+        void ProjectUserInterface_Qt::executePTReport()
+        {
+                changeModule = true;
+                confirmToClose();
+                LoadingScreen::instance().show();
+                qApp->processEvents();
+                this->close();
+                manager->startModule("PT-Report",0);
                 changeModule = false;
         }
 
