@@ -862,11 +862,17 @@ public:
 	*/
 	double calculateRMSE();
 
+        /**
+        * \brief Metodo que retorna a matrix x1
+        * \return Matrix
+        */
+        Matrix getx1() { return x1; };
 
-
-
-
-
+        /**
+        * \brief Metodo que retorna a matrix x2
+        * \return Matrix
+        */
+        Matrix getx2() { return x2; };
 
 // teste
 

@@ -19,6 +19,7 @@
 #include "SpatialRessection.h"
 #include "Project.h"
 #include "XmlUpdater.h"
+#include "PhotoTriReport.h"
 
 namespace br {
 namespace uerj {
@@ -431,9 +432,10 @@ public:
 	*/
         void stopEPR();
 
-    bool loadProject();
+        bool loadProject();
 
-    Project* getProject() {return &report_project;}
+        Project* getProject() {return &report_project;}
+        void execPTReport();
 
 };
 
