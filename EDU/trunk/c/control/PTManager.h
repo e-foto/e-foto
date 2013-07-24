@@ -7,6 +7,7 @@
 #include "ConvertionsSystems.h"
 #include <QStringList>
 #include <deque>
+#include "PhotoTriReport.h"
 
 namespace br {
 namespace uerj {
@@ -636,6 +637,7 @@ public:
 
         string getCoordinatesGeodesic();
         string getCoordinatesTopocentric();
+        int createPhototriReport(char *filename);
 
 };
 

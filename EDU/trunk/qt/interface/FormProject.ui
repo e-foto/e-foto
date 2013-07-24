@@ -118,6 +118,7 @@
     <addaction name="actionDEMExtraction"/>
     <addaction name="actionOrtho_rectification"/>
     <addaction name="separator"/>
+    <addaction name="actionPTReport"/>
     <addaction name="actionReport"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -403,10 +404,18 @@
   </action>
   <action name="actionReport">
    <property name="text">
-    <string>Rep&amp;ort</string>
+    <string>Projetc Rep&amp;ort</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionPTReport">
+   <property name="text">
+    <string>Photo-triangulation &amp;Full Report</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

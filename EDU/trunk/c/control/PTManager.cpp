@@ -1726,6 +1726,20 @@ bool PTManager::getLocalTopocentricMode()
 {
 	return localTopocentricMode;
 }
+
+/*********************************************************
+ *
+ * Phototriangulation report
+ *
+*********************************************************/
+
+int PTManager::createPhototriReport(char *filename)
+{
+    PhotoTriReport pt_report(efotoManager);
+
+    return pt_report.createReport(filename);
+}
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

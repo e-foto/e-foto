@@ -676,16 +676,16 @@ bool EFotoManager::reloadProject()
 		if (ortho != NULL)
 		{
 			stopOrtho();
-		}
-				if (sp != NULL)
-				{
-						stopSP();
-				}
+                }
+                if (sp != NULL)
+                {
+                    stopSP();
+                }
                 return project->reload();
-	}
+        }
 	else
 	{
-		return false;
+            return false;
 	}
 }
 
@@ -1070,6 +1070,10 @@ bool EFotoManager::exec(string filename)
                 savedState = true;
                 execEPR();
                 break;
+        case 10:
+                savedState = true;
+                execPTReport();
+                break;
 	default:
 		nextModule = 0;
 	}
@@ -1113,6 +1117,29 @@ int EFotoManager::getFreePointId()
 	}
 	//return result;
 }
+
+void EFotoManager::execPTReport()
+{
+    report_project.setXml(xmlData);
+
+    QString fileExport= QFileDialog::getSaveFileName(0,"Save full PT report",".","*.txt");
+
+    if (fileExport.isEmpty())
+    {
+        reloadProject();
+        return;
+    }
+
+    if(!fileExport.endsWith(".txt"))
+        fileExport.append(".txt");
+
+    // Create and run full report
+    PhotoTriReport pt_report(this);
+    pt_report.createReport((char *) fileExport.toStdString().c_str());
+
+    reloadProject();
+}
+
 
 } // namespace efoto
 } // namespace eng
