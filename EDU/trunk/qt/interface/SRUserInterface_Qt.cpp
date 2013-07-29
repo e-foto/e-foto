@@ -101,10 +101,10 @@ void SRUserInterface_Qt::init()
 	gridLayout->addWidget(imageView, 0, 0, 1, 1);
 	setCentralWidget(centralwidget);
 
-    flightDirectionForm = new FlightDirectionForm();
-    flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-    flightDirectionForm->imageLabel->setHidden(true);
-    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+        flightDirectionForm = new FlightDirectionForm();
+        flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+        flightDirectionForm->imageLabel->setHidden(true);
+        connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
 	markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
 	markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
@@ -158,7 +158,7 @@ void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 	actionSpatialRessection->setEnabled(true);
 }
 
-void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
+void SRUserInterface_Qt::updateSelection(QStandardItem *item)
 {
     if (item->column() == 2)
 	{
@@ -172,7 +172,7 @@ void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
 			{
 				manager->unselectPoint(points->data(points->index(item->row(),0)).toInt());
 			}
-			actualizeDisplayedPoints();
+                        updateDisplayedPoints();
 			makeRepaint();
 			testActivateSR();
 		}
@@ -184,6 +184,20 @@ void SRUserInterface_Qt::actualizeSelection(QStandardItem *item)
 			}
 		}
 	}
+}
+
+void SRUserInterface_Qt::updateAll()
+{
+    for (int i=0; i<points->rowCount(); i++)
+    {
+        if (points->item(i,2)->checkState() == Qt::Checked)
+            manager->selectPoint(points->data(points->index(i,0)).toInt());
+        else
+            manager->unselectPoint(points->data(points->index(i,0)).toInt());
+    }
+    updateDisplayedPoints();
+    makeRepaint();
+    testActivateSR();
 }
 
 void SRUserInterface_Qt::makeRepaint()
@@ -426,7 +440,7 @@ void SRUserInterface_Qt::acceptSR()
 	windowReport->close();
 }
 
-void SRUserInterface_Qt::actualizeDisplayedPoints()
+void SRUserInterface_Qt::updateDisplayedPoints()
 {
 	for (int row = 0; row < points->rowCount() ;row++)
 	{
@@ -468,25 +482,30 @@ bool SRUserInterface_Qt::exec()
     table1->setColumnHidden(0,true);
     table1->setColumnHidden(1,true);
     table1->setColumnHidden(11,true);
-	for (int row = 0; row < numberOfPoints; row++)
-	{
+
+    for (int row = 0; row < numberOfPoints; row++)
+    {
         deque<string> pointData = manager->pointData(row);
-		for (unsigned int col = 0; col < pointData.size(); col++)
-		{
-			QStandardItem* item = new QStandardItem(QString(pointData.at(col).c_str()));
+
+        for (unsigned int col = 0; col < pointData.size(); col++)
+        {
+            QStandardItem* item = new QStandardItem(QString(pointData.at(col).c_str()));
+
             if (col == 2)
-			{
                 item->setCheckable(true);
-			}
-			points->setItem(row, col, item);
-		}
-        for (int col = pointData.size(); col < 11; col++)
-		{
-			QStandardItem* item = new QStandardItem(QString(""));
-			points->setItem(row, col, item);
+
+            points->setItem(row, col, item);
         }
+
+        for (int col = pointData.size(); col < 11; col++)
+        {
+            QStandardItem* item = new QStandardItem(QString(""));
+            points->setItem(row, col, item);
+        }
+
         QStandardItem* item = new QStandardItem();
         points->setItem(row, 11, item);
+
         if (points->data(points->index(row,7)).toString() != "")
         {
             points->setData(points->index(row, 11), QVariant(true));
@@ -495,33 +514,40 @@ bool SRUserInterface_Qt::exec()
         {
             points->setData(points->index(row, 11), QVariant(false));
         }
+
         if (pointData.at(1) == "false")
             table1->setRowHidden(row,true);
+
+        // Check if point was measured and check current row - fix by Marcelo Teixeira Silveira
+        if ((!points->item(row, 7)->text().isEmpty()) && (!points->item(row, 8)->text().isEmpty()) && (!points->item(row, 9)->text().isEmpty()) && (!points->item(row, 10)->text().isEmpty()))
+            points->item(row,2)->setCheckState(Qt::Checked);
     }
-	table1->selectRow(0);
-	table1->setFocus();
 
-	connect (points, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(actualizeSelection(QStandardItem*)));
+    table1->selectRow(0);
+    table1->setFocus();
 
-	this->show();
-	LoadingScreen::instance().close();
-	qApp->processEvents();
-	//oldImageView = new ImageView(centralwidget);
-	imageView->loadImage(QString(manager->getImageFile().c_str()));
-	{
-		//oldImageView->createPoints(points,2);
-		//oldImageView->drawPoints(points,2);
-		//oldImageView->fitView();
-	}
-	actualizeDisplayedPoints();
-	makeRepaint();
-	actionMove->trigger();
+    connect (points, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(updateSelection(QStandardItem*)));
 
-	//LoadingScreen::instance().close();
-	//if (qApp->exec())
-	//return false;
-	//delete(oldImageView);
-	return true;
+    this->show();
+    LoadingScreen::instance().close();
+    qApp->processEvents();
+    //oldImageView = new ImageView(centralwidget);
+    imageView->loadImage(QString(manager->getImageFile().c_str()));
+    {
+        //oldImageView->createPoints(points,2);
+        //oldImageView->drawPoints(points,2);
+        //oldImageView->fitView();
+    }
+    updateDisplayedPoints();
+    updateAll();
+    makeRepaint();
+    actionMove->trigger();
+
+    //LoadingScreen::instance().close();
+    //if (qApp->exec())
+    //return false;
+    //delete(oldImageView);
+    return true;
 }
 
 } // namespace efoto
