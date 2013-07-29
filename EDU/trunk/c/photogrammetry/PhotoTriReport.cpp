@@ -150,7 +150,7 @@ int PhotoTriReport::createReport(char *filename)
         arq << "\n";
     }
 
-    arq << "\n";
+    arq << "\n\n";
 
     arq << "The residuals of control points reprojected to the image (pixels):\n";
     arq << "Point ID " << setw(13) << "Image ID " << setw(10) << "Vx" << setw(15) << "Vy\n";

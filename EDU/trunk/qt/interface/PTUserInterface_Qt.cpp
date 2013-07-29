@@ -1242,6 +1242,10 @@ void PTUserInterface_Qt::onReportButtonClicked()
     }
 
     QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
+
+    if (fileExport == "")
+        return;
+
     if(!fileExport.endsWith(".txt"))
         fileExport.append(".txt");
 
