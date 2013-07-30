@@ -404,7 +404,7 @@
   </action>
   <action name="actionReport">
    <property name="text">
-    <string>Projetc Rep&amp;ort</string>
+    <string>Project Rep&amp;ort</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
