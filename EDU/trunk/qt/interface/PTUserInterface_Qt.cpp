@@ -108,6 +108,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
         // Problems with epp reading leads to identify EOs done, but broken pointers.
         // After solve the problem, remove next line and similar on acceptResults()
         reportButton->setEnabled(false);
+        exportToKmlButton->setEnabled(false);
 
     //insertionMode=false;
 	bool activeCalculate=ptManager->hasAllImagesInitialValues();
@@ -411,13 +412,14 @@ void PTUserInterface_Qt::viewReport()
 	reportLayout->addLayout(buttonsLayout);
 
 	resultView->setLayout(reportLayout);
-	resultView->show();
 
-	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
-	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
-	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
-    connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
-	resultView->setWindowModality(Qt::ApplicationModal);
+        connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
+        connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
+        connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
+        connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
+        resultView->setWindowModality(Qt::ApplicationModal);
+
+	resultView->show();
 }
 
 void PTUserInterface_Qt::showReportXml()
@@ -1051,8 +1053,10 @@ void PTUserInterface_Qt::acceptResults()
 		viewReportToolButton->setEnabled(true);
 	else
 		viewReportToolButton->setEnabled(false);
-        // Remove next line, after solving epp reading problem
+
+        // Remove next lines, after solving epp reading problem
         reportButton->setEnabled(true);
+        exportToKmlButton->setEnabled(true);
 }
 
 void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
