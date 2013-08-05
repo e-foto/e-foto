@@ -99,6 +99,29 @@ double DemGrid::getMeanZ()
 	return meanZ/double(count);
 }
 
+double DemGrid::getStdZ()
+{
+        double meanZ = getMeanZ(), stdZ, Z;
+        unsigned int count=0;
+
+        for (unsigned int i=1; i<=dem_height; i++)
+        {
+                for (unsigned int j=1; j<=dem_width; j++)
+                {
+                        Z = DEM.get(i,j);
+
+                        // If hole, continue
+                        if (fabs(Z - 0.0) < 0.000000000000000001)
+                                continue;
+
+                        stdZ += pow(Z - meanZ, 2);
+                        count++;
+                }
+        }
+
+        return sqrt(stdZ/double(count));
+}
+
 double DemGrid::getHeightXY(double X, double Y)
 {
 	// Calculate col,row - double
@@ -576,6 +599,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	double Px, Py, d, D, weight, Cx, Cy, Pxi, Pyi;
 	int no_points = point_list->size(), no_valid_points, point_id;
 	int total = DEM.getCols()*DEM.getRows();
+        int min_points[5] = { 5, 6, 7, 8, 12 };
 	Matrix X,A,L;
 
 	// Create fast structure
@@ -606,7 +630,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 			mpg->getPointsClose(Px, Py, D0);
 			no_valid_points = mpg->selected_points.size();
 
-			if (no_valid_points == 0)
+                        if (no_valid_points < min_points[mode2])
 				continue;
 
 			//
@@ -697,6 +721,8 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 			manager->setProgress((100*y)/DEM.getRows());
 	}
 
+        eliminateBadPointsGrid(3.0);
+
 	gettimeofday(&end,NULL);
 
 	float etime = (float)(end.tv_sec - begin.tv_sec);
@@ -706,6 +732,14 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	printf("Elapsed time: %.6f\n",etime);
 
 	delete mpg;
+}
+
+void DemGrid::eliminateBadPointsGrid(double sigma)
+{
+    double meanZ = getMeanZ();
+    double stdZ = getStdZ();
+
+    cutGrid(meanZ - stdZ*sigma, meanZ + stdZ*sigma, true);
 }
 
 void DemGrid::cutGrid(double min, double max, bool fromList=true)
