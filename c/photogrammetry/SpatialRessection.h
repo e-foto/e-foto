@@ -41,6 +41,8 @@ class SpatialRessection : public ExteriorOrientation
 	Matrix L0;
 	Matrix Lb;
 	Matrix lastL0;
+	string type;
+    deque<double> rmse;
 
 	RayTester* rt;
 
@@ -87,6 +89,7 @@ public:
 	Matrix getL0();
 	Matrix getLb();
 	Matrix getLastL0();
+    string getType() {return type;}
 
 	deque<int> getSelectedPoints();
 	ImageSpaceCoordinate* getPointForFlightDirection();
@@ -95,6 +98,7 @@ public:
 	bool getConverged();
 	bool getGnssConverged();
 	bool getInsConverged();
+    deque<double> getRMSE() {return rmse;}
 
 	// Composed object accessors
 	//
@@ -135,6 +139,7 @@ public:
 	void generateInitialP();
 	void generateA();
 	void generateL0();
+    void generateRMSE();
 	void generateLb();
 	void generateP();
 	void generateX0();

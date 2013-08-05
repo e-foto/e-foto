@@ -220,27 +220,28 @@ deque<string> SRManager::listAllPoints()
 
 deque<string> SRManager::pointData(int index)
 {
-	deque<string> result;
-	if (started)
-	{
+    deque<string> result;
+    if (started)
+    {
         Point* myPoint = myPoints.at(index);
-		result.push_back(Conversion::intToString(myPoint->getId()));
+        result.push_back(Conversion::intToString(myPoint->getId()));
         result.push_back(myPoint->getType() == Point::CONTROL ? "true" : "false");
         result.push_back(myPoint->getPointId());
         result.push_back(myPoint->getDescription());
-		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getX(),3));
-		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getY(),3));
-		result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getZ(),3));
-		if (myPoint->hasImageCoordinate(myImage->getId()) && myPoint->getImageCoordinate(myImage->getId()).isAvailable())
-		{
-			result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getCol()));
-			result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getLin()));
-			DetectorSpaceCoordinate aisc = myImage->getIO()->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
-			result.push_back(Conversion::doubleToString(aisc.getXi(),3));
-			result.push_back(Conversion::doubleToString(aisc.getEta(),3));
-		}
-	}
-	return result;
+        result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getX(),3));
+        result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getY(),3));
+        result.push_back(Conversion::doubleToString(myPoint->getObjectCoordinate().getZ(),3));
+
+        if (myPoint->hasImageCoordinate(myImage->getId()) && myPoint->getImageCoordinate(myImage->getId()).isAvailable())
+        {
+            result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getCol()));
+            result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(myImage->getId()).getLin()));
+            DetectorSpaceCoordinate aisc = myImage->getIO()->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
+            result.push_back(Conversion::doubleToString(aisc.getXi(),3));
+            result.push_back(Conversion::doubleToString(aisc.getEta(),3));
+        }
+    }
+    return result;
 }
 
 unsigned int SRManager::countSelectedPoints()
@@ -500,14 +501,16 @@ void SRManager::acceptSR()
         newXml.addChildAtTagName("spatialRessections", mySR->xmlGetData());
 
     newXml.replaceChildByTagAtt("image","key",Conversion::intToString(myImage->getId()),myImage->xmlGetData());
-	int currentPointId;
-	for (int i = 0; i < myImage->countPoints(); i++)
-	{
-		currentPointId = myImage->getPointAt(i)->getId();
-		newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());
-	}
-	manager->xmlSetData(newXml.getContent());
-	manager->setSavedState(false);
+
+    int currentPointId;
+    for (int i = 0; i < myImage->countPoints(); i++)
+    {
+        currentPointId = myImage->getPointAt(i)->getId();
+        newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(currentPointId), myImage->getPointAt(i)->xmlGetData());
+    }
+
+    manager->xmlSetData(newXml.getContent());
+    manager->setSavedState(false);
 }
 
 } // namespace efoto

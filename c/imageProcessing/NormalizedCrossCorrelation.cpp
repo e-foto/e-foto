@@ -24,7 +24,7 @@ NormalizedCrossCorrelation::NormalizedCrossCorrelation()
 int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchmat)
 {
 	double p;
-	best_p = -2.0;
+        best_p = 0.0;
 
 	//
 	// Check if data was correctly assigned - Notice that Matrix notation ranges from 1,1 to N,M
@@ -45,26 +45,34 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	if ((template_width < 3) || (template_height < 3))
 		return -2;
 
-	// Save original template size
+        // Save original template size (template size may increase with the next test)
 	int ori_template_width = template_width;
 	int ori_template_height = template_height;
 
-	// This infinite loop will be broken inside
 	bool flag = true;
-	int ref_w, ref_h, s_w, s_h, delta_tx, delta_ty, delta_tx_end, delta_ty_end;
+        int ref_w, ref_h, s_w, s_h;
+
+        // Read image matrices data
+        ref_w = refmat->getCols();
+        ref_h = refmat->getRows();
+        s_w = searchmat->getCols();
+        s_h = searchmat->getRows();
+
+        //
+        // Calculate ideal search window size based on standard deviation (templation size may increase)
+        //
 	while (flag)
 	{
-		// Read image matrices data
-		ref_w = refmat->getCols();
-		ref_h = refmat->getRows();
-		s_w = searchmat->getCols();
-		s_h = searchmat->getRows();
-		delta_tx = round(double(template_width)/2.0), delta_ty = round(double(template_height)/2.0);
-		delta_tx_end = template_width - delta_tx, delta_ty_end = template_height - delta_ty;
+                // Calculate template limits
+                calculateTemplateBoundingBox();
 
 		// Check if template center is out of bounds
-		if ((template_center_x - delta_tx < 0) || (template_center_y - delta_ty < 0) || (template_center_x + delta_tx_end > ref_w) || (template_center_y + delta_ty_end > ref_h))
+                if ((template_xi <= 0) || (template_yi <= 0) || (template_xf >= ref_w - 1) || (template_yf >= ref_h - 1))
+                {
+                        template_width = ori_template_width;
+                        template_height = ori_template_height;
 			return -3;
+                }
 
 		// Check if low variance
 		if (!checkTemplateStd(refmat))
@@ -88,16 +96,17 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	// Start searching
 	//
 
-	int template_xi = 1 + template_center_x - delta_tx, template_yi = 1 + template_center_y - delta_ty;
-	int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
-	int search_window_xi = 1 + search_window_center_x - round(double(search_window_width)/2.0), search_window_yi = 1 + search_window_center_y - round(double(search_window_height)/2.0);
+        // Calculate seach window limits
+        int search_window_xi = search_window_center_x - floor(double(search_window_width)/2.0), search_window_yi = search_window_center_y - floor(double(search_window_height)/2.0);
+        int delta_tx = floor(double(template_width)/2.0);
+        int delta_ty = floor(double(template_height)/2.0);
 
 	for (int sw_i = search_window_yi ; sw_i <= search_window_yi + (search_window_height - 1); sw_i++)
 	{
 		for (int sw_j = search_window_xi ; sw_j <= search_window_xi + (search_window_width - 1); sw_j++)
 		{
 			// Check if matching window is out of bounds
-			if ((sw_i < 0) || (sw_j < 0) || (sw_i > s_h) || (sw_j > s_w))
+                        if ((sw_i <= 0) || (sw_j <= 0) || (sw_i >= s_h-1) || (sw_j >= s_w-1))
 				continue;
 
 			// Calculate correlation
@@ -106,8 +115,8 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 			if (p > best_p)
 			{
 				best_p = p;
-				best_x = sw_j + (delta_tx-1);
-				best_y = sw_i + (delta_ty-1);
+                                best_x = (double) sw_j + (delta_tx);
+                                best_y = (double) sw_i + (delta_ty);
 			}
 		}
 	}
@@ -115,6 +124,13 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 	// Return original template size
 	template_width = ori_template_width;
 	template_height = ori_template_height;
+
+        // Add fraction part to result
+        best_x += frac_tc_x;
+        best_y += frac_tc_y;
+
+        // Matching successful
+        return 1;
 }
 
 double NormalizedCrossCorrelation::average(Matrix *m, int row_i, int row_f, int col_i, int col_f)
@@ -204,25 +220,25 @@ double NormalizedCrossCorrelation::covXY(Matrix *X, Matrix *Y, int row_x_i, int 
  */
 double NormalizedCrossCorrelation::directCorrelation(Matrix *X, Matrix *Y, int template_cx, int template_cy, int matching_cx, int matching_cy)
 {
-	int ref_w = X->getCols(), ref_h = X->getRows();
-	int s_w = Y->getCols(), s_h = Y->getRows();
-	int delta_tx = round(double(template_width)/2.0), delta_ty = round(double(template_height)/2.0);
-	int delta_tx_end = template_width - delta_tx, delta_ty_end = template_height - delta_ty;
+    int ref_w = X->getCols(), ref_h = X->getRows();
+    int s_w = Y->getCols(), s_h = Y->getRows();
+    int delta_tx = round(double(template_width)/2.0), delta_ty = round(double(template_height)/2.0);
+    int delta_tx_end = template_width - delta_tx, delta_ty_end = template_height - delta_ty;
 
-	// Check if template is out of bounds
-	if ((template_cx - delta_tx < 0) || (template_cy - delta_ty < 0) || (template_cx + delta_tx_end > ref_w) || (template_cy + delta_ty_end > ref_h))
-		return 0.0;
+    // Check if template is out of bounds
+    if ((template_cx - delta_tx < 0) || (template_cy - delta_ty < 0) || (template_cx + delta_tx_end > ref_w) || (template_cy + delta_ty_end > ref_h))
+            return 0.0;
 
-	// Check if matching window is out of bounds
-	if ((matching_cx - delta_tx < 0) || (matching_cy - delta_ty < 0) || (matching_cx + delta_tx_end > s_w) || (matching_cy + delta_ty_end > s_h))
-		return 0.0;
+    // Check if matching window is out of bounds
+    if ((matching_cx - delta_tx < 0) || (matching_cy - delta_ty < 0) || (matching_cx + delta_tx_end > s_w) || (matching_cy + delta_ty_end > s_h))
+            return 0.0;
 
-	int template_xi = 1 + template_cx - delta_tx, template_yi = 1 + template_cy - delta_ty;
-	int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
-	int matching_window_xi = 1 + matching_cx - delta_tx, matching_window_yi = 1 + matching_cy - delta_ty;
-	int matching_window_xf = matching_window_xi + (template_width - 1), matching_window_yf = matching_window_yi + (template_height - 1);
+    int template_xi = 1 + template_cx - delta_tx, template_yi = 1 + template_cy - delta_ty;
+    int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
+    int matching_window_xi = 1 + matching_cx - delta_tx, matching_window_yi = 1 + matching_cy - delta_ty;
+    int matching_window_xf = matching_window_xi + (template_width - 1), matching_window_yf = matching_window_yi + (template_height - 1);
 
-	return correlation(X, Y, template_yi, template_yf, template_xi, template_xf, matching_window_yi, matching_window_yf, matching_window_xi, matching_window_xf);
+    return correlation(X, Y, template_yi, template_yf, template_xi, template_xf, matching_window_yi, matching_window_yf, matching_window_xi, matching_window_xf);
 }
 
 double NormalizedCrossCorrelation::correlation(Matrix *X, Matrix *Y, int row_x_i, int row_x_f, int col_x_i, int col_x_f, int row_y_i, int row_y_f, int col_y_i, int col_y_f)
@@ -254,11 +270,17 @@ bool NormalizedCrossCorrelation::checkTemplateStd(Matrix *refmat)
 
 double NormalizedCrossCorrelation::calculateTemplateStd(Matrix *refmat)
 {
-	int delta_tx = round(double(template_width)/2.0), delta_ty = round(double(template_height)/2.0);
-	int template_xi = 1 + template_center_x - delta_tx, template_yi = 1 + template_center_y - delta_ty;
-	int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
+        calculateTemplateBoundingBox();
 
 	return stddev(refmat, template_yi, template_yf, template_xi, template_xf);
+}
+
+void NormalizedCrossCorrelation::calculateTemplateBoundingBox()
+{
+        template_xi = template_center_x - template_width/2;
+        template_yi = template_center_y - template_height/2;
+        template_xf = template_xi + template_width - 1;
+        template_yf = template_yi + template_height - 1;
 }
 
 } // namespace efoto

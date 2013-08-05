@@ -17,6 +17,9 @@
 #include "Point.h"
 #include "InteriorOrientation.h"
 #include "SpatialRessection.h"
+#include "Project.h"
+#include "XmlUpdater.h"
+#include "PhotoTriReport.h"
 
 namespace br {
 namespace uerj {
@@ -30,6 +33,7 @@ class ProjectManager;
 class DEMManager;
 class OrthoManager;
 class SPManager;
+class ReportManager;
 
 /**
 * \file EFotoManager.h
@@ -49,13 +53,16 @@ class EFotoManager
 	string interfaceType;
 
 
-	ProjectManager* project;
+        ProjectManager* project;
 	IOManager* interiorOrientation;
 	SRManager* spatialRessection;
 	PTManager* fotoTri;
 	DEMManager* dem;
 	OrthoManager* ortho;
 	SPManager* sp;
+        ReportManager* report;
+        XmlUpdater updater;
+        Project report_project;
 
 	Terrain* theTerrain;
 	deque<Sensor*> sensors;
@@ -413,6 +420,22 @@ public:
 	* \return int Identificador do Ponto.
 	*/
 	int getFreePointId();
+
+	/**
+	* \brief Método que carrega o módulo de Report.
+	* \return bool Retorna verdadeiro se o módulo FotoTri já tiver terminado de ser carregado. Retorna falso, caso contrário.
+	*/
+        bool execEPR();
+
+	/**
+	* \brief Método que encerra o módulo de Report.
+	*/
+        void stopEPR();
+
+        bool loadProject();
+
+        Project* getProject() {return &report_project;}
+        void execPTReport();
 
 };
 

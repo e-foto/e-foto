@@ -126,7 +126,7 @@ public :
     //E o Lambda nao serve para nada??
     static double getNunesRaio(double phi0, double lambda0, GeoSystem sys);
 
-
+    static Matrix nunesToGeoElips(double X, double Y, double Z, double phi0, double lambda0, double h0,GeoSystem system);
 
 };
 

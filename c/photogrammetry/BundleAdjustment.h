@@ -74,6 +74,8 @@ protected:
 	deque<Point*> listControlPoints;
 	deque<Point*> listPhotogrammetricPoints;
 
+    deque<double> listRMSE;
+
 	bool done;
 	bool converged;
 	bool userInitialValues;
@@ -216,6 +218,7 @@ public:
 	Matrix getMatRes();
 
 
+    deque<double> getListRMSE();
 
 protected:
 	//Seta a matrix baseado nos angulos
@@ -535,7 +538,7 @@ public:
 	* \brief Metodo responsavel por todo o calculo do ajustamento por Bundle Adjustment
 	* \return bool: Informa se o calculo foi bem sucedido ou nÃ£o
 	*/
-	bool calculate();
+    bool calculate(bool makeReport);
 
 	/**
 	* \brief Metodo que informa se Ã© possivel calcular o ajustamento ou nÃ£o, baseado no numero de incognitas e equaÃ§Ãµes
@@ -859,11 +862,17 @@ public:
 	*/
 	double calculateRMSE();
 
+        /**
+        * \brief Metodo que retorna a matrix x1
+        * \return Matrix
+        */
+        Matrix getx1() { return x1; };
 
-
-
-
-
+        /**
+        * \brief Metodo que retorna a matrix x2
+        * \return Matrix
+        */
+        Matrix getx2() { return x2; };
 
 // teste
 

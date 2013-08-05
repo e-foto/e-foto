@@ -29,8 +29,9 @@ public slots:
 	virtual void informState();
         virtual void receivePoint(QPointF p);
         virtual void setFlightDirection(QString,double);
-	virtual void actualizeDisplayedPoints();
-	virtual void actualizeSelection(QStandardItem* item);
+        virtual void updateDisplayedPoints();
+        virtual void updateSelection(QStandardItem* item);
+        virtual void updateAll();
 	virtual void makeRepaint();
 	virtual void activeSetMode();
 	virtual void activeUnsetMode();
@@ -42,6 +43,7 @@ public slots:
 	virtual void testActivateSR();
 	virtual void setFlight();
 	virtual void acceptSR();
+        virtual void EOdone();
 
 private:
 	void init();

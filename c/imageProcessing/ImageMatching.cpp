@@ -141,10 +141,10 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
         {
                 // Read current seed, converting to matrix coordinate system
                 mp = *repository->get(i);
-                lx = mp.left_x + 1;
-                ly = mp.left_y + 1;
-                rx = mp.right_x + 1;
-                ry = mp.right_y + 1;
+                lx = mp.left_x + 1.0;
+                ly = mp.left_y + 1.0;
+                rx = mp.right_x + 1.0;
+                ry = mp.right_y + 1.0;
                 curr_left_id = mp.left_image_id;
                 curr_right_id = mp.right_image_id;
 
@@ -208,10 +208,19 @@ void ImageMatching::fillMap(MatchingPointsList * mpoints)
  * Region Growing functions *
  ****************************/
 
-// Adapted from:
+// Stacked flood-fill adapted from:
 // http://en.wikipedia.org/wiki/Flood_fill
 // http://www.student.kuleuven.be/~m0216922/CG/floodfill.html#Recursive_Scanline_Floodfill_Algorithm (Copyright (c) 2004-2007, Lode Vandevenne)
-
+/*
+//
+// INTEGER STACK - OLD
+//
+// Each new seed generated creates a new cell in an array, with its coordinates and the coordinates of the approximate corresponding point.
+// Once 4 new seeds are created for each successfuly matching, it is not possible to run matching for all 4 seeds at the same time. So we store it for further matching.
+// Array of condensed coordinates - object with two integer values and a pointer to the previous object: reference_image_coord, corresponding_image_coord, pointer_to_previous
+// Each condensed coordinate is an integer, putting together two coordinates X and Y, calculated as follows: coord = img_width * y + x
+// Once this class uses images as Matrix (class Matrix - from 1 to n,m), we must adjust to: coord = img_width * (y-1) + (x-1)
+// It is possible to change this coordinate object to 4 double coordinates, but it will take 4 times memory. RG uses a great amount of memory.
 bool ImageMatching::pop(int &x, int &y, int &sx, int &sy)
 {
         if(stack != NULL)
@@ -226,7 +235,6 @@ bool ImageMatching::pop(int &x, int &y, int &sx, int &sy)
                 aux = stack;
                 stack = stack->prev;
                 delete aux;
-
                 return 1;
         }
         else
@@ -327,8 +335,146 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                 else
                         manager->setProgress(int(coverage*100));
 
-                if (cancel_flag)
+                // If Region Growing is not selected, then perform matching only once for each seed
+                if ((cancel_flag) || (!perform_RG))
                         return;
+        }
+}
+*/
+//
+// DOUBLE STACK - NEW
+//
+// Double stack - ref_x, ref_y, cor_x, cor_y, pointer_prev
+// Reference and corresponding image coordinates
+bool ImageMatching::pop(double &x, double &y, double &sx, double &sy)
+{
+        if(stack != NULL)
+        {
+                x = stack->ref_x;
+                y = stack->ref_y;
+                sx = stack->cor_x;
+                sy = stack->cor_y;
+
+                aux = stack;
+                stack = stack->prev;
+                delete aux;
+                return 1;
+        }
+        else
+        {
+                return 0;
+        }
+}
+
+bool ImageMatching::push(double x, double y, double sx, double sy)
+{
+        aux = stack;
+        stack = new stackCell();
+        stack->ref_x = x;
+        stack->ref_y = y;
+        stack->cor_x = sx;
+        stack->cor_y = sy;
+        stack->prev = aux;
+        return 1;
+}
+
+void ImageMatching::emptyStack()
+{
+        double x, y, sx, sy;
+        while(pop(x,y,sx,sy));
+}
+
+void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsList *mpoints, double x, double y, double sx, double sy)
+{
+        int i, j, ncc_flag, lsm_flag;
+        double lx, ly, rx, ry;
+        double new_x, new_y, p;
+
+        emptyStack();
+        push(x,y,sx,sy);
+
+        while(pop(lx,ly,rx,ry))
+        {
+                // Map coordinates
+                i = (int(ly)/step_y) + 1;
+                j = (int(lx)/step_x) + 1;
+
+                // Check if current point is inside determined area
+                if (lx < matching_xi || lx > matching_xf || ly < matching_yi || ly > matching_yf)
+                        continue;
+                if (rx < smatching_xi || rx > smatching_xf || ry < smatching_yi || ry > smatching_yf)
+                        continue;
+
+                // Check if visited
+                if (int(map.get(i,j)) != 0)
+                        continue;
+
+                //
+                // Choose correlation method
+                //
+
+                // Normalized Cross Correlation  - Integer precision
+                if (matching_method == NCC)
+                {
+                        // Truncate reference coordinates
+                        ncc.setTemplateCenter(lx, ly);
+                        ncc.setSearchWindowCenter(rx, ry);
+                        ncc_flag = ncc.searchHomologous(img1,img2);
+                        p = ncc.getBestP();
+
+                        if (p < corr_th || ncc_flag != 1)
+                                continue;
+
+                        new_x = ncc.getBestX();
+                        new_y = ncc.getBestY();
+
+                        // Add 4-neighbor pixels - NCC - Faster if inside this 'if'
+                        // If new seed are based on new_x and new_y, may diverge !!
+                        push(lx + double(step_x), ly, rx + double(step_x), ry);
+                        push(lx - double(step_x), ly, rx - double(step_x), ry);
+                        push(lx, ly + double(step_y), rx, ry + double(step_y));
+                        push(lx, ly - double(step_y), rx, ry - double(step_y));
+                }
+
+                // Least Squares Matching - Double precision
+                if (matching_method == LSM)
+                {
+                        lsm_flag = lsm.searchHomologous(img1, img2, lx, ly, rx, ry);
+                        p = lsm.getBestP();
+
+                        if (p < corr_th || lsm_flag < 1)
+                                continue;
+
+                        new_x = lsm.getBestX();
+                        new_y = lsm.getBestY();
+
+                        // Add 4-neighbor pixels - LSM - Faster if inside this 'if'
+                        push(lx + double(step_x), ly, new_x + double(step_x), new_y);
+                        push(lx - double(step_x), ly, new_x - double(step_x), new_y);
+                        push(lx, ly + double(step_y), new_x, new_y + double(step_y));
+                        push(lx, ly - double(step_y), new_x, new_y - double(step_y));
+                }
+
+                // Add pair to list, converting to c++ coordinates system
+                mpoints->add(left_image_id, right_image_id, double(lx-1), double(ly-1), new_x-1.0, new_y-1.0, p);
+
+                // Set visited
+                map.set(i,j,1.0);
+
+                // Calculate coverage
+                num_visited += 1.0;
+                coverage = num_visited/max_size;
+                if (manager == NULL)
+                        printf("%.2f %%\r",coverage*100);
+                else
+                        manager->setProgress(int(coverage*100));
+
+                // If Region Growing is not selected, then perform matching only once for each seed
+                if ((cancel_flag) || (!perform_RG))
+                {
+                        emptyStack();
+                        return;
+                }
         }
 }
 

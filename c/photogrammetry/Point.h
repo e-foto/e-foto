@@ -90,6 +90,8 @@ public:
 	// Associated object accessor methods
 	//
 	void putImage(Image* newImageAssociation); // Set point associations. Generally from zero to many images.
+    void clearImages(); // Remove associations.
+    void removeImage(int id); // Remove one association;
 	Image* getImage(int imageId); // Get associated point at image by id.
 	int countImages(); // Inform the number of points associated the image.
 	Image* getImageAt(unsigned int index); // Get associated point at image by index in deque for iterations.

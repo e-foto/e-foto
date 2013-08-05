@@ -100,7 +100,7 @@ void ImageSpaceCoordinate::xmlSetData(string xml)
 string ImageSpaceCoordinate::xmlGetData()
 {
 	stringstream result;
-	result << "<imageCoordinates uom=\"" << unit << "\" image_key=\"" << imageId << "\">";
+    result << "<imageCoordinates uom=\"#" << unit << "\" image_key=\"" << imageId << "\">";
 	if (available)
 		result << "<gml:pos>" << Conversion::doubleToString(col) << " " << Conversion::doubleToString(lin) << "</gml:pos>";
 	else

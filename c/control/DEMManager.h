@@ -43,6 +43,7 @@ class DEMManager
 	void updateBoundingBox(double Xi, double Yi, double Xf, double Yf);
 	int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
 	double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
+        bool perf_RG;
 	bool isShowImage;
 	bool started;
 	bool status;
@@ -111,6 +112,15 @@ class DEMManager
 	* \brief Método que verifica se dois ângulos tem alinhamento.
 	*/
 	bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
+        /**
+        * \brief Método para calcular o valor médio da altitude do terreno, baseado nos pontos de controle
+        */
+        double getTerrainMeanAltitude();
+        /**
+        * \brief Método para identificar se um par em questão já fora identificado
+        */
+        bool existPair(int &id1, int &id2);
+
 	ImageMatching *im;
 	DemGrid *grid;
 	DemFeatures *df;
@@ -255,7 +265,7 @@ public:
 	/**
 	* \brief Método que muda os parâmetros do LSM e NCC.	
 	*/
-    void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; };
+    void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms, int _perf_RG) { lsm_temp_growth_step = _lsm_gr; lsm_temp_max_size = _lsm_ms; ncc_temp_growth_step = _ncc_gr; ncc_temp_max_size = _ncc_ms; perf_RG = _perf_RG;};
     /**
     * \brief Método que calcula a resolução do DEM.
     */
@@ -276,6 +286,10 @@ public:
     * \brief Registra no XML o endereço de um arquivo de DEM Quality.
     */
     void addDEMQualityToXML(string filename);
+    /**
+    * \brief Ativar eliminação de pontos ruins.
+    */
+    void eliminateBadPoints() { pairs.filterBadPoints2D(); };
 
 };
 

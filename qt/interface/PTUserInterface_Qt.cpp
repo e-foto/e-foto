@@ -6,13 +6,11 @@
 #include <QMessageBox>
 #include "ConvertionsSystems.h"
 
-#include <QDebug>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
-
 
 PTUserInterface_Qt* PTUserInterface_Qt::ptInst = NULL;
 
@@ -49,6 +47,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	controlTool->addWidget(saveMarksButton);
 	controlTool->addWidget(viewReportToolButton);
 	controlTool->addWidget(exportToKmlButton);
+        controlTool->addWidget(reportButton);
+        controlTool->addWidget(doneButton);
     //controlTool->addWidget(insertPointInButton);
     /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
     addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
@@ -89,6 +89,8 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	connect(markToolButton,SIGNAL(clicked()),this,SLOT(addPoint()));
 	connect(insertPointInButton,SIGNAL(clicked(bool)),this,SLOT(toggleInsertPointMode(bool)));
 	connect(viewReportToolButton,SIGNAL(clicked(bool)),this,SLOT(showReportXml()));
+        connect(reportButton,SIGNAL(clicked(bool)),this,SLOT(onReportButtonClicked()));
+        connect(doneButton,SIGNAL(clicked(bool)),this,SLOT(FTdone()));
 	//connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	//connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
 	connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
@@ -102,6 +104,11 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 		viewReportToolButton->setEnabled(true);
 	else
 		viewReportToolButton->setEnabled(false);
+
+        // Problems with epp reading leads to identify EOs done, but broken pointers.
+        // After solve the problem, remove next line and similar on acceptResults()
+        reportButton->setEnabled(false);
+        exportToKmlButton->setEnabled(false);
 
     //insertionMode=false;
 	bool activeCalculate=ptManager->hasAllImagesInitialValues();
@@ -393,8 +400,10 @@ void PTUserInterface_Qt::viewReport()
 	QHBoxLayout *buttonsLayout= new QHBoxLayout();
 	QPushButton *acceptButton= new QPushButton(tr("Accept"));
 	QPushButton *discardButton= new QPushButton(tr("Discard"));
+        QPushButton *exportTxtButton= new QPushButton(tr("Export coordinates"));
 	buttonsLayout->addWidget(acceptButton);
 	buttonsLayout->addWidget(discardButton);
+	buttonsLayout->addWidget(exportTxtButton);
 
 	QVBoxLayout *reportLayout= new QVBoxLayout;
 	//reportLayout->addLayout(infoLayout);
@@ -403,13 +412,14 @@ void PTUserInterface_Qt::viewReport()
 	reportLayout->addLayout(buttonsLayout);
 
 	resultView->setLayout(reportLayout);
+
+        connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
+        connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
+        connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
+        connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
+        resultView->setWindowModality(Qt::ApplicationModal);
+
 	resultView->show();
-
-	connect(acceptButton,SIGNAL(clicked()),this,SLOT(acceptResults()));
-	connect(acceptButton,SIGNAL(clicked()),resultView,SLOT(close()));
-	connect(discardButton, SIGNAL(clicked()),resultView,SLOT(close()));
-
-	resultView->setWindowModality(Qt::ApplicationModal);
 }
 
 void PTUserInterface_Qt::showReportXml()
@@ -502,6 +512,7 @@ bool PTUserInterface_Qt::calculatePT()
 	{
 		QMessageBox::information(this,tr("Impossible Calculate PhotoTriangulation"),tr("There's no sufficient points to calculate Phototriangulation,\ntry put more Control Points or Photogrammetric(Tie) Points "));
 	}
+
 	return result;
 }
 
@@ -1042,6 +1053,10 @@ void PTUserInterface_Qt::acceptResults()
 		viewReportToolButton->setEnabled(true);
 	else
 		viewReportToolButton->setEnabled(false);
+
+        // Remove next lines, after solving epp reading problem
+        reportButton->setEnabled(true);
+        exportToKmlButton->setEnabled(true);
 }
 
 void PTUserInterface_Qt::markAllpoints(SingleDisplay *display)
@@ -1182,6 +1197,87 @@ void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
 		calculateFotoTriToolButton->setEnabled(true);
 		//flightDirectionForm->close();
 	}
+}
+
+void PTUserInterface_Qt::exportCoordinates()
+{
+	QWidget *chooseSystem=new QWidget();
+
+	QHBoxLayout *hl1=new QHBoxLayout();
+	QHBoxLayout *hl2=new QHBoxLayout();
+	QVBoxLayout *vl1= new QVBoxLayout();
+
+	QLabel *lbl1= new QLabel("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose system(s) to export</p></body></html>");
+	QLabel *lbl2= new QLabel("File: ");
+    geodesicCheckBox= new QCheckBox("Geodesic",this);
+    topocentricCheckBox= new QCheckBox("Local Topocentric",this);
+	QLineEdit *fileLineEdit = new QLineEdit(this);
+    QToolButton *fileChooseButton= new QToolButton(this);
+    fileChooseButton->setText("...");
+	fileChooseButton->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#000000;\">Choose file and path to txt flie</span></p></body></html>");
+	QPushButton *exportButton =  new QPushButton("Export");
+
+	hl1->addWidget(geodesicCheckBox);
+	hl1->addWidget(topocentricCheckBox);
+	hl2->addWidget(lbl2);
+	hl2->addWidget(fileLineEdit);
+	hl2->addWidget(fileChooseButton);
+	vl1->addWidget(lbl1);
+	vl1->addLayout(hl1);
+	vl1->addLayout(hl2);
+    vl1->addWidget(exportButton);
+	chooseSystem->setLayout(vl1);
+	fileLineEdit->setReadOnly(true);
+	chooseSystem->show();
+
+	qDebug() << "Entrou ";
+    connect(exportButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
+
+
+}
+
+// Created by Marcelo Teixiera Silveira
+void PTUserInterface_Qt::onReportButtonClicked()
+{
+    if (!ptManager->hasEODone())
+    {
+        QMessageBox::warning(this,"Warning","Please, calculate photo-triangulation first.");
+        return;
+    }
+
+    QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
+
+    if (fileExport == "")
+        return;
+
+    if(!fileExport.endsWith(".txt"))
+        fileExport.append(".txt");
+
+    // This will run the complete report for PT. Still not working inside PT class due to conflicts with Project class.
+//    manager->createPhototriReport((char *)fileExport.toStdString().c_str());
+
+    // Create report using ftManager (report inside PhotoTriangulation)
+    saveFtReport((char *)fileExport.toStdString().c_str());
+}
+
+void PTUserInterface_Qt::exportCoordinatesTxt()
+{
+
+    QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
+    if(!fileExport.endsWith(".txt"))
+        fileExport.append(".txt");
+
+    QFile *exportTxt=new QFile(fileExport);
+    exportTxt->setFileName(fileExport);
+    exportTxt->open(QIODevice::WriteOnly);
+
+    stringstream coordinates;
+
+    coordinates << ptManager->getCoordinatesGeodesic();
+    coordinates << ptManager->getCoordinatesTopocentric();
+
+    exportTxt->write(coordinates.str().data());
+    exportTxt->close();
 }
 
 
@@ -1381,6 +1477,11 @@ void PTUserInterface_Qt::putInStack(int oldCol,int oldLin,int pointKey, int imag
 	//qDebug() << "Empilhando "<< markPoint->toString();
 }
 
+void PTUserInterface_Qt::FTdone()
+{
+    close();
+}
+
 void PTUserInterface_Qt::undoMark()
 {
 	//qDebug("undo Chamado");
@@ -1412,8 +1513,71 @@ void PTUserInterface_Qt::undoMark()
 
 }
 
+// Created by Marcelo Teixiera Silveira
+int PTUserInterface_Qt::saveFtReport(char * filename)
+{
+    // Open file to save
+    ofstream arq(filename);
+    if (arq.fail())
+    {
+        printf("Problems while saving ...\n");
+                return 0;
+    }
+
+    arq << "E-FOTO Photo-triangulation Brief Report\n";
+    arq << "=======================================\n\n";
+    arq << "Digital image unit: pixels\n";
+    arq << "Angle unit: degrees\n";
+    arq << "Ground X, Y, Z unit: meters\n\n";
+
+    arq << "Number of iterations: " << ptManager->getBundleAdjustment()->getTotalIterations() << "\n";
+    string converged;
+    (ptManager->getBundleAdjustment()->isConverged()) ? converged = "Yes" : converged = "No";
+    arq << "Converged: " << converged << "\n";
+    arq << "RMSE: " << Conversion::doubleToString(ptManager->getRMSE(),5) << "\n\n\n";
+
+    arq << "Exterior Orientation:\n\n";
+
+    arq << left << setw(25) << "Image Id" << setw(25) << "X0" << setw(25) << "Y0" << setw(25) <<  "Z0" << setw(25) <<  "Omega" << setw(25) <<  "Phy" << setw(25) <<  "kappa";
+
+    arq << "\n";
+
+    deque<string> images = selectionImagesView->getSelectedItens();
+    Matrix mat_aux = ptManager->getMatrixOE();
+
+    for (int i=1; i <= mat_aux.getRows(); i++)
+        arq << setw(25) << images.at(i-1) << setw(25) << Conversion::doubleToString(mat_aux.get(i,4),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,5),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,6),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,1),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,2),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
+
+    arq << "\nMVC:\n";
+
+    mat_aux = ptManager->getMVC();
+
+    for (int i=1; i <= mat_aux.getRows(); i++)
+        arq << setw(25) << images.at(i-1) << setw(25) << Conversion::doubleToString(mat_aux.get(i,4),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,5),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,6),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,1),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,2),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,3),8) << "\n";
 
 
+    arq << "\n\nPhotogrammetric points:\n\n";
+
+    arq << setw(25) << "Point Id" << setw(25) << "E" << setw(25) << "N" << setw(25) << "H" << setw(25) << "δE" << setw(25) << "δN" << setw(25) << "δH";
+
+    arq << "\n";
+
+    deque<string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
+    if (ids.size()!=0)
+    {
+            Matrix pointsPhotogrametricMatrix = ptManager->getPhotogrammetricENH();
+            Matrix pointsResiduosPhotogrametricMatrix = ptManager->getResiduoPhotogrammetric();
+
+            for (int i=0;i<ids.size();i++)
+                arq << setw(25) << ids.at(i) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 1),5) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 2),5) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 3),5) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 1),8) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 2),8) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 3),8) << "\n";
+    }
+
+    arq << "\n\nEnd of the report.";
+
+    arq.close();
+
+    return 1;
+}
 
 PointMark::PointMark(QPointF coord, int keypoint,int imagekey,QString id)
 {

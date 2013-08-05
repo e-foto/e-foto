@@ -629,6 +629,18 @@ void SpatialRessection::generateL0()
 	}
 }
 
+void SpatialRessection::generateRMSE()
+{
+    double sum = 0;
+    for (int i = 0; i < L0.getRows(); i++)
+    {
+        sum += pow(L0.get(i+1,1),2);
+        //qDebug("%f",sum);
+    }
+    //qDebug("%f",sqrt(sum/(selectedPoints.size()*2-6)));
+    rmse.push_back(sqrt(sum/(selectedPoints.size()*2-6)));
+}
+
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
   Aqui tem codigo da PR
   ////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -751,7 +763,7 @@ void SpatialRessection::initialize()
 		// Setting the values to X0 and reseting Xa.
 		X0.resize(6, 1);
 
-		if (!myImage->isGnssAvailable() || (myImage->isGnssAvailable() && myImage->getGnssType() != "Unused"))
+                if (!myImage->isGnssAvailable() || (myImage->isGnssAvailable() && myImage->getGnssType() == "Unused"))
 		{
 			X0.set(1, 1, X00);
 			X0.set(2, 1, Y00);
@@ -763,7 +775,7 @@ void SpatialRessection::initialize()
 			X0.set(2, 1, myImage->getGnssY0());
 			X0.set(3, 1, myImage->getGnssZ0());
 		}
-		if (!myImage->isInsAvailable() || (myImage->isInsAvailable() && myImage->getInsType() != "Unused"))
+                if (!myImage->isInsAvailable() || (myImage->isInsAvailable() && myImage->getInsType() == "Unused"))
 		{
 			X0.set(4, 1, phi0);
 			X0.set(5, 1, omega0);

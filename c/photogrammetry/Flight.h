@@ -66,6 +66,12 @@ public:
  */
 	void setId(int newId);
 
+        /**
+         * \brief Método de acesso que seta o identificador do vôo.
+         * \param nickname Novo identificador.
+        */
+        void setFlightId(string nickname);
+
 	/**
  * \brief Método de acesso que seta a id do sensor associado ao vôo.
  * \param newSensorId	Novo identificador de sensor associado.
@@ -119,6 +125,13 @@ public:
  * \return int	Identificador do voo.
  */
 	int getId();
+
+        /**
+        * \brief Método de acesso que retorna o identificador do vôo.
+        * \return string Identificador do voo.
+        */
+
+        string getFlightId();
 
 	/**
  * \brief Método de acesso que retorna a id do sensor associado ao vôo.
@@ -202,7 +215,9 @@ public:
  * \brief Método que associa uma imagem ao voo.
  * \param newImageAssociation	Ponteiro para a imagem.
  */
-	void putImage(Image* newImageAssociation);
+    void putImage(Image* newImageAssociation);
+
+    void clearImages() {myImages.clear();}
 
 	/**
  * \brief Método de acesso que retorna o ponteiro para a instância da classe Image associada ao voo.

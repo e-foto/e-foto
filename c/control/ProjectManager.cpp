@@ -434,7 +434,10 @@ bool ProjectManager::startModule(string module, int image)
 			manager->setNextModule(7);
 		else if (module.compare("StereoPlotter") == 0)
 			manager->setNextModule(8);
-
+                else if (module.compare("Report") == 0)
+                        manager->setNextModule(9);
+                else if (module.compare("PT-Report") == 0)
+                        manager->setNextModule(10);
 		manager->setNextImage(image);
 		manager->exec();
 		return true;

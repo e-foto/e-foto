@@ -89,6 +89,23 @@ void Orthorectification::getXYAt(int col, int row, double &X, double &Y)
 	Y = res_y * (double(row) - 1.0) + Yi;
 }
 
+void Orthorectification::getXYAt(double col, double row, double &X, double &Y)
+{
+        X = res_x * (double(col) - 1.0) + Xi;
+        Y = res_y * (double(row) - 1.0) + Yi;
+}
+
+void Orthorectification::getColRowAt(double X, double Y, double &col, double &row)
+{
+        col = 1.0 + (X - Xi) / res_x;
+        row = 1.0 + (Y - Yi) / res_y;
+}
+
+void Orthorectification::getColRowAt(double X, double Y, int &col, int &row)
+{
+        col = int(1.0 + (X - Xi) / res_x);
+        row = int(1.0 + (Y - Yi) / res_y);
+}
 
 /************************
  *                      *
