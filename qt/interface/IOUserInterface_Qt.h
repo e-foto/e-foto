@@ -35,6 +35,7 @@ public slots:
 	virtual bool viewReport();
 	virtual void testActivateIO();
 	virtual void acceptIO();
+        virtual void OIdone();
 
 protected:
 	static IOUserInterface_Qt* ioInst;

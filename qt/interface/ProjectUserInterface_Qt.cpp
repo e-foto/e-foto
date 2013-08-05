@@ -51,12 +51,14 @@ namespace efoto {
 		this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 		this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
 		this->connect(actionStereo, SIGNAL(triggered()), this, SLOT(executeSP()));
+                this->connect(actionPTReport, SIGNAL(triggered()), this, SLOT(executePTReport()));
+                this->connect(actionReport, SIGNAL(triggered()), this, SLOT(executeReport()));
 		this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 		this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 		this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
-        this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
-        this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
-        this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+                this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
+                this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+                this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
 		this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 		this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 		this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT( validatingPoint()) );
@@ -133,8 +135,8 @@ namespace efoto {
 		centralWidget()->layout()->addWidget(&controlButtons);
 
 		// Adiciona um atalho para os desenvolvedores observarem as mudanÃ§as no XML durante o runtime
-        //QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
-        //connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
+        QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
+        connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
 		// Inserido pelo Paulo 05/09/2011
 		// Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
@@ -149,8 +151,13 @@ namespace efoto {
         //connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
 
 
+                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
 		actionFoto_Tri->setEnabled(availablePhotoTri());
-
+                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
+                actionPTReport->setEnabled(availablePhotoTri());  // Bug fix by Marcelo
 	}
 
 	ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
@@ -522,7 +529,11 @@ namespace efoto {
 
 				newTree();
 				// Inserido pelo Paulo 05/09/2011
-				actionFoto_Tri->setEnabled(availablePhotoTri());
+                                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
+                                actionFoto_Tri->setEnabled(availablePhotoTri());
+                                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
 				//			actionInterior_Orientation->setEnabled(availabeOI());
 				//		actionSpatial_resection->setEnabled(availableOE());
 			}
@@ -707,6 +718,28 @@ namespace efoto {
 		manager->startModule("StereoPlotter",0);
 		changeModule = false;
 	}
+
+        void ProjectUserInterface_Qt::executeReport()
+        {
+                changeModule = true;
+                confirmToClose();
+                LoadingScreen::instance().show();
+                qApp->processEvents();
+                this->close();
+                manager->startModule("Report",0);
+                changeModule = false;
+        }
+
+        void ProjectUserInterface_Qt::executePTReport()
+        {
+                changeModule = true;
+                confirmToClose();
+                LoadingScreen::instance().show();
+                qApp->processEvents();
+                this->close();
+                manager->startModule("PT-Report",0);
+                changeModule = false;
+        }
 
 	void ProjectUserInterface_Qt::executeFT()
 	{
@@ -1028,7 +1061,12 @@ namespace efoto {
 	bool ProjectUserInterface_Qt::exec()
 	{
 		actionSave_file->setEnabled(!manager->getSavedState());
-		actionFoto_Tri->setEnabled(availablePhotoTri());
+                actionSpatial_resection->setEnabled(availableSR()); // Bug fix by Marcelo
+                actionFoto_Tri->setEnabled(availablePhotoTri());
+                actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
+                actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
+                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
+
 		//	actionInterior_Orientation->setEnabled(availabeOI());
 		//	actionSpatial_resection->setEnabled(availableOE());
 		//PAULO -> codigo para dar um refresh no formulario
@@ -2499,6 +2537,37 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			return true;
 		return false;
 	}
+
+        // ******
+        // Bug reported by Martin Veermer
+        // Big fixed by Marcelo Teixeira Silveira
+        bool ProjectUserInterface_Qt::availableSR()
+        {
+            return availablePhotoTri();
+        }
+
+
+        bool ProjectUserInterface_Qt::availableStereoPlotter()
+        {
+                EDomElement ois(manager->getXml("exteriorOrientation"));
+                EDomElement images(manager->getXml(("images")));
+
+                if(images.children().size()<=ois.children().size())
+                        return true;
+
+                return false;
+        }
+
+        bool ProjectUserInterface_Qt::availableDemExtraction()
+        {
+            return availableStereoPlotter();
+        }
+
+        bool ProjectUserInterface_Qt::availableOrthoImage()
+        {
+            return availableStereoPlotter();
+        }
+        //**********
 
 	/*
 // Se houver imagens cadastradas, poderÃÂ¡ se fazer a OrientaÃÂ§ÃÂ£o interior

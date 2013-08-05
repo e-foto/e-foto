@@ -341,6 +341,18 @@ void Point::putImage(Image* newImageAssociation)
 		myImages.push_back(newImageAssociation);
 }
 
+void Point::clearImages()
+{
+    myImages.clear();
+}
+
+void Point::removeImage(int id)
+{
+    for (int i = myImages.size()-1; i >= 0; i--)
+        if (myImages.at(i)->getId() == id)
+            myImages.erase(myImages.begin()+i);
+}
+
 /**
  *
  */

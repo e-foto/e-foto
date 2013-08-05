@@ -30,6 +30,8 @@ Image::Image(int myId, int mySensorId)
 	id = myId;
 	sensorId = mySensorId;
     flightDirection = 3*M_PI;
+    flightDirectionAvailable = false;
+    mySensor = NULL;
 }
 
 /**
@@ -130,6 +132,7 @@ void Image::setFilepath(string newFilepath)
  */
 void Image::setFlightDirection(double radianAngle)
 {
+    flightDirectionAvailable = true;
 	flightDirection=radianAngle;
 }
 
@@ -451,6 +454,18 @@ void Image::putPoint(Point* newPointAssociation)
 		myPoints.push_back(newPointAssociation);
 }
 
+void Image::clearPoints()
+{
+    myPoints.clear();
+}
+
+void Image::removePoint(int id)
+{
+    for (int i = myPoints.size()-1; i >= 0; i--)
+        if (myPoints.at(i)->getId() == id)
+            myPoints.erase(myPoints.begin()+i);
+}
+
 Point* Image::getPoint(int pointId)
 {
 	for (unsigned int i = 0; i < myPoints.size(); i++)
@@ -521,7 +536,9 @@ void Image::xmlSetData(string xml)
 	filepath = root.elementByTagName("filePath").toString();
     resolution = root.elementByTagName("resolution").toInt();
     resolutionUnit = root.elementByTagName("resolution").attribute("uom");
-    flightDirection = root.elementByTagName("flightDirection").toDouble();
+    flightDirectionAvailable = root.elementByTagName("flightDirection").getContent() != "";
+    if (flightDirectionAvailable)
+        flightDirection = root.elementByTagName("flightDirection").toDouble();
 
 	//Isso deve ser corrigido...
 	//spatialCoordinates.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
@@ -594,29 +611,33 @@ string Image::xmlGetData()
 	//Isso deve ser corrigido...
 	//result << spatialCoordinates.xmlGetData();
 
-	result << "<GNSS uom=\"#m\" type=\"" << gnssType << "\">\n";
+
 	if (gnssAvailable)
 	{
+                result << "<GNSS uom=\"#m\" type=\"" << gnssType << "\">\n";
 		result << "<gml:pos>" << Conversion::doubleToString(gnssX0) << " " << Conversion::doubleToString(gnssY0) << " " << Conversion::doubleToString(gnssZ0) << "</gml:pos>\n";
 	}
 	else
 	{
 		result << "<gml:pos>Not Available</gml:pos>\n";
 	}
-	if (gnssSigmaAvailable)
+
+        if (gnssAvailable && gnssSigmaAvailable)
 	{
-		result << "<sigma>" << gnssSigma.xmlGetData() << "</gml:sigma>\n";
+                result << "<sigma>" << gnssSigma.xmlGetData() << "</sigma>\n";
 	}
 	else
 	{
 		result << "<sigma>Not Available</sigma>\n";
 	}
-	result << "</GNSS>\n";
 
-	result << "<INS uom=\"#rad\" type=\"" << insType << "\">\n";
-	if (insAvailable)
+        if (gnssAvailable)
+            result << "</GNSS>\n";
+
+        if (insAvailable)
 	{
-		result << "<omega>" << Conversion::doubleToString(insOmega) <<"</sigma>\n";
+                result << "<INS uom=\"#rad\" type=\"" << insType << "\">\n";
+                result << "<omega>" << Conversion::doubleToString(insOmega) <<"</sigma>\n";
 		result << "<phi>" << Conversion::doubleToString(insPhi) <<"</sigma>\n";
 		result << "<kappa>" << Conversion::doubleToString(insKappa) <<"</sigma>\n";
 	}
@@ -626,15 +647,18 @@ string Image::xmlGetData()
 		result << "<phi>Not Available</phi>\n";
 		result << "<kappa>Not Available</kappa>\n";
 	}
-	if (insSigmaAvailable)
+
+        if (insAvailable && insSigmaAvailable)
 	{
-		result << "<sigma>" << insSigma.xmlGetData() << "</gml:sigma>\n";
+                result << "<sigma>" << insSigma.xmlGetData() << "</sigma>\n";
 	}
 	else
 	{
 		result << "<sigma>Not Available</sigma>\n";
 	}
-	result << "</INS>\n";
+
+        if (insAvailable)
+            result << "</INS>\n";
 
 	//Fim da gambiarra temporaria.
 

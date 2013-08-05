@@ -10,8 +10,11 @@
 #include "DEMManager.h"
 #include "OrthoManager.h"
 #include "SPManager.h"
+#include "ReportManager.h"
+#include "LoadingScreen.h"
 
 #include <QApplication>
+#include <QFileDialog>
 
 namespace br {
 namespace uerj {
@@ -24,19 +27,20 @@ namespace efoto {
 /**
  *
  */
-EFotoManager::EFotoManager()
+EFotoManager::EFotoManager() : updater("")
 {
 	xmlData = "";
 	savedState = true;
-	project = NULL;
+        project = NULL;
 	interiorOrientation = NULL;
 	spatialRessection = NULL;
 	fotoTri = NULL;
 	dem = NULL;
 	ortho = NULL;
-		sp = NULL;
+        sp = NULL;
 	theTerrain = NULL;
 	nextModule = 1;
+	report = NULL;
 }
 
 /**
@@ -637,11 +641,11 @@ bool EFotoManager::execProject(string filename)
 {
 	bool result;
 	nextModule = 0;
-	if (project == NULL)
+        if (project == NULL)
 	{
-		project = new ProjectManager(this);
+                project = new ProjectManager(this);
 	}
-	result = project->exec(filename);
+        result = project->exec(filename);
 	return result;
 }
 
@@ -651,7 +655,7 @@ bool EFotoManager::execProject(string filename)
 bool EFotoManager::reloadProject()
 {
 	nextModule = 0;
-	if (project != NULL)
+        if (project != NULL)
 	{
 		if (fotoTri !=NULL)
 		{
@@ -672,16 +676,16 @@ bool EFotoManager::reloadProject()
 		if (ortho != NULL)
 		{
 			stopOrtho();
-		}
-				if (sp != NULL)
-				{
-						stopSP();
-				}
-		return project->reload();
-	}
+                }
+                if (sp != NULL)
+                {
+                    stopSP();
+                }
+                return project->reload();
+        }
 	else
 	{
-		return false;
+            return false;
 	}
 }
 
@@ -796,8 +800,8 @@ bool EFotoManager::execSP()
 
 	instanceAllImages();
 	instanceAllPoints();
-    instanceAllIOs();
-    instanceAllEOs();
+        instanceAllIOs();
+        instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
@@ -838,6 +842,8 @@ void EFotoManager::stopSP()
 	for (int i=0;i<numImages;i++)
 	{
 			deleteIO(images.at(0)->getId());
+                        deleteEO(images.at(0)->getId());
+                        deleteSensor(images.at(0)->getId());
 			deleteImage(images.at(0)->getId());
 	}
 }
@@ -892,9 +898,9 @@ bool EFotoManager::execDEM()
 	nextModule = 2;
 
 	instanceAllImages();
-    instanceAllPoints();
-    instanceAllIOs();
-    instanceAllEOs();
+        instanceAllPoints();
+        instanceAllIOs();
+        instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
@@ -935,6 +941,8 @@ void EFotoManager::stopDEM()
 	for (int i=0;i<numImages;i++)
 	{
 		deleteIO(images.at(0)->getId());
+                deleteEO(images.at(0)->getId());
+                deleteSensor(images.at(0)->getId());
 		deleteImage(images.at(0)->getId());
 	}
 }
@@ -946,8 +954,8 @@ bool EFotoManager::execOrtho()
 	nextModule = 2;
 
 	instanceAllImages();
-    instanceAllIOs();
-    instanceAllEOs();
+        instanceAllIOs();
+        instanceAllEOs();
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
@@ -992,6 +1000,29 @@ void EFotoManager::stopOrtho()
 	}
 }
 
+bool EFotoManager::execEPR()
+{
+	bool result;
+
+        nextModule = 2;
+
+        report_project.setXml(xmlData);
+
+	report = new ReportManager(this);
+
+	result = report->exec();
+
+	return result;
+}
+
+void EFotoManager::stopEPR()
+{
+	if (report != NULL)
+		delete report;
+	report = NULL;
+}
+
+
 /**
  *
  */
@@ -1035,6 +1066,14 @@ bool EFotoManager::exec(string filename)
 		savedState = true;
 		execSP();
 		break;
+        case 9:
+                savedState = true;
+                execEPR();
+                break;
+        case 10:
+                savedState = true;
+                execPTReport();
+                break;
 	default:
 		nextModule = 0;
 	}
@@ -1078,6 +1117,29 @@ int EFotoManager::getFreePointId()
 	}
 	//return result;
 }
+
+void EFotoManager::execPTReport()
+{
+    report_project.setXml(xmlData);
+
+    QString fileExport= QFileDialog::getSaveFileName(0,"Save full PT report",".","*.txt");
+
+    if (fileExport.isEmpty())
+    {
+        reloadProject();
+        return;
+    }
+
+    if(!fileExport.endsWith(".txt"))
+        fileExport.append(".txt");
+
+    // Create and run full report
+    PhotoTriReport pt_report(this);
+    pt_report.createReport((char *) fileExport.toStdString().c_str());
+
+    reloadProject();
+}
+
 
 } // namespace efoto
 } // namespace eng

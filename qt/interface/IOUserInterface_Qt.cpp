@@ -56,6 +56,7 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 
 	QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
 	QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
+        QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(OIdone()));
 	//QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
 	//QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
 	//QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
@@ -332,6 +333,11 @@ void IOUserInterface_Qt::acceptIO()
 {
 	manager->acceptIO();
 	windowReport->close();
+}
+
+void IOUserInterface_Qt::OIdone()
+{
+    close();
 }
 
 void IOUserInterface_Qt::closeEvent(QCloseEvent *e)

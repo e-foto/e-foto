@@ -99,6 +99,29 @@ double DemGrid::getMeanZ()
 	return meanZ/double(count);
 }
 
+double DemGrid::getStdZ()
+{
+        double meanZ = getMeanZ(), stdZ, Z;
+        unsigned int count=0;
+
+        for (unsigned int i=1; i<=dem_height; i++)
+        {
+                for (unsigned int j=1; j<=dem_width; j++)
+                {
+                        Z = DEM.get(i,j);
+
+                        // If hole, continue
+                        if (fabs(Z - 0.0) < 0.000000000000000001)
+                                continue;
+
+                        stdZ += pow(Z - meanZ, 2);
+                        count++;
+                }
+        }
+
+        return sqrt(stdZ/double(count));
+}
+
 double DemGrid::getHeightXY(double X, double Y)
 {
 	// Calculate col,row - double
@@ -181,13 +204,32 @@ void DemGrid::getXYAt(int col, int row, double &X, double &Y)
 	Y = res_y * (double(row) - 1.0) + Yi;
 }
 
+void DemGrid::getXYAt(double col, double row, double &X, double &Y)
+{
+        X = res_x * (double(col) - 1.0) + Xi;
+        Y = res_y * (double(row) - 1.0) + Yi;
+}
+
+void DemGrid::getColRowAt(double X, double Y, double &col, double &row)
+{
+        col = 1.0 + (X - Xi) / res_x;
+        row = 1.0 + (Y - Yi) / res_y;
+}
+
+void DemGrid::getColRowAt(double X, double Y, int &col, int &row)
+{
+        col = int(1.0 + (X - Xi) / res_x);
+        row = int(1.0 + (Y - Yi) / res_y);
+}
+
 /*
  * INTERPOOLATION DECISION METHOD
  */
 
 void DemGrid::interpolateNearestPoint()
 {
-	(chooseBestInterpolationMathod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+        // nf set to 1.0 is the size of the matrix grid cell (not terrain)
+        (chooseBestInterpolationMethod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
 }
 
 void DemGrid::interpolateTrendSurface(int mode)
@@ -199,36 +241,42 @@ void DemGrid::interpolateTrendSurface(int mode)
 void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 {
 	double nf = (n/res_x)*(n/res_y);
-	(chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
+        (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
 }
 
 void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 {
 	double nf = (n/res_x)*(n/res_y);
-	(chooseBestInterpolationMathod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
+        (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
 }
 
 /*
- * 0- Normal
- * 1- Fast
+ * Input:
+ * nf- Structure matrix area in cells (new subdivision of the grid)
+ *
+ * Output:
+ * 0- Use normal interpolation
+ * 1- Use fast interpolation
  */
-int DemGrid::chooseBestInterpolationMathod(double nf)
+int DemGrid::chooseBestInterpolationMethod(double nf)
 {
 	int no_points = point_list->size();
 
 	if (no_points < 1000)
 		return 0;
 
-        // Very large numbers !!
-        // Double prefered !!
-        double area = double(dem_width) * double (dem_height);
-	double density = double(no_points)/double(area);
-        if (density < 1.0)
-                density = 1.0;
+        // May have very large numbers - double prefered !!
+        double area = double(dem_width) * double (dem_height); // Calculate DEM matrix area - not terrain area
+        double grid_density = double(no_points)/double(area); // Points per area
 
-        // For not overfloating the "no_points^2", let's consider the sqtr for both equations
+        // If density is less than a cell size
+        if (grid_density < 1.0)
+                grid_density = 1.0;
+
+        // Let's calculate the computational effort for each grid cell
+        // For not overfloating values, we consider the sqtr for both equations
         double no_its_normal = no_points;           // no_points^2
-        double no_its_fast = sqrt(area*density*nf); // area*density*nf
+        double no_its_fast = sqrt(area*grid_density*nf); // area*density*nf
 
 	return (no_its_normal > no_its_fast);
 }
@@ -252,6 +300,8 @@ int DemGrid::chooseBestInterpolationMathod(double nf)
 // Time function found at: http://forum.clubedohardware.com.br/milisegundos-c/282275?s=bbcb5f6ff12025b9a8227a5a37e4ccfc&amp;
 void DemGrid::interpolateNearestPointFast()
 {
+        cancel_flag = false;
+
 	if (point_list == NULL)
 	{
 		printf("Error! No point list linked.\n");
@@ -277,7 +327,7 @@ void DemGrid::interpolateNearestPointFast()
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Nearest Point ...\n");
+        printf("Interpolating using Nearest Point Fast ...\n");
 	gettimeofday(&begin,NULL);
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
 	{
@@ -296,6 +346,9 @@ void DemGrid::interpolateNearestPointFast()
 			}
 
 			DEM.set(y, x, Z);
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
@@ -314,6 +367,8 @@ void DemGrid::interpolateNearestPointFast()
 // This interpolation method does not use the fast structure
 void DemGrid::interpolateTrendSurfaceFast(int mode)
 {
+        cancel_flag = false;
+
 	if (point_list == NULL)
 	{
 		printf("Error! No point list linked.\n");
@@ -340,7 +395,7 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Trend Surface ...\n");
+        printf("Interpolating using Trend Surface Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	// Size of the matrices
@@ -389,6 +444,9 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 			A.set(i,10,pow(mp->Y-Cy,3));
 		}
 		L.set(i,1,mp->Z);
+
+                if (cancel_flag)
+                    return;
 	}
 
 	// Least-squares
@@ -403,12 +461,15 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 			Py = Yi + double(y-1)*res_y - Cy;
 			switch (mode)
 			{
-			case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
-			case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
-			case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
-			case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
-			case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
+                            case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
+                            case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
+                            case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
+                            case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
+                            case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
@@ -426,6 +487,8 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 // Using fast structure
 void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 {
+        cancel_flag = false;
+
 	if (point_list == NULL)
 	{
 		printf("Error! No point list linked.\n");
@@ -450,7 +513,7 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Moving Average ...\n");
+        printf("Interpolating using Moving Average Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
@@ -488,6 +551,9 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 				DEM.set(y,x,sum1/sum2);
 			else
 				DEM.set(y,x,0.0);
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
@@ -507,6 +573,8 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 // Using fast structure
 void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mode2)
 {
+        cancel_flag = false;
+
 	if (point_list == NULL)
 	{
 		printf("Error! No point list linked.\n");
@@ -531,6 +599,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	double Px, Py, d, D, weight, Cx, Cy, Pxi, Pyi;
 	int no_points = point_list->size(), no_valid_points, point_id;
 	int total = DEM.getCols()*DEM.getRows();
+        int min_points[5] = { 5, 6, 7, 8, 12 };
 	Matrix X,A,L;
 
 	// Create fast structure
@@ -542,7 +611,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	struct timeval end;
 	int MICRO_PER_SECOND = 1000000;
 
-	printf("Interpolating using Moving Surface ...\n");
+        printf("Interpolating using Moving Surface Fast ...\n");
 	gettimeofday(&begin,NULL);
 
 	for (unsigned int y=1; y<=DEM.getRows(); y++)
@@ -561,7 +630,7 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 			mpg->getPointsClose(Px, Py, D0);
 			no_valid_points = mpg->selected_points.size();
 
-			if (no_valid_points == 0)
+                        if (no_valid_points < min_points[mode2])
 				continue;
 
 			//
@@ -638,16 +707,21 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 
 			switch (mode2)
 			{
-			case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
-			case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
-			case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
-			case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
-			case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
+                            case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
+                            case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
+                            case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
+                            case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
+                            case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
 	}
+
+        eliminateBadPointsGrid(3.0);
 
 	gettimeofday(&end,NULL);
 
@@ -658,6 +732,14 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 	printf("Elapsed time: %.6f\n",etime);
 
 	delete mpg;
+}
+
+void DemGrid::eliminateBadPointsGrid(double sigma)
+{
+    double meanZ = getMeanZ();
+    double stdZ = getStdZ();
+
+    cutGrid(meanZ - stdZ*sigma, meanZ + stdZ*sigma, true);
 }
 
 void DemGrid::cutGrid(double min, double max, bool fromList=true)
@@ -928,6 +1010,8 @@ void DemGrid::loadDemAscii(char * filename)
 
 void DemGrid::interpolateNearestPointNormal()
 {
+        cancel_flag = false;
+
 	if (point_list == NULL)
 	{
 		printf("Error! No point list linked.\n");
@@ -969,6 +1053,9 @@ void DemGrid::interpolateNearestPointNormal()
 				}
 			}
 			DEM.set(y, x, Z);
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
@@ -984,6 +1071,8 @@ void DemGrid::interpolateNearestPointNormal()
 
 void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 {
+        cancel_flag = false;
+
 	// If empty list of points
 	if (point_list->size() < 1)
 		return;
@@ -1030,6 +1119,9 @@ void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 				DEM.set(y,x,sum1/sum2);
 			else
 				DEM.set(y,x,0.0);
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
@@ -1046,6 +1138,8 @@ void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 
 void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int mode2)
 {
+        cancel_flag = false;
+
 	// If empty list of points
 	if (point_list->size() < 1)
 		return;
@@ -1176,12 +1270,15 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
 
 			switch (mode2)
 			{
-			case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
-			case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
-			case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
-			case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
-			case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
+                            case 0 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py); break;
+                            case 1 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py); break;
+                            case 2 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Px + X.get(5,1)*Py*Py); break;
+                            case 3 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py); break;
+                            case 4 : DEM.set(y, x, X.get(1,1) + X.get(2,1)*Px + X.get(3,1)*Py + X.get(4,1)*Px*Py + X.get(5,1)*Px*Px + X.get(6,1)*Py*Py + X.get(7,1)*Px*Px*Px + X.get(8,1)*Px*Px*Py + X.get(9,1)*Px*Py*Py + X.get(10,1)*Py*Py*Py); break;
 			}
+
+                        if (cancel_flag)
+                            return;
 		}
 		if (manager!=NULL)
 			manager->setProgress((100*y)/DEM.getRows());
