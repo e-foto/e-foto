@@ -53,8 +53,10 @@ public:
 	void interpolateMovingSurface(double, double, int, int);
 	double getElapsedTime() { return elap_time; };
 	void cutGrid(double min, double max, bool fromList);
+        void eliminateBadPointsGrid(double sigma);
 	void getMinMax(double &, double &); // Return Min Z and Max Z
 	double getMeanZ();
+        double getStdZ();
 	double getHeightXY(double X, double Y);
         double getHeight(double row, double col);
 	Matrix *getDemImage(double min=0.0, double max=0.0);
