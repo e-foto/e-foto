@@ -353,7 +353,8 @@ public:
  * \brief Método para extrair o equivalente em dados xml (mml:matrix) da matriz.
  * \return string	Retorna o string contendo o xml (mml:matrix) da matriz.
  */
-	string xmlGetData();
+    string xmlGetData();
+    string xmlGetData(int prec);
 
 	/**
  * \brief Método para setar os valores de atributos da matriz utilizando sua descrição em xml (mml:matrix).

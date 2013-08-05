@@ -52,7 +52,7 @@
         <item row="0" column="1">
          <widget class="QPushButton" name="stereoButton">
           <property name="toolTip">
-           <string>Open Stereo Plotter</string>
+           <string>Open Stereo Plotter Feature</string>
           </property>
           <property name="text">
            <string/>
@@ -1125,6 +1125,16 @@
        <item row="1" column="0">
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
+          <widget class="QCheckBox" name="checkBox_5">
+           <property name="text">
+            <string>Perform Region Growing</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="checkBox_4">
            <property name="text">
             <string>Eliminate bad points</string>
@@ -1323,7 +1333,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.100000000000000</double>
+             <double>0.050000000000000</double>
             </property>
            </widget>
           </item>
@@ -1763,7 +1773,7 @@
              <number>150</number>
             </property>
             <property name="value">
-             <number>50</number>
+             <number>25</number>
             </property>
            </widget>
           </item>
@@ -1835,7 +1845,7 @@
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.150000000000000</double>
+             <double>0.050000000000000</double>
             </property>
            </widget>
           </item>

@@ -50,7 +50,10 @@ public:
 	double getOrthoimagePixel(double, double);
 	void setOrthoimagePixel(int, int, double);
 	void setOrthoimagePixel(double, double, double);
-	void getXYAt(int, int, double &, double &);
+        void getXYAt(int col, int row, double &X, double &Y);
+        void getXYAt(double col, double row, double &X, double &Y);
+        void getColRowAt(double X, double Y, int &col, int &row);
+        void getColRowAt(double X, double Y, double &col, double &row);
 	double getGridResX() { return res_x; };
 	double getGridResY() { return res_y; };
 	void setColorDepth(int _cd) { color_depth = _cd; };
