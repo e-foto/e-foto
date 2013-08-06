@@ -211,7 +211,7 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 	Xf = header[2];
 	Yf = header[3];
 	res_x = header[4];
-	res_x = header[5];
+        res_y = header[5];
 	ortho_width = int(header[6]);
 	ortho_height = int(header[7]);
 	color_depth = int(header[8]);
