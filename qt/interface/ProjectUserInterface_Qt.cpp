@@ -23,7 +23,7 @@ namespace efoto {
 	{
 		setupUi(this);
 
-		//  Inicia variÃÂ¡veis
+		//  Inicia variaveis
 		this->manager = manager;
 		this->currentForm = NULL;
 		this->currentItemId = 0;
@@ -155,7 +155,6 @@ namespace efoto {
 		actionFoto_Tri->setEnabled(availablePhotoTri());
                 actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
                 actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
-                actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
                 actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
                 actionPTReport->setEnabled(availablePhotoTri());  // Bug fix by Marcelo
 	}
@@ -473,7 +472,7 @@ namespace efoto {
 
 				QString imagesMissing="";
 				int contMissings=0;
-				for (int i=0 ;i < imagesEdom.size() ;i++)
+				for (int i=0 ;i < (int)imagesEdom.size() ;i++)
 				{
 					QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
 					dirImage.setCurrent(imagesName);
@@ -534,8 +533,6 @@ namespace efoto {
                                 actionStereo->setEnabled(availableStereoPlotter()); // Bug fix by Marcelo
                                 actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
                                 actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
-				//			actionInterior_Orientation->setEnabled(availabeOI());
-				//		actionSpatial_resection->setEnabled(availableOE());
 			}
 			else
 			{
@@ -1000,7 +997,7 @@ namespace efoto {
 
 		ETreeModel* etm = manager->getTreeModel();
 
-		for (unsigned int i = 0; i < etm->countChildren(); i++)
+		for (int i = 0; i < (int)etm->countChildren(); i++)
 		{
 			if (i < treeItems.size())
 			{
@@ -1017,7 +1014,7 @@ namespace efoto {
 				else if (etm->dataAt(i) == "points")
 					treeItems.at(i)->setText(0, tr("Points"));
 				if (!(etm->dataAt(i) == "projectHeader" || etm->dataAt(i) == "terrain" || etm->dataAt(i) == "sensors" || etm->dataAt(i) == "flights"))
-					for (unsigned int j = 0; j < etm->countGrandchildren(i); j++)
+					for (int j = 0; j < (int)etm->countGrandchildren(i); j++)
 					{
 					if (j < treeItems.at(i)->childCount())
 					{
@@ -1332,16 +1329,18 @@ menuExecute->setEnabled(true);
 			imageForm.groupBox_2->setVisible(true);
 			imageForm.setEOAvailable(true);
 
-			if (node3.attribute("type")=="spatialRessection")
-				imageForm.groupBox_2->setTitle("OE Parameters (Spatial Ressection)");
+			if (node3.attribute("type")=="spatialResection")
+				imageForm.groupBox_2->setTitle("OE Parameters (Spatial Resection)");
+			else if (node3.attribute("type")=="user")
+				imageForm.groupBox_2->setTitle("OE Parameters (3D Direct Georeferencing)");
 			else
 				imageForm.groupBox_2->setTitle("OE Parameters (Phototriangulation)");
 
 			imageForm.x0Label->setText("X0: " + QString::number(node3.elementByTagName("X0").toDouble(),'f',4) +" m");
 			imageForm.y0Label->setText("Y0: " + QString::number(node3.elementByTagName("Y0").toDouble(),'f',4) +" m");
 			imageForm.z0Label->setText("Z0: " + QString::number(node3.elementByTagName("Z0").toDouble(),'f',4) +" m");
-            imageForm.omegaLabel->setText(QString::fromUtf8( " ω: ") + QString::number(node3.elementByTagName("phi").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
-            imageForm.phiLabel->setText(QString::fromUtf8( " φ: ") + QString::number(node3.elementByTagName("omega").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
+            imageForm.omegaLabel->setText(QString::fromUtf8( " ω: ") + QString::number(node3.elementByTagName("omega").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
+            imageForm.phiLabel->setText(QString::fromUtf8( " φ: ") + QString::number(node3.elementByTagName("phi").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
             imageForm.kappaLabel->setText(QString::fromUtf8( " κ: ") + QString::number(node3.elementByTagName("kappa").toDouble()*180/M_PI,'f',4) + QString::fromUtf8("°"));
 		}
 		else
@@ -1464,8 +1463,47 @@ menuExecute->setEnabled(true);
 
 	void ProjectUserInterface_Qt::saveImage()
 	{
+		string xmlString="";
+		stringstream eoXML;
+		bool existOE, userOE=false;
+		
 		editState = false;
-		manager->editComponent("Image", currentItemId, imageForm.getvalues());
+		xmlString = imageForm.getvalues();
+		manager->editComponent("Image", currentItemId, xmlString);
+		EDomElement imageUserEO(xmlString);
+		if (imageUserEO.hasTagName("GNSS") and imageUserEO.hasTagName("INS")){
+		  existOE = !(manager->getXml("imageEO","image_key",Conversion::intToString(currentItemId))=="");
+		  if (existOE) 
+		  {
+		    EDomElement oeXMLObj(manager->getXml("imageEO","image_key",Conversion::intToString(currentItemId)));
+		    userOE = oeXMLObj.attribute("type")=="user";
+		    if (userOE) 
+		      manager->removeComponent( "EO", currentItemId);
+		  }
+		  if (!existOE or userOE)
+		  {		    
+		    EDomElement xyzXml(imageUserEO.elementByTagName("gml:pos"));
+		    EDomElement omegaXML(imageUserEO.elementByTagName("omega"));
+		    EDomElement phiXML(imageUserEO.elementByTagName("phi"));
+		    EDomElement kappaXML(imageUserEO.elementByTagName("kappa"));
+		    deque<double> XA;
+		    XA= xyzXml.toGmlPos();
+		    eoXML << "\t<imageEO type=\"user\" image_key=\"" << Conversion::intToString(currentItemId) << "\">\n";
+		    eoXML << "\t\t\t<Xa>\n";
+		    eoXML << "\t\t\t\t<X0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(0)) << "</X0>\n";
+		    eoXML << "\t\t\t\t<Y0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(1)) << "</Y0>\n";
+		    eoXML << "\t\t\t\t<Z0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(2)) << "</Z0>\n";
+		    eoXML << "\t\t\t\t<omega uom=\"#rad\">"<< omegaXML.getContent() << "</omega>\n";
+		    eoXML << "\t\t\t\t<phi uom=\"#rad\">"<< phiXML.getContent() << "</phi>\n";
+		    eoXML << "\t\t\t\t<kappa uom=\"#rad\">"<< kappaXML.getContent() << "</kappa>\n";
+		    eoXML << "\t\t\t</Xa>\n";
+		    eoXML << "</imageEO>\n";
+		    manager->addComponent( eoXML.str(), "exteriorOrientation");
+		    actionStereo->setEnabled(availableStereoPlotter()); 
+		    actionDEMExtraction->setEnabled(availableDemExtraction());  
+		    actionOrtho_rectification->setEnabled(availableOrthoImage());  		    
+		  } 		    
+		}
 		viewImage(currentItemId);
 		actionSave_file->setEnabled(true);
 		updateTree();
@@ -2315,7 +2353,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loadWidget->show();
 
 		deque<EDomElement> point=points.elementsByTagName("point");
-		for (int i=0; i<point.size(); i++)
+		for (int i=0; i< (int)point.size(); i++)
 		{
 			loading.setFormat(tr("Point %v/%m : %p%"));
 			loading.setValue(i);
@@ -2455,7 +2493,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			QString aux(line);
 			pointsList << aux.remove('\n');
 		}
-
+ 
 		importFile->close();
 
 		QWidget *loadWidget= new QWidget();
@@ -2796,7 +2834,7 @@ bool ProjectUserInterface_Qt::availableOE()
 
 		//stringstream allPoints;
 		//int cont=0;
-		for (int i=0; i<pnts.size();i++)
+		for (int i=0; i< (int)pnts.size();i++)
 		{
 			//		points.attribute();
 			if (!pnts.at(i).hasTagName("imageCoordinates"))
@@ -2838,7 +2876,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
 		deque<EDomElement> point=points.elementsByTagName("point");
-		for (int i=0; i<point.size(); i++)
+		for (int i=0; i<(int)point.size(); i++)
 		{
 			loading.setFormat(tr("Point %v/%m : %p%"));
 			loading.setValue(i);
@@ -2860,7 +2898,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		EDomElement ede;
 		QString gmlpos;
 		bool ok;
-		for (int i=0; i<digitalCoordinates.size();i++)
+		for (int i=0; i<(int)digitalCoordinates.size();i++)
 		{
 			ede=digitalCoordinates.at(i);
 			gmlpos=ede.elementByTagName("gml:pos").toString().c_str();
