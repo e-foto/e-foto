@@ -101,7 +101,7 @@ p, li { white-space: pre-wrap; }
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>
           <property name="specialValueText">
-           <string> </string>
+           <string/>
           </property>
           <property name="accelerated">
            <bool>true</bool>
