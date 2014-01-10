@@ -8,6 +8,8 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+static bool isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64 *match = 0);
+  
 ScienceSpinBox::ScienceSpinBox(QWidget * parent): QDoubleSpinBox(parent)
 {
 	setButtonSymbols(QAbstractSpinBox::NoButtons);
