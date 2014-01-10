@@ -84,18 +84,6 @@ public:
  */
 	bool isForm(string formName);
 
-	/**
- * \brief Metodo que informa no formulario se a orientaçao interior foi feita ou não
- * \param state : Booleano informando se o estado da orientaçao interior da imagem apontada por esse formulario
- */
-	void setIOAvailable(bool state);
-
-	/**
- * \brief Metodo que informa no formulario se a orientaçao exterior foi feita ou não
- * \param state : Booleano informando se o estado da orientaçao exterior da imagem apontada por esse formulario
- */
-	void setEOAvailable(bool state);
-
 
 private slots:
 	/**

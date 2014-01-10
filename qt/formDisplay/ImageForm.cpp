@@ -223,8 +223,6 @@ void ImageForm:: setReadOnly(bool state)
 QString ImageForm::loadImageFile()
 {
 	QString fileImage = QFileDialog::getOpenFileName(this, "Open File", lastPath, "*.tif *.png *.bmp *.jpg");
-	setIOAvailable(false);
-	setEOAvailable(false);
 
 	QDir absolutePath (proj->getSavedIn());
 	//qDebug()<<proj->getSavedIn();
@@ -324,24 +322,6 @@ string ImageForm :: getFileImagePath()
 bool ImageForm::isForm(string formName)
 {
 	return !formName.compare("ImageForm");
-}
-
-void ImageForm::setIOAvailable(bool state)
-{
-	if (state)
-	;
-		//labelIO->setText("Interior orientation is available");
-	//else
-		//labelIO->setText("Interior orientation is not available");
-}
-
-void ImageForm::setEOAvailable(bool state)
-{
-	if (state)
-	;
-		//labelEO->setText("Spatial resection is available");
-	//else
-		//labelEO->setText("Spatial resection is not available");
 }
 
 void ImageForm::cleanForm()
