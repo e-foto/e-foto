@@ -1309,7 +1309,6 @@ menuExecute->setEnabled(true);
 		if (node2.getContent()!="")
 		{
 			imageForm.groupBox->setVisible(true);
-			imageForm.setIOAvailable(true);
 			imageForm.a0Label->setText("a0: " + QString::number(node2.elementByTagName("a0").toDouble(),'f', 4));
 			imageForm.a1Label->setText("a1: " + QString::number(node2.elementByTagName("a1").toDouble(),'f',4));
 			imageForm.a2Label->setText("a2: " + QString::number(node2.elementByTagName("a2").toDouble(),'f',4));
@@ -1320,21 +1319,19 @@ menuExecute->setEnabled(true);
 		else
 		{
             imageForm.groupBox->setVisible(false);
-			imageForm.setIOAvailable(false);
 		}
 
 		EDomElement node3(manager->getXml("imageEO", "image_key", Conversion::intToString(id)));
 		if (node3.getContent()!="")
 		{
 			imageForm.groupBox_2->setVisible(true);
-			imageForm.setEOAvailable(true);
 
 			if (node3.attribute("type")=="spatialResection")
-				imageForm.groupBox_2->setTitle("OE Parameters (Spatial Resection)");
+				imageForm.groupBox_2->setTitle("EO Parameters (Spatial Resection)");
 			else if (node3.attribute("type")=="user")
-				imageForm.groupBox_2->setTitle("OE Parameters (3D Direct Georeferencing)");
+				imageForm.groupBox_2->setTitle("EO Parameters (3D Direct Georeferencing)");
 			else
-				imageForm.groupBox_2->setTitle("OE Parameters (Phototriangulation)");
+				imageForm.groupBox_2->setTitle("EO Parameters (Phototriangulation)");
 
 			imageForm.x0Label->setText("X0: " + QString::number(node3.elementByTagName("X0").toDouble(),'f',4) +" m");
 			imageForm.y0Label->setText("Y0: " + QString::number(node3.elementByTagName("Y0").toDouble(),'f',4) +" m");
@@ -1346,7 +1343,6 @@ menuExecute->setEnabled(true);
 		else
 		{
 			imageForm.groupBox_2->setVisible(false);
-			imageForm.setEOAvailable(false);
 		}
 
 		debuggerTextEdit->clear();
@@ -1493,9 +1489,9 @@ menuExecute->setEnabled(true);
 		    eoXML << "\t\t\t\t<X0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(0)) << "</X0>\n";
 		    eoXML << "\t\t\t\t<Y0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(1)) << "</Y0>\n";
 		    eoXML << "\t\t\t\t<Z0 uom=\"#m\">"<< Conversion::doubleToString(XA.at(2)) << "</Z0>\n";
-		    eoXML << "\t\t\t\t<omega uom=\"#rad\">"<< omegaXML.getContent() << "</omega>\n";
-		    eoXML << "\t\t\t\t<phi uom=\"#rad\">"<< phiXML.getContent() << "</phi>\n";
-		    eoXML << "\t\t\t\t<kappa uom=\"#rad\">"<< kappaXML.getContent() << "</kappa>\n";
+		    eoXML << "\t\t\t\t<omega uom=\"#rad\">"<< omegaXML.toString() << "</omega>\n";
+		    eoXML << "\t\t\t\t<phi uom=\"#rad\">"<< phiXML.toString() << "</phi>\n";
+		    eoXML << "\t\t\t\t<kappa uom=\"#rad\">"<< kappaXML.toString() << "</kappa>\n";
 		    eoXML << "\t\t\t</Xa>\n";
 		    eoXML << "</imageEO>\n";
 		    manager->addComponent( eoXML.str(), "exteriorOrientation");
