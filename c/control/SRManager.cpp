@@ -489,8 +489,8 @@ string SRManager::getImageFile()
 void SRManager::acceptSR()
 {
     EDomElement newXml(manager->xmlGetData());
-    if (newXml.elementByTagName("spatialRessections").getContent() == "")
-        newXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
+    if (newXml.elementByTagName("spatialResections").getContent() == "")
+        newXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialResections>\n</spatialResections>");
     if (newXml.elementByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
         newXml.replaceChildByTagAtt("imageEO", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetDataEO());
     else
@@ -498,7 +498,7 @@ void SRManager::acceptSR()
     if (newXml.elementByTagAtt("imageSR", "image_key", Conversion::intToString(myImage->getId())).getContent() != "")
         newXml.replaceChildByTagAtt("imageSR", "image_key", Conversion::intToString(myImage->getId()), mySR->xmlGetData());
     else
-        newXml.addChildAtTagName("spatialRessections", mySR->xmlGetData());
+        newXml.addChildAtTagName("spatialResections", mySR->xmlGetData());
 
     newXml.replaceChildByTagAtt("image","key",Conversion::intToString(myImage->getId()),myImage->xmlGetData());
 

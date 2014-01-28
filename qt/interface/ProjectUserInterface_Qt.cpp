@@ -2232,7 +2232,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	{
 		stringstream aux;
 		string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
-		QStringList fields= point.split("\t");
+		QStringList fields= point.split(QRegExp("\\s+")); // split by any sequences of whitespace
 		// check	control	 tie
 		if (fields.length() == 7)
 		{
@@ -2277,7 +2277,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			aux << "</imagesMeasurements>\n";
 			aux << "</point>";
 		}
-		else if (point.split("\t").length() == 4)
+		else if (fields.length() == 4)
 		{
 			//gcpIdField = point.split("\t").at(0).toStdString().c_str();
 			gcpIdField = fields.at(0).toStdString();
