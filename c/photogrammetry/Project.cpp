@@ -486,7 +486,7 @@ void Project::deleteEO(int id, bool makeReconnections)
 	{
 		//EDomElement xmlEO(myEO->xmlGetData());
 		//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
-		if (myEO->is("SpatialRessection"))
+		if (myEO->is("SpatialResection"))
 		{
 			SpatialRessection* mySR = (SpatialRessection*) myEO;
 			delete(mySR);
@@ -820,7 +820,7 @@ void Project::setXml(string xml)
 	//EDomElement dem = ede.elementByTagName("DEMs");
 	//EDomElement eoi = ede.elementByTagName("orthoImages");
     //EDomElement feat = ede.elementByTagName("features");
-	EDomElement sr = ede.elementByTagName("spatialRessections");
+	EDomElement sr = ede.elementByTagName("spatialResections");
 
 	// Rever a parte de estados de processos... armazenados e acessados na string processStates
     processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ sr.getContent();

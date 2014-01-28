@@ -339,7 +339,7 @@ void SpatialRessection::unsetPointForFlightDirection()
 string SpatialRessection::objectType(void)
 {
 	stringstream result;
-	result << "SpatialRessection " << imageId;
+	result << "SpatialResection " << imageId;
 	return result.str();
 }
 
@@ -356,7 +356,7 @@ string SpatialRessection::objectAssociations(void)
  */
 bool SpatialRessection::is(string s)
 {
-	return (s == "SpatialRessection" ? true : false);
+	return (s == "SpatialResection" ? true : false);
 }
 
 // XML methods
@@ -377,7 +377,7 @@ void SpatialRessection::xmlSetData(string xml)
 
     deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
     selectedPoints.clear();
-    for(int i = 0; i < pts.size();i++)
+    for(int i = 0; i < (int)pts.size();i++)
     {
         selectedPoints.push_back(pts.at(i).elementByTagName("pointKey").toInt());
     }
@@ -428,7 +428,7 @@ string SpatialRessection::xmlGetData()
     result << "<parameters>\n";
 
     result << "<usedPoints>\n";
-    for (int i=0;i<selectedPoints.size();i++)
+    for (int i=0;i<(int)selectedPoints.size();i++)
     {
         result << "<pointKey>" <<	Conversion::intToString(selectedPoints.at(i))	<<"</pointKey>\n";
     }
@@ -457,7 +457,7 @@ string SpatialRessection::xmlGetData()
 string SpatialRessection::xmlGetDataEO()
 {
     stringstream result;
-    result << "<imageEO type=\"spatialRessection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
+    result << "<imageEO type=\"spatialResection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
     result << "<Xa>\n";
     result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
     result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
@@ -632,7 +632,7 @@ void SpatialRessection::generateL0()
 void SpatialRessection::generateRMSE()
 {
     double sum = 0;
-    for (int i = 0; i < L0.getRows(); i++)
+    for (int i = 0; i < (int)L0.getRows(); i++)
     {
         sum += pow(L0.get(i+1,1),2);
         //qDebug("%f",sum);
