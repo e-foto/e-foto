@@ -330,14 +330,14 @@ RESOURCES += resource.qrc
 # Autochange AboutForm code
 ABOUTDIR = qt/infrastructure/
 unix { 
-    MYDATA = $$system(date -u +%Y.%m.%d) # a versao release so precisa da data e olhe la!
+    MYDATA = $$system(date -u +%Y.%m) # a versao release so precisa da data sem o dia!
     
     # MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
     MYREV = $$system(svnversion)
     MYREV ~= s/[a-z]|[A-Z]/
     CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-        system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
-        system(sed -r s/Revision\ [0-9]{3}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza a revis�o do AboutLayout
+        system(sed -r s/[0-9]{4}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
+        system(sed -r s/Build\ [0-9]{3}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o Build do AboutLayout
         !build_pass:message(Release build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
     }
     else:!build_pass:message(Debug build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
