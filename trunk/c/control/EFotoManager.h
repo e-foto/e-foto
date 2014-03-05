@@ -1,25 +1,29 @@
 /*******************************************************************************
 		EFotoManager.h
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 
 #ifndef EFOTOMANAGER_H
 #define EFOTOMANAGER_H
 
-#include "EObject.h"
-#include "Terrain.h"
-#include "ProjectHeader.h"
-#include "SensorWithFiducialMarks.h"
-#include "SensorWithKnowDimensions.h"
-#include "SensorWithKnowParameters.h"
-#include "Flight.h"
-#include "Image.h"
-#include "Point.h"
-#include "InteriorOrientation.h"
-#include "SpatialRessection.h"
 #include "Project.h"
 #include "XmlUpdater.h"
-#include "PhotoTriReport.h"
 
 namespace br {
 namespace uerj {
@@ -34,6 +38,14 @@ class DEMManager;
 class OrthoManager;
 class SPManager;
 class ReportManager;
+class Terrain;
+class Sensor;
+class Image;
+class Point;
+class Flight;
+class InteriorOrientation;
+class ExteriorOrientation;
+
 
 /**
 * \file EFotoManager.h
@@ -45,7 +57,11 @@ class ReportManager;
 class EFotoManager
 {
 
-	int nextModule;
+public:
+	enum nextModule_t {NEXT_NONE, NEXT_PROJECT, NEXT_RELOAD, NEXT_IO, 
+	  NEXT_SR, NEXT_PT, NEXT_DEM, NEXT_ORTHO, NEXT_SP, NEXT_Report, NEXT_PTReport};
+private:
+	nextModule_t nextModule;
 	int nextImage;
 
 	bool savedState;
@@ -317,7 +333,7 @@ public:
 	* \brief Método que seta o próximo módulo a ser executado.
 	* \param newModule  O próximo módulo a ser executado.
 	*/
-	void setNextModule(int newModule);
+    void setNextModule(nextModule_t newModule);
 
 	/**
 	* \brief Método que seta a próxima imagem a ser processada.
@@ -444,4 +460,4 @@ public:
 } // namespace uerj
 } // namespace br
 
-#endif // PROJECT_H
+#endif // EFOTOMANAGER_H

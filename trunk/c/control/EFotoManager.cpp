@@ -1,7 +1,22 @@
 /*******************************************************************************
 		  EFotoManager.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EFotoManager.h"
 #include "IOManager.h"
 #include "SRManager.h"
@@ -11,7 +26,6 @@
 #include "OrthoManager.h"
 #include "SPManager.h"
 #include "ReportManager.h"
-#include "LoadingScreen.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -31,15 +45,15 @@ EFotoManager::EFotoManager() : updater("")
 {
 	xmlData = "";
 	savedState = true;
-        project = NULL;
+	project = NULL;
 	interiorOrientation = NULL;
 	spatialRessection = NULL;
 	fotoTri = NULL;
 	dem = NULL;
 	ortho = NULL;
-        sp = NULL;
+	sp = NULL;
 	theTerrain = NULL;
-	nextModule = 1;
+	nextModule = NEXT_PROJECT;
 	report = NULL;
 }
 
@@ -91,7 +105,7 @@ Sensor* EFotoManager::instanceSensor(int id)
 		return (Sensor*) newSensorWithFiducialMarks;
 	}
 	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-			xmlSensor.elementByTagName("calculationMode").toString().compare("With Sensor Dimensions") == 0)
+		xmlSensor.elementByTagName("calculationMode").toString().compare("With Sensor Dimensions") == 0)
 	{
 		SensorWithKnowDimensions* newSensorWithKnowDimensions = new SensorWithKnowDimensions();
 		newSensorWithKnowDimensions->xmlSetData(xmlSensor.getContent());
@@ -99,7 +113,7 @@ Sensor* EFotoManager::instanceSensor(int id)
 		return (Sensor*) newSensorWithKnowDimensions;
 	}
 	if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-			xmlSensor.elementByTagName("calculationMode").toString().compare("Fixed Parameters") == 0)
+		xmlSensor.elementByTagName("calculationMode").toString().compare("Fixed Parameters") == 0)
 	{
 		SensorWithKnowParameters* newSensorWithKnowParameters = new SensorWithKnowParameters();
 		newSensorWithKnowParameters->xmlSetData(xmlSensor.getContent());
@@ -266,19 +280,16 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 	for (unsigned int i = 0; i < EOs.size(); i++)
 		if (EOs.at(i)->getImageId() == imageId)
 			return EOs.at(i);
-    EDomElement root(xmlData);
-    EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
-    EDomElement xmlSR = root.elementByTagAtt("imageSR", "image_key", Conversion::intToString(imageId));
-    if (xmlEO.getContent().compare("") == 0 || xmlSR.getContent().compare("") == 0)
+	EDomElement root(xmlData);
+	EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
+	EDomElement xmlSR = root.elementByTagAtt("imageSR", "image_key", Conversion::intToString(imageId));
+	if (xmlEO.getContent().compare("") == 0 || xmlSR.getContent().compare("") == 0)
 		return NULL;
-	//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
-	{
-		SpatialRessection* newEO = new SpatialRessection();
+	SpatialRessection* newEO = new SpatialRessection();
         newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
-		EOs.push_back(newEO);
-		return (ExteriorOrientation*) newEO;
-	}
-	return NULL;
+	EOs.push_back(newEO);
+
+	return (ExteriorOrientation*) newEO;
 }
 
 void EFotoManager::instanceAllEOs()
@@ -294,8 +305,6 @@ void EFotoManager::instanceAllEOs()
         for (unsigned int j = 0; j < EOs.size() && notAvailable; j++)
 			if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key")))
 				notAvailable = false;
-		//InteriorOrientation *pkj;
-		//pkj->getImageId()
 		if (notAvailable)
 		{
 			SpatialRessection* newEO = new SpatialRessection(); // SpatialRessection vai virar ExteriorOrientation em breve.
@@ -402,7 +411,7 @@ void EFotoManager::deletePoint(int id)
 	if (myPoint != NULL)
 	{
 		Point* point = myPoint;
-			delete(point);
+		delete(point);
 		points.erase(points.begin() + i);
 	}
 }
@@ -442,8 +451,6 @@ void EFotoManager::deleteEO(int id)
 		}
 	if (myEO != NULL)
 	{
-		//EDomElement xmlEO(myEO->xmlGetData());
-		//if (xmlEO.attribute("type").compare("spatialRessection") == 0)
 		if (myEO->is("SpatialRessection"))
 		{
 			SpatialRessection* mySR = (SpatialRessection*) myEO;
@@ -621,7 +628,7 @@ string EFotoManager::getInterfaceType()
 /**
  *
  */
-void EFotoManager::setNextModule(int newModule)
+void EFotoManager::setNextModule(nextModule_t newModule)
 {
 	nextModule = newModule;
 }
@@ -640,10 +647,10 @@ void EFotoManager::setNextImage(int newImage)
 bool EFotoManager::execProject(string filename)
 {
 	bool result;
-	nextModule = 0;
+    nextModule = NEXT_NONE;
         if (project == NULL)
 	{
-                project = new ProjectManager(this);
+		project = new ProjectManager(this);
 	}
         result = project->exec(filename);
 	return result;
@@ -654,7 +661,7 @@ bool EFotoManager::execProject(string filename)
  */
 bool EFotoManager::reloadProject()
 {
-	nextModule = 0;
+    nextModule = NEXT_NONE;
         if (project != NULL)
 	{
 		if (fotoTri !=NULL)
@@ -695,7 +702,7 @@ bool EFotoManager::reloadProject()
 bool EFotoManager::execIO(int id)
 {
 	bool result;
-	nextModule = 2;
+    nextModule = NEXT_RELOAD;
 	Image* ioImage = instanceImage(id);
 	if (ioImage == NULL)
 	{
@@ -708,18 +715,10 @@ bool EFotoManager::execIO(int id)
 		io = new InteriorOrientation(id);
 		IOs.push_back(io);
 	}
-	else
-	{
 
-	}
 	interiorOrientation = new IOManager(this, ioSensor, ioImage, io);
 	result = interiorOrientation->exec();
-	/* precisa de um stop
- delete interiorOrientation;
- deleteIO(id);
- deleteSensor(ioImage->getSensorId());
- deleteImage(id);
- */
+
 	return result;
 }
 
@@ -739,7 +738,7 @@ void EFotoManager::stopIO(int id)
 bool EFotoManager::execSR(int id)
 {
 	bool result;
-    nextModule = 2;
+    nextModule = NEXT_RELOAD;
 	Image* srImage = instanceImage(id);
 	if (srImage == NULL)
 	{
@@ -756,23 +755,11 @@ bool EFotoManager::execSR(int id)
 		sr = new SpatialRessection(id);
 		EOs.push_back(sr);
 	}
-	else
-	{
-
-	}
-    instanceAllPoints();
-    spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr, points);
+	instanceAllPoints();
+	spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr, points);
 
 	result = spatialRessection->exec();
-	/* precisa de um stop
- delete spatialRessection;
- deleteEO(id);
- deleteIO(id);
- deleteFlight(srImage->getFlightId());
- deleteSensor(srImage->getSensorId());
- deleteTerrain();
- deleteImage(id);
- */
+
 	return result;
 }
 
@@ -787,6 +774,7 @@ void EFotoManager::stopSR(int id)
 	deleteSensor(srImage->getSensorId());
 	deleteTerrain();
 	deleteImage(id);
+	points.clear();
 }
 
 /**
@@ -796,7 +784,7 @@ bool EFotoManager::execSP()
 {
 	bool result;
 
-	nextModule = 2;
+	nextModule = NEXT_RELOAD;
 
 	instanceAllImages();
 	instanceAllPoints();
@@ -805,19 +793,19 @@ bool EFotoManager::execSP()
 
 	for (int i = images.size() - 1; i >=0; i--)
 	{
-			Image* img = images.at(i);
-			Sensor* sensor = instanceSensor(img->getSensorId());
-			InteriorOrientation* imgIO = instanceIO(img->getId());
-			SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
+		Image* img = images.at(i);
+		Sensor* sensor = instanceSensor(img->getSensorId());
+		InteriorOrientation* imgIO = instanceIO(img->getId());
+		SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
 
-			img->setSensor(sensor);
-			img->setIO(imgIO);
-			img->setEO(imgEO);
+		img->setSensor(sensor);
+		img->setIO(imgIO);
+		img->setEO(imgEO);
 
-			if (imgIO == NULL || imgEO == NULL)
-			{
-					deleteImage(img->getId());
-			}
+		if (imgIO == NULL || imgEO == NULL)
+		{
+			deleteImage(img->getId());
+		}
 	}
 
 	sp = new SPManager(this, images, EOs);
@@ -837,21 +825,21 @@ void EFotoManager::stopSP()
 
 	for (int i=0;i<numPoints;i++)
 	{
-			deletePoint(points.at(0)->getId());
+		deletePoint(points.at(0)->getId());
 	}
 	for (int i=0;i<numImages;i++)
 	{
-			deleteIO(images.at(0)->getId());
-                        deleteEO(images.at(0)->getId());
-                        deleteSensor(images.at(0)->getId());
-			deleteImage(images.at(0)->getId());
+		deleteIO(images.at(0)->getId());
+		deleteEO(images.at(0)->getId());
+		deleteSensor(images.at(0)->getId());
+		deleteImage(images.at(0)->getId());
 	}
 }
 
 bool EFotoManager::execPT()
 {
 	bool result;
-	nextModule = 2;
+	nextModule = NEXT_RELOAD;
 
 	instanceAllImages();
 	instanceAllPoints();
@@ -862,8 +850,6 @@ bool EFotoManager::execPT()
 
 	Flight *ptFlight = instanceFlight(1);
 	Terrain* ptTerrain = instanceTerrain();
-	//ptFlight->setTerrain(ptTerrain);
-	//fotoTri = new PTManager(this,ptImages,ptOis,ptSensor);//,ptFlight);
 	fotoTri = new PTManager(this,images,IOs,ptSensor,ptFlight,ptTerrain);
 	result = fotoTri->exec();
 
@@ -895,7 +881,7 @@ bool EFotoManager::execDEM()
 {
 	bool result;
 
-	nextModule = 2;
+	nextModule = NEXT_RELOAD;
 
 	instanceAllImages();
         instanceAllPoints();
@@ -930,7 +916,7 @@ void EFotoManager::stopDEM()
 {
 	delete dem;
 	dem = NULL;
-	//deleteSensor(images.at(0)->getSensorId());
+
 	int numPoints=points.size();
 	int numImages=images.size();
 
@@ -951,7 +937,7 @@ bool EFotoManager::execOrtho()
 {
 	bool result;
 
-	nextModule = 2;
+	nextModule = NEXT_RELOAD;
 
 	instanceAllImages();
         instanceAllIOs();
@@ -985,7 +971,7 @@ void EFotoManager::stopOrtho()
 {
 	delete ortho;
 	ortho = NULL;
-	//deleteSensor(images.at(0)->getSensorId());
+
 	int numPoints=points.size();
 	int numImages=images.size();
 
@@ -1004,7 +990,7 @@ bool EFotoManager::execEPR()
 {
 	bool result;
 
-        nextModule = 2;
+        nextModule = NEXT_RELOAD;
 
         report_project.setXml(xmlData);
 
@@ -1032,52 +1018,49 @@ bool EFotoManager::exec(string filename)
 	{
 		execProject(filename);
 	}
-	//while (nextModule != 0)
-	//{
 	switch (nextModule)
 	{
-	case 1:
+	case NEXT_PROJECT:
 		execProject();
 		break;
-	case 2:
+	case NEXT_RELOAD:
 		reloadProject();
 		break;
-	case 3:
+	case NEXT_IO:
 		savedState = true;
 		execIO(nextImage);
 		break;
-	case 4:
+	case NEXT_SR:
 		savedState = true;
 		execSR(nextImage);
 		break;
-	case 5:
+	case NEXT_PT:
 		savedState = true;
 		execPT();
 		break;
-	case 6:
+	case NEXT_DEM:
 		savedState = true;
 		execDEM();
 		break;
-	case 7:
+	case NEXT_ORTHO:
 		savedState = true;
 		execOrtho();
 		break;
-	case 8:
+	case NEXT_SP:
 		savedState = true;
 		execSP();
 		break;
-        case 9:
-                savedState = true;
-                execEPR();
-                break;
-        case 10:
-                savedState = true;
-                execPTReport();
+	case NEXT_Report:
+		savedState = true;
+		execEPR();
+		break;
+	case NEXT_PTReport:
+		savedState = true;
+		execPTReport();
                 break;
 	default:
-		nextModule = 0;
+        nextModule = NEXT_NONE;
 	}
-	//}
 
 	return true;
 }
@@ -1086,43 +1069,41 @@ int EFotoManager::getFreeImageId()
 {
 
 	int result = 0;
-	//if (manager != NULL)
+
+	deque<EDomElement> images = EDomElement(getXml("images")).children();
+	result = 1;
+	for (int i = images.size()-1; i >= 0; i--)
 	{
-		deque<EDomElement> images = EDomElement(getXml("images")).children();
-		result = 1;
-		for (int i = images.size()-1; i >= 0; i--)
-		{
-			if (Conversion::stringToInt(images.at(i).attribute("key")) >= result)
-				result = Conversion::stringToInt(images.at(i).attribute("key"))+1;
-		}
-		return result;
+		if (Conversion::stringToInt(images.at(i).attribute("key")) >= result)
+			result = Conversion::stringToInt(images.at(i).attribute("key"))+1;
 	}
-	//return result;
+
+	return result;
+
 }
 
 int EFotoManager::getFreePointId()
 {
 
 	int result = 0;
-	//if (manager != NULL)
+
+	deque<EDomElement> points = EDomElement(getXml("points")).children();
+	result = 1;
+	for (int i = points.size()-1; i >= 0; i--)
 	{
-		deque<EDomElement> points = EDomElement(getXml("points")).children();
-		result = 1;
-		for (int i = points.size()-1; i >= 0; i--)
-		{
-			if (Conversion::stringToInt(points.at(i).attribute("key")) >= result)
-				result = Conversion::stringToInt(points.at(i).attribute("key"))+1;
-		}
-		return result;
+		if (Conversion::stringToInt(points.at(i).attribute("key")) >= result)
+			result = Conversion::stringToInt(points.at(i).attribute("key"))+1;
 	}
-	//return result;
+
+	return result;
+
 }
 
 void EFotoManager::execPTReport()
 {
-    report_project.setXml(xmlData);
+	report_project.setXml(xmlData);
 
-    QString fileExport= QFileDialog::getSaveFileName(0,"Save full PT report",".","*.txt");
+	QString fileExport= QFileDialog::getSaveFileName(0,"Save full PT report",".","*.txt");
 
     if (fileExport.isEmpty())
     {
