@@ -1,4 +1,3 @@
-**************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
@@ -112,7 +111,7 @@ void OrthoManager::addImagesToForm()
 {
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 
-	for (int i=1; i<=listAllImages.size(); i++)
+    for (unsigned i=1; i<=listAllImages.size(); i++)
 		oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
 }
 
@@ -167,7 +166,7 @@ void OrthoManager::loadOrtho(char *filename)
 	}
 }
 
-void OrthoManager::runAllOrthoTogheter()
+void OrthoManager::runAllOrthoTogether()
 {
 	// List of all centers
 	vector <int> Cx;
@@ -180,7 +179,7 @@ void OrthoManager::runAllOrthoTogheter()
 	Image *img;
 	int w,h;
 	double best_dist_inital=0.0;
-	for (int i=0; i<listAllImages.size(); i++)
+    for (unsigned i=0; i<listAllImages.size(); i++)
 	{
 		img = listAllImages.at(i);
 		w = img->getWidth();
@@ -206,7 +205,7 @@ void OrthoManager::runAllOrthoTogheter()
 	string filename, strimg;
 	Matrix img_m;
 
-		for (int curr_image=0; curr_image<listAllImages.size(); curr_image++)
+        for (unsigned curr_image=0; curr_image<listAllImages.size(); curr_image++)
 	{
 		if (flag_cancel)
 			return;
@@ -250,7 +249,7 @@ void OrthoManager::runAllOrthoTogheter()
 
 								best_img = -1;
 								best_dist = best_dist_inital;
-								for (int k=0; k<listAllImages.size(); k++)
+                                for (unsigned k=0; k<listAllImages.size(); k++)
 								{
 										analog_coord = pr.at(k).objectToDetector(X, Y, Z);
 										pr.at(k).detectorToImage(analog_coord.getXi(), analog_coord.getEta(), col, lin);
@@ -273,7 +272,7 @@ void OrthoManager::runAllOrthoTogheter()
 								}
 
 								// Is best image = current image, copy pixel
-								if (best_img == curr_image)
+                                if (best_img == static_cast<int>(curr_image))
 								{
 										(best_img == -1) ? pixel = 0.0 : pixel = interp.interpolate(&img_m, best_col, best_lin, inter_method);
 										ortho->setOrthoimagePixel(X, Y, pixel);
@@ -286,7 +285,7 @@ void OrthoManager::runAllOrthoTogheter()
 
 void OrthoManager::runOrthoIndividual(int image)
 {
-	if (image < 1 || image > listAllImages.size())
+    if (image < 1 || image > static_cast<int>(listAllImages.size()))
 		return;
 
 	// Get image data
@@ -402,7 +401,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 
 	if (option == 0)
 	{
-		runAllOrthoTogheter();
+        runAllOrthoTogether();
 
 		if (flag_cancel)
 		{
@@ -418,12 +417,12 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 		string base_fname(filename);
 		string ext(".ort");
 		size_t expos = base_fname.find(ext);
-		if (expos != -1)
+        if (expos != string::npos)
 			base_fname = base_fname.substr(0,expos);
 		base_fname = base_fname + "_";
 		string fname;
 
-		for (int i=1; i<=listAllImages.size(); i++)
+        for (unsigned i=1; i<=listAllImages.size(); i++)
 		{
 			runOrthoIndividual(i);
 			fname = base_fname + Conversion::intToString(i) + ext;

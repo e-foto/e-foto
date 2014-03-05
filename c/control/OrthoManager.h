@@ -1,5 +1,5 @@
 /**************************************************************************
-														   OrthoManager.h
+OrthoManager.h
 **************************************************************************/
 
 
@@ -27,7 +27,7 @@ class EFotoManager;
 /**
 * \file OrthoManager.h
 * \class OrthoManager
-* \brief Classe que gerencia a ortoimagem e ortorretificaÁ„o.
+* \brief Classe que gerencia a ortoimagem e ortorretifica√ß√£o.
 * \attention Imagens que variam entre 0,0 e 1,0.
 * \copyright E-Foto group
 * \authors Marcelo Teixeira Silveira 
@@ -44,18 +44,18 @@ class OrthoManager
 	deque<ExteriorOrientation*> listEOs;
 	DemGrid *grid;
 	/**
-	* \brief MÈtodo que inclui os dados das imagens no formul·rio.
+	* \brief M√©todo que inclui os dados das imagens no formul√°rio.
 	*/
 	void addImagesToForm();
 	Orthorectification *ortho;
 	/**
-	* \brief MÈtodo que executa a ortoimagem para uma imagem.
+	* \brief M√©todo que executa a ortoimagem para uma imagem.
 	*/
 	void runOrthoIndividual(int);
 	/**
-	* \brief MÈtodo que executa a ortoimagem para todas as imagens.
+	* \brief M√©todo que executa a ortoimagem para todas as imagens.
 	*/
-	void runAllOrthoTogheter();
+	void runAllOrthoTogether();
 	bool flag_cancel;
 	bool show_image;
 	int inter_method;
@@ -65,53 +65,53 @@ public:
 	// Constructors and Destructors
 	//
 	/**
-	* \brief Construtor padr„o.
+	* \brief Construtor padr√£o.
 	*/
 	OrthoManager();
 	/**
-	* \brief Construtor que j· identifica o seu gerenciador, as imagens que ser„o usadas e os dados de uma orientaÁ„o exterior a ser extraÌdas.
+	* \brief Construtor que j√° identifica o seu gerenciador, as imagens que ser√£o usadas e os dados de uma orienta√ß√£o exterior a ser extra√≠das.
 	*/
 	OrthoManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
 	/**
-	* \brief Destrutor padr„o.
+	* \brief Destrutor padr√£o.
 	*/
 	~OrthoManager();
 
 	// Association Methods
 	//
 	/**
-	* \brief MÈtodo de associaÁ„o que seta uma interface.
+	* \brief M√©todo de associa√ß√£o que seta uma interface.
 	*/
 	void setInterface(OrthoUserInterface* newInterface);
 	/**
-	* \brief MÈtodo que retorna a Interface corrente.
+	* \brief M√©todo que retorna a Interface corrente.
 	*/
 	OrthoUserInterface* getInterface();
 
 	// Other Methods
 	//
 	/**
-	* \brief MÈtodo que executa a ortoimagem.
+	* \brief M√©todo que executa a ortoimagem.
 	*/
 	bool exec();
 	/**
-	* \brief MÈtodo que interrompe a ortoimagem.
+	* \brief M√©todo que interrompe a ortoimagem.
 	*/
 	void returnProject();
 	/**
-	* \brief MÈtodo que altera a barra de progresso na interface.
+	* \brief M√©todo que altera a barra de progresso na interface.
 	*/
 	void setProgress(int);
 	/**
-	* \brief MÈtodo que carrega a grade do DEM a partir de um arquivo.
+	* \brief M√©todo que carrega a grade do DEM a partir de um arquivo.
 	*/
 	int loadDemGrid(char * filename, int fileType);
 	/**
-	* \brief MÈtodo que executa a ortorretificaÁ„o.
+	* \brief M√©todo que executa a ortorretifica√ß√£o.
 	*/
 	int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
 	/**
-	* \brief MÈtodo que interrompe a ortorretificaÁ„o.
+	* \brief M√©todo que interrompe a ortorretifica√ß√£o.
 	*/
 	void setFlagCancel() { flag_cancel = true; };
 	/**
@@ -119,24 +119,24 @@ public:
 	*/
 	void setShowImage(bool _shw) { show_image = _shw; };
 	/**
-	* \brief MÈtodo que altera o mÈtodo de interpolaÁ„o.
+	* \brief M√©todo que altera o m√©todo de interpola√ß√£o.
 	*/
     void setInterMethod(int _mth) { inter_method = _mth; };
     /**
-    * \brief MÈtodo que carrega a ortorretificaÁ„o.
+    * \brief M√©todo que carrega a ortorretifica√ß√£o.
     */
     void loadOrtho(char *filename);
     /**
-    * \brief Registra no XML o endereÁo de um arquivo de Ortho.
+    * \brief Registra no XML o endere√ßo de um arquivo de Ortho.
     */
     void addOrthoToXML(string filename);
     /**
-    * \brief Registra no XML o endereÁo de um arquivo de Ortho.
+    * \brief Registra no XML o endere√ßo de um arquivo de Ortho.
     */
     void addOrthoToXML2(string filename);
 
     /**
-    * \brief Registra no XML o endereÁo de um arquivo de Ortho.
+    * \brief Registra no XML o endere√ßo de um arquivo de Ortho.
     */
     Orthorectification * getOrtho() { return ortho; };
 
