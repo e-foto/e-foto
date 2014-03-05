@@ -336,8 +336,8 @@ unix {
     MYREV = $$system(svnversion)
     MYREV ~= s/[a-z]|[A-Z]/
     CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-        system(sed -r s/[0-9]{4}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
-        system(sed -r s/Build\ [0-9]{3}/Revision\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o Build do AboutLayout
+        system(sed -r s/[0-9]{4}\\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
+        system(sed -r s/Revision\\ [0-9]{3}/Revision\\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o Build do AboutLayout
         !build_pass:message(Release build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
     }
     else:!build_pass:message(Debug build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
@@ -348,18 +348,18 @@ win32 {
     MYYEAR = $$member(MYDATA,0).
     MYMONTH = $$member(MYDATA,1).
     MYDAY = $$member(MYDATA,2)
-    MYDATA = $$MYYEAR$$MYMONTH$$MYDAY
+    MYDATA = $$MYYEAR$$MYMONTH
     
     # MYDATA2 = $${MYDATA}
     # MYDATA2 ~= s/^[0-9]{3}/ #Retira os trs primeiros digitos do Ano na data, ou seja, yy.mm.dd
     MYREV = $$system(subWCrev ../)
     MYREV = $$find(MYREV, [0-9]{3}.)
     MYREV ~= s/\D/ # Pega tudo menos numeros(Non-digit)
-    MYREV ~= s/^[0-9]{3}/ # Elimina os trs primeiros digitos
+    MYREV ~= s/^[0-9]{3}/ # Elimina os tres primeiros digitos
     !build_pass:message(rev: $${MYREV})
     !build_pass:message(data: $${MYDATA})
     CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-        system(sed -r s/[0-9]{4}\.[0-9]{2}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
+        system(sed -r s/[0-9]{4}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
         
         # system(sed -r s/Revision\" \"[0-9]{3}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza a revis�o do AboutLayout
         !build_pass:message(Release build! WIN32)# Essa linha pode ser suprimida, isso s� aparecer� na saida do compilador(Compile Output)
@@ -369,3 +369,14 @@ win32 {
 
 # linha para colocar o icone do e-foto no executavel
 RC_FILE = efotoIcon.rc
+
+#install settings
+unix{
+    target.path = /usr/local/bin
+    desk.path = /usr/share/applications
+    desk.files += efoto.desktop
+    icon.path = /usr/share/applications/pixmaps
+    icon.files += efoto-icon.png
+
+    INSTALLS += target desk icon
+}

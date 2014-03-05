@@ -1,17 +1,33 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ProjectUserInterface_Qt.h"
 
-#include <qapplication.h>
-#include <qvariant.h>
+#include "ETreeModel.h"
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QMessageBox>
-#include <QLabel>
 #include <QShortcut>
-#include <QMessageBox>
-#include <QDesktopWidget>
-#include <QProgressBar>
+#include <QScrollArea>
+
+#include "AboutForm.h"
+#include "LoadingScreen.h"
 
 #include "EDomValidator.h"
+
+
 
 namespace br {
 namespace uerj {
@@ -39,7 +55,7 @@ namespace efoto {
 		setWindowTitle(tr("efoto[Project Manager]"));
 		imageForm.proj = this;
 
-		// Realiza as conexÃÂµes necessÃÂ¡rias
+		// Realiza as conexões necessárias 
 		this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
 		this->connect(actionLoad_file, SIGNAL(triggered()), this, SLOT(loadFile()));
 		this->connect(actionSave_file, SIGNAL(triggered()), this, SLOT(saveFile()));
@@ -51,14 +67,14 @@ namespace efoto {
 		this->connect(actionOrtho_rectification, SIGNAL(triggered()), this, SLOT(executeOrtho()));
 		this->connect(actionFoto_Tri, SIGNAL(triggered()), this, SLOT(executeFT()));
 		this->connect(actionStereo, SIGNAL(triggered()), this, SLOT(executeSP()));
-                this->connect(actionPTReport, SIGNAL(triggered()), this, SLOT(executePTReport()));
-                this->connect(actionReport, SIGNAL(triggered()), this, SLOT(executeReport()));
+		this->connect(actionPTReport, SIGNAL(triggered()), this, SLOT(executePTReport()));
+		this->connect(actionReport, SIGNAL(triggered()), this, SLOT(executeReport()));
 		this->connect(actionAbout,SIGNAL(triggered()), this, SLOT(showAbout()));
 		this->connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(processTreeClick(QModelIndex)));
 		this->connect(&imagesForm, SIGNAL(clicked(int)), this, SLOT(selectImage(int)));
-                this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
-                this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
-                this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+		this->connect(&pointsForm, SIGNAL(clicked(int)), this, SLOT(selectPoint(int)));
+		this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
+		this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this , SLOT( validatingImage()) );
 		this->connect(imageForm.fileNameLine, SIGNAL(textChanged(QString)),this , SLOT( validatingImage()) );
 		this->connect(pointForm.lineEdit_gcp_id, SIGNAL(editingFinished()), this, SLOT( validatingPoint()) );
 		this->connect(pointForm.sigmaController, SIGNAL(validateChanged()), this, SLOT( validatingPoint()) );
@@ -90,7 +106,7 @@ namespace efoto {
 		// Bloqueia alguns dos dipositivos
 		this->removeDockWidget(debuggerDockWidget);
 		this->removeDockWidget(projectDockWidget);
-
+		
 		this->show();
 
 		// Coloca s forms na QStackedWidget
@@ -157,7 +173,9 @@ namespace efoto {
                 actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
                 actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
                 actionPTReport->setEnabled(availablePhotoTri());  // Bug fix by Marcelo
-	}
+				
+
+    }
 
 	ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
 	{
@@ -2187,7 +2205,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			QByteArray line = importFile->readLine();
 			QString aux(line);
 			//pointsList << aux.left(aux.lastIndexOf('\n'));
-			pointsList << aux.remove('\n');
+            pointsList << aux.simplified();;
 		}
 		importFile->close();
 
@@ -2305,7 +2323,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			aux << "</imagesMeasurements>\n";
 			aux << "</point>";
 		}else{
-			QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
+            QMessageBox::warning(this, tr(" fileWarning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
 			return "";
 		}
 
@@ -3142,7 +3160,8 @@ bool ProjectUserInterface_Qt::availableOE()
 		else
 			projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
 	}
-
+	
+	
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

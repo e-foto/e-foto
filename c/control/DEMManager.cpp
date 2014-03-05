@@ -1,7 +1,22 @@
 /**************************************************************************
-														   DEMManager.cpp
+DEMManager.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "EDom.h"
 #include "Point.h"
@@ -9,6 +24,10 @@
 #include "EFotoManager.h"
 #include "DEMUserInterface.h"
 #include "DEMUserInterface_Qt.h"
+#include "ImageMatching.h"
+#include "DemGrid.h"
+
+
 
 
 // Constructors and destructors
@@ -101,7 +120,7 @@ void DEMManager::returnProject()
 
 Image * DEMManager::getImage(int id)
 {
-	for (int i=0; i<listAllImages.size(); i++)
+    for (unsigned i=0; i<listAllImages.size(); i++)
 	{
 		if (listAllImages.at(i)->getId() == id)
 			return listAllImages.at(i);
@@ -114,7 +133,7 @@ void DEMManager::setListPoint()
 {
 	EDomElement xmlPoints(manager->getXml("points"));
 	deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
-	for(int i=0;i<allPoints.size();i++)
+    for(unsigned i=0;i<allPoints.size();i++)
 	{
 		Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
 		if (point != NULL)
@@ -243,7 +262,7 @@ int DEMManager::getPairs()
         listPairs.clear();
 
         Image *img;
-        double X1, Y1, X2, Y2, R, dist, bX2, bY2, overlap, align_ang, kappa, terrain_mean_Z;
+        double X1, Y1, X2, Y2, R, dist, overlap, terrain_mean_Z;
         int p1, p2, img_code, id1, id2;
         Matrix Xa;
 
@@ -262,17 +281,16 @@ int DEMManager::getPairs()
         Y2 = osc.getY();
         R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
-        for (int i=0; i<listAllImages.size(); i++)
+        for (unsigned i=0; i<listAllImages.size(); i++)
         {
                 // Get reference image data
                 img = listAllImages.at(i);
                 Xa = img->getEO()->getXa();
                 X1 = Xa.get(1,1);
                 Y1 = Xa.get(2,1);
-                kappa = fabs(Xa.get(6,1));
 
                 // Calculate the shortest image center
-                for (int j=0; j<listAllImages.size(); j++)
+                for (unsigned j=0; j<listAllImages.size(); j++)
                 {
                         // Skip same image check
                         if (i==j)
@@ -293,12 +311,6 @@ int DEMManager::getPairs()
                         if (overlap < 55.0 || overlap > 100.0)
                                 continue;
 
-/*                        // Check images alignment and kappa
-                        align_ang = getAngleBetweenImages(X1, Y1, bX2, bY2);
-
-                        if (!checkAnglesAlligned(align_ang, kappa, 0.174532925)) // 10 Degrees
-                                continue;
-*/
                         // Assign image ids (in this case, the verctor number - image id ranges from 1-N
                         id1 = i+1;
                         id2 = j+1;
@@ -334,7 +346,7 @@ bool DEMManager::existPair(int &id1, int &id2)
         id2 = aux;
     }
 
-    for (int i=0; i<listPairs.size(); i++)
+    for (unsigned i=0; i<listPairs.size(); i++)
     {
         // Decode image list
         getImagesId(i, pair_id1, pair_id2);
@@ -356,7 +368,7 @@ void DEMManager::addPairsToInterface()
 	string str_left, str_right;
 	stringstream txt;
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
-	for (int i=0; i<listPairs.size(); i++)
+    for (unsigned i=0; i<listPairs.size(); i++)
 	{
 		getImagesId(i,left_id,right_id);
 		str_left = listAllImages.at(left_id-1)->getImageId();
@@ -374,7 +386,7 @@ void DEMManager::getImagesId(int pos, int &left, int &right)
 	// Check pos
 	left = -1;
 	right = -1;
-	if (pos < 0 || pos > listPairs.size()-1)
+    if (pos < 0 || (unsigned)pos > listPairs.size()-1)
 		return;
 
 	// Decode
@@ -467,7 +479,7 @@ void DEMManager::createInitialSeeds()
 	double X, Y, Z;
 	ImageSpaceCoordinate left_dic, right_dic;
 
-	for (int i=0; i<listAllPoints.size(); i++)
+    for (unsigned i=0; i<listAllPoints.size(); i++)
 	{
 		p = listAllPoints.at(i);
 		no_imgs_pt = p->countImages();
@@ -477,7 +489,7 @@ void DEMManager::createInitialSeeds()
 			continue;
 
 		// Read pair list
-		for (int k=0; k<listPairs.size(); k++)
+        for (unsigned k=0; k<listPairs.size(); k++)
 		{
 			getImagesId(k, left_id, right_id);
 
@@ -773,7 +785,7 @@ int DEMManager::extractDEM(int option, bool clearMList)
 	// Extract all pairs
 	if (option==0)
 	{
-		for (int i=0; i<listPairs.size(); i++)
+        for (unsigned i = 0; i<listPairs.size(); i++)
 		{
 			extractDEMPair(i);
 			if (cancel_flag)
@@ -844,7 +856,7 @@ int DEMManager::extractDEM(int option, bool clearMList)
 
 void DEMManager::extractDEMPair(int pair)
 {
-	if (pair < 0 || pair > listPairs.size()-1)
+    if (pair < 0 || pair > static_cast<int>(listPairs.size())-1)
 		return;
 
 	//

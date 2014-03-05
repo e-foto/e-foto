@@ -1,3 +1,20 @@
+**************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ReportUserInterface_Qt.h"
 
 #include <qapplication.h>
@@ -373,6 +390,8 @@ void ReportUserInterface_Qt::unselectFatherByKid(QTreeWidgetItem* kid)
 
 bool ReportUserInterface_Qt::saveEPR()
 {
+
+  
     QString* chosenExtension = new QString();
     QString filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"),chosenExtension);
     QString filenameOriginal,filenameOriginalMask,filePathMask;
@@ -393,17 +412,17 @@ bool ReportUserInterface_Qt::saveEPR()
         chosenExtension->remove('*');
 
         if (chosenExtension->toStdString() == ".xml"){
-            idExt = 0;
+            idExt = XMLTYPE;
         } else {
             if (chosenExtension->toStdString() == ".txt"){
-                idExt = 1;
+                idExt = TXTTYPE;
                 filenameOriginalMask = filenameOriginal;
                 filenameOriginalMask.prepend("~");
                 filePathMask = filename.left(j);
                 filename = filePathMask + "/" + filenameOriginalMask;
             } else {
                 if (chosenExtension->toStdString() == ".html"){
-                    idExt = 2;
+                    idExt = HTMTYPE;
                     filenameOriginalMask = filenameOriginal;
                     filenameOriginalMask.prepend("~");
                     filePathMask = filename.left(j);
@@ -419,13 +438,13 @@ bool ReportUserInterface_Qt::saveEPR()
     bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
     bool doneXslt = false;
 
-    if(idExt == 1)
+    if(idExt == TXTTYPE)
     {
-        doneXslt = manager->makeXslt(1,filePath.toStdString());
+        doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
     } else {
-        if(idExt == 2)
+        if(idExt == HTMTYPE)
         {
-            doneXslt = manager->makeXslt(2,filePath.toStdString());
+            doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
         }
         else
         {
@@ -436,7 +455,7 @@ bool ReportUserInterface_Qt::saveEPR()
     if(done == true && doneXslt == true)
     {
         QProcess *pro = new QProcess();        
-        if(idExt == 1)
+        if(idExt == TXTTYPE)
         {            
             QString output;
             if(filenameOriginal.endsWith(".txt"))
@@ -465,7 +484,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->start("cmd /C del \""+filename+"\"");
             #endif
         } else {
-            if(idExt == 2){                   
+            if(idExt == HTMTYPE){                   
                 QString output;
                 if(filenameOriginal.endsWith(".html"))
                     output = filePath + "/" + filenameOriginal;

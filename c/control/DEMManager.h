@@ -1,22 +1,30 @@
 /**************************************************************************
-														   DEMManager.h
+DEMManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef DEMMANAGER_H
 #define DEMMANAGER_H
 
-#include "EObject.h"
-#include <deque>
-#include "Image.h"
-#include "ExteriorOrientation.h"
-#include "Matrix.h"
-#include "ImageMatching.h"
-#include "MatchingPoints.h"
-#include "DemGrid.h"
 #include "SpatialIntersection.h"
 #include "DemFeatures.h"
 #include <string>
+#include <deque>
 
 namespace br {
 namespace uerj {
@@ -25,6 +33,9 @@ namespace efoto {
 
 class DEMUserInterface;
 class EFotoManager;
+class ExteriorOrientation;
+class ImageMatching;
+class DemGrid;
 
 /**
 * \file DEMManager.h
