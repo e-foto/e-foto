@@ -1,10 +1,27 @@
 /**************************************************************************
-						   ProjectManager.cpp
+ProjectManager.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ProjectManager.h"
 #include "EFotoManager.h"
 #include "ProjectUserInterface_Qt.h"
+#include "Project.h"
+#include "ETreeModel.h"
 
 // Constructors and Destructor
 //
@@ -17,7 +34,6 @@ namespace efoto {
 ProjectManager::ProjectManager()
 {
 	this->manager = NULL;
-	//this->xmlFile = NULL;
 	this->treeModel = NULL;
 	this->updater = NULL;
 }
@@ -25,7 +41,6 @@ ProjectManager::ProjectManager()
 ProjectManager::ProjectManager(EFotoManager* manager)
 {
 	this->manager = manager;
-	//this->xmlFile = NULL;
 	this->treeModel = NULL;
 	this->updater = NULL;
 }
@@ -36,8 +51,6 @@ ProjectManager::~ProjectManager()
 		delete treeModel;
 	if (updater != NULL)
 		delete updater;
-	//if (xmlFile != NULL)
-	//delete xmlFile;
 }
 
 // Other Methods
@@ -122,20 +135,6 @@ bool ProjectManager::newProject(string filename)
 		xmlData += "</interiorOrientation>\n";
 		xmlData += "<exteriorOrientation>\n";
 		xmlData += "</exteriorOrientation>\n";
-		/*
-  xmlData += "<photogrammetricBlock>\n";
-  xmlData += "</photogrammetricBlock>\n";
-  xmlData += "<stereoPairs>\n";
-  xmlData += "</stereoPairs>\n";
-  xmlData += "<normalization>\n";
-  xmlData += "</normalization>\n";
-  xmlData += "<stereoPloting>\n";
-  xmlData += "</stereoPloting>\n";
-  xmlData += "<dem>\n";
-  xmlData += "</dem>\n";
-  xmlData += "<orthorectification>\n";
-  xmlData += "</orthorectification>\n";
-  */
 		xmlData += "</efotoPhotogrammetricProject>";
 
 		manager->xmlSetData(xmlData);
@@ -201,25 +200,6 @@ bool ProjectManager::loadFile(string filename)
 			}
 			else
 			{
-				/* for debugs
-	int error = updater.getError();
-	if (error == 1)
-	{
-	 cout << "(referenceBuild < thisXmlBuid) is not supported";
-	}
-	if (error == 2)
-	{
-	 cout << "buildOne (referenceBuild) is invalid";
-	}
-	if (error == 3)
-	{
-	 cout << "buildTwo (thisXmlBuild) is invalid";
-	}
-	if (error == 4)
-	{
-	 cout << "xml string passed is empty";
-	}
-   */
 				return false;
 			}
 			// Aqui deve entrar um codigo para validar o XML.
@@ -232,7 +212,6 @@ bool ProjectManager::loadFile(string filename)
 			treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
 			return true;
 		}
-		//else cout << "Unable to open file"; // for debugs
 		return false;
 	}
 
@@ -262,9 +241,6 @@ int ProjectManager::informFileVersionError()
 {
 	if (manager != NULL && updater != NULL)
 	{
-		//EDomElement ede(manager->xmlGetData()); //deprecated
-		//if ("1.0.20" == ede.elementByTagName("efotoPhotogrammetricProject").attribute("version"))//deprecated
-		//return true;//deprecated
 		return updater->getError();
 	}
 	return 0;
@@ -423,21 +399,21 @@ bool ProjectManager::startModule(string module, int image)
 	if (manager != NULL)
 	{
 		if (module.compare("InteriorOrientation") == 0)
-			manager->setNextModule(3);
+			manager->setNextModule(EFotoManager::NEXT_IO);
 		else if (module.compare("SpatialRessection") == 0)
-			manager->setNextModule(4);
+			manager->setNextModule(EFotoManager::NEXT_SR);
 		else if (module.compare("FotoTriangulation") == 0)
-			manager->setNextModule(5);
+			manager->setNextModule(EFotoManager::NEXT_PT);
 		else if (module.compare("DEM-Extraction") == 0)
-			manager->setNextModule(6);
+			manager->setNextModule(EFotoManager::NEXT_DEM);
 		else if (module.compare("Ortho-rectification") == 0)
-			manager->setNextModule(7);
+			manager->setNextModule(EFotoManager::NEXT_ORTHO);
 		else if (module.compare("StereoPlotter") == 0)
-			manager->setNextModule(8);
-                else if (module.compare("Report") == 0)
-                        manager->setNextModule(9);
-                else if (module.compare("PT-Report") == 0)
-                        manager->setNextModule(10);
+			manager->setNextModule(EFotoManager::NEXT_SP);
+		else if (module.compare("Report") == 0)
+			manager->setNextModule(EFotoManager::NEXT_Report);
+		else if (module.compare("PT-Report") == 0)
+			manager->setNextModule(EFotoManager::NEXT_PTReport);
 		manager->setNextImage(image);
 		manager->exec();
 		return true;

@@ -1,15 +1,26 @@
 /**************************************************************************
-							ProjectManager.h
+ProjectManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
 
-#include "EObject.h"
-#include "ETreeModel.h"
-#include "PositionMatrix.h"
-#include "ProjectUserInterface.h"
 #include "XmlUpdater.h"
 
 namespace br {
@@ -19,6 +30,8 @@ namespace efoto {
 
 class ProjectUserInterface;
 class EFotoManager;
+class ETreeModel;
+class EObject;
 
 /**
 * \file ProjectManager.h
@@ -32,7 +45,6 @@ class ProjectManager
 
 	EFotoManager* manager;
 	ProjectUserInterface* myInterface;
-	//FILE* xmlFile; // attribute banned for lack of use
 	XmlUpdater* updater;
 	ETreeModel* treeModel;
 
@@ -134,9 +146,6 @@ public:
 	* \return ETreeModel Modelo de dados do projeto.
 	*/
 	ETreeModel* getTreeModel();
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
-	/**Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys Image Keys */
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
 	/**
 	* \brief Método que retorna o deque de Image Keys.
 	* \return deque<int> O deque de Image Keys.

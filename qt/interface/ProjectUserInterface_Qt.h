@@ -1,9 +1,21 @@
 #ifndef PROJECTUSERINTERFACE_QT_H
 #define PROJECTUSERINTERFACE_QT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-#include "ETreeModel.h"
-#include "EDom.h"
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ui_FormProject.h"
 #include "ProjectUserInterface.h"
 
@@ -15,15 +27,9 @@
 #include "ImageForm.h"
 #include "PointsForm.h"
 #include "PointForm.h"
-#include "AboutForm.h"
 #include "ControlButtons.h"
-#include "LoadingScreen.h"
 
-#include <QList>
-#include <QModelIndex>
 #include <QStackedWidget>
-#include <QScrollArea>
-#include <QFile>
 
 
 namespace br {
@@ -71,7 +77,6 @@ protected slots:
 public:
 
 	// Other Methods
-	//
 	bool exec();
 
 	void viewHeader();
@@ -95,17 +100,13 @@ public:
 	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
 	string edomImageToTxt(EDomElement images);
 
-	// Inserido pelo Paulo 05/09/2011
-	//insere as coordenadas digitais no ponto
 	bool insertDigitalCoordinates(QString coordinates);
-        bool availableSR();
+	bool availableSR();
 	bool availablePhotoTri();
-        bool availableStereoPlotter();
-        bool availableDemExtraction();
-        bool availableOrthoImage();
+	bool availableStereoPlotter();
+	bool availableDemExtraction();
+	bool availableOrthoImage();
 	void updateLabelFileName();
-	//bool availabeOI();
-	//bool availableOE();
 
 
 public slots:
@@ -120,8 +121,8 @@ public slots:
 	virtual void executeDEM();
 	virtual void executeOrtho();
 	virtual void executeSP();
-        virtual void executeReport();
-        virtual void executePTReport();
+	virtual void executeReport();
+	virtual void executePTReport();
 	virtual void processTreeClick(QModelIndex);
 	virtual void exportSPFile();
 
@@ -164,30 +165,26 @@ public slots:
 	// Debug...
 	virtual void toggleDebug();
 	virtual void showAbout();
-
+	
 	void importPointsFromTxt();
 	void exportPointsToTxt();
+	void importImagesBatch();
+
 	void importImagesFromTxt();
 	void importPointsFromTxt2();
 
-	/*Paulo importar imagens em batch 26/01/12*/
-	void importImagesBatch();
     string addImageXml(QString fileName, int keyImage, int dpi = 0);
     string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi = 0 );
-
-	/*Paulo importar Ois em batch 26/01/12*/
 	void importOIDigitalMarks();
 	string OIToXml(QStringList oiMarks, int imageKey);
-	//void exportImagesToTxt();
 
 	void importDigitalCoordinatesFromTxt();
-
 	void updateCurrentForm();
 	void deleteEmptyPoints();
 
-
 	void exportDigitalCoordinates();
 	string edomDigitalCoordinatesPointToTxt(EDomElement points);
+
 };
 
 } // namespace efoto
