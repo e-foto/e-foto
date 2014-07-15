@@ -285,7 +285,8 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 	EDomElement xmlSR = root.elementByTagAtt("imageSR", "image_key", Conversion::intToString(imageId));
 	if (xmlEO.getContent().compare("") == 0 || xmlSR.getContent().compare("") == 0)
 		return NULL;
-	SpatialRessection* newEO = new SpatialRessection();
+
+    SpatialRessection* newEO = new SpatialRessection();
         newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
 	EOs.push_back(newEO);
 
@@ -739,25 +740,28 @@ bool EFotoManager::execSR(int id)
 {
 	bool result;
     nextModule = NEXT_RELOAD;
-	Image* srImage = instanceImage(id);
+    Image* srImage = instanceImage(id);
+    SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
+    if (sr == NULL)
+    {
+        sr = new SpatialRessection(id);
+        EOs.push_back(sr);
+    }
 	if (srImage == NULL)
 	{
 		return false;
 	}
+	sr->setImageId(id);
+	sr->setImage(srImage);
 	Sensor* srSensor = instanceSensor(srImage->getSensorId());
 	Flight* srFlight = instanceFlight(srImage->getFlightId());
 	InteriorOrientation* srIO = instanceIO(id);
-	SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
+
 	Terrain* srTerrain = instanceTerrain();
 	srFlight->setTerrain(srTerrain);
-	if (sr == NULL)
-	{
-		sr = new SpatialRessection(id);
-		EOs.push_back(sr);
-	}
+
 	instanceAllPoints();
 	spatialRessection = new SRManager(this, srTerrain, srSensor, srFlight, srImage, srIO, sr, points);
-
 	result = spatialRessection->exec();
 
 	return result;

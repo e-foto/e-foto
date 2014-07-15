@@ -1,3 +1,19 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef ETABLEWIDGET_H
 #define ETABLEWIDGET_H
 
@@ -20,7 +36,7 @@ namespace efoto {
 * \class ETableWidget
 * \brief Classe que gerencia as tabelas reimplementada da QTableWidget
 * \copyright E-Foto group
-* \author Paulo AndrÈ Batista Pupim e Irving Badolato
+* \author Paulo Andr√© Batista Pupim e Irving Badolato
 */
 
 class ETableWidget: public QTableWidget
@@ -48,40 +64,40 @@ public:
 	ETableWidget(QWidget *parent=0);
 
 	/**
-	* \brief Construtor com valores numÈricos e alguma formataÁ„o para exibiÁ„o da tabela
-	* \param values: Matriz contendo os valores numÈricos a serem exibidos na tabela
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
+	* \brief Construtor com valores num√©ricos e alguma formata√ß√£o para exibi√ß√£o da tabela
+	* \param values: Matriz contendo os valores num√©ricos a serem exibidos na tabela
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
 	* \param parent: Ponteiro para objeto QWidget pai
 	*/
 	ETableWidget(Matrix values,char mode='e',int precision=6,QWidget *parent=0);
 
 	/**
 	* \brief Metodo para inserir valores numericos na tabela a partir da coluna zero e linha zero
-	* \param values: Matriz contendo os valores numÈricos a serem exibidos na tabela
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
+	* \param values: Matriz contendo os valores num√©ricos a serem exibidos na tabela
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
 	*/
 	void setTableData(Matrix values,char mode='e',int precision=6);
 
 	/**
 	* \brief Metodo para inserir valores numericos na tabela a partir da coluna zero e linha zero
-	* \param xml: Objeto EDomElement com o xml contendo os valores numÈricos a serem exibidos na tabela
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
+	* \param xml: Objeto EDomElement com o xml contendo os valores num√©ricos a serem exibidos na tabela
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
 	*/
 	void setTableData(EDomElement xml,char mode='e',int precision=6);
 
 	/**
 	* \brief Metodo para inserir valores numericos na tabela a partir da coluna zero e linha zero
-	* \param xmlString: String com o xml contendo os valores numÈricos a serem exibidos na tabela
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
+	* \param xmlString: String com o xml contendo os valores num√©ricos a serem exibidos na tabela
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
 	*/
 	void setTableData(string xmlString,char mode='e',int precision=6);
 
 	/**
-	*  \brief Metodo para redimensionar a tabela de forma que ela fique em um tamanho compacto, tentando sempre n„o prejudicar a visulaizaÁ„o dos dados
+	*  \brief Metodo para redimensionar a tabela de forma que ela fique em um tamanho compacto, tentando sempre n√£o prejudicar a visulaiza√ß√£o dos dados
 	*/
 	void resizeTable();
 
@@ -92,13 +108,13 @@ public:
 	void enableAutoCopy(bool enable=true);
 
 	/**
-	* \brief Metodo que permite especificar a partir de onde ser· colocada matriz com os valores numericos nas tabelas
+	* \brief Metodo que permite especificar a partir de onde ser√° colocada matriz com os valores numericos nas tabelas
 	* \param input : Matriz que contem os valores numericos a serem colocados na tabela
 	* \param row   : Linha inicial do preenchimento das celulas
 	* \param column: Coluna inicial do preenchimento das celulas
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
-	* \attention Cuidado ao sobrescrever celulas j· preenchidas
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
+	* \attention Cuidado ao sobrescrever celulas j√° preenchidas
 	*/
 	void putIn(Matrix input, int row, int column,char mode='e',int precision=6);
 
@@ -124,30 +140,30 @@ public:
 	*/
 
 	/**
-	* \brief Metodo auxiliar para apagar seleÁ„o de celulas
+	* \brief Metodo auxiliar para apagar sele√ß√£o de celulas
 	*/
 	void clearSelection();
 
 	/**
-	* \brief Metodo para alterar o modo de exibiÁ„o dos valores numÈricos
-	* \param newMode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
+	* \brief Metodo para alterar o modo de exibi√ß√£o dos valores num√©ricos
+	* \param newMode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
 	*/
 	void setMode(char newMode);
 
 	/**
-	* \brief Metodo para alterar a precis„o com que os valores numÈricos sao exibidos
-	* \param newDecimals: Precis„o com a qual os valores numericos ser„o exibidos
+	* \brief Metodo para alterar a precis√£o com que os valores num√©ricos sao exibidos
+	* \param newDecimals: Precis√£o com a qual os valores numericos ser√£o exibidos
 	*/
 	void setDecimals(int newDecimals);
 
 	/**
 	* \brief Metodo para retornar o modo atual
-	* \return char : Caracter contendo o modo de exibiÁ„o: 'e' È formato exponencial , 'f' È formato decimal
+	* \return char : Caracter contendo o modo de exibi√ß√£o: 'e' √© formato exponencial , 'f' √© formato decimal
 	*/
 	char getMode();
 
 	/**
-	* \brief Metodo para retornar a precis„o atual
+	* \brief Metodo para retornar a precis√£o atual
 	* \return int : Inteiro contendo o numero de casas decimais exibidas
 	*/
 	int getDecimals();
@@ -162,23 +178,23 @@ public slots:
 	void autoCopy();
 
 	/**
-	* \brief Override de metodo adequaÁ„o do connect com o signal da QCheckBox, a saber, "stateChanged(int)"
-	* \param int : Inteiro com o codigo de conex„o com QCheckBox: a saber 0 desconecta e 1 conecta sinal
+	* \brief Override de metodo adequa√ß√£o do connect com o signal da QCheckBox, a saber, "stateChanged(int)"
+	* \param int : Inteiro com o codigo de conex√£o com QCheckBox: a saber 0 desconecta e 1 conecta sinal
 	*/
 	void enableAutoCopy(int enable);
 
 	/**
-	* \brief Atualiza os valores da tabela para a formataÁao informada nos parametros
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 'e' È formato exponencial , 'f' È formato decimal
-	* \param precision: Precis„o com a qual os valores numericos ser„o exibidos
+	* \brief Atualiza os valores da tabela para a formata√ßao informada nos parametros
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 'e' √© formato exponencial , 'f' √© formato decimal
+	* \param precision: Precis√£o com a qual os valores numericos ser√£o exibidos
 	* \attention Comportamento impreciso se houver valorer nao-numericos
 	*/
 
 	void updateTableValues(char mode='f', int precision=4);
 
 	/**
-	* \brief Atualiza os valores da tabela para a formataÁao informada no parametro
-	* \param mode  : Tipo de exibiÁ„o com que os valores numÈricos aparecer„o: 0 È formato exponencial , 1 È formato decimal
+	* \brief Atualiza os valores da tabela para a formata√ßao informada no parametro
+	* \param mode  : Tipo de exibi√ß√£o com que os valores num√©ricos aparecer√£o: 0 √© formato exponencial , 1 √© formato decimal
 	* \attention Comportamento impreciso se houver valorer nao-numericos
 	*/
 	void updateModoValues(int modo=0);
@@ -194,7 +210,8 @@ public slots:
 	//void avaliateType(QTableWidgetItem *);
 	//void avaliateType(int row, int col);
 	//void validateItem();
-
+signals:
+    void focusReceived();
 /*
 signals:
 	void focusReceived();
@@ -213,7 +230,7 @@ protected:
 
 	/**
 	* \brief Metodo reimplementado do QTableWidget. Quando o usuario pressiona ctrl+c, o conteudo das celulas selecionadas e posto na area de transferencia
-	* \param Objeto de evento contendo as informaÁoes sobre as teclas pressionadas
+	* \param Objeto de evento contendo as informa√ßoes sobre as teclas pressionadas
 	*/
 	void keyPressEvent(QKeyEvent *event);
 
