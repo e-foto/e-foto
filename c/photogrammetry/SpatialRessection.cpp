@@ -1,7 +1,22 @@
 /**************************************************************************
 	  SpatialRessection.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SpatialRessection.h"
 #include "Image.h"
 #include "Point.h"
@@ -24,18 +39,20 @@ namespace efoto {
  *
  */
 SpatialRessection::SpatialRessection()
+    : pointForFlightDirectionAvailable(false),
+      flightDirectionAvailable(false),
+      totalIterations(0),
+      gnssConverged(false),
+      insConverged(false),
+      useDistortions(true)
 {
-	pointForFlightDirectionAvailable = flightDirectionAvailable = false;
-	totalIterations = 0;
-	gnssConverged = false;
-	insConverged = false;
-
-	if (myImage != NULL)
+    if (myImage != NULL){
 		rt = new RayTester(myImage);
-	else
+        }
+    else {
 		rt = NULL;
+   }
 
-	useDistortions = true;
 }
 
 /**
@@ -48,12 +65,13 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
 	totalIterations = 0;
 	gnssConverged = false;
 	insConverged = false;
-
-	if (myImage != NULL)
+  //  myImage = image(myImageId);
+    if (myImage != NULL){
 		rt = new RayTester(myImage);
-	else
-		rt = NULL;
-
+        }
+    else {
+        rt = NULL;
+   }
 	useDistortions = true;
 }
 
@@ -693,8 +711,12 @@ void SpatialRessection::generateX0()
 void SpatialRessection::initialize()
 {
 		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
-	{
-		rt->setImage(myImage);
+    {
+        if (rt == NULL)
+            rt = new RayTester(myImage);
+        else
+            rt->setImage(myImage);
+
 		rt->setIOParameters(myImage->getIO()->getXa());
 
 		generateInitialA();
@@ -702,6 +724,7 @@ void SpatialRessection::initialize()
 		generateInitialP();
 
 		// Calculating X00 and Y00.
+
 		double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
 		double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
 
