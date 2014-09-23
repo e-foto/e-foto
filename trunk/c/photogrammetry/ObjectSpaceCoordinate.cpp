@@ -1,8 +1,26 @@
 /*******************************************************************************
    ObjectSpaceCoordinate.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ObjectSpaceCoordinate.h"
+#include "PositionMatrix.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -15,7 +33,7 @@ ObjectSpaceCoordinate::ObjectSpaceCoordinate()
 	sigmaAvailable = false;
 }
 
-ObjectSpaceCoordinate::ObjectSpaceCoordinate(string myUnit, double myX, double myY, double myZ, double mySigmaX, double mySigmaY, double mySigmaZ, double mySigmaXY, double mySigmaXZ, double mySigmaYZ)
+ObjectSpaceCoordinate::ObjectSpaceCoordinate(std::string myUnit, double myX, double myY, double myZ, double mySigmaX, double mySigmaY, double mySigmaZ, double mySigmaXY, double mySigmaXZ, double mySigmaYZ)
 {
 	setUnit(myUnit);
 	setX(myX);
@@ -88,7 +106,7 @@ void ObjectSpaceCoordinate::setSigmaYZ(double newSigmaYZ)
 	sigmaYZ = newSigmaYZ;
 }
 
-void ObjectSpaceCoordinate::setUnit(string newUnit)
+void ObjectSpaceCoordinate::setUnit(std::string newUnit)
 {
 	unit = newUnit;
 }
@@ -138,7 +156,7 @@ double ObjectSpaceCoordinate::getSigmaYZ()
 	return sigmaYZ;
 }
 
-string ObjectSpaceCoordinate::getUnit()
+std::string ObjectSpaceCoordinate::getUnit()
 {
 	return unit;
 }
@@ -202,29 +220,29 @@ Matrix ObjectSpaceCoordinate::getPositionSigmas()
 	return positionSigmas;
 }
 
-string ObjectSpaceCoordinate::objectType(void)
+std::string ObjectSpaceCoordinate::objectType(void)
 {
 	return "ObjectSpaceCoordinate";
 }
 
-string ObjectSpaceCoordinate::objectAssociations(void)
+std::string ObjectSpaceCoordinate::objectAssociations(void)
 {
 	return "";
 }
 
-bool ObjectSpaceCoordinate::is(string s)
+bool ObjectSpaceCoordinate::is(std::string s)
 {
 	return (s == "ObjectSpaceCoordinate" ? true : false);
 }
 
-void ObjectSpaceCoordinate::xmlSetData(string xml)
+void ObjectSpaceCoordinate::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	unit = root.attribute("uom");
 	EDomElement xmlPos = root.elementByTagName("gml:pos");
 	if (xmlPos.isAvailable())
 	{
-		deque<double> gmlPosValues = root.elementByTagName("gml:pos").toGmlPos();
+        std::deque<double> gmlPosValues = root.elementByTagName("gml:pos").toGmlPos();
 		x = gmlPosValues.at(0);
 		y = gmlPosValues.at(1);
 		z = gmlPosValues.at(2);
@@ -249,9 +267,9 @@ void ObjectSpaceCoordinate::xmlSetData(string xml)
 	setPositionSigmas(sigmaMatrix);
 }
 
-string ObjectSpaceCoordinate::xmlGetData()
+std::string ObjectSpaceCoordinate::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<spatialCoordinates uom=\"" << unit << "\">\n";
 	if (available)
 		result << "<gml:pos>" << Conversion::doubleToString(x) << " " << Conversion::doubleToString(y) << " " << Conversion::doubleToString(z) << "</gml:pos>\n";

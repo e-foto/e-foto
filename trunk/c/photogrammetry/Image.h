@@ -4,8 +4,23 @@
 
 #ifndef IMAGE_H
 #define IMAGE_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-#include "EObject.h"
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+//#include "EObject.h"
 #include "ImageFiducialMark.h"
 #include "ObjectSpaceCoordinate.h"
 
@@ -40,20 +55,20 @@ class Image : public EObject
 	int sensorId;
 	int flightId;
 	unsigned int resolution;
-	string resolutionUnit;
+    std::string resolutionUnit;
 	unsigned int width;
 	unsigned int height;
-	string filename;
-	string filepath;
+    std::string filename;
+    std::string filepath;
     double flightDirection;
     bool flightDirectionAvailable;
 
-	string imageId;
+    std::string imageId;
 	ObjectSpaceCoordinate spatialCoordinates;
 
 	// IMPORTANTE: Gambiarra temporaria...
 	bool gnssAvailable; bool gnssSigmaAvailable; bool insAvailable; bool insSigmaAvailable;
-	string gnssType; string insType;
+    std::string gnssType; std::string insType;
 	double gnssX0; double gnssY0; double gnssZ0;
 	Matrix gnssSigma;
 	double insOmega; double insPhi; double insKappa;
@@ -61,7 +76,7 @@ class Image : public EObject
 
 	// Composed objects
 	//
-	deque<ImageFiducialMark> digFidMarks;
+    std::deque<ImageFiducialMark> digFidMarks;
 
 	// Associated objects
 	//
@@ -69,13 +84,12 @@ class Image : public EObject
 	Flight* myFlight;
 	InteriorOrientation* myIO;
 	SpatialRessection* myEO; // Muito em breve (quando definirmos a fototri) a classe usada aqui será uma ExteriorOrientation.
-	deque<Point*> myPoints;
+    std::deque<Point*> myPoints;
 
 public:
 
 	// Constructors and destructors
-	//
-	Image();
+    Image();
 	Image(int myId, int mySensorId); // Constructor with ids only, needed in project use.
 	virtual ~Image();
 
@@ -85,31 +99,31 @@ public:
 	void setSensorId(int newSensorId);
 	void setFlightId(int newFlightId);
 	void setResolution(unsigned int newResolution);
-	void setResolutionUnit(string newResolutionUnit);
+    void setResolutionUnit(std::string newResolutionUnit);
 	void setWidth(unsigned int newWidth);
 	void setHeight(unsigned int newHeight);
-	void setFilename(string newFilename);
-	void setFilepath(string newFilepath);
+    void setFilename(std::string newFilename);
+    void setFilepath(std::string newFilepath);
 	int getId();
 	int getSensorId();
 	int getFlightId();
 	unsigned int getResolution();
-	string getResolutionUnit();
+    std::string getResolutionUnit();
 	unsigned int getWidth();
 	unsigned int getHeight();
-	string getFilename();
-	string getFilepath();
-	string getImageId();
+    std::string getFilename();
+    std::string getFilepath();
+    std::string getImageId();
 	bool isGnssAvailable();
 	bool isInsAvailable();
 	double getGnssX0();
 	double getGnssY0();
 	double getGnssZ0();
-	string getGnssType();
+    std::string getGnssType();
 	double getInsOmega();
 	double getInsPhi();
 	double getInsKappa();
-	string getInsType();
+    std::string getInsType();
 
 	void setFlightDirection(double radianAngle);//Paulo 27/09/11
 	double getFlightDirection();//Paulo 27/09/11
@@ -117,8 +131,8 @@ public:
 
 	// Composed objects accessor methods
 	//
-	void setDigFidMarks(deque<ImageFiducialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
-	deque<ImageFiducialMark> getDigFidMarks(); // Get for all DigFidMarks using deque.
+    void setDigFidMarks(std::deque<ImageFiducialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
+    std::deque<ImageFiducialMark> getDigFidMarks(); // Get for all DigFidMarks using deque.
 
 	void putDigFidMark(ImageFiducialMark newDigFidMark); // Put one DigFidMark between the components of the image.
 	ImageFiducialMark getDigFidMark(int id);
@@ -151,14 +165,14 @@ public:
 	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints //Paulo 27/09/2011
 	// EObject methods
 	//
-	string objectType(void);
-	string objectAssociations(void);
-	bool is(string s);
+    std::string objectType(void);
+    std::string objectAssociations(void);
+    bool is(std::string s);
 
 	// XML methods
 	//
-	void xmlSetData(string xml);
-	string xmlGetData();
+    void xmlSetData(std::string xml);
+    std::string xmlGetData();
 
 	//Other methods
 	//

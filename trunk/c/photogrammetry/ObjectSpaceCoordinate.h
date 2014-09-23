@@ -1,5 +1,21 @@
 #ifndef OBJECTSPACECOORDINATE_H
 #define OBJECTSPACECOORDINATE_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "Coordinate.h"
 
@@ -28,7 +44,7 @@ private:
 	double sigmaXY;
 	double sigmaXZ;
 	double sigmaYZ;
-	string unit;
+    std::string unit;
 
 public:
 
@@ -50,7 +66,7 @@ public:
  * \param mySigmaXZ	Valor de erro conjunto para as direções X e Z.
  * \param mySigmaYZ	Valor de erro conjunto para as direções Y e Z.
  */
-	ObjectSpaceCoordinate(string myUnit, double myX, double myY, double myZ, double mySigmaX = 1, double mySigmaY = 1, double mySigmaZ = 1, double mySigmaXY = 0, double mySigmaXZ = 0, double mySigmaYZ = 0);
+    ObjectSpaceCoordinate(std::string myUnit, double myX, double myY, double myZ, double mySigmaX = 1, double mySigmaY = 1, double mySigmaZ = 1, double mySigmaXY = 0, double mySigmaXZ = 0, double mySigmaYZ = 0);
 
 	/**
  * \brief Construtor que cria uma coordenada de objeto sem erro conhecido usando matrizes.
@@ -123,7 +139,7 @@ public:
  * \brief Método para alterar a unidade em que a coordenada é considerada.
  * \param newUnit	Texto descritor da nova unidade de medidas considerada para a coordenada.
  */
-	void setUnit(string newUnit);
+    void setUnit(std::string newUnit);
 
 	/**
  * \brief Método para retornar o valor X num sistema de coordenadas (X, Y, Z).
@@ -181,9 +197,9 @@ public:
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
- * \return string	Texto descritor da unidade de medidas considerada para a coordenada.
+ * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-	string getUnit();
+    std::string getUnit();
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.
@@ -211,35 +227,35 @@ public:
 
 	/**
  * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
+ * \return std::string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para emitir as associações de uma instância.
- * \return string	Retorna vazio para esta classe.
+ * \return std::string	Retorna vazio para esta classe.
  * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
  */
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
  * \return bool	Retorna verdadeiro caso o nome passado seja ObjectSpaceCoordinate. Retorna falso no caso contrário.
  */
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
- * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe ObjectSpaceCoordinate.
+ * \param xml	std::string contendo o xml com todos os valores de atributos adequados a uma instância da classe ObjectSpaceCoordinate.
  */
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe ObjectSpaceCoordinate.
+ * \return std::string	Retorna o string contendo o xml para uma instância da classe ObjectSpaceCoordinate.
  */
-	string xmlGetData();
+    std::string xmlGetData();
 
 };
 

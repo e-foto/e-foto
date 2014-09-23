@@ -1,4 +1,36 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "PhotoTriReport.h"
+#include "ProjectiveRay.h"
+#include "Project.h"
+#include "EFotoManager.h"
+#include "SpatialIntersection.h"
+#include "SpatialRessection.h"
+#include "InteriorOrientation.h"
+#include "Image.h"
+#include "Point.h"
+#include "FrameSensor.h"
+#include "StereoPair.h"
+
+#include "math.h"
+
+#include <iomanip>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -17,7 +49,7 @@ PhotoTriReport::PhotoTriReport(EFotoManager* newManager)
 int PhotoTriReport::createReport(char *filename)
 {
     // Open file to save
-    ofstream arq(filename);
+    std::ofstream arq(filename);
     if (arq.fail())
     {
         printf("Problems while saving ...\n");
@@ -56,7 +88,7 @@ int PhotoTriReport::createReport(char *filename)
 
         img = project->allImages().at(i);
 
-        arq << "Point ID" << setw(9) << "Col" << setw(16) << "Row\n" ;
+        arq << "Point ID" << std::setw(9) << "Col" << std::setw(16) << "Row\n" ;
 
         for (int j=0; j< img->countPoints(); j++)
         {
@@ -64,7 +96,7 @@ int PhotoTriReport::createReport(char *filename)
             col = (double) pnt->getImageCoordinate(img->getId()).getCol();
             row = (double) pnt->getImageCoordinate(img->getId()).getLin();
 
-            arq << setw(4) << pnt->getId() << setw(15) << Conversion::doubleToString(col,3) << setw(15) << Conversion::doubleToString(row,3) << "\n";
+            arq << std::setw(4) << pnt->getId() << std::setw(15) << Conversion::doubleToString(col,3) << std::setw(15) << Conversion::doubleToString(row,3) << "\n";
         }
 
         arq << "\n";
@@ -72,8 +104,8 @@ int PhotoTriReport::createReport(char *filename)
         io = img->getIO();
 
         arq << "Affine coefficients from image (pixels) to film (millimeters):\n";
-        arq << setw(9) << "A0 " << setw(20) << "A1" << setw(20) << "A2" << setw(20) << "B0" << setw(20) << "B1" << setw(20) << "B2\n";
-        arq << Conversion::doubleToString(io->getXa().get(1,1),10) << setw(20) << Conversion::doubleToString(io->getXa().get(2,1),10) << setw(20) << Conversion::doubleToString(io->getXa().get(3,1),10) << setw(20) << Conversion::doubleToString(io->getXa().get(4,1),10) << setw(20) << Conversion::doubleToString(io->getXa().get(5,1),10) << setw(20) << Conversion::doubleToString(io->getXa().get(6,1),10) << "\n";
+        arq << std::setw(9) << "A0 " << std::setw(20) << "A1" << std::setw(20) << "A2" << std::setw(20) << "B0" << std::setw(20) << "B1" << std::setw(20) << "B2\n";
+        arq << Conversion::doubleToString(io->getXa().get(1,1),10) << std::setw(20) << Conversion::doubleToString(io->getXa().get(2,1),10) << std::setw(20) << Conversion::doubleToString(io->getXa().get(3,1),10) << std::setw(20) << Conversion::doubleToString(io->getXa().get(4,1),10) << std::setw(20) << Conversion::doubleToString(io->getXa().get(5,1),10) << std::setw(20) << Conversion::doubleToString(io->getXa().get(6,1),10) << "\n";
 
         arq << "\n\n";
     }
@@ -84,7 +116,7 @@ int PhotoTriReport::createReport(char *filename)
     arq << "Photo-triangulation results:\n";
     arq << "============================\n\n";
 
-    string converged = "Yes";
+    std::string converged = "Yes";
     if (!project->photoTri()->getConverged()) converged = "No";
 
     arq << "Number of iterations: " << project->photoTri()->getTotalIterations() << "\n";
@@ -99,49 +131,49 @@ int PhotoTriReport::createReport(char *filename)
     }
 
     arq << "The Exterior Orientation parameters:\n";
-    arq << "Image ID " << setw(15) << "X0 " << setw(20) << "Y0" << setw(20) << "Z0" << setw(23) << "Omega" << setw(20) << "Phy" << setw(20) << "Kappa\n";
+    arq << "Image ID " << std::setw(15) << "X0 " << std::setw(20) << "Y0" << std::setw(20) << "Z0" << std::setw(23) << "Omega" << std::setw(20) << "Phy" << std::setw(20) << "Kappa\n";
 
     for (int i=0; i<no_imgs; i++)
     {
         img = project->allImages().at(i);
         eo = img->getEO();
-        arq << img->getId() << setw(30) << Conversion::doubleToString(eo->getXa().get(1,1),10) << setw(20) << Conversion::doubleToString(eo->getXa().get(2,1),10) << setw(20) << Conversion::doubleToString(eo->getXa().get(3,1),10) << setw(20) << Conversion::doubleToString(eo->getXa().get(4,1)*rad_to_deg,10) << setw(20) << Conversion::doubleToString(eo->getXa().get(5,1)*rad_to_deg,10) << setw(20) << Conversion::doubleToString(eo->getXa().get(6,1)*rad_to_deg,10) << "\n";
+        arq << img->getId() << std::setw(30) << Conversion::doubleToString(eo->getXa().get(1,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(2,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(3,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(4,1)*rad_to_deg,10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(5,1)*rad_to_deg,10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(6,1)*rad_to_deg,10) << "\n";
     }
 
     arq << "\n\n";
     arq << "The Interior Orientation parameters:\n";
-    arq << "Image ID " << setw(7) << "f(mm)" << setw(15) << "x0" << setw(15) << "y0\n";
+    arq << "Image ID " << std::setw(7) << "f(mm)" << std::setw(15) << "x0" << std::setw(15) << "y0\n";
     Sensor * sensor;
     for (int i=0; i<no_imgs; i++)
     {
         img = project->allImages().at(i);
         sensor = img->getSensor();
-        arq << img->getId() << setw(17) << Conversion::doubleToString(sensor->getFocalDistance(),5) << setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getXi(),5) << setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getEta(),5) << "\n";
+        arq << img->getId() << std::setw(17) << Conversion::doubleToString(sensor->getFocalDistance(),5) << std::setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getXi(),5) << std::setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getEta(),5) << "\n";
     }
 
     arq << "\n\n";
 
     arq << "The residuals of control points (meters):\n";
-    arq << "Point ID " << setw(13) << "rX " << setw(15) << "rY" << setw(15) << "rZ\n";
+    arq << "Point ID " << std::setw(13) << "rX " << std::setw(15) << "rY" << std::setw(15) << "rZ\n";
 
     Matrix mat_aux = calculateXYZerror();
 
     for (int i=1; i<=mat_aux.getRows(); i++)
-        arq << int(mat_aux.get(i,4)) << setw(22) << Conversion::doubleToString(mat_aux.get(i,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << setw(15) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
+        arq << int(mat_aux.get(i,4)) << std::setw(22) << Conversion::doubleToString(mat_aux.get(i,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
 
     mat_aux = calculateAvgStd(mat_aux);
 
-    arq << "Average" << setw(16) << Conversion::doubleToString(mat_aux.get(1,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(1,2),5) << setw(15) << Conversion::doubleToString(mat_aux.get(1,3),5) << "\n";
-    arq << "Std.dev." << setw(15) << Conversion::doubleToString(mat_aux.get(2,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(2,2),5) << setw(15) << Conversion::doubleToString(mat_aux.get(2,3),5) << "\n\n\n";
+    arq << "Average" << std::setw(16) << Conversion::doubleToString(mat_aux.get(1,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(1,2),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(1,3),5) << "\n";
+    arq << "Std.dev." << std::setw(15) << Conversion::doubleToString(mat_aux.get(2,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(2,2),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(2,3),5) << "\n\n\n";
 
 
     arq << "The coordinates of object points:\n";
-    arq << "Image ID " << setw(13) << "X " << setw(15) << "Y" << setw(15) << "Z" << setw(30) << "Measured in image(s)\n";
+    arq << "Image ID " << std::setw(13) << "X " << std::setw(15) << "Y" << std::setw(15) << "Z" << std::setw(30) << "Measured in image(s)\n";
 
     for (int i=0; i<project->allPoints().size(); i++)
     {
         pnt = project->allPoints().at(i);
-        arq << pnt->getId() << setw(25) << Conversion::doubleToString(pnt->getObjectCoordinate().getX(),5) << setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getY(),5) << setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getZ(),5) << setw(10);
+        arq << pnt->getId() << std::setw(25) << Conversion::doubleToString(pnt->getObjectCoordinate().getX(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getY(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getZ(),5) << std::setw(10);
 
         // Add images where points appears
         for (int j=0; j < pnt->countImages(); j++)
@@ -153,17 +185,17 @@ int PhotoTriReport::createReport(char *filename)
     arq << "\n\n";
 
     arq << "The residuals of control points reprojected to the image (pixels):\n";
-    arq << "Point ID " << setw(13) << "Image ID " << setw(10) << "Vx" << setw(15) << "Vy\n";
+    arq << "Point ID " << std::setw(13) << "Image ID " << std::setw(10) << "Vx" << std::setw(15) << "Vy\n";
 
     mat_aux = calculatePixelerror();
 
     for (int i=1; i<=mat_aux.getRows(); i++)
-        arq << int(mat_aux.get(i,3)) << setw(13) << int(mat_aux.get(i,4)) << setw(20) << Conversion::doubleToString(mat_aux.get(i,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << "\n";
+        arq << int(mat_aux.get(i,3)) << std::setw(13) << int(mat_aux.get(i,4)) << std::setw(20) << Conversion::doubleToString(mat_aux.get(i,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << "\n";
 
     mat_aux = calculateAvgStd(mat_aux);
 
-    arq << "Average" << setw(27) << Conversion::doubleToString(mat_aux.get(1,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(1,2),5) << "\n";
-    arq << "Std.dev." << setw(26) << Conversion::doubleToString(mat_aux.get(2,1),5) << setw(15) << Conversion::doubleToString(mat_aux.get(2,2),5) << "\n\n";
+    arq << "Average" << std::setw(27) << Conversion::doubleToString(mat_aux.get(1,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(1,2),5) << "\n";
+    arq << "Std.dev." << std::setw(26) << Conversion::doubleToString(mat_aux.get(2,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(2,2),5) << "\n\n";
 
     arq << "End of report.";
 

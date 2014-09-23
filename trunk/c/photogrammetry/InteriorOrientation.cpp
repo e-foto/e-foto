@@ -1,12 +1,32 @@
 /**************************************************************************
 		  InteriorOrientation.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "InteriorOrientation.h"
 #include "SensorWithFiducialMarks.h"
 #include "SensorWithKnowDimensions.h"
 #include "SensorWithKnowParameters.h"
+#include "PositionMatrix.h"
 #include "Image.h"
+
+#include <stdlib.h>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -125,9 +145,9 @@ Image* InteriorOrientation::getImage()
 /**
  *
  */
-string InteriorOrientation::objectType(void)
+std::string InteriorOrientation::objectType(void)
 {
-		stringstream result;
+        std::stringstream result;
 		result << "InteriorOrientation " << imageId;
 		return result.str();
 }
@@ -135,7 +155,7 @@ string InteriorOrientation::objectType(void)
 /**
  *
  */
-string InteriorOrientation::objectAssociations(void)
+std::string InteriorOrientation::objectAssociations(void)
 {
 		return myImage->objectType();
 }
@@ -143,7 +163,7 @@ string InteriorOrientation::objectAssociations(void)
 /**
  *
  */
-bool InteriorOrientation::is(string s)
+bool InteriorOrientation::is(std::string s)
 {
 		return (s == "InteriorOrientation" ? true : false);
 }
@@ -154,7 +174,7 @@ bool InteriorOrientation::is(string s)
 /**
  *
  */
-void InteriorOrientation::xmlSetData(string xml)
+void InteriorOrientation::xmlSetData(std::string xml)
 {
 		EDomElement root(xml);
 		imageId = Conversion::stringToInt(root.attribute("image_key"));
@@ -169,7 +189,7 @@ void InteriorOrientation::xmlSetData(string xml)
 		//La.xmlSetData(root.elementByTagName("La"));
 		myQuality.xmlSetData(root.elementByTagName("quality").getContent());
 
-		deque<EDomElement> xmlFiducialMarks = root.elementsByTagName("fiducialMark");
+        std::deque<EDomElement> xmlFiducialMarks = root.elementsByTagName("fiducialMark");
 		if (myImage != NULL)
 		{
 				myImage->clearDigFidMarks();
@@ -185,9 +205,9 @@ void InteriorOrientation::xmlSetData(string xml)
 /**
  *
  */
-string InteriorOrientation::xmlGetData()
+std::string InteriorOrientation::xmlGetData()
 {
-		stringstream result;
+        std::stringstream result;
 		result << "<imageIO type=\"Affine\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
 		result << "<parameters>\n";
 		result << "<Xa>\n";
@@ -206,7 +226,7 @@ string InteriorOrientation::xmlGetData()
 		result << "<fiducialMarks uom=\"#px\">\n";
 		if (myImage != NULL)
 		{
-				deque<ImageFiducialMark> digFidMarks = myImage->getDigFidMarks();
+                std::deque<ImageFiducialMark> digFidMarks = myImage->getDigFidMarks();
 				for (unsigned int i = 0; i < digFidMarks.size(); i++)
 				{
 						result << digFidMarks.at(i).xmlGetData();
@@ -321,7 +341,7 @@ void InteriorOrientation::calculate()
 void InteriorOrientation::generateA()
 {
 		Matrix newMatrix;
-		deque<ImageFiducialMark> myMarks = myImage->getDigFidMarks();
+        std::deque<ImageFiducialMark> myMarks = myImage->getDigFidMarks();
 		unsigned int size = myMarks.size();
 
 		newMatrix.resize(size * 2, 6).zero();

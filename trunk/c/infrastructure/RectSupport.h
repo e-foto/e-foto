@@ -1,5 +1,21 @@
 #ifndef RECTSUPPORT_H
 #define RECTSUPPORT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "EObject.h"
 
@@ -42,7 +58,7 @@ public:
  * \brief Método para emitir o nome de classe.
  * \return string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para retornar o número de colunas da matriz.
@@ -52,9 +68,9 @@ public:
 
 	/**
  * \brief Método para retornar o número de linhas da matriz.
- * \return unsigned	Número de linhas.
+ * \return size_t	Número de linhas.
  */
-	unsigned int getRows() const;
+    size_t getRows() const;
 
 };
 

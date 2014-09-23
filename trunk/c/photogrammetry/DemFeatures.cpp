@@ -1,4 +1,30 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "DemFeatures.h"
+
+#include "MatchingPoints.h"
+
+#include <math.h>
+
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <cstdlib>
 
 namespace br {
 namespace uerj {
@@ -36,7 +62,7 @@ FeatureClass * DemFeatures::getFeatureClass(int classid)
  * 2- Line
  * 3- Polygon
  */
-string DemFeatures::getFeatureTypeName(int ftype)
+std::string DemFeatures::getFeatureTypeName(int ftype)
 {
 	switch (ftype)
 	{
@@ -84,7 +110,7 @@ DemFeature* DemFeatures::getFeatureLink(int feat)
 }
 
 // Returns feature id
-int DemFeatures::addNewFeature(string name, string fdesc, int fclass, int ftype, int layer)
+int DemFeatures::addNewFeature(std::string name, std::string fdesc, int fclass, int ftype, int layer)
 {
 	DemFeature df;
 	df.name = name;
@@ -209,7 +235,7 @@ int DemFeatures::deletePoint(int featid, int pointid)
 	calculateFeatureAttributes(featid);
 }
 
-void DemFeatures::setName(int featid, string _name)
+void DemFeatures::setName(int featid, std::string _name)
 {
 	// Check if feature is valid
 	if (featid < 1 || featid > features.size())
@@ -218,7 +244,7 @@ void DemFeatures::setName(int featid, string _name)
 	features.at(featid-1).name = _name;
 }
 
-string DemFeatures::getName(int featid)
+std::string DemFeatures::getName(int featid)
 {
 	// Check if feature is valid
 	if (featid < 1 || featid > features.size())
@@ -227,7 +253,7 @@ string DemFeatures::getName(int featid)
 	return features.at(featid-1).name;
 }
 
-void DemFeatures::setDescription(int featid, string _desc)
+void DemFeatures::setDescription(int featid, std::string _desc)
 {
 	// Check if feature is valid
 	if (featid < 1 || featid > features.size())
@@ -236,7 +262,7 @@ void DemFeatures::setDescription(int featid, string _desc)
 	features.at(featid-1).description = _desc;
 }
 
-string DemFeatures::getDescription(int featid)
+std::string DemFeatures::getDescription(int featid)
 {
 	// Check if feature is valid
 	if (featid < 1 || featid > features.size())
@@ -309,7 +335,7 @@ int DemFeatures::getNumPoints(int featid)
 }
 
 // Return class id
-int DemFeatures::addFeatureClass(string name, string description, int ccolor, int fcolor)
+int DemFeatures::addFeatureClass(std::string name, std::string description, int ccolor, int fcolor)
 {
 	FeatureClass fc;
 	fc.name = name;
@@ -789,7 +815,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	int p_feat = features.size();
 
 	// Start to read file info
-	ifstream arq(filename); // open the emf file
+    std::ifstream arq(filename); // open the emf file
 
 	if (arq.fail())
 	{
@@ -798,7 +824,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 	}
 
 	// Search for features (search the <EFOTO_FEATURES> tag in the first 20 lines)
-	string tag;
+    std::string tag;
 	bool flag = false;
 	int count=0;
 	while ((!flag) && (!arq.fail()) && (count < 20))
@@ -834,7 +860,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
 		// Else, insert element
 		getline(arq,tag); // 2nd line class
-		df.feature_class = atoi(tag.c_str());
+        df.feature_class = atoi(tag.c_str());
 
 		getline(arq,tag); // 3rd line type of feature
 		if (tag.substr(0,5).compare("Point")==0)
@@ -941,7 +967,7 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 			return 0;
 
 	// Open file to save
-	ofstream arq(filename);
+    std::ofstream arq(filename);
 	if (arq.fail())
 	{
 			printf("Problems while saving ...\n");
@@ -1012,7 +1038,7 @@ int DemFeatures::saveFeatSp165(char *filename, bool append)
 int DemFeatures::exportFeatures(char *filename)
 {
         // Open file to save
-        ofstream arq(filename);
+        std::ofstream arq(filename);
         if (arq.fail())
         {
             printf("Problems while saving ...\n");
@@ -1316,12 +1342,12 @@ bool DemFeatures::isInside(int feat_id, double X, double Y)
 	return true;
 }
 
-string DemFeatures::getFeaturesList()
+std::string DemFeatures::getFeaturesList()
 {
-	stringstream txt;
+    std::stringstream txt;
 	DemFeature df;
 
-	txt << fixed << setprecision(5);
+    txt << std::fixed << std::setprecision(5);
 
 	for (int i=0; i<features.size(); i++)
 	{
@@ -1336,15 +1362,15 @@ string DemFeatures::getFeaturesList()
 	return txt.str();
 }
 
-string DemFeatures::getFeaturesToDisplay(int mode)
+std::string DemFeatures::getFeaturesToDisplay(int mode)
 {
 	// Mode 0 = Digital coordinates
 	// Mode 1 = Terrain coordinartes
 
-	stringstream txt;
+    std::stringstream txt;
 	DemFeature df;
 
-	txt << fixed << setprecision(5);
+    txt << std::fixed << std::setprecision(5);
 
 	// Number of features
 	txt << features.size() << "\n";

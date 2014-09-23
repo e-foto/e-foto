@@ -3,6 +3,9 @@
 *******************************************************************************/
 
 #include "RadiometricTransformation.h"
+#include "Matrix.h"
+
+#include <math.h>
 
 /************************
  * IMAGE NORMALIZATION  *
@@ -122,11 +125,11 @@ int RadiometricTransformation::histmatching(Matrix *m1, Matrix *m2, int levels)
 	// Create mapping function
 	Matrix map(levels,1);
 	double p,q;
-	for (unsigned i=1; i<=levels; i++)
+    for (int i=1; i<=levels; i++)
 	{
 		q = fabs(V.get(i,1) - S.get(1,1));
 		p = 1;
-		for (unsigned k=2; k<=levels; k++)
+        for (int k=2; k<=levels; k++)
 		{
 			if (fabs(V.get(i,1) - S.get(k,1)) < q)
 			{
@@ -207,7 +210,7 @@ Matrix& RadiometricTransformation::imcdf(Matrix *m, int levels)
 
 	// Calculate s = T(r)
 	double p, n = double(m->getRows()*m->getCols());
-	for (unsigned int k=1; k<=levels; k++)
+    for (int k=1; k<=levels; k++)
 	{
 		// Calculate cumulated probability p
 		p = 0.0;

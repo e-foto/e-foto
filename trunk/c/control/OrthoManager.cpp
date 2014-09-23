@@ -1,3 +1,6 @@
+/**************************************************************************
+OrthoManager.cpp
+**************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
@@ -14,9 +17,6 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**************************************************************************
-OrthoManager.cpp
-**************************************************************************/
 
 
 #include "EDom.h"
@@ -25,6 +25,15 @@ OrthoManager.cpp
 #include "EFotoManager.h"
 #include "OrthoUserInterface.h"
 #include "OrthoUserInterface_Qt.h"
+#include "DemGrid.h"
+#include "ProjectiveRay.h"
+#include "Orthorectification.h"
+#include "Interpolation.h"
+#include "Image.h"
+
+#include <math.h>
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -41,7 +50,7 @@ OrthoManager::OrthoManager()
 	status = false;
 }
 
-OrthoManager::OrthoManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
+OrthoManager::OrthoManager(EFotoManager* manager, std::deque<Image*>images, std::deque<ExteriorOrientation*> eos)
 {
 	this->manager = manager;
 	started = false;
@@ -169,11 +178,11 @@ void OrthoManager::loadOrtho(char *filename)
 void OrthoManager::runAllOrthoTogether()
 {
 	// List of all centers
-	vector <int> Cx;
-	vector <int> Cy;
-	vector <int> img_width;
-	vector <int> img_height;
-	vector <ProjectiveRay> pr;
+    std::vector <int> Cx;
+    std::vector <int> Cy;
+    std::vector <int> img_width;
+    std::vector <int> img_height;
+    std::vector <ProjectiveRay> pr;
 
 	// Get image centers in pixels
 	Image *img;
@@ -202,7 +211,7 @@ void OrthoManager::runAllOrthoTogether()
 		// Run ortho-image image by image
 	//
 	OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
-	string filename, strimg;
+    std::string filename, strimg;
 	Matrix img_m;
 
         for (unsigned curr_image=0; curr_image<listAllImages.size(); curr_image++)
@@ -310,7 +319,7 @@ void OrthoManager::runOrthoIndividual(int image)
 	grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
 	Xi_img = Xf; Yi_img = Yf; Xf_img = Xi; Yf_img = Yi;
 	oui->setProgress(0);
-	string strimg = Conversion::intToString(image);
+    std::string strimg = Conversion::intToString(image);
 	oui->setCurrentWork("Calculating DEM bounding box for image "+strimg);
 
 	for (double Y=Yi; Y<Yf; Y+=res_y)
@@ -343,7 +352,7 @@ void OrthoManager::runOrthoIndividual(int image)
 	// Load image as matrix
 	//
 	oui->setCurrentWork("Loading image "+strimg);
-	string filename = img->getFilepath() + "/" + img->getFilename();
+    std::string filename = img->getFilepath() + "/" + img->getFilename();
 		Matrix img_matrix;
 		oui->loadImage(img_matrix, (char *)filename.c_str(), 1.0);
 
@@ -414,13 +423,13 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 
 	if (option == 1)
 	{
-		string base_fname(filename);
-		string ext(".ort");
+        std::string base_fname(filename);
+        std::string ext(".ort");
 		size_t expos = base_fname.find(ext);
-        if (expos != string::npos)
+        if (expos != std::string::npos)
 			base_fname = base_fname.substr(0,expos);
 		base_fname = base_fname + "_";
-		string fname;
+        std::string fname;
 
         for (unsigned i=1; i<=listAllImages.size(); i++)
 		{
@@ -460,7 +469,7 @@ int OrthoManager::orthoRectification(char * filename, int fileType, int option, 
 	}
 
     // Expanção do XML
-    addOrthoToXML(string(filename));
+    addOrthoToXML(std::string(filename));
 
 	return 1;
 }
@@ -477,9 +486,9 @@ void OrthoManager::setProgress(int progress)
 }
 
 //#include <QDebug>
-void OrthoManager::addOrthoToXML(string filename)
+void OrthoManager::addOrthoToXML(std::string filename)
 {
-    stringstream add;
+    std::stringstream add;
     add << "<eoiFilename>";
     add << filename;
     add << "</eoiFilename>";
@@ -494,7 +503,7 @@ void OrthoManager::addOrthoToXML(string filename)
     manager->setSavedState(false);
 }
 
-void OrthoManager::addOrthoToXML2(string filename)
+void OrthoManager::addOrthoToXML2(std::string filename)
 {
     //Fazer
     qDebug("Ortho2: %s",filename.c_str());

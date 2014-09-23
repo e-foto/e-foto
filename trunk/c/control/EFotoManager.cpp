@@ -19,6 +19,9 @@
 */
 #include "EFotoManager.h"
 #include "IOManager.h"
+#include "InteriorOrientation.h"
+#include "ExteriorOrientation.h"
+#include "SpatialRessection.h"
 #include "SRManager.h"
 #include "PTManager.h"
 #include "ProjectManager.h"
@@ -26,6 +29,14 @@
 #include "OrthoManager.h"
 #include "SPManager.h"
 #include "ReportManager.h"
+#include "PhotoTriReport.h"
+#include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
+#include "Point.h"
+#include "Terrain.h"
+#include "Flight.h"
+#include "Image.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -162,7 +173,7 @@ Image* EFotoManager::instanceImage(int id)
 void EFotoManager::instanceAllImages()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
+    std::deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
 	for (unsigned int i = 0 ;i < xmlAllImages.size();i++)
 	{
 		qApp->processEvents();
@@ -187,7 +198,7 @@ void EFotoManager::instanceAllImages()
 void EFotoManager::instanceAllPoints()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
+    std::deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
 
 	for (unsigned int i = 0; i < xmlAllPoint.size(); i++)
 	{
@@ -249,7 +260,7 @@ InteriorOrientation* EFotoManager::instanceIO(int imageId)
 void EFotoManager::instanceAllIOs()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
+    std::deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
 	for (unsigned int i = 0 ;i < xmlAllIOs.size();i++)
 	{
 		qApp->processEvents();
@@ -296,7 +307,7 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 void EFotoManager::instanceAllEOs()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
+    std::deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
 	for (unsigned int i = 0 ;i < xmlAllEOs.size();i++)
 	{
 		qApp->processEvents();
@@ -540,7 +551,7 @@ ExteriorOrientation* EFotoManager::EO(int id)
 /**
  *
  */
-string EFotoManager::getXml(string tagname)
+std::string EFotoManager::getXml(std::string tagname)
 {
 	EDomElement root(xmlData);
 	return root.elementByTagName(tagname).getContent();
@@ -549,7 +560,7 @@ string EFotoManager::getXml(string tagname)
 /**
  *
  */
-string EFotoManager::getXml(string tagname, string att, string value)
+std::string EFotoManager::getXml(std::string tagname, std::string att, std::string value)
 {
 	EDomElement root(xmlData);
 	return root.elementByTagAtt(tagname, att, value).getContent();
@@ -562,7 +573,7 @@ string EFotoManager::getXml(string tagname, string att, string value)
 /**
  *
  */
-string EFotoManager::objectType(void)
+std::string EFotoManager::objectType(void)
 {
 	return "EFotoManager";
 }
@@ -570,7 +581,7 @@ string EFotoManager::objectType(void)
 /**
  *
  */
-string EFotoManager::objectAssociations(void)
+std::string EFotoManager::objectAssociations(void)
 {
 	return "";
 }
@@ -578,7 +589,7 @@ string EFotoManager::objectAssociations(void)
 /**
  *
  */
-bool EFotoManager::is(string s)
+bool EFotoManager::is(std::string s)
 {
 	return (s == "EFotoManager" ? true : false);
 }
@@ -586,12 +597,12 @@ bool EFotoManager::is(string s)
 
 // XML methods
 //
-void EFotoManager::xmlSetData(string xml)
+void EFotoManager::xmlSetData(std::string xml)
 {
 	xmlData = xml;
 }
 
-string EFotoManager::xmlGetData()
+std::string EFotoManager::xmlGetData()
 {
 	return xmlData;
 }
@@ -613,7 +624,7 @@ bool EFotoManager::getSavedState()
 /**
  *
  */
-void EFotoManager::setInterfaceType(string newInterfaceType)
+void EFotoManager::setInterfaceType(std::string newInterfaceType)
 {
 	interfaceType = newInterfaceType;
 }
@@ -621,7 +632,7 @@ void EFotoManager::setInterfaceType(string newInterfaceType)
 /**
  *
  */
-string EFotoManager::getInterfaceType()
+std::string EFotoManager::getInterfaceType()
 {
 	return interfaceType;
 }
@@ -645,7 +656,7 @@ void EFotoManager::setNextImage(int newImage)
 /**
  *
  */
-bool EFotoManager::execProject(string filename)
+bool EFotoManager::execProject(std::string filename)
 {
 	bool result;
     nextModule = NEXT_NONE;
@@ -799,10 +810,12 @@ bool EFotoManager::execSP()
 	{
 		Image* img = images.at(i);
 		Sensor* sensor = instanceSensor(img->getSensorId());
+		Flight* flight = instanceFlight(img->getFlightId());
 		InteriorOrientation* imgIO = instanceIO(img->getId());
 		SpatialRessection* imgEO = (SpatialRessection*)instanceEO(img->getId());
 
 		img->setSensor(sensor);
+		img->setFlight(flight);
 		img->setIO(imgIO);
 		img->setEO(imgEO);
 
@@ -1016,7 +1029,7 @@ void EFotoManager::stopEPR()
 /**
  *
  */
-bool EFotoManager::exec(string filename)
+bool EFotoManager::exec(std::string filename)
 {
 	if (filename != "")
 	{
@@ -1074,7 +1087,7 @@ int EFotoManager::getFreeImageId()
 
 	int result = 0;
 
-	deque<EDomElement> images = EDomElement(getXml("images")).children();
+    std::deque<EDomElement> images = EDomElement(getXml("images")).children();
 	result = 1;
 	for (int i = images.size()-1; i >= 0; i--)
 	{
@@ -1091,7 +1104,7 @@ int EFotoManager::getFreePointId()
 
 	int result = 0;
 
-	deque<EDomElement> points = EDomElement(getXml("points")).children();
+    std::deque<EDomElement> points = EDomElement(getXml("points")).children();
 	result = 1;
 	for (int i = points.size()-1; i >= 0; i--)
 	{

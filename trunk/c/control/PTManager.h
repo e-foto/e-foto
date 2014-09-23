@@ -1,13 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef PTMANAGER_H
 #define PTMANAGER_H
 
-#include "EObject.h"
 #include "BundleAdjustment.h"
-#include "Matrix.h"
-#include "ConvertionsSystems.h"
-#include <QStringList>
-#include <deque>
-#include "PhotoTriReport.h"
 
 namespace br {
 namespace uerj {
@@ -35,42 +46,40 @@ class InteriorOrientation;
 class PTManager
 {
 protected:
-	bool localTopocentricMode;
-	bool started;
-	bool status;
-	bool marksSaveState;
-	bool previousData;
+    EFotoManager* efotoManager;
+    std::deque<Image*> listAllImages;
+    std::deque<InteriorOrientation*> listOis;
+    Sensor *mySensor;
+    Flight *myFlight;
+    Terrain *myTerrain;
 
+    bool marksSaveState;
+    bool started;
+    bool status;
+	bool localTopocentricMode;
+	bool previousData;
 	int maxIterations;
 	double metricConvergency;
 	double angularConvergency;
 
-	EFotoManager* efotoManager;
+
 	PTUserInterface* myInterface;
 
-	Sensor *mySensor;
-	Flight *myFlight;
-	Terrain *myTerrain;
+
 	double flightScale;
 	/***/
-	deque<Image*> listAllImages;
-	deque<Point*> listAllPoints;
-	deque<InteriorOrientation*> listOis;
 
-	deque<Image*> listSelectedImages;
-	deque<Point*> listSelectedPoints;
+    std::deque<Point*> listAllPoints;
+
+
+    std::deque<Image*> listSelectedImages;
+    std::deque<Point*> listSelectedPoints;
 
 	BundleAdjustment* pt;
 	Matrix ENH,spareENH,AFP,MVC,residuos;
 
 public:
-		/**
- * \brief Construtor basico da classe
- * \attention NÃ£o use-o em sua totalidade
- */
-		PTManager();
-
-		/**
+/**
  * \brief Construtor completo da classe para gerenciamento total
  * \param newManager : Gerente geral do software e-foto
  * \param images : Lista com todos os objetos Image cadastrados no projeto atual
@@ -78,21 +87,21 @@ public:
  * \param sensor : Objeto Sensor, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  * \param flight : Objeto Flight, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  */
-		PTManager(EFotoManager* newManager, deque<Image*> images, deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
+        PTManager(EFotoManager* newManager, std::deque<Image*> images, std::deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
 
 		/**
   * \brief Destrutor do objeto
  */
 		~PTManager();
 
-		Matrix getFotoIndice(deque<Matrix*> imgs, deque<Matrix> IOs, deque<Matrix> EOs, int width, int height, Matrix& dim); //(GraphicWorkAround)
+// Matrix getFotoIndice(std::deque<Matrix*> imgs, std::deque<Matrix> IOs, std::deque<Matrix> EOs, int width, int height, Matrix& dim); //(GraphicWorkAround)
 
 		/**
  * \brief Metodo que retorna o nome de arquivo da imagem pelo seu respectiva key no projeto
  * \param imageKey : Key da imagem no projeto
  * \return string : Texto contendo o nome do arquivo da imagem
  */
-		string getImagefile(int imageKey);
+        std::string getImagefile(int imageKey);
 
 		/**
  * \brief Metodo que altera a interface com o usuÃ¡rio
@@ -159,7 +168,7 @@ public:
  * \return Matrix : Matriz com as coordenadas digitais da imagem onde cada linha Ã© a cooordenada de um ponto na sequencia: coluna , linha
  * \attention Esse metodo pode falhar se o projeto tiver duas imagens em diretorios diferentes com o mesmo nome de arquivo.
  */
-		Matrix getColLin(string imageFilename);
+        Matrix getColLin(std::string imageFilename);
 
 		/**
  * \overload getColLin
@@ -185,42 +194,42 @@ public:
 		/**
  * \brief Metodo auxiliar que retorna uma lista de key dos pontos contidos na imagem especificada
  * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com as key de todos os pontos no projeto
- * \return deque<string> : Lista com as keys dos pontos
+ * \return std::deque<string> : Lista com as keys dos pontos
  */
-		deque<string> getStringKeysPoints(string imageFileName="");
+        std::deque<std::string> getStringKeysPoints(std::string imageFileName="");
 
 		/**
  * \brief Metodo auxiliar que retorna uma lista com os tipos dos pontos contidos na imagem especificada
  * \param imageFileName: Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com os tipos de todos os pontos no projeto
- * \return deque<string> : Lista com os tipos dos pontos
+ * \return std::deque<string> : Lista com os tipos dos pontos
  */
-		deque<string> getStringTypePoints(string imageFileName="");
+        std::deque<std::string> getStringTypePoints(std::string imageFileName="");
 
 		/**
  * \brief Metodo auxiliar que retorna uma lista dos ids dos pontos contidos na imagem especificada
  * \param imageFileName  : Nome do arquivo de imagem, se uma string vazia for passada, o retorno serÃ¡ uma lista com os ids de todos os pontos dependendo do \param cond1
  * \param cond1 : Indica a condiÃ§ao de seleÃ§ao dos pontos. Atualmente sÃ³ existe a condiÃ§Ã£o "noCheckingPoint" que exclui os ids dos pontos de checking
- * \return deque<string> : Lista com os ids dos pontos
+ * \return std::deque<string> : Lista com os ids dos pontos
  */
-		deque<string> getStringIdPoints(string imageFileName="",string cond1="");
+        std::deque<std::string> getStringIdPoints(std::string imageFileName="",std::string cond1="");
 
 		/**
  * \brief Metodo que retorna uma lista contendo todos os nomes dos arquivos das imagens cadastradas
- * \return deque<string> : Lista com os nomes dos arquivos de imagens
+ * \return std::deque<string> : Lista com os nomes dos arquivos de imagens
  */
-		deque<string> getStringImages();
+        std::deque<std::string> getStringImages();
 
 		/**
  * \brief Metodo que altera a lista de pontos selecionados para a execuÃ§Ã£o do calculo da fototriangulaÃ§Ã£o
  * \param selectedPointsList : lista com os ids dos pontos selecionados
  */
-		void selectPoints(deque<string> selectedPointsList);
+        void selectPoints(std::deque<std::string> selectedPointsList);
 
 		/**
  * \brief Metodo que altera a lista de imagens selecionadas para a execuÃ§Ã£o do calculo da fototriangulaÃ§Ã£o
  * \param selectedImagesList : lista com os nomes dos arquivos de imagens selecionadas
  */
-		void selectImages(deque<string> selectedImagesList);
+        void selectImages(std::deque<std::string> selectedImagesList);
 
 		// metodo para dar um update nas coordenadas digitais do pont
 		/**
@@ -237,14 +246,14 @@ public:
  * \param imageFilename : Nome do arquivo de imagem
  * \return int : key da imagem
  */
-		int getImageId(string imageFilename);
+        int getImageId(std::string imageFilename);
 
 		/**
  * \brief Metodo que retorna o Id de um ponto
  * \param pointKey: Key do ponto no projeto
- * \return string : id do ponto
+ * \return std::string : id do ponto
  */
-		string getPointId(int pointKey);
+        std::string getPointId(int pointKey);
 
 		/**
  * \brief Metodo que retorna o objeto usado para o calculo da fototriangulaÃ§Ã£o
@@ -272,26 +281,26 @@ public:
 
 		/**
  * \brief Metodo auxiliar que retorna uma lista com os ids dos pontos fotogramÃ©tricos selecionados
- * \return deque<string> : Lista com os ids dos pontos fotogramÃ©tricos
+ * \return std::deque<std::string> : Lista com os ids dos pontos fotogramÃ©tricos
  */
-		deque<string> getSelectedPointIdPhotogrammetric();
+        std::deque<std::string> getSelectedPointIdPhotogrammetric();
 
 		/**
  * \brief Metodo que retorna o caminho do arquivo da imagem especificado
  * \param fileName : Nome do arquivo de imagem
- * \return string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
+ * \return std::string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
  * \attention Esse metodo pode falhar se o projeto tiver duas imagens em diretorios diferentes com o mesmo nome de arquivo.
  */
-		string getFilePath(string fileName);
+        std::string getFilePath(std::string fileName);
 
 		/**
  * \overload getFilePath
  * \brief Metodo que retorna o caminho do arquivo da imagem especificado
  * \param imageKey : key da imagem no projeto
- * \return string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
+ * \return std::string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
  * \attention Esse metodo Ã© totalmente seguro, pois Ã© baseado na key da imagem que Ã© unica.
  */
-		string getFilePath(int imageKey);
+        std::string getFilePath(int imageKey);
 
 		/**
  * \brief Metodo responsavel por salvar, no xml corrente, tanto as marcaÃ§oes de linha e coluna como os resultados da fototriangulaÃ§ao
@@ -327,23 +336,23 @@ public:
 
 		/**
  * \brief Cria um texto em xml contendo tudo que for pertinente a fototriangulaÃ§ao
- * \return string : Texto em xml com os resultados entre outros valores da fototriangulaÃ§ao
+ * \return std::string : Texto em xml com os resultados entre outros valores da fototriangulaÃ§ao
  */
-		string createOESXml();
+        std::string createOESXml();
 
 		/**
  * \brief Metodo que retorna uma lista dos nomes dos arquivos de imagens em que o referido ponto aparece
  * \param pointKey : key do ponto desejado
- * \return deque<String> : Lista com os nomes dos arquivos de imagens
+ * \return std::deque<std::string> : Lista com os nomes dos arquivos de imagens
  */
-		deque<string> getImagesAppearances(int pointKey);
+        std::deque<std::string> getImagesAppearances(int pointKey);
 
 		/**
  * \brief Carrega os dados da fototriangulaÃ§ao, se houver, feita anteriormente
  * \param fotoTriData : Texto xml contendo os dados da fototriangulaÃ§ao
  * \attention Ainda em desenvolvimento
  */
-		void loadFotoTriData(string fotoTriData);
+        void loadFotoTriData(std::string fotoTriData);
 
 		/**
  * \brief Metodo que checa se foi feita uma fototriangulaÃ§ao anteriormente
@@ -356,7 +365,7 @@ public:
  * \param imagefile : Nome do arquivo de imagem
  * \param flightDirection : Valor da direÃ§ao de voo em radianos
  */
-		void setImageFlightDirection(string imageFile,double flightDirection);
+        void setImageFlightDirection(std::string imageFile,double flightDirection);
 
 		/**
  * \overload setImageFlightDirection
@@ -371,7 +380,7 @@ public:
  * \param imagefile : Nome do arquivo da imagem
  * \return double : valor da superposiçao em porcentagem
  */
-		double getLongitudinalOverlap(string imageFile);
+        double getLongitudinalOverlap(std::string imageFile);
 
 		/**
  * \overload getLongitudinalOverlap
@@ -386,7 +395,7 @@ public:
  * \param imageFile : Nome do arquivo de imagem
  * \return double : Valor do angulo da direÃ§ao de voo em radianos
  */
-		double getImageFlightDirection(string imageFile);
+        double getImageFlightDirection(std::string imageFile);
 
 		/**
  * \brief Metodo que retorna o valor do angulo(kappa0) da direÃ§ao de voo
@@ -408,7 +417,7 @@ public:
  * \param fileName : Nome do arquivo em que o xml será salvo
  * \return string : xml(*.kml) dos pontos e imagens
  */
-		string exportBlockTokml(string fileName);
+        std::string exportBlockTokml(std::string fileName);
 
 		/**
  * \brief Metodo auxiliar que retorna uma string correspondente a um ponto xml interpretavel pelo GoogleEarth
@@ -417,10 +426,10 @@ public:
  * \param hemiLatitude : Valor inteiro que representa o hemisfério SUL=-1 ou hemisfério NORTE=+1
  * \param      sys     : Sistema geodesico
  * \param   pointType  : Texto que informa que tipo de ponto é, controle fotogramétrico ou de checking
- * \return    string   : Texto com o xml correspondente a um lugar(placemark) no GoogleEarth
+ * \return    std::string   : Texto com o xml correspondente a um lugar(placemark) no GoogleEarth
  */
 		//string pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType);
-		string pointToKml(Point *pnt, int zona,int hemiLatitude, GeoSystem sys ,string pointType);
+        std::string pointToKml(Point *pnt, int zona,int hemiLatitude, GeoSystem sys ,std::string pointType);
 
 		/**
  * \brief Metodo auxiliar que retorna o valor da escala de voo
@@ -486,9 +495,9 @@ public:
 		/**
  * \brief Metodo auxiliar que retorna uma lista dos ids dos pontos fotogramétricos com uma sobreposiçao(numero de imagens em que o ponto aparece) menor que a especificada
  * \param overlap: Valor inteiro no qual o valor de superposiçõ es não alcance
- * \return deque<string> : lista com os Ids dos pontos
+ * \return std::deque<std::string> : lista com os Ids dos pontos
  */
-		deque<string> getPointsWithLesserThanOverlap(int overlap);
+        std::deque<std::string> getPointsWithLesserThanOverlap(size_t overlap);
 
 		/**
  * \brief Metodo auxiliar que cria e instancia um novo objeto Point e adiciona ao xml do projeto
@@ -571,7 +580,7 @@ public:
 		* \param zona : Zona na qual as coordenadas estão
 		* \return Matrix: Matriz com as coordenadas convertidas para geocentricas
 		*/
-		void convertToNunes(deque<Point*> points, GeoSystem sys, int hemi, int zona);
+        void convertToNunes(std::deque<Point*> points, GeoSystem sys, int hemi, int zona);
 
 		/**
 		* \brief Metodo que converte todos as coordenadas para UTM
@@ -579,15 +588,16 @@ public:
 		* \param sys : Sistema geodesico no qual as coordenadas deverão estar
 		* \return Matrix: Matriz com as coordenadas convertidas para UTM
 		*/
-		void convertToUTM(deque<Point*> points, GeoSystem sys);
+        void convertToUTM(std::deque<Point*> points, GeoSystem sys);
 
 		/** \brief Metodo que checa se alguma orientacao exterior foi feita
-		/* \return bool : Informa se há ou nao orientacao exterior feita
+        * \return bool : Informa se há ou nao orientacao exterior feita
 		*/
 		bool hasEODone();
 
-		/** \brief Metodo que retorna uma matriz com os parametros da orientacao exterior, onde cada linha contem os parametros.
-		/* \return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
+        /**
+         * \brief Metodo que retorna uma matriz com os parametros da orientacao exterior, onde cada linha contem os parametros.
+         * \return Matrix : Matriz com os parametros da orientacao exterior na seguinte ordem: image key, X0, Y0, Z0, omega, phi, kappa
 		*/
 		Matrix eoParametersFromXml();
 
@@ -617,26 +627,26 @@ public:
 
 		/**
 		*	\brief
-		*	\return string
+        *	\return std::string
 		*/
-		string getPhotoTriXml();
+        std::string getPhotoTriXml();
 
 		/**
 		*	\brief
-		*	\return string
+        *	\return std::string
 		*/
-		string getUsedPointsXml();
+        std::string getUsedPointsXml();
 
 		/**
 		*	\brief
-		*	\return string
+        *	\return std::string
 		*/
-		string getUsedImagesXml();
+        std::string getUsedImagesXml();
 
-		deque<string> getImagesKappaSet();
+        std::deque<std::string> getImagesKappaSet();
 
-        string getCoordinatesGeodesic();
-        string getCoordinatesTopocentric();
+        std::string getCoordinatesGeodesic();
+        std::string getCoordinatesTopocentric();
         int createPhototriReport(char *filename);
 
 };

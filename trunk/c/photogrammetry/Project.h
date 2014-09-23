@@ -1,23 +1,37 @@
 #ifndef PROJECT_H
 #define PROJECT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EObject.h"
-#include "Terrain.h"
-#include "ProjectHeader.h"
-#include "SensorWithFiducialMarks.h"
-#include "SensorWithKnowDimensions.h"
-#include "SensorWithKnowParameters.h"
-#include "Flight.h"
-#include "Image.h"
-#include "Point.h"
-#include "InteriorOrientation.h"
-#include "SpatialRessection.h"
-#include "Dummies.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class ProjectHeader;
+class SensorWithFiducialMarks;
+class Image;
+class Point;
+class Terrain;
+class Sensor;
+class Flight;
+class InteriorOrientation;
+class ExteriorOrientation;
 
 class PhotoTri : public EObject
 {
@@ -26,19 +40,20 @@ class PhotoTri : public EObject
     double metricConvergency;
     double angularConvergency;
     double rmse;
-    deque<int> imageKey;
-    deque<int> pointKey;
-    deque<Image*> image;
-    deque<Point*> point;
+    std::deque<int> imageKey;
+    std::deque<int> pointKey;
+    std::deque<Image*> image;
+    std::deque<Point*> point;
 
 public:
     PhotoTri();
-    string xmlGetData();
-    void xmlSetData(string xml);
 
-    virtual string objectType(void) {return "PhotoTri";}
-    virtual string objectAssociations(void) {return "";}
-    virtual bool is(string s) {return s.compare("PhotoTri");}
+    std::string xmlGetData();
+    void xmlSetData(std::string xml);
+
+    virtual std::string objectType(void) {return "PhotoTri";}
+    virtual std::string objectAssociations(void) {return "";}
+    virtual bool is(std::string s) {return s.compare("PhotoTri");}
 
     int getTotalIterations() {return totalIterations;}
     bool getConverged() {return converged;}
@@ -46,10 +61,10 @@ public:
     double getAngularConvergency() {return angularConvergency;}
     double getRmse() {return rmse;}
 
-    deque<int> getImageKeys() {return imageKey;}
-    deque<int> getPointKeys() {return pointKey;}
-    deque<Image*> getImages() {return image;}
-    deque<Point*> getPoints() {return point;}
+    std::deque<int> getImageKeys() {return imageKey;}
+    std::deque<int> getPointKeys() {return pointKey;}
+    std::deque<Image*> getImages() {return image;}
+    std::deque<Point*> getPoints() {return point;}
 
     void putImage(Image* img);
     void putPoint(Point* pt);
@@ -60,22 +75,25 @@ public:
 
 class Project
 {
+    class DEM; //Dummy class. To be implemented
+    class OrthoImage; //Dummy class. To be implemented
+    class featuresFile; //Dummy class. To be implemented
 
-	string xmlData;
-	string xmlState;
+    std::string xmlData;
+    std::string xmlState;
 
 	ProjectHeader* theHeader;
     Terrain* theTerrain;
-    deque<Sensor*> sensors;
-    deque<Flight*> flights;
-    deque<Image*> images;
-    deque<Point*> points;
-    deque<DEM*> DEMs;
-    deque<OrthoImage*> orthos;
-    deque<featuresFile*> feats;
-    string processStates;
-	deque<InteriorOrientation*> IOs;
-	deque<ExteriorOrientation*> EOs;
+    std::deque<Sensor*> sensors;
+    std::deque<Flight*> flights;
+    std::deque<Image*> images;
+    std::deque<Point*> points;
+    std::deque<DEM*> DEMs;
+    std::deque<OrthoImage*> orthos;
+    std::deque<featuresFile*> feats;
+    std::string processStates;
+    std::deque<InteriorOrientation*> IOs;
+    std::deque<ExteriorOrientation*> EOs;
     PhotoTri* thePhotoTri;
 
 protected:
@@ -210,9 +228,9 @@ public:
 
 	/**
 	* \brief Método que retorna todas as instâncias existente da classe Image.
-	* \return deque<Image*> deque com ponteiros para as instâncias da classe Image.
+    * \return std::deque<Image*> std::deque com ponteiros para as instâncias da classe Image.
 	*/
-	deque<Image*> allImages() {return images;}
+    std::deque<Image*> allImages() {return images;}
 
 	/**
 	* \brief Método que retorna uma instância existente da classe Point.
@@ -223,9 +241,9 @@ public:
 
 	/**
 	* \brief Método que retorna todas as instâncias existente da classe Point.
-	* \return deque<Point*> deque com ponteiros para as instâncias da classe Point.
+    * \return std::deque<Point*> std::deque com ponteiros para as instâncias da classe Point.
 	*/
-	deque<Point*> allPoints() {return points;}
+    std::deque<Point*> allPoints() {return points;}
 
 	/**
 	* \brief Método que retorna uma instância existente da classe InteriorOrientation.
@@ -233,7 +251,7 @@ public:
 	* \return InteriorOrientation Instância da classe InteriorOrientation.
     */
     InteriorOrientation* IO(int id);
-    deque<InteriorOrientation*> allIOs() {return IOs;}
+    std::deque<InteriorOrientation*> allIOs() {return IOs;}
 
 	/**
 	* \brief Método que retorna uma instância existente da classe ExteriorOrientation.
@@ -241,57 +259,57 @@ public:
 	* \return ExteriorOrientation Instância da classe ExteriorOrientation.
     */
     ExteriorOrientation* EO(int id);
-    deque<ExteriorOrientation*> allEOs() {return EOs;}
+    std::deque<ExteriorOrientation*> allEOs() {return EOs;}
 
     PhotoTri* photoTri();
 
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname);
+    std::string getXml(std::string tagname);
 
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
 	* \param att Valor do atributo da tag do XML.
 	* \param value Valor do nó da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname, string att, string value);
+    std::string getXml(std::string tagname, std::string att, std::string value);
 
 	/**
 	* \brief Método para emitir o nome de classe.
-	* \return string	Retorna o nome de classe do objeto.
+    * \return std::string	Retorna o nome de classe do objeto.
 	*/
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
 	* \brief Método para emitir as associações de uma instância.
-	* \return string	Retorna vazio para esta classe.
+    * \return std::string	Retorna vazio para esta classe.
 	* \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
 	*/
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
 	* \brief Método de teste para o nome/tipo de instância.
 	* \param s	Texto com o nome da classe que é esperado.
 	* \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
 	*/
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
     * \brief Método para setar os valores de atributos de uma instância de Projeto utilizando sua descrição em xml.
     * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe Project.
 	*/
-    void setXml(string xml);
+    void setXml(std::string xml);
 
 	/**
     * \brief Método para extrair o equivalente em xml de uma instância de Projeto.
-    * \return string	Retorna o string contendo o xml para uma instância da classe Project.
+    * \return std::string	Retorna o string contendo o xml para uma instância da classe Project.
 	*/
-    string getXml();
+    std::string getXml();
 
     /**
     * \brief Método que retorna um identificador de sensor que ainda não foi utilizado.
@@ -360,21 +378,21 @@ public:
 	*/
 	void deleteEO(int id, bool makeReconnections = true);
 
-	void addSensor(string data = "", bool makeReconnections = true);
+    void addSensor(std::string data = "", bool makeReconnections = true);
 
-	void addFlight(string data = "", bool makeReconnections = true);
+    void addFlight(std::string data = "", bool makeReconnections = true);
 
-	void addImage(string data = "", bool makeReconnections = true);
+    void addImage(std::string data = "", bool makeReconnections = true);
 
-	void addPoint(string data = "", bool makeReconnections = true);
+    void addPoint(std::string data = "", bool makeReconnections = true);
 
-    void addIO(string data, bool makeReconnections = true);
+    void addIO(std::string data, bool makeReconnections = true);
 
-    void addEO(string data, bool makeReconnections = true);
+    void addEO(std::string data, bool makeReconnections = true);
 
-    string getProcessStates() {return processStates;}
+    std::string getProcessStates() {return processStates;}
 
-    void setProcessStates(string state) {processStates = state;}
+    void setProcessStates(std::string state) {processStates = state;}
 
     void closeProject();
 

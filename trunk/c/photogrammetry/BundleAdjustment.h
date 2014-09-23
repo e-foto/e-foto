@@ -1,31 +1,34 @@
 #ifndef BUNDLEADJUSTMENT_H
 #define BUNDLEADJUSTMENT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "GeoSystem.h"
 #include "Matrix.h"
-#include <stdlib.h>
-#include <deque>
-#include <math.h>
-
-#include "Sensor.h"
-#include "Image.h"
-#include "Point.h"
-#include "Flight.h"
-#include "InteriorOrientation.h"
-#include "SparseMatrix.h"
-
-
-
-#include "ConvertionsSystems.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
+class Point;
+class Sensor;
+class Image;
+class InteriorOrientation;
 
-//EIGEN
-//#include "Core"
-//#include "Dense"
 
 /**
 * \file BundleAdjustment.h
@@ -33,7 +36,7 @@ namespace efoto {
 * \brief Classe que calcula os parametros das orientaÃ§Ãµes exteriores de todas as imagens de um bloco
 * \author Paulo AndrÃ© Batista Pupim e Rafael Aguiar
 */
-//using namespace std;
+
 class BundleAdjustment
 {
 
@@ -68,13 +71,13 @@ protected:
 /* Variaveis auxiliares */
 
 	Sensor* sensor;
-	deque<Image*> listImages;
-	deque<Point*> listPoints;
+    std::deque<Image*> listImages;
+    std::deque<Point*> listPoints;
 
-	deque<Point*> listControlPoints;
-	deque<Point*> listPhotogrammetricPoints;
+    std::deque<Point*> listControlPoints;
+    std::deque<Point*> listPhotogrammetricPoints;
 
-    deque<double> listRMSE;
+    std::deque<double> listRMSE;
 
 	bool done;
 	bool converged;
@@ -82,17 +85,11 @@ protected:
 
 public:
 	/**
-	* \brief Construtor padrÃ£o
-	* \attention NUNCA use esse construtor para calculo, futuramente serÃ¡ eliminado
-	*/
-	BundleAdjustment();
-
-	/**
 	* \brief Construtor basico para o calculo
 	* \param listSelectedimages : Lista com todos as imagens que serÃ£o consideradas no calculo
 	* \param listSelectedPoints : Lista com todos os pontos que serÃ£o consideradas no calculo
 	*/
-	BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints);
+    BundleAdjustment(std::deque<Image*>listSelectedImages, std::deque<Point*> listSelectedPoints);
 
 	/**
 	* \brief Retorna o numero de equaÃ§Ãµes que o calculo atual tem que resolver
@@ -218,7 +215,7 @@ public:
 	Matrix getMatRes();
 
 
-    deque<double> getListRMSE();
+    std::deque<double> getListRMSE();
 
 protected:
 	//Seta a matrix baseado nos angulos
@@ -496,16 +493,16 @@ public:
 	* \param oi  : OrientaÃ§Ã£o interior da imagem em que a coordenada estÃ¡
 	* \param xsi : Coodernada analogica xi
 	* \param eta : Coodernada analogica eta
-	* \deprecated Esse metodo logo serÃ¡ substituido pelo existente na classe /*nome da classe MOTOR DE FOTOGRAMETRIAm*
+    * \deprecated This method will be replaced by the existent method on class *nome da classe MOTOR DE FOTOGRAMETRIAm*
 	*/
-	Matrix analogToDigital(InteriorOrientation *oi,double xsi, double eta);
+    Matrix analogToDigital(InteriorOrientation *oi,double xsi, double eta);
 
 	/**
 	* \brief Metodo que converte coordenada digital(col,lin) em coordenada analogica(xi,eta)
 	* \param oi  : OrientaÃ§Ã£o interior da imagem em que a coordenada estÃ¡
 	* \param linha : Coodernada analogica linha
 	* \param coluna : Coodernada analogica coluna
-	* \deprecated Esse metodo logo serÃ¡ substituido pelo existente na classe /*nome da classe MOTOR DE FOTOGRAMETRIAm*
+    * \deprecated This method will be replaced by the existent method on class *nome da classe MOTOR DE FOTOGRAMETRIAm*
 	*/
 	Matrix digitalToAnalog(InteriorOrientation *oi, double linha, double coluna);
 
@@ -779,7 +776,7 @@ public:
 	//imprime todas as imagens com seus pontos
 
 
-	string printAll();
+    std::string printAll();
 
 	/** Metodos Eigen*/
 //	Matrix convertEigenToMatrix(Eigen::MatrixXd eigen);
@@ -798,14 +795,15 @@ public:
 	/**
 	* \brief Metodo que retorna a matriz com as aproximaÃ§oes iniciais dos parametros de orientaÃ§ao exterior de todas as imagens
 	* \return Matrix : Matrix com os parametros de orientaÃ§ao exterior
+    *
 	*/
 	Matrix getMatrixInicialValues();
 
 	/**
 	* \brief Metodo que retorna a lista de pontos fotogrametricos usados no calculo do ajustamento
-	* \return deque<Point*> : Lista com os objetos Point dos pontos fotogrametricos
+    * \return std::deque<Point*> : Lista com os objetos Point dos pontos fotogrametricos
 	*/
-	deque<Point*> getPhotogrammetricList();
+    std::deque<Point*> getPhotogrammetricList();
 
 	/**
 	* \brief Metodo que checa se o usuario colocou para todas as imagens todos os parametros da orinentação exterior como valores iniciais
@@ -846,7 +844,7 @@ public:
 	* \param zona : Zona na qual as coordenadas estão
 	* \return Matrix: Matriz com as coordenadas convertidas para geocentricas
 	*/
-	void convertToGeocentric(deque<Point*> points, GeoSystem sys, int hemi, int zona);
+    void convertToGeocentric(std::deque<Point*> points, GeoSystem sys, int hemi, int zona);
 
 	/**
 	* \brief Metodo que converte todos as coordenadas para UTM
@@ -854,7 +852,7 @@ public:
 	* \param sys : Sistema geodesico no qual as coordenadas deverão estar
 	* \return Matrix: Matriz com as coordenadas convertidas para UTM
 	*/
-	void convertToUTM(deque<Point*> points, GeoSystem sys);
+    void convertToUTM(std::deque<Point*> points, GeoSystem sys);
 
 	/**
 	* \brief Metodo que calcula o RMSE do bloco
@@ -882,7 +880,7 @@ public:
 	* \param range : valor no qual sera colocado o valor de range
 	* \param offset : valor no qual sera colocado o valor de offset
 	*/
-	void normalize(deque<Point*> points,double &range, double &diff);
+    void normalize(std::deque<Point*> points,double &range, double &diff);
 
 	/**
 	* \brief Metodo que desnormaliza as coordenadas
@@ -890,7 +888,7 @@ public:
 	* \param range : valor do range
 	* \param offset : valor do offset
 	*/
-	void desnormalize(deque<Point *>points,double range, double offset);
+    void desnormalize(std::deque<Point *>points,double range, double offset);
 
 
 };

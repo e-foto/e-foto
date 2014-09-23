@@ -1,5 +1,21 @@
 #ifndef IMAGEFIDUCIALMARK_H
 #define IMAGEFIDUCIALMARK_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "AbstractImageCoordinate.h"
 
@@ -84,35 +100,35 @@ public:
 
 	/**
  * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
+ * \return std::string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para emitir as associações de uma instância.
- * \return string	Retorna vazio para esta classe.
+ * \return std::string	Retorna vazio para esta classe.
  * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
  */
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
  * \return bool	Retorna verdadeiro caso o nome passado seja ImageFiducialMark. Retorna falso no caso contrário.
  */
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
  * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe ImageFiducialMark.
  */
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe ImageFiducialMark.
+ * \return std::string	Retorna o string contendo o xml para uma instância da classe ImageFiducialMark.
  */
-	string xmlGetData();
+    std::string xmlGetData();
 };
 
 } // namespace efoto

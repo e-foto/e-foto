@@ -1,9 +1,23 @@
 #ifndef ETREEMODEL_H
 #define ETREEMODEL_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <deque>
 #include <string>
-using namespace std;
 
 namespace br {
 namespace uerj {
@@ -20,7 +34,7 @@ namespace efoto {
 class ETreeElement
 {
 	unsigned int id;
-	string description;
+    std::string description;
 public:
 
 	/**
@@ -33,13 +47,13 @@ public:
  * \param id	A chave de identificação do elemento descrito.
  * \param description	A descriçao do elemento.
  */
-	ETreeElement(int id, string description);
+    ETreeElement(int id, std::string description);
 
 	/**
  * \brief Construtor de um elemento a partir de sua representação XML.
  * \param data	A representação XML do elemento.
  */
-	ETreeElement(string data);
+    ETreeElement(std::string data);
 
 	/**
  * \brief Recupera a chave de identificação do elemento.
@@ -49,9 +63,9 @@ public:
 
 	/**
  * \brief Recupera a descrição textual do elemento.
- * \return string	A descrição do elemento.
+ * \return std::string	A descrição do elemento.
  */
-	string getDescription();
+    std::string getDescription();
 };
 
 /**
@@ -63,8 +77,8 @@ public:
 */
 class ETreeNode
 {
-	string description;
-	deque<ETreeElement> children;
+    std::string description;
+    std::deque<ETreeElement> children;
 public:
 
 	/**
@@ -77,19 +91,19 @@ public:
  * \param description	A descrição do nó.
  * \param children	A lista de elementos filhos do nó.
  */
-	ETreeNode(string description, deque<ETreeElement> children);
+    ETreeNode(std::string description, std::deque<ETreeElement> children);
 
 	/**
  * \brief Construtor de um nó a partir de sua representação XML.
  * \param data	A representação XML do nó.
  */
-	ETreeNode(string data);
+    ETreeNode(std::string data);
 
 	/**
  * \brief Recupera a descrição textual do nó.
- * \return string	A descrição do nó.
+ * \return std::string	A descrição do nó.
  */
-	string getDescription();
+    std::string getDescription();
 
 	/**
  * \brief Conta a quantidade de elementos folhas associados ao nó.
@@ -99,9 +113,9 @@ public:
 
 	/**
  * \brief Recupera a lista de elementos folhas associados ao nó.
- * \return deque<ETreeElement> A lista de elementos filhos do nó.
+ * \return std::deque<ETreeElement> A lista de elementos filhos do nó.
  */
-	deque<ETreeElement> getChildren();
+    std::deque<ETreeElement> getChildren();
 
 	/**
  * \brief Recupera um elemento folha a partir do seu índice na lista.
@@ -113,9 +127,9 @@ public:
 	/**
  * \brief Recupera a descrição textual de um elemento folha do nó.
  * \param index	O índice do elemento desejado.
- * \return string	A descrição do elemento desejado.
+ * \return std::string	A descrição do elemento desejado.
  */
-	string dataAt(unsigned int index);
+    std::string dataAt(unsigned int index);
 
 	/**
  * \brief Recupera a chave de identificação de um elemento folha do nó.
@@ -126,9 +140,9 @@ public:
 
 	/**
  * \brief Lista as descrições textuais de todos os elementos folhas do nó.
- * \return deque<string>	A lista de todas as descrições dos elementos filhos.
+ * \return std::deque<std::string>	A lista de todas as descrições dos elementos filhos.
  */
-	deque<string> data();
+    std::deque<std::string> data();
 };
 
 /**
@@ -140,7 +154,7 @@ public:
 */
 class ETreeModel
 {
-	deque<ETreeNode> children;
+    std::deque<ETreeNode> children;
 public:
 
 	/**
@@ -152,13 +166,13 @@ public:
  * \brief Construtor de uma árvore com estrutua conhecida.
  * \param children	A lista de nós da árvore.
  */
-	ETreeModel(deque<ETreeNode> children);
+    ETreeModel(std::deque<ETreeNode> children);
 
 	/**
  * \brief Construtor de uma árvore a partir da raiz do xml contido em um arquivo .epp.
  * \param data	Uma string com o conteúdo do arquivo .epp.
  */
-	ETreeModel(string data);
+    ETreeModel(std::string data);
 
 	/**
  * \brief Conta quantos nós a árvore possui.
@@ -175,9 +189,9 @@ public:
 
 	/**
  * \brief Recupera a lista de nós existentes na árvore.
- * \return deque<ETreeNode>	A lista de nós da árvore.
+ * \return std::deque<ETreeNode>	A lista de nós da árvore.
  */
-	deque<ETreeNode> getChildren();
+    std::deque<ETreeNode> getChildren();
 
 	/**
  * \brief Recupera um nó especifico da árvore.
@@ -190,9 +204,9 @@ public:
  * \brief Recupera a descrição textual de uma das folhas da árvore.
  * \param nodeIndex	O índice do nó no qual a folha se encontra.
  * \param elementIndex	O índice da folha dentro do nó.
- * \return string	A descriçao da folha.
+ * \return std::string	A descriçao da folha.
  */
-	string dataAt(unsigned int nodeIndex, unsigned int elementIndex);
+    std::string dataAt(unsigned int nodeIndex, unsigned int elementIndex);
 
 	/**
  * \brief Recupera a chave de identificação de uma das folhas da árvore.
@@ -205,15 +219,15 @@ public:
 	/**
  * \brief Recupera a descrição textual de um dos nós da árvore.
  * \param index	O índice do nó.
- * \return string	A descrição do nó.
+ * \return std::string	A descrição do nó.
  */
-	string dataAt(unsigned int index);
+    std::string dataAt(unsigned int index);
 
 	/**
  * \brief Recupera uma lista contendo as listas de descrições das folhas da árvore, organizada por nós.
- * \return deque<deque<string>>	A lista das listas de descrições das folhas da árvore.
+ * \return std::deque<std::deque<std::string>>	A lista das listas de descrições das folhas da árvore.
  */
-	deque< deque<string> > data();
+    std::deque< std::deque<std::string> > data();
 };
 
 } // namespace efoto

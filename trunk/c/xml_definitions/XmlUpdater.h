@@ -1,7 +1,24 @@
 #ifndef XMLUPDATER_H
 #define XMLUPDATER_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EDom.h"
+//#include <string>
+//#include <deque>
 
 namespace br {
 namespace uerj {
@@ -19,9 +36,9 @@ class XmlUpdater
 {
 
 private:
-	deque <string> builds;
-	string xmlBuild; // this is a version descriptor of loaded xml
-	string referenceBuild; // this is a version descriptor of reference
+    std::deque <std::string> builds;
+    std::string xmlBuild; // this is a version descriptor of loaded xml
+    std::string referenceBuild; // this is a version descriptor of reference
 	EDomElement allXml; // this is a xml loaded under constructor
 
 	int error;
@@ -33,7 +50,7 @@ private:
  * \param buidTwo	Versão inicial. Normalmente a versão que se deseja atualizar.
  * \return int	Valor 1 se a atualização é possível, 0 se não é necessária, -1 é impossível, pois equivale a voltar uma versão, -2 é impossível, pois a buildOne é desconhecida ou -3 se é impossível, pois buildTwo é desconhecida.
  */
-	int compareBuilds(string buildOne, string buildTwo);
+    int compareBuilds(std::string buildOne, std::string buildTwo);
 
 	/**
  * \brief Método interno que executa as chamadas de update necessárias em cascata.
@@ -47,7 +64,7 @@ public:
  * \param allXml	Todo o conteúdo de um arquivo epp.
  * \param referenceBuild	Versão de referência para qual o xml deve ser atualizado. Por padrão é a última versão conhecida pela classe.
  */
-	XmlUpdater(string allXml, string referenceBuild = "");
+    XmlUpdater(std::string allXml, std::string referenceBuild = "");
 
 	/**
  * \brief Método para retornar o conteúdo do arquivo xml armazenado.
@@ -71,20 +88,20 @@ public:
  * \brief Método para retornar a versão do arquivo epp.
  * \return string	Retorna a descritor de versão registrado no arquivo epp.
  */
-	string getXmlBuild();
+    std::string getXmlBuild();
 
 	/**
  * \brief Método para retornar a versão mais atual de arquivo epp conhecida por esta classe.
  * \return string	Retorna a descritor da última versão reconhecida por esta classe.
  */
-	string getReferenceBuild();
+    std::string getReferenceBuild();
 
 	/**
  * \brief Método para informar se uma versão de arquivo epp é uma versão conhecida.
  * \param build	Descritor da versão a ser avaliada.
  * \return string	Retorna verdadeiro se a versão é reconhecida pela classe.
  */
-	bool buildIsValid(string build);
+    bool buildIsValid(std::string build);
 
 	/**
  * \brief Método para atualizar o arquivo epp é até a última versão conhecida.
@@ -115,7 +132,7 @@ public:
 	  * \param newWord: Palavra a ser colocada no lugar da palavra procurada
 	  * \return bool : Informa se a palavra foi encontrada ou nao, no texto.
 	  */
-	bool replacer(string &text,string oldWord,string newWord);
+    bool replacer(std::string &text,std::string oldWord,std::string newWord);
 
 };
 

@@ -1,10 +1,24 @@
+#ifndef DEMGRID_H
+#define DEMGRID_H
 /******************************************************************************
 								DemGrid.h
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-#ifndef DEMGRID_H
-#define DEMGRID_H
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
 * class DemGrid
@@ -16,17 +30,9 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
-#include <stdio.h>
-#include <math.h>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
 #include "MatchingPoints.h"
-#include "MatchingPointsGrid.h"
 #include "Matrix.h"
-
-using namespace std;
 
 namespace br {
 namespace uerj {
@@ -34,6 +40,7 @@ namespace eng {
 namespace efoto {
 
 class DEMManager;
+class MatchingPointsGrid;
 
 class DemGrid
 {
@@ -69,7 +76,7 @@ public:
         void getColRowAt(double X, double Y, int &col, int &row);
         void getColRowAt(double X, double Y, double &col, double &row);
 	void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
-	string calculateDemQuality(MatchingPointsList mpl);
+    std::string calculateDemQuality(MatchingPointsList mpl);
 	void overlayMap(Matrix * map);
         void setCancel() { cancel_flag = true; };
 
@@ -84,7 +91,7 @@ private:
 	void saveDemEfoto(char *);
 	void loadDemEfoto(char *);
 	void saveDemAscii(char *);
-	double getAsciiParameter(ifstream *, string);
+    double getAsciiParameter(std::ifstream *, std::string);
 	void loadDemAscii(char *);
 	DEMManager* manager;
 

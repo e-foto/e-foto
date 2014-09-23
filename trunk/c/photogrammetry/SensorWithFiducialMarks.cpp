@@ -1,8 +1,26 @@
 /**************************************************************************
 	  SensorWithFiducialMarks.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SensorWithFiducialMarks.h"
+
+#include <sstream>
+#include <iostream>
 
 namespace br {
 namespace uerj {
@@ -73,7 +91,7 @@ void SensorWithFiducialMarks::setLb(const Matrix& newLb)
 		SigmaLb.resize(newLb.getRows(), newLb.getCols()).ones();
 	}
 	else
-		cerr << "Lb is not in the expected format.";
+        std::cerr << "Lb is not in the expected format.";
 }
 
 /**
@@ -92,11 +110,11 @@ void SensorWithFiducialMarks::setLb(const Matrix& newLb, const Matrix& newSigmaL
 		else
 		{
 			SigmaLb.resize(newLb.getRows(), newLb.getCols()).ones();
-			cerr << "SigmaLb is not in the expected format.";
+            std::cerr << "SigmaLb is not in the expected format.";
 		}
 	}
 	else
-		cerr << "Lb is not in the expected format.";
+        std::cerr << "Lb is not in the expected format.";
 }
 
 /**
@@ -128,7 +146,7 @@ Matrix SensorWithFiducialMarks::getSigmaLb()
  * Set all the values of anaFidMarks deque at once
  * @param newAnaFidMarks a deque with the new values
  */
-void SensorWithFiducialMarks::setAnaFidMarks(deque<DetectorFiducialMark> newAnaFidMarks)
+void SensorWithFiducialMarks::setAnaFidMarks(std::deque<DetectorFiducialMark> newAnaFidMarks)
 {
 	anaFidMarks = newAnaFidMarks;
 }
@@ -137,7 +155,7 @@ void SensorWithFiducialMarks::setAnaFidMarks(deque<DetectorFiducialMark> newAnaF
  * Get all the values of anaFidMarks deque at once
  * @return a deque the values of anaFidMarks
  */
-deque<DetectorFiducialMark> SensorWithFiducialMarks::getAnaFidMarks()
+std::deque<DetectorFiducialMark> SensorWithFiducialMarks::getAnaFidMarks()
 {
 	return anaFidMarks;
 }
@@ -220,9 +238,9 @@ void SensorWithFiducialMarks::clearAnaFidMarks()
 /**
  *
  */
-string SensorWithFiducialMarks::objectType(void)
+std::string SensorWithFiducialMarks::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "SensorWithFiducialMarks " << id;
 	return result.str();
 }
@@ -230,7 +248,7 @@ string SensorWithFiducialMarks::objectType(void)
 /**
  *
  */
-string SensorWithFiducialMarks::objectAssociations(void)
+std::string SensorWithFiducialMarks::objectAssociations(void)
 {
 	return "";
 }
@@ -238,7 +256,7 @@ string SensorWithFiducialMarks::objectAssociations(void)
 /**
  *
  */
-bool SensorWithFiducialMarks::is(string s)
+bool SensorWithFiducialMarks::is(std::string s)
 {
 	return (s == "SensorWithFiducialMarks" ? true : false);
 }
@@ -249,7 +267,7 @@ bool SensorWithFiducialMarks::is(string s)
 /**
  *
  */
-void SensorWithFiducialMarks::xmlSetData(string xml)
+void SensorWithFiducialMarks::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -260,7 +278,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 	calculationMode = root.elementByTagName("calculationMode").toString();
 
 	spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
-	deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
+    std::deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
 	spectralRanges.clear();
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
@@ -284,7 +302,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 	else
 		focalDistanceSigma = 1.0;
 
-	deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
+    std::deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
 	rsCoefficients.clear();
 	for (unsigned int i = 0; i < xmlRadialSymmetric.size(); i++)
 	{
@@ -297,7 +315,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 		rsCoefficients.push_back(*radial);
 	}
 
-	deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
+    std::deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
 	dCoefficients.clear();
 	for (unsigned int i = 0; i < xmlDecentered.size(); i++)
 	{
@@ -312,7 +330,7 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 
 	principalPointCoordinates.xmlSetData(root.elementByTagName("principalPointCoordinates").getContent());
 
-	deque<EDomElement> xmlFiducial = root.elementsByTagName("fiducialMark");
+    std::deque<EDomElement> xmlFiducial = root.elementsByTagName("fiducialMark");
 	anaFidMarks.clear();
 	for (unsigned int i = 0; i < xmlFiducial.size(); i++)
 	{
@@ -325,9 +343,9 @@ void SensorWithFiducialMarks::xmlSetData(string xml)
 /**
  *
  */
-string SensorWithFiducialMarks::xmlGetData()
+std::string SensorWithFiducialMarks::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
 	result << "<sensorId>" << sensorId << "</sensorId>\n";
 	result << "<type>\n";
