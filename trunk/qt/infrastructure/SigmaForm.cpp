@@ -1,5 +1,6 @@
 #include "SigmaForm.h"
 #include "ScienceSpinBox.h"
+#include <math.h>
 
 namespace br {
 namespace uerj {
@@ -14,7 +15,7 @@ SigmaFormController::SigmaFormController()
 	this->toNotAvailable();
 }
 
-SigmaFormController::SigmaFormController(string myMode, unsigned int myDimension)
+SigmaFormController::SigmaFormController(std::string myMode, unsigned int myDimension)
 {
 	init();
 	dimension = myDimension;
@@ -71,7 +72,7 @@ void SigmaFormController::init()
 	edits.clear();
 }
 
-Matrix SigmaFormController::stDevToMatrix(deque<double> stDev)
+Matrix SigmaFormController::stDevToMatrix(std::deque<double> stDev)
 {
 	Matrix result(stDev.size(), stDev.size());
 	result.zero();
@@ -80,9 +81,9 @@ Matrix SigmaFormController::stDevToMatrix(deque<double> stDev)
 	return result;
 }
 
-deque<double> SigmaFormController::matrixToStDev(Matrix mat)
+std::deque<double> SigmaFormController::matrixToStDev(Matrix mat)
 {
-	deque<double> result;
+    std::deque<double> result;
 	for (unsigned int i = 0; i < mat.getRows(); i++)
 		result.push_back(sqrt(mat.get(i,i)));
 	return result;
@@ -93,7 +94,7 @@ QWidget* SigmaFormController::getContent()
 	return contentWidget;
 }
 
-void SigmaFormController::setDirection(string newDirection)
+void SigmaFormController::setDirection(std::string newDirection)
 {
 	QBoxLayout* myLayout = (QBoxLayout*)contentWidget->layout();
 	if (newDirection == "horizontal")
@@ -108,22 +109,22 @@ void SigmaFormController::setDirection(string newDirection)
 	}
 }
 
-string SigmaFormController::getDirection()
+std::string SigmaFormController::getDirection()
 {
 	return direction;
 }
 
-void SigmaFormController::setMode(string newMode)
+void SigmaFormController::setMode(std::string newMode)
 {
 	mode = newMode;
 }
 
-string SigmaFormController::getMode()
+std::string SigmaFormController::getMode()
 {
 	return mode;
 }
 
-void SigmaFormController::fillValues(string xml)
+void SigmaFormController::fillValues(std::string xml)
 {
 	EDomElement root(xml);
 	values = Matrix();
@@ -151,7 +152,7 @@ void SigmaFormController::fillValues(string xml)
 	}
 }
 
-string SigmaFormController::getValues()
+std::string SigmaFormController::getValues()
 {
 	if (mode == "Not Available")
 	{

@@ -1,5 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "ImagesForm.h"
+#include "EDom.h"
 #include <QPicture>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -17,16 +36,16 @@ ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
 
 }
 
-void ImagesForm::fillvalues(string values)
+void ImagesForm::fillvalues(std::string values)
 {
 	EDomElement ede(values);
 	int rows=ede.children().size();
 	imagesTable->setRowCount(rows);
 
-	deque<EDomElement> imaChildren = ede.children();
+    std::deque<EDomElement> imaChildren = ede.children();
 	for (int i=0;i<rows;i++){
-		string tableParameter;
-		stringstream auxStream;
+        std::string tableParameter;
+        std::stringstream auxStream;
 
 		auxStream << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
 		auxStream << "/";
@@ -46,10 +65,10 @@ void ImagesForm::fillvalues(string values)
 	}
 	imaChildren.clear();
 }
-string ImagesForm::getvalues()
+std::string ImagesForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
+    std::string xmlString;
+    std::stringstream auxStream;
 
 	auxStream << "\nNot Available\n";
 
@@ -70,12 +89,12 @@ void ImagesForm :: emitSignal(int i)
 	emit clicked(i);
 }
 
-bool ImagesForm::isForm(string formName)
+bool ImagesForm::isForm(std::string formName)
 {
 	return !formName.compare("HeaderForm");
 }
 
-void ImagesForm::setIOsAvailable(string xmlIOs)
+void ImagesForm::setIOsAvailable(std::string xmlIOs)
 {
 	EDomElement ede(xmlIOs);
 
@@ -119,7 +138,7 @@ void ImagesForm::setIOsAvailable(string xmlIOs)
 	}
 }
 
-void ImagesForm::setEOsAvailable(string xmlEOs)
+void ImagesForm::setEOsAvailable(std::string xmlEOs)
 {
 	EDomElement ede(xmlEOs);
 

@@ -1,5 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "SensorForm.h"
+
 #include <QtGui>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -85,7 +104,7 @@ SensorForm::SensorForm(QWidget *parent): AbstractForm(parent)
 
 }
 
-void SensorForm::fillvalues(string values)
+void SensorForm::fillvalues(std::string values)
 {
 
 	clearForm();
@@ -377,10 +396,10 @@ void SensorForm::fillvalues(string values)
 
 }
 
-string SensorForm::getvalues()
+std::string SensorForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
+    std::string xmlString;
+    std::stringstream auxStream;
 
 	auxStream << "<sensor key=\"" << ede.attribute("key").data() << "\">\n";
 	auxStream << "<sensorId>" << sensorIdLineEdit->text().toUtf8().data() <<"</sensorId>\n";
@@ -718,7 +737,7 @@ void SensorForm::calculationMode (int modeIndex)
 	}
 }
 
-bool SensorForm::isForm(string formName)
+bool SensorForm::isForm(std::string formName)
 {
 	return !formName.compare("SensorForm");
 }

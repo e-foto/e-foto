@@ -1,16 +1,26 @@
 #ifndef PTUSERINTERFACE_QT_H
 #define PTUSERINTERFACE_QT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ui_FotoTriForm.h"
 #include "PTUserInterface.h"
-//#include "ImageView.h"
-#include "LoadingScreen.h"
-#include "ETableWidget.h"
-#include "WindowsSelectPage.h"
-#include "ImageViewers.h"
-#include "FlightDirectionForm.h"
-#include <QCheckBox>
 
+class WindowsSelectPage;
+class QCheckBox;
 
 namespace br {
 namespace uerj {
@@ -18,6 +28,12 @@ namespace eng {
 namespace efoto {
 
 class PointMark;
+class Marker;
+class SeparatedViewer;
+class SeparatedStereoViewer;
+class SingleDisplay;
+class FlightDirectionForm;
+
 
 
 /**
@@ -56,7 +72,7 @@ protected:
 	QList<int> markedImages;
 	//void previsionMark(int pointKey,QPointF *point);
 
-	string leftImageString, rightImageString;
+    std::string leftImageString, rightImageString;
 	QStringList listAllImages;// contem os file name das imagens
 	QStringList listAllPoints;// contem os ids dos pontos
 
@@ -73,7 +89,7 @@ protected:
 
     QCheckBox *geodesicCheckBox;
     QCheckBox *topocentricCheckBox;
-	string fileExport;
+    std::string fileExport;
 	int saveFtReport(char *filename);
 
 private:
@@ -100,13 +116,13 @@ public:
  * \brief Metodo auxiliar que atualiza os items da tabela da imagem informada
  * \param image : string
  */
-	void updateImageTable(ETableWidget *imageTable,string imageFilename, bool move=true);
+    void updateImageTable(ETableWidget *imageTable,std::string imageFilename, bool move=true);
 	bool exec();
 
 public slots:
 
 	void makeTheSpell(); // Metodo da gambiarra inserida no construtor desta classe durante os testes de exibição de resultados gráficos (GraphicWorkAround).
-	deque<Matrix*> getImageMatrixes(); // (GraphicWorkAround).
+    std::deque<Matrix*> getImageMatrixes(); // (GraphicWorkAround).
 	Matrix* getImageMatrix(QImage img); // (GraphicWorkAround).
 	void onReportButtonClicked();
 

@@ -1,5 +1,21 @@
 #ifndef ORTHOUSERINTERFACE_QT_H
 #define ORTHOUSERINTERFACE_QT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "ui_OrthoForm.h"
 #include "ui_OrthoQualityEditor.h"
@@ -7,6 +23,7 @@
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "Matrix.h"
+#include "GeometryResource.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -63,7 +80,7 @@ public:
 	int saveImage(char *filename, Matrix *I);
 	bool exec();
 	void setProgress(int);
-	void setCurrentWork(string msg);
+    void setCurrentWork(std::string msg);
 	void setAllowClose(bool _b) { allow_close = _b; };
 	void disableOptions();
 	void enableOptions();
@@ -88,7 +105,7 @@ private:
         int loadPointsFromTxt(char *filename);
         int loadPointsFromQuality(char *filename);
         void addTableEnding(int tab_pos);
-        string getTableAt(int row, int col);
+        std::string getTableAt(int row, int col);
         double getDoubleTableAt(int row, int col);
         void setTableAt(int row, int col, double value);
         QString lastDir;

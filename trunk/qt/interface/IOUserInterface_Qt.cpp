@@ -1,4 +1,26 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "IOUserInterface_Qt.h"
+
+#include "LoadingScreen.h"
+#include "SingleTools.h"
+#include "ImageViewers.h"
+
+#include <QPushButton>
 
 #include <qapplication.h>
 #include <qvariant.h>
@@ -6,6 +28,8 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
+#include "IOManager.h"
+#include <math.h>
 
 #include "ETableWidget.h"
 
@@ -174,7 +198,7 @@ bool IOUserInterface_Qt::calculateIO()
 
 bool IOUserInterface_Qt::viewReport()
 {
-	deque<string> myValues = manager->makeReport();
+    std::deque<std::string> myValues = manager->makeReport();
 
 	windowReport = new QWidget();
 	QVBoxLayout *myLayout = new QVBoxLayout();
@@ -361,7 +385,7 @@ bool IOUserInterface_Qt::exec()
 		points = new QStandardItemModel(numberOfMarks, 5);
 		for (int row = 0; row < numberOfMarks; row++)
 		{
-			deque<string> markData = manager->markData(row);
+            std::deque<std::string> markData = manager->markData(row);
 			for (unsigned int col = 0; col < markData.size(); col++)
 			{
 				QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
@@ -426,7 +450,7 @@ bool IOUserInterface_Qt::exec()
 		points = new QStandardItemModel(numberOfMarks, 5);
 		for (int row = 0; row < numberOfMarks; row++)
 		{
-			deque<string> markData = manager->markData(row);
+            std::deque<std::string> markData = manager->markData(row);
 			for (unsigned int col = 0; col < markData.size(); col++)
 			{
 				QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
@@ -501,7 +525,7 @@ bool IOUserInterface_Qt::exec()
   points = new QStandardItemModel(numberOfMarks, 5);
   for (int row = 0; row < numberOfMarks; row++)
   {
-   deque<string> markData = manager->markData(row);
+   deque<std::string> markData = manager->markData(row);
    for (unsigned int col = 0; col < markData.size(); col++)
    {
 	QStandardItem* item = new QStandardItem(QString(markData.at(col).c_str()));
