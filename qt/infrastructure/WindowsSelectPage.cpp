@@ -130,9 +130,9 @@ void WindowsSelectPage::setInitialList(QStringList list)
 	uncheckedListView->setModel(uncheckedModel);
 }
 
-deque<string> WindowsSelectPage::getSelectedItens()
+std::deque<std::string> WindowsSelectPage::getSelectedItens()
 {
-	deque<string> list;
+    std::deque<std::string> list;
 
 	//QString str;
 	//str.toStdString().c_str();

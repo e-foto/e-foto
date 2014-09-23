@@ -1,4 +1,23 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "HeaderForm.h"
+
+#include "EDom.h"
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -12,7 +31,7 @@ HeaderForm::HeaderForm(QWidget *parent) : AbstractForm(parent)
 	//metadataFrame->setVisible(false);
 }
 
-void HeaderForm::fillvalues(string values)
+void HeaderForm::fillvalues(std::string values)
 {
 	cleanForm();
 	EDomElement ede(values);
@@ -30,11 +49,11 @@ void HeaderForm::fillvalues(string values)
 	lineEditContext->setText(QString::fromUtf8(ede.elementByTagName("context").toString().c_str()));
 }
 
-string HeaderForm::getvalues()
+std::string HeaderForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
-	auxStream << "<projectHeader>\n";
+    std::string xmlString;
+    std::stringstream auxStream;
+    auxStream << "<projectHeader>\n";
 	auxStream << "<name>" << lineEditName->text().toUtf8().data() << "</name>\n";
 	auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
 	if (lineEditFilePath->text().isEmpty())
@@ -48,7 +67,7 @@ string HeaderForm::getvalues()
 	auxStream << "<aims>" << lineEditAims->text().toUtf8().data() << "</aims>\n";
 	auxStream << "<context>" << lineEditContext->text().toUtf8().data() << "</context>\n";
 	auxStream << "</projectHeader>";
-	xmlString = auxStream.str();
+    xmlString = auxStream.str();
 	return xmlString;
 }
 
@@ -61,7 +80,7 @@ void HeaderForm::setReadOnly(bool state)
 	lineEditContext->setReadOnly(state);
 }
 
-bool HeaderForm::isForm(string formName)
+bool HeaderForm::isForm(std::string formName)
 {
 	return !formName.compare("HeaderForm");
 }

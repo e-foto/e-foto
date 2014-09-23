@@ -141,7 +141,7 @@ void ETableWidget::setTableData(EDomElement xml, char mode, int precision)
 	setTableData(*io, mode, precision);
 }
 
-void ETableWidget::setTableData(string xmlString, char mode, int precision)
+void ETableWidget::setTableData(std::string xmlString, char mode, int precision)
 {
 	io= new Matrix();
 	io->xmlSetData(xmlString);

@@ -15,9 +15,21 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SRUserInterface_Qt.h"
-#include <QPushButton>
 
+#include "GeometryResource.h"
+#include "SingleTools.h"
+#include "ImageViewers.h"
+#include "LoadingScreen.h"
+#include "FlightDirectionForm.h"
+
+
+#include "SRManager.h"
 #include "ETableWidget.h"
+#include <math.h>
+
+#include <QPushButton>
+#include <QInputDialog>
+#include <QStandardItemModel>
 
 namespace br {
 namespace uerj {
@@ -279,7 +291,7 @@ bool SRUserInterface_Qt::calculateSR()
 
 bool SRUserInterface_Qt::viewReport()
 {
-	deque<string> myValues = manager->makeReport();
+    std::deque<std::string> myValues = manager->makeReport();
 
 	windowReport = new QWidget();
 	QVBoxLayout *myLayout = new QVBoxLayout();
@@ -502,7 +514,7 @@ bool SRUserInterface_Qt::exec()
 
     for (int row = 0; row < numberOfPoints; row++)
     {
-        deque<string> pointData = manager->pointData(row);
+        std::deque<std::string> pointData = manager->pointData(row);
 
         for (unsigned int col = 0; col < pointData.size(); col++)
         {

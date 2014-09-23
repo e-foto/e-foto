@@ -1,6 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "ImageViewers.h"
 #include <QDesktopWidget>
-
+#include "StereoDisplay.h"
+#include "SingleTools.h"
 #include "DemFeatures.h"
 
 namespace br {
@@ -86,7 +104,7 @@ void SingleViewer::setElevationImageMode(double xi, double dx, double yi, double
 	tool->setElevationImageMode(xi, dx, yi, dy, zi, dz);
 }
 
-
+MarkTool* SingleViewer::getMarker() {return &tool->mark;}
 
 
 SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(parent)
@@ -196,8 +214,9 @@ void SeparatedStereoViewer::blockMark()
 	tool->setMarkVisible(false);
 }
 
+MarkTool& SeparatedStereoViewer::getLeftMarker() {return (tool->leftMark);}
 
-
+MarkTool& SeparatedStereoViewer::getRightMarker() {return (tool->rightMark);}
 
 StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 {
@@ -221,6 +240,10 @@ StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 	//QRect desktop = QDesktopWidget().screenGeometry();
 	//move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
 }
+
+MarkStereoTool& StereoViewer::getMarker() {return stereoTool->_mark;}
+
+
 
 void StereoViewer::closeEvent(QCloseEvent *)
 {

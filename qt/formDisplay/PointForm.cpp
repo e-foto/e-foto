@@ -1,5 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "PointForm.h"
+
 #include <QCheckBox>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -23,13 +42,13 @@ PointForm::PointForm(QWidget *parent) : AbstractForm(parent)
 	imageMeasurementsTable->setColumnHidden(0,true);
 }
 
-void PointForm::setImageList(deque<int> myKeyList, deque<string> myNameList)
+void PointForm::setImageList(std::deque<int> myKeyList, std::deque<std::string> myNameList)
 {
 	imageKeyList = myKeyList;
 	imageNameList = myNameList;
 }
 
-void PointForm::fillvalues(string values)
+void PointForm::fillvalues(std::string values)
 {
 	cleanForm();
 
@@ -40,7 +59,7 @@ void PointForm::fillvalues(string values)
 
 	lineEdit_gcp_id->setText(QString::fromUtf8(ede.elementByTagName("pointId").toString().c_str()));
 	textEditDescription->setText(QString::fromUtf8(ede.elementByTagName("description").toString().c_str()));
-	deque<double> aux = ede.elementByTagName("spatialCoordinates").elementByTagName("gml:pos").toGmlPos();
+    std::deque<double> aux = ede.elementByTagName("spatialCoordinates").elementByTagName("gml:pos").toGmlPos();
 	if (aux.size() == 3)
 	{
 		eDoubleSpinBox->setValue(aux.at(0));
@@ -119,9 +138,9 @@ void PointForm::fillvalues(string values)
     imageMeasurementsTable->setDisabled(true);
 }
 
-string PointForm::getvalues()
+std::string PointForm::getvalues()
 {
-	stringstream auxStream;
+    std::stringstream auxStream;
 	auxStream << "<point key=\"" << key << "\" type=\"" << getType() <<"\">\n";
 	auxStream << "<pointId>" << lineEdit_gcp_id->text().toUtf8().data() << "</pointId>\n";
 	auxStream << "<description>" << textEditDescription->toPlainText().toUtf8().data() << "</description>\n";
@@ -170,7 +189,7 @@ void PointForm::setReadOnly (bool state)
 	imageMeasurementsTable->setDisabled(state);
 }
 
-void PointForm::setType(string type)
+void PointForm::setType(std::string type)
 {
 	if (!type.compare("control"))
 		typeComboBox->setCurrentIndex(0);
@@ -180,7 +199,7 @@ void PointForm::setType(string type)
 		typeComboBox->setCurrentIndex(2);
 }
 
-string PointForm::getType()
+std::string PointForm::getType()
 {
 	if (typeComboBox->currentIndex() == 0)
 		return "control";
@@ -191,7 +210,7 @@ string PointForm::getType()
 	return "";
 }
 
-bool PointForm::isForm(string formName)
+bool PointForm::isForm(std::string formName)
 {
 	return !formName.compare("PointForm");
 }

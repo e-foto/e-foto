@@ -32,29 +32,29 @@ protected:
 	QList<ScienceSpinBox*> edits;
 	QStringList titles;
 	unsigned int dimension;
-	string direction;
-	string mode;
+    std::string direction;
+    std::string mode;
 	Matrix values;
 
 public:
 	SigmaFormController();
-	SigmaFormController(string myMode, unsigned int myDimension = 1);
+    SigmaFormController(std::string myMode, unsigned int myDimension = 1);
 	SigmaFormController(Matrix myValues);
 
 protected:
 	void init();
-	Matrix stDevToMatrix(deque<double> stDev);
-	deque<double> matrixToStDev(Matrix mat);
+    Matrix stDevToMatrix(std::deque<double> stDev);
+    std::deque<double> matrixToStDev(Matrix mat);
 	void updateTitles();
 
 public:
 	QWidget* getContent();
-	void setDirection(string newDirection);
-	string getDirection();
-	void setMode(string newMode);
-	string getMode();
-	void fillValues(string xml);
-	string getValues();
+    void setDirection(std::string newDirection);
+    std::string getDirection();
+    void setMode(std::string newMode);
+    std::string getMode();
+    void fillValues(std::string xml);
+    std::string getValues();
 	bool getValidate();
 	//paulo
 	void setNameLabels(QStringList newNames);
