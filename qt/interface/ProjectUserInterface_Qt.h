@@ -61,7 +61,7 @@ protected:
 	PointForm pointForm;
 	ControlButtons controlButtons;
 	QModelIndex currentIndex;
-	string savedIn;
+    std::string savedIn;
 	bool editState; bool addNewState; bool changeModule;
 
 protected slots:
@@ -90,15 +90,15 @@ public:
 	void viewImages();
 	void viewImage(int id);
 	QString getSavedIn();
-	string pointTxtToXml(QString point, int key, int line, string typePoint="control");
-	string edomPointToTxt(EDomElement points);
+    std::string pointTxtToXml(QString point, int key, int line, std::string typePoint="control");
+    std::string edomPointToTxt(EDomElement points);
 
-	string pointTxtToXml2(QString point, int key, int line, string typePoint="photogrammetric");
+    std::string pointTxtToXml2(QString point, int key, int line, std::string typePoint="photogrammetric");
 
 
 
 	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
-	string edomImageToTxt(EDomElement images);
+    std::string edomImageToTxt(EDomElement images);
 
 	bool insertDigitalCoordinates(QString coordinates);
 	bool availableSR();
@@ -106,13 +106,15 @@ public:
 	bool availableStereoPlotter();
 	bool availableDemExtraction();
 	bool availableOrthoImage();
+    bool availableLP();
 	void updateLabelFileName();
 
 
 public slots:
 	virtual void closeEvent(QCloseEvent *event);
 	virtual void newProject();
-	virtual void loadFile(string filenameAtStart = "");
+    virtual void loadFile(std::string filenameAtStart = "");
+    virtual void loadLastProject();
 	virtual void saveFile();
 	virtual bool saveFileAs(bool onNewProject = false);
 	virtual void executeIO();
@@ -173,17 +175,17 @@ public slots:
 	void importImagesFromTxt();
 	void importPointsFromTxt2();
 
-    string addImageXml(QString fileName, int keyImage, int dpi = 0);
-    string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi = 0 );
+    std::string addImageXml(QString fileName, int keyImage, int dpi = 0);
+    std::string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi = 0 );
 	void importOIDigitalMarks();
-	string OIToXml(QStringList oiMarks, int imageKey);
+    std::string OIToXml(QStringList oiMarks, int imageKey);
 
 	void importDigitalCoordinatesFromTxt();
 	void updateCurrentForm();
 	void deleteEmptyPoints();
 
 	void exportDigitalCoordinates();
-	string edomDigitalCoordinatesPointToTxt(EDomElement points);
+    std::string edomDigitalCoordinatesPointToTxt(EDomElement points);
 
 };
 

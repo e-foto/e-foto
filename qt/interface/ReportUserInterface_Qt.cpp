@@ -17,29 +17,28 @@
 */
 #include "ReportUserInterface_Qt.h"
 
+#include "ReportManager.h"
+#include "ETableWidget.h"
+#include "LoadingScreen.h"
+
 #include <qapplication.h>
 #include <qvariant.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
-#include <QRadioButton>
-#include "ETableWidget.h"
-
-#include <QTreeWidget>
+#include <QtGui>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-//#include <iostream>
-
 ReportUserInterface_Qt* ReportUserInterface_Qt::ReportInst = NULL;
 
 ReportUserInterface_Qt* ReportUserInterface_Qt::instance(ReportManager* manager)
 {
-        if (ReportInst = NULL)
+        if (ReportInst == NULL)
 	{
 		delete ReportInst;
 		ReportInst = NULL;

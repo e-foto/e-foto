@@ -16,18 +16,21 @@
 */
 #include "ProjectUserInterface_Qt.h"
 
+#include "ProjectManager.h"
+
+#include "AboutForm.h"
+#include "LoadingScreen.h"
 #include "ETreeModel.h"
+#include "EDomValidator.h"
+
+#include <math.h>
+
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QShortcut>
 #include <QScrollArea>
-
-#include "AboutForm.h"
-#include "LoadingScreen.h"
-
-#include "EDomValidator.h"
-
-
+#include <QSettings>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -58,8 +61,10 @@ namespace efoto {
 		// Realiza as conexões necessárias 
 		this->connect(actionNew, SIGNAL(triggered()), this, SLOT(newProject()));
 		this->connect(actionLoad_file, SIGNAL(triggered()), this, SLOT(loadFile()));
+        this->connect(actionLoad_last_project, SIGNAL(triggered()), this, SLOT(loadLastProject()));
 		this->connect(actionSave_file, SIGNAL(triggered()), this, SLOT(saveFile()));
 		this->connect(actionSave_file_as, SIGNAL(triggered()), this, SLOT(saveFileAs()));
+        this->connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 		this->connect(actionInterior_Orientation, SIGNAL(triggered()), this, SLOT(executeIO()));
 		this->connect(actionSpatial_resection, SIGNAL(triggered()), this, SLOT(executeSR()));
 		this->connect(actionExport_Stereo, SIGNAL(triggered()), this, SLOT(exportSPFile()));
@@ -173,7 +178,7 @@ namespace efoto {
                 actionDEMExtraction->setEnabled(availableDemExtraction());  // Bug fix by Marcelo
                 actionOrtho_rectification->setEnabled(availableOrthoImage());  // Bug fix by Marcelo
                 actionPTReport->setEnabled(availablePhotoTri());  // Bug fix by Marcelo
-				
+                actionLoad_last_project->setEnabled(availableLP());
 
     }
 
@@ -275,7 +280,7 @@ namespace efoto {
 
 		//Os comandos a seguir so serao uteis enquanto o projeto ficar restrito a apenas um sensor e um flight
 
-		string text = "";
+        std::string text = "";
 
 		text += "<sensor key=\"1\">\n";
 		text +=	"<sensorId></sensorId>\n";
@@ -398,7 +403,7 @@ namespace efoto {
 		//processTreeClick(treeWidget->currentIndex());
 	}
 
-	void ProjectUserInterface_Qt::loadFile(string filenameAtStart)
+    void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 	{
 		if (!confirmToClose())
 			return;
@@ -457,8 +462,10 @@ namespace efoto {
   }
  }
  */
+		
 
-		QString filename;
+    QString filename;
+
 		if (filenameAtStart == "")
 		{
 			filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
@@ -483,7 +490,7 @@ namespace efoto {
    }
    */
 				EDomElement imagesXml(manager->getXml("images").c_str());
-				deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
+                std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
 
 				QDir dirImage(filename.left(filename.lastIndexOf('/')));
 				QFileInfo imageFileInfo;
@@ -668,7 +675,7 @@ namespace efoto {
 	{
 		bool ok;
 		QStringList items;
-		deque<string> strItems = manager->listImages();
+        std::deque<std::string> strItems = manager->listImages();
 		for (unsigned int i = 0; i < strItems.size(); i++)
 			items << strItems.at(i).c_str();
 		QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
@@ -692,7 +699,7 @@ namespace efoto {
 	{
 		bool ok;
 		QStringList items;
-		deque<string> strItems = manager->listImages();
+        std::deque<std::string> strItems = manager->listImages();
 		for (unsigned int i = 0; i < strItems.size(); i++)
 			items << strItems.at(i).c_str();
 		QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
@@ -902,7 +909,7 @@ namespace efoto {
 	{
 		bool ok;
 		QStringList items;
-		deque<string> strItems = manager->listImages();
+        std::deque<std::string> strItems = manager->listImages();
 		for (unsigned int i = 0; i < strItems.size(); i++)
 			items << strItems.at(i).c_str();
 
@@ -1477,8 +1484,8 @@ menuExecute->setEnabled(true);
 
 	void ProjectUserInterface_Qt::saveImage()
 	{
-		string xmlString="";
-		stringstream eoXML;
+        std::string xmlString="";
+        std::stringstream eoXML;
 		bool existOE, userOE=false;
 		
 		editState = false;
@@ -1500,7 +1507,7 @@ menuExecute->setEnabled(true);
 		    EDomElement omegaXML(imageUserEO.elementByTagName("omega"));
 		    EDomElement phiXML(imageUserEO.elementByTagName("phi"));
 		    EDomElement kappaXML(imageUserEO.elementByTagName("kappa"));
-		    deque<double> XA;
+            std::deque<double> XA;
 		    XA= xyzXml.toGmlPos();
 		    eoXML << "\t<imageEO type=\"user\" image_key=\"" << Conversion::intToString(currentItemId) << "\">\n";
 		    eoXML << "\t\t\t<Xa>\n";
@@ -1599,7 +1606,7 @@ menuExecute->setEnabled(true);
 	{
 		// Por enquanto este metodo esta fora de uso.
 		/*
-string text = "";
+std::string text = "";
 
 text += "<sensor key=\"\">\n";
 text +=	"<sensorId></sensorId>\n";
@@ -1696,7 +1703,7 @@ text += "</sensor>";
 	{
 		// Por enquanto este metodo esta fora de uso.
 		/*
-string text = "";
+std::string text = "";
 
 text += "<flight key=\"\" sensor_key=\"\">\n";
 text += "<flightId></flightId>\n";
@@ -1723,7 +1730,7 @@ text += "</flight>";
 		addNewState = true;
 		currentItemId = manager->getFreeImageId();
 
-		string text = "";
+        std::string text = "";
 		text += "<image key=\"" + Conversion::intToString(currentItemId) + "\" sensor_key=\"1\" flight_key=\"1\">\n";
 		text += "<imageId></imageId>\n";
 		text += "<width uom=\"#px\"></width>\n";
@@ -1750,7 +1757,7 @@ text += "</flight>";
 	{
 		addNewState = true;
 		//updateView(new QLabel("Futuro view de point"));
-		string text = "";
+        std::string text = "";
 
 		currentItemId = manager->getFreePointId();
 		text += "<point key=\"" + Conversion::intToString(currentItemId) + "\" type=\"\">\n";
@@ -1780,7 +1787,7 @@ text += "</flight>";
 	void ProjectUserInterface_Qt::saveNewSensor()
 	{
 		/*
-string currentData = debuggerTextEdit->toPlainText().toStdString();
+std::string currentData = debuggerTextEdit->toPlainText().toStdString();
 if (EDomValidator::validateSensor(currentData))
 {
 manager->addComponent(currentData, "sensors");
@@ -1800,7 +1807,7 @@ emit viewButtons->editButton->click();
 	void ProjectUserInterface_Qt::saveNewFlight()
 	{
 		/*
-string currentData = debuggerTextEdit->toPlainText().toStdString();
+std::string currentData = debuggerTextEdit->toPlainText().toStdString();
 if (EDomValidator::validateFlight(currentData))
 {
 manager->addComponent(currentData, "flights");
@@ -2225,7 +2232,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
 
-		string newPointXML;
+        std::string newPointXML;
 		for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
 		{
 			loading.setFormat(tr("%v/%m : %p%"));
@@ -2246,10 +2253,10 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 	/** This function convert a point data from a *.txt line in a children point XML valid
 */
-	string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, string typePoint)
+    std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, std::string typePoint)
 	{
-		stringstream aux;
-		string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+        std::stringstream aux;
+        std::string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
 		QStringList fields= point.split(QRegExp("\\s+")); // split by any sequences of whitespace
 		// check	control	 tie
 		if (fields.length() == 7)
@@ -2366,7 +2373,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
 
-		deque<EDomElement> point=points.elementsByTagName("point");
+        std::deque<EDomElement> point=points.elementsByTagName("point");
 		for (int i=0; i< (int)point.size(); i++)
 		{
 			loading.setFormat(tr("Point %v/%m : %p%"));
@@ -2382,10 +2389,10 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 	/** This function convert a EDomElement children Point in a line *.txt point format
 */
-	string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
+    std::string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 	{
-		stringstream aux;
-		stringstream stdev;
+        std::stringstream aux;
+        std::stringstream stdev;
 		QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
 		aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
 		//aux << points.attribute("type")<< "\t";
@@ -2408,7 +2415,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		}
 
 		aux <<"\n";
-		string result=aux.str();
+        std::string result=aux.str();
 		//qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
 
 		//qDebug("stdev:%s",stdev.str().c_str());
@@ -2455,7 +2462,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 */
 	EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int line, int sensorKey, int flightKey)
 	{
-		stringstream aux;
+        std::stringstream aux;
 
 		// implementar o xml de images aqui
 		/*
@@ -2481,7 +2488,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
  QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
 
  */
-		string newXml=aux.str();
+        std::string newXml=aux.str();
 		EDomElement newImageXml(newXml.c_str());
 
 		return newImageXml;
@@ -2527,7 +2534,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		loadWidget->show();
 
 		EDomElement imagesXml(manager->getXml("points").c_str());
-		deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("point");
+        std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("point");
 
 		for (int i=0; i<pointsList.length() ;i++)
 		{
@@ -2562,14 +2569,14 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 			return false;
 		else
 		{
-			string imagekey=digitalPoint.at(0).toStdString().c_str();
-			string pointkey=digitalPoint.at(1).toStdString().c_str();
-			string colValue=digitalPoint.at(2).toStdString().c_str();
-			string linValue=digitalPoint.at(3).toStdString().c_str();
+            std::string imagekey=digitalPoint.at(0).toStdString().c_str();
+            std::string pointkey=digitalPoint.at(1).toStdString().c_str();
+            std::string colValue=digitalPoint.at(2).toStdString().c_str();
+            std::string linValue=digitalPoint.at(3).toStdString().c_str();
 
 			EDomElement pointsXML(manager->getXml("points").c_str());
 			EDomElement point(pointsXML.elementByTagAtt("point","key",pointkey));
-			stringstream aux;
+            std::stringstream aux;
 			aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
 			aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
 			aux << "</imageCoordinates>\n";
@@ -2598,6 +2605,11 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
             return availablePhotoTri();
         }
 
+        bool ProjectUserInterface_Qt::availableLP()
+        {
+            QSettings efotoSettings("uerj","efoto");
+            return efotoSettings.contains("lastProject");
+        }
 
         bool ProjectUserInterface_Qt::availableStereoPlotter()
         {
@@ -2753,7 +2765,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
 
-		string newPointXML;
+        std::string newPointXML;
 		for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
 		{
 			loading.setFormat(tr("%v/%m : %p%"));
@@ -2774,11 +2786,11 @@ bool ProjectUserInterface_Qt::availableOE()
 
 	/** This function convert a point data from a *.txt line in a children point XML valid
 */
-	string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line, string typePoint)
+    std::string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line, std::string typePoint)
 	{
 		bool ok;
-		stringstream aux;
-		string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+        std::stringstream aux;
+        std::string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
 		QStringList fields= point.split("\t");
 		int numImagesInPoint=fields.size()/4-1;
 
@@ -2821,7 +2833,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		aux << "<imagesMeasurements>\n";
 		for(int i=0;i<numImagesInPoint;i++)
 		{
-			string imagekey =fields.at(4*(i+1)).toStdString();
+            std::string imagekey =fields.at(4*(i+1)).toStdString();
 			//string colValue =(fields.at(4*(i+1)+2).toInt(&ok)).toStdString();
 			//string linValue =fields.at(4*(i+1)+3).toStdString();
 
@@ -2844,7 +2856,7 @@ bool ProjectUserInterface_Qt::availableOE()
 	void ProjectUserInterface_Qt::deleteEmptyPoints()
 	{
 		EDomElement points(manager->getXml("points"));
-		deque<EDomElement> pnts=(points.elementsByTagName("point"));
+        std::deque<EDomElement> pnts=(points.elementsByTagName("point"));
 
 		//stringstream allPoints;
 		//int cont=0;
@@ -2889,7 +2901,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		loadWidget->setWindowTitle(tr("Exporting Points"));
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
-		deque<EDomElement> point=points.elementsByTagName("point");
+        std::deque<EDomElement> point=points.elementsByTagName("point");
 		for (int i=0; i<(int)point.size(); i++)
 		{
 			loading.setFormat(tr("Point %v/%m : %p%"));
@@ -2903,12 +2915,12 @@ bool ProjectUserInterface_Qt::availableOE()
 	/** This function convert a EDomElement children Point in a line *.txt point format
  */
 
-	string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement points)
+    std::string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement points)
 	{
-		stringstream aux;
-		deque<EDomElement> digitalCoordinates=points.elementsByTagName("imageCoordinates");
+        std::stringstream aux;
+        std::deque<EDomElement> digitalCoordinates=points.elementsByTagName("imageCoordinates");
 
-		string pointId=points.elementByTagName("pointId").toString();
+        std::string pointId=points.elementByTagName("pointId").toString();
 		EDomElement ede;
 		QString gmlpos;
 		bool ok;
@@ -2923,7 +2935,7 @@ bool ProjectUserInterface_Qt::availableOE()
 			aux << ede.attribute("image_key") << "\t" << pointId << "\t" << col << "\t" << lin <<"\n";
 		}
 
-		string result=aux.str();
+        std::string result=aux.str();
 		return result.c_str();
 	}
 
@@ -2939,7 +2951,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		if(importFilesName.size()==0)
 			return;
 
-		string xmlImages="";
+        std::string xmlImages="";
 
 		QWidget *loadWidget= new QWidget();
 		loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
@@ -3001,10 +3013,10 @@ bool ProjectUserInterface_Qt::availableOE()
 
 	}
 
-    string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int dpi)
+    std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int dpi)
 	{
 
-		stringstream imageXml;
+        std::stringstream imageXml;
 		QImage image(fileName);
 		QDir absolutePath (getSavedIn());
 		int i=fileName.lastIndexOf("/");
@@ -3030,10 +3042,10 @@ bool ProjectUserInterface_Qt::availableOE()
 	}
 
 
-    string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi)
+    std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi)
 	{
 
-		stringstream imageXml;
+        std::stringstream imageXml;
 		QDir absolutePath (getSavedIn());
 
 		int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
@@ -3091,7 +3103,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		loading.setMinimumSize(300,30);
 		loadWidget->show();
 
-		string newOIXML;
+        std::string newOIXML;
 		int imagescount=1;
 		for (int i=0; i<marksList.length() && loadWidget!=NULL;i+=4)
 		{
@@ -3111,9 +3123,9 @@ bool ProjectUserInterface_Qt::availableOE()
 		actionSave_file->setEnabled(true);
 	}
 
-	string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
+    std::string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
 	{
-		stringstream OIxml;
+        std::stringstream OIxml;
 		bool ok;
 		//Paulo: Metodo Lusitano
 		double markx1=oiMarks.at(0).section('\t',0,0).toDouble(&ok);
@@ -3160,7 +3172,13 @@ bool ProjectUserInterface_Qt::availableOE()
 		else
 			projectDockWidget->setWindowTitle(QString(tr("Open Project: ")) + headerForm.lineEditFileName->text());
 	}
-	
+
+    void ProjectUserInterface_Qt::loadLastProject()
+    {
+        QSettings efotoSettings("uerj","efoto");
+        QString filename = efotoSettings.value("lastProject").toString();
+        loadFile(filename.toStdString());
+    }
 	
 } // namespace efoto
 } // namespace eng

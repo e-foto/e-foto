@@ -1,11 +1,39 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "PTUserInterface_Qt.h"
+
+#include "PTManager.h"
 #include "WindowsSelectPage.h"
+#include "ConvertionsSystems.h"
+#include "SingleTools.h"
+#include "SingleDisplay.h"
+#include "LoadingScreen.h"
+#include "WindowsSelectPage.h"
+#include "ImageViewers.h"
+#include "FlightDirectionForm.h"
 
 #include <qapplication.h>
 #include <QtGui>
 #include <QMessageBox>
-#include "ConvertionsSystems.h"
+#include <QCheckBox>
 
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -31,7 +59,7 @@ PTUserInterface_Qt* PTUserInterface_Qt::instance(PTManager *ptManager)
 PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::WindowFlags fl)
 	:QMainWindow(parent, fl)
 {
-	leftImageTableWidget;
+
 	setupUi(this);
 	ptManager = manager;
 	saveMarksButton->setDisabled(true);
@@ -79,7 +107,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     //tool->addAction(showFotoIndice);
     //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
 
-	setWindowTitle("E-foto - Phototriangulation");
+    setWindowTitle("E-foto - Phototriangulation");
 
 	connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
 	connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
@@ -116,7 +144,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
 	calculateFotoTriToolButton->setEnabled(activeCalculate);
 	imagesPointTreeWidget->setColumnHidden(3,true);
 
-	setWindowState(this->windowState() | Qt::WindowMaximized);
+    setWindowState(this->windowState() | Qt::WindowMaximized);
 
 	qApp->processEvents();
 	//qDebug("Construtor");
@@ -134,7 +162,7 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	SingleViewer* graphicResults = new SingleViewer(0);
 
 	// Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e converta em matrix gerando um deque de matrizes
-	deque<Matrix*> imgs = getImageMatrixes();
+    std::deque<Matrix*> imgs = getImageMatrixes();
 	//deque<Matrix> IOs = getImageIOs();
 	//deque<Matrix> EOs = getImageEOs();
 
@@ -143,7 +171,7 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	// Passo 3: Pegue a matrix resultante e carregue-a no visualizador.
 	//Matrix dim;
 	//graphicResults->loadImage(manager->getFotoIndice( imgs, IOs, EOs, 3000, 1000, dim));
-	for (int i = 0; i < imgs.size(); i++)
+    for (size_t i = 0; i < imgs.size(); i++)
 		delete(imgs.at(i));
 
 	// Passo 4: Dê a métrica correta ao visualizador usando o resumo das dimensões da imagem de fotoindice
@@ -152,9 +180,9 @@ void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
 	graphicResults->show();
 }
 
-deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
+std::deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
 {
-	deque<Matrix*> result;
+    std::deque<Matrix*> result;
 
 	// Para cada imagem do projeto abra a imagem com um QImage e faça: Matrix* getImageMatrix(QImage img)
 	// Dai é só guardar cada ponteiro no deque e retornar.
@@ -183,9 +211,9 @@ Matrix* PTUserInterface_Qt::getImageMatrix(QImage img) // (GraphicWorkAround). /
 void PTUserInterface_Qt::init()
 {
 	//qDebug("INIT");
-	deque<string> images =ptManager->getStringImages();
-	deque<string> points =ptManager->getStringIdPoints();
-	for (int i=0;i<images.size();i++)
+    std::deque<std::string> images =ptManager->getStringImages();
+    std::deque<std::string> points =ptManager->getStringIdPoints();
+    for (size_t i=0;i<images.size();i++)
 	{
 		QString img=images.at(i).c_str();
 		listAllImages << img;
@@ -195,7 +223,7 @@ void PTUserInterface_Qt::init()
 			listImageRight << img;
 	}
 	//Esse for esta causando crashs no programa... Verfificar e explicar o porquê.
-	for (int i=0;i<points.size();i++)
+    for (size_t i=0;i<points.size();i++)
 		listAllPoints << QString(points.at(i).c_str());
 
 	currentPointKey =-1;
@@ -276,9 +304,9 @@ bool PTUserInterface_Qt::exec()
 	//qDebug("EXEC");
 	//	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;//,leftImageIdPoints, rightImageIdPoints;
 	/*
- deque<string>  ids  = ptManager->getStringIdPoints();
- deque<string> types = ptManager->getStringTypePoints();
- deque<string> keys  = ptManager->getStringKeysPoints();
+ std::deque<std::string>  ids  = ptManager->getStringIdPoints();
+ std::deque<string> types = ptManager->getStringTypePoints();
+ std::deque<string> keys  = ptManager->getStringKeysPoints();
  headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";*/
 
 	/** carregar imagem da esquerda*/
@@ -339,7 +367,7 @@ void PTUserInterface_Qt::viewReport()
 	QVBoxLayout *oeLayout= new QVBoxLayout();
 	ETableWidget *oeTable=  new ETableWidget();
 	QStringList imagesSelected;
-	deque<string> images=selectionImagesView->getSelectedItens();
+    std::deque<std::string> images=selectionImagesView->getSelectedItens();
 	for (int i=0;i<images.size();i++)
 		imagesSelected << QString(images.at(i).c_str());
 	oeTable->setColumnCount(13);
@@ -367,7 +395,7 @@ void PTUserInterface_Qt::viewReport()
 	horizontalLayout->setStretchFactor(oeLayout,13);
 	/**///tabela dos pontos fotogrametricos
 
-	deque<string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
+    std::deque<std::string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
 	if (ids.size()!=0)
 	{
 		QVBoxLayout *phtgLayout= new QVBoxLayout();
@@ -380,7 +408,7 @@ void PTUserInterface_Qt::viewReport()
 		Matrix pointsPhotogrametricMatrix=ptManager->getPhotogrammetricENH();
 		Matrix pointsResiduosPhotogrametricMatrix=ptManager->getResiduoPhotogrammetric();
 
-		for (int i=0;i<ids.size();i++)
+        for (size_t i=0;i<ids.size();i++)
 			idsPhotogrammetric << QString(ids.at(i).c_str());
 		photogrammetricTable->setColumnCount(7);
 		photogrammetricTable->putInColumn(idsPhotogrammetric,0);
@@ -428,7 +456,7 @@ void PTUserInterface_Qt::showReportXml()
 	QDockWidget *dockResultView = new QDockWidget("EO Parameters",this);
 	QWidget *resultView = new QWidget();
 
-	dockResultView->setWidget(resultView);
+    dockResultView->setWidget(resultView);
 	QHBoxLayout *horizontalLayout= new QHBoxLayout();
 	//qDebug("Vendo Report");
 	QStringList oeHeaderLabels;
@@ -456,7 +484,7 @@ void PTUserInterface_Qt::showReportXml()
 
 	QStringList imagesSelected;
 	//oesXml.show('f',3,"oesXml");
-	for (int i=0; i<oesXml.getRows();i++)
+    for (size_t i=0; i<oesXml.getRows();i++)
 	{
 		//qDebug("imageID: %d\n",oesXml.getInt(i+1,1));
 		imagesSelected << QString::fromStdString(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
@@ -520,11 +548,11 @@ void PTUserInterface_Qt::showSelectionWindow()
 {
 	selectionView= new QWidget();
 
-	deque<string> idsOut = ptManager->getPointsWithLesserThanOverlap(2);
+    std::deque<std::string> idsOut = ptManager->getPointsWithLesserThanOverlap(2);
 	if (idsOut.size()>0)
 	{
 		QString ids="";
-		for (int i=0;i<idsOut.size() ; i++)
+        for (size_t i=0;i<idsOut.size() ; i++)
 		{
 			ids+=QString::fromStdString(idsOut.at(i));
 			ids+=", ";
@@ -543,7 +571,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 	}
 
 	QStringList listImages;
-	deque<string> lista;
+    std::deque<std::string> lista;
 	lista=ptManager->getStringImages();
 	int sizeList=lista.size();
 	for (int i=0;i<sizeList;i++)
@@ -616,7 +644,7 @@ void PTUserInterface_Qt::showSelectionWindow()
 	connect(runButton,SIGNAL(clicked()),this,SLOT(calculatePT()));
 	connect(cancelButton,SIGNAL(clicked()),selectionView,SLOT(close()));
 
-	selectionView->setWindowModality(Qt::ApplicationModal);
+    selectionView->setWindowModality(Qt::ApplicationModal);
 	selectionView->show();
 }
 
@@ -666,13 +694,13 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 }
 
 //Atualiza a tabela de imagens
-void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string imageFilename, bool move)
+void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, std::string imageFilename, bool move)
 {
 	bool ok;
 	QStringList idImagesPoints, keysImagePoints;
-	deque<string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
-	deque<string> keysPoints = ptManager->getStringKeysPoints(imageFilename);
-	for (int i=0;i<imagesPoints.size();i++)
+    std::deque<std::string> imagesPoints = ptManager->getStringIdPoints(imageFilename);
+    std::deque<std::string> keysPoints = ptManager->getStringKeysPoints(imageFilename);
+    for (size_t i=0;i<imagesPoints.size();i++)
 	{
 		idImagesPoints << QString(imagesPoints.at(i).c_str());
 		keysImagePoints << QString(keysPoints.at(i).c_str());
@@ -733,13 +761,13 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, string image
 void PTUserInterface_Qt::updatePointsTable()
 {
 	QStringList headerLabelsPoints,idPoints,typePoints,keysPoints;
-	deque<string>  ids  = ptManager->getStringIdPoints();
-	deque<string> types = ptManager->getStringTypePoints();
-	deque<string> keys  = ptManager->getStringKeysPoints();
+    std::deque<std::string>  ids  = ptManager->getStringIdPoints();
+    std::deque<std::string> types = ptManager->getStringTypePoints();
+    std::deque<std::string> keys  = ptManager->getStringKeysPoints();
 	headerLabelsPoints<<"Id"<<"Type"<<"E"<<"N"<<"H";
 
 	Matrix pointsMatrix=ptManager->getENH();
-	for (int i=0;i<ids.size();i++)
+    for (size_t i=0;i<ids.size();i++)
 	{
 		idPoints << QString(ids.at(i).c_str());
 		typePoints << QString(types.at(i).c_str());
@@ -1129,13 +1157,13 @@ void PTUserInterface_Qt::clearAllMarks(SingleDisplay *display)
 void PTUserInterface_Qt::showImagesAppearances(int pointKey)
 {
 	imagesPointTreeWidget->clear();
-	deque<string> appearances=ptManager->getImagesAppearances(pointKey);
+    std::deque<std::string> appearances=ptManager->getImagesAppearances(pointKey);
 
 	if (appearances.size()==0)
         return pointIdLabel->setText(QString("Point %1").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
 
 	QList<QTreeWidgetItem*> treelist;
-	for(int i=0;i<appearances.size();i++)
+    for(size_t i=0;i<appearances.size();i++)
 	{
 		QString imageKey= QString::number(ptManager->getImageId(appearances.at(i)));
 		Matrix coord=ptManager->getDigitalCoordinate(ptManager->getImageId(appearances.at(i)),pointKey);
@@ -1271,7 +1299,7 @@ void PTUserInterface_Qt::exportCoordinatesTxt()
     exportTxt->setFileName(fileExport);
     exportTxt->open(QIODevice::WriteOnly);
 
-    stringstream coordinates;
+    std::stringstream coordinates;
 
     coordinates << ptManager->getCoordinatesGeodesic();
     coordinates << ptManager->getCoordinatesTopocentric();
@@ -1517,7 +1545,7 @@ void PTUserInterface_Qt::undoMark()
 int PTUserInterface_Qt::saveFtReport(char * filename)
 {
     // Open file to save
-    ofstream arq(filename);
+    std::ofstream arq(filename);
     if (arq.fail())
     {
         printf("Problems while saving ...\n");
@@ -1531,45 +1559,45 @@ int PTUserInterface_Qt::saveFtReport(char * filename)
     arq << "Ground X, Y, Z unit: meters\n\n";
 
     arq << "Number of iterations: " << ptManager->getBundleAdjustment()->getTotalIterations() << "\n";
-    string converged;
+    std::string converged;
     (ptManager->getBundleAdjustment()->isConverged()) ? converged = "Yes" : converged = "No";
     arq << "Converged: " << converged << "\n";
     arq << "RMSE: " << Conversion::doubleToString(ptManager->getRMSE(),5) << "\n\n\n";
 
     arq << "Exterior Orientation:\n\n";
 
-    arq << left << setw(25) << "Image Id" << setw(25) << "X0" << setw(25) << "Y0" << setw(25) <<  "Z0" << setw(25) <<  "Omega" << setw(25) <<  "Phy" << setw(25) <<  "kappa";
+    arq << left << std::setw(25) << "Image Id" << std::setw(25) << "X0" << std::setw(25) << "Y0" << std::setw(25) <<  "Z0" << std::setw(25) <<  "Omega" << std::setw(25) <<  "Phy" << std::setw(25) <<  "kappa";
 
     arq << "\n";
 
-    deque<string> images = selectionImagesView->getSelectedItens();
+    std::deque<std::string> images = selectionImagesView->getSelectedItens();
     Matrix mat_aux = ptManager->getMatrixOE();
 
-    for (int i=1; i <= mat_aux.getRows(); i++)
-        arq << setw(25) << images.at(i-1) << setw(25) << Conversion::doubleToString(mat_aux.get(i,4),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,5),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,6),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,1),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,2),5) << setw(25) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
+    for (size_t i=1; i <= mat_aux.getRows(); i++)
+        arq << std::setw(25) << images.at(i-1) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,4),5) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,5),5) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,6),5) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,1),5) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,2),5) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
 
     arq << "\nMVC:\n";
 
     mat_aux = ptManager->getMVC();
 
-    for (int i=1; i <= mat_aux.getRows(); i++)
-        arq << setw(25) << images.at(i-1) << setw(25) << Conversion::doubleToString(mat_aux.get(i,4),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,5),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,6),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,1),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,2),8) << setw(25) << Conversion::doubleToString(mat_aux.get(i,3),8) << "\n";
+    for (size_t i=1; i <= mat_aux.getRows(); i++)
+        arq << std::setw(25) << images.at(i-1) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,4),8) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,5),8) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,6),8) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,1),8) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,2),8) << std::setw(25) << Conversion::doubleToString(mat_aux.get(i,3),8) << "\n";
 
 
     arq << "\n\nPhotogrammetric points:\n\n";
 
-    arq << setw(25) << "Point Id" << setw(25) << "E" << setw(25) << "N" << setw(25) << "H" << setw(25) << "δE" << setw(25) << "δN" << setw(25) << "δH";
+    arq << std::setw(25) << "Point Id" << std::setw(25) << "E" << std::setw(25) << "N" << std::setw(25) << "H" << std::setw(25) << "δE" << std::setw(25) << "δN" << std::setw(25) << "δH";
 
     arq << "\n";
 
-    deque<string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
+    std::deque<std::string>  ids  = ptManager->getSelectedPointIdPhotogrammetric();
     if (ids.size()!=0)
     {
             Matrix pointsPhotogrametricMatrix = ptManager->getPhotogrammetricENH();
             Matrix pointsResiduosPhotogrametricMatrix = ptManager->getResiduoPhotogrammetric();
 
-            for (int i=0;i<ids.size();i++)
-                arq << setw(25) << ids.at(i) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 1),5) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 2),5) << setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 3),5) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 1),8) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 2),8) << setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 3),8) << "\n";
+            for (size_t i=0;i<ids.size();i++)
+                arq << std::setw(25) << ids.at(i) << std::setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 1),5) << std::setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 2),5) << std::setw(25) << Conversion::doubleToString(pointsPhotogrametricMatrix.get(i+1, 3),5) << std::setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 1),8) << std::setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 2),8) << std::setw(25) << Conversion::doubleToString(pointsResiduosPhotogrametricMatrix.get(i+1, 3),8) << "\n";
     }
 
     arq << "\n\nEnd of the report.";

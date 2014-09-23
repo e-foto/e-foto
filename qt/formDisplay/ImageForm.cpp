@@ -1,7 +1,26 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ImageForm.h"
 #include <QFileDialog>
 #include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
+#include "ImageViewers.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -42,7 +61,7 @@ ImageForm::ImageForm(QWidget *parent):AbstractForm(parent)
     groupBox_2->setVisible(false);
 }
 
-void ImageForm::fillvalues(string values)
+void ImageForm::fillvalues(std::string values)
 {
 	this->cleanForm();
 	EDomElement ede(values);
@@ -64,7 +83,7 @@ void ImageForm::fillvalues(string values)
 
 	fileNameLine->setText( QString::fromUtf8(ede.elementByTagName("fileName").toString().c_str() ));
 
-	string auxString;
+    std::string auxString;
 	auxString = ede.elementByTagName("filePath").toString();
 
 	if (auxString == "."){
@@ -98,7 +117,7 @@ void ImageForm::fillvalues(string values)
 	}
 	else
 	{
-		deque<double> aux = ede.elementByTagName("GNSS").elementByTagName("gml:pos").toGmlPos();
+        std::deque<double> aux = ede.elementByTagName("GNSS").elementByTagName("gml:pos").toGmlPos();
 		if (aux.size() == 3)
 		{
 			eDoubleSpinBox_2->setValue(aux.at(0));
@@ -157,10 +176,10 @@ void ImageForm::fillvalues(string values)
 
 }
 
-string ImageForm::getvalues()
+std::string ImageForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
+    std::string xmlString;
+    std::stringstream auxStream;
 
 	auxStream << tagXml << "\n";
 	auxStream << "<imageId>" << imageIDLine->text().toUtf8().data() << "</imageId>\n";
@@ -173,7 +192,7 @@ string ImageForm::getvalues()
     auxStream << "<flightDirection>" << Conversion::doubleToString(flightDirection) << "</flightDirection>\n";
 	if (gnssGroup->isChecked())
 	{
-		string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
+        std::string type = gnssTypeComboBox->currentIndex() == 0 ? "Initial": gnssTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
 		auxStream << "<GNSS uom=\"#m\" type=\"" << type << "\">\n";
 		auxStream << "<gml:pos>" << Conversion::doubleToString(eDoubleSpinBox_2->value()) << " " << Conversion::doubleToString(nDoubleSpinBox_2->value()) << " " << Conversion::doubleToString(hDoubleSpinBox_2->value()) <<"</gml:pos>\n";
 		auxStream << gnssSigmaController->getValues();
@@ -181,7 +200,7 @@ string ImageForm::getvalues()
 	}
 	if (insGroup->isChecked())
 	{
-		string type = insTypeComboBox->currentIndex() == 0 ? "Initial": insTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
+        std::string type = insTypeComboBox->currentIndex() == 0 ? "Initial": insTypeComboBox->currentIndex() == 1 ? "Fixed" : "Unused";
 		auxStream << "<INS uom=\"#rad\" type=\"" << type << "\">\n";
 		auxStream << "<omega>" << Conversion::doubleToString(omegaDmsEdit->getDmsValue()->dmsToRadiano()) <<"</omega>\n";
 		auxStream << "<phi>" << Conversion::doubleToString(phiDmsEdit->getDmsValue()->dmsToRadiano()) <<"</phi>\n";
@@ -309,17 +328,17 @@ void ImageForm::metadataVisibleChanged(QString newText)
 		metadataGroup->setVisible(true);
 }
 
-string ImageForm :: getFileImageName()
+std::string ImageForm :: getFileImageName()
 {
 	return fileImageName.toStdString().c_str();
 }
 
-string ImageForm :: getFileImagePath()
+std::string ImageForm :: getFileImagePath()
 {
 	return fileImagePath.toStdString().c_str();
 }
 
-bool ImageForm::isForm(string formName)
+bool ImageForm::isForm(std::string formName)
 {
 	return !formName.compare("ImageForm");
 }

@@ -94,7 +94,7 @@ public:
 	* \param mode  : Tipo de exibição com que os valores numéricos aparecerão: 'e' é formato exponencial , 'f' é formato decimal
 	* \param precision: Precisão com a qual os valores numericos serão exibidos
 	*/
-	void setTableData(string xmlString,char mode='e',int precision=6);
+    void setTableData(std::string xmlString,char mode='e',int precision=6);
 
 	/**
 	*  \brief Metodo para redimensionar a tabela de forma que ela fique em um tamanho compacto, tentando sempre não prejudicar a visulaização dos dados

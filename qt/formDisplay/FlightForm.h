@@ -1,9 +1,25 @@
 #ifndef FLIGHTFORM_H
 #define FLIGHTFORM_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "ui_FlightLayout.h"
 #include "AbstractForm.h"
-#include "EDom.h"
+
 
 namespace br {
 namespace uerj {
@@ -32,13 +48,13 @@ public:
   * \brief Metodo que preenche um formulário previamente salvo em um arquivo *.epp
   * \param values : string que contém o xml com os valores que preencherão o formulario
   */
-	void fillvalues(string values);
+    void fillvalues(std::string values);
 
 	/**
   * \brief Metodo que cria uma string, padronizada em xml, com os valores dos campos do formulario
-  * \return string : Texto em xml contendo tags com os campos do formulario
+  * \return std::string : Texto em xml contendo tags com os campos do formulario
   */
-	string getvalues();
+    std::string getvalues();
 
 	/**
   * \brief Metodo que altera todos os objetos editaveis do formulario no modo de somente leitura
@@ -62,7 +78,7 @@ public:
   * \param formName : nome do formulario
   * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário
   */
-	bool isForm(string formName);
+    bool isForm(std::string formName);
 
 };
 

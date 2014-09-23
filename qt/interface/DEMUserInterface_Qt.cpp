@@ -1,12 +1,35 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "DEMUserInterface_Qt.h"
 
-#include <qdesktopwidget.h>
-#include <qapplication.h>
-#include <qvariant.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qaction.h>
-#include <qstring.h>
+#include "Image.h"
+#include "SingleDisplay.h"
+#include "ImageViewers.h"
+#include "LoadingScreen.h"
+
+#include <QDesktopWidget>
+#include <QFileDialog>
+#include <QMessageBox>
+
+#include <math.h>
+
+#include <sstream>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -42,7 +65,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
 	QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onDemLoadClicked()));
         QObject::connect(loadButton2, SIGNAL(clicked()), this, SLOT(onDemGridLoadClicked()));
 	QObject::connect(interButton, SIGNAL(clicked()), this, SLOT(onDemGridClicked()));
-	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(int)));
+	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onLSMCheckChanged(/*int*/)));
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
 	QObject::connect(comboBox2_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onGridAreaLimitsStateChanged(int)));
 	QObject::connect(comboBox1, SIGNAL(currentIndexChanged(int)), this, SLOT(onInterStateChanged(int)));
@@ -184,13 +207,13 @@ void DEMUserInterface_Qt::onAbortClicked()
 	setAllowClose(true);
 }
 
-void DEMUserInterface_Qt::onLSMTemplateSizeChanged(int ts)
+void DEMUserInterface_Qt::onLSMTemplateSizeChanged(/*int ts*/)
 {
     if (spinBox3->value() > spinBox3_3->value())
         spinBox3_3->setValue(spinBox3->value() + spinBox3_2->value());
 }
 
-void DEMUserInterface_Qt::onCorrTemplateSizeChanged(int ts)
+void DEMUserInterface_Qt::onCorrTemplateSizeChanged(/*int ts*/)
 {
     if (spinBox11->value() > spinBox11_3->value())
         spinBox11_3->setValue(spinBox11->value() + spinBox11_2->value());
@@ -420,7 +443,7 @@ void DEMUserInterface_Qt::onDemGridClicked()
 		return;
 
 	// Perform interpolation
-	manager->interpolateGrid(comboBox0->currentIndex(), comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex(), comboBox0->currentIndex());
+    manager->interpolateGrid(/*comboBox0->currentIndex(), */ comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex(), comboBox0->currentIndex());
 
 	if (manager->cancelFlag())
 		return;
@@ -557,7 +580,7 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
 	int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-	ofstream outfile(filename.toStdString().c_str());
+    std::ofstream outfile(filename.toStdString().c_str());
 
 	outfile << textEdit->toPlainText().toStdString();
 
@@ -832,8 +855,8 @@ void SeedEditorUserInterface_Qt::getImagesIds(int &left_id, int &right_id)
 {
 	int i = comboBox1->currentIndex();
 
-	deque<int> listPairs = manager->getImagesPairs();
-	deque<Image*> listAllImages = manager->getImages();
+    std::deque<int> listPairs = manager->getImagesPairs();
+    std::deque<Image*> listAllImages = manager->getImages();
 
 	// Decode
 	int no_imgs = listAllImages.size();
@@ -988,14 +1011,14 @@ void SeedEditorUserInterface_Qt::closeOk()
  */
 void SeedEditorUserInterface_Qt::addPairs()
 {
-	deque<int> listPairs = manager->getImagesPairs();
-	deque<Image*> listAllImages = manager->getImages();
+    std::deque<int> listPairs = manager->getImagesPairs();
+    std::deque<Image*> listAllImages = manager->getImages();
 
 	// Add pairs to the interface
 	int left_id, right_id;
 	int no_imgs = listAllImages.size();
-	string str_left, str_right;
-	stringstream txt;
+    std::string str_left, str_right;
+    std::stringstream txt;
 
 	for (int i=0; i<listPairs.size(); i++)
 	{
@@ -1195,15 +1218,15 @@ void SeedEditorUserInterface_Qt::updateData(int i)
 	//
 	// Update current images
 	//
-	deque<Image*> listAllImages = manager->getImages();
+    std::deque<Image*> listAllImages = manager->getImages();
 	int left_id, right_id;
 	getImagesIds(left_id, right_id);
 
 	//
 	// Update Images
 	//
-	string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
-	string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
+    std::string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
+    std::string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
 
 	viewer->loadLeftImage(QString::fromStdString(left_file));
 	viewer->loadRightImage(QString::fromStdString(right_file));

@@ -1,4 +1,25 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "OrthoUserInterface_Qt.h"
+
+#include "DemFeatures.h"
+#include "ImageViewers.h"
+#include "SingleTools.h"
+#include "SingleDisplay.h"
 
 #include <qdesktopwidget.h>
 #include <qapplication.h>
@@ -7,6 +28,14 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
+#include "Orthorectification.h"
+#include "OrthoManager.h"
+#include <math.h>
+
+#include <QCloseEvent>
+
+#include <iomanip>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -295,7 +324,7 @@ void OrthoUserInterface_Qt::setProgress(int progress)
 	qApp->processEvents();
 }
 
-void OrthoUserInterface_Qt::setCurrentWork(string msg)
+void OrthoUserInterface_Qt::setCurrentWork(std::string msg)
 {
 	QString qmsg = QString::fromStdString(msg);
 	workLabel->setText(qmsg);
@@ -361,7 +390,7 @@ int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 	}
 
     // Expanção do XML
-    manager->addOrthoToXML2(string(filename));
+    manager->addOrthoToXML2(std::string(filename));
 
 	img.save(filename,"BMP");
 
@@ -571,12 +600,12 @@ void OrthoQualityUserInterface_Qt::saveQuality()
         int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-        ofstream outfile((char *)filename.toStdString().c_str());
+        std::ofstream outfile((char *)filename.toStdString().c_str());
 
         if (outfile.fail())
                 return;
 
-        outfile << setprecision(5);
+        outfile << std::setprecision(5);
 
         outfile << "Terrain X\tTerrain Y\tOrtho-image X\tOrtho-image Y\tX error\tY Error\tPlanimetric Error\n";
 
@@ -661,7 +690,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename)
     // X2 Y2 Z2
     // ...
 
-    ifstream arq(filename);
+    std::ifstream arq(filename);
 
     if (arq.fail())
             return 0;
@@ -707,7 +736,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
 {
     // Open ortho-imae quality file
 
-    ifstream arq(filename);
+    std::ifstream arq(filename);
 
     if (arq.fail())
             return 0;
@@ -718,7 +747,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
     int tab_pos = 0;
 
     // Skip first line (header)
-    string tag;
+    std::string tag;
     getline(arq,tag);
     tag = tag.substr(0,9);
     if (tag.compare("Terrain X") != 0)
@@ -797,7 +826,7 @@ void OrthoQualityUserInterface_Qt::addTableEnding(int tab_pos)
 
 }
 
-string OrthoQualityUserInterface_Qt::getTableAt(int row, int col)
+std::string OrthoQualityUserInterface_Qt::getTableAt(int row, int col)
 {
     QTableWidgetItem *selItem;
     selItem = tableWidget->item(row, col);

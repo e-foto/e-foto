@@ -19,19 +19,19 @@
 
 #include "ui_SRForm.h"
 #include "SRUserInterface.h"
-#include "ImageViewers.h"
-#include "LoadingScreen.h"
-#include "FlightDirectionForm.h"
 
-#include <QPoint>
-#include <QGridLayout>
-#include <QInputDialog>
-#include <QStandardItemModel>
+class QStandardModel;
+class QStandardItem;
+class QStandardItemModel;
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class Marker;
+class SingleViewer;
+class FlightDirectionForm;
 
 
 class SRUserInterface_Qt : public QMainWindow, public Ui::SRMainWindow, public SRUserInterface

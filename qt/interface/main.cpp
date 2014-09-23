@@ -1,7 +1,5 @@
 #include <iostream>
 
-using namespace std;
-
 #include <QApplication>
 #include <QTranslator>
 #include "LoadingScreen.h"

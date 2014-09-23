@@ -1,21 +1,26 @@
 #ifndef DEMUSERINTERFACE_QT_H
 #define DEMUSERINTERFACE_QT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ui_DemExtraction.h"
 #include "ui_SeedEditor.h"
 #include "DEMUserInterface.h"
-#include "ImageViewers.h"
-#include "LoadingScreen.h"
-#include "Matrix.h"
-#include "MatchingPoints.h"
 #include "ProgressWindow_Qt.h"
-#include <QPoint>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QStandardItemModel>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QList>
+
 
 namespace br {
 namespace uerj {
@@ -23,6 +28,8 @@ namespace eng {
 namespace efoto {
 
 class SeedEditorUserInterface_Qt;
+class SeparatedStereoViewer;
+class Marker;
 
 class DEMUserInterface_Qt : public QWidget, public Ui::DEMInterface, public DEMUserInterface
 {
@@ -63,8 +70,8 @@ protected slots:
     void enableAfterGrid();
     void onLoadPtsButtonClicked();
     void onSavePtsButtonClicked();
-    void onLSMTemplateSizeChanged(int ts);
-    void onCorrTemplateSizeChanged(int ts);
+    void onLSMTemplateSizeChanged(/*int ts*/);
+    void onCorrTemplateSizeChanged(/*int ts*/);
     void onDownValueChanged(double value);
     void onSeedEditorClosed();
 
@@ -116,7 +123,7 @@ private:
 	void addMatchingPoints();
 	void addSeedsAndTable();
 	int findKey(int seed_id);
-	vector<int> sel_seeds;
+    std::vector<int> sel_seeds;
 	void checkSelectedSeeds();
 	int no_seeds, no_pairs; // Number for each pair, not the total
         QString lastDir;

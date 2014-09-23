@@ -1,4 +1,27 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SPUserInterface_Qt.h"
+
+#include "SPManager.h"
+#include "StereoTools.h"
+#include "StereoDisplay.h"
+#include "TreeFeatures.h"
+#include "LoadingScreen.h"
+#include "ImageViewers.h"
 
 #include <qdesktopwidget.h>
 #include <qapplication.h>
@@ -7,6 +30,9 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
+
+#include <QMessageBox>
+#include <QFileDialog>
 
 namespace br {
 namespace uerj {
@@ -17,15 +43,15 @@ SPUserInterface_Qt* SPUserInterface_Qt::spInst = NULL;
 
 SPUserInterface_Qt* SPUserInterface_Qt::instance(SPManager* manager)
 {
-	if (spInst = NULL)
+    if (spInst != NULL)
 	{
 		delete spInst;
 		spInst = NULL;
 	}
-	if (spInst == NULL)
-	{
+    //if (spInst == NULL)
+    //{
 		spInst = new SPUserInterface_Qt(manager);
-	}
+    //}
 	return spInst;
 }
 
@@ -419,7 +445,7 @@ void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
 void SPUserInterface_Qt::onFeatureSelected()
 {
 	// Get Feature data
-	string fname;
+    std::string fname;
         int sel_feat, fclass, ftype, no_points;
         double perimeter, area;
 
@@ -445,10 +471,10 @@ void SPUserInterface_Qt::onFeatureSelected()
         areaLabel->setText(QString::number(area,'f',2) + " square meters");
 }
 
-void SPUserInterface_Qt::addImagePair(char * item)
+void SPUserInterface_Qt::addImagePair(char *item)
 {
-	QString text = QString::fromAscii(item);
-	comboBox->addItem(text);
+    QString text = QString::fromAscii(item);
+    comboBox->addItem(text);
 }
 
 void SPUserInterface_Qt::onCloseFeature()

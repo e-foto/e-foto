@@ -1,23 +1,35 @@
 #ifndef SPUSERINTERFACE_QT_H
 #define SPUSERINTERFACE_QT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "ui_Stereoplotter.h"
 #include "SPUserInterface.h"
-#include "ImageViewers.h"
-#include "LoadingScreen.h"
-#include "Matrix.h"
-#include "TreeFeatures.h"
-#include <QPoint>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QStandardItemModel>
-#include <QFileDialog>
-#include <QMessageBox>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class SeparatedStereoViewer;
+class SeparatedStereoToolsBar;
+class StereoViewer;
+class StereoToolsBar;
+class TreeFeatures;
 
 class SPUserInterface_Qt : public QMainWindow, public Ui::StereoPlotterForm, public SPUserInterface
 {
@@ -28,7 +40,7 @@ public:
 public slots:
 
 protected:
-	static SPUserInterface_Qt* spInst;
+    static SPUserInterface_Qt* spInst;
 	SPUserInterface_Qt(SPManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SPUserInterface_Qt();
 	SPManager *manager;
@@ -82,7 +94,7 @@ public:
 	// Other Methods
 	//
 	bool exec();
-	void addImagePair(char *);
+    void addImagePair(char *);
         void showErrorMessage(QString msg);
 
 };

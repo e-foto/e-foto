@@ -166,7 +166,7 @@ HEADERS += DEMManager.h \
     ReportUserInterface_Qt.h \
     SPUserInterface_Qt.h \
     SRUserInterface_Qt.h \
-    c/photogrammetry/PhotoTriReport.h
+    PhotoTriReport.h
 
 # c/control/
 SOURCES += DEMManager.cpp \
@@ -295,7 +295,7 @@ SOURCES += DEMManager.cpp \
     ReportUserInterface_Qt.cpp \
     SPUserInterface_Qt.cpp \
     SRUserInterface_Qt.cpp \
-    c/photogrammetry/PhotoTriReport.cpp
+    PhotoTriReport.cpp \
 
 # qt/formDisplay/
 FORMS += FeatEditor.ui \

@@ -1,7 +1,28 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "EDom.h"
+
 #include "PointsForm.h"
 #include <QFileDialog>
 #include <QFile>
 #include <QString>
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -18,18 +39,18 @@ PointsForm :: PointsForm(QWidget *parent) : AbstractForm(parent)
 	//connect(importButton, SIGNAL(clicked()), this ,SLOT(importFromTxt()));
 }
 
-void PointsForm::fillvalues(string values)
+void PointsForm::fillvalues(std::string values)
 {
 	EDomElement ede(values);
 	int rows=ede.children().size();
 	pointsTable->setRowCount(rows);
 	pointsTable->setColumnCount(6);
 
-	deque<EDomElement> pntChildrens = ede.children();
+    std::deque<EDomElement> pntChildrens = ede.children();
 
 	for (int i=0;i<rows;i++){
 
-		deque<double> values;
+        std::deque<double> values;
 
 		QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pntChildrens.at(i).attribute("key").c_str()) );
 		QTableWidgetItem *gcpItem = new QTableWidgetItem(pntChildrens.at(i).elementByTagName("pointId").toString().c_str()) ;
@@ -52,10 +73,10 @@ void PointsForm::fillvalues(string values)
 	pntChildrens.clear();
 
 }
-string PointsForm::getvalues()
+std::string PointsForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
+    std::string xmlString;
+    std::stringstream auxStream;
 
 	auxStream << "\nNot Available\n";
 
@@ -72,7 +93,7 @@ void PointsForm :: emitSignal(int i)
 	emit clicked(i);
 }
 
-bool PointsForm::isForm(string formName)
+bool PointsForm::isForm(std::string formName)
 {
 	return !formName.compare("PointsForm");
 }

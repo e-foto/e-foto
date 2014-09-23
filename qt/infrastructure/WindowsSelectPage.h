@@ -6,8 +6,6 @@
 #include <QtGui>
 #include <deque>
 
-using namespace std;
-
 class WindowsSelectPage : public QWizardPage
 {
 	Q_OBJECT
@@ -15,7 +13,7 @@ class WindowsSelectPage : public QWizardPage
 public:
 	WindowsSelectPage(QString leftBox, QString rightBox,QWidget *parent = 0);
 	void setInitialList(QStringList list);
-	deque<string> getSelectedItens();
+    std::deque<std::string> getSelectedItens();
 	void initializePage();
 
 public slots :

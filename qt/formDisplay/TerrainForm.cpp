@@ -1,4 +1,25 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "TerrainForm.h"
+
+#include "EDom.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -18,7 +39,7 @@ TerrainForm::TerrainForm(QWidget *parent):AbstractForm(parent)
 	connect(meanAltSpinBox, SIGNAL(valueChanged(double)),this,SLOT(validatorAlt()));
 }
 
-void TerrainForm::fillLatDir(string str)
+void TerrainForm::fillLatDir(std::string str)
 {
 	if (str == "N")
 		latDirCombo->setCurrentIndex(0);
@@ -26,7 +47,7 @@ void TerrainForm::fillLatDir(string str)
 		latDirCombo->setCurrentIndex(1);
 }
 
-void TerrainForm::fillLongDir(string str)
+void TerrainForm::fillLongDir(std::string str)
 {
 	if (str == "E")
 		longDirCombo->setCurrentIndex(1);
@@ -34,7 +55,7 @@ void TerrainForm::fillLongDir(string str)
 		longDirCombo->setCurrentIndex(0);
 }
 
-string TerrainForm::getLatDir()
+std::string TerrainForm::getLatDir()
 {
 	if (latDirCombo->currentIndex() == 0)
 		return "N";
@@ -42,7 +63,7 @@ string TerrainForm::getLatDir()
 		return "S";
 }
 
-string TerrainForm::getLongDir()
+std::string TerrainForm::getLongDir()
 {
 	if (longDirCombo->currentIndex() == 1)
 		return "E";
@@ -50,7 +71,7 @@ string TerrainForm::getLongDir()
 		return "W";
 }
 
-void TerrainForm::fillvalues(string values)
+void TerrainForm::fillvalues(std::string values)
 {
 	cleanForm();
 	EDomElement ede(values);
@@ -96,10 +117,10 @@ void TerrainForm::fillvalues(string values)
 	longDmsEdit->updateValue();
 }
 
-string TerrainForm::getvalues()
+std::string TerrainForm::getvalues()
 {
-	string xmlString;
-	stringstream auxStream;
+    std::string xmlString;
+    std::stringstream auxStream;
 
 	auxStream << "<terrain>\n";
 	auxStream << "<meanAltitude uom=\"#m\">" << (meanAltSpinBox->value()) <<"</meanAltitude>\n";
@@ -182,7 +203,7 @@ void TerrainForm::setFormLocale(QLocale locale)
 	longDmsEdit->setLocale(locale);
 }
 
-bool TerrainForm::isForm(string formName)
+bool TerrainForm::isForm(std::string formName)
 {
 	return !formName.compare("TerrainForm");
 }
