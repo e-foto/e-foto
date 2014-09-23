@@ -1,10 +1,23 @@
 #ifndef DMS_H
 #define DMS_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-//#include <QString>
-#include "EDom.h"
-#include <iostream>
-using namespace::std;
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <string>
 
 namespace br {
 namespace uerj {
@@ -56,7 +69,7 @@ public:
     * \param dms : string no formato dd°mm'ss.sss" ou dd mm ss.sss
     * \attention string em outros formatos podem gerar resultados inesperados
     */
-    Dms(string dms);
+    Dms(std::string dms);
 
 	/**
 	* \brief Metodo para retornar o valor absoluto do grau
@@ -106,7 +119,7 @@ public:
     * \param decimals : precisao de retorno dos segundos
     * \return string : Objeto em formato texto dd°mm'ss.sss"
     */
-    string toString(int decimals=20);
+    std::string toString(int decimals=20);
 
 	/**
 	* \brief converte uma QString num formato padronizado em objeto Dms
@@ -122,7 +135,7 @@ public:
     * \attention QString em outros formatos podem gerar resultados inesperados
     * \return Dms : ponteiro para objeto Dms
     */
-    Dms* stringToDms(string dms);
+    Dms* stringToDms(std::string dms);
 
 	/**
 	* \brief Metodo para alterar os valores do objeto apartir de outro Dms

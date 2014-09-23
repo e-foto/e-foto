@@ -27,6 +27,9 @@
 #include "InteriorOrientation.h"
 #include "SpatialRessection.h"
 #include "SRUserInterface_Qt.h"
+#include "Flight.h"
+
+#include <fstream>
 
 // Constructors and destructors
 //
@@ -48,7 +51,7 @@ SRManager::SRManager()
 	status = false;
 }
 
-SRManager::SRManager(EFotoManager *manager, Terrain *myTerrain, Sensor *mySensor, Flight *myFlight, Image *myImage, InteriorOrientation *myIO, SpatialRessection *mySR, deque<Point *> myPoints)
+SRManager::SRManager(EFotoManager *manager, Terrain *myTerrain, Sensor *mySensor, Flight *myFlight, Image *myImage, InteriorOrientation *myIO, SpatialRessection *mySR, std::deque<Point *> myPoints)
 {
 	this->manager = manager;
 	this->mySensor = mySensor;
@@ -117,9 +120,9 @@ void SRManager::unselectPoint(int id)
 	}
 }
 
-deque<double> SRManager::pointToDetector(double col, double lin)
+std::deque<double> SRManager::pointToDetector(double col, double lin)
 {
-	deque<double> result;
+    std::deque<double> result;
 	result.push_back(myIO->imageToDetector(col, lin).getXi());
 	result.push_back(myIO->imageToDetector(col, lin).getEta());
 	return result;
@@ -170,16 +173,16 @@ bool SRManager::removePointFromImage(int id)
 	return false;
 }
 
-deque<string> SRManager::listSelectedPoints()
+std::deque<std::string> SRManager::listSelectedPoints()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	if (started)
 	{
-		deque<int> selectedPoints = mySR->getSelectedPoints();
+        std::deque<int> selectedPoints = mySR->getSelectedPoints();
 		for (unsigned int i = 0; i < selectedPoints.size(); i++)
 		{
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
-			string value = Conversion::intToString(myPoint->getId());
+            std::string value = Conversion::intToString(myPoint->getId());
 			value += " ";
 			value += myPoint->getPointId();
 			value += " ";
@@ -190,15 +193,15 @@ deque<string> SRManager::listSelectedPoints()
 	return result;
 }
 
-deque<string> SRManager::listImagePoints()
+std::deque<std::string> SRManager::listImagePoints()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	if (started)
 	{
 		for (int i = 0; i < myImage->countPoints(); i++)
 		{
 			Point* myPoint = myImage->getPointAt(i);
-			string value = Conversion::intToString(myPoint->getId());
+            std::string value = Conversion::intToString(myPoint->getId());
 			value += " ";
 			value += myPoint->getPointId();
 			value += " ";
@@ -209,19 +212,19 @@ deque<string> SRManager::listImagePoints()
 	return result;
 }
 
-deque<string> SRManager::listAllPoints()
+std::deque<std::string> SRManager::listAllPoints()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	if (started)
 	{
 		EDomElement xmlPoints(manager->getXml("points"));
-		deque<EDomElement> allPoints = xmlPoints.children();
+        std::deque<EDomElement> allPoints = xmlPoints.children();
 		for (unsigned int i = 0; i < allPoints.size(); i++)
 		{
-			string data = allPoints.at(i).getContent();
+            std::string data = allPoints.at(i).getContent();
 			if (data != "")
 			{
-				string value = allPoints.at(i).attribute("key");
+                std::string value = allPoints.at(i).attribute("key");
 				value += " ";
 				value += allPoints.at(i).elementByTagName("pointId").toString();
 				value += " ";
@@ -233,9 +236,9 @@ deque<string> SRManager::listAllPoints()
 	return result;
 }
 
-deque<string> SRManager::pointData(int index)
+std::deque<std::string> SRManager::pointData(int index)
 {
-    deque<string> result;
+    std::deque<std::string> result;
     if (started)
     {
         Point* myPoint = myPoints.at(index);
@@ -269,10 +272,10 @@ bool SRManager::connectImagePoints()
 	if (!(started)) /* Sim, esse método é executado antes do módulo ser iniciado, e não deve ser executado depois. */
 	{
 		EDomElement xmlPoints(manager->getXml("points"));
-		deque<EDomElement> allPoints = xmlPoints.children();
+        std::deque<EDomElement> allPoints = xmlPoints.children();
 		for (unsigned int i = 0; i < allPoints.size(); i++)
 		{
-			string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(myImage->getId())).getContent();
+            std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(myImage->getId())).getContent();
 			if (data != "")
 			{
 				Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
@@ -347,11 +350,11 @@ bool SRManager::exteriorDone()
 	return true;
 }
 
-deque<string> SRManager::makeReport()
+std::deque<std::string> SRManager::makeReport()
 {
 
 	// Modificado em 27/06/2011 a pedido do Prof Nunes para exibir La e Sigma La se existirem. A saber o codigo anterior exibia Lb e sigma de Lb.
-	deque<string> result;
+    std::deque<std::string> result;
 	result.push_back(mySR->getXa().xmlGetData());
 	result.push_back(mySR->getLa().xmlGetData());
 	result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
@@ -408,12 +411,12 @@ void SRManager::returnProject()
 	manager->reloadProject();
 }
 
-bool SRManager::save(string path)
+bool SRManager::save(std::string path)
 {
 	if (started)
 	{
 		FILE* pFile;
-		string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
+        std::string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
 
 		output += mySensor->xmlGetData();
 		output += "\n";
@@ -443,7 +446,7 @@ bool SRManager::save(string path)
 	return false;
 }
 
-bool SRManager::load(string path)
+bool SRManager::load(std::string path)
 {
 	if (started)
 	{
@@ -466,7 +469,7 @@ bool SRManager::load(string path)
 		if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
 
 
-		string strxml(buffer);
+        std::string strxml(buffer);
 		EDomElement xml(strxml);
 
 		mySensor->xmlSetData(xml.elementByTagName("Sensor").getContent());
@@ -475,7 +478,7 @@ bool SRManager::load(string path)
 		myIO->xmlSetData(xml.elementByTagName("imageIO").getContent());
 		mySR->xmlSetData(xml.elementByTagName("imageEO").getContent());
 
-		deque<EDomElement> xmlPoints = xml.elementsByTagName("Point");
+        std::deque<EDomElement> xmlPoints = xml.elementsByTagName("Point");
 		for (unsigned int i = 0; i < xmlPoints.size(); i++)
 		{
 
@@ -487,13 +490,13 @@ bool SRManager::load(string path)
 	return false;
 }
 
-string SRManager::getImageFile()
+std::string SRManager::getImageFile()
 {
 	if (myImage->getFilepath() == ".")
 		return myImage->getFilename();
 	else
 	{
-		string result = "";
+        std::string result = "";
 		result += myImage->getFilepath();
 		result += "/";
 		result += myImage->getFilename();

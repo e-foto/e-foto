@@ -1,8 +1,25 @@
 /*******************************************************************************
    ImageFiducialMark.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "ImageFiducialMark.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -75,31 +92,31 @@ int ImageFiducialMark::getImageId()
 	return imageId;
 }
 
-string ImageFiducialMark::objectType(void)
+std::string ImageFiducialMark::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "ImageFiducialMark " << id;
 	return result.str();
 }
 
-string ImageFiducialMark::objectAssociations(void)
+std::string ImageFiducialMark::objectAssociations(void)
 {
 	return "";
 }
 
-bool ImageFiducialMark::is(string s)
+bool ImageFiducialMark::is(std::string s)
 {
 	return (s == "ImageFiducialMark" ? true : false);
 }
 
-void ImageFiducialMark::xmlSetData(string xml)
+void ImageFiducialMark::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
 	EDomElement xmlPos = root.elementByTagName("gml:pos");
 	if (xmlPos.isAvailable())
 	{
-		deque<double> gmlPosValues = xmlPos.toGmlPos();
+        std::deque<double> gmlPosValues = xmlPos.toGmlPos();
 		col = gmlPosValues.at(0);
 		lin = gmlPosValues.at(1);
 		available = true;
@@ -110,9 +127,9 @@ void ImageFiducialMark::xmlSetData(string xml)
 	}
 }
 
-string ImageFiducialMark::xmlGetData()
+std::string ImageFiducialMark::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<fiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
 	if (available)
 		result << "<gml:pos>" << Conversion::doubleToString(col) << " " << Conversion::doubleToString(lin) << "</gml:pos>\n";

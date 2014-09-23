@@ -1,16 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef MATRIX_H
 #define MATRIX_H
 
 #include "RectSupport.h"
-#include "PositionMatrix.h"
-
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <math.h>
-#include <stdlib.h>
-
-using namespace std;
 
 namespace br {
 namespace uerj {
@@ -32,7 +40,7 @@ class Matrix : public RectSupport
 
 private:
 	double* _Mat;
-	string unit;
+    std::string unit_;
 
 protected:
 
@@ -147,7 +155,7 @@ public:
  * \brief Método para retornar a unidade considerada para a matriz.
  * \return string	Texto descritor da unidade de medidas considerada para a matriz.
  */
-	string getUnit();
+    std::string getUnit();
 
 	/**
   * \brief Método para retornar uma selecão do conteúdo da matriz.
@@ -166,7 +174,7 @@ public:
  * \param precision	Precisão em quantidade de números significativos (para notação científica) ou em quantidade de casa decimais (para notação decimal).
  * \param name	Nome a ser dado para a matriz durante sua exibição.
  */
-	void show(char mode='f',int precision=3, string name = "");
+    void show(char mode='f',int precision=3, std::string name = "");
 
 	/**
  * \brief Método para informar o maior valor de uma matriz.
@@ -200,7 +208,7 @@ public:
  * \brief Método para alterar a unidade considerada para a matriz.
  * \param newUnit	Texto descritor da nova unidade de medidas considerada para a matriz.
  */
-	void setUnit(string newUnit);
+    void setUnit(std::string newUnit);
 
 	/**
  * \brief Método para verificar se a matriz é a identidade.
@@ -333,34 +341,34 @@ public:
  * \brief Método para emitir o nome de classe.
  * \return string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para emitir as associações de uma instância.
- * \return string	Retorna vazio para esta classe.
+ * \return std::string	Retorna vazio para esta classe.
  * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
  */
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
  * \return bool	Retorna verdadeiro caso o nome passado seja Matrix. Retorna falso no caso contrário.
  */
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml (mml:matrix) da matriz.
- * \return string	Retorna o string contendo o xml (mml:matrix) da matriz.
+ * \return std::string	Retorna o string contendo o xml (mml:matrix) da matriz.
  */
-    string xmlGetData();
-    string xmlGetData(int prec);
+    std::string xmlGetData();
+    std::string xmlGetData(int prec);
 
 	/**
  * \brief Método para setar os valores de atributos da matriz utilizando sua descrição em xml (mml:matrix).
  * \param xml	String contendo o xml (mml:matrix) da matriz.
  */
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
   * Método para computar a transposta da matriz em escopo.

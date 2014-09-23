@@ -1,7 +1,22 @@
 /**************************************************************************
 		  IOManager.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "IOManager.h"
 #include "EFotoManager.h"
 #include "SensorWithFiducialMarks.h"
@@ -11,6 +26,8 @@
 #include "InteriorOrientation.h"
 #include "IOUserInterface.h"
 #include "IOUserInterface_Qt.h"
+
+#include <fstream>
 
 // Constructors and destructors
 //
@@ -96,9 +113,9 @@ unsigned int IOManager::countMarks()
 	return myImage->countDigFidMarks();
 }
 
-deque<string> IOManager::markData(int index)
+std::deque<std::string> IOManager::markData(int index)
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	if (started)
 	{
 		PositionMatrix analogMarks = getAnalogMarks();
@@ -122,7 +139,7 @@ unsigned int IOManager::getTotalMarks()
 
 int IOManager::getCalculationMode()
 {
-	string mode = mySensor->getCalculationMode();
+    std::string mode = mySensor->getCalculationMode();
 	return mode == "With Fiducial Marks"? 1 : mode == "With Sensor Dimensions" ? 2 : mode == "Fixed Parameters" ? 3 : 0;
 }
 
@@ -162,9 +179,9 @@ bool IOManager::interiorDone()
 	return true;
 }
 
-deque<string> IOManager::makeReport()
+std::deque<std::string> IOManager::makeReport()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	result.push_back(myIO->getXa().xmlGetData());
 	result.push_back(myIO->getLa().xmlGetData());
 	result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
@@ -213,12 +230,12 @@ void IOManager::returnProject()
 	manager->reloadProject();
 }
 
-bool IOManager::save(string path)
+bool IOManager::save(std::string path)
 {
 	if (started)
 	{
 		FILE* pFile;
-		string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
+        std::string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
 
 		output += mySensor->xmlGetData();
 		output += "\n";
@@ -239,7 +256,7 @@ bool IOManager::save(string path)
 	return false;
 }
 
-bool IOManager::load(string path)
+bool IOManager::load(std::string path)
 {
 	if (started)
 	{
@@ -262,7 +279,7 @@ bool IOManager::load(string path)
 		if ((unsigned int) result != (unsigned int) lSize) {fputs ("Reading error",stderr); exit (3);}
 
 
-		string strxml(buffer);
+        std::string strxml(buffer);
 		EDomElement xml(strxml);
 
 		mySensor->xmlSetData(xml.elementByTagName("Sensor").getContent());
@@ -275,13 +292,13 @@ bool IOManager::load(string path)
 	return false;
 }
 
-string IOManager::getImageFile()
+std::string IOManager::getImageFile()
 {
 	if (myImage->getFilepath() == ".")
 		return myImage->getFilename();
 	else
 	{
-		string result = "";
+        std::string result = "";
 		result += myImage->getFilepath();
 		result += "/";
 		result += myImage->getFilename();

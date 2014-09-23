@@ -1,15 +1,30 @@
+#ifndef REPORTMANAGER_H
+#define REPORTMANAGER_H
 /**************************************************************************
 		  ReportManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-#ifndef REPORTMANAGER_H
-#define REPORTMANAGER_H
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-#include "EObject.h"
-#include "Project.h"
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Dms.h"
-#include <QtGui>
+
+#include <QImage>
+
+class QTreeWidgetItem;
 
 namespace br {
 namespace uerj {
@@ -18,6 +33,10 @@ namespace efoto {
 
 class ReportUserInterface;
 class EFotoManager;
+
+//New
+class Project;
+
 
 class ReportManager
 {
@@ -80,87 +99,87 @@ public:
     * \brief Metodo que retorna o XML da opcao pai Header.
     * \return string XML da opcao pai Header.
     */
-    string eprHeader();
+    std::string eprHeader();
     /**
     * \brief Metodo que retorna o XML da opcao Terrain.
     * \return string XML da opcao pai Terrain.
     */
-    string eprTerrain();
+    std::string eprTerrain();
     /**
     * \brief Metodo que retorna o XML da opcao pai Sensor.
     * \return string XML da opcao pai Sensor.
     */
-    string eprSensors();
+    std::string eprSensors();
     /**
     * \brief Metodo que retorna o XML da opcao pai Flight.
     * \return string XML da opcao pai Flight.
     */
-    string eprFlights();
+    std::string eprFlights();
     /**
     * \brief Metodo que retorna o XML da opcao pai Images.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Images.
     */
-    string eprImages(QList<QTreeWidgetItem*> treeItems);
+    std::string eprImages(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Points.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Points
     */
-    string eprBlockPoints(QList<QTreeWidgetItem*> treeItems);
+    std::string eprBlockPoints(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Affine Transformation.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Affine Transformation.
     */
-    string eprAffineTransformation(QList<QTreeWidgetItem*> treeItems);
+    std::string eprAffineTransformation(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Spatial Resection.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Spatial Resection.
     */
-    string eprSpatialRessection(QList<QTreeWidgetItem*> treeItems);
+    std::string eprSpatialRessection(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Phtogrammetric Block.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Phtogrammetric Block.
     */
-    string eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems);
+    std::string eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Interior Orientation.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Interior Orientation.
     */
-    string eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems);
+    std::string eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Exterior Orientation.
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return string XML da opcao pai Exterior Orientation.
     */
-    string eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems);
+    std::string eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que retorna o XML da opcao pai Stereo Pairs.
     * \return string XML da opcao pai Stereo Pairs.
     */
-    string eprStereoPairs();
+    std::string eprStereoPairs();
     /**
     * \brief Metodo que retorna o XML da opcao pai Stereo Plotting.
     * \return string XML da opcao pai Stereo Plotting.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    string eprStereoPlotting();
+    std::string eprStereoPlotting();
     /**
     * \brief Metodo que retorna o XML da opcao pai DSM.
     * \return string XML da opcao pai DSM.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    string eprDSM();
+    std::string eprDSM();
     /**
     * \brief Metodo que retorna o XML da opcao pai Ortho Rectification.
     * \return string XML da opcao pai Ortho Rectification.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    string eprOrthorectification();
+    std::string eprOrthorectification();
 
     /**
     * \brief Metodo que chama os metodos necessarios, de acordo com as opcoes marcadas da arvore, e cria o arquivo XML do relatorio.
@@ -169,14 +188,14 @@ public:
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return bool Retorna se o arquivo XML foi criado com sucesso.
     */
-    bool makeFile(string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
+    bool makeFile(std::string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que cria o arquivo XSL correspondente a escolha do usuario
     * \param idExt Id do tipo de formato escolhido pelo usuario.
     * \param path Caminho para salvar o arquivo.
     * \return bool Retorna se o arquivo XSL foi criado com sucesso.
     */
-    bool makeXslt(int idExt, string path);
+    bool makeXslt(int idExt, std::string path);
 
     /**
     * \brief Metodo que gera thumbnail de imagens.

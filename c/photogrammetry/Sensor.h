@@ -1,9 +1,24 @@
+#ifndef SENSOR_H
+#define SENSOR_H
 /*******************************************************************************
 		Sensor.h
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-#ifndef SENSOR_H
-#define SENSOR_H
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "EObject.h"
 
@@ -63,28 +78,28 @@ protected:
 	// Private attributes
 	//
 	int id;
-	string sensorId;
+    std::string sensorId;
 	//double focalDistance;
 	//double focalDistanceSigma;
 	//DetectorSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
-	string description;
-	string geometry;
-	string detector;
-	string energySource;
-	string calculationMode;
-	string calibrationCertificateNumber;
-	string calibrationCertificateDispatch;
-	string calibrationCertificateExpiration;
-	//string focalDistanceUnit;
-	string spectralRangesUnit;
-	deque<SpectralRange> spectralRanges;
+    std::string description;
+    std::string geometry;
+    std::string detector;
+    std::string energySource;
+    std::string calculationMode;
+    std::string calibrationCertificateNumber;
+    std::string calibrationCertificateDispatch;
+    std::string calibrationCertificateExpiration;
+    //std::string focalDistanceUnit;
+    std::string spectralRangesUnit;
+    std::deque<SpectralRange> spectralRanges;
 	//deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
 	//deque<DecenteredDistortionCoefficient> dCoefficients;
 
 	// Associated Objects
 	//
-	deque<Image*> myImages;
-	deque<Flight*> myFlights;
+    std::deque<Image*> myImages;
+    std::deque<Flight*> myFlights;
 
 public:
 
@@ -98,19 +113,19 @@ public:
 	// Private attributes accessor methods
     //
         void setId(int newId);
-        void setSensorId(string nickname);
+        void setSensorId(std::string nickname);
 	//void setFocalDistance(double newFocalDistance);
 	//void setFocalDistanceSigma(double newFocalDistanceSigma);
 	//void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates);
-	void setDescription(string newDescription);
-	void setCalculationMode(string newCalculationMode);
+    void setDescription(std::string newDescription);
+    void setCalculationMode(std::string newCalculationMode);
 	int getId();
-        string getSensorId();
+        std::string getSensorId();
 	virtual double getFocalDistance() = 0;
 	virtual double getFocalDistanceSigma() = 0;
 	virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
-	string getDescription();
-	string getCalculationMode();
+    std::string getDescription();
+    std::string getCalculationMode();
 
 	// Associated object accessor methods
 	//
@@ -127,7 +142,7 @@ public:
 
 	// EObject methods
 	//
-	virtual string objectType(void);
+    virtual std::string objectType(void);
 
 };
 

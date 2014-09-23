@@ -1,68 +1,87 @@
 /*******************************************************************************
    EDOM.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EDom.h"
+
+#include <sstream>
+#include <stdexcept>
+#include <iomanip>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-string Conversion::doubleToString(double value)
+std::string Conversion::doubleToString(double value)
 {
-	stringstream converter;
-	converter << setprecision(16);
+    std::stringstream converter;
+    converter << std::setprecision(16);
 	converter << value;
 	return converter.str();
 }
 
-string Conversion::doubleToString(double value, int precision)
+std::string Conversion::doubleToString(double value, int precision)
 {
-	stringstream converter;
-	converter << setprecision(precision);
-	converter << fixed;
+    std::stringstream converter;
+    converter << std::setprecision(precision);
+    converter << std::fixed;
 	converter << value;
 	return converter.str();
 }
 
-double Conversion::stringToDouble(string value)
+double Conversion::stringToDouble(std::string value)
 {
 	double result;
-	stringstream converter;
-	converter << setprecision(16);
+    std::stringstream converter;
+    converter << std::setprecision(16);
 	converter << value;
 	converter >> result;
 	return result;
 }
 
-string Conversion::intToString(int value)
+std::string Conversion::intToString(int value)
 {
-	stringstream converter;
+    std::stringstream converter;
 	converter << value;
 	return converter.str();
 }
 
-int Conversion::stringToInt(string value)
+int Conversion::stringToInt(std::string value)
 {
 	int result;
-	stringstream converter;
+    std::stringstream converter;
 	converter << value;
 	converter >> result;
 	return result;
 }
 
-string Conversion::longToString(long value)
+std::string Conversion::longToString(long value)
 {
-	stringstream converter;
+    std::stringstream converter;
 	converter << value;
 	return converter.str();
 }
 
-long Conversion::stringToLong(string value)
+long Conversion::stringToLong(std::string value)
 {
 	long result;
-	stringstream converter;
+    std::stringstream converter;
 	converter << value;
 	converter >> result;
 	return result;
@@ -70,7 +89,7 @@ long Conversion::stringToLong(string value)
 
 // Private methods
 //
-int EDomElement::tagType(string tag)
+int EDomElement::tagType(std::string tag)
 {
 	if (tag.find("<") != 0)
 		return INVALID_TAG;
@@ -80,21 +99,21 @@ int EDomElement::tagType(string tag)
 		return INVALID_TAG;
 	else if (tag.at(1) == ' ' || tag.at(1) == '\t' || tag.at(1) == '\n')
 		return INVALID_TAG;
-	else if (tag.find("<?") != string::npos || tag.find("?>") != string::npos)
+    else if (tag.find("<?") != std::string::npos || tag.find("?>") != std::string::npos)
 		return INVALID_TAG;
-	else if (tag.find("<!") != string::npos)
+    else if (tag.find("<!") != std::string::npos)
 		return INVALID_TAG;
-	else if (tag.find("</") == string::npos && tag.find("/>") == string::npos)
+    else if (tag.find("</") == std::string::npos && tag.find("/>") == std::string::npos)
 		return OPEN_TAG;
-	else if (tag.find("</") == 0 && tag.find("/>") == string::npos)
+    else if (tag.find("</") == 0 && tag.find("/>") == std::string::npos)
 		return CLOSE_TAG;
-	else if (tag.find("</") != 0 && tag.find("/>") != string::npos)
+    else if (tag.find("</") != 0 && tag.find("/>") != std::string::npos)
 		return SIMPLE_TAG;
 	else
 		return INVALID_TAG;
 }
 
-string EDomElement::tagName(string tag)
+std::string EDomElement::tagName(std::string tag)
 {
 	int first = 0;
 	int last;
@@ -121,9 +140,9 @@ string EDomElement::tagName(string tag)
 	}
 }
 
-bool EDomElement::setAttribute(string att, string newAttValue)
+bool EDomElement::setAttribute(std::string att, std::string newAttValue)
 {
-	string tag = "";
+    std::string tag = "";
 	try
 	{
 		if (content.at(0) == '<')
@@ -140,11 +159,11 @@ bool EDomElement::setAttribute(string att, string newAttValue)
 		return false;
 
 	unsigned long pos1 = content.find(att);
-	if (pos1 == string::npos)
+    if (pos1 == std::string::npos)
 		return false;
 	unsigned long pos2 = content.find('\"', pos1);
 	unsigned long pos3 = content.find('\"', pos2 + 1);
-	string value = "\"";
+    std::string value = "\"";
 	value += newAttValue;
 	value += "\"";
 	content.replace(pos2, pos3-pos2+1, value);
@@ -152,12 +171,12 @@ bool EDomElement::setAttribute(string att, string newAttValue)
 	return true;
 }
 
-bool EDomElement::addAttribute(string newAttName, string newAttValue)
+bool EDomElement::addAttribute(std::string newAttName, std::string newAttValue)
 {
 	if (attribute(newAttName) != "")
 		return false;
 
-	string tag = "";
+    std::string tag = "";
 	try
 	{
 		if (content.at(0) == '<')
@@ -174,7 +193,7 @@ bool EDomElement::addAttribute(string newAttName, string newAttValue)
 		return false;
 
 	unsigned long pos = content.find('>');
-	string value = " ";
+    std::string value = " ";
 	value += newAttName;
 	value += "=\"";
 	value += newAttValue;
@@ -191,7 +210,7 @@ EDomElement::EDomElement()
 	content = "";
 }
 
-EDomElement::EDomElement(string myXml)
+EDomElement::EDomElement(std::string myXml)
 {
 	content = myXml;
 }
@@ -202,21 +221,21 @@ EDomElement::~EDomElement()
 
 // Attribute accessor methods
 //
-void EDomElement::setContent(string newXml)
+void EDomElement::setContent(std::string newXml)
 {
 	content = newXml;
 }
 
-string EDomElement::getContent()
+std::string EDomElement::getContent()
 {
 	return content;
 }
 
 // XML methods
 //
-deque<EDomElement> EDomElement::children()
+std::deque<EDomElement> EDomElement::children()
 {
-	deque<EDomElement> result;
+    std::deque<EDomElement> result;
 	EDomElement* item;
 	unsigned long opening = 1;
 	unsigned long closing = 0;
@@ -263,15 +282,15 @@ deque<EDomElement> EDomElement::children()
 	catch (std::out_of_range& e)
 	{
 
-		deque<EDomElement> dummy;
+        std::deque<EDomElement> dummy;
 		dummy.clear();
 		return dummy;
 	}
 }
 
-deque<EDomElement> EDomElement::elementsByTagName(string name)
+std::deque<EDomElement> EDomElement::elementsByTagName(std::string name)
 {
-	deque<EDomElement> result;
+    std::deque<EDomElement> result;
 	EDomElement* item;
 	unsigned long opening = 0;
 	unsigned long closing = 0;
@@ -320,15 +339,15 @@ deque<EDomElement> EDomElement::elementsByTagName(string name)
 	catch (std::out_of_range& e)
 	{
 
-		deque<EDomElement> dummy;
+        std::deque<EDomElement> dummy;
 		dummy.clear();
 		return dummy;
 	}
 }
 
-deque<EDomElement> EDomElement::elementsByTagAtt(string tagname, string att, string value)
+std::deque<EDomElement> EDomElement::elementsByTagAtt(std::string tagname, std::string att, std::string value)
 {
-	deque<EDomElement> result, temp;
+    std::deque<EDomElement> result, temp;
 	temp = elementsByTagName(tagname);
 	for (unsigned int i = 0; i < temp.size(); i++)
 		if (temp.at(i).attribute(att).compare(value) == 0)
@@ -336,25 +355,25 @@ deque<EDomElement> EDomElement::elementsByTagAtt(string tagname, string att, str
 	return result;
 }
 
-EDomElement EDomElement::elementByTagName(string tagname)
+EDomElement EDomElement::elementByTagName(std::string tagname)
 {
 	EDomElement result;
-	deque<EDomElement> list = elementsByTagName(tagname);
+    std::deque<EDomElement> list = elementsByTagName(tagname);
 	if (!list.empty())
 		result = list.at(0);
 	return result;
 }
 
-EDomElement EDomElement::elementByTagAtt(string tagname, string att, string value)
+EDomElement EDomElement::elementByTagAtt(std::string tagname, std::string att, std::string value)
 {
 	EDomElement result;
-	deque<EDomElement> list = elementsByTagAtt(tagname, att, value);
+    std::deque<EDomElement> list = elementsByTagAtt(tagname, att, value);
 	if (!list.empty())
 		result = list.at(0);
 	return result;
 }
 
-bool EDomElement::addChildAtTagName(string tagname, string newChild)
+bool EDomElement::addChildAtTagName(std::string tagname, std::string newChild)
 {
 	bool result = false;
 	unsigned long opening = 0;
@@ -410,7 +429,7 @@ bool EDomElement::addChildAtTagName(string tagname, string newChild)
 	}
 }
 
-bool EDomElement::addChildAtTagAtt(string tagname, string att, string value, string newChild)
+bool EDomElement::addChildAtTagAtt(std::string tagname, std::string att, std::string value, std::string newChild)
 {
 	bool result = false;
 	unsigned long opening = 0;
@@ -470,7 +489,7 @@ bool EDomElement::addChildAtTagAtt(string tagname, string att, string value, str
 	}
 }
 
-bool EDomElement::replaceChildByTagName(string tagname, string newChild)
+bool EDomElement::replaceChildByTagName(std::string tagname, std::string newChild)
 {
 	bool result = false;
 	unsigned long opening = 0;
@@ -524,7 +543,7 @@ bool EDomElement::replaceChildByTagName(string tagname, string newChild)
 	}
 }
 
-bool EDomElement::replaceChildByTagAtt(string tagname, string att, string value, string newChild)
+bool EDomElement::replaceChildByTagAtt(std::string tagname, std::string att, std::string value, std::string newChild)
 {
 	bool result = false;
 	unsigned long opening = 0;
@@ -582,9 +601,9 @@ bool EDomElement::replaceChildByTagAtt(string tagname, string att, string value,
 	}
 }
 
-string EDomElement::tagName()
+std::string EDomElement::tagName()
 {
-	string tag = "";
+    std::string tag = "";
 	try
 	{
 		if (content.at(0) == '<')
@@ -617,9 +636,9 @@ string EDomElement::tagName()
 	}
 }
 
-string EDomElement::attribute(string att)
+std::string EDomElement::attribute(std::string att)
 {
-	string result = "";
+    std::string result = "";
 	unsigned long pos = 0;
 	try
 	{
@@ -642,7 +661,7 @@ string EDomElement::attribute(string att)
 	}
 }
 
-bool EDomElement::addAttributeByTagName(string tagname, string newAtt, string newAttValue)
+bool EDomElement::addAttributeByTagName(std::string tagname, std::string newAtt, std::string newAttValue)
 {
 	EDomElement ede = elementByTagName(tagname);
 	if (!ede.addAttribute(newAtt,newAttValue))
@@ -651,7 +670,7 @@ bool EDomElement::addAttributeByTagName(string tagname, string newAtt, string ne
 	return true;
 }
 
-bool EDomElement::addAttributeByTagAtt(string tagname, string att, string value, string newAtt, string newAttValue)
+bool EDomElement::addAttributeByTagAtt(std::string tagname, std::string att, std::string value, std::string newAtt, std::string newAttValue)
 {
 	EDomElement ede = elementByTagAtt(tagname,att,value);
 	if (!ede.addAttribute(newAtt,newAttValue))
@@ -660,7 +679,7 @@ bool EDomElement::addAttributeByTagAtt(string tagname, string att, string value,
 	return true;
 }
 
-bool EDomElement::replaceAttributeByTagName(string tagname, string replaceAtt, string newAttValue)
+bool EDomElement::replaceAttributeByTagName(std::string tagname, std::string replaceAtt, std::string newAttValue)
 {
 	EDomElement ede = elementByTagName(tagname);
 	if (!ede.setAttribute(replaceAtt,newAttValue))
@@ -669,7 +688,7 @@ bool EDomElement::replaceAttributeByTagName(string tagname, string replaceAtt, s
 	return true;
 }
 
-bool EDomElement::replaceAttributeByTagAtt(string tagname, string att, string value, string replaceAtt, string newAttValue)
+bool EDomElement::replaceAttributeByTagAtt(std::string tagname, std::string att, std::string value, std::string replaceAtt, std::string newAttValue)
 {
 	EDomElement ede = elementByTagAtt(tagname,att,value);
 	if (!ede.setAttribute(replaceAtt,newAttValue))
@@ -678,9 +697,9 @@ bool EDomElement::replaceAttributeByTagAtt(string tagname, string att, string va
 	return true;
 }
 
-string EDomElement::toString()
+std::string EDomElement::toString()
 {
-	string result = "";
+    std::string result = "";
 	try
 	{
 		if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
@@ -703,7 +722,7 @@ int EDomElement::toInt()
 	{
 		if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
 		{
-			string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
+            std::string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
 			result = Conversion::stringToInt(value);
 		}
 		return result;
@@ -722,7 +741,7 @@ long EDomElement::toLong()
 	{
 		if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
 		{
-			string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
+            std::string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
 			result = Conversion::stringToLong(value);
 		}
 		return result;
@@ -741,7 +760,7 @@ double EDomElement::toDouble()
 	{
 		if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
 		{
-			string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
+            std::string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
 			result = Conversion::stringToDouble(value);
 		}
 		return result;
@@ -753,10 +772,10 @@ double EDomElement::toDouble()
 	}
 }
 
-deque<double> EDomElement::toGmlPos()
+std::deque<double> EDomElement::toGmlPos()
 {
-	deque<double> result;
-	string values = toString();
+    std::deque<double> result;
+    std::string values = toString();
 	unsigned int pos = 0;
 	int limit;
 	try
@@ -764,11 +783,11 @@ deque<double> EDomElement::toGmlPos()
 		while (pos < values.length())
 		{
 			double value;
-			if (values.find(" ", pos) != string::npos)
+            if (values.find(" ", pos) != std::string::npos)
 				limit = values.find(" ", pos);
 			else
 				limit = values.length();
-			string valueStr = values.substr(pos, limit - pos);
+            std::string valueStr = values.substr(pos, limit - pos);
 			value = Conversion::stringToDouble(valueStr);
 			result.push_back(value);
 			pos = limit + 1;
@@ -778,7 +797,7 @@ deque<double> EDomElement::toGmlPos()
 	catch (std::out_of_range& e)
 	{
 
-		deque<double> dummy;
+        std::deque<double> dummy;
 		dummy.clear();
 		return dummy;
 	}
@@ -788,9 +807,9 @@ bool EDomElement::isAvailable()
 {
 	if (children().size() == 0)
 	{
-		string value = toString();
+        std::string value = toString();
 
-		for (string::size_type i = 0; i < value.length(); i++)
+        for (std::string::size_type i = 0; i < value.length(); i++)
 		{
 			value[i] = toupper (value[i]);
 		}
@@ -801,7 +820,7 @@ bool EDomElement::isAvailable()
 	return true;
 }
 
-bool EDomElement::hasTagName(string tagname)
+bool EDomElement::hasTagName(std::string tagname)
 {
 	EDomElement check = this->elementByTagName(tagname);
 	if (check.tagName() == tagname)
@@ -814,7 +833,7 @@ bool EDomElement::hasTagName(string tagname)
 //
 EDomElement EDomElement::indent(char indentation)
 {
-	stringstream result;
+    std::stringstream result;
 	long nesting = 0;
 	bool firstchar = true;
 	try
@@ -857,7 +876,7 @@ EDomElement EDomElement::indent(char indentation)
 
 EDomElement EDomElement::trim(char charToTrim)
 {
-	stringstream result;
+    std::stringstream result;
 	bool checkIndentation = true;
 	try
 	{
@@ -889,7 +908,7 @@ EDomElement EDomElement::trim(char charToTrim)
 
 EDomElement EDomElement::removeBlankLines(bool removeIndentation)
 {
-	stringstream result;
+    std::stringstream result;
 	bool isBlank = true;
 	unsigned long lineBegin = 0;
 	try
@@ -903,7 +922,7 @@ EDomElement EDomElement::removeBlankLines(bool removeIndentation)
 					isBlank = false;
 					if (!removeIndentation)
 					{
-						for (lineBegin; lineBegin < pos; lineBegin++)
+                        for (; lineBegin < pos; lineBegin++)
 						{
 							result << content.at(lineBegin);
 						}

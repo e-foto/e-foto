@@ -1,6 +1,8 @@
 #include "ETreeModel.h"
 #include "EDom.h"
 
+#include <sstream>
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -12,13 +14,13 @@ ETreeElement::ETreeElement()
 	this->description = "";
 }
 
-ETreeElement::ETreeElement(int id, string description)
+ETreeElement::ETreeElement(int id, std::string description)
 {
 	this->id = id;
 	this->description = description;
 }
 
-ETreeElement::ETreeElement(string data)
+ETreeElement::ETreeElement(std::string data)
 {
 	EDomElement xmlData(data);
 	if (xmlData.tagName() == "sensor")
@@ -48,7 +50,7 @@ unsigned int ETreeElement::getId()
 	return id;
 }
 
-string ETreeElement::getDescription()
+std::string ETreeElement::getDescription()
 {
 	return description;
 }
@@ -58,22 +60,22 @@ ETreeNode::ETreeNode()
 	this->description = "";
 }
 
-ETreeNode::ETreeNode(string description, deque<ETreeElement> children)
+ETreeNode::ETreeNode(std::string description, std::deque<ETreeElement> children)
 {
 	this->description = description;
 	this->children = children;
 }
 
-ETreeNode::ETreeNode(string data)
+ETreeNode::ETreeNode(std::string data)
 {
 	EDomElement xmlData(data);
 	description = xmlData.tagName();
-	deque<EDomElement> elements = xmlData.children();
+    std::deque<EDomElement> elements = xmlData.children();
 	for (unsigned int i = 0; i < elements.size(); i++)
 		children.push_back(ETreeElement(elements.at(i).getContent()));
 }
 
-string ETreeNode::getDescription()
+std::string ETreeNode::getDescription()
 {
 	return description;
 }
@@ -83,7 +85,7 @@ unsigned int ETreeNode::countChildren()
 	return children.size();
 }
 
-deque<ETreeElement> ETreeNode::getChildren()
+std::deque<ETreeElement> ETreeNode::getChildren()
 {
 	return children;
 }
@@ -96,7 +98,7 @@ ETreeElement ETreeNode::getChild(unsigned int index)
 		return ETreeElement();
 }
 
-string ETreeNode::dataAt(unsigned int index)
+std::string ETreeNode::dataAt(unsigned int index)
 {
 	if (index < children.size())
 		return children.at(index).getDescription();
@@ -112,9 +114,9 @@ unsigned int ETreeNode::idAt(unsigned int index)
 		return 0;
 }
 
-deque<string> ETreeNode::data()
+std::deque<std::string> ETreeNode::data()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	for (unsigned int i = 0; i < children.size(); i++)
 		result.push_back(children.at(i).getDescription());
 	return result;
@@ -125,12 +127,12 @@ ETreeModel::ETreeModel()
 
 }
 
-ETreeModel::ETreeModel(deque<ETreeNode> children)
+ETreeModel::ETreeModel(std::deque<ETreeNode> children)
 {
 	this->children = children;
 }
 
-ETreeModel::ETreeModel(string data)
+ETreeModel::ETreeModel(std::string data)
 {
 	EDomElement xmlData(data);
 	children.push_back(ETreeNode(xmlData.elementByTagName("projectHeader").getContent()));
@@ -139,8 +141,8 @@ ETreeModel::ETreeModel(string data)
 	children.push_back(ETreeNode(xmlData.elementByTagName("flights").getContent()));
 
 	EDomElement xmlImages = xmlData.elementByTagName("images");
-	deque<EDomElement> xmlImageList = xmlImages.elementsByTagName("image");
-	stringstream imageList;
+    std::deque<EDomElement> xmlImageList = xmlImages.elementsByTagName("image");
+    std::stringstream imageList;
 	imageList << "<images>\n";
 	for (unsigned int i = 0; i < xmlImageList.size(); i++)
 	{
@@ -165,7 +167,7 @@ unsigned int ETreeModel::countGrandchildren(unsigned int index)
 		return 0;
 }
 
-deque<ETreeNode> ETreeModel::getChildren()
+std::deque<ETreeNode> ETreeModel::getChildren()
 {
 	return children;
 }
@@ -178,7 +180,7 @@ ETreeNode ETreeModel::getChild(unsigned int index)
 		return ETreeNode();
 }
 
-string ETreeModel::dataAt(unsigned int nodeIndex, unsigned int elementIndex)
+std::string ETreeModel::dataAt(unsigned int nodeIndex, unsigned int elementIndex)
 {
 	if (nodeIndex < children.size() && elementIndex < children.at(nodeIndex).countChildren())
 		return children.at(nodeIndex).dataAt(elementIndex);
@@ -194,7 +196,7 @@ unsigned int ETreeModel::idAt(unsigned int nodeIndex, unsigned int elementIndex)
 		return 0;
 }
 
-string ETreeModel::dataAt(unsigned int index)
+std::string ETreeModel::dataAt(unsigned int index)
 {
 	if (index < children.size())
 		return children.at(index).getDescription();
@@ -202,9 +204,9 @@ string ETreeModel::dataAt(unsigned int index)
 		return "";
 }
 
-deque< deque<string> > ETreeModel::data()
+std::deque< std::deque<std::string> > ETreeModel::data()
 {
-	deque< deque<string> > result;
+    std::deque< std::deque<std::string> > result;
 	for (unsigned int i = 0; i < children.size(); i++)
 		result.push_back(children.at(i).data());
 	return result;

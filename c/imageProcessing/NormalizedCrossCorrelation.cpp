@@ -3,6 +3,9 @@
 *******************************************************************************/
 
 #include "NormalizedCrossCorrelation.h"
+#include "Matrix.h"
+
+#include <math.h>
 
 namespace br {
 namespace uerj {

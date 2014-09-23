@@ -38,14 +38,6 @@ class DEMManager;
 class OrthoManager;
 class SPManager;
 class ReportManager;
-class Terrain;
-class Sensor;
-class Image;
-class Point;
-class Flight;
-class InteriorOrientation;
-class ExteriorOrientation;
-
 
 /**
 * \file EFotoManager.h
@@ -65,8 +57,8 @@ private:
 	int nextImage;
 
 	bool savedState;
-	string xmlData;
-	string interfaceType;
+    std::string xmlData;
+    std::string interfaceType;
 
 
         ProjectManager* project;
@@ -81,12 +73,12 @@ private:
         Project report_project;
 
 	Terrain* theTerrain;
-	deque<Sensor*> sensors;
-	deque<Flight*> flights;
-	deque<Image*> images;
-	deque<Point*> points;
-	deque<InteriorOrientation*> IOs;
-	deque<ExteriorOrientation*> EOs;
+    std::deque<Sensor*> sensors;
+    std::deque<Flight*> flights;
+    std::deque<Image*> images;
+    std::deque<Point*> points;
+    std::deque<InteriorOrientation*> IOs;
+    std::deque<ExteriorOrientation*> EOs;
 
 public:
 
@@ -260,50 +252,50 @@ public:
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname);
+    std::string getXml(std::string tagname);
 
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
 	* \param att Valor do atributo da tag do XML.
 	* \param value Valor do nó da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname, string att, string value);
+    std::string getXml(std::string tagname, std::string att, std::string value);
 
 	/**
 	* \brief Método para emitir o nome de classe.
-	* \return string	Retorna o nome de classe do objeto.
+    * \return std::string	Retorna o nome de classe do objeto.
 	*/
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
 	* \brief Método para emitir as associações de uma instância.
-	* \return string	Retorna vazio para esta classe.
+    * \return std::string	Retorna vazio para esta classe.
 	* \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
 	*/
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
 	* \brief Método de teste para o nome/tipo de instância.
 	* \param s	Texto com o nome da classe que é esperado.
 	* \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
 	*/
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
 	* \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
 	* \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe EFotoManager.
 	*/
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
 	* \brief Método para extrair o equivalente em dados xml de uma instância.
-	* \return string	Retorna o string contendo o xml para uma instância da classe EFotoManager.
+    * \return std::string	Retorna o string contendo o xml para uma instância da classe EFotoManager.
 	*/
-	string xmlGetData();
+    std::string xmlGetData();
 
 	/**
 	* \brief Método usado após aceitar uma IO ou SR para setar como default que o projeto ainda não foi salvo.
@@ -321,13 +313,13 @@ public:
 	* \brief Método que seta o tipo de interface em que o programa irá rodar.
 	* \param newInterfaceType O tipo de interface.
 	*/
-	void setInterfaceType(string newInterfaceType);
+    void setInterfaceType(std::string newInterfaceType);
 
 	/**
 	* \brief Método que retorna o tipo de interface corrente.
-	* \return string O tipo de interface corrente.
+    * \return std::string O tipo de interface corrente.
 	*/
-	string getInterfaceType();
+    std::string getInterfaceType();
 
 	/**
 	* \brief Método que seta o próximo módulo a ser executado.
@@ -345,7 +337,7 @@ public:
 	* \brief Método que carrega o módulo ProjectManager.
 	* \return bool Retorna verdadeiro se o módulo ProjectManager já tiver terminado de ser carregado. Retorna falso, caso contrário.
 	*/
-	bool execProject(string filename = "");
+    bool execProject(std::string filename = "");
 
 	/**
 	* \brief Método que recarrega o módulo ProjectManager.
@@ -416,7 +408,7 @@ public:
 	* \brief Método que executa um loop de execuções principais.
 	* \return bool Retorna verdadeiro se as execuções principais estejam sendo executadas corretamente. Retorna falso, caso contrário.
 	*/
-	bool exec(string filename= "");
+    bool exec(std::string filename= "");
 	/**
 	* \brief Método que carrega o módulo de FotoTri.
 	* \return bool Retorna verdadeiro se o módulo FotoTri já tiver terminado de ser carregado. Retorna falso, caso contrário.

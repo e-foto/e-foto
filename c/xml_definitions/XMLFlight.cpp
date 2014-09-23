@@ -1,4 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "XMLFlight.h"
+
+#include "EDom.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -9,7 +29,7 @@ XMLFlight::XMLFlight()
 {
 }
 
-void XMLFlight::xmlSetData(string xml)
+void XMLFlight::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 
@@ -22,7 +42,7 @@ void XMLFlight::xmlSetData(string xml)
 	setDescription(root.elementByTagName("description").toString());
 	setExecution(root.elementByTagName("execution").toString());
 	setProducerName(root.elementByTagName("producerName").toString());
-	string scale;
+    std::string scale;
 	scale = "";
 	scale += root.elementsByTagName("mml:mn").at(0).toString();
 	scale += ":";
@@ -34,9 +54,9 @@ void XMLFlight::xmlSetData(string xml)
 	setTransversalOverlap(root.elementByTagName("transversal").toDouble());
 }
 
-string XMLFlight::xmlGetData()
+std::string XMLFlight::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<flight key=\"" << getId() << "\" sensor_key=\"" << getSensorId() << "\">\n";
 
 	//questionar sobre essa linha

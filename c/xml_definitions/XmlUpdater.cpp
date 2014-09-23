@@ -2,13 +2,15 @@
 #include <QApplication>
 //#include <QDebug>
 
+#include <sstream>
+
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-XmlUpdater::XmlUpdater(string xml,string referenceBuild)
+XmlUpdater::XmlUpdater(std::string xml,std::string referenceBuild)
 {
 	builds.push_back("1.0.20");
 	builds.push_back("1.0.42");
@@ -53,17 +55,17 @@ bool XmlUpdater::isUpdated()
 	return updated;
 }
 
-string XmlUpdater::getReferenceBuild()
+std::string XmlUpdater::getReferenceBuild()
 {
 	return referenceBuild;
 }
 
-string XmlUpdater::getXmlBuild()
+std::string XmlUpdater::getXmlBuild()
 {
 	return xmlBuild = getAllXml().elementByTagName("efotoPhotogrammetricProject").attribute("version");
 }
 
-int XmlUpdater::compareBuilds(string buildOne, string buildTwo)
+int XmlUpdater::compareBuilds(std::string buildOne, std::string buildTwo)
 {
 	if (!buildIsValid(buildOne))
 	{
@@ -152,7 +154,7 @@ void XmlUpdater::executeUpdate()
 	}
 }
 
-bool XmlUpdater::buildIsValid(string build)
+bool XmlUpdater::buildIsValid(std::string build)
 {
 	for (unsigned int i=0;i<builds.size();i++)
 	{
@@ -166,7 +168,7 @@ void XmlUpdater::updateToBuild1_0_42()
 {
 	EDomElement sensor = allXml.elementByTagAtt("sensor","key","1");
 	EDomElement edeType = sensor.elementByTagName("type");
-	string type = edeType.elementByTagName("detector").toString();
+    std::string type = edeType.elementByTagName("detector").toString();
 	if(type=="ccd")
 	{
 		edeType.addChildAtTagName("type","<calculationMode>Fixed Parameters</calculationMode>");
@@ -188,16 +190,16 @@ void XmlUpdater::updateToBuild1_0_42()
 
 void XmlUpdater::updateToBuild1_0_266()
 {
-	string all= allXml.getContent();
+    std::string all= allXml.getContent();
 	while(replacer(all,"fiductial","fiducial"));
 	allXml.setContent(all);
 
-	deque<EDomElement> eosXml = allXml.elementsByTagName("imageEO");
+    std::deque<EDomElement> eosXml = allXml.elementsByTagName("imageEO");
 
     allXml.addChildAtTagName("efotoPhotogrammetricProject","<spatialRessections>\n</spatialRessections>");
     for(int i=0;i<eosXml.size();i++)
 	{
-		string total="";
+        std::string total="";
 		EDomElement eoXml;
 		eoXml.setContent(eosXml.at(i).getContent());
 		if (eoXml.hasTagName("iterations"))
@@ -207,14 +209,14 @@ void XmlUpdater::updateToBuild1_0_266()
 			xaXml.replaceAttributeByTagAtt("omega","uom","#m","uom","#rad");
 			xaXml.replaceAttributeByTagAtt("kappa","uom","#m","uom","#rad");
 
-			stringstream aux;
+            std::stringstream aux;
 			aux << "<imageEO type=\""<< eoXml.attribute("type") <<"\" image_key=\""<< eoXml.attribute("image_key") << "\">\n";
 			aux << xaXml.getContent();
 			aux << "\n</imageEO>";
 
 			eoXml.replaceChildByTagName("Xa","");
 
-			stringstream newXmlSpatialRessection;
+            std::stringstream newXmlSpatialRessection;
             newXmlSpatialRessection << "<imageSR image_key=\""<< eoXml.attribute("image_key") << "\">\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("iterations").getContent() << "\n";
 			newXmlSpatialRessection << eoXml.elementByTagName("converged").getContent() << "\n";
@@ -233,7 +235,7 @@ void XmlUpdater::updateToBuild1_0_266()
 
 void XmlUpdater::updateToBuild1_0_325()
 {
-	string all= allXml.getContent();
+    std::string all= allXml.getContent();
     while(replacer(all,"1.0.266","1.0.325"));
     while(replacer(all,"Ressection","Resection"));
     while(replacer(all,"<spatialResection ","<imageSR "));
@@ -243,11 +245,11 @@ void XmlUpdater::updateToBuild1_0_325()
 	allXml.replaceAttributeByTagName("efotoPhotogrammetricProject","version","1.0.325");
 }
 
-bool XmlUpdater::replacer(string &text,string oldWord,string newWord)
+bool XmlUpdater::replacer(std::string &text,std::string oldWord,std::string newWord)
 {
 	size_t searched;
 	searched = text.rfind(oldWord);
-	if (searched != string::npos)
+    if (searched != std::string::npos)
 	{
 		text.replace(searched,oldWord.length(),newWord);
 		return true;

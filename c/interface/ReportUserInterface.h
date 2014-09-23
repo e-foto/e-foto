@@ -1,3 +1,5 @@
+#ifndef REPORTUSERINTERFACE_H
+#define REPORTUSERINTERFACE_H
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
@@ -18,19 +20,12 @@
 		ReportUserInterface.h
 **************************************************************************/
 
-
-#ifndef REPORTUSERINTERFACE_H
-#define REPORTUSERINTERFACE_H
-
-#include "ReportManager.h"
-#include "PositionMatrix.h"
-
-//#include "EObject.h"
-
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class ReportManager;
 
 #define XMLTYPE 0
 #define TXTTYPE 1

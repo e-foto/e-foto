@@ -1,6 +1,25 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "PositionMatrix.h"
 
-
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -25,7 +44,7 @@ void PositionMatrix::nw(const unsigned int rows, const unsigned int cols)
 	unit = "";
 }
 
-PositionMatrix::PositionMatrix(unsigned int dimensions, string newUnit):RectSupport(dimensions, 1)
+PositionMatrix::PositionMatrix(unsigned int dimensions, std::string newUnit):RectSupport(dimensions, 1)
 {
 	nw(dimensions, 1); // Allocate matrix and fill its attributes.
 	unit = newUnit;
@@ -77,7 +96,7 @@ int PositionMatrix::load(char* filename)
 	unsigned int cols;
 	unsigned int rows;
 
-	ifstream arq(filename); // open the emf file
+    std::ifstream arq(filename); // open the emf file
 	if (!arq.fail())
 	{
 		arq.getline(str,255); // read file header
@@ -111,16 +130,16 @@ int PositionMatrix::load(char* filename)
 
 int PositionMatrix::save(char* filename)
 {
-	ofstream emfile(filename); // open the emf file
+    std::ofstream emfile(filename); // open the emf file
 	if (!emfile.fail())
 	{
-		emfile << "E-foto project double PositionMatrix Format" << endl; // write file header
+        emfile << "E-foto project double PositionMatrix Format" << std::endl; // write file header
 		if (!emfile.fail())
 		{
-			emfile << filename << endl; // write filename
+            emfile << filename << std::endl; // write filename
 			if (!emfile.fail())
 			{
-				emfile << ncols << " " << nrows << endl;
+                emfile << ncols << " " << nrows << std::endl;
 				if (!emfile.fail())
 				{
 					for (unsigned int i = 0; (i < (ncols * nrows)); i++)
@@ -142,7 +161,7 @@ double PositionMatrix::get(const unsigned int i, const unsigned int j) const
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
 		return _Mat[(i-1) * ncols + j - 1];
 	else
-		cerr << "i, j values out of the range of the matrix." << endl;
+        std::cerr << "i, j values out of the range of the matrix." << std::endl;
 	return 0;
 }
 
@@ -151,7 +170,7 @@ int PositionMatrix::getInt(const unsigned int i, const unsigned int j) const
 	return (int) get(i,j);
 }
 
-string PositionMatrix::getUnit() const
+std::string PositionMatrix::getUnit() const
 {
 	return unit;
 }
@@ -163,7 +182,7 @@ PositionMatrix PositionMatrix::sel(const unsigned int FirstRow, const unsigned i
 	PositionMatrix Result;
 	if((FirstRow > LastRow)||(FirstCol > LastCol)||(FirstRow < 1)||(FirstCol < 1)||(LastRow > nrows)||(LastCol > ncols))
 	{
-		cerr << "Error detected by the Matrix.sel() method:" << endl << "Input parameters out of range or incorrect."<<endl;
+        std::cerr << "Error detected by the Matrix.sel() method:" << std::endl << "Input parameters out of range or incorrect."<< std::endl;
 		return Result;
 	}
 	if ( (DraftResult.nrows != (LastRow-FirstRow+1)) || (DraftResult.ncols != (LastCol-FirstCol+1)) )
@@ -182,17 +201,17 @@ PositionMatrix PositionMatrix::sel(const unsigned int FirstRow, const unsigned i
 
 void PositionMatrix::show()
 {
-	cout << "PositionMatrix " << nrows << 'x' << ncols << " (" << unit << ")" << endl;
-	cout.setf(ios::fixed | ios::scientific);
+    std::cout << "PositionMatrix " << nrows << 'x' << ncols << " (" << unit << ")" << std::endl;
+    std::cout.setf(std::ios::fixed | std::ios::scientific);
 	for (unsigned int i = 1; i <= nrows; i++)
 	{
 		for (unsigned int j = 1; j <= ncols; j++)
 			//printf("%10.1f ", get((unsigned int) i, (unsigned int) j));
-			cout << setw(9) << setprecision(3) <<  get((unsigned int) i, (unsigned int) j) << " ";
-		cout << endl;
+            std::cout << std::setw(9) << std::setprecision(3) <<  get((unsigned int) i, (unsigned int) j) << " ";
+        std::cout << std::endl;
 	}
-	cout.unsetf(ios::fixed | ios::scientific);
-	cout << endl;
+    std::cout.unsetf(std::ios::fixed | std::ios::scientific);
+    std::cout << std::endl;
 }
 
 void PositionMatrix::set(unsigned int i, unsigned int j, double value) const
@@ -200,7 +219,7 @@ void PositionMatrix::set(unsigned int i, unsigned int j, double value) const
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
 		_Mat[(i-1) * ncols + j - 1]=value;
 	else
-		cerr << "i, j values out of the range of the matrix." << endl;
+        std::cerr << "i, j values out of the range of the matrix." << std::endl;
 }
 
 void PositionMatrix::set(unsigned int i, double value) const
@@ -218,7 +237,7 @@ void PositionMatrix::setInt(unsigned int i, int value) const
 	set(i,1, (double) value);
 }
 
-void PositionMatrix::setUnit(string newUnit)
+void PositionMatrix::setUnit(std::string newUnit)
 {
 	unit = newUnit;
 }
@@ -229,7 +248,7 @@ PositionMatrix PositionMatrix::operator &(const PositionMatrix& Par_Matrix)
 	PositionMatrix Result;
 	if (Par_Matrix.nrows!=nrows)
 	{
-		cerr << "Error detected by the & operator:" << endl<< "Both matrixes must have the same number of rows." << endl;
+        std::cerr << "Error detected by the & operator:" << std::endl<< "Both matrixes must have the same number of rows." << std::endl;
 	}
 	else
 	{
@@ -263,7 +282,7 @@ PositionMatrix PositionMatrix::operator |(const PositionMatrix& Par_Matrix)
 
 	if (Par_Matrix.ncols!=ncols)
 	{
-		cerr << "Error detected by the | operator:" << endl<< "Both matrixes must have the same number of cols." << endl;
+        std::cerr << "Error detected by the | operator:" << std::endl<< "Both matrixes must have the same number of cols." << std::endl;
 	}
 	else
 	{
@@ -295,7 +314,7 @@ PositionMatrix& PositionMatrix::operator =(const Matrix& Par_Matrix)
 	{
 		_Mat[i]=Par_Matrix._Mat[i];
 	}
-	unit = Par_Matrix.unit;
+    unit = Par_Matrix.unit_;
 	return *this;
 }
 
@@ -358,32 +377,32 @@ bool PositionMatrix::operator !=(const PositionMatrix& Par_Matrix)
 	return 0;
 }
 
-string PositionMatrix::objectType(void)
+std::string PositionMatrix::objectType(void)
 {
 	return "PositionMatrix";
 }
 
-string PositionMatrix::objectAssociations(void)
+std::string PositionMatrix::objectAssociations(void)
 {
 	return "";
 }
 
-bool PositionMatrix::is(string s)
+bool PositionMatrix::is(std::string s)
 {
 	return (s == "PositionMatrix" ? true : false);
 }
 
-string PositionMatrix::xmlGetData()
+std::string PositionMatrix::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<gml:pos>" << this->toGmlPosFormat() << "</gml:pos>\n";
 	return result.str();
 }
 
-void PositionMatrix::xmlSetData(string xml)
+void PositionMatrix::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	deque<double> values = root.toGmlPos();
+    std::deque<double> values = root.toGmlPos();
 	resize(values.size());
 	for (unsigned int i = 0; i < values.size(); i++)
 		set(i, values.at(i));
@@ -404,9 +423,9 @@ PositionMatrix PositionMatrix::toDiagonal()
 	return Result;
 }
 
-string PositionMatrix::toGmlPosFormat()
+std::string PositionMatrix::toGmlPosFormat()
 {
-	stringstream oss;
+    std::stringstream oss;
 	for (unsigned int i = 1; i <= nrows; i++)
 		for (unsigned int j = 1; j <= ncols; j++)
 		{

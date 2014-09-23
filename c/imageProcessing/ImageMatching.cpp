@@ -465,7 +465,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                 num_visited += 1.0;
                 coverage = num_visited/max_size;
                 if (manager == NULL)
-                        printf("%.2f %%\r",coverage*100);
+                        throw "%.2f %%\r";//,coverage*100;
                 else
                         manager->setProgress(int(coverage*100));
 

@@ -63,8 +63,8 @@ public:
 
 	// EObject methods
 	//
-	string objectType(void);
-	string objectAssociations(void);
+    std::string objectType(void);
+    std::string objectAssociations(void);
 
 };
 

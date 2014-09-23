@@ -1,8 +1,34 @@
 /*******************************************************************************
 		SpatialIntersection.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "SpatialIntersection.h"
+
+#include "SpatialRessection.h"
+#include "ProjectiveRay.h"
+#include "PositionMatrix.h"
+#include "StereoPair.h"
+#include "Image.h"
+
+#include "math.h"
+
+#include <sstream>
 
 // Constructors and destructors
 
@@ -148,31 +174,31 @@ PositionMatrix SpatialIntersection::calculateIntersection(PositionMatrix leftPos
 
 // EObject methods
 //
-string SpatialIntersection::objectType(void)
+std::string SpatialIntersection::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "SpatialIntersection " << stereoPair->getLeftImage()->getId() << " " << stereoPair->getRightImage()->getId();
 	return result.str();
 }
 
-string SpatialIntersection::objectAssociations(void)
+std::string SpatialIntersection::objectAssociations(void)
 {
 	return "";
 }
 
-bool SpatialIntersection::is(string s)
+bool SpatialIntersection::is(std::string s)
 {
 	return (s == "SpatialIntersection" ? true : false);
 }
 
 // XML methods
 //
-void SpatialIntersection::xmlSetData(string xml)
+void SpatialIntersection::xmlSetData(std::string xml)
 {
 
 }
 
-string SpatialIntersection::xmlGetData()
+std::string SpatialIntersection::xmlGetData()
 {
 	return "";
 }

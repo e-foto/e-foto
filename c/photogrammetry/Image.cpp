@@ -1,11 +1,29 @@
 /*******************************************************************************
 		 Image.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "Image.h"
 #include "Point.h"
 #include "SensorWithFiducialMarks.h"
 #include "Flight.h"
+#include "math.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -13,7 +31,6 @@ namespace eng {
 namespace efoto {
 
 // Constructors and destructors
-
 /**
  *
  */
@@ -85,7 +102,7 @@ void Image::setResolution(unsigned int newResolution)
  * Set the value of resolutionUnit
  * @param newResolutionUnit the new value of resolutionUnit
  */
-void Image::setResolutionUnit(string newResolutionUnit)
+void Image::setResolutionUnit(std::string newResolutionUnit)
 {
 	resolutionUnit = newResolutionUnit;
 }
@@ -112,7 +129,7 @@ void Image::setHeight(unsigned int newHeight)
  * Set the value of filename
  * @param newFilename the new value of filename
  */
-void Image::setFilename(string newFilename)
+void Image::setFilename(std::string newFilename)
 {
 	filename = newFilename;
 }
@@ -121,7 +138,7 @@ void Image::setFilename(string newFilename)
  * Set the value of filepath
  * @param newFilepath the new value of filepath
  */
-void Image::setFilepath(string newFilepath)
+void Image::setFilepath(std::string newFilepath)
 {
 	filepath = newFilepath;
 }
@@ -176,7 +193,7 @@ unsigned int Image::getResolution()
  * Get the value of resolutionUnit
  * @return the value of resolutionUnit
  */
-string Image::getResolutionUnit()
+std::string Image::getResolutionUnit()
 {
 	return resolutionUnit;
 }
@@ -203,7 +220,7 @@ unsigned int Image::getHeight()
  * Get the value of filename
  * @return the value of filename
  */
-string Image::getFilename()
+std::string Image::getFilename()
 {
 	return filename;
 }
@@ -212,7 +229,7 @@ string Image::getFilename()
  * Get the value of filepath
  * @return the value of filepath
  */
-string Image::getFilepath()
+std::string Image::getFilepath()
 {
 	return filepath;
 }
@@ -231,7 +248,7 @@ double Image::getFlightDirection()
  * Get the value of image ID
  * @return the value of image ID
  */
-string Image::getImageId()
+std::string Image::getImageId()
 {
 	return imageId;
 }
@@ -261,7 +278,7 @@ double Image::getGnssZ0()
 	return gnssZ0;
 }
 
-string Image::getGnssType()
+std::string Image::getGnssType()
 {
 	return gnssType;
 }
@@ -281,7 +298,7 @@ double Image::getInsKappa()
 	return insKappa;
 }
 
-string Image::getInsType()
+std::string Image::getInsType()
 {
 	return insType;
 }
@@ -294,7 +311,7 @@ string Image::getInsType()
  * Set all the values of digFidMarks deque at once
  * @param newDigFidMarks a deque with the new values
  */
-void Image::setDigFidMarks(deque<ImageFiducialMark> newDigFidMarks)
+void Image::setDigFidMarks(std::deque<ImageFiducialMark> newDigFidMarks)
 {
 	digFidMarks = newDigFidMarks;
 }
@@ -303,7 +320,7 @@ void Image::setDigFidMarks(deque<ImageFiducialMark> newDigFidMarks)
  * Get all the values of digFidMarks deque at once
  * @return a deque the values of digFidMarks
  */
-deque<ImageFiducialMark> Image::getDigFidMarks()
+std::deque<ImageFiducialMark> Image::getDigFidMarks()
 {
 	return digFidMarks;
 }
@@ -492,9 +509,9 @@ Point* Image::getPointAt(unsigned int index)
 /**
  *
  */
-string Image::objectType(void)
+std::string Image::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "Image " << id;
 	return result.str();
 }
@@ -502,9 +519,9 @@ string Image::objectType(void)
 /**
  *
  */
-string Image::objectAssociations(void)
+std::string Image::objectAssociations(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << mySensor->objectType() << " " << myFlight->objectType();
 	return result.str();
 }
@@ -512,7 +529,7 @@ string Image::objectAssociations(void)
 /**
  *
  */
-bool Image::is(string s)
+bool Image::is(std::string s)
 {
 	return (s == "Image" ? true : false);
 }
@@ -523,7 +540,7 @@ bool Image::is(string s)
 /**
  *
  */
-void Image::xmlSetData(string xml)
+void Image::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -544,7 +561,7 @@ void Image::xmlSetData(string xml)
 	//spatialCoordinates.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
 
 	EDomElement gnss = root.elementByTagName("GNSS");
-	deque<double> gnssPos = gnss.elementByTagName("gml:pos").toGmlPos();
+    std::deque<double> gnssPos = gnss.elementByTagName("gml:pos").toGmlPos();
 	if (gnssPos.size() == 3)
 	{
 		gnssAvailable = true;
@@ -596,9 +613,9 @@ void Image::xmlSetData(string xml)
 /**
  *
  */
-string Image::xmlGetData()
+std::string Image::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<image key=\"" << Conversion::intToString(id) << "\" sensor_key=\"" << Conversion::intToString(sensorId) << "\" flight_key=\"" << Conversion::intToString(flightId) << "\">\n";
 	result << "<imageId>" << imageId << "</imageId>\n";
 	result << "<width uom=\"#px\">" << Conversion::intToString(width) << "</width>\n";
@@ -679,7 +696,7 @@ int Image::load()
 
 void Image::sortPoints()
 {
-	deque<Point*> listCtrl;
+    std::deque<Point*> listCtrl;
 
 	for(int i=0; i<myPoints.size() ;i++)
 	{

@@ -18,17 +18,23 @@ DEMManager.cpp
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EDom.h"
-#include "Point.h"
 #include "DEMManager.h"
+
+#include "Point.h"
 #include "EFotoManager.h"
-#include "DEMUserInterface.h"
+#include "SpatialRessection.h"
 #include "DEMUserInterface_Qt.h"
 #include "ImageMatching.h"
 #include "DemGrid.h"
+#include "DemFeatures.h"
+#include "SpatialIntersection.h"
+#include "FrameSensor.h"
+#include "Image.h"
 
+#include "ProjectiveRay.h"
 
-
+#include <math.h>
+#include <sstream>
 
 // Constructors and destructors
 //
@@ -44,7 +50,7 @@ DEMManager::DEMManager()
 	status = false;
 }
 
-DEMManager::DEMManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos)
+DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images, std::deque<ExteriorOrientation*> eos)
 {
 	this->manager = manager;
 	started = false;
@@ -132,7 +138,7 @@ Image * DEMManager::getImage(int id)
 void DEMManager::setListPoint()
 {
 	EDomElement xmlPoints(manager->getXml("points"));
-	deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+    std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
     for(unsigned i=0;i<allPoints.size();i++)
 	{
 		Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
@@ -147,13 +153,13 @@ bool DEMManager::connectImagePoints()
 	{
 		qApp->processEvents();
 		EDomElement xmlPoints(manager->getXml("points"));
-		deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+        std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 		for (unsigned int j = 0; j < listAllImages.size(); j++)
 		{
 			//listAllImages.at(j)->clearPoints();
 			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
-				string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(listAllImages.at(j)->getId())).getContent();
+                std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(listAllImages.at(j)->getId())).getContent();
 				//qDebug("%s\n",data.c_str());
 				if (data != "")
 				{
@@ -365,8 +371,8 @@ void DEMManager::addPairsToInterface()
 {
 	// Add pairs to the interface
 	int left_id, right_id;
-	string str_left, str_right;
-	stringstream txt;
+    std::string str_left, str_right;
+    std::stringstream txt;
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
     for (unsigned i=0; i<listPairs.size(); i++)
 	{
@@ -519,7 +525,7 @@ void DEMManager::saveDem(char * filename, int fileType)
 {
 	pairs.save(filename,fileType);
     // Expanção do XML
-    addPairsToXML(string(filename));
+    addPairsToXML(std::string(filename));
 
 	dem_unsaved = false;
 }
@@ -529,7 +535,7 @@ void DEMManager::saveDemGrid(char * filename, int fileType)
     grid->saveDem(filename,fileType);
 	grid_unsaved = false;
     // Expanção do XML
-    addDEMToXML(string(filename));
+    addDEMToXML(std::string(filename));
 }
 
 int DEMManager::loadDem(char * filename, int fileType)
@@ -633,7 +639,7 @@ int DEMManager::loadDemFeature(char *filename)
  * DEM extraction
  **/
 
-void DEMManager::interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
+void DEMManager::interpolateGrid(/*int source, */ int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
 {
 	double Zi, Zf;
 
@@ -871,7 +877,7 @@ void DEMManager::extractDEMPair(int pair)
 		Matrix img1, img2;
 	DEMUserInterface_Qt *dui = (DEMUserInterface_Qt *)myInterface;
 	dui->setStatus((char *)"Loading left image ...");
-	string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
+    std::string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
 		dui->loadImage(img1, (char *)filename.c_str(), downsample);
 	dui->setStatus((char *)"Loading right image ...");
 	filename = getImage(right_id)->getFilepath() + "/" + getImage(right_id)->getFilename();
@@ -881,7 +887,7 @@ void DEMManager::extractDEMPair(int pair)
 	// Start matching
 	//
 
-	stringstream txt;
+    std::stringstream txt;
 	txt << "Matching pair " << left_id << " and " << right_id;
 	dui->setStatus((char *)txt.str().c_str());
 	dui->setProgress(0);
@@ -929,7 +935,7 @@ void DEMManager::getPointList(MatchingPointsList &sd, MatchingPointsList &pr)
 	pr = pairs;
 }
 
-string DEMManager::getDemQuality(char *filename, int option)
+std::string DEMManager::getDemQuality(char *filename, int option)
 {
 	MatchingPointsList mpl;
 	DemFeatures df2;
@@ -977,9 +983,9 @@ double DEMManager::calculateDemRes(double ds)
 }
 
 //#include <QDebug>
-void DEMManager::addPairsToXML(string filename)
+void DEMManager::addPairsToXML(std::string filename)
 {
-    stringstream add;
+    std::stringstream add;
     add << "<pairsFilename>";
     add << filename;
     add << "</pairsFilename>";
@@ -994,9 +1000,9 @@ void DEMManager::addPairsToXML(string filename)
     manager->setSavedState(false);
 }
 
-void DEMManager::addSeedsToXML(string filename)
+void DEMManager::addSeedsToXML(std::string filename)
 {
-    stringstream add;
+    std::stringstream add;
     add << "<seedsFilename>";
     add << filename;
     add << "</seedsFilename>";
@@ -1011,9 +1017,9 @@ void DEMManager::addSeedsToXML(string filename)
     manager->setSavedState(false);
 }
 
-void DEMManager::addDEMToXML(string filename)
+void DEMManager::addDEMToXML(std::string filename)
 {
-    stringstream add;
+    std::stringstream add;
     add << "<dsmFilename>";
     add << filename;
     add << "</dsmFilename>";
@@ -1028,7 +1034,7 @@ void DEMManager::addDEMToXML(string filename)
     manager->setSavedState(false);
 }
 
-void DEMManager::addDEMQualityToXML(string filename)
+void DEMManager::addDEMQualityToXML(std::string filename)
 {
     //Fazer
     //qDebug("DEMQuality: %s",filename.c_str());

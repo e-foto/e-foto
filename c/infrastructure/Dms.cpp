@@ -1,4 +1,23 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Dms.h"
+
+#include "EDom.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -40,7 +59,7 @@ Dms::Dms(QString degree)
     this->setSignal(newDegree->hasSignal());
 }
 */
-Dms::Dms(string dms)
+Dms::Dms(std::string dms)
 {
     Dms *newDegree = stringToDms(dms);
     setSecondsPrecision();
@@ -165,9 +184,9 @@ QString Dms::toString(int decimals)
 	return text;
 }*/
 
-string Dms::toString(int decimals)
+std::string Dms::toString(int decimals)
 {
-    string text;
+    std::string text;
 
     if(this->hasSignal())
         text+="-";
@@ -213,7 +232,7 @@ Dms* Dms::stringToDms(QString dms)
 	return this;
 }
 */
-Dms* Dms::stringToDms(string dms)
+Dms* Dms::stringToDms(std::string dms)
 {
 
     /*
@@ -221,7 +240,7 @@ Dms* Dms::stringToDms(string dms)
     dms.replace("'"," ");
     dms.replace("\""," ");*/
 
-    string aux=dms;
+    std::string aux=dms;
 
 	//qDebug("dms:%s",aux.c_str());
     int pos=aux.find_first_of(" ");

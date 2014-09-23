@@ -1,5 +1,21 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "EObject.h"
 
@@ -26,11 +42,11 @@ private:
 
 	int id;
 	int sensorId;
-	string flightId;
-	string description;
-	string execution;
-	string producerName;
-	string scale;
+    std::string flightId;
+    std::string description;
+    std::string execution;
+    std::string producerName;
+    std::string scale;
 	double scaleDen;
 	double height;
 	double longitudinalOverlap;
@@ -38,7 +54,7 @@ private:
 
 	Terrain* myTerrain;
 	Sensor* mySensor;
-	deque<Image*> myImages;
+    std::deque<Image*> myImages;
 
 
 public:
@@ -70,7 +86,7 @@ public:
          * \brief Método de acesso que seta o identificador do vôo.
          * \param nickname Novo identificador.
         */
-        void setFlightId(string nickname);
+        void setFlightId(std::string nickname);
 
 	/**
  * \brief Método de acesso que seta a id do sensor associado ao vôo.
@@ -82,25 +98,25 @@ public:
  * \brief Método de acesso que seta a descrição do vôo.
  * \param newDescription	Nova descrição.
  */
-	void setDescription(string newDescription);
+    void setDescription(std::string newDescription);
 
 	/**
  * \brief Método de acesso que seta a data de execução do vôo.
  * \param newExecution	Nova data de execução do vôo.
  */
-	void setExecution(string newExecution);
+    void setExecution(std::string newExecution);
 
 	/**
  * \brief Método de acesso que seta o nome do produtor do vôo.
  * \param newProducerName	Novo nome do produtor do vôo.
  */
-	void setProducerName(string newProducerName);
+    void setProducerName(std::string newProducerName);
 
 	/**
  * \brief Método de acesso que seta a escala nominal do vôo.
  * \param newScaleNova escala nominal de voo.
  */
-	void setScale(string newScale);
+    void setScale(std::string newScale);
 
 	/**
  * \brief Método de acesso que seta a altura do vôo.
@@ -128,10 +144,10 @@ public:
 
         /**
         * \brief Método de acesso que retorna o identificador do vôo.
-        * \return string Identificador do voo.
+        * \return std::string Identificador do voo.
         */
 
-        string getFlightId();
+        std::string getFlightId();
 
 	/**
  * \brief Método de acesso que retorna a id do sensor associado ao vôo.
@@ -141,27 +157,27 @@ public:
 
 	/**
  * \brief Método de acesso que retorna a descrição do vôo.
- * \return string	Descrição do vôo.
+ * \return std::string	Descrição do vôo.
  */
-	string getDescription();
+    std::string getDescription();
 
 	/**
  * \brief Método de acesso que retorna a data de execução do vôo.
- * \return string	Data de execução do vôo.
+ * \return std::string	Data de execução do vôo.
  */
-	string getExecution();
+    std::string getExecution();
 
 	/**
  * \brief Método de acesso que retorna o nome do produtor do vôo.
- * \return string	Nome do produtor do vôo.
+ * \return std::string	Nome do produtor do vôo.
  */
-	string getProducerName();
+    std::string getProducerName();
 
 	/**
  * \brief Método de acesso que retorna a escala nominal do vôo.
- * \return string	Escala nominal do vôo.
+ * \return std::string	Escala nominal do vôo.
  */
-	string getScale();
+    std::string getScale();
 
 	/**
  * \brief Método de acesso que retorna o denominador da escala de vôo.
@@ -241,35 +257,35 @@ public:
 
 	/**
  * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
+ * \return std::string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para emitir as associações de uma instância.
- * \return string	Retorna Sensor e o id deste sensor no projeto se ele estiver conectado a um sensor.
+ * \return std::string	Retorna Sensor e o id deste sensor no projeto se ele estiver conectado a um sensor.
  * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
  */
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
  * \return bool	Retorna verdadeiro caso o nome passado seja Flight. Retorna falso no caso contrário.
  */
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
- * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe Flight.
+ * \param xml	std::string contendo o xml com todos os valores de atributos adequados a uma instância da classe Flight.
  */
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe Flight.
+ * \return std::string	Retorna o std::string contendo o xml para uma instância da classe Flight.
  */
-	string xmlGetData();
+    std::string xmlGetData();
 };
 
 } // namespace efoto
