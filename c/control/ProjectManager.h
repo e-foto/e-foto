@@ -21,7 +21,8 @@ ProjectManager.h
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
 
-#include "XmlUpdater.h"
+#include <string>
+#include <deque>
 
 namespace br {
 namespace uerj {
@@ -32,6 +33,7 @@ class ProjectUserInterface;
 class EFotoManager;
 class ETreeModel;
 class EObject;
+class XmlUpdater;
 
 /**
 * \file ProjectManager.h
@@ -77,7 +79,7 @@ public:
 	* \param filename Nome do arquivo.
 	* \return bool Retorna verdadeiro se o novo projeto foi iniciado corretamente. Retorna falso, caso contrário.
 	*/
-	bool newProject(string filename);
+    bool newProject(std::string filename);
 	/**
 	* \brief Método que será implementado futuramente.
 	* \todo  Será usado para carregar um projeto a partir de um banco de dados.
@@ -93,13 +95,13 @@ public:
 	* \param  filename Nome do arquivo.
 	* \return  bool Retorna verdadeiro se o projeto foi carregado corretamente. Retorna falso, caso contrário.
 	*/
-	bool loadFile(string filename);
+    bool loadFile(std::string filename);
 	/**
 	* \brief Método que salva um projeto em um arquivo do tipo *.epp.
 	* \param  filename Nome do arquivo.
 	* \return  bool Retorna verdadeiro se o projeto foi salvado corretamente. Retorna falso, caso contrário.
 	*/
-	bool saveFile(string filename);
+    bool saveFile(std::string filename);
 	/**
 	* \brief Método que retorna um inteiro informando que tipo de erro tem o arquivo.
 	* \return  int Código de erro que tem o arquivo.
@@ -111,21 +113,21 @@ public:
 	* \param parent : String com a tag na qual sera inseridos os dados
 	* \return bool Retorna verdadeiro se a adição foi realizada corretamente. Retorna falso, caso contrário.
 	*/
-	bool addComponent(string data, string parent);
+    bool addComponent(std::string data, std::string parent);
 	/**
 	* \brief Método que remove um nó xml do projeto.
 	* \param type : Texto contendo o tipo, a saber: Sensor, Flight,Image, Point, IO, EO.
 	* \param  id : Identificacao do componente no XML.
 	* \return bool Retorna verdadeiro se a remoção foi realizada corretamente. Retorna falso, caso contrário.
 	*/
-	bool removeComponent(string type, int id);
+    bool removeComponent(std::string type, int id);
 	/**
 	* \brief Método que edita um nó no xml do projeto.
 	* \param type : Texto contendo o tipo, a saber: Header, Terrain.
 	* \param  data : Dados novos a serem inseridos no lugar dos antigos.
 	* \return bool Retorna verdadeiro se a edição foi realizada corretamente. Retorna falso, caso contrário.
 	*/
-	bool editComponent(string type, string data);
+    bool editComponent(std::string type, std::string data);
 	/**
 	* \brief Método que edita um nó no xml do projeto.
 	* \param type : Texto contendo o tipo, a saber: Sensor, Flight,Image, Point, IO, EO.
@@ -133,14 +135,14 @@ public:
 	* \param  data : Dados novos a serem inseridos no lugar dos antigos.
 	* \return bool Retorna verdadeiro se a edição foi realizada corretamente. Retorna falso, caso contrário.
 	*/
-	bool editComponent(string type, int id, string data);
+    bool editComponent(std::string type, int id, std::string data);
 	/**
 	* \brief Método que retorna uma instância solicitada.
 	* \param type Tipo da instância.
 	* \param  id Identificador da instância.
 	* \return EObject Retorna a instância solicitada.
 	*/
-	EObject* viewComponent(string type, int id);
+    EObject* viewComponent(std::string type, int id);
 	/**
 	* \brief Método que retorna o atual modelo de dados do projeto..
 	* \return ETreeModel Modelo de dados do projeto.
@@ -150,18 +152,18 @@ public:
 	* \brief Método que retorna o deque de Image Keys.
 	* \return deque<int> O deque de Image Keys.
 	*/
-	deque<int> listImageKeys();
+    std::deque<int> listImageKeys();
 	/**
 	* \brief Método que retorna o deque de imagens.
-	* \return deque<string> O deque de imagens.
+    * \return deque<std::string> O deque de imagens.
 	*/
-	deque<string> listImages();
+    std::deque<std::string> listImages();
 	/**
 	* \brief Método que retorna o identificador de uma imagem.
 	* \param imageName O nome da imagem.
 	* \return int Identificador solicitado da imagem.
 	*/
-	int getImageId(string imageName);
+    int getImageId(std::string imageName);
 	/**
 	* \brief Método que retorna um identificador de imagens que ainda não foi utilizado.
 	* \return int Identificador da imagem que ainda não foi utilizado.
@@ -178,12 +180,12 @@ public:
 	* \param image Identificador da imagem.
 	* \return bool Retorna verdadeiro se o módulo foi iniciado corretamente. Retorna falso, caso contrário.
 	*/
-	bool startModule(string module, int image);
+    bool startModule(std::string module, int image);
 	/**
 	* \brief Método que carrega o módulo ProjectManager.
 	* \return bool Retorna verdadeiro se o módulo ProjectManager já tiver terminado de ser carregado. Retorna falso, caso contrário.
 	*/
-	bool exec(string filename = "");
+    bool exec(std::string filename = "");
 	/**
 	* \brief Método que recarrega o módulo ProjectManager.
 	* \return bool Retorna verdadeiro se o módulo ProjectManager tiver recarregado com sucesso. Retorna falso, caso contrário.
@@ -192,17 +194,17 @@ public:
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname);
+    std::string getXml(std::string tagname);
 	/**
 	* \brief Método que retorna os valores de um nó do XML.
 	* \param tagname Nome da tag do XML.
 	* \param att Valor do atributo da tag do XML.
 	* \param value Valor do nó da tag do XML.
-	* \return string Valores do Nó do XML que foi requisitado.
+    * \return std::string Valores do Nó do XML que foi requisitado.
 	*/
-	string getXml(string tagname, string att, string value);
+    std::string getXml(std::string tagname, std::string att, std::string value);
 	/**
 	* \todo Método que será implementado futuramente.
 	*/
@@ -214,7 +216,13 @@ public:
 	* \param image2 Identificador da segunda imagem.
 	* \return bool Retorna verdadeiro se os arquivos foram criados com sucesso. Retorna falso, caso contrário.
 	*/
-	bool makeSPFile(string filename, int image1, int image2);
+    bool makeSPFile(std::string filename, int image1, int image2);
+    
+    // get and save settings JAR
+private:
+
+ 
+    void saveSettings(std::string filename);
 };
 
 } // namespace efoto

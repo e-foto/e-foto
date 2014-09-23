@@ -1,8 +1,25 @@
 /**************************************************************************
 	  SensorWithKnowDimensions.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SensorWithKnowDimensions.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -97,19 +114,19 @@ Matrix SensorWithKnowDimensions::forgeLb()
 // EObject methods
 //
 
-string SensorWithKnowDimensions::objectType(void)
+std::string SensorWithKnowDimensions::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "SensorWithKnowDimensions " << id;
 	return result.str();
 }
 
-string SensorWithKnowDimensions::objectAssociations(void)
+std::string SensorWithKnowDimensions::objectAssociations(void)
 {
 	return "";
 }
 
-bool SensorWithKnowDimensions::is(string s)
+bool SensorWithKnowDimensions::is(std::string s)
 {
 	return (s == "SensorWithKnowDimensions" ? true : false);
 }
@@ -117,7 +134,7 @@ bool SensorWithKnowDimensions::is(string s)
 // XML methods
 //
 
-void SensorWithKnowDimensions::xmlSetData(string xml)
+void SensorWithKnowDimensions::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -128,7 +145,7 @@ void SensorWithKnowDimensions::xmlSetData(string xml)
 	calculationMode = root.elementByTagName("calculationMode").toString();
 
 	spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
-	deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
+    std::deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
 	spectralRanges.clear();
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
@@ -152,7 +169,7 @@ void SensorWithKnowDimensions::xmlSetData(string xml)
 	else
 		focalDistanceSigma = 1.0;
 
-	deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
+    std::deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
 	rsCoefficients.clear();
 	for (unsigned int i = 0; i < xmlRadialSymmetric.size(); i++)
 	{
@@ -165,7 +182,7 @@ void SensorWithKnowDimensions::xmlSetData(string xml)
 		rsCoefficients.push_back(*radial);
 	}
 
-	deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
+    std::deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
 	dCoefficients.clear();
 	for (unsigned int i = 0; i < xmlDecentered.size(); i++)
 	{
@@ -186,9 +203,9 @@ void SensorWithKnowDimensions::xmlSetData(string xml)
 	frameColumns = sensorDimensions.elementByTagName("columns").toInt();
 }
 
-string SensorWithKnowDimensions::xmlGetData()
+std::string SensorWithKnowDimensions::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
 	result << "<sensorId>" << sensorId << "</sensorId>\n";
 	result << "<type>\n";

@@ -20,6 +20,8 @@
 #include "ExteriorOrientation.h"
 #include "Image.h"
 
+#include <sstream>
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -67,9 +69,9 @@ Image* ExteriorOrientation::getImage() const
 /**
  *
  */
-string ExteriorOrientation::objectType(void)
+std::string ExteriorOrientation::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "ExteriorOrientation " << imageId;
 	return result.str();
 }
@@ -77,7 +79,7 @@ string ExteriorOrientation::objectType(void)
 /**
  *
  */
-string ExteriorOrientation::objectAssociations(void)
+std::string ExteriorOrientation::objectAssociations(void)
 {
 	return myImage->objectType();
 }

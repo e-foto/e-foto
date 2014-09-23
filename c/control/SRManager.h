@@ -1,12 +1,27 @@
+#ifndef SRMANAGER_H
+#define SRMANAGER_H
 /**************************************************************************
 							   SRManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-#ifndef SRMANAGER_H
-#define SRMANAGER_H
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-#include "EObject.h"
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <deque>
+#include <string>
 
 namespace br {
 namespace uerj {
@@ -43,7 +58,7 @@ class SRManager
 	Image* myImage;
 	InteriorOrientation* myIO;
 	SpatialRessection* mySR;
-	deque<Point*> myPoints;
+    std::deque<Point*> myPoints;
 	SRUserInterface* myInterface;
 
 public:
@@ -64,7 +79,7 @@ public:
 	* \param myIO Ponteiro para os parâmetros de orientação interior.
 	* \param mySR Ponteiro para o objeto de cálculo utilizado.
 	*/
-    SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR, deque<Point*> myPoints);
+    SRManager(EFotoManager* manager, Terrain* myTerrain, Sensor* mySensor, Flight* myFlight, Image* myImage, InteriorOrientation* myIO, SpatialRessection* mySR, std::deque<Point*> myPoints);
 	/**
 	* \brief Destrutor padrão.
 	*/
@@ -109,7 +124,7 @@ public:
 	* \param lin Valor da quantidade de linhas da imagem.
 	* \return deque<double> Deque com as coordenadas do detector.
 	*/
-	deque<double> pointToDetector(double col, double lin);
+    std::deque<double> pointToDetector(double col, double lin);
 	/**
 	* \brief Método que retira a seleção do ponto da imagem.
 	* \param id Identificador do ponto.
@@ -132,23 +147,23 @@ public:
 	* \brief Método que armazena num deque os pontos da imagem selecionados.
 	* \return deque<string> Deque dos pontos selecionados da imagem.
 	*/
-	deque<string> listSelectedPoints();
+    std::deque<std::string> listSelectedPoints();
 	/**
 	* \brief Método que armazena num deque os pontos do projeto que estão na imagem.
 	* \return deque<string> Deque dos pontos do projeto que estão na imagem.
 	*/
-	deque<string> listImagePoints();
+    std::deque<std::string> listImagePoints();
 	/**
 	* \brief Método que armazena num deque todos os pontos do projeto.
 	* \return deque<string> Deque dos todos os pontos do projeto.
 	*/
-	deque<string> listAllPoints();
+    std::deque<std::string> listAllPoints();
 	/**
 	* \brief Método que armazena num deque as informações do ponto.
 	* \param index Posição do ponto no deque de pontos. 	
 	* \return deque<string> Deque com informações do ponto.
 	*/
-	deque<string> pointData(int index);
+    std::deque<std::string> pointData(int index);
 	/**
 	* \brief Método que conta quantos pontos da imagem foram selecionados.	
 	* \return unsigned int Valor da quantidade de pontos selecionados da imagem.
@@ -204,7 +219,7 @@ public:
 	* \brief Método que armazena num deque os valores de Xa, La, sigma0squared, V, SigmaXa, SigmaLa para exibir o relatório na interface gráfica.
 	* \return deque<string> .
 	*/
-	deque<string> makeReport();
+    std::deque<std::string> makeReport();
 
 	/**
 	* \brief Método que inicia o módulo de Orientação Exterior e informa se foi feito algum cálculo neste mesmo módulo anteriormente para a alertar o usuário, caso o projeto não tenha sido salvo.
@@ -226,18 +241,18 @@ public:
 	* \param path Caminho do arquivo do projeto.
 	* \return bool Retorna verdadeiro caso o projeto foi salvo com sucesso. Retorna falso, caso contrário.
 	*/
-	bool save(string path);
+    bool save(std::string path);
 	/**
 	* \brief Método que informa se o projeto foi carregado com sucesso.
 	* \param path Caminho do arquivo do projeto.
 	* \return bool Retorna verdadeiro caso o projeto foi carregado com sucesso. Retorna falso, caso contrário.
 	*/
-	bool load(string path);
+    bool load(std::string path);
 	/**
 	* \brief Método que retorna o caminho com o nome do arquivo da imagem.
 	* \return string Caminho com o nome do arquivo da imagem.
 	*/
-	string getImageFile();
+    std::string getImageFile();
 	/**
 	* \brief Método que salva os dados da Orientação Exterior no XML.
 	*/

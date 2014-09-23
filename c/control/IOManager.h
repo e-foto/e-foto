@@ -1,12 +1,26 @@
 /**************************************************************************
 		  IOManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef IOMANAGER_H
 #define IOMANAGER_H
 
-#include "EObject.h"
 #include "PositionMatrix.h"
 
 namespace br {
@@ -96,9 +110,9 @@ public:
 	/**
 	* \brief Método que armazena num deque as posições de marcas fiduciais analógicas e também de alguma marca fiducial digital.
 	* \param index Posição do deque da marca fiducial.
-	* \return deque<string> Deque de marcas fiduciais.
+    * \return deque<string> Deque de marcas fiduciais.
 	*/
-	deque<string> markData(int index);
+    std::deque<std::string> markData(int index);
 	/**
 	* \brief Método que retorna o total de marcas fiduciais analógicas.
 	* \return unsigned int O valor da quantidade de marcas fiduciais analógicas.
@@ -124,9 +138,9 @@ public:
 	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
 	/**
 	* \brief Método que armazena num deque os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa vindos de um xml para exibir o relatório na interface gráfica.
-	* \return deque<string> Os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa.
+    * \return deque<string> Os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa.
 	*/
-	deque<string> makeReport();
+    std::deque<std::string> makeReport();
 	/**
 	* \brief Método que inicia o módulo de Orientação Interior e retorna se foi feito algum cálculo neste mesmo módulo anteriormente para a alertar o usuário, caso o projeto não tenha sido salvo.
 	* \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contrário.
@@ -143,21 +157,22 @@ public:
 	void returnProject();
 	/**
 	* \brief Método que salva o projeto e informa se o mesmo foi salvo com sucesso.
+    *
 	* \param path Caminho do projeto.
 	* \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contrário.
 	*/
-	bool save(string path);
+    bool save(std::string path);
 	/**
 	* \brief Método que carrega o projeto e informa se o mesmo foi salvo com sucesso.
 	* \param path Caminho do projeto.
 	* \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contrário.
 	*/
-	bool load(string path);
+    bool load(std::string path);
 	/**
 	* \brief Método que retorna o caminho da imagem com o nome do arquivo.
-	* \return string Caminho da imagem e o nome do arquivo.
+    * \return string Caminho da imagem e o nome do arquivo.
 	*/
-	string getImageFile();
+    std::string getImageFile();
 	/**
 	* \brief Método que retorna o número de linhas quando o sensor conhece as dimensões da imagem.
 	* \return int Número de linhas.

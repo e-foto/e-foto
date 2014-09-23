@@ -1,11 +1,24 @@
-/******************************************************************************
-						   MatchingPoints.h
-*******************************************************************************/
-
-
 #ifndef MATCHINGPOINTS_H
 #define MATCHINGPOINTS_H
+/******************************************************************************
+                           MatchingPoints.h
+*******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /**
 * class MatchingPoints
 *
@@ -16,21 +29,14 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include <vector>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include "Matrix.h"
-
-using namespace std;
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class Matrix;
 
 class MPImagePairs
 {
@@ -90,7 +96,7 @@ public:
 	bool hasEmptyPairs();
 
 private:
-	vector <MatchingPoints> list;
+    std::vector <MatchingPoints> list;
 	unsigned int bad_points;
 	void Quicksort(double **, int, int);
 	void switchElements(int, int);
@@ -110,7 +116,7 @@ private:
 	int strTokensCount(char *);
 	int checkImagePairs(int left, int right, bool add=false);
 	void identImagePairs();
-	vector <MPImagePairs> MPImagePairsList;
+    std::vector <MPImagePairs> MPImagePairsList;
 	void drawCross(Matrix *, int, int, double);
 
 };

@@ -24,8 +24,13 @@
 #include "Sensor.h"
 #include "FrameSensor.h"
 #include "Terrain.h"
+#include "Flight.h"
+#include "RayTester.h"
+
+#include "math.h"
 
 #include <QDebug>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -236,7 +241,7 @@ Matrix SpatialRessection::getLastL0()
 /**
  *
  */
-deque<int> SpatialRessection::getSelectedPoints()
+std::deque<int> SpatialRessection::getSelectedPoints()
 {
 	return selectedPoints;
 }
@@ -354,9 +359,9 @@ void SpatialRessection::unsetPointForFlightDirection()
 /**
  *
  */
-string SpatialRessection::objectType(void)
+std::string SpatialRessection::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "SpatialResection " << imageId;
 	return result.str();
 }
@@ -364,7 +369,7 @@ string SpatialRessection::objectType(void)
 /**
  *
  */
-string SpatialRessection::objectAssociations(void)
+std::string SpatialRessection::objectAssociations(void)
 {
 	return myImage->objectType();
 }
@@ -372,7 +377,7 @@ string SpatialRessection::objectAssociations(void)
 /**
  *
  */
-bool SpatialRessection::is(string s)
+bool SpatialRessection::is(std::string s)
 {
 	return (s == "SpatialResection" ? true : false);
 }
@@ -383,7 +388,7 @@ bool SpatialRessection::is(string s)
 /**
  *
  */
-void SpatialRessection::xmlSetData(string xml)
+void SpatialRessection::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	imageId = Conversion::stringToInt(root.attribute("image_key"));
@@ -393,7 +398,7 @@ void SpatialRessection::xmlSetData(string xml)
 	else
 		gnssConverged = insConverged = false;
 
-    deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
+    std::deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
     selectedPoints.clear();
     for(int i = 0; i < (int)pts.size();i++)
     {
@@ -417,7 +422,7 @@ void SpatialRessection::xmlSetData(string xml)
 	// Aqui vem a maldição do nome igual. Tem um elemento X0 dentro do Xa, e um X0 fora. Quero achar o fora.
 	// Eu poderia fazer o acesso diretamente pelo nome dos elementos internos, mas seria dar muitas voltas no XML.
 	EDomElement xmlX0;
-	deque<EDomElement> xmlX0s = root.elementsByTagName("X0");
+    std::deque<EDomElement> xmlX0s = root.elementsByTagName("X0");
 	for (unsigned int i = 0; i < xmlX0s.size(); i++)
 		if (xmlX0s.at(i).children().size() == 6)
 			xmlX0 = xmlX0s.at(i);
@@ -434,9 +439,9 @@ void SpatialRessection::xmlSetData(string xml)
 /**
  *
  */
-string SpatialRessection::xmlGetData()
+std::string SpatialRessection::xmlGetData()
 {
-    stringstream result;
+    std::stringstream result;
     result << "<imageSR image_key=\"" << Conversion::intToString(imageId) << "\">\n";
     result << "<iterations>" << Conversion::intToString(totalIterations) << "</iterations>\n";
     if (gnssConverged && insConverged)
@@ -472,9 +477,9 @@ string SpatialRessection::xmlGetData()
     return result.str();
 }
 
-string SpatialRessection::xmlGetDataEO()
+std::string SpatialRessection::xmlGetDataEO()
 {
-    stringstream result;
+    std::stringstream result;
     result << "<imageEO type=\"spatialResection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
     result << "<Xa>\n";
     result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
@@ -970,7 +975,7 @@ DetectorSpaceCoordinate SpatialRessection::getRadialDistortions(double xi, doubl
 	if (frame != NULL)
 	{
 		double r = sqrt(xi*xi+eta*eta);
-		deque<RadialSymmetricDistortionCoefficient> rs = frame->getRadialSymmetricCoefficients();
+        std::deque<RadialSymmetricDistortionCoefficient> rs = frame->getRadialSymmetricCoefficients();
 		double dr = 0;
 
 		for (unsigned int i = 0; i < rs.size(); i++)
@@ -1000,7 +1005,7 @@ DetectorSpaceCoordinate SpatialRessection::getDecenteredDistortions(double xi, d
 	if (frame != NULL)
 	{
 		double r = sqrt(xi*xi+eta*eta);
-		deque<DecenteredDistortionCoefficient> dec = frame->getDecenteredCoefficients();
+        std::deque<DecenteredDistortionCoefficient> dec = frame->getDecenteredCoefficients();
 		double P1 = dec.at(0).getValue();
 		double P2 = dec.at(1).getValue();
 

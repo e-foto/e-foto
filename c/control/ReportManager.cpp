@@ -23,11 +23,23 @@
 #include "ReportUserInterface.h"
 #include "ReportUserInterface_Qt.h"
 #include "ProjectiveRay.h"
-
+#include "ProjectHeader.h"
+#include "SpatialRessection.h"
+#include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
 #include "BundleAdjustment.h"
 #include "SingleScene.h"
+#include "Point.h"
+#include "InteriorOrientation.h"
+#include "Terrain.h"
+#include "Flight.h"
+#include "Image.h"
 
+#include <sstream>
+#include <fstream>
 
+#include <QtGui>
 
 // Constructors and destructors
 //
@@ -262,10 +274,10 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
     }
 }
 
-string ReportManager::eprHeader()
+std::string ReportManager::eprHeader()
 {
     ProjectHeader *cabecalho = project->header();
-    string txt;
+    std::string txt;
     txt = "<projectHeader>\n";
     txt += "<name>" + cabecalho->getName() + "</name>\n";
     txt += "<description>" + cabecalho->getDescription() + "</description>\n";
@@ -276,10 +288,10 @@ string ReportManager::eprHeader()
     return txt;
 }
 
-string ReportManager::eprTerrain()
+std::string ReportManager::eprTerrain()
 {
     Terrain *terreno = project->terrain();
-    string txt,direction;
+    std::string txt,direction;
     Dms lat(terreno->getCentralCoordLat());
     Dms lon(terreno->getCentralCoordLong());    
     txt = "<terrain>\n";    
@@ -313,10 +325,10 @@ string ReportManager::eprTerrain()
     return txt;
 }
 
-string ReportManager::eprSensors()
+std::string ReportManager::eprSensors()
 {
     Sensor *sensores = project->sensor(1);
-    string txt;    
+    std::string txt;
     txt = "<sensors>\n";
     txt += "<sensorId>" + sensores->getSensorId() + "</sensorId>\n";
     txt += "<description>" + sensores->getDescription() + "</description>\n";
@@ -328,10 +340,10 @@ string ReportManager::eprSensors()
     return txt;
 }
 
-string ReportManager::eprFlights()
+std::string ReportManager::eprFlights()
 {
     Flight *voos = project->flight(1);
-    string txt;    
+    std::string txt;
     txt = "<flights>\n";
     txt += "<flightId>" + voos->getFlightId() + "</flightId>\n";
     txt += "<execution>" + voos->getExecution() + "</execution>\n";
@@ -349,9 +361,9 @@ string ReportManager::eprFlights()
     return txt;
 }
 
-string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
 {
-	string txt;
+    std::string txt;
 	Image *img;
 	txt = "<images>\n";
 	for(unsigned int i=0;i<project->allImages().size();i++)
@@ -420,9 +432,9 @@ string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
 	return txt;
 }
 
-string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
+    std::string txt;
     txt = "<blockPoints>\n";
     for(unsigned int i=0;i<project->allPoints().size();i++)
     {
@@ -480,9 +492,9 @@ string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
+    std::string txt;
     txt = "<affineTransformation>\n";
     for (unsigned int i = 0; i < project->allIOs().size(); i++)
     {
@@ -499,7 +511,7 @@ string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
                     txt += "<calculationMode>" + io->getImage()->getSensor()->getCalculationMode() + "</calculationMode>\n";
                     if (io->getImage()->getSensor()->getCalculationMode() == "With Fiducial Marks")
                     {
-                        deque<ImageFiducialMark> fidMarks = io->getImage()->getDigFidMarks();
+                        std::deque<ImageFiducialMark> fidMarks = io->getImage()->getDigFidMarks();
                         SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*) io->getImage()->getSensor();
                         txt += "<fidMarks>\n";
                         for(unsigned int j = 0; j < fidMarks.size(); j++)
@@ -561,9 +573,9 @@ string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
+    std::string txt;
     txt = "<spatialResection>\n";
     for(unsigned int i = 0; i < project->allEOs().size(); i++)
     {
@@ -643,9 +655,9 @@ string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
 
             sr->initialize();
             sr->calculate(sr->getTotalIterations(),0.001,0.001);
-            deque<double> rmse = sr->getRMSE();
+            std::deque<double> rmse = sr->getRMSE();
             txt += "<rmseOfEachIteration>\n";
-            for (int a = 0; a < rmse.size(); a++)
+            for (size_t a = 0; a < rmse.size(); a++)
             {
                 //qDebug("%f",rmse.at(a));
                 txt += "<rmse>\n";
@@ -661,14 +673,14 @@ string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
+    std::string txt;
     if (project->photoTri() == NULL)
         return "";
 
-    deque<Image*> usedImages = project->photoTri()->getImages();
-    deque<Point*> usedPoints = project->photoTri()->getPoints();
+    std::deque<Image*> usedImages = project->photoTri()->getImages();
+    std::deque<Point*> usedPoints = project->photoTri()->getPoints();
     BundleAdjustment* bundle = new BundleAdjustment(usedImages, usedPoints);
 
     txt = "<photogrammetricBlock>\n";
@@ -705,7 +717,7 @@ string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems)
         bundle->setMetricConvergencyValue(project->photoTri()->getMetricConvergency());
         bundle->setMaxNumberIterations(project->photoTri()->getTotalIterations());
         bundle->calculate(true);
-        deque<double> RMSEs = bundle->getListRMSE();
+        std::deque<double> RMSEs = bundle->getListRMSE();
         txt += "<rmseOfEachIteration>\n";
         for(unsigned int j=0;j<RMSEs.size();j++)
         {
@@ -722,9 +734,9 @@ string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
 {
-    string txt;
+    std::string txt;
     txt = "<interiorOrientation>\n";
     Image *img;
     InteriorOrientation* io;
@@ -767,9 +779,9 @@ string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*> treeItems)
     return txt;
 }
 
-string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems)
+std::string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*> treeItems)
 {
-	string txt;
+    std::string txt;
 	Image *img;
 	SpatialRessection* eo;
 	txt = "<exteriorOrientation>\n";
@@ -875,9 +887,9 @@ bool checkAnglesAlligned(double angle1, double angle2, double tolerance)
     return (distance < tolerance || fabs(M_PI - distance) < tolerance);
 }
 
-string ReportManager::eprStereoPairs()
+std::string ReportManager::eprStereoPairs()
 {
-    string txt;
+    std::string txt;
     txt = "<stereoPairs>\n";
 
     //
@@ -891,23 +903,26 @@ string ReportManager::eprStereoPairs()
 
     Image *img;
     double X1, Y1, X2, Y2, R, dist, best_dist, bX2, bY2, overlap, align_ang, kappa;
-    int p1, p2, best_img;
+    int best_img;
     Matrix Xa;
 
     // Calculate Image Radius
-    ObjectSpaceCoordinate osc;
+   // ObjectSpaceCoordinate osc;
     img = project->allImages().at(0);
-    ProjectiveRay pr(img);
-    Xa = img->getEO()->getXa();
-    X1 = Xa.get(1,1);
-    Y1 = Xa.get(2,1);
-    p1 = img->getWidth();
-    p2 = img->getHeight()/2;
-    osc = pr.imageToObject(p1,p2,img->getHeight(),false);
-    X2 = osc.getX();
-    Y2 = osc.getY();
-    R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+   // ProjectiveRay pr(img);
+   // Xa = img->getEO()->getXa();
+   // X1 = Xa.get(1,1);
+   // Y1 = Xa.get(2,1);
+   // p1 = img->getWidth();
+   // p2 = img->getHeight()/2;
+   // osc = pr.imageToObject(p1,p2,img->getHeight(),false);
+   // X2 = osc.getX();
+   // Y2 = osc.getY();
+   // R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+    // Calculate Images Radius, using the first image as reference
 
+        // New R calcul width*scale*(1 pol in meters)/resolution
+        R = img->getWidth() * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
     for (unsigned int i=0; i<project->allImages().size()-1; i++)
     {
         // Get base image center
@@ -922,9 +937,6 @@ string ReportManager::eprStereoPairs()
         // Calculate the shortest image center
         for (unsigned int j=i+1; j<project->allImages().size(); j++)
         {
-            if (i==j)
-                continue;
-
             img = project->allImages().at(j);
             Xa = img->getEO()->getXa();
             X2 = Xa.get(1,1);
@@ -965,31 +977,31 @@ string ReportManager::eprStereoPairs()
     return txt;
 }
 
-string ReportManager::eprStereoPlotting()
+std::string ReportManager::eprStereoPlotting()
 {
-    string txt;
+    std::string txt;
     txt = "<stereoPlotting>Teste 13</stereoPlotting>\n";
     return txt;
 }
 
-string ReportManager::eprDSM()
+std::string ReportManager::eprDSM()
 {
-    string txt;
+    std::string txt;
     txt = "<dsm>Teste 14</dsm>\n";
     return txt;
 }
 
-string ReportManager::eprOrthorectification()
+std::string ReportManager::eprOrthorectification()
 {
-    string txt;
+    std::string txt;
     txt = "<orthoRectification>Teste 15</orthoRectification>\n";
     return txt;
 }
 
-bool ReportManager::makeFile(string filename, int idExt, QList<QTreeWidgetItem*> treeItems)
+bool ReportManager::makeFile(std::string filename, int idExt, QList<QTreeWidgetItem*> treeItems)
 {
-    stringstream out;
-    ofstream myFile (filename.c_str());
+    std::stringstream out;
+    std::ofstream myFile (filename.c_str());
     if (myFile.is_open())
     {
         int numChild = treeItems.count();
@@ -1074,10 +1086,10 @@ bool ReportManager::makeFile(string filename, int idExt, QList<QTreeWidgetItem*>
     }
 }
 
-bool ReportManager::makeXslt(int idExt, string path)
+bool ReportManager::makeXslt(int idExt, std::string path)
 {
-    string xsltransformation;
-    stringstream outxsl;
+    std::string xsltransformation;
+    std::stringstream outxsl;
     xsltransformation = path.c_str();    
     outxsl << "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n";
 
@@ -1484,7 +1496,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "    End of E-Foto Photogrammetric Report\n";
         outxsl << "</xsl:template>\n";
         outxsl << "</xsl:stylesheet>\n";
-        ofstream myXsltFile(xsltransformation.c_str());
+        std::ofstream myXsltFile(xsltransformation.c_str());
         myXsltFile << outxsl.str();
         myXsltFile.close();
     } else {
@@ -2182,7 +2194,7 @@ bool ReportManager::makeXslt(int idExt, string path)
         outxsl << "</html>\n";
         outxsl << "</xsl:template>\n";
         outxsl << "</xsl:stylesheet>\n";
-        ofstream myXsltFile(xsltransformation.c_str());
+        std::ofstream myXsltFile(xsltransformation.c_str());
         EDomElement xsl(outxsl.str());
         myXsltFile << xsl.removeBlankLines(true).indent('\t').getContent() ;
         myXsltFile.close();

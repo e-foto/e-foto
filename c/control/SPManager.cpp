@@ -24,6 +24,16 @@ SPManager.cpp
 #include "SPUserInterface_Qt.h"
 #include "ProjectiveRay.h"
 #include "Project.h"
+#include "SpatialIntersection.h"
+#include "SpatialRessection.h"
+#include "StereoPair.h"
+#include "Point.h"
+#include "Terrain.h"
+#include "Image.h"
+#include "Flight.h"
+#include <math.h>
+
+#include <sstream>
 
 
 namespace br {
@@ -41,7 +51,7 @@ SPManager::SPManager() :
 	status = false;
 }
 
-SPManager::SPManager(EFotoManager* manager, deque<Image*>images, deque<ExteriorOrientation*> eos) :
+SPManager::SPManager(EFotoManager* manager, std::deque<Image*>images, std::deque<ExteriorOrientation*> eos) :
     prL(0), prR(0)
 {
 	this->manager = manager;
@@ -121,8 +131,8 @@ void SPManager::returnProject()
 void SPManager::setListPoint()
 {
         EDomElement xmlPoints(manager->getXml("points"));
-        deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
-        for(int i=0;i<allPoints.size();i++)
+        std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+        for(size_t i=0;i<allPoints.size();i++)
         {
                 Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
                 if (point != NULL)
@@ -154,7 +164,7 @@ void SPManager::saveFeatures(char *filename)
 {
         spFeatures.saveFeatures(filename,0,false);
     // Expanção do XML
-    addGeometryToXML(string(filename));
+    addGeometryToXML(std::string(filename));
 }
 
 void SPManager::exportFeatures(char *filename)
@@ -162,7 +172,7 @@ void SPManager::exportFeatures(char *filename)
         spFeatures.exportFeatures(filename);
 }
 
-void SPManager::addFeature(string name, int feattype, int featclass)
+void SPManager::addFeature(std::string name, int feattype, int featclass)
 {
 	int fclass = spFeatures.convClassFromSp165(feattype, featclass);
 
@@ -190,17 +200,17 @@ void SPManager::removeAllFeatures()
 	spFeatures.setSelectedFeature(-1);
 }
 
-int SPManager::removePoint()
+bool SPManager::removePoint()
 {
     int sel_feat = spFeatures.selectedFeature();
 
     if (sel_feat == -1)
-        return 0;
+        return false;
 
     int sel_pt = spFeatures.selectedPoint();
 
     if (sel_pt == -1)
-		return 0;
+        return false;
 
     spFeatures.deletePoint(sel_feat, sel_pt);
     if (sel_pt > spFeatures.getFeature(spFeatures.selectedFeature()).points.size() && sel_pt != 1)
@@ -208,7 +218,7 @@ int SPManager::removePoint()
     else if (sel_pt == 1 && spFeatures.getFeature(spFeatures.selectedFeature()).points.size() == 0)
         spFeatures.setSelectedPoint(-1);
 
-    return 1;
+    return true;
 }
 
 void SPManager::setSelected(int feat_id, int pt_id)
@@ -229,7 +239,7 @@ void SPManager::setSelected(int feat_id, int pt_id)
     spFeatures.setSelectedPoint(pt_id);
 }
 
-void SPManager::getSelectedFeatureData(int &sel_feat, string &fname, int &ftype, int &fclass, int &no_points, double &perimeter, double &area)
+void SPManager::getSelectedFeatureData(int &sel_feat, std::string &fname, int &ftype, int &fclass, int &no_points, double &perimeter, double &area)
 {
     ftype = -1;
     fclass = -1;
@@ -268,7 +278,7 @@ void SPManager::updateProjections()
     for (int i = 0; i < spFeatures.getNumFeatures(); i++)
     {
         DemFeature* df = spFeatures.getFeatureLink(i+1);
-        for (int j = 0; j < df->points.size(); j++)
+        for (size_t j = 0; j < df->points.size(); j++)
         {
             // Isso vai ficar um pouco ruim, mas vai melhorar em breve quando a classe DigitalImageCoordinates for substituida por algo equivalente usando double (completando o suporte a subpixels)
             ImageSpaceCoordinate pL0 = prL.objectToImage(df->points.at(j).X, df->points.at(j).Y, df->points.at(j).Z,false);
@@ -302,10 +312,10 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
     Z = obj.getZ();
 }
 
-string SPManager::getFullImagePath(int imagekey)
+std::string SPManager::getFullImagePath(int imagekey)
 {
     Image* img = listAllImages.at(imagekey-1);
-    string result;
+    std::string result;
     result.append(img->getFilepath());
     result.append("/");
     result.append(img->getFilename());
@@ -384,42 +394,28 @@ int SPManager::getPairs()
 	listPairs.clear();
 
 	Image *img;
-        double X1, Y1, X2, Y2, R, dist, bX2, bY2, overlap, align_ang, kappa, terrain_mean_Z;
-        int p1, p2, img_code, id1, id2;
-	Matrix Xa;
+    double X1, Y1, X2, Y2, R, dist, overlap;
+    int img_code, id1, id2;
+    size_t imagesSize = listAllImages.size();
+    Matrix Xa;
 
-        // Calculate Images Radius, using the first image as reference
-	ObjectSpaceCoordinate osc;
+    // Calculate Images Radius, using the first image as reference
 	img = listAllImages.at(0);
-	ProjectiveRay pr(img);
-	Xa = img->getEO()->getXa();
-	X1 = Xa.get(1,1);
-	Y1 = Xa.get(2,1);
-	p1 = img->getWidth();
-	p2 = img->getHeight()/2;
-        terrain_mean_Z = getTerrainMeanAltitude();
-        osc = pr.imageToObject(p1,p2,terrain_mean_Z,false);
-	X2 = osc.getX();
-	Y2 = osc.getY();
-	R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+    // New R calcul
+    R = img->getWidth() * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
 
-        for (int i=0; i<listAllImages.size(); i++)
+    for (size_t i=0; i<imagesSize; i++)
 	{
-                // Get reference image data
+       // Get reference image data
 		img = listAllImages.at(i);
 		Xa = img->getEO()->getXa();
 		X1 = Xa.get(1,1);
 		Y1 = Xa.get(2,1);
-		kappa = fabs(Xa.get(6,1));
 
 		// Calculate the shortest image center
-                for (int j=0; j<listAllImages.size(); j++)
+        for (size_t j=i+1; j<imagesSize; j++)
 		{
-                        // Skip same image check
-			if (i==j)
-				continue;
-
-                        // Get test image data
+           // Get test image data
 			img = listAllImages.at(j);
 			Xa = img->getEO()->getXa();
 			X2 = Xa.get(1,1);
@@ -428,35 +424,28 @@ int SPManager::getPairs()
 			// Calculate dist
 			dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
-                        // Check images overlapping
-                        overlap = 100*(2*R - dist)/(2*R);
+            // Check images overlapping
+            overlap = 100*(R - dist)/(R);
+            if (overlap < 55.0 || overlap > 100.0)
+                continue;
 
-                        if (overlap < 55.0 || overlap > 100.0)
-                                continue;
+            // Assign image ids (in this case, the vector number - image id ranges from 1-N
+           id1 = i+1;
+           id2 = j+1;
 
-/*                        // Check images alignment and kappa
-                        align_ang = getAngleBetweenImages(X1, Y1, bX2, bY2);
-
-                        if (!checkAnglesAlligned(align_ang, kappa, 0.174532925)) // 10 Degrees
-                                continue;
-*/
-                        // Assign image ids (in this case, the verctor number - image id ranges from 1-N
-                        id1 = i+1;
-                        id2 = j+1;
-
-                        // Check if pair exists
-                        if (!existPair(id1, id2))
-                        {
-                            // Add images to list
-                            img_code = (id1-1) + listAllImages.size()*(id2-1);
-                            listPairs.push_back(img_code);
-                        }
+           // Check if pair exists
+           if (!existPair(id1, id2))
+           {
+           // Add images to list
+               img_code = (id1-1) + listAllImages.size()*(id2-1);
+               listPairs.push_back(img_code);
+           }
 		}
 	}
 
 	addPairsToInterface();
 
-        return (listPairs.size() > 0);
+   return (listPairs.size() > 0);
 }
 
 // Check if pair already exists and sort ids
@@ -475,7 +464,7 @@ bool SPManager::existPair(int &id1, int &id2)
         id2 = aux;
     }
 
-    for (int i=0; i<listPairs.size(); i++)
+    for (size_t i=0; i<listPairs.size(); i++)
     {
         // Decode image list
         getImagesId(i, pair_id1, pair_id2);
@@ -494,18 +483,20 @@ void SPManager::addPairsToInterface()
 {
 	// Add pairs to the interface
 	int left_id, right_id;
-	string str_left, str_right;
-	stringstream txt;
+    std::string str_left, str_right;
+    std::stringstream txt;
+
 	SPUserInterface_Qt *spui = (SPUserInterface_Qt *)myInterface;
 
-	for (int i=0; i<listPairs.size(); i++)
+    for (size_t i=0; i<listPairs.size(); i++)
 	{
 		getImagesId(i,left_id,right_id);
-		str_left = listAllImages.at(left_id-1)->getImageId();
+        str_left = listAllImages.at(left_id-1)->getImageId();
 		str_right = listAllImages.at(right_id-1)->getImageId();
-		txt.str(""); // Clear stream
-		txt << "Images " << str_left << " and " << str_right;
-		spui->addImagePair((char *)txt.str().c_str());
+        txt.str(""); // Clear stream
+        txt << "Images " << str_left << " and " << str_right;
+        spui->addImagePair((char *)txt.str().c_str());
+
 	}
 }
 
@@ -594,10 +585,10 @@ double SPManager::getBoundingBoxIdealZoom(int width, int height)
     ImageSpaceCoordinate rightCenter = getRightPoint(getBoundingBoxCenter());
 
     double dx, dy;
-    double xl = leftCenter.getPosition().get(1);
-    double yl = leftCenter.getPosition().get(2);
-    double xr = rightCenter.getPosition().get(1);
-    double yr = rightCenter.getPosition().get(2);
+    //double xl = leftCenter.getPosition().get(1);
+    //double yl = leftCenter.getPosition().get(2);
+    //double xr = rightCenter.getPosition().get(1);
+    //double yr = rightCenter.getPosition().get(2);
     double xmax, ymax;
 
     if (leftCenter.getPosition().get(1) < rightCenter.getPosition().get(1))
@@ -688,9 +679,9 @@ void SPManager::changePair(int pos, int &lk, int &rk)
 	updateProjections();
 }
 
-void SPManager::addGeometryToXML(string filename)
+void SPManager::addGeometryToXML(std::string filename)
 {
-    stringstream add;
+    std::stringstream add;
     add << "<featuresFilename>";
     add << filename;
     add << "</featuresFilename>";

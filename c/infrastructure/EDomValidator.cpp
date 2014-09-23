@@ -10,7 +10,7 @@ bool EDomValidator::validateProject()
 	return true;
 }
 
-bool EDomValidator::validateHeader(string xml)
+bool EDomValidator::validateHeader(std::string xml)
 {
 	/* A estrutura validada por este método é:
 
@@ -53,7 +53,7 @@ bool EDomValidator::validateHeader(string xml)
 	return true;
 }
 
-bool EDomValidator::validateTerrain(string xml)
+bool EDomValidator::validateTerrain(std::string xml)
 {
 	/* A estrutura validada por este método é:
 
@@ -136,7 +136,7 @@ bool EDomValidator::validateTerrain(string xml)
 	return true;
 }
 
-bool EDomValidator::validateFlight(string xml)
+bool EDomValidator::validateFlight(std::string xml)
 {
 	/* A estrutura validada por este método é:
 
@@ -174,7 +174,7 @@ bool EDomValidator::validateFlight(string xml)
 		EDomElement scaleTester = tester.elementByTagName("nominalScale");
 		if (!scaleTester.hasTagName("mml:mfrac")) return false;
 		{
-			deque<EDomElement> mnTester = scaleTester.elementsByTagName("mml:mn");
+            std::deque<EDomElement> mnTester = scaleTester.elementsByTagName("mml:mn");
 			if (mnTester.size() != 2) return false;
 		}
 	}
@@ -192,7 +192,7 @@ bool EDomValidator::validateFlight(string xml)
 	{
 		EDomElement scaleTester = tester.elementByTagName("nominalScale");
 		{
-			deque<EDomElement> mnTester = scaleTester.elementsByTagName("mml:mn");
+            std::deque<EDomElement> mnTester = scaleTester.elementsByTagName("mml:mn");
 			if (mnTester.at(0).toString() == "") return false;
 			if (mnTester.at(1).toString() == "") return false;
 		}
@@ -207,7 +207,7 @@ bool EDomValidator::validateFlight(string xml)
 	return true;
 }
 
-bool EDomValidator::validateSensor(string xml)
+bool EDomValidator::validateSensor(std::string xml)
 {
 	/* A estrutura validada por este método é:
 
@@ -393,7 +393,7 @@ bool EDomValidator::validateSensor(string xml)
 	return true;
 }
 
-bool EDomValidator::validateImage(string xml)
+bool EDomValidator::validateImage(std::string xml)
 {
 	/* A estrutura validada por este método é:
 
@@ -442,7 +442,7 @@ bool EDomValidator::validateImage(string xml)
 	return true;
 }
 
-bool EDomValidator::validatePoint(string xml)
+bool EDomValidator::validatePoint(std::string xml)
 {
 	/* A estrutura validada por este método é:
 

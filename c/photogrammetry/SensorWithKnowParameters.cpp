@@ -1,8 +1,26 @@
 /**************************************************************************
 	  SensorWithKnowParameters.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SensorWithKnowParameters.h"
+
+#include <sstream>
+#include <iostream>
 
 namespace br {
 namespace uerj {
@@ -51,7 +69,7 @@ void SensorWithKnowParameters::setXa(const Matrix& newXa)
 		SigmaXa.resize(newXa.getRows(), newXa.getCols()).ones();
 	}
 	else
-		cerr << "Xa is not in the expected format.";
+        std::cerr << "Xa is not in the expected format.";
 }
 
 void SensorWithKnowParameters::setXa(const Matrix& newXa, const Matrix& newSigmaXa)
@@ -66,11 +84,11 @@ void SensorWithKnowParameters::setXa(const Matrix& newXa, const Matrix& newSigma
 		else
 		{
 			SigmaXa.resize(newXa.getRows(), newXa.getCols()).ones();
-			cerr << "SigmaXa is not in the expected format.";
+            std::cerr << "SigmaXa is not in the expected format.";
 		}
 	}
 	else
-		cerr << "Xa is not in the expected format.";
+        std::cerr << "Xa is not in the expected format.";
 }
 
 Matrix SensorWithKnowParameters::getXa()
@@ -91,19 +109,19 @@ Matrix SensorWithKnowParameters::getSigmaXa()
 // EObject methods
 //
 
-string SensorWithKnowParameters::objectType(void)
+std::string SensorWithKnowParameters::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "SensorWithKnowParameters " << id;
 	return result.str();
 }
 
-string SensorWithKnowParameters::objectAssociations(void)
+std::string SensorWithKnowParameters::objectAssociations(void)
 {
 	return "";
 }
 
-bool SensorWithKnowParameters::is(string s)
+bool SensorWithKnowParameters::is(std::string s)
 {
 	return (s == "SensorWithKnowParameters" ? true : false);
 }
@@ -111,7 +129,7 @@ bool SensorWithKnowParameters::is(string s)
 // XML methods
 //
 
-void SensorWithKnowParameters::xmlSetData(string xml)
+void SensorWithKnowParameters::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -122,7 +140,7 @@ void SensorWithKnowParameters::xmlSetData(string xml)
 	calculationMode = root.elementByTagName("calculationMode").toString();
 
 	spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
-	deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
+    std::deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
 	spectralRanges.clear();
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
@@ -146,7 +164,7 @@ void SensorWithKnowParameters::xmlSetData(string xml)
 	else
 		focalDistanceSigma = 1.0;
 
-	deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
+    std::deque<EDomElement> xmlRadialSymmetric = root.elementByTagName("radialSymmetric").children();
 	rsCoefficients.clear();
 	for (unsigned int i = 0; i < xmlRadialSymmetric.size(); i++)
 	{
@@ -159,7 +177,7 @@ void SensorWithKnowParameters::xmlSetData(string xml)
 		rsCoefficients.push_back(*radial);
 	}
 
-	deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
+    std::deque<EDomElement> xmlDecentered = root.elementByTagName("decentered").children();
 	dCoefficients.clear();
 	for (unsigned int i = 0; i < xmlDecentered.size(); i++)
 	{
@@ -185,9 +203,9 @@ void SensorWithKnowParameters::xmlSetData(string xml)
 	setXa(newXa);
 }
 
-string SensorWithKnowParameters::xmlGetData()
+std::string SensorWithKnowParameters::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
 	result << "<sensorId>" << sensorId << "</sensorId>\n";
 	result << "<type>\n";

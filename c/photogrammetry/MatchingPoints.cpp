@@ -1,4 +1,28 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "MatchingPoints.h"
+
+#include "Matrix.h"
+
+#include <iomanip>
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include <cstring>
 
 namespace br {
 namespace uerj {
@@ -137,7 +161,7 @@ void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
 	std_y = std_y * sigma_y;
 	double delta_x, delta_y;
 	bad_points = 0;
-	vector <MatchingPoints> new_list;
+    std::vector <MatchingPoints> new_list;
 	for (int i=0; i < list.size(); i++)
 	{
 		delta_x = fabs(list.at(i).left_x - list.at(i).right_x);
@@ -158,14 +182,15 @@ void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
 
 void MatchingPointsList::listMp()
 {
-	printf("Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n");
+    std::cout << "Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
 
 	MatchingPoints *mp;
 
 	for (int i=1; i<=list.size(); i++)
 	{
 		mp = &list.at(i-1);
-		printf("%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",i, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
+        std::cout << i << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t"
+                << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << std::endl;
 	}
 }
 
@@ -174,14 +199,15 @@ void MatchingPointsList::listMp(int pos)
 	if (pos < 1 || pos > list.size())
 		return;
 
-	printf("Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n");
+    std::cout << "Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
 	MatchingPoints *mp = &list.at(pos-1);
-	printf("%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",pos, mp->left_image_id, mp->right_image_id, mp->left_x, mp->left_y, mp->right_x, mp->right_y, mp->X, mp->Y, mp->Z, mp->matching_accuracy);
+    std::cout << pos << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x
+            << "\t" << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << std::endl;
 }
 
 int MatchingPointsList::save(char *filename, int type)
 {
-	ofstream outfile(filename);
+    std::ofstream outfile(filename);
 
 	if (outfile.fail())
 		return 0;
@@ -194,7 +220,7 @@ int MatchingPointsList::save(char *filename, int type)
 
 	MatchingPoints *mp;
 
-	outfile << fixed << setprecision(5);
+    outfile << std::fixed << std::setprecision(5);
 
 	for (int i=1; i<=list.size(); i++)
 	{
@@ -250,7 +276,7 @@ bool MatchingPointsList::checkFile(char *filename, int type)
 	}
 
 	// Check file
-	ifstream infile(filename);
+    std::ifstream infile(filename);
 
 	infile.getline(line,256);
 	infile.getline(line,256); // Take the second line
@@ -269,7 +295,7 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 	if (!checkFile(filename,type))
 		return -1;
 
-	ifstream infile(filename);
+    std::ifstream infile(filename);
 
 	if (infile.fail())
 		return 0;
@@ -565,7 +591,7 @@ void MatchingPointsList::sortList(sortCriteria criteria)
 
 void MatchingPointsList::updateList()
 {
-	vector <MatchingPoints> listaux;
+    std::vector <MatchingPoints> listaux;
 	MatchingPoints mp;
 	int pos;
 

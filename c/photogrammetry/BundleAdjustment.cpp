@@ -1,9 +1,33 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "BundleAdjustment.h"
 #include "Dms.h"
-
+#include "Point.h"
 #include "RayTester.h"
+#include "InteriorOrientation.h"
+#include "SparseMatrix.h"
+#include "ConvertionsSystems.h"
+#include "math.h"
+#include "Image.h"
+#include "Sensor.h"
+#include "Flight.h"
 
-#include <qdebug.h>
+#include <iostream>
 #include <QTime>
 
 
@@ -19,12 +43,8 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-BundleAdjustment::BundleAdjustment()
-{
 
-}
-
-BundleAdjustment::BundleAdjustment(deque<Image*>listSelectedImages, deque<Point*> listSelectedPoints)
+BundleAdjustment::BundleAdjustment(std::deque<Image*>listSelectedImages, std::deque<Point*> listSelectedPoints)
 {
 		listImages=listSelectedImages;
 		listPoints=listSelectedPoints;
@@ -262,12 +282,12 @@ bool BundleAdjustment::calculate(bool makeReport)
 								conv=testConverged();
 								if (conv ==-2)
 								{
-										printf("Apareceu valor infinito");
+                                        std::cout << "Apareceu valor infinito" << std::endl;
 										break;
 								}
 								if (conv ==-1)
 								{
-										printf("Apareceu valor NAN");
+                                        std::cout << "Apareceu valor NAN" << std::endl;
 										break;
 								}
 								//matAdjust.show('f',5,"MatAdjus antes do update do loop");
@@ -330,12 +350,12 @@ bool BundleAdjustment::calculate(bool makeReport)
 								conv=testConverged();
 								if (conv ==-2)
 								{
-										printf("Apareceu valor infinito");
+                                        std::cout << "Apareceu valor infinito" << std::endl;
 										break;
 								}
 								if (conv ==-1)
 								{
-										printf("Apareceu valor NAN");
+                                        std::cout << "Apareceu valor NAN" << std::endl;
 										break;
 								}
 								totalIterations++;
@@ -1545,7 +1565,7 @@ Matrix BundleAdjustment::getMatRes()
     return matRes;
 }
 
-deque<double> BundleAdjustment::getListRMSE()
+std::deque<double> BundleAdjustment::getListRMSE()
 {
     return listRMSE;
 }
@@ -1723,9 +1743,9 @@ void BundleAdjustment::setUserInitialValues(Matrix initialValues)
 		userInitialValues= true;
 }
 
-string BundleAdjustment::printAll()
+std::string BundleAdjustment::printAll()
 {
-		string result="";
+        std::string result="";
 		int numImages=listImages.size();
 		for (int i=0;i<numImages;i++)
 		{
@@ -1893,7 +1913,7 @@ Matrix BundleAdjustment::getResiduo(Point *photogrammetricPoint)
 		return result;
 }
 
-deque<Point*> BundleAdjustment::getPhotogrammetricList()
+std::deque<Point*> BundleAdjustment::getPhotogrammetricList()
 {
 		return listPhotogrammetricPoints;
 }
@@ -1952,7 +1972,7 @@ Matrix BundleAdjustment::convertToUTM(Matrix coordinates, GeoSystem sys)
 		return coordinates;
 }
 
-void BundleAdjustment::convertToGeocentric(deque<Point*> points, GeoSystem sys, int hemi, int zona)
+void BundleAdjustment::convertToGeocentric(std::deque<Point*> points, GeoSystem sys, int hemi, int zona)
 {
 		int rows=points.size();
 		for (int i=0;i<rows;i++)
@@ -1970,7 +1990,7 @@ void BundleAdjustment::convertToGeocentric(deque<Point*> points, GeoSystem sys, 
 		}
 }
 
-void BundleAdjustment::convertToUTM(deque<Point*> points, GeoSystem sys)
+void BundleAdjustment::convertToUTM(std::deque<Point*> points, GeoSystem sys)
 {
 		int rows=points.size();
 		for (int i=0;i<rows;i++)
@@ -1999,7 +2019,7 @@ double BundleAdjustment::calculateRMSE()
 
 		// em teste
 
-void BundleAdjustment::normalize(deque<Point *>points,double &range, double &offset)
+void BundleAdjustment::normalize(std::deque<Point *>points,double &range, double &offset)
 {
 		int rows=points.size();
 		double minX, minY, minZ, maxX, maxY, maxZ,minT,maxT;
@@ -2090,7 +2110,7 @@ void BundleAdjustment::normalize(deque<Point *>points,double &range, double &off
 
 }
 
-void BundleAdjustment::desnormalize(deque<Point*>points, double range, double offset)
+void BundleAdjustment::desnormalize(std::deque<Point*>points, double range, double offset)
 {
 		int rows=points.size();
 		for (int i=0;i<rows;i++)

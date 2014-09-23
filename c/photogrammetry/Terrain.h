@@ -1,6 +1,21 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EObject.h"
 
 namespace br {
@@ -21,15 +36,15 @@ class Terrain : public EObject
 
 private:
 	double meanAltitude;
-	string meanAltitudeUnit;
+    std::string meanAltitudeUnit;
 	double minAltitude;
-	string minAltitudeUnit;
+    std::string minAltitudeUnit;
 	double maxAltitude;
-	string maxAltitudeUnit;
-	string GRS;
-	string CPS;
-	string workAreaCentralCoordinateLat;
-	string workAreaCentralCoordinateLong;
+    std::string maxAltitudeUnit;
+    std::string GRS;
+    std::string CPS;
+    std::string workAreaCentralCoordinateLat;
+    std::string workAreaCentralCoordinateLong;
 	int utmFuse;
 
 public:
@@ -49,7 +64,7 @@ public:
  * \brief Método que seta a unidade da altura média do Terreno.
  * \param  newMeanAltitudeUnit	Nova unidade.
  */
-	void setMeanAltitudeUnit(string newMeanAltitudeUnit);
+    void setMeanAltitudeUnit(std::string newMeanAltitudeUnit);
 
 	/**
  * \brief Método que seta a menor altura do Terreno.
@@ -61,7 +76,7 @@ public:
  * \brief Método que seta a unidade da menor altura do Terreno.
  * \param newMinAltitudeUnit	Nova unidade.
  */
-	void setMinAltitudeUnit(string newMinAltitudeUnit);
+    void setMinAltitudeUnit(std::string newMinAltitudeUnit);
 
 	/**
  * \brief Método que seta a maior altura do Terreno.
@@ -73,31 +88,31 @@ public:
  * \brief Método que seta a unidade da maior altura do Terreno.
  * \param newMaxAltitudeUnit	Nova unidade.
  */
-	void setMaxAltitudeUnit(string newMaxAltitudeUnit);
+    void setMaxAltitudeUnit(std::string newMaxAltitudeUnit);
 
 	/**
  * \brief Método que seta a Geodesic Reference System (GRS) do Terreno.
  * \param newGRS	Nova GRS.
  */
-	void setGRS(string newGRS);
+    void setGRS(std::string newGRS);
 
 	/**
  * \brief Método que seta a Cartographic Projection System (CPS) do Terreno.
  * \param newCPS	Nova CPS.
  */
-	void setCPS(string newCPS);
+    void setCPS(std::string newCPS);
 
 	/**
  * \brief Método que seta a latitude da coodernada central do Terreno.
  * \param newCentralCoordLat	Nova latitude descrita e texto equivalente a "graus minutos segundos direção".
  */
-	void setCentralCoordLat(string newCentralCoordLat);
+    void setCentralCoordLat(std::string newCentralCoordLat);
 
 	/**
  * \brief Método que seta a longitude da coodernada central do Terreno.
  * \param newCentralCoordLong	Nova longitude descrita e texto equivalente a "graus minutos segundos direção".
  */
-	void setCentralCoordLong(string newCentralCoordLong);
+    void setCentralCoordLong(std::string newCentralCoordLong);
 
 	/**
  * \brief Método que seta em qual fuso do terreno no sistema de coordenadas Universal Transversa de Mercator (UTM).
@@ -113,9 +128,9 @@ public:
 
 	/**
  * \brief Método que retorna a unidade da altura média do Terreno.
- * \return string	A unidade da altura média do Terreno.
+ * \return std::string	A unidade da altura média do Terreno.
  */
-	string getMeanAltitudeUnit();
+    std::string getMeanAltitudeUnit();
 
 	/**
  * \brief Método que retorna a menor altura do Terreno.
@@ -125,9 +140,9 @@ public:
 
 	/**
  * \brief Método que retorna a unidade da menor altura do Terreno.
- * \return string	A unidade da menor altura do Terreno.
+ * \return std::string	A unidade da menor altura do Terreno.
  */
-	string getMinAltitudeUnit();
+    std::string getMinAltitudeUnit();
 
 	/**
  * \brief Método que retorna a maior altura do Terreno.
@@ -137,33 +152,33 @@ public:
 
 	/**
  * \brief Método que retorna a unidade da maior altura do Terreno.
- * \return string	A unidade da maior altura do Terreno.
+ * \return std::string	A unidade da maior altura do Terreno.
  */
-	string getMaxAltitudeUnit();
+    std::string getMaxAltitudeUnit();
 
 	/**
  * \brief Método que retorna a GRS do Terreno.
- * \return string	Retorna a GRS do Terreno.
+ * \return std::string	Retorna a GRS do Terreno.
  */
-	string getGRS();
+    std::string getGRS();
 
 	/**
  * \brief Método que retorna a CPS do Terreno.
- * \return string	Retorna a CPS do Terreno.
+ * \return std::string	Retorna a CPS do Terreno.
  */
-	string getCPS();
+    std::string getCPS();
 
 	/**
  * \brief Método que retorna a latitude da coodernada central do Terreno.
- * \return string	A latitude da coodernada central do Terreno.
+ * \return std::string	A latitude da coodernada central do Terreno.
  */
-	string getCentralCoordLat();
+    std::string getCentralCoordLat();
 
 	/**
  * \brief Método que retorna a longitude da coodernada central do Terreno.
- * \return string	A longitude da coodernada central do Terreno.
+ * \return std::string	A longitude da coodernada central do Terreno.
  */
-	string getCentralCoordLong();
+    std::string getCentralCoordLong();
 
 	/**
  * \brief Método que retorna a qual fuso UTM o Terreno pertence.
@@ -173,35 +188,35 @@ public:
 
 	/**
  * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
+ * \return std::string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 	/**
  * \brief Método para emitir as associações de uma instância.
- * \return string	Retorna vazio para esta classe.
+ * \return std::string	Retorna vazio para esta classe.
  * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
  */
-	string objectAssociations(void);
+    std::string objectAssociations(void);
 
 	/**
  * \brief Método de teste para o nome/tipo de instância.
  * \param s	Texto com o nome da classe que é esperado.
  * \return bool	Retorna verdadeiro caso o nome passado seja Terrain. Retorna falso no caso contrário.
  */
-	bool is(string s);
+    bool is(std::string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
  * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe Terrain.
  */
-	void xmlSetData(string xml);
+    void xmlSetData(std::string xml);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return string	Retorna o string contendo o xml para uma instância da classe Terrain.
+ * \return std::string	Retorna o string contendo o xml para uma instância da classe Terrain.
  */
-	string xmlGetData();
+    std::string xmlGetData();
 };
 
 } // namespace efoto

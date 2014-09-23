@@ -1,4 +1,25 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Orthorectification.h"
+
+#include <math.h>
+#include <iostream>
+#include <fstream>
 
 namespace br {
 namespace uerj {
@@ -116,13 +137,13 @@ void Orthorectification::getColRowAt(double X, double Y, int &col, int &row)
 // This is an internal function used to debug loading functions
 void Orthorectification::printData()
 {
-	printf("Orthoimage header:\n");
-	printf(" Xi: %f\n Yi: %f\n Xf: %f\n Yf: %f\n",Xi,Yi,Xf,Yf);
-	printf(" Resolution X: %f\n Resolution Y: %f\n",res_x,res_y);
-	printf(" GRID width: %d\n GRID height: %d\n",ortho_width,ortho_height);
-	printf(" Image color depth: %d\ Number of bands: %d",color_depth,no_bands);
-	printf(" Coordinate system: %d\n Spheroid: %d\n Datum: %d\n",coord_system, spheroid, datum);
-	printf("Sample Ortho data:\n");
+    std::cout << "Orthoimage header:\n";
+    std::cout << " Xi: " << Xi << "\t" << Yi << "\t" << Xf << "\t" << Yf << std::endl;
+    std::cout << " Resolution X: " << res_x << std::endl << "Resolution Y: " << res_y << std::endl;
+    std::cout << " GRID width: " << ortho_width << std::endl << "GRID height: " << ortho_height <<std::endl;
+    std::cout << " Image color depth: "<< color_depth <<" Number of bands: " << no_bands;
+    std::cout << " Coordinate system: " << coord_system << std::endl << "Spheroid: " << spheroid << std::endl << " Datum: " << datum << std::endl;
+    std::cout << "Sample Ortho data:\n";
 
 	int w,h;
 	(ortho_width < 10) ? w = ortho_width : w = 10;
@@ -131,8 +152,8 @@ void Orthorectification::printData()
 	for (unsigned int i=1; i<=h; i++)
 	{
 		for (unsigned int j=1; j<=w; j++)
-			printf("%.2f  ",orthoimage.get(i,j));
-		printf("\n");
+            std::cout << orthoimage.get(i,j);
+        std::cout << std::endl;
 	}
 }
 

@@ -1,9 +1,26 @@
 /*******************************************************************************
 	  Point.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "Point.h"
 #include "Image.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -51,7 +68,7 @@ void Point::setId(int newId)
  * Set the value of gcpId
  * @param newId the new value of gcpId
  */
-void Point::setPointId(string newPointId)
+void Point::setPointId(std::string newPointId)
 {
 	pointId = newPointId;
 }
@@ -60,7 +77,7 @@ void Point::setPointId(string newPointId)
  * Set the value of description
  * @param newId the new value of description
  */
-void Point::setDescription(string newDescription)
+void Point::setDescription(std::string newDescription)
 {
 	description = newDescription;
 }
@@ -83,7 +100,7 @@ int Point::getId()
  * Get the value of gcpId
  * @return the value of gcpId
  */
-string Point::getPointId()
+std::string Point::getPointId()
 {
 	return pointId;
 }
@@ -92,7 +109,7 @@ string Point::getPointId()
  * Get the value of description
  * @return the value of description
  */
-string Point::getDescription()
+std::string Point::getDescription()
 {
 	return description;
 }
@@ -127,7 +144,7 @@ ObjectSpaceCoordinate Point::getObjectCoordinate()
  * Set all the values of imageCoordinates deque at once
  * @param newimageCoordinates the new values
  */
-void Point::setImageCoordinates(deque<ImageSpaceCoordinate> newimageCoordinates)
+void Point::setImageCoordinates(std::deque<ImageSpaceCoordinate> newimageCoordinates)
 {
 	imageCoordinates = newimageCoordinates;
 }
@@ -136,7 +153,7 @@ void Point::setImageCoordinates(deque<ImageSpaceCoordinate> newimageCoordinates)
  * Set all the values of DetectorCoordinates deque at once
  * @param newDetectorCoordinates the new values
  */
-void Point::setDetectorCoordinates(deque<DetectorSpaceCoordinate> newDetectorCoordinates)
+void Point::setDetectorCoordinates(std::deque<DetectorSpaceCoordinate> newDetectorCoordinates)
 {
 	detectorCoordinates = newDetectorCoordinates;
 }
@@ -145,7 +162,7 @@ void Point::setDetectorCoordinates(deque<DetectorSpaceCoordinate> newDetectorCoo
  * Get the value of imageCoordinates deque
  * @return the values of imageCoordinates deque
  */
-deque<ImageSpaceCoordinate> Point::getImageCoordinates()
+std::deque<ImageSpaceCoordinate> Point::getImageCoordinates()
 {
 	return imageCoordinates;
 }
@@ -154,7 +171,7 @@ deque<ImageSpaceCoordinate> Point::getImageCoordinates()
  * Get the value of DetectorCoordinates deque
  * @return the values of DetectorCoordinates deque
  */
-deque<DetectorSpaceCoordinate> Point::getDetectorCoordinates()
+std::deque<DetectorSpaceCoordinate> Point::getDetectorCoordinates()
 {
 	return detectorCoordinates;
 }
@@ -420,9 +437,9 @@ bool Point::hasDetectorCoordinate(int imageId)
 /**
  *
  */
-string Point::objectType(void)
+std::string Point::objectType(void)
 {
-	stringstream result;
+    std::stringstream result;
 	result << "Point " << id;
 	return result.str();
 }
@@ -430,9 +447,9 @@ string Point::objectType(void)
 /**
  *
  */
-string Point::objectAssociations(void)
+std::string Point::objectAssociations(void)
 {
-	stringstream result;
+    std::stringstream result;
 	if (countImages() != 0)
 		result << "Image";
 	for (int i = 0; i < countImages(); i++)
@@ -443,12 +460,12 @@ string Point::objectAssociations(void)
 /**
  *
  */
-bool Point::is(string s)
+bool Point::is(std::string s)
 {
 	return (s == "Point" ? true : false);
 }
 
-void Point::xmlSetData(string xml)
+void Point::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	id = Conversion::stringToInt(root.attribute("key"));
@@ -456,7 +473,7 @@ void Point::xmlSetData(string xml)
 	pointId = root.elementByTagName("pointId").toString();
 	description = root.elementByTagName("description").toString();
 	objectCoordinate.xmlSetData(root.elementByTagName("spatialCoordinates").getContent());
-	deque<EDomElement> xmlimageCoordinates = root.elementsByTagName("imageCoordinates");
+    std::deque<EDomElement> xmlimageCoordinates = root.elementsByTagName("imageCoordinates");
 	imageCoordinates.clear();
 	for (unsigned int i = 0; i < xmlimageCoordinates.size(); i++)
 	{
@@ -466,9 +483,9 @@ void Point::xmlSetData(string xml)
 	}
 }
 
-string Point::xmlGetData()
+std::string Point::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"" << writePointType(type) << "\">\n";
 	result << "<pointId>" << pointId << "</pointId>\n";
 	result << "<description>" << description << "</description>\n";
@@ -483,7 +500,7 @@ string Point::xmlGetData()
 	return result.str();
 }
 
-Point::PointType Point::readPointType(string type)
+Point::PointType Point::readPointType(std::string type)
 {
 	if (type == "control")
 	{
@@ -503,7 +520,7 @@ Point::PointType Point::readPointType(string type)
 	}
 }
 
-string Point::writePointType(PointType type)
+std::string Point::writePointType(PointType type)
 {
 	if (type == CONTROL)
 	{

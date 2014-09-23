@@ -1,11 +1,28 @@
 /**************************************************************************
 	  IOQuality.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "IOQuality.h"
 #include "SensorWithFiducialMarks.h"
 #include "SensorWithKnowDimensions.h"
 #include "InteriorOrientation.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -72,7 +89,7 @@ Matrix IOQuality::getSigmaLa()
 /**
  *
  */
-string IOQuality::objectType(void)
+std::string IOQuality::objectType(void)
 {
 	return "IOQuality";
 }
@@ -80,7 +97,7 @@ string IOQuality::objectType(void)
 /**
  *
  */
-string IOQuality::objectAssociations(void)
+std::string IOQuality::objectAssociations(void)
 {
 	return "";
 }
@@ -88,7 +105,7 @@ string IOQuality::objectAssociations(void)
 /**
  *
  */
-bool IOQuality::is(string s)
+bool IOQuality::is(std::string s)
 {
 	return (s == "IOQuality" ? true : false);
 }
@@ -99,7 +116,7 @@ bool IOQuality::is(string s)
 /**
  *
  */
-void IOQuality::xmlSetData(string xml)
+void IOQuality::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	V.xmlSetData(root.elementByTagName("V").elementByTagName("mml:matrix").getContent());
@@ -120,9 +137,9 @@ void IOQuality::xmlSetData(string xml)
 /**
  *
  */
-string IOQuality::xmlGetData()
+std::string IOQuality::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<quality>\n";
 	result << "<V>\n";
 	result << V.xmlGetData();

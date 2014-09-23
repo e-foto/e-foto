@@ -1,10 +1,28 @@
 /**************************************************************************
 	  EOQuality.cpp
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "EOQuality.h"
 #include "ExteriorOrientation.h"
 #include "SpatialRessection.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -66,7 +84,7 @@ Matrix EOQuality::getSigmaLa()
 /**
  *
  */
-string EOQuality::objectType(void)
+std::string EOQuality::objectType(void)
 {
 	return "EOQuality";
 }
@@ -74,7 +92,7 @@ string EOQuality::objectType(void)
 /**
  *
  */
-string EOQuality::objectAssociations(void)
+std::string EOQuality::objectAssociations(void)
 {
 	return "";
 }
@@ -82,7 +100,7 @@ string EOQuality::objectAssociations(void)
 /**
  *
  */
-bool EOQuality::is(string s)
+bool EOQuality::is(std::string s)
 {
 	return (s == "EOQuality" ? true : false);
 }
@@ -93,7 +111,7 @@ bool EOQuality::is(string s)
 /**
  *
  */
-void EOQuality::xmlSetData(string xml)
+void EOQuality::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 	V.xmlSetData(root.elementByTagName("V").elementByTagName("mml:matrix").getContent());
@@ -114,9 +132,9 @@ void EOQuality::xmlSetData(string xml)
 /**
  *
  */
-string EOQuality::xmlGetData()
+std::string EOQuality::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<quality>\n";
 	result << "<V>\n";
 	result << V.xmlGetData();

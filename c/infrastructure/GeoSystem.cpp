@@ -1,5 +1,24 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "GeoSystem.h"
 #include <math.h>
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -40,7 +59,7 @@ GeoSystem::GeoSystem(GeoSystemEnum system)
 	}
 }
 
-GeoSystem::GeoSystem(string sysName)
+GeoSystem::GeoSystem(std::string sysName)
 {
 	if (sysName=="CORREGOALEGRE")
 	{
@@ -79,7 +98,7 @@ GeoSystem::GeoSystem(string sysName)
 	}
 }
 
-GeoSystem::GeoSystem(double a, double f, string newName)
+GeoSystem::GeoSystem(double a, double f, std::string newName)
 {
 	setEixoMaior(a);
 	setF(f);
@@ -102,7 +121,7 @@ void GeoSystem::setF(double newF)
 	f=(newF>0.0 ? newF: 0.0);
 }
 
-void GeoSystem::setSystemName(string name)
+void GeoSystem::setSystemName(std::string name)
 {
 	systemName=name;
 }
@@ -133,19 +152,19 @@ double GeoSystem::getSecondEccentricity()
 	return e1*e1/(1-e1*e1);
 }
 
-string GeoSystem::getSystemName()
+std::string GeoSystem::getSystemName()
 {
 	return systemName;
 }
 
-string GeoSystem::toString()
+std::string GeoSystem::toString()
 {
-	stringstream aux;
+    std::stringstream aux;
 	aux << systemName <<":\ta = " << a << "\tb = "<< b << "\tf = "<< f <<"\n";
 	return aux.str().c_str();
 }
 
-void GeoSystem::setSystem(double a, double f, string newName)
+void GeoSystem::setSystem(double a, double f, std::string newName)
 {
 	setEixoMaior(a);
 	setF(f);

@@ -1,18 +1,27 @@
+#ifndef DEMFEATURES_H
+#define DEMFEATURES_H
 /*******************************************************************************
 							  DemFeatures.h
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
-#ifndef DEMFEATURES_H
-#define DEMFEATURES_H
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <string>
-#include <iostream>
-#include <fstream>
 #include <vector>
-#include "MatchingPoints.h"
 #include "Matrix.h"
 
 /**
@@ -25,27 +34,19 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
-using namespace std;
-
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Feature 2D
-//class DemFeatures2D
-//{
-//public:
-//    int pt_id;
-//    double left_x, left_y, right_x, right_y;
-//};
+class  MatchingPointsList;
 
 // Feature Class
 class FeatureClass
 {
 public:
-	string name;
-	string description;
+    std::string name;
+    std::string description;
 	int type;
 	int outline_color, fill_color, fill_transparency;
 	int line_type;
@@ -67,10 +68,10 @@ public:
 	DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; is_on_screen = 0; };
 	int feature_class, feature_type, layer, is_on_screen;
 	double perimeter, area;
-	string name, description;
+    std::string name, description;
 	DemFeaturePoints centroid;
 	bool flag_calc_centroid;
-	vector <DemFeaturePoints> points;
+    std::vector <DemFeaturePoints> points;
 };
 
 // All features
@@ -93,9 +94,9 @@ private:
 	double angle2D(double X1, double Y1, double X2, double Y2);
 	//int findFeature2D(int id);
 	int selected_feat, selected_pt;
-	vector <DemFeature> features;
-	vector <FeatureClass> feature_classes;
-	//vector <DemFeatures2D> display_coords;
+    std::vector <DemFeature> features;
+    std::vector <FeatureClass> feature_classes;
+    //std::vector <DemFeatures2D> display_coords;
 	Matrix polygonMap;
 
 public:
@@ -104,7 +105,7 @@ public:
 	int convClassFromSp165(int ft, int fc);
 	int getClassIdToSp165(int new_class);
 	FeatureClass * getFeatureClass(int);
-	string getFeatureTypeName(int);
+    std::string getFeatureTypeName(int);
 	int loadFeatures(char *filename, int mode, bool append);
 	int saveFeatures(char *filename, int mode, bool append);
         int exportFeatures(char *filename);
@@ -116,7 +117,7 @@ public:
 	void setSelectedFeature(int _ft) { selected_feat = _ft; };
 	int selectedPoint() { return selected_pt; };
 	void setSelectedPoint(int _pt) { selected_pt = _pt; };
-	int addNewFeature(string name, string fdesc, int fclass, int ftype, int layer); // Returns feature id
+    int addNewFeature(std::string name, std::string fdesc, int fclass, int ftype, int layer); // Returns feature id
 	void deleteAllFeatures() { features.clear(); };
 	int deleteFeature(int featid);
 	int copyFeature(int featid, double shift);
@@ -124,10 +125,10 @@ public:
 	void updatePoint(int featid, int pointid, double X, double Y, double Z);
 	void update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry);
 	int deletePoint(int featid, int pointid);
-	void setName(int featid, string _name);
-	string getName(int featid);
-	void setDescription(int featid, string _desc);
-	string getDescription(int featid);
+    void setName(int featid, std::string _name);
+    std::string getName(int featid);
+    void setDescription(int featid, std::string _desc);
+    std::string getDescription(int featid);
 	void setFeatureClassId(int featid, int fclass);
 	int getFeatureClassId(int featid);
 	void setFeatureType(int featid, int ftype);
@@ -136,7 +137,7 @@ public:
 	int getLayer(int featid);
 	int getNumPoints(int featid);
 	int getNumFeatures() { return features.size(); };
-	int addFeatureClass(string name, string description, int ccolor, int fcolor); // Return class id
+    int addFeatureClass(std::string name, std::string description, int ccolor, int fcolor); // Return class id
 	int addFeatureClass(FeatureClass fc); // Return class id
 	void setFeatureClass(int classid, FeatureClass fc);
 	int getNearestFeature(double X, double Y, double Z);
@@ -147,13 +148,13 @@ public:
 	bool isInside(int feat_id, double X, double Y);
 	void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
 	double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
-	string getFeaturesList();
-	//string getFeaturesToDisplayText(int mode=0);
-	//vector<DemFeatures2D> * getFeaturesToDisplay() { return &display_coords; };
+    std::string getFeaturesList();
+    //std::string getFeaturesToDisplayText(int mode=0);
+    //std::vector<DemFeatures2D> * getFeaturesToDisplay() { return &display_coords; };
 	//void insertFeature2D(int id, double lx, double ly, double rx, double ry);
 	//void deleteFeature2D(int id);
 	//void deleteAllFeatures2D() { display_coords.clear(); };
-	string getFeaturesToDisplay(int mode=0);
+    std::string getFeaturesToDisplay(int mode=0);
 	void setImagePairSize(int lw, int lh, int rw, int rh);
 };
 

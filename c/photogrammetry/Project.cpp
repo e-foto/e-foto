@@ -1,6 +1,35 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Project.h"
 
 #include <QApplication>
+
+#include "ProjectHeader.h"
+#include "SensorWithFiducialMarks.h"
+#include "SensorWithKnowDimensions.h"
+#include "SensorWithKnowParameters.h"
+#include "Terrain.h"
+#include "Flight.h"
+#include "Image.h"
+#include "Point.h"
+#include "InteriorOrientation.h"
+#include "ExteriorOrientation.h"
+#include "SpatialRessection.h"
 
 namespace br {
 namespace uerj {
@@ -142,7 +171,7 @@ Image* Project::instanceImage(int id)
 void Project::instanceAllImages()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
+    std::deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
 	for (unsigned int i = 0 ;i < xmlAllImages.size();i++)
 	{
 		qApp->processEvents();
@@ -167,7 +196,7 @@ void Project::instanceAllImages()
 void Project::instanceAllPoints()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
+    std::deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
 
 	for (unsigned int i = 0; i < xmlAllPoint.size(); i++)
 	{
@@ -229,7 +258,7 @@ InteriorOrientation* Project::instanceIO(int imageId)
 void Project::instanceAllIOs()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
+    std::deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
 	for (unsigned int i = 0 ;i < xmlAllIOs.size();i++)
 	{
 		qApp->processEvents();
@@ -278,8 +307,8 @@ ExteriorOrientation* Project::instanceEO(int imageId)
 void Project::instanceAllEOs()
 {
 	EDomElement root(xmlData);
-	deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
-	deque<EDomElement> xmlAllSRs = root.elementsByTagName("imageSR");
+    std::deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
+    std::deque<EDomElement> xmlAllSRs = root.elementsByTagName("imageSR");
 	for (unsigned int i = 0 ;i < xmlAllEOs.size();i++)
 	{
 		qApp->processEvents();
@@ -513,7 +542,7 @@ void Project::closeProject()
 	//Rever
 }
 
-void Project::addSensor(string data, bool makeReconnections)
+void Project::addSensor(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -556,7 +585,7 @@ void Project::addSensor(string data, bool makeReconnections)
 		linkAll();
 }
 
-void Project::addFlight(string data, bool makeReconnections)
+void Project::addFlight(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -581,7 +610,7 @@ void Project::addFlight(string data, bool makeReconnections)
 		linkAll();
 }
 
-void Project::addImage(string data, bool makeReconnections)
+void Project::addImage(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -606,7 +635,7 @@ void Project::addImage(string data, bool makeReconnections)
 		linkAll();
 }
 
-void Project::addPoint(string data, bool makeReconnections)
+void Project::addPoint(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -631,7 +660,7 @@ void Project::addPoint(string data, bool makeReconnections)
 		linkAll();
 }
 
-void Project::addIO(string data, bool makeReconnections)
+void Project::addIO(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -652,7 +681,7 @@ void Project::addIO(string data, bool makeReconnections)
 		linkAll();
 }
 
-void Project::addEO(string data, bool makeReconnections)
+void Project::addEO(std::string data, bool makeReconnections)
 {
 	if (data != "")
 	{
@@ -766,7 +795,7 @@ PhotoTri *Project::photoTri()
 /**
  *
  */
-string Project::getXml(string tagname)
+std::string Project::getXml(std::string tagname)
 {
 	EDomElement root(getXml());
 	return root.elementByTagName(tagname).getContent();
@@ -775,7 +804,7 @@ string Project::getXml(string tagname)
 /**
  *
  */
-string Project::getXml(string tagname, string att, string value)
+std::string Project::getXml(std::string tagname, std::string att, std::string value)
 {
 	EDomElement root(getXml());
 	return root.elementByTagAtt(tagname, att, value).getContent();
@@ -788,7 +817,7 @@ string Project::getXml(string tagname, string att, string value)
 /**
  *
  */
-string Project::objectType(void)
+std::string Project::objectType(void)
 {
 	return "Project";
 }
@@ -796,7 +825,7 @@ string Project::objectType(void)
 /**
  *
  */
-string Project::objectAssociations(void)
+std::string Project::objectAssociations(void)
 {
 	return "";
 }
@@ -804,7 +833,7 @@ string Project::objectAssociations(void)
 /**
  *
  */
-bool Project::is(string s)
+bool Project::is(std::string s)
 {
 	return (s == "Project" ? true : false);
 }
@@ -812,7 +841,7 @@ bool Project::is(string s)
 
 // XML methods
 //
-void Project::setXml(string xml)
+void Project::setXml(std::string xml)
 {
 	xmlData = xml;
 
@@ -923,12 +952,12 @@ void Project::linkAll()
     }
 }
 
-string Project::getXml()
+std::string Project::getXml()
 {
 	if (xmlData.empty())
 		return "";
 
-	string xmlData = "";
+    std::string xmlData = "";
 	xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
 	xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
@@ -1046,12 +1075,12 @@ PhotoTri::PhotoTri()
 
 }
 
-string PhotoTri::xmlGetData()
+std::string PhotoTri::xmlGetData()
 {
     // Em branco por enquanto;
 }
 
-void PhotoTri::xmlSetData(string xml)
+void PhotoTri::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
 
@@ -1061,11 +1090,11 @@ void PhotoTri::xmlSetData(string xml)
     angularConvergency = root.elementByTagName("angularConvergency").toDouble();
     rmse = root.elementByTagName("rmse").toDouble();
 
-    deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
+    std::deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
     for (int i = 0; i <pts.size(); i++)
         pointKey.push_back(pts.at(i).elementByTagName("pointKey").toInt());
 
-    deque<EDomElement> imgs = root.elementByTagName("usedImages").children();
+    std::deque<EDomElement> imgs = root.elementByTagName("usedImages").children();
     for (int i = 0; i <imgs.size(); i++)
         imageKey.push_back(imgs.at(i).elementByTagName("imageKey").toInt());
 

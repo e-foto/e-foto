@@ -1,7 +1,31 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <sys/time.h>
 #include <time.h>
 #include "DemGrid.h"
 #include "DEMManager.h"
+#include "MatchingPointsGrid.h"
+
+#include <math.h>
+
+#include <sstream>
+#include <iomanip>
+#include <cstdlib>
+#include <fstream>
 
 /**
 * class DemGrid
@@ -902,12 +926,12 @@ void DemGrid::loadDemEfoto(char * filename)
 
 void DemGrid::saveDemAscii(char * filename)
 {
-	ofstream outfile(filename);
+    std::ofstream outfile(filename);
 
 	// Write header
 	outfile << "-= EFOTO DEM GRID DATA =-\n\n";
 	outfile << "Header info:\n";
-	outfile << fixed << setprecision(5);
+    outfile << std::fixed << std::setprecision(5);
 	outfile << "Xi=" << Xi << "\nYi=" << Yi << "\nXf=" << Xf << "\nYf=" << Yf << "\n";
 	outfile << "Res_X=" << res_x << "\nRes_Y=" << res_y << "\n";
 	outfile << "Width=" << dem_width << "\nHeight=" << dem_height << "\n";
@@ -929,18 +953,18 @@ void DemGrid::saveDemAscii(char * filename)
 }
 
 // For later conversion to stream
-double DemGrid::getAsciiParameter(ifstream *file, string tag)
+double DemGrid::getAsciiParameter(std::ifstream *file, std::string tag)
 {
 	char line[256];
-	string sline;
+    std::string sline;
 
 	int line_count = 0, p;
 	// find -1 = not found
-	file->seekg (0, ios::beg);
+    file->seekg (0, std::ios::beg);
 	while (!file->eof() && line_count<50)
 	{
 		file->getline(line,256);
-		sline = (string) line;
+        sline = (std::string) line;
 		p = sline.find(tag);
 		if (p>=0)
 		{
@@ -955,11 +979,10 @@ double DemGrid::getAsciiParameter(ifstream *file, string tag)
 
 void DemGrid::loadDemAscii(char * filename)
 {
-	ifstream arq(filename);
+    std::ifstream arq(filename);
 	if (arq.fail())
 	{
-		cout << "Error while opening file!\n";
-		return;
+        throw "Error while opening file!\n";
 	}
 
 	// Read header
@@ -1155,8 +1178,8 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
 	// 3 - 2nd Degree
 	// 4 - 3rd Degree
 
-	vector <int> validPointList;
-	vector <double> validPointListWeight;
+    std::vector <int> validPointList;
+    std::vector <double> validPointListWeight;
 	double Px, Py, d, D, weight, Cx, Cy;
 	int no_points = point_list->size(), no_valid_points;
 	int total = DEM.getCols()*DEM.getRows();
@@ -1300,9 +1323,9 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
  *             *
  ***************/
 
-string DemGrid::calculateDemQuality(MatchingPointsList mpl)
+std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
 {
-	stringstream txt;
+    std::stringstream txt;
 
 	MatchingPoints *mp;
 	double Z, Zgrid;

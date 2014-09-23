@@ -1,20 +1,28 @@
 /**************************************************************************
 OrthoManager.h
 **************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef ORTHOMANAGER_H
 #define ORTHOMANAGER_H
 
-#include "EObject.h"
 #include <deque>
-#include "Image.h"
-#include "ExteriorOrientation.h"
-#include "Matrix.h"
-#include "DemGrid.h"
-#include "ProjectiveRay.h"
-#include "Orthorectification.h"
-#include "Interpolation.h"
+#include <string>
 
 namespace br {
 namespace uerj {
@@ -23,6 +31,11 @@ namespace efoto {
 
 class OrthoUserInterface;
 class EFotoManager;
+
+class DemGrid;
+class ExteriorOrientation;
+class Image;
+class Orthorectification;
 
 /**
 * \file OrthoManager.h
@@ -40,8 +53,8 @@ class OrthoManager
 	bool status;
 	OrthoUserInterface* myInterface;
 	EFotoManager* manager;
-	deque<Image*> listAllImages;
-	deque<ExteriorOrientation*> listEOs;
+    std::deque<Image*> listAllImages;
+    std::deque<ExteriorOrientation*> listEOs;
 	DemGrid *grid;
 	/**
 	* \brief Método que inclui os dados das imagens no formulário.
@@ -71,7 +84,7 @@ public:
 	/**
 	* \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
 	*/
-	OrthoManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    OrthoManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
 	/**
 	* \brief Destrutor padrão.
 	*/
@@ -129,11 +142,11 @@ public:
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */
-    void addOrthoToXML(string filename);
+    void addOrthoToXML(std::string filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */
-    void addOrthoToXML2(string filename);
+    void addOrthoToXML2(std::string filename);
 
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.

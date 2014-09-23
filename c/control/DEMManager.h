@@ -21,9 +21,9 @@ DEMManager.h
 #ifndef DEMMANAGER_H
 #define DEMMANAGER_H
 
-#include "SpatialIntersection.h"
-#include "DemFeatures.h"
-#include <string>
+#include "StereoPair.h"
+#include "MatchingPoints.h"
+
 #include <deque>
 
 namespace br {
@@ -33,9 +33,11 @@ namespace efoto {
 
 class DEMUserInterface;
 class EFotoManager;
-class ExteriorOrientation;
 class ImageMatching;
 class DemGrid;
+class DemFeatures;
+class Point;
+class ExteriorOrientation;
 
 /**
 * \file DEMManager.h
@@ -66,10 +68,10 @@ class DEMManager
 	double over_it_dist;
 	DEMUserInterface* myInterface;
 	EFotoManager* manager;
-	deque<Image*> listAllImages;
-	deque<Point*> listAllPoints;
-	deque<int> listPairs;
-	deque<ExteriorOrientation*> listEOs;
+    std::deque<Image*> listAllImages;
+    std::deque<Point*> listAllPoints;
+    std::deque<int> listPairs;
+    std::deque<ExteriorOrientation*> listEOs;
 	/**
 	* \brief Método privado que atualiza os número de sementes de dados.
 	*/
@@ -150,7 +152,7 @@ public:
 	/**
 	* \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
 	*/
-	DEMManager(EFotoManager* manager, deque<Image*> images, deque<ExteriorOrientation*> eos);
+    DEMManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
 	/**
 	* \brief Destrutor padrão.
 	*/
@@ -224,7 +226,7 @@ public:
 	/**
 	* \brief Método que interpola a grade.
 	*/
-	void interpolateGrid(int source, int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource);
+    void interpolateGrid(/*int source, */ int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource);
 	/**
 	* \brief Método que ativa a função de cancelamento. Interrompe a extração do DEM ou a  ação de interpolação da grade.
 	*/
@@ -256,11 +258,11 @@ public:
 	/**
 	* \brief Método que retorna uma lista de instâncias da classe Image.
 	*/
-	deque<Image*> getImages() { return listAllImages; };
+    std::deque<Image*> getImages() { return listAllImages; };
 	/**
 	* \brief Método que retorna uma lista de pares de imagens.	
 	*/
-	deque<int> getImagesPairs() { return listPairs; };
+    std::deque<int> getImagesPairs() { return listPairs; };
 	/**
 	* \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.	
 	*/
@@ -272,7 +274,7 @@ public:
 	/**
 	* \brief Método que carrega um arquivo com as qualidades do DEM.	
 	*/
-	string getDemQuality(char * filename, int option);
+    std::string getDemQuality(char * filename, int option);
 	/**
 	* \brief Método que muda os parâmetros do LSM e NCC.	
 	*/
@@ -284,19 +286,19 @@ public:
     /**
     * \brief Registra no XML o endereço de um arquivo de matching.
     */
-    void addPairsToXML(string filename);
+    void addPairsToXML(std::string filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de sementes para matching.
     */
-    void addSeedsToXML(string filename);
+    void addSeedsToXML(std::string filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de DEM.
     */
-    void addDEMToXML(string filename);
+    void addDEMToXML(std::string filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de DEM Quality.
     */
-    void addDEMQualityToXML(string filename);
+    void addDEMQualityToXML(std::string filename);
     /**
     * \brief Ativar eliminação de pontos ruins.
     */

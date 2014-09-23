@@ -1,4 +1,25 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "MatchingPointsGrid.h"
+
+#include <iostream>
+#include <math.h>
+#include <MatchingPoints.h>
 
 namespace br {
 namespace uerj {
@@ -23,8 +44,8 @@ void MatchingPointsGrid::createNewGrid(double rx, double ry)
 	height = 2 + (Yf - Yi)/res_y;
 
 	// Create empty structure
-	printf("Map size: %d x %d\n",width,height);
-	printf("Creating empty structure ...\n");
+    std::cout << "Map size:" << width << " x " << height << std::endl;
+    std::cout << "Creating empty structure ...\n";
 	MPGCell cell;
 	gridMap.clear();
 	for (unsigned int i=0; i<width*height; i++)
@@ -44,11 +65,11 @@ void MatchingPointsGrid::createStructure()
 
 	if (point_list == NULL)
 	{
-		printf("Error! No point list assigned.\n");
+        std::cout << "Error! No point list assigned.\n";
 		return;
 	}
 
-	printf("Creating grid map for %d points ...\n",point_list->size());
+    std::cout << "Creating grid map for " << point_list->size() << "points ...\n";
 	for (unsigned int i=1; i<=point_list->size(); i++)
 	{
 		mp = point_list->get(i);

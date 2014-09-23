@@ -20,7 +20,7 @@ RectSupport::~RectSupport()
 
 }
 
-string RectSupport::objectType(void)
+std::string RectSupport::objectType(void)
 {
 	return "RectSupport";
 }
@@ -30,7 +30,7 @@ unsigned int RectSupport::getCols() const
 	return ncols;
 }
 
-unsigned int RectSupport::getRows() const
+size_t RectSupport::getRows() const
 {
 	return nrows;
 }

@@ -1,24 +1,35 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "SparseMatrix.h"
+
+#include <math.h>
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-SparseMatrixElement::SparseMatrixElement()
+SparseMatrixElement::SparseMatrixElement(size_t myRow, size_t myCol, double myValue)
+    :row_(myRow),
+     col_(myCol),
+     value_(myValue),
+     next_(NULL)
 {
-	this->row = -1;
-	this->col = -1;
-	this->value = 0.0;
-	this->next = NULL;
-}
 
-SparseMatrixElement::SparseMatrixElement(int myRow, int myCol, double myValue)
-{
-	this->row = myRow;
-	this->col = myCol;
-	this->value = myValue;
-	this->next = NULL;
 }
 
 SparseMatrixElement::~SparseMatrixElement()
@@ -26,72 +37,67 @@ SparseMatrixElement::~SparseMatrixElement()
 
 }
 
-int SparseMatrixElement::getRow()
+size_t SparseMatrixElement::getRow()
 {
-	return row;
+    return row_;
 }
 
-int SparseMatrixElement::getCol()
+size_t SparseMatrixElement::getCol()
 {
-	return col;
+    return col_;
 }
 
 double SparseMatrixElement::getValue()
 {
-	return value;
+    return value_;
 }
 
 SparseMatrixElement* SparseMatrixElement::getNext()
 {
-	return next;
+    return next_;
 }
 
-void SparseMatrixElement::setRow(int newRow)
+void SparseMatrixElement::setRow(size_t newRow)
 {
-	row = newRow;
+    row_ = newRow;
 }
 
-void SparseMatrixElement::setCol(int newCol)
+void SparseMatrixElement::setCol(size_t newCol)
 {
-	col = newCol;
+    col_ = newCol;
 }
 
 void SparseMatrixElement::setValue(double newValue)
 {
-	value = newValue;
+    value_ = newValue;
 }
 
 void SparseMatrixElement::setNext(SparseMatrixElement* newNext)
 {
-	next = newNext;
+    next_ = newNext;
 }
 
-SparseMatrix::SparseMatrix()
-{
-	rows = 0;
-	cols = 0;
-}
 
 SparseMatrix::SparseMatrix(Matrix source, double precision)
 {
 	bool firstOfRow;
-	SparseMatrixElement* newElement;
-	SparseMatrixElement* lastElement;
+    SparseMatrixElement* newElement = NULL;
+    SparseMatrixElement* lastElement = NULL;
 
-	rows = source.getRows();
-	cols = source.getCols();
+    rows_ = source.getRows();
+    cols_ = source.getCols();
 
-	for (unsigned int i = 1; i <= source.getRows(); i++)
+    for (size_t i = 1; i <= rows_; i++)
 	{
 		firstOfRow = true;
-		for (unsigned int j = 1; j <= source.getCols(); j++)
+        for (size_t j = 1; j <= cols_; j++)
 		{
 			if (fabs(source.get(i,j)) > precision)
 			{
 				newElement = new SparseMatrixElement(i, j, source.get(i,j));
 				if (firstOfRow == true)
 				{
-					elements.push_back(newElement);
+                    elements_.push_back(newElement);
 					lastElement = newElement;
 					firstOfRow = false;
 				}
@@ -109,9 +115,9 @@ SparseMatrix::~SparseMatrix()
 {
 	SparseMatrixElement* checker;
 	SparseMatrixElement* deleter;
-	for (unsigned int i = 0; i < elements.size(); i++)
+    for (size_t i = 0; i < elements_.size(); i++)
 	{
-		checker = elements.at(i);
+        checker = elements_.at(i);
 		while (checker != NULL)
 		{
 			deleter = checker;
@@ -123,12 +129,12 @@ SparseMatrix::~SparseMatrix()
 
 Matrix SparseMatrix::toMatrix()
 {
-	Matrix result(rows, cols);
+    Matrix result(rows_, cols_);
 	SparseMatrixElement* currentElement;
 
-	for (unsigned int i = 0; i < elements.size(); i++)
+    for (size_t i = 0; i < elements_.size(); i++)
 	{
-		currentElement = elements.at(i);
+        currentElement = elements_.at(i);
 		while (currentElement != NULL)
 		{
 			result.set(currentElement->getRow(), currentElement->getCol(), currentElement->getValue());
@@ -141,19 +147,19 @@ Matrix SparseMatrix::toMatrix()
 
 Matrix SparseMatrix::operator*(Matrix target)
 {
-	Matrix result(rows, target.getCols());
+    Matrix result(rows_, target.getCols());
 	SparseMatrixElement* currentElement;
 	double value;
 	int currentRow;
 
-	if (cols == target.getRows())
+    if (cols_ == target.getRows())
 	{
-		for (unsigned int i = 0; i < elements.size(); i++)
+        for (size_t i = 0; i < elements_.size(); i++)
 		{
-			for (unsigned int j = 1; j <= target.getCols(); j++)
+            for (size_t j = 1; j <= target.getCols(); j++)
 			{
 				value = 0.0;
-				currentElement = elements.at(i);
+                currentElement = elements_.at(i);
 				currentRow = currentElement->getRow();
 				while (currentElement != NULL)
 				{

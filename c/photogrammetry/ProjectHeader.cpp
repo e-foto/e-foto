@@ -1,8 +1,26 @@
 /*******************************************************************************
    ProjectHeader.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "ProjectHeader.h"
+
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -13,129 +31,129 @@ ProjectHeader::~ProjectHeader()
 {
 }
 
-void ProjectHeader::setName(string newName)
+void ProjectHeader::setName(std::string newName)
 {
 	name = newName;
 }
 
-void ProjectHeader::setDescription(string newDescription)
+void ProjectHeader::setDescription(std::string newDescription)
 {
 	description = newDescription;
 }
 
-void ProjectHeader::setFilePath(string newFilePath)
+void ProjectHeader::setFilePath(std::string newFilePath)
 {
 	filePath = newFilePath;
 }
 
-void ProjectHeader::setFileName(string newFileName)
+void ProjectHeader::setFileName(std::string newFileName)
 {
 	fileName = newFileName;
 }
 
-void ProjectHeader::setCreation(string newCreation)
+void ProjectHeader::setCreation(std::string newCreation)
 {
 	creation = newCreation;
 }
 
-void ProjectHeader::setModification(string newModification)
+void ProjectHeader::setModification(std::string newModification)
 {
 	modification = newModification;
 }
 
-void ProjectHeader::setOwner(string newOwner)
+void ProjectHeader::setOwner(std::string newOwner)
 {
 	owner = newOwner;
 }
 
-void ProjectHeader::setAims(string newAims)
+void ProjectHeader::setAims(std::string newAims)
 {
 	aims = newAims;
 }
 
-void ProjectHeader::setContext(string newContext)
+void ProjectHeader::setContext(std::string newContext)
 {
 	context = newContext;
 }
 
-string ProjectHeader::getName()
+std::string ProjectHeader::getName()
 {
 	return name;
 }
 
-string ProjectHeader::getDescription()
+std::string ProjectHeader::getDescription()
 {
 	return description;
 }
 
-string ProjectHeader::getFilePath()
+std::string ProjectHeader::getFilePath()
 {
 	return filePath;
 }
 
-string ProjectHeader::getFileName()
+std::string ProjectHeader::getFileName()
 {
 	return fileName;
 }
 
-string ProjectHeader::getCreation()
+std::string ProjectHeader::getCreation()
 {
 	return creation;
 }
 
-string ProjectHeader::getModification()
+std::string ProjectHeader::getModification()
 {
 	return modification;
 }
 
-string ProjectHeader::getOwner()
+std::string ProjectHeader::getOwner()
 {
 	return owner;
 }
 
-string ProjectHeader::getAims()
+std::string ProjectHeader::getAims()
 {
 	return aims;
 }
 
-string ProjectHeader::getContext()
+std::string ProjectHeader::getContext()
 {
 	return context;
 }
 
-string ProjectHeader::objectType(void)
+std::string ProjectHeader::objectType(void)
 {
 	return "ProjectHeader";
 }
 
-string ProjectHeader::objectAssociations(void)
+std::string ProjectHeader::objectAssociations(void)
 {
 	return "";
 }
 
-bool ProjectHeader::is(string s)
+bool ProjectHeader::is(std::string s)
 {
 	return (s == "ProjectHeader" ? true : false);
 }
 
-void ProjectHeader::xmlSetData(string xml)
+void ProjectHeader::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 
-	name = root.elementByTagName("name").toString();
-	description = root.elementByTagName("description").toString();
-	filePath = root.elementByTagName("filePath").toString();
-	fileName = root.elementByTagName("fileName").toString();
-	creation = root.elementByTagName("creation").toString();
-	modification = root.elementByTagName("modification").toString();
-	owner = root.elementByTagName("owner").toString();
-	aims = root.elementByTagName("aims").toString();
-	context = root.elementByTagName("context").toString();
+    name = root.elementByTagName("name").toString();
+    description = root.elementByTagName("description").toString();
+    filePath = root.elementByTagName("filePath").toString();
+    fileName = root.elementByTagName("fileName").toString();
+    creation = root.elementByTagName("creation").toString();
+    modification = root.elementByTagName("modification").toString();
+    owner = root.elementByTagName("owner").toString();
+    aims = root.elementByTagName("aims").toString();
+    context = root.elementByTagName("context").toString();
 }
 
-string ProjectHeader::xmlGetData()
+std::string ProjectHeader::xmlGetData()
 {
-	stringstream result;
+    std::stringstream result;
 	result << "<projectHeader>\n";
 	result << "<name>" << name << "</name>\n";
 	result << "<description>" << description << "</description>\n";

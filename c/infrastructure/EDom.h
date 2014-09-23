@@ -1,14 +1,25 @@
 #ifndef EDOM_H
 #define EDOM_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <string>
-#include <iomanip>
-#include <iostream>
-#include <stdexcept>
-#include <sstream>
 #include <deque>
 
-using namespace std;
 
 namespace br {
 namespace uerj {
@@ -34,7 +45,7 @@ public:
  * \param value	Valor a ser convertido.
  * \return string	Texto que descreve o valor inserido.
  */
-	static string doubleToString(double value);
+    static std::string doubleToString(double value);
 
 	/**
  * \brief Sobrecarga do método para conversão de double para string.
@@ -42,42 +53,42 @@ public:
  * \param precision	Definição da precisão desejada na conversão.
  * \return string	Texto que descreve o valor inserido.
  */
-	static string doubleToString(double value, int precision);
+    static std::string doubleToString(double value, int precision);
 
 	/**
  * \brief Método para conversão de string para double.
  * \param value	Valor descrito em texto.
  * \return double	Valor convertido.
  */
-	static double stringToDouble(string value);
+    static double stringToDouble(std::string value);
 
 	/**
  * \brief Método para conversão de inteiro para string.
  * \param value	Valor a ser convertido.
  * \return string	Texto que descreve o valor inserido.
  */
-	static string intToString(int value);
+    static std::string intToString(int value);
 
 	/**
  * \brief Método para conversão de string para inteiro.
  * \param value	Valor descrito em texto.
  * \return int	Valor convertido.
  */
-	static int stringToInt(string value);
+    static int stringToInt(std::string value);
 
 	/**
  * \brief Método para conversão de inteiro longo para string.
  * \param value	Valor a ser convertido.
  * \return string	Texto que descreve o valor inserido.
  */
-	static string longToString(long value);
+    static std::string longToString(long value);
 
 	/**
  * \brief Método para conversão de string para inteiro longo.
  * \param value	Valor descrito em texto.
  * \return long	Valor convertido.
  */
-	static long stringToLong(string value);
+    static long stringToLong(std::string value);
 };
 
 /**
@@ -94,7 +105,7 @@ class EDomElement
 
 	enum { INVALID_TAG = 0, OPEN_TAG = 1, CLOSE_TAG = 2, SIMPLE_TAG = 3 };
 
-	string content;
+    std::string content;
 
 	/**
  * \brief Verifica o tipo de uma tag xml passada como parâmetro.
@@ -102,14 +113,14 @@ class EDomElement
  * \param myTag	Tag a ser verificada.
  * \return int	0 se INVALID_TAG, 1 se OPEN_TAG, 2 se CLOSE_TAG e 3 se SIMPLE_TAG.
  */
-	int tagType(string myTag);
+    int tagType(std::string myTag);
 
 	/**
  * \brief Retorna o tagname de uma tag xml passada como parâmetro.
  * \param myTag	Tag com o nome a ser retornado.
  * \return string	O nome da tag passada.
  */
-	string tagName(string myTag);
+    std::string tagName(std::string myTag);
 
 	/**
  * \brief Muda o valor de um dos atributos do elemento atual.
@@ -117,7 +128,7 @@ class EDomElement
  * \param newAttValue	Novo valor para o atributo.
  * \return bool	Verdadeiro se a alteração foi efetuada com sucesso, falso caso contrário.
  */
-	bool setAttribute(string att, string newAttValue);
+    bool setAttribute(std::string att, std::string newAttValue);
 
 	/**
  * \brief Adiciona um novo atributo ao elemento atual.
@@ -125,7 +136,7 @@ class EDomElement
  * \param newAttValue	Valor a ser atribuído ao novo atributo
  * \return bool Verdadeiro se a adição foi efetuada com sucesso, falso caso contrário.
  */
-	bool addAttribute(string newAttName, string newAttValue);
+    bool addAttribute(std::string newAttName, std::string newAttValue);
 
 public:
 
@@ -138,7 +149,7 @@ public:
  * \brief Construtor de um elemento cujo conteúdo é conhecido.
  * \param myXml	Conteúdo a ser atribuído ao elemento construído.
  */
-	EDomElement(string myXml);
+    EDomElement(std::string myXml);
 
 	/**
  * \brief Destrutor vazio padrão.
@@ -149,26 +160,26 @@ public:
  * \brief Muda o conteúdo xml do elemento atual.
  * \param newXml	O novo conteúdo xml do elemento.
  */
-	void setContent(string newXml);
+    void setContent(std::string newXml);
 
 	/**
  * \brief Recupera o conteúdo xml do elemento atual em formato string.
  * \return string	O conteúdo xml do elemento.
  */
-	string getContent();
+    std::string getContent();
 
 	/**
  * \brief Lista os elementos filhos contidos no elemento atual.
  * \return deque<EDomElement>	Um deque contendo os elementos filhos.
  */
-	deque<EDomElement> children();
+    std::deque<EDomElement> children();
 
 	/**
  * \brief Lista os elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
  * \param name	O tagname a ser buscado.
  * \return deque<EDomElement>	Um deque com a lista de elementos que correspondem aos critérios de pesquisa.
  */
-	deque<EDomElement> elementsByTagName(string name);
+    std::deque<EDomElement> elementsByTagName(std::string name);
 
 	/**
  * \brief Lista os elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com um determinado valor.
@@ -177,14 +188,14 @@ public:
  * \param value	O valor do atributo a ser verificado.
  * \return deque<EDomElement>	Um deque com a lista de elementos que correspondem aos critérios de pesquisa.
  */
-	deque<EDomElement> elementsByTagAtt(string tagname, string att, string value);
+    std::deque<EDomElement> elementsByTagAtt(std::string tagname, std::string att, std::string value);
 
 	/**
  * \brief Retorna o primeiro elemento contido no elemento atual (incluindo o próprio) que possui o tagname especificado.
  * \param name	O tagname a ser buscado.
  * \return EDomElement	O primeiro elemento que corresponde aos critérios de pesquisa.
  */
-	EDomElement elementByTagName(string tagname);
+    EDomElement elementByTagName(std::string tagname);
 
 	/**
  * \brief Retorna o primeiro elemento contido no elemento atual (incluindo o próprio) que possui o tagname especificado e um atributo com um determinado valor.
@@ -193,7 +204,7 @@ public:
  * \param value	O valor do atributo a ser verificado.
  * \return EDomElement	O primeiro elemento que corresponde aos critérios de pesquisa.
  */
-	EDomElement elementByTagAtt(string tagname, string att, string value);
+    EDomElement elementByTagAtt(std::string tagname, std::string att, std::string value);
 
 	/**
  * \brief Adiciona um elemento filho aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
@@ -202,7 +213,7 @@ public:
  * \return bool	Verdadeiro se a inserção foi realizada com sucesso, falso caso contrário.
  * \todo Fazer uma versão que receba um EDomElement como segundo parâmetro.
  */
-	bool addChildAtTagName(string tagname, string newChild);
+    bool addChildAtTagName(std::string tagname, std::string newChild);
 
 	/**
  * \brief Adiciona um elemento filho aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
@@ -213,7 +224,7 @@ public:
  * \return bool	Verdadeiro se a inserção foi realizada com sucesso, falso caso contrário.
  * \todo Fazer uma versão que receba um EDomElement como quarto parâmetro.
  */
-	bool addChildAtTagAtt(string tagname, string att, string value, string newChild);
+    bool addChildAtTagAtt(std::string tagname, std::string att, std::string value, std::string newChild);
 
 	/**
  * \brief Substitui os elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
@@ -222,7 +233,7 @@ public:
  * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
  * \todo Fazer uma versão que receba um EDomElement como segundo parâmetro.
  */
-	bool replaceChildByTagName(string tagname, string newChild);
+    bool replaceChildByTagName(std::string tagname, std::string newChild);
 
 	/**
  * \brief Substitui os elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
@@ -233,20 +244,20 @@ public:
  * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
  * \todo Fazer uma versão que receba um EDomElement como quarto parâmetro.
  */
-	bool replaceChildByTagAtt(string tagname, string att, string value, string newChild);
+    bool replaceChildByTagAtt(std::string tagname, std::string att, std::string value, std::string newChild);
 
 	/**
  * \brief Recupera o tagname do elemento atual.
  * \return string	O tagname do elemento atual.
  */
-	string tagName();
+    std::string tagName();
 
 	/**
  * \brief Recupera o valor de um dos atributos do elemento atual.
  * \param att	O nome do parâmetro a ser retornado.
  * \return string	O valor do atributo desejado.
  */
-	string attribute(string att);
+    std::string attribute(std::string att);
 
 	/**
  * \brief Adiciona um atributo aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
@@ -255,7 +266,7 @@ public:
  * \param newAttValue	O valor a ser atribuído ao novo atributo.
  * \return bool	Verdadeiro se a adição foi realizada com sucesso, falso caso contrário.
  */
-	bool addAttributeByTagName(string tagname, string newAtt, string newAttValue);
+    bool addAttributeByTagName(std::string tagname, std::string newAtt, std::string newAttValue);
 
 	/**
  * \brief Adiciona um atributo aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
@@ -266,7 +277,7 @@ public:
  * \param newAttValue	O valor a ser atribuído ao novo atributo.
  * \return bool	Verdadeiro se a adição foi realizada com sucesso, falso caso contrário.
  */
-	bool addAttributeByTagAtt(string tagname, string att, string value, string newAtt, string newAttValue);
+    bool addAttributeByTagAtt(std::string tagname, std::string att, std::string value, std::string newAtt, std::string newAttValue);
 
 	/**
  * \brief Modifica um atributo existente nos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
@@ -275,7 +286,7 @@ public:
  * \param newAttValue	O novo valor a ser atribuído ao atributo.
  * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
  */
-	bool replaceAttributeByTagName(string tagname, string replaceAtt, string newAttValue);
+    bool replaceAttributeByTagName(std::string tagname, std::string replaceAtt, std::string newAttValue);
 
 	/**
  * \brief Modifica um atributo existente nos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
@@ -286,13 +297,13 @@ public:
  * \param newAttValue	O valor a ser atribuído ao novo atributo.
  * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
  */
-	bool replaceAttributeByTagAtt(string tagname, string att, string value, string replaceAtt, string newAttValue);
+    bool replaceAttributeByTagAtt(std::string tagname, std::string att, std::string value, std::string replaceAtt, std::string newAttValue);
 
 	/**
  * \brief Retorna o valor textual contido no elemento atual como uma string.
  * \return string	O valor contido no elemento atual.
  */
-	string toString();
+    std::string toString();
 
 	/**
  * \brief Retorna o valor textual contido no elemento atual convertido em um inteiro.
@@ -320,7 +331,7 @@ public:
  * \return deque<double>	Os valores contidos no elemento atual.
  * \attention As regras de conversão utilizadas são as definidas na classe Conversion.
  */
-	deque<double> toGmlPos();
+    std::deque<double> toGmlPos();
 
 	/**
  * \brief Testa se o valor textual contido no elemento atual está disponível, isto é, se não é vazio ou alguma variação de "Not Available".
@@ -333,7 +344,7 @@ public:
  * \param tagname	O tagname a ser identificado.
  * \return bool	Verdadeiro se a tagname existir dentro do elemento atual, falso caso contrário.
  */
-	bool hasTagName(string tagname);
+    bool hasTagName(std::string tagname);
 
 	/**
  * \brief Retorna um elemento de conteúdo idêntico ao atual, mas com uma determinada indentação aplicada.
@@ -375,13 +386,13 @@ public:
  * \brief Método para extrair o equivalente em dados xml de um componente.
  * \return string	Retorna o string contendo o xml com todos os valores de atributos contidos numa instância de classe derivada.
  */
-	virtual string xmlGetData() = 0;
+    virtual std::string xmlGetData() = 0;
 
 	/**
  * \brief Método para setar os valores de atributos de um componente utilizando sua descrição em xml.
  * \param xml	String contendo o xml com todos os valores de atributos adequados a uma determinada instância.
  */
-	virtual void xmlSetData(string xml) = 0;
+    virtual void xmlSetData(std::string xml) = 0;
 
 };
 

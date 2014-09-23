@@ -1,11 +1,23 @@
 #ifndef GEOSYSTEM_H
 #define GEOSYSTEM_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <string>
-#include <iostream>
-#include <sstream>
-
-using namespace std;
 
 namespace br {
 namespace uerj {
@@ -27,7 +39,7 @@ private:
 	double a;//eixoMenor
 	double b;//eixoMaior;
 	double f;// achatamento
-	string systemName;//nome do sistema
+    std::string systemName;//nome do sistema
 public:
 	/**
   * \brief Construtor a partir de um enumerador
@@ -41,14 +53,14 @@ public:
   * \param f: achatamento do elipsoide
   * \param name: nome do sistema geodesico
   */
-	GeoSystem(double a, double f, string name);
+    GeoSystem(double a, double f, std::string name);
 
 	/**
   * \brief Construtor com o nome do sistema geodesico
   * \param sysName : nome do sistema geodesico
   * \attention Se o \param sysName for inexistente o objeto tera valores incorretos, use esse construtor com cuidado
   */
-	GeoSystem(string sysName);
+    GeoSystem(std::string sysName);
 
 	/**
   * \brief Retorna o valor do semi-eixo maior
@@ -84,7 +96,7 @@ public:
   * \brief Retorna o nome do sistema geodesico
   * \return string : Valor de systemName;
   */
-	string getSystemName();
+    std::string getSystemName();
 
 	/**
   * \brief Altera o valor do semi-eixo maior
@@ -109,7 +121,7 @@ public:
   * \param name : Valor se systemName;
   * \attention Alterar o nome do sistema nao altera os seus atributos automaticamente
   */
-	void setSystemName(string name);
+    void setSystemName(std::string name);
 
 	/**
   * \brief Altera o objeto para o sistema geodesico do enumerador
@@ -123,13 +135,13 @@ public:
   * \param f: achatamento do elipsoide
   * \param newName: nome do sistema geodesico
   */
-	void setSystem(double a, double f, string newName);
+    void setSystem(double a, double f, std::string newName);
 
 	/**
   * \brief Retorna umm representaçao textual do objeto, ou seja, seus principais atributos em forma de texto
   * \return string : Texto com os principais atributos do objeto, a saber, semi-eixo maior, menor e achatamento do elipsoide
   */
-	string toString();
+    std::string toString();
 };
 
 } // namespace efoto

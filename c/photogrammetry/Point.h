@@ -1,6 +1,21 @@
 #ifndef POINT_H
 #define POINT_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "EObject.h"
 #include "ObjectSpaceCoordinate.h"
 #include "ImageSpaceCoordinate.h"
@@ -31,18 +46,18 @@ public:
 
 protected:
 	int id;
-	string pointId;
-	string description;
+    std::string pointId;
+    std::string description;
 	PointType type;
 
 	ObjectSpaceCoordinate objectCoordinate;
-	deque<ImageSpaceCoordinate> imageCoordinates;
-	deque<DetectorSpaceCoordinate> detectorCoordinates;
+    std::deque<ImageSpaceCoordinate> imageCoordinates;
+    std::deque<DetectorSpaceCoordinate> detectorCoordinates;
 
-	deque<Image*> myImages;
+    std::deque<Image*> myImages;
 
-	PointType readPointType(string type);
-	string writePointType(PointType type);
+    PointType readPointType(std::string type);
+    std::string writePointType(PointType type);
 
 public:
 
@@ -55,12 +70,12 @@ public:
 	// Private attribute accessor methods
 	//
 	void setId(int newId);
-	void setPointId(string newPointId);
-	void setDescription(string newDescription);
+    void setPointId(std::string newPointId);
+    void setDescription(std::string newDescription);
 	void setType(PointType type);
 	int getId();
-	string getPointId();
-	string getDescription();
+    std::string getPointId();
+    std::string getDescription();
 	PointType getType();
 
 	// Composed Objects accessor methods
@@ -68,10 +83,10 @@ public:
 	void setObjectCoordinate(ObjectSpaceCoordinate newObject);
 	ObjectSpaceCoordinate getObjectCoordinate();
 
-	void setImageCoordinates(deque<ImageSpaceCoordinate> newImageCoordinates);
-	void setDetectorCoordinates(deque<DetectorSpaceCoordinate> newDetectorCoordinates);
-	deque<ImageSpaceCoordinate> getImageCoordinates();
-	deque<DetectorSpaceCoordinate> getDetectorCoordinates();
+    void setImageCoordinates(std::deque<ImageSpaceCoordinate> newImageCoordinates);
+    void setDetectorCoordinates(std::deque<DetectorSpaceCoordinate> newDetectorCoordinates);
+    std::deque<ImageSpaceCoordinate> getImageCoordinates();
+    std::deque<DetectorSpaceCoordinate> getDetectorCoordinates();
 
 	int putImageCoordinate(ImageSpaceCoordinate newimageCoordinate);
 	int putDetectorCoordinate(DetectorSpaceCoordinate newdetectorCoordinate);
@@ -94,7 +109,7 @@ public:
     void removeImage(int id); // Remove one association;
 	Image* getImage(int imageId); // Get associated point at image by id.
 	int countImages(); // Inform the number of points associated the image.
-	Image* getImageAt(unsigned int index); // Get associated point at image by index in deque for iterations.
+    Image* getImageAt(unsigned int index); // Get associated point at image by index in std::deque for iterations.
 
 	// Check methods
 	//
@@ -103,14 +118,14 @@ public:
 
 	// EObject methods
 	//
-	string objectType(void);
-	string objectAssociations(void);
-	bool is(string s);
+    std::string objectType(void);
+    std::string objectAssociations(void);
+    bool is(std::string s);
 
 	// Other methods
 	//
-	void xmlSetData(string xml);
-	string xmlGetData();
+    void xmlSetData(std::string xml);
+    std::string xmlGetData();
 };
 
 } // namespace efoto

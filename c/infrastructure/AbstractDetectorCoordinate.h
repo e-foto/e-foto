@@ -1,6 +1,21 @@
 #ifndef ABSTRACTDETECTORCOORDINATE_H
 #define ABSTRACTDETECTORCOORDINATE_H
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "Coordinate.h"
 
 namespace br {
@@ -26,7 +41,7 @@ protected:
 	double sigmaXi;
 	double sigmaEta;
 	double sigmaXiEta;
-	string unit;
+    std::string unit;
 
 public:
 
@@ -69,7 +84,7 @@ public:
  * \brief Método para alterar a unidade em que a coordenada é considerada.
  * \param newUnit	Texto descritor da nova unidade de medidas considerada para a coordenada.
  */
-	void setUnit(string newUnit);
+    void setUnit(std::string newUnit);
 
 	/**
  * \brief Método para retornar o valor Xi num sistema de coordenadas (Xi, Eta).
@@ -103,9 +118,9 @@ public:
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
- * \return string	Texto descritor da unidade de medidas considerada para a coordenada.
+ * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-	string getUnit();
+    std::string getUnit();
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.
@@ -133,9 +148,9 @@ public:
 
 	/**
  * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
+ * \return std::string	Retorna o nome de classe do objeto.
  */
-	string objectType(void);
+    std::string objectType(void);
 
 };
 

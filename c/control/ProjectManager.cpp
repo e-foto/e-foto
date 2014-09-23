@@ -17,11 +17,23 @@ ProjectManager.cpp
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "Image.h"
+#include "Terrain.h"
 #include "ProjectManager.h"
 #include "EFotoManager.h"
 #include "ProjectUserInterface_Qt.h"
 #include "Project.h"
 #include "ETreeModel.h"
+#include "SensorWithFiducialMarks.h"
+#include "SpatialRessection.h"
+#include "InteriorOrientation.h"
+#include "Flight.h"
+#include <QSettings>
+
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <math.h>
 
 // Constructors and Destructor
 //
@@ -36,6 +48,7 @@ ProjectManager::ProjectManager()
 	this->manager = NULL;
 	this->treeModel = NULL;
 	this->updater = NULL;
+	//loadSettings();
 }
 
 ProjectManager::ProjectManager(EFotoManager* manager)
@@ -74,11 +87,11 @@ bool ProjectManager::disconnectDatabase()
 	return false;
 }
 
-bool ProjectManager::newProject(string filename)
+bool ProjectManager::newProject(std::string filename)
 {
 	if (manager != NULL)
 	{
-		string xmlData = "";
+        std::string xmlData = "";
 		xmlData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 		xmlData += "<?xml-stylesheet type=\"text/xsl\" href=\"xsl/epp.xsl\"?>\n\n";
 		xmlData += "<efotoPhotogrammetricProject version=\"1.0.42\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
@@ -91,8 +104,8 @@ bool ProjectManager::newProject(string filename)
 
 		int i = filename.rfind('/');
 
-		string filePath = "<filePath>"+filename.substr(0,i)+"</filePath>\n";
-		string fileName = "<fileName>"+filename.erase(0,i+1)+"</fileName>\n";
+        std::string filePath = "<filePath>"+filename.substr(0,i)+"</filePath>\n";
+        std::string fileName = "<fileName>"+filename.erase(0,i+1)+"</fileName>\n";
 
 		xmlData += fileName;
 		xmlData += filePath;
@@ -167,12 +180,12 @@ bool ProjectManager::saveProject()
 	return false;
 }
 
-bool ProjectManager::loadFile(string filename)
+bool ProjectManager::loadFile(std::string filename)
 {
 	if (manager != NULL)
 	{
-		stringstream myData;
-		ifstream myFile(filename.c_str());
+        std::stringstream myData;
+        std::ifstream myFile(filename.c_str());
 		if (updater != NULL)
 		{
 			delete updater;
@@ -180,15 +193,15 @@ bool ProjectManager::loadFile(string filename)
 		}
 		if (myFile.is_open())
 		{
-			string line;
+            std::string line;
 			while (!myFile.eof())
 			{
-				getline (myFile,line);
-				myData << line << endl;
+                getline (myFile,line);
+                myData << line << std::endl;
 			}
 			myFile.close();
 
-			string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
+            std::string xmlData = EDomElement(myData.str()).removeBlankLines(true).getContent();
 			updater = new XmlUpdater(xmlData);
 			if (updater->isUpdated())
 			{
@@ -210,6 +223,7 @@ bool ProjectManager::loadFile(string filename)
 				delete treeModel;
 
 			treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
+			saveSettings(filename);
 			return true;
 		}
 		return false;
@@ -218,11 +232,11 @@ bool ProjectManager::loadFile(string filename)
 	return false;
 }
 
-bool ProjectManager::saveFile(string filename)
+bool ProjectManager::saveFile(std::string filename)
 {
 	if (manager != NULL)
 	{
-		ofstream myFile (filename.c_str());
+        std::ofstream myFile (filename.c_str());
 		if (myFile.is_open())
 		{
 			EDomElement xml(manager->xmlGetData());
@@ -231,7 +245,7 @@ bool ProjectManager::saveFile(string filename)
 			myFile.close();
 			return true;
 		}
-		else cout << "Unable to open file";
+        else std::cout << "Unable to open file";
 		return false;
 	}
 	return false;
@@ -246,7 +260,7 @@ int ProjectManager::informFileVersionError()
 	return 0;
 }
 
-bool ProjectManager::addComponent(string data, string parent)
+bool ProjectManager::addComponent(std::string data, std::string parent)
 {
 	if (manager != NULL)
 	{
@@ -262,7 +276,7 @@ bool ProjectManager::addComponent(string data, string parent)
 	return false;
 }
 
-bool ProjectManager::removeComponent(string type, int id)
+bool ProjectManager::removeComponent(std::string type, int id)
 {
 	if (manager != NULL)
 	{
@@ -289,7 +303,7 @@ bool ProjectManager::removeComponent(string type, int id)
 	return false;
 }
 
-bool ProjectManager::editComponent(string type, string data)
+bool ProjectManager::editComponent(std::string type, std::string data)
 {
 	if (manager != NULL)
 	{
@@ -308,7 +322,7 @@ bool ProjectManager::editComponent(string type, string data)
 	return false;
 }
 
-bool ProjectManager::editComponent(string type, int id, string data)
+bool ProjectManager::editComponent(std::string type, int id, std::string data)
 {
 	if (manager != NULL)
 	{
@@ -335,7 +349,7 @@ bool ProjectManager::editComponent(string type, int id, string data)
 	return false;
 }
 
-EObject* ProjectManager::viewComponent(string type, int id)
+EObject* ProjectManager::viewComponent(std::string type, int id)
 {
 	if (manager != NULL)
 	{
@@ -360,23 +374,23 @@ ETreeModel* ProjectManager::getTreeModel()
 	return treeModel;
 }
 
-deque<int> ProjectManager::listImageKeys()
+std::deque<int> ProjectManager::listImageKeys()
 {
-	deque<int> result;
+    std::deque<int> result;
 	for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
 		result.push_back(treeModel->idAt(4, i));
 	return result;
 }
 
-deque<string> ProjectManager::listImages()
+std::deque<std::string> ProjectManager::listImages()
 {
-	deque<string> result;
+    std::deque<std::string> result;
 	for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
 		result.push_back(treeModel->dataAt(4, i));
 	return result;
 }
 
-int ProjectManager::getImageId(string imageName)
+int ProjectManager::getImageId(std::string imageName)
 {
 	for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
 		if (treeModel->dataAt(4, i) == imageName)
@@ -394,7 +408,7 @@ int ProjectManager::getFreePointId()
 	return manager->getFreePointId();
 }
 
-bool ProjectManager::startModule(string module, int image)
+bool ProjectManager::startModule(std::string module, int image)
 {
 	if (manager != NULL)
 	{
@@ -421,7 +435,7 @@ bool ProjectManager::startModule(string module, int image)
 	return false;
 }
 
-bool ProjectManager::exec(string filename)
+bool ProjectManager::exec(std::string filename)
 {
 	if (manager != NULL)
 	{
@@ -455,12 +469,12 @@ bool ProjectManager::reload()
 	return false;
 }
 
-string ProjectManager::getXml(string tagname)
+std::string ProjectManager::getXml(std::string tagname)
 {
 	return manager->getXml(tagname);
 }
 
-string ProjectManager::getXml(string tagname, string att, string value)
+std::string ProjectManager::getXml(std::string tagname, std::string att, std::string value)
 {
 	return manager->getXml(tagname, att, value);
 }
@@ -474,7 +488,7 @@ bool ProjectManager::getSavedState()
 	return true;
 }
 
-bool ProjectManager::makeSPFile(string filename, int image1, int image2)
+bool ProjectManager::makeSPFile(std::string filename, int image1, int image2)
 {
 	if (manager != NULL)
 	{
@@ -501,7 +515,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		}
 
 		EDomElement xml(manager->xmlGetData());
-		string value = "";
+        std::string value = "";
 		// O texto aqui de baixo esta escrito errado de proposito para ficar compativel com o teste que o Marcelo
 		// programou no stereoplotter. La ele procura por "Mesure" quando o correto seria "Measure".
 		// Isto e compativel com a versao 1.6 do modulo e devera mudar logo que ele corrija a sua parte.
@@ -524,7 +538,7 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 		value += Conversion::doubleToString(sensor->getFocalDistance()); value += "\n";
 		value += Conversion::doubleToString(flight->getHeight()); value += "\n";
 
-		string scale = flight->getScale();
+        std::string scale = flight->getScale();
 		value += scale.substr(scale.find(':') + 1); value += "\n";
 
 		double X01 = sr1->getXa().get(1,1);
@@ -558,19 +572,26 @@ bool ProjectManager::makeSPFile(string filename, int image1, int image2)
 
 		value += "End of data";
 
-		ofstream myFile (filename.c_str());
+        std::ofstream myFile (filename.c_str());
 		if (myFile.is_open())
 		{
 			myFile << value;
 			myFile.close();
 			return true;
 		}
-		else cout << "Unable to open file";
+        else std::cout << "Unable to open file";
 		return false;
 	}
 	return false;
 }
 
+
+ 
+void ProjectManager::saveSettings(std::string filename)
+{
+     QSettings efotoSettings("uerj","efoto");
+     efotoSettings.setValue("lastProject",filename.c_str());
+}
 
 } // namespace efoto
 } // namespace eng

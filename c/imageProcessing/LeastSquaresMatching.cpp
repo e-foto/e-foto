@@ -1,8 +1,24 @@
 /*******************************************************************************
 					   LeastSquaresMatching.cpp
 *******************************************************************************/
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
 
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "LeastSquaresMatching.h"
+#include <math.h>
 
 namespace br {
 namespace uerj {
@@ -99,6 +115,7 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 	int template_xi = 1 + Tx - delta_tx, template_yi = 1 + Ty - delta_ty;
 	//	int template_xf = template_xi + (template_width - 1), template_yf = template_yi + (template_height - 1);
 	int matching_xi, matching_yi, matching_xf, matching_yf;
+
 
 	// Calculate matching window bounding box
 	matching_xi = 1 + Mx - delta_tx, matching_yi = 1 + My - delta_ty;

@@ -1,6 +1,30 @@
+/*Copyright 2002-2014 e-foto team (UERJ)
+  This file is part of e-foto.
+
+    e-foto is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    e-foto is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Matrix.h"
 
+#include "PositionMatrix.h"
 
+#include <iostream>
+#include <fstream>
+
+#include <math.h>
+#include <sstream>
+#include <iomanip>
 
 namespace br {
 namespace uerj {
@@ -13,7 +37,7 @@ void Matrix::del()
 	_Mat = NULL;
 	ncols = 0;
 	nrows = 0;
-	unit = "";
+    unit_ = "";
 }
 
 void Matrix::nw(const unsigned int rows, const unsigned int cols)
@@ -22,7 +46,7 @@ void Matrix::nw(const unsigned int rows, const unsigned int cols)
 	nrows = rows; ncols = cols;                   // Fill matrix' attributes.
 	for(unsigned int i = 0; i < (rows * cols); i++) //set its elements to zero
 		_Mat[i] = 0;
-	unit = "";
+    unit_ = "";
 }
 
 Matrix::Matrix(unsigned int rows, unsigned int cols):RectSupport(rows, cols)
@@ -45,7 +69,7 @@ Matrix::Matrix(const Matrix& anotherMatrix):RectSupport(anotherMatrix.getRows(),
 Matrix::Matrix():RectSupport(0, 0)
 {
 	_Mat = NULL;
-	unit = "";
+    unit_ = "";
 }
 
 Matrix::~Matrix()
@@ -98,7 +122,7 @@ int Matrix::load(char* filename)
 	unsigned int cols;
 	unsigned int rows;
 
-	ifstream arq(filename); // open the emf file
+    std::ifstream arq(filename); // open the emf file
 	if (!arq.fail())
 	{
 		arq.getline(str,255); // read file header
@@ -132,16 +156,16 @@ int Matrix::load(char* filename)
 
 int Matrix::save(char* filename)
 {
-	ofstream emfile(filename); // open the emf file
+    std::ofstream emfile(filename); // open the emf file
 	if (!emfile.fail())
 	{
-		emfile << "E-foto project double Matrix Format" << endl; // write file header
+        emfile << "E-foto project double Matrix Format" << std::endl; // write file header
 		if (!emfile.fail())
 		{
-			emfile << filename << endl; // write filename
+            emfile << filename << std::endl; // write filename
 			if (!emfile.fail())
 			{
-				emfile << ncols << " " << nrows << endl;
+                emfile << ncols << " " << nrows << std::endl;
 				if (!emfile.fail())
 				{
 					for (unsigned int i = 0; (i < (ncols * nrows)); i++)
@@ -163,7 +187,7 @@ double Matrix::get(const unsigned int i, const unsigned int j) const
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
 		return _Mat[(i-1) * ncols + j - 1];
 	else
-		cerr << "Get ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << endl;
+        std::cerr << "Get ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << std::endl;
 	return 0;
 }
 
@@ -172,9 +196,9 @@ int Matrix::getInt(const unsigned int i, const unsigned int j) const
 	return (int) get(i,j);
 }
 
-string Matrix::getUnit()
+std::string Matrix::getUnit()
 {
-	return unit;
+    return unit_;
 }
 
 Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
@@ -184,7 +208,7 @@ Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
 	Matrix Result;
 	if((FirstRow > LastRow)||(FirstCol > LastCol)||(FirstRow < 1)||(FirstCol < 1)||(LastRow > nrows)||(LastCol > ncols))
 	{
-		cerr << "Error detected by the Matrix.sel() method:" << endl << "Input parameters out of range or incorrect."<<endl;
+        std::cerr << "Error detected by the Matrix.sel() method:" << std::endl << "Input parameters out of range or incorrect."<< std::endl;
 		return Result;
 	}
 	if ( (DraftResult.nrows != (LastRow-FirstRow+1)) || (DraftResult.ncols != (LastCol-FirstCol+1)) )
@@ -197,29 +221,29 @@ Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
 			DraftResult.set(i, j, get((FirstRow + i - 1),(FirstCol + j -1)));
 
 	Result = DraftResult;
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
-void Matrix::show(char mode, int precision, string name)
+void Matrix::show(char mode, int precision, std::string name)
 {
-	cout << "Matrix " << name << " ["<<nrows << 'x' << ncols << "] "<<endl;
+    std::cout << "Matrix " << name << " ["<<nrows << 'x' << ncols << "] "<< std::endl;
 	if (mode=='f')
-		cout.setf(ios::fixed);
+        std::cout.setf(std::ios::fixed);
 	if (mode=='e')
-		cout.setf(ios::scientific);
+        std::cout.setf(std::ios::scientific);
 	for (unsigned int i = 1; i <= nrows; i++)
 	{
 		for (unsigned int j = 1; j <= ncols; j++)
-			cout << setw(15) << setprecision(precision) <<  get((unsigned int) i, (unsigned int) j) << " ";
-		cout << endl;
+            std::cout << std::setw(15) << std::setprecision(precision) <<  get((unsigned int) i, (unsigned int) j) << " ";
+        std::cout << std::endl;
 	}
 	if (mode=='f')
-		cout.unsetf(ios::fixed);
+        std::cout.unsetf(std::ios::fixed);
 	if (mode=='e')
-		cout.unsetf(ios::scientific);
+        std::cout.unsetf(std::ios::scientific);
 
-	cout << endl;
+    std::cout << std::endl;
 }
 
 double Matrix::highestValue() const
@@ -253,7 +277,7 @@ void Matrix::set(unsigned int i, unsigned int j, double value) const
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
 		_Mat[(i-1) * ncols + j - 1]=value;
 	else
-		cerr << "Set ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << endl;
+        std::cerr << "Set ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << std::endl;
 }
 
 void Matrix::setInt(unsigned int i, unsigned int j, int value) const
@@ -261,9 +285,9 @@ void Matrix::setInt(unsigned int i, unsigned int j, int value) const
 	set(i,j, (double) value);
 }
 
-void Matrix::setUnit(string newUnit)
+void Matrix::setUnit(std::string newUnit)
 {
-	unit = newUnit;
+    unit_ = newUnit;
 }
 
 bool Matrix::isIdentity()
@@ -307,7 +331,7 @@ Matrix Matrix::operator &(const Matrix& Par_Matrix)
 	Matrix Result;
 	if (Par_Matrix.nrows!=nrows)
 	{
-		cerr << "Error detected by the & operator:" << endl<< "Both matrixes must have the same number of rows." << endl;
+        std::cerr << "Error detected by the & operator:" << std::endl<< "Both matrixes must have the same number of rows." << std::endl;
 	}
 	else
 	{
@@ -329,7 +353,7 @@ Matrix Matrix::operator &(const Matrix& Par_Matrix)
 				DraftResult.set((unsigned int)i,(unsigned int)(j+ncols),Par_Matrix.get((unsigned int)i,(unsigned int)j));
 		}
 		Result = DraftResult;
-		Result.unit = unit;
+        Result.unit_ = unit_;
 		return Result;
 	}
 	return Result;
@@ -341,7 +365,7 @@ Matrix Matrix::operator |(const Matrix& Par_Matrix)
 
 	if (Par_Matrix.ncols!=ncols)
 	{
-		cerr << "Error detected by the | operator:" << endl<< "Both matrixes must have the same number of cols." << endl;
+        std::cerr << "Error detected by the | operator:" << std::endl<< "Both matrixes must have the same number of cols." << std::endl;
 	}
 	else
 	{
@@ -355,7 +379,7 @@ Matrix Matrix::operator |(const Matrix& Par_Matrix)
 				DraftResult.set((unsigned int)(i+nrows),(unsigned int)j,Par_Matrix.get((unsigned int)i,(unsigned int)j));
 		}
 		Result = DraftResult;
-		Result.unit = unit;
+        Result.unit_ = unit_;
 	}
 
 	return Result;
@@ -367,7 +391,7 @@ Matrix Matrix::operator +(const Matrix& Par_Matrix)
 	Matrix Result;
 	if ((Par_Matrix.nrows!=nrows)||(Par_Matrix.ncols!=ncols) )
 	{
-		cerr << "Error detected by the + operator: Both matrixes must have the same dimensions." << endl;
+        std::cerr << "Error detected by the + operator: Both matrixes must have the same dimensions." << std::endl;
 	}
 	else
 	{
@@ -385,7 +409,7 @@ Matrix Matrix::operator +(const Matrix& Par_Matrix)
 			DraftResult._Mat[i]=_Mat[i] + Par_Matrix._Mat[i];
 		}
 		Result = DraftResult;
-		Result.unit = unit;
+        Result.unit_ = unit_;
 		return Result;
 	}
 	return Result;
@@ -397,7 +421,7 @@ Matrix Matrix::operator -(const Matrix& Par_Matrix)
 	Matrix Result;
 	if ((Par_Matrix.nrows!=nrows)||(Par_Matrix.ncols!=ncols))
 	{
-		cerr << "Error detected by the - operator: Both matrixes must have the same dimensions." << endl;
+        std::cerr << "Error detected by the - operator: Both matrixes must have the same dimensions." << std::endl;
 	}
 	else
 	{
@@ -415,7 +439,7 @@ Matrix Matrix::operator -(const Matrix& Par_Matrix)
 			DraftResult._Mat[i]=_Mat[i] - Par_Matrix._Mat[i];
 		}
 		Result = DraftResult;
-		Result.unit = unit;
+        Result.unit_ = unit_;
 		return Result;
 	}
 	return Result;
@@ -429,8 +453,7 @@ Matrix Matrix::operator *(const Matrix& Par_Matrix)
 
 	if (ncols!=Par_Matrix.nrows)
 	{
-		cerr << "Matrices dimensions are imcompatible." << endl;
-		exit (-1);
+        throw "Matrices dimensions are incompatible.";
 	}
 	else
 	{
@@ -449,7 +472,7 @@ Matrix Matrix::operator *(const Matrix& Par_Matrix)
 		}
 
 		Result = *DraftResult;
-		Result.unit = unit;
+        Result.unit_ = unit_;
 		delete DraftResult;
 		return Result;
 	}
@@ -467,7 +490,7 @@ Matrix Matrix::operator +(double Par_Scalar)
 		}
 	}
 	Result = DraftResult;
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -483,7 +506,7 @@ Matrix Matrix::operator -(double Par_Scalar)
 		}
 	}
 	Result = DraftResult;
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -499,7 +522,7 @@ Matrix Matrix::operator *(double Par_Scalar)
 		}
 	}
 	Result = DraftMatrix;
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -515,7 +538,7 @@ Matrix Matrix::operator /(double Par_Scalar)
 		}
 	}
 	Result = DraftResult;
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -530,7 +553,7 @@ Matrix& Matrix::operator =(const PositionMatrix& Par_Matrix)
 	{
 		_Mat[i]=Par_Matrix._Mat[i];
 	}
-	unit = Par_Matrix.unit;
+    unit_ = Par_Matrix.unit;
 	return *this;
 }
 
@@ -545,7 +568,7 @@ Matrix& Matrix::operator =(const Matrix& Par_Matrix)
 	{
 		_Mat[i]=Par_Matrix._Mat[i];
 	}
-	unit = Par_Matrix.unit;
+    unit_ = Par_Matrix.unit_;
 	return *this;
 }
 
@@ -593,24 +616,24 @@ bool Matrix::operator !=(const Matrix& Par_Matrix)
 	return 0;
 }
 
-string Matrix::objectType(void)
+std::string Matrix::objectType(void)
 {
 	return "Matrix";
 }
 
-string Matrix::objectAssociations(void)
+std::string Matrix::objectAssociations(void)
 {
 	return "";
 }
 
-bool Matrix::is(string s)
+bool Matrix::is(std::string s)
 {
 	return (s == "Matrix" ? true : false);
 }
 
-string Matrix::xmlGetData()
+std::string Matrix::xmlGetData()
 {
-    stringstream result;
+    std::stringstream result;
     result << "<mml:matrix>\n";
     for (unsigned int i = 1; i <= getRows(); i++)
     {
@@ -623,9 +646,9 @@ string Matrix::xmlGetData()
     return result.str();
 }
 
-string Matrix::xmlGetData(int prec)
+std::string Matrix::xmlGetData(int prec)
 {
-    stringstream result;
+    std::stringstream result;
     result << "<mml:matrix>\n";
     for (unsigned int i = 1; i <= getRows(); i++)
     {
@@ -638,11 +661,11 @@ string Matrix::xmlGetData(int prec)
     return result.str();
 }
 
-void Matrix::xmlSetData(string xml)
+void Matrix::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 
-	deque<EDomElement> matRows, matCols;
+    std::deque<EDomElement> matRows, matCols;
 
 	matRows = root.children();
 	if (matRows.size() == 0)
@@ -705,10 +728,10 @@ Matrix Matrix::inverse2()
 	Matrix Inv = *this;
 	double element;
 	if (nrows != ncols)
-		cerr << "Error detected by the inversion algorithm." << endl << "Matrix must  be square."<< endl;
+        std::cerr << "Error detected by the inversion algorithm." << std::endl << "Matrix must  be square."<< std::endl;
 	else
 	{
-		for(int i = 1; i<=nrows; i++) //definindo a linha a trabalhar
+        for(int i = 1; i<=nrows; i++) //definindo a linha a trabalhar
 		{
 			element = Inv.get(i,i);
 			for(int j = 1; j<=ncols; j++)
@@ -735,7 +758,7 @@ Matrix Matrix::inverse()
 {
 	Matrix Inv;
 	if (nrows != ncols)
-		cerr << "Error detected by the inversion algorithm." << endl << "Matrix must  be square."<< endl;
+        std::cerr << "Error detected by the inversion algorithm." << std::endl << "Matrix must  be square."<< std::endl;
 	else
 	{
 		//Inversion method: standard Gauss-Jordan Elimination algorithm
@@ -762,7 +785,7 @@ Matrix Matrix::osuInverse()
 {
 	Matrix Inv;
 	if (nrows != ncols)
-		cerr << "Error detected by the inversion algorithm." << endl << "Matrix must be square."<< endl;
+        std::cerr << "Error detected by the inversion algorithm." << std::endl << "Matrix must be square."<< std::endl;
 	else
 	{
 		Inv = *this;
@@ -815,7 +838,7 @@ Matrix Matrix::transpose()
 	for (unsigned int i = 1; i <= nrows; i++)
 		for (unsigned int j = 1; j <= ncols; j++)
 			Result.set(j, i, this->get(i,j));
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -888,7 +911,7 @@ Matrix Matrix::toDiagonal()
 				Result.set(i*j, i*j, get(i,j));
 	}
 	//Aqui pode ser incluido um else que revele um erro nessa operação que pede um vetor como entrada.
-	Result.unit = unit;
+    Result.unit_ = unit_;
 	return Result;
 }
 
@@ -910,8 +933,8 @@ Matrix& Matrix::putMatrix(Matrix put, int lin, int col)
 		//printf("sobrescrevendo matrix original\n");
 	}
 
-	int newRows=max(lin-1+put.getRows(),this->getRows());
-	int newCols=max(col-1+put.getCols(),this->getCols());
+    int newRows=std::max(lin-1+put.getRows(),this->getRows());
+    int newCols=std::max(col-1+put.getCols(),this->getCols());
 
 	Matrix temp(newRows,newCols);
 	for(int i=1;i<=newRows;i++)
