@@ -46,23 +46,23 @@ OrthoUserInterface_Qt* OrthoUserInterface_Qt::OrthoInst = NULL;
 
 OrthoUserInterface_Qt* OrthoUserInterface_Qt::instance(OrthoManager* manager)
 {
-	if (OrthoInst = NULL)
-	{
-		delete OrthoInst;
-		OrthoInst = NULL;
-	}
-	if (OrthoInst == NULL)
-	{
-		OrthoInst = new OrthoUserInterface_Qt(manager);
-	}
-	return OrthoInst;
+    if (OrthoInst = NULL)
+    {
+        delete OrthoInst;
+        OrthoInst = NULL;
+    }
+    if (OrthoInst == NULL)
+    {
+        OrthoInst = new OrthoUserInterface_Qt(manager);
+    }
+    return OrthoInst;
 }
 
 OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* parent, Qt::WindowFlags fl)
-	: QWidget(parent, fl)
+    : QWidget(parent, fl)
 {
-	setupUi(this);
-	/*
+    setupUi(this);
+    /*
  actionSet_mark->setCheckable(true);
  actionMove->setCheckable(true);
  actionZoom->setCheckable(true);
@@ -82,56 +82,56 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
  QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
  QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
  QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
-		if (manager->interiorDone())
-				actionView_report->setEnabled(true);
+        if (manager->interiorDone())
+                actionView_report->setEnabled(true);
 */
-	this->manager = manager;
+    this->manager = manager;
 
-	QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
-	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
-	QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
-	QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
+    QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+    QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
+    QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
+    QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
-	QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
+    QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
         QObject::connect(orthoQualityButton, SIGNAL(clicked()), this, SLOT(onOrthoQualityButtonClicked()));
 
-	setWindowState(this->windowState());
+    setWindowState(this->windowState());
 
-	// Set flags
-	dem_load_flag = 0;
+    // Set flags
+    dem_load_flag = 0;
 
-	// Center window
-	QDesktopWidget *desktop = QApplication::desktop();
-	int Cx,Cy;
-	QRect rect = geometry();
-	Cx = (desktop->width() - rect.width())/2;
-	Cy = (desktop->height() - rect.height())/2;
-	move(Cx,Cy);
+    // Center window
+    QDesktopWidget *desktop = QApplication::desktop();
+    int Cx,Cy;
+    QRect rect = geometry();
+    Cx = (desktop->width() - rect.width())/2;
+    Cy = (desktop->height() - rect.height())/2;
+    move(Cx,Cy);
 
-	allow_close = true;
-	onShowImageChanged(checkBox->isChecked());
+    allow_close = true;
+    onShowImageChanged(checkBox->isChecked());
 
         ortho_qual_form = NULL;
 
         lastDir = ".";
 
-	qApp->processEvents();
-	init();
+    qApp->processEvents();
+    init();
 }
 
 OrthoUserInterface_Qt::~OrthoUserInterface_Qt()
 {
-	// no need to delete child widgets, Qt does it all for us
+    // no need to delete child widgets, Qt does it all for us
 }
 
 void OrthoUserInterface_Qt::languageChange()
 {
-	retranslateUi(this);
+    retranslateUi(this);
 }
 
 void OrthoUserInterface_Qt::init()
 {
-	/*
+    /*
  // Insert image into layout
  QWidget* centralwidget = new QWidget(this);
 
@@ -154,65 +154,65 @@ void OrthoUserInterface_Qt::init()
 
  calculationMode = 0;
 */
-	//this->showNormal();
-	//myImageView->fitView();
+    //this->showNormal();
+    //myImageView->fitView();
 }
 
 void OrthoUserInterface_Qt::closeEvent(QCloseEvent *e)
 {
-	if (!allow_close)
-	{
-		e->ignore();
-		return;
-	}
+    if (!allow_close)
+    {
+        e->ignore();
+        return;
+    }
 
-	LoadingScreen::instance().show();
-	qApp->processEvents();
-	//delete(myImageView);
-	manager->returnProject();
-	QWidget::closeEvent(e);
+    LoadingScreen::instance().show();
+    qApp->processEvents();
+    //delete(myImageView);
+    manager->returnProject();
+    QWidget::closeEvent(e);
 }
 
 bool OrthoUserInterface_Qt::exec()
 {
-	show();
-	LoadingScreen::instance().close();
-	return true;
+    show();
+    LoadingScreen::instance().close();
+    return true;
 }
 
 void OrthoUserInterface_Qt::onAbortClicked()
 {
-	// Abort clicked
-	manager->setFlagCancel();
-	workLabel->setText("Canceled");
-	progressBar->setValue(0);
-	enableOptions();
+    // Abort clicked
+    manager->setFlagCancel();
+    workLabel->setText("Canceled");
+    progressBar->setValue(0);
+    enableOptions();
 }
 
 void OrthoUserInterface_Qt::onLoadDemClicked()
 {
-	// File open dialog
+    // File open dialog
         QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("DEM (*.dsm);; Text file (*.txt);; All files (*.*)")) ;
-	// if no file name written, return
-	if (filename=="")
-		return;
+    // if no file name written, return
+    if (filename=="")
+        return;
 
-	// Save last dir
-	int i=filename.lastIndexOf("/");
+    // Save last dir
+    int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-	// Add file to line edit
-	lineEdit->setText(filename);
+    // Add file to line edit
+    lineEdit->setText(filename);
 
-	// Load DEM
-	dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toStdString().c_str(),comboBox2->currentIndex());
+    // Load DEM
+    dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toStdString().c_str(),comboBox2->currentIndex());
 
-	// Report error
-	if (!dem_load_flag)
-	{
-		QMessageBox::critical(this,"Error","Invalid DEM file format.");
-		return;
-	}
+    // Report error
+    if (!dem_load_flag)
+    {
+        QMessageBox::critical(this,"Error","Invalid DEM file format.");
+        return;
+    }
 }
 
 void OrthoUserInterface_Qt::onLoadOrthoClicked()
@@ -238,32 +238,33 @@ void OrthoUserInterface_Qt::onLoadOrthoClicked()
 
 void OrthoUserInterface_Qt::onOrthoClicked()
 {
-	// Ortho clicked
+    // Ortho clicked
 
-	if (!dem_load_flag)
-	{
-		QMessageBox::critical(this,"Error","Please, load a DEM first.");
-		return;
-	}
+    if (!dem_load_flag)
+    {
+        QMessageBox::critical(this,"Error","Please, load a DEM first.");
+        return;
+    }
 
-	// Save dialog
-	// File open dialog
+    // Save dialog
+    // File open dialog
         QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), lastDir, tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)")) ;
-	// if no file name written, return
-	if (filename=="")
-		return;
+    // if no file name written, return
+    if (filename=="")
+        return;
 
-	// Save last dir
-	int i=filename.lastIndexOf("/");
+    // Save last dir
+    int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-	disableOptions();
-	setAllowClose(false);
-	manager->setInterMethod(comboBox4->currentIndex());
-	manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
-	setAllowClose(true);
-	enableOptions();
-	setCurrentWork("Done");
+    disableOptions();
+    setAllowClose(false);
+    manager->setInterMethod(comboBox4->currentIndex());
+    // To do: solve unused field (comboBox3) of user interface
+    manager->orthoRectification((char *)filename.toStdString().c_str()/*,comboBox3->currentIndex()*/, comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+    setAllowClose(true);
+    enableOptions();
+    setCurrentWork("Done");
         orthoQualityButton->setEnabled(true);
 }
 
@@ -293,46 +294,46 @@ void OrthoUserInterface_Qt::onCloseOrthoQualityForm()
 
 void OrthoUserInterface_Qt::disableOptions()
 {
-	comboBox->setEnabled(false);
-	comboBox2->setEnabled(false);
-	lineEdit->setEnabled(false);
-	doubleSpinBox1->setEnabled(false);
-	doubleSpinBox2->setEnabled(false);
-	orthoButton->setEnabled(false);
-	doneButton->setEnabled(false);
+    comboBox->setEnabled(false);
+    comboBox2->setEnabled(false);
+    lineEdit->setEnabled(false);
+    doubleSpinBox1->setEnabled(false);
+    doubleSpinBox2->setEnabled(false);
+    orthoButton->setEnabled(false);
+    doneButton->setEnabled(false);
         loadButton->setEnabled(false);
 }
 
 void OrthoUserInterface_Qt::enableOptions()
 {
-	comboBox->setEnabled(true);
-	comboBox2->setEnabled(true);
-	lineEdit->setEnabled(true);
-	doubleSpinBox1->setEnabled(true);
-	doubleSpinBox2->setEnabled(true);
-	orthoButton->setEnabled(true);
-	doneButton->setEnabled(true);
+    comboBox->setEnabled(true);
+    comboBox2->setEnabled(true);
+    lineEdit->setEnabled(true);
+    doubleSpinBox1->setEnabled(true);
+    doubleSpinBox2->setEnabled(true);
+    orthoButton->setEnabled(true);
+    doneButton->setEnabled(true);
         loadButton->setEnabled(true);
 }
 
 void OrthoUserInterface_Qt::setProgress(int progress)
 {
-	if (progress < 0) progress = 0;
-	if (progress > 100) progress = 100;
+    if (progress < 0) progress = 0;
+    if (progress > 100) progress = 100;
 
-	progressBar->setValue(progress);
-	qApp->processEvents();
+    progressBar->setValue(progress);
+    qApp->processEvents();
 }
 
 void OrthoUserInterface_Qt::setCurrentWork(std::string msg)
 {
-	QString qmsg = QString::fromStdString(msg);
-	workLabel->setText(qmsg);
+    QString qmsg = QString::fromStdString(msg);
+    workLabel->setText(qmsg);
 }
 
 void OrthoUserInterface_Qt::onShowImageChanged(int opt)
 {
-	manager->setShowImage(opt);
+    manager->setShowImage(opt);
 }
 
 /*
@@ -341,60 +342,60 @@ void OrthoUserInterface_Qt::onShowImageChanged(int opt)
 #include <qdebug.h>
 void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 {
-	int levels=256;
+    int levels=256;
 
-	QImage img;
-	img.load(filename);
+    QImage img;
+    img.load(filename);
 
-	int step = int(1.0/sample);
-	int width = int(img.width()*sample);
-	int height = int(img.height()*sample);
-	int pixel;
+    int step = int(1.0/sample);
+    int width = int(img.width()*sample);
+    int height = int(img.height()*sample);
+    int pixel;
 
         // Resize Matrix
         I.resize(height, width);
 
-	progressBar->setValue(0);
-	for (unsigned int i=1; i<=height; i++)
-	{
-		for (unsigned int j=1; j<=width; j++)
-		{
-			pixel = img.pixel((j-1)*step,(i-1)*step);
-			//	  		pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140; // Color to gray 8-bit
-			//                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3; // Simple color to gray 8-bit
-			//                        pixel = pixel & 0xFF; // Gray 24-bit to 8-bit
-			//                        I->set(i, j, pixel/double(levels-1));
+    progressBar->setValue(0);
+    for (int i=1; i<=height; i++)
+    {
+        for (int j=1; j<=width; j++)
+        {
+            pixel = img.pixel((j-1)*step,(i-1)*step);
+            //	  		pixel = ((pixel >> 16) & 0xFF)*0.2989 + ((pixel >> 8) & 0xFF)*0.5870 + (pixel & 0xFF)*0.1140; // Color to gray 8-bit
+            //                        pixel = (((pixel >> 16) & 0xFF) + ((pixel >> 8) & 0xFF) + (pixel & 0xFF)) / 3; // Simple color to gray 8-bit
+            //                        pixel = pixel & 0xFF; // Gray 24-bit to 8-bit
+            //                        I->set(i, j, pixel/double(levels-1));
                         I.set(i, j, double(pixel&0xFFFFFF)/double(0xFFFFFF)); // Color 24-bit (RR GG BB) to 0-1
-		}
-		progressBar->setValue((100*i)/height);
-	}
+        }
+        progressBar->setValue((100*i)/height);
+    }
 }
 
 int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 {
-	int levels = 256;
+    int levels = 256;
 
-	QImage img(I->getCols(), I->getRows(), QImage::Format_RGB32); // Qt4
+    QImage img(I->getCols(), I->getRows(), QImage::Format_RGB32); // Qt4
 
-	int pixel;
-	for (unsigned int i=1; i<=img.height(); i++)
-	{
-		for (unsigned int j=1; j<=img.width(); j++)
-		{
-			//                        pixel = round(I->get(i,j)*double(levels-1));
-			//                        pixel = (pixel << 16) + (pixel << 8) + pixel; // Gray to color 24-bit
-			pixel = int(I->get(i,j)*double(0xFFFFFF));
+    int pixel;
+    for (int i=1; i<=img.height(); i++)
+    {
+        for (int j=1; j<=img.width(); j++)
+        {
+            //                        pixel = round(I->get(i,j)*double(levels-1));
+            //                        pixel = (pixel << 16) + (pixel << 8) + pixel; // Gray to color 24-bit
+            pixel = int(I->get(i,j)*double(0xFFFFFF));
 
-			img.setPixel(j-1, i-1, pixel);
-		}
-	}
+            img.setPixel(j-1, i-1, pixel);
+        }
+    }
 
     // Expanção do XML
     manager->addOrthoToXML2(std::string(filename));
 
-	img.save(filename,"BMP");
+    img.save(filename,"BMP");
 
-	return 1;
+    return 1;
 }
 
 void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale)
@@ -419,8 +420,8 @@ void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, dou
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg)
 {
-	QMessageBox::critical(this, "Error",msg);
-	doneButton->click();
+    QMessageBox::critical(this, "Error",msg);
+    doneButton->click();
 }
 
 /*******************************************************************************************************
@@ -645,7 +646,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromSP(char *filename)
 {
     // Use Dem feature in order to get points
     DemFeatures sp_points;
-    if (!sp_points.loadFeatures(filename, 0, false))
+    if (!sp_points.loadFeatures(filename/*, 0*/, false))
         return 0;
 
     // Clear table
@@ -658,7 +659,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromSP(char *filename)
     {
         DemFeature* df = sp_points.getFeatureLink(i+1);
 
-        for (int j = 0; j < df->points.size(); j++)
+        for (unsigned int j = 0; j < df->points.size(); j++)
         {
             // Add new table items
             tableWidget->insertRow(tab_pos);

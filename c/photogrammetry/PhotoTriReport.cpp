@@ -158,7 +158,7 @@ int PhotoTriReport::createReport(char *filename)
 
     Matrix mat_aux = calculateXYZerror();
 
-    for (int i=1; i<=mat_aux.getRows(); i++)
+    for (unsigned int i=1; i<=mat_aux.getRows(); i++)
         arq << int(mat_aux.get(i,4)) << std::setw(22) << Conversion::doubleToString(mat_aux.get(i,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,3),5) << "\n";
 
     mat_aux = calculateAvgStd(mat_aux);
@@ -170,7 +170,7 @@ int PhotoTriReport::createReport(char *filename)
     arq << "The coordinates of object points:\n";
     arq << "Image ID " << std::setw(13) << "X " << std::setw(15) << "Y" << std::setw(15) << "Z" << std::setw(30) << "Measured in image(s)\n";
 
-    for (int i=0; i<project->allPoints().size(); i++)
+    for (unsigned int i=0; i<project->allPoints().size(); i++)
     {
         pnt = project->allPoints().at(i);
         arq << pnt->getId() << std::setw(25) << Conversion::doubleToString(pnt->getObjectCoordinate().getX(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getY(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getZ(),5) << std::setw(10);
@@ -189,7 +189,7 @@ int PhotoTriReport::createReport(char *filename)
 
     mat_aux = calculatePixelerror();
 
-    for (int i=1; i<=mat_aux.getRows(); i++)
+    for (unsigned int i=1; i<=mat_aux.getRows(); i++)
         arq << int(mat_aux.get(i,3)) << std::setw(13) << int(mat_aux.get(i,4)) << std::setw(20) << Conversion::doubleToString(mat_aux.get(i,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(i,2),5) << "\n";
 
     mat_aux = calculateAvgStd(mat_aux);
@@ -221,7 +221,7 @@ Matrix PhotoTriReport::calculateXYZerror()
     Point *pnt;
     int count;
 
-    for (int i=0; i<project->allPoints().size(); i++)
+    for (unsigned int i=0; i<project->allPoints().size(); i++)
     {
         pnt = project->allPoints().at(i);
 
@@ -294,7 +294,7 @@ Matrix PhotoTriReport::calculatePixelerror()
     ImageSpaceCoordinate isc;
     int p=1;
 
-    for (int i=0; i<project->allPoints().size(); i++)
+    for (unsigned int i=0; i<project->allPoints().size(); i++)
     {
         pnt = project->allPoints().at(i);
 

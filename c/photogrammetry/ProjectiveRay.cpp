@@ -520,9 +520,10 @@ PositionMatrix ProjectiveRay::applyDistortions(const PositionMatrix& myAnalogPos
         }
 }
 
+// Todo: Solve urgently: The method must return the corrected coordinates.
 DetectorSpaceCoordinate ProjectiveRay::removeDistortions(double xi, double eta)
 {
-        return DetectorSpaceCoordinate();
+        return DetectorSpaceCoordinate(0,"",xi,eta);
 }
 
 DetectorSpaceCoordinate ProjectiveRay::removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate)

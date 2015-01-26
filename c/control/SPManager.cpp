@@ -47,21 +47,21 @@ namespace efoto {
 SPManager::SPManager() :
     prL(0), prR(0)
 {
-	started = false;
-	status = false;
+    started = false;
+    status = false;
 }
 
 SPManager::SPManager(EFotoManager* manager, std::deque<Image*>images, std::deque<ExteriorOrientation*> eos) :
     prL(0), prR(0)
 {
-	this->manager = manager;
-	started = false;
-	status = false;
-	listAllImages = images;
-	listEOs = eos;
-	spFeatures.createClassesFromSp165();
-	leftKey = 1;
-	rightKey = 2;
+    this->manager = manager;
+    started = false;
+    status = false;
+    listAllImages = images;
+    listEOs = eos;
+    spFeatures.createClassesFromSp165();
+    leftKey = 1;
+    rightKey = 2;
         setListPoint();
 }
 
@@ -75,12 +75,12 @@ SPManager::~SPManager()
 
 void SPManager::setInterface(SPUserInterface* newInterface)
 {
-	myInterface = newInterface;
+    myInterface = newInterface;
 }
 
 SPUserInterface* SPManager::getInterface()
 {
-	return myInterface;
+    return myInterface;
 }
 
 // Other Methods
@@ -88,15 +88,15 @@ SPUserInterface* SPManager::getInterface()
 
 bool SPManager::exec()
 {
-	if (manager != NULL)
-	{
-		if (manager->getInterfaceType().compare("Qt") == 0)
-		{
-			myInterface = SPUserInterface_Qt::instance(this);
-		}
+    if (manager != NULL)
+    {
+        if (manager->getInterfaceType().compare("Qt") == 0)
+        {
+            myInterface = SPUserInterface_Qt::instance(this);
+        }
 
-		started = true;
-		if (myInterface != NULL)
+        started = true;
+        if (myInterface != NULL)
                 {
                     // Test if theere are at least two images
                     if (listAllImages.size() < 2)
@@ -118,14 +118,14 @@ bool SPManager::exec()
                     }
 
                     myInterface->centerImages(getCentralPoint(), 1.0);
-		}
-	}
-	return status;
+        }
+    }
+    return status;
 }
 
 void SPManager::returnProject()
 {
-	manager->reloadProject();
+    manager->reloadProject();
 }
 
 void SPManager::setListPoint()
@@ -157,12 +157,12 @@ double SPManager::getTerrainMeanAltitude()
 
 int SPManager::loadFeatures(char *filename, bool append)
 {
-        return spFeatures.loadFeatures(filename,0,append);
+        return spFeatures.loadFeatures(filename/*,0*/,append);
 }
 
 void SPManager::saveFeatures(char *filename)
 {
-        spFeatures.saveFeatures(filename,0,false);
+        spFeatures.saveFeatures(filename/*,0,false*/);
     // Expanção do XML
     addGeometryToXML(std::string(filename));
 }
@@ -174,30 +174,30 @@ void SPManager::exportFeatures(char *filename)
 
 void SPManager::addFeature(std::string name, int feattype, int featclass)
 {
-	int fclass = spFeatures.convClassFromSp165(feattype, featclass);
+    int fclass = spFeatures.convClassFromSp165(feattype, featclass);
 
-	spFeatures.addNewFeature(name, "", fclass, feattype, 1);
+    spFeatures.addNewFeature(name, "", fclass, feattype, 1);
 
-	setSelected(spFeatures.getNumFeatures(),-1);
+    setSelected(spFeatures.getNumFeatures(),-1);
 }
 
 int SPManager::removeFeature()
 {
-	int sel_feat = spFeatures.selectedFeature();
+    int sel_feat = spFeatures.selectedFeature();
 
-	if (sel_feat == -1)
-		return 0;
+    if (sel_feat == -1)
+        return 0;
 
-	spFeatures.deleteFeature(sel_feat);
-	spFeatures.setSelectedFeature(-1);
+    spFeatures.deleteFeature(sel_feat);
+    spFeatures.setSelectedFeature(-1);
 
-	return 1;
+    return 1;
 }
 
 void SPManager::removeAllFeatures()
 {
-	spFeatures.deleteAllFeatures();
-	spFeatures.setSelectedFeature(-1);
+    spFeatures.deleteAllFeatures();
+    spFeatures.setSelectedFeature(-1);
 }
 
 bool SPManager::removePoint()
@@ -213,7 +213,7 @@ bool SPManager::removePoint()
         return false;
 
     spFeatures.deletePoint(sel_feat, sel_pt);
-    if (sel_pt > spFeatures.getFeature(spFeatures.selectedFeature()).points.size() && sel_pt != 1)
+    if (unsigned(sel_pt) > spFeatures.getFeature(spFeatures.selectedFeature()).points.size() && sel_pt != 1)
         spFeatures.setSelectedPoint(sel_pt - 1);
     else if (sel_pt == 1 && spFeatures.getFeature(spFeatures.selectedFeature()).points.size() == 0)
         spFeatures.setSelectedPoint(-1);
@@ -333,96 +333,96 @@ std::string SPManager::getFullImagePath(int imagekey)
  */
 double SPManager::fixAngle(double angle)
 {
-	bool negative = angle < 0.0;
+    bool negative = angle < 0.0;
 
-	// Positive signal
-	angle = fabs(angle);
+    // Positive signal
+    angle = fabs(angle);
 
-	// Bring angle to the first lap
-	if (angle > 2*M_PI)
-	{
-		int laps = floor(angle/(2*M_PI));
-		angle = angle - laps*(2*M_PI);
-	}
+    // Bring angle to the first lap
+    if (angle > 2*M_PI)
+    {
+        int laps = floor(angle/(2*M_PI));
+        angle = angle - laps*(2*M_PI);
+    }
 
-	if (negative)
-		angle = 2*M_PI - angle;
+    if (negative)
+        angle = 2*M_PI - angle;
 
-	return angle;
+    return angle;
 }
 
 double SPManager::getAngleBetweenImages(double X1, double Y1, double X2, double Y2)
 {
-	double delta_X = X2 - X1;
-	double delta_Y = Y2 - Y1;
+    double delta_X = X2 - X1;
+    double delta_Y = Y2 - Y1;
 
-		if (fabs(delta_X - 0.0) < 0.0000000000001)
-	{
-		if (delta_Y > 0.0)
-			return M_PI/2.0;
-		else
-			return 3*M_PI/2.0;
-	}
+        if (fabs(delta_X - 0.0) < 0.0000000000001)
+    {
+        if (delta_Y > 0.0)
+            return M_PI/2.0;
+        else
+            return 3*M_PI/2.0;
+    }
 
-		return fixAngle(atan(delta_Y/delta_X));
+        return fixAngle(atan(delta_Y/delta_X));
 }
 
 bool SPManager::checkAnglesAlligned(double angle1, double angle2, double tolerance)
 {
-	angle1 = fixAngle(angle1);
-	angle2 = fixAngle(angle2);
+    angle1 = fixAngle(angle1);
+    angle2 = fixAngle(angle2);
 
-	double distance = fabs(angle1 - angle2);
+    double distance = fabs(angle1 - angle2);
 
-	if (distance > M_PI)
-		distance = 2*M_PI - distance;
+    if (distance > M_PI)
+        distance = 2*M_PI - distance;
 
-	return (distance < tolerance || fabs(M_PI - distance) < tolerance);
+    return (distance < tolerance || fabs(M_PI - distance) < tolerance);
 }
 
 int SPManager::getPairs()
 {
-	//
-	// List Pairs description (0 - N-1):
-	//
-	// num = left + no_imgs*right // Encoding
-	// left = num % no_imgs // Decoding
-	// right =  num / no_imgs // Decoding
-	//  Image ID ranges from 1-N
+    //
+    // List Pairs description (0 - N-1):
+    //
+    // num = left + no_imgs*right // Encoding
+    // left = num % no_imgs // Decoding
+    // right =  num / no_imgs // Decoding
+    //  Image ID ranges from 1-N
 
-	// Clear list
-	listPairs.clear();
+    // Clear list
+    listPairs.clear();
 
-	Image *img;
+    Image *img;
     double X1, Y1, X2, Y2, R, dist, overlap;
     int img_code, id1, id2;
     size_t imagesSize = listAllImages.size();
     Matrix Xa;
 
     // Calculate Images Radius, using the first image as reference
-	img = listAllImages.at(0);
+    img = listAllImages.at(0);
     // New R calcul
     R = img->getWidth() * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
 
     for (size_t i=0; i<imagesSize; i++)
-	{
+    {
        // Get reference image data
-		img = listAllImages.at(i);
-		Xa = img->getEO()->getXa();
-		X1 = Xa.get(1,1);
-		Y1 = Xa.get(2,1);
+        img = listAllImages.at(i);
+        Xa = img->getEO()->getXa();
+        X1 = Xa.get(1,1);
+        Y1 = Xa.get(2,1);
 
-		// Calculate the shortest image center
+        // Calculate the shortest image center
         for (size_t j=i+1; j<imagesSize; j++)
-		{
+        {
            // Get test image data
-			img = listAllImages.at(j);
-			Xa = img->getEO()->getXa();
-			X2 = Xa.get(1,1);
-			Y2 = Xa.get(2,1);
+            img = listAllImages.at(j);
+            Xa = img->getEO()->getXa();
+            X2 = Xa.get(1,1);
+            Y2 = Xa.get(2,1);
 
-			// Calculate dist
-			dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+            // Calculate dist
+            dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
             // Check images overlapping
             overlap = 100*(R - dist)/(R);
@@ -440,10 +440,10 @@ int SPManager::getPairs()
                img_code = (id1-1) + listAllImages.size()*(id2-1);
                listPairs.push_back(img_code);
            }
-		}
-	}
+        }
+    }
 
-	addPairsToInterface();
+    addPairsToInterface();
 
    return (listPairs.size() > 0);
 }
@@ -481,49 +481,49 @@ bool SPManager::existPair(int &id1, int &id2)
 
 void SPManager::addPairsToInterface()
 {
-	// Add pairs to the interface
-	int left_id, right_id;
+    // Add pairs to the interface
+    int left_id, right_id;
     std::string str_left, str_right;
     std::stringstream txt;
 
-	SPUserInterface_Qt *spui = (SPUserInterface_Qt *)myInterface;
+    SPUserInterface_Qt *spui = (SPUserInterface_Qt *)myInterface;
 
     for (size_t i=0; i<listPairs.size(); i++)
-	{
-		getImagesId(i,left_id,right_id);
+    {
+        getImagesId(i,left_id,right_id);
         str_left = listAllImages.at(left_id-1)->getImageId();
-		str_right = listAllImages.at(right_id-1)->getImageId();
+        str_right = listAllImages.at(right_id-1)->getImageId();
         txt.str(""); // Clear stream
         txt << "Images " << str_left << " and " << str_right;
         spui->addImagePair((char *)txt.str().c_str());
 
-	}
+    }
 }
 
 void SPManager::addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
 {
-	if (fid < 1 || fid > spFeatures.getNumFeatures())
-		return;
+    if (fid < 1 || fid > spFeatures.getNumFeatures())
+        return;
 
-	if (pid < 1 || pid > spFeatures.getFeature(fid).points.size()+1)
-		return;
+    if (pid < 1 || unsigned(pid) > spFeatures.getFeature(fid).points.size()+1)
+        return;
 
-	spFeatures.addNewPoint(fid, pid, X, Y, Z);
-	spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
-	spFeatures.setSelectedFeature(fid);
-	spFeatures.setSelectedPoint(pid);
+    spFeatures.addNewPoint(fid, pid, X, Y, Z);
+    spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
+    spFeatures.setSelectedFeature(fid);
+    spFeatures.setSelectedPoint(pid);
 }
 
 void SPManager::updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z)
 {
-	if (fid < 1 || fid > spFeatures.getNumFeatures())
-		return;
+    if (fid < 1 || fid > spFeatures.getNumFeatures())
+        return;
 
-	if (pid < 1 || pid > spFeatures.getFeature(fid).points.size())
-		return;
+    if (pid < 1 || unsigned(pid) > spFeatures.getFeature(fid).points.size())
+        return;
 
-	spFeatures.updatePoint(fid, pid, X, Y, Z);
-	spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
+    spFeatures.updatePoint(fid, pid, X, Y, Z);
+    spFeatures.update2DPoint(fid, pid, lx, ly, rx, ry);
 }
 
 void SPManager::setSelectedXYZ(double X, double Y, double Z)
@@ -658,25 +658,25 @@ ImageSpaceCoordinate SPManager::getRightPoint(ObjectSpaceCoordinate coord)
 // Internal function. Pos from 0 - N-1.
 void SPManager::getImagesId(int pos, int &left, int &right)
 {
-	// Check pos
-	left = -1;
-	right = -1;
-	if (pos < 0 || pos > listPairs.size()-1)
-		return;
+    // Check pos
+    left = -1;
+    right = -1;
+    if (pos < 0 || unsigned(pos) > listPairs.size()-1)
+        return;
 
-	// Decode
-	int no_imgs = listAllImages.size();
-	left = 1 + (listPairs.at(pos) % no_imgs);
-	right = 1 + (listPairs.at(pos) / no_imgs);
+    // Decode
+    int no_imgs = listAllImages.size();
+    left = 1 + (listPairs.at(pos) % no_imgs);
+    right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
 void SPManager::changePair(int pos, int &lk, int &rk)
 {
-	getImagesId(pos, leftKey, rightKey);
-	lk = leftKey;
-	rk = rightKey;
+    getImagesId(pos, leftKey, rightKey);
+    lk = leftKey;
+    rk = rightKey;
 
-	updateProjections();
+    updateProjections();
 }
 
 void SPManager::addGeometryToXML(std::string filename)
