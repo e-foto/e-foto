@@ -185,7 +185,7 @@ void ImageMatching::fillMap(MatchingPointsList * mpoints)
         MatchingPoints *mp;
         int i, j, lx, ly;
 
-        for (int f=1; f<=mpoints->size(); f++)
+        for (unsigned int f=1; f<=mpoints->size(); f++)
         {
                 mp = mpoints->get(f);
 

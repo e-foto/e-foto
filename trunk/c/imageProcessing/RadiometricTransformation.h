@@ -1,5 +1,5 @@
 /*******************************************************************************
-						 RadiometricTransformation.h
+                         RadiometricTransformation.h
 *******************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
@@ -41,13 +41,15 @@ class RadiometricTransformation
 {
 
 public:
-	int imadjust(Matrix *m, double in_min=0.0, double in_max=0.0, double out_min=0.0, double out_max=1.0);
-	int histmatching(Matrix *m1, Matrix *m2, int levels=256);
-	Matrix& imhist(Matrix *m, int levels=256);
-	Matrix& imcdf(Matrix *m, int levels=256);
-	int histeq(Matrix *m, int levels=256);
-	int im2double(Matrix *m, int levels=256);
+    int imadjust(Matrix *m, double in_min=0.0, double in_max=0.0, double out_min=0.0, double out_max=1.0);
+    int histmatching(Matrix *m1, Matrix *m2, int levels=256);
+    Matrix& imhist(Matrix *m, int levels=256);
+    Matrix& imcdf(Matrix *m, int levels=256);
+    int histeq(Matrix *m, int levels=256);
 
+    /* Method into disuse:
+    int im2double(Matrix *m, int levels=256);
+    */
 private:
 
 
