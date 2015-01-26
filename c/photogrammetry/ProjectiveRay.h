@@ -87,6 +87,7 @@ public:
         DetectorSpaceCoordinate applyDistortions(double xi, double eta);
         DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
         PositionMatrix applyDistortions(const PositionMatrix& myAnalogPositions);
+        // Todo: Solve urgently: The method must return the corrected coordinates
         DetectorSpaceCoordinate removeDistortions(double xi, double eta);
         DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
         PositionMatrix removeDistortions(const PositionMatrix& myAnalogPositions);

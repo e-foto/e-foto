@@ -1,7 +1,7 @@
 #ifndef MATCHINGPOINTSGRID_H
 #define MATCHINGPOINTSGRID_H
 /******************************************************************************
-						   MatchingPointsGrid.h
+                           MatchingPointsGrid.h
 *******************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
@@ -54,20 +54,20 @@ public:
 class MatchingPointsGrid
 {
 public:
-	MatchingPointsGrid(MatchingPointsList *, double, double);
-	void createNewGrid(double, double);
-	int getNearestPoint(double, double);
-	void getPointsClose(double, double, double);
+    MatchingPointsGrid(MatchingPointsList *, double, double);
+    void createNewGrid(double, double);
+    int getNearestPoint(double, double);
+    void getPointsClose(double, double, double);
     std::vector <int> selected_points;
 
 private:
-	int width, height;
-	double Xi, Xf, Yi, Yf;
-	double res_x, res_y;
+    unsigned int width, height;
+    double Xi, Xf, Yi, Yf;
+    double res_x, res_y;
     std::vector <MPGCell> gridMap;
-	int no_inside_points, no_outside_points;
-	MatchingPointsList *point_list;
-	void createStructure();
+    int no_inside_points, no_outside_points;
+    MatchingPointsList *point_list;
+    void createStructure();
 
 };
 
