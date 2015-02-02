@@ -2446,7 +2446,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 		for (int i=0; i<imagesList.length();i++)
 		{
-			EDomElement newImageXML=imageTxtToXml(imagesList.at(i),manager->getFreeImageId(),i+1);
+            EDomElement newImageXML=imageTxtToXml(/*imagesList.at(i),manager->getFreeImageId(),i+1*/);
 			if ( newImageXML.hasTagName("imageId") )
 			{
 				manager->addComponent(newImageXML.getContent().data(),"images");
@@ -2460,7 +2460,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	/** This function convert image data from a *.txt line in a children image XML valid
 *
 */
-	EDomElement ProjectUserInterface_Qt::imageTxtToXml(QString image, int key, int line, int sensorKey, int flightKey)
+    EDomElement ProjectUserInterface_Qt::imageTxtToXml(/*QString image, int key, int line, int sensorKey, int flightKey*/)
 	{
         std::stringstream aux;
 
@@ -2539,20 +2539,20 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 		for (int i=0; i<pointsList.length() ;i++)
 		{
 			/*
-   loading.setFormat(tr("Coordinate %v/%m : %p%"));
-   loading.setValue(i+1);
-   QStringList digitalPoint=coordinates.split("\t");
-   string imagekey=digitalPoint.at(0).toStdString().c_str();
-   string pointkey=digitalPoint.at(1).toStdString().c_str();
-   string colValue=digitalPoint.at(2).toStdString().c_str();
-   string linValue=digitalPoint.at(3).toStdString().c_str();
+            loading.setFormat(tr("Coordinate %v/%m : %p%"));
+            loading.setValue(i+1);
+            QStringList digitalPoint=coordinates.split("\t");
+            string imagekey=digitalPoint.at(0).toStdString().c_str();
+            string pointkey=digitalPoint.at(1).toStdString().c_str();
+            string colValue=digitalPoint.at(2).toStdString().c_str();
+            string linValue=digitalPoint.at(3).toStdString().c_str();
 
-   if (pointkey=imagesEdom.at(i))
-   stringstream aux;
-   aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
-   aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
-   aux << "</imageCoordinates>";
-*/
+            if (pointkey=imagesEdom.at(i))
+                stringstream aux;
+            aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
+            aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
+            aux << "</imageCoordinates>";
+            */
 			if(!insertDigitalCoordinates(pointsList.at(i)))//,imagesEdom.at()))
 				QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
 		}
@@ -2770,7 +2770,7 @@ bool ProjectUserInterface_Qt::availableOE()
 		{
 			loading.setFormat(tr("%v/%m : %p%"));
 			loading.setValue(i+1);
-			newPointXML+=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i,i+1);
+            newPointXML+=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i/*,i+1*/);
 			/*if ( newPointXML.hasTagName("pointId") )
   {
    manager->addComponent(newPointXML.getContent().data(),"points");
@@ -2784,9 +2784,8 @@ bool ProjectUserInterface_Qt::availableOE()
 
 	}
 
-	/** This function convert a point data from a *.txt line in a children point XML valid
-*/
-    std::string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key, int line, std::string typePoint)
+	/** This function convert a point data from a *.txt line in a children point XML valid*/
+    std::string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key/*, int line*/, std::string typePoint)
 	{
 		bool ok;
         std::stringstream aux;
@@ -2796,14 +2795,14 @@ bool ProjectUserInterface_Qt::availableOE()
 
 		gcpIdField = fields.at(0).toStdString().c_str();
 		/*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
+        typeField = point.split("\t").at(1).toStdString().c_str();
+            if(typeField == "Tie")
+                typePoint="photogrammetric";
+            else if (typeField== "Control")
+                typePoint="control";
+            else if (typeField== "Check")
+                typePoint="verification";
+        */
 		eField = fields.at(1).toStdString();
 		nField = fields.at(2).toStdString();
 		hField = fields.at(3).toStdString();
@@ -2816,19 +2815,19 @@ bool ProjectUserInterface_Qt::availableOE()
 		aux << "<description>" << "Put point description here" << "</description>\n";
 		aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
 		aux << "<gml:pos>" << eField << " " << nField << " " << hField << "</gml:pos>\n";
-		/*	aux << "<sigma>\n";
-  aux << "<mml:matrix>\n";
-  aux << "<mml:matrixrow>\n";
-  aux << "<mml:cn>" << dEField << "</mml:cn>\n";
-  aux << "</mml:matrixrow>\n";
-  aux << "<mml:matrixrow>\n";
-  aux << "<mml:cn>" << dNField << "</mml:cn>\n";
-  aux << "</mml:matrixrow>\n";
-  aux << "<mml:matrixrow>\n";
-  aux << "<mml:cn>" << dHField << "</mml:cn>\n";
-  aux << "</mml:matrixrow>\n";
-  aux << "</mml:matrix>\n";
-  aux << "</sigma>\n";*/
+        /*aux << "<sigma>\n";
+        aux << "<mml:matrix>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dEField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dNField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "<mml:matrixrow>\n";
+        aux << "<mml:cn>" << dHField << "</mml:cn>\n";
+        aux << "</mml:matrixrow>\n";
+        aux << "</mml:matrix>\n";
+        aux << "</sigma>\n";*/
 		aux << "</spatialCoordinates>\n";
 		aux << "<imagesMeasurements>\n";
 		for(int i=0;i<numImagesInPoint;i++)

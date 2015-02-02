@@ -86,6 +86,7 @@ std::string PointsForm::getvalues()
 
 void PointsForm ::setReadOnly(bool state)
 {
+    pointsTable->setEnabled(state);
     // PointsForm is only to read in all times.
 }
 

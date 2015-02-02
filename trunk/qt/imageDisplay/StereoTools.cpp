@@ -30,6 +30,7 @@ namespace efoto {
 
 void StereoTool::paintEvent(const QPaintEvent& event)
 {
+    event.isAccepted();
     if (_display->painting())
     {
         QPainter painter(_display);
@@ -90,11 +91,13 @@ void StereoTool::resizeEvent(const QResizeEvent &event)
 
 void StereoTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     _display->setCursor(_currentCursor, _display->isStereoCursor());
 }
 
 void StereoTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     _display->setCursor(SymbolsResource::getBackGround(QColor(0,0,0,0)), _display->isStereoCursor());
     _display->updateAll();
 }
@@ -219,6 +222,7 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
 
 void StereoTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void StereoTool::wheelEvent(const QWheelEvent & event)
@@ -296,10 +300,10 @@ void StereoTool::setCursor(QImage cursor, bool stereo)
     _currentCursor = cursor;
     _display->setCursor(_currentCursor, stereo);
 }
-
+/*
 void StereoTool::actualizePosLabel(SingleDisplay* display, bool force)
 {
-    /*
+
     if (force || display->visibleRegion().contains(display->mapFromGlobal(QCursor::pos())))
     {
         // Actualize X,Y coordinates
@@ -328,9 +332,9 @@ void StereoTool::actualizePosLabel(SingleDisplay* display, bool force)
         // Reset label
         _posLabel->setText(info);
     }
-    */
-}
 
+}
+*/
 
 
 ZoomStereoTool::ZoomStereoTool(StereoDisplay* display) :
@@ -440,6 +444,7 @@ void ZoomStereoTool::mouseMoved(const QMouseEvent & event)
 
 void ZoomStereoTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
     _display->fitView();
     //actualizeScaleSpin(_display->getCurrentScene()->getScale());
 }
@@ -570,6 +575,7 @@ void MarkStereoTool::insertMark(QPointF lPos, QPointF rPos, int key, QString lab
     _display->getCurrentScene()->getRightScene()->geometry()->insertPoint(rPos, key, label, marker == NULL ? &mark : marker);
 }
 
+/*
 void MarkStereoTool::editMark(int key, QPointF lPos, QPointF rPos, Marker *marker)
 {
 }
@@ -577,6 +583,7 @@ void MarkStereoTool::editMark(int key, QPointF lPos, QPointF rPos, Marker *marke
 void MarkStereoTool::editMark(int key, QPointF lPos, QPointF rPos, QString label, Marker *marker)
 {
 }
+*/
 
 void MarkStereoTool::deleteMark(int key)
 {
@@ -734,6 +741,7 @@ void NearStereoTool::setNearCursor(QCursor cursor)
 
 void NearStereoTool::paintEvent(const QPaintEvent &event)
 {
+    event.isAccepted();
     QPixmap ico = QPixmap::fromImage(_display->getCursor());
     QRect reg(QPoint(), ico.size());
     if (_leftNear->painting())
@@ -758,18 +766,22 @@ void NearStereoTool::paintEvent(const QPaintEvent &event)
 
 void NearStereoTool::resizeEvent(const QResizeEvent &event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::moveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     /*
     if (_near->positionIsVisible(_display->getLastMousePosition()) || _cursorIsVisible)
     {
@@ -782,22 +794,27 @@ void NearStereoTool::moveEvent(const QHoverEvent& event)
 
 void NearStereoTool::mousePressed(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::mouseReleased(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::mouseMoved(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearStereoTool::wheelEvent(const QWheelEvent & event)
 {
+    event.isAccepted();
 }
 
 
@@ -858,22 +875,27 @@ void OverStereoTool::setOverVisible(bool status)
 
 void OverStereoTool::paintEvent(const QPaintEvent &event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::resizeEvent(const QResizeEvent &event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::moveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     _leftOver->updateMousePosition();
     _rightOver->updateMousePosition();
     /*
@@ -894,22 +916,27 @@ void OverStereoTool::moveEvent(const QHoverEvent& event)
 
 void OverStereoTool::mousePressed(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::mouseReleased(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::mouseMoved(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void OverStereoTool::wheelEvent(const QWheelEvent & event)
 {
+    event.isAccepted();
 }
 
 
