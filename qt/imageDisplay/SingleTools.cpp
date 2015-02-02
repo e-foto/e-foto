@@ -15,6 +15,7 @@ namespace efoto {
 
 void SingleTool::paintEvent(const QPaintEvent& event)
 {
+    event.isAccepted();
     if (_display->painting())
     {
         QPainter painter(_display);
@@ -66,17 +67,20 @@ void SingleTool::paintEvent(const QPaintEvent& event)
     }
 }
 
-void SingleTool::resizeEvent(const QResizeEvent &event)
+void SingleTool::resizeEvent(const QResizeEvent& event)
 {
+    event.isAccepted();
     actualizeScaleSpin(_display->getCurrentScene()->getScale());
 }
 
 void SingleTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void SingleTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void SingleTool::moveEvent(const QHoverEvent& event)
@@ -147,7 +151,6 @@ void SingleTool::mouseReleased(const QMouseEvent &event)
         SingleScene* scene = (SingleScene*)_display->getCurrentScene();
         scene->setDetailedPoint(_display->getPosition(event.pos()));
     }
-
     _display->update();
 }
 
@@ -186,10 +189,12 @@ void SingleTool::mouseMoved(const QMouseEvent &event)
 
 void SingleTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void SingleTool::wheelEvent(const QWheelEvent & event)
 {
+    event.isAccepted();
 }
 
 void SingleTool::autoMove()
@@ -435,6 +440,7 @@ void ZoomTool::mouseMoved(const QMouseEvent & event)
 
 void ZoomTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
     _display->fitView();
     actualizeScaleSpin(_display->getCurrentScene()->getScale());
 
@@ -744,22 +750,27 @@ void OverTool::setOverVisible(bool status)
 
 void OverTool::paintEvent(const QPaintEvent& event)
 {
+    event.isAccepted();
 }
 
 void OverTool::resizeEvent(const QResizeEvent &event)
 {
+    event.isAccepted();
 }
 
 void OverTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void OverTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
 }
 
 void OverTool::moveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     _over->updateMousePosition();
     if (_display->positionIsVisible(_over->getLastMousePosition()))
     {
@@ -797,6 +808,7 @@ void OverTool::mousePressed(const QMouseEvent & event)
 
 void OverTool::mouseReleased(const QMouseEvent & event)
 {
+    event.isAccepted();
     _onMove = false;
     _over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
 }
@@ -817,6 +829,7 @@ void OverTool::mouseMoved(const QMouseEvent & event)
 
 void OverTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void OverTool::wheelEvent(const QWheelEvent & event)
@@ -898,6 +911,7 @@ void NearTool::setNearCursor(QCursor cursor)
 
 void NearTool::paintEvent(const QPaintEvent& event)
 {
+    event.isAccepted();
     //if (_near->painting())
     //{
     //QPainter painter(_near);
@@ -932,10 +946,12 @@ void NearTool::paintEvent(const QPaintEvent& event)
 
 void NearTool::resizeEvent(const QResizeEvent &event)
 {
+    event.isAccepted();
 }
 
 void NearTool::enterEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     if (_display->visibleRegion().contains(_display->mapFromGlobal(QCursor::pos())))// && !_near->visibleRegion().contains(_near->mapFromGlobal(QCursor::pos())))
     {
         _cursorIsVisible = true;
@@ -947,6 +963,7 @@ void NearTool::enterEvent(const QHoverEvent& event)
 
 void NearTool::leaveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     if (!_display->visibleRegion().contains(_display->mapFromGlobal(QCursor::pos())))// || _near->visibleRegion().contains(_near->mapFromGlobal(QCursor::pos())))
     {
         _cursorIsVisible = false;
@@ -956,6 +973,7 @@ void NearTool::leaveEvent(const QHoverEvent& event)
 
 void NearTool::moveEvent(const QHoverEvent& event)
 {
+    event.isAccepted();
     //if (!_display->showDetailedArea())
     //_display->updateDetail();
 
@@ -990,20 +1008,24 @@ void NearTool::mousePressed(const QMouseEvent & event)
 
 void NearTool::mouseReleased(const QMouseEvent & event)
 {
+    event.isAccepted();
     //SingleScene* scene = (SingleScene*)_display->getCurrentScene();
     //scene->setDetailedPoint(_display->getPosition(event.pos()));
 }
 
 void NearTool::mouseMoved(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearTool::mouseDblClicked(const QMouseEvent & event)
 {
+    event.isAccepted();
 }
 
 void NearTool::wheelEvent(const QWheelEvent & event)
 {
+    event.isAccepted();
 }
 
 

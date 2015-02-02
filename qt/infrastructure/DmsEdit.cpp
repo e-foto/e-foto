@@ -46,7 +46,6 @@ int DmsEdit::getDecimals()
 }
 void DmsEdit::validate()
 {
-	bool ok;
 	if (getDmsEditMode()==DMS)
 	{
 		//degMinSecLine->stringToDms(this->text().toStdString());
@@ -337,6 +336,7 @@ bool DmsEdit::eventFilter(QObject *objeto, QEvent *evento)
 	{
 		QLineEdit::eventFilter(objeto,evento);
 	}
+    return true;
 }
 
 /** Method overloaded from QLineEdit
@@ -447,7 +447,6 @@ DmsEditMode DmsEdit::getDmsEditMode()
 void DmsEdit::setDmsEditMode(DmsEditMode newMode)
 {
 	blockSignals(true);
-	bool ok;
 	if (getDmsEditMode()==DMS && newMode==RAD)
 	{
 	//	qDebug()<<"dms to rad";

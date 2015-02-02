@@ -78,6 +78,7 @@ std::string ImagesForm::getvalues()
 
 void ImagesForm ::setReadOnly(bool state)
 {
+    imagesTable->setEnabled(state);
     // ImagesForm is only to read in all times.
 }
 

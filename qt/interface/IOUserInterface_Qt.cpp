@@ -44,7 +44,7 @@ IOUserInterface_Qt* IOUserInterface_Qt::ioInst = NULL;
 
 IOUserInterface_Qt* IOUserInterface_Qt::instance(IOManager* manager)
 {
-	if (ioInst = NULL)
+    if (ioInst != NULL)
 	{
 		delete ioInst;
 		ioInst = NULL;

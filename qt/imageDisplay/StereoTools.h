@@ -46,7 +46,7 @@ public:
     void setPosLabel(QLabel* leftLabel, QLabel* rightLabel, QLabel* stereoLabel) {_leftPosLabel = leftLabel; _rightPosLabel = rightLabel; _3dPosLabel = stereoLabel;}
     //void actualizeScaleSpin(double scale);
     void actualizePosLabel();
-    void actualizePosLabel(SingleDisplay* display, bool force = false);
+    //void actualizePosLabel(SingleDisplay* display, bool force = false);
 
     void setCursor(QImage cursor, bool stereo);
 
@@ -125,8 +125,8 @@ public:
 
     void addMark(QPointF lPos, QPointF rPos, int key, QString label = "", Marker* marker = NULL);
     void insertMark(QPointF lPos, QPointF rPos, int key, QString label = "", Marker* marker = NULL);
-    void editMark(int key, QPointF lPos, QPointF rPos, Marker* marker = NULL);
-    void editMark(int key, QPointF lPos, QPointF rPos, QString label, Marker* marker = NULL);
+    //void editMark(int key, QPointF lPos, QPointF rPos, Marker* marker = NULL);
+    //void editMark(int key, QPointF lPos, QPointF rPos, QString label, Marker* marker = NULL);
     void deleteMark(int key);
     void clear();
 

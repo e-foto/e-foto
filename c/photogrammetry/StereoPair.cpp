@@ -150,7 +150,7 @@ bool StereoPair::is(std::string s)
 //
 void StereoPair::xmlSetData(std::string xml)
 {
-
+    std::string none = xml;
 }
 
 std::string StereoPair::xmlGetData()
