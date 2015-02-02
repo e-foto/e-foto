@@ -93,11 +93,11 @@ public:
     std::string pointTxtToXml(QString point, int key, int line, std::string typePoint="control");
     std::string edomPointToTxt(EDomElement points);
 
-    std::string pointTxtToXml2(QString point, int key, int line, std::string typePoint="photogrammetric");
+    std::string pointTxtToXml2(QString point, int key/*, int line*/, std::string typePoint="photogrammetric");
 
 
 
-	EDomElement imageTxtToXml(QString image, int key, int line, int sensorKey=0, int flightKey=0);
+    EDomElement imageTxtToXml(/*QString image, int key, int line, int sensorKey=0, int flightKey=0*/);
     std::string edomImageToTxt(EDomElement images);
 
 	bool insertDigitalCoordinates(QString coordinates);

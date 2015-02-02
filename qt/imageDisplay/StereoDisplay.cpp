@@ -105,12 +105,12 @@ void GLDisplay::updateMousePosition()
 
 void GLDisplay::setGLCursor(QImage cursor)
 {
-    if (ctexture != NULL && glIsTexture((GLuint)ctexture))
+    if ((ctexture != 0) && glIsTexture((GLuint)ctexture))
         glDeleteTextures(1, (GLuint*)(&ctexture));
     _cursor = cursor;
     if (cursor.isNull())
     {
-        ctexture = NULL;
+        (ctexture = 0);
         return;
     }
     cursor = QGLWidget::convertToGLFormat(cursor);
@@ -123,7 +123,7 @@ void GLDisplay::setGLCursor(QImage cursor)
 
 QImage GLDisplay::getGLCursor()
 {
-    if (ctexture != NULL)
+    if (ctexture != 0)
     {
         return _cursor;
     }
@@ -133,7 +133,7 @@ QImage GLDisplay::getGLCursor()
 
 void GLDisplay::setGLBackground(QImage bg)
 {
-    if (btexture != NULL && glIsTexture((GLuint)btexture))
+    if (btexture != 0 && glIsTexture((GLuint)btexture))
         glDeleteTextures(1, (GLuint*)(&btexture));
     bg = QGLWidget::convertToGLFormat(bg);
     glEnable(GL_TEXTURE_2D);
@@ -777,7 +777,7 @@ void StereoDisplay::pan(int dx, int dy)
 }
 */
 
-void StereoDisplay::zoom(double zoomFactor, QPoint* atPoint)
+void StereoDisplay::zoom(double zoomFactor/*, QPoint* atPoint*/)
 {
     currentScene_->getLeftScene()->zoom(zoomFactor);
     currentScene_->getRightScene()->zoom(zoomFactor);

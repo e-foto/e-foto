@@ -181,6 +181,7 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 
 void SRUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
+    imageFile = "Not used here, however keeps the same interface Phototri.";
     manager->flightDirection(kappa0);
     flightAvailable = true;
     actionSpatialRessection->setEnabled(true);

@@ -195,7 +195,7 @@ bool SpatialIntersection::is(std::string s)
 //
 void SpatialIntersection::xmlSetData(std::string xml)
 {
-
+    std::string none = xml;
 }
 
 std::string SpatialIntersection::xmlGetData()

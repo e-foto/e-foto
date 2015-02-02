@@ -72,7 +72,7 @@ protected slots:
     void onSavePtsButtonClicked();
     void onLSMTemplateSizeChanged(/*int ts*/);
     void onCorrTemplateSizeChanged(/*int ts*/);
-    void onDownValueChanged(double value);
+    void onDownValueChanged(/*double value*/);
     void onSeedEditorClosed();
 
 private:
@@ -117,7 +117,7 @@ private:
 	ProgressWindow pw;
 	void getImagesIds(int &left_id, int &right_id);
 	void updateMarks();
-	void updateData(int i);
+    void updateData(/*int i*/);
 	void addPairs();
 	void closeEvent(QCloseEvent *);
 	void addMatchingPoints();
@@ -138,9 +138,9 @@ public slots:
 	void onAddButtonClicked();
 	void onRemoveButtonClicked();
 	void closeOk();
-	void onComboBox1Changed(int index);
-	void onCheckBoxChanged(int state);
-	void onTableClicked(int row, int col);
+    void onComboBox1Changed(/*int index*/);
+    void onCheckBoxChanged();
+    void onTableClicked(/*int row, int col*/);
 
 signals:
 	void closed(bool);

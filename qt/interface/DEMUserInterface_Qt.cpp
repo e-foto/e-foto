@@ -79,7 +79,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
         QObject::connect(spinBox11, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
         QObject::connect(spinBox3_3, SIGNAL(valueChanged(int)), this, SLOT(onLSMTemplateSizeChanged(int)));
         QObject::connect(spinBox11_3, SIGNAL(valueChanged(int)), this, SLOT(onCorrTemplateSizeChanged(int)));
-        QObject::connect(doubleSpinBox0, SIGNAL(valueChanged(double)), this, SLOT(onDownValueChanged(double)));
+        QObject::connect(doubleSpinBox0, SIGNAL(valueChanged(double)), this, SLOT(onDownValueChanged()));
 
     setWindowState(this->windowState());
     sed = NULL;
@@ -219,7 +219,7 @@ void DEMUserInterface_Qt::onCorrTemplateSizeChanged(/*int ts*/)
         spinBox11_3->setValue(spinBox11->value() + spinBox11_2->value());
 }
 
-void DEMUserInterface_Qt::onDownValueChanged(double value)
+void DEMUserInterface_Qt::onDownValueChanged(/*double value*/)
 {
     downReslabel->setText(QString::number(manager->calculateDemRes(doubleSpinBox0->value()),'f',2) + " meters");
 }
@@ -619,8 +619,8 @@ void DEMUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
     img.load(filename);
 
     int step = int(1.0/sample);
-    int width = int(img.width()*sample);
-    int height = int(img.height()*sample);
+    unsigned int width = int(img.width()*sample);
+    unsigned int height = int(img.height()*sample);
     int pixel;
 
         // Resize Matrix
@@ -646,9 +646,9 @@ int DEMUserInterface_Qt::saveImage(char *filename, Matrix *I)
     QImage img(I->getCols(), I->getRows(), QImage::Format_RGB32); // Qt4
 
     int pixel;
-    for (unsigned int i=1; i<=img.height(); i++)
+    for (int i=1; i<=img.height(); i++)
     {
-        for (unsigned int j=1; j<=img.width(); j++)
+        for (int j=1; j<=img.width(); j++)
         {
             pixel = round(I->get(i,j)*double(levels-1));
             pixel = (pixel << 16) + (pixel << 8) + pixel;
@@ -730,10 +730,10 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     connect(removeButton,SIGNAL(clicked()),this,SLOT(onRemoveButtonClicked()));
     connect(okButton,SIGNAL(clicked()),this,SLOT(closeOk()));
     connect(cancelButton,SIGNAL(clicked()),this,SLOT(close()));
-    connect(comboBox1,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboBox1Changed(int)));
-    connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
-    connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
-    connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked(int,int)));
+    connect(comboBox1,SIGNAL(currentIndexChanged(int)),this,SLOT(onComboBox1Changed()));
+    connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged()));
+    connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked()));
+    connect(tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(onTableClicked()));
 
     Marker mark(SymbolsResource::getCross(Qt::yellow, QSize(24, 24),2)); // Create marks
     viewer->getLeftMarker().changeMarker(mark);
@@ -750,7 +750,7 @@ SeedEditorUserInterface_Qt::SeedEditorUserInterface_Qt(DEMManager *manager, QWid
     pw.setAllowClose(false);
     manager->getPointList(seeds,pairs);
     addPairs();
-    updateData(0);
+    updateData(/*0*/);
 
     // Empty list of selected seeds
     sel_seeds.clear();
@@ -826,7 +826,7 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p)
 /*
  * Control table events
  */
-void SeedEditorUserInterface_Qt::onTableClicked(int row, int col)
+void SeedEditorUserInterface_Qt::onTableClicked(/*int row, int col*/)
 {
     checkSelectedSeeds();
 
@@ -972,9 +972,9 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
 
     // Sort selection seeds
     int aux;
-    for (int i=0; i<sel_seeds.size()-1; i++)
+    for (unsigned int i=0; i<sel_seeds.size()-1; i++)
     {
-        for (int j=i+1; j<sel_seeds.size(); j++)
+        for (unsigned int j=i+1; j<sel_seeds.size(); j++)
         {
             if (sel_seeds.at(i) > sel_seeds.at(j))
             {
@@ -986,7 +986,7 @@ void SeedEditorUserInterface_Qt::checkSelectedSeeds()
     }
 }
 
-void SeedEditorUserInterface_Qt::onCheckBoxChanged(int state)
+void SeedEditorUserInterface_Qt::onCheckBoxChanged(/*int state*/)
 {
     updateMarks();
 }
@@ -1020,7 +1020,7 @@ void SeedEditorUserInterface_Qt::addPairs()
     std::string str_left, str_right;
     std::stringstream txt;
 
-    for (int i=0; i<listPairs.size(); i++)
+    for (unsigned int i=0; i<listPairs.size(); i++)
     {
         // Decode
         left_id = 1 + (listPairs.at(i) % no_imgs);
@@ -1067,12 +1067,12 @@ void SeedEditorUserInterface_Qt::loadSeeds()
     seeds.load((char *)filename.toStdString().c_str(), 0);
 
     // Update data
-    updateData(comboBox1->currentIndex());
+    updateData(/*comboBox1->currentIndex()*/);
 }
 
-void SeedEditorUserInterface_Qt::onComboBox1Changed(int index)
+void SeedEditorUserInterface_Qt::onComboBox1Changed(/*int index*/)
 {
-    updateData(index);
+    updateData(/*index*/);
 }
 
 /*
@@ -1132,7 +1132,7 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
 
     int key = no_pairs + 1;
 
-    for (int i=0; i<seeds.size(); i++)
+    for (unsigned int i=0; i<seeds.size(); i++)
     {
         mp = seeds.get(i+1);
 
@@ -1213,7 +1213,7 @@ void SeedEditorUserInterface_Qt::updateMarks()
     viewer->update();
 }
 
-void SeedEditorUserInterface_Qt::updateData(int i)
+void SeedEditorUserInterface_Qt::updateData(/*int i*/)
 {
     //
     // Update current images

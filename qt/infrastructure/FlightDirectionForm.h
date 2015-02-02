@@ -54,17 +54,17 @@ public slots:
 	* \brief Metodo que altera o valor do angulo contido na QSpinBox
 	* \param value : Valor do angulo em graus
 	*/
-	void setSpinValue(int value);
+    void setSpinValue(/*int value*/);
 
 	/**
 	* \brief Metodo que altera o valor do angulo apontado no QDial
 	* \param value : Valor do angulo em graus
 	*/
-	void setDialValue(int value);
+    void setDialValue(/*int value*/);
 
 	void updateMarkedLabel(int comboIndex);
 
-	void updateItemCombo(int comboIndex);
+    void updateItemCombo(/*int comboIndex*/);
 
 protected slots:
 	bool eventFilter(QObject * obj, QEvent * event);

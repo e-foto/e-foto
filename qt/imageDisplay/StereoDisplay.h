@@ -134,7 +134,7 @@ public:
     /* Method into disuse:
     virtual void pan(int dx, int dy);
     */
-    virtual void zoom(double zoomFactor, QPoint* atPoint = NULL);
+    virtual void zoom(double zoomFactor/*, QPoint* atPoint = NULL*/);
 
     void updateAll();
     void updateAll(QPointF* left, QPointF* right, bool emitClicked = false);

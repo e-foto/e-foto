@@ -46,7 +46,7 @@ OrthoUserInterface_Qt* OrthoUserInterface_Qt::OrthoInst = NULL;
 
 OrthoUserInterface_Qt* OrthoUserInterface_Qt::instance(OrthoManager* manager)
 {
-    if (OrthoInst = NULL)
+    if (OrthoInst != NULL)
     {
         delete OrthoInst;
         OrthoInst = NULL;
@@ -342,8 +342,6 @@ void OrthoUserInterface_Qt::onShowImageChanged(int opt)
 #include <qdebug.h>
 void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 {
-    int levels=256;
-
     QImage img;
     img.load(filename);
 
@@ -373,7 +371,6 @@ void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 
 int OrthoUserInterface_Qt::saveImage(char *filename, Matrix *I)
 {
-    int levels = 256;
 
     QImage img(I->getCols(), I->getRows(), QImage::Format_RGB32); // Qt4
 
@@ -448,8 +445,8 @@ OrthoQualityUserInterface_Qt::OrthoQualityUserInterface_Qt(OrthoManager *manager
         connect(doneButton,SIGNAL(clicked()),this,SLOT(close()));
         connect(deleteButton,SIGNAL(clicked()),this,SLOT(onDeletePoint()));
         connect(calculateButton,SIGNAL(clicked()),this,SLOT(calculateAll()));
-        connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged(int)));
-        connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int,int)));
+        connect(checkBox,SIGNAL(stateChanged(int)),this,SLOT(onCheckBoxChanged()));
+        connect(tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(onTableClicked(int)));
 
         setCentralWidget(viewer);
 
@@ -502,7 +499,7 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
         viewer->update();
 }
 
-void OrthoQualityUserInterface_Qt::onTableClicked(int row, int col)
+void OrthoQualityUserInterface_Qt::onTableClicked(int row/*, int col*/)
 {
         int num_points = tableWidget->rowCount() - 2;
 
@@ -577,7 +574,7 @@ void OrthoQualityUserInterface_Qt::updateMarks()
     viewer->update();
 }
 
-void OrthoQualityUserInterface_Qt::onCheckBoxChanged(int state)
+void OrthoQualityUserInterface_Qt::onCheckBoxChanged(/*int state*/)
 {
     updateMarks();
 }

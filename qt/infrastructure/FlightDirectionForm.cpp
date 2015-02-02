@@ -19,8 +19,8 @@ FlightDirectionForm::FlightDirectionForm(QStringList comboBoxItens,QList<int> ne
 
 	setMarkedImages(newMarkedImages);
 
-	connect(flightDirectionDial,SIGNAL(valueChanged(int)),this,SLOT(setSpinValue(int)));
-	connect(flightDirectionSpin,SIGNAL(valueChanged(int)),this,SLOT(setDialValue(int)));
+    connect(flightDirectionDial,SIGNAL(valueChanged(int)),this,SLOT(setSpinValue()));
+    connect(flightDirectionSpin,SIGNAL(valueChanged(int)),this,SLOT(setDialValue()));
 	connect(acceptAngleButton, SIGNAL(clicked()),this,SLOT(acceptValues()));
 	connect(finishButton,SIGNAL(clicked()),this,SLOT(close()));
 
@@ -35,8 +35,8 @@ FlightDirectionForm::FlightDirectionForm(QWidget *parent) : QWidget(parent)
 	markedIcon.addFile(":/image/checked.png");
 	unmarkedIcon.addFile(":/image/unchecked.png");
 
-	connect(flightDirectionDial,SIGNAL(valueChanged(int)),this,SLOT(setSpinValue(int)));
-	connect(flightDirectionSpin,SIGNAL(valueChanged(int)),this,SLOT(setDialValue(int)));
+    connect(flightDirectionDial,SIGNAL(valueChanged(int)),this,SLOT(setSpinValue()));
+    connect(flightDirectionSpin,SIGNAL(valueChanged(int)),this,SLOT(setDialValue()));
 	connect(acceptAngleButton, SIGNAL(clicked()),this,SLOT(acceptValues()));
 	connect(finishButton,SIGNAL(clicked()),this,SLOT(close()));
 	//connect(imagesFlightDirectionCombo,SIGNAL((int)),this,SLOT(updateMarkedLabel(int)));
@@ -52,10 +52,10 @@ void FlightDirectionForm::acceptValues()
     if(!isMarked(currentIndexCombo))
         markedImages.push_back(currentIndexCombo);
     updateMarkedLabel(currentIndexCombo);
-    updateItemCombo(currentIndexCombo);
+    updateItemCombo(/*currentIndexCombo*/);
 }
 
-void FlightDirectionForm::setSpinValue(int value)
+void FlightDirectionForm::setSpinValue(/*int value*/)
 {
 	int dialValue=flightDirectionDial->value();
 
@@ -65,7 +65,7 @@ void FlightDirectionForm::setSpinValue(int value)
 	flightDirectionSpin->setValue(dialValue-90);
 }
 
-void FlightDirectionForm::setDialValue(int value)
+void FlightDirectionForm::setDialValue(/*int value*/)
 {
 	int spinValue = flightDirectionSpin->value();
 	if (spinValue>=270)
@@ -83,7 +83,7 @@ void FlightDirectionForm::updateMarkedLabel(int comboIndex)
 		imagesFlightDirectionCombo->setItemIcon(comboIndex,unmarkedIcon);
 }
 
-void FlightDirectionForm::updateItemCombo(int comboIndex)
+void FlightDirectionForm::updateItemCombo(/*int comboIndex*/)
 {
 	if (autoPassMode)
 	{
