@@ -1,3 +1,7 @@
+
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "FlightDirectionForm.h"
 #include "math.h"
 

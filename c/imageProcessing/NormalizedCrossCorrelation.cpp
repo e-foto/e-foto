@@ -1,11 +1,12 @@
 /*******************************************************************************
-					   NormalizedCrossCorrelation.cpp
+                       NormalizedCrossCorrelation.cpp
 *******************************************************************************/
 
 #include "NormalizedCrossCorrelation.h"
 #include "Matrix.h"
 
-#include <math.h>
+//#include <math.h>
+#include <stdio.h>
 
 namespace br {
 namespace uerj {
@@ -14,45 +15,45 @@ namespace efoto {
 
 NormalizedCrossCorrelation::NormalizedCrossCorrelation()
 {
-	template_width = 7;
-	template_height = 7;
-	search_window_width = 50;
-	search_window_height = 50;
-	//	min_std_acceptance = 0.019607843; // 5.0 in 0-255 range
-	min_std_acceptance = 0.15;
+    template_width = 7;
+    template_height = 7;
+    search_window_width = 50;
+    search_window_height = 50;
+    //	min_std_acceptance = 0.019607843; // 5.0 in 0-255 range
+    min_std_acceptance = 0.15;
         temp_growth_step = 2;
         temp_max_size = 50;
 }
 
 int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchmat)
 {
-	double p;
+    double p;
         best_p = 0.0;
 
-	//
-	// Check if data was correctly assigned - Notice that Matrix notation ranges from 1,1 to N,M
-	//
+    //
+    // Check if data was correctly assigned - Notice that Matrix notation ranges from 1,1 to N,M
+    //
 
-	// Error codes:
-	//  1 - No errors
-	// -1 - Search window is smaller than template
-	// -2 - Template is too small, less than 3 pixels
-	// -3 - Template is out of the image
-	// -4 - Template has low std
+    // Error codes:
+    //  1 - No errors
+    // -1 - Search window is smaller than template
+    // -2 - Template is too small, less than 3 pixels
+    // -3 - Template is out of the image
+    // -4 - Template has low std
 
-	// Check search window size
-	if ((search_window_width < template_width) || (search_window_height < template_height))
-		return -1;
+    // Check search window size
+    if ((search_window_width < template_width) || (search_window_height < template_height))
+        return -1;
 
-	// Check the size of the template
-	if ((template_width < 3) || (template_height < 3))
-		return -2;
+    // Check the size of the template
+    if ((template_width < 3) || (template_height < 3))
+        return -2;
 
         // Save original template size (template size may increase with the next test)
-	int ori_template_width = template_width;
-	int ori_template_height = template_height;
+    int ori_template_width = template_width;
+    int ori_template_height = template_height;
 
-	bool flag = true;
+    bool flag = true;
         int ref_w, ref_h, s_w, s_h;
 
         // Read image matrices data
@@ -64,69 +65,69 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
         //
         // Calculate ideal search window size based on standard deviation (templation size may increase)
         //
-	while (flag)
-	{
+    while (flag)
+    {
                 // Calculate template limits
                 calculateTemplateBoundingBox();
 
-		// Check if template center is out of bounds
+        // Check if template center is out of bounds
                 if ((template_xi <= 0) || (template_yi <= 0) || (template_xf >= ref_w - 1) || (template_yf >= ref_h - 1))
                 {
                         template_width = ori_template_width;
                         template_height = ori_template_height;
-			return -3;
+            return -3;
                 }
 
-		// Check if low variance
-		if (!checkTemplateStd(refmat))
-		{
+        // Check if low variance
+        if (!checkTemplateStd(refmat))
+        {
                         template_width += temp_growth_step;
                         template_height += temp_growth_step;
-		}
-		else
-			break;
+        }
+        else
+            break;
 
-		// Check if size is too big, with still low variance - really quit
+        // Check if size is too big, with still low variance - really quit
                 if (template_width > temp_max_size || template_height > temp_max_size)
-		{
-			template_width = ori_template_width;
-			template_height = ori_template_height;
-			return -4;
-		}
-	}
+        {
+            template_width = ori_template_width;
+            template_height = ori_template_height;
+            return -4;
+        }
+    }
 
-	//
-	// Start searching
-	//
+    //
+    // Start searching
+    //
 
         // Calculate seach window limits
         int search_window_xi = search_window_center_x - floor(double(search_window_width)/2.0), search_window_yi = search_window_center_y - floor(double(search_window_height)/2.0);
         int delta_tx = floor(double(template_width)/2.0);
         int delta_ty = floor(double(template_height)/2.0);
 
-	for (int sw_i = search_window_yi ; sw_i <= search_window_yi + (search_window_height - 1); sw_i++)
-	{
-		for (int sw_j = search_window_xi ; sw_j <= search_window_xi + (search_window_width - 1); sw_j++)
-		{
-			// Check if matching window is out of bounds
-                        if ((sw_i <= 0) || (sw_j <= 0) || (sw_i >= s_h-1) || (sw_j >= s_w-1))
-				continue;
+    for (int sw_i = search_window_yi ; sw_i <= search_window_yi + (search_window_height - 1); sw_i++)
+    {
+        for (int sw_j = search_window_xi ; sw_j <= search_window_xi + (search_window_width - 1); sw_j++)
+        {
+            // Check if matching window is out of bounds
+            if ((sw_i <= 0) || (sw_j <= 0) || (sw_i >= s_h-1) || (sw_j >= s_w-1))
+                continue;
 
-			// Calculate correlation
-			p = correlation(refmat, searchmat, template_yi, template_yf, template_xi, template_xf, sw_i, sw_i + (template_height-1), sw_j, sw_j + (template_width-1));
+            // Calculate correlation
+            p = correlation(refmat, searchmat, template_yi, template_yf, template_xi, template_xf, sw_i, sw_i + (template_height-1), sw_j, sw_j + (template_width-1));
 
-			if (p > best_p)
-			{
-				best_p = p;
+            if (p > best_p)
+            {
+                best_p = p;
                                 best_x = (double) sw_j + (delta_tx);
                                 best_y = (double) sw_i + (delta_ty);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	// Return original template size
-	template_width = ori_template_width;
-	template_height = ori_template_height;
+    // Return original template size
+    template_width = ori_template_width;
+    template_height = ori_template_height;
 
         // Add fraction part to result
         best_x += frac_tc_x;
@@ -138,84 +139,84 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix *refmat, Matrix *searchm
 
 double NormalizedCrossCorrelation::average(Matrix *m, int row_i, int row_f, int col_i, int col_f)
 {
-	// If assigned with 0, calculate the average for the whole matrix
-	if ((row_i < 1) || (row_f < 1) || (col_i < 1) ||(col_f < 1))
-	{
-		row_i = 1;
-		col_i = 1;
-		row_f = m->getRows();
-		col_f = m->getCols();
-	}
+    // If assigned with 0, calculate the average for the whole matrix
+    if ((row_i < 1) || (row_f < 1) || (col_i < 1) ||(col_f < 1))
+    {
+        row_i = 1;
+        col_i = 1;
+        row_f = m->getRows();
+        col_f = m->getCols();
+    }
 
-	double sum=0.0;
-	int n = (1+(row_f-row_i))*(1+(col_f-col_i));
-	for (int i=row_i; i<=row_f; i++)
-	{
-		for (int j=col_i; j<=col_f; j++)
-			sum += m->get(i,j);
-	}
+    double sum=0.0;
+    int n = (1+(row_f-row_i))*(1+(col_f-col_i));
+    for (int i=row_i; i<=row_f; i++)
+    {
+        for (int j=col_i; j<=col_f; j++)
+            sum += m->get(i,j);
+    }
 
-	return sum/double(n);
+    return sum/double(n);
 }
 
 
 double NormalizedCrossCorrelation::stddev(Matrix *m, int row_i, int row_f, int col_i, int col_f)
 {
-	// If assigned with 0, calculate the standard deviation for the whole matrix
-	if ((row_i < 1) || (row_f < 1) || (col_i < 1) ||(col_f < 1))
-	{
-		row_i = 1;
-		col_i = 1;
-		row_f = m->getRows();
-		col_f = m->getCols();
-	}
+    // If assigned with 0, calculate the standard deviation for the whole matrix
+    if ((row_i < 1) || (row_f < 1) || (col_i < 1) ||(col_f < 1))
+    {
+        row_i = 1;
+        col_i = 1;
+        row_f = m->getRows();
+        col_f = m->getCols();
+    }
 
-	double avg = average(m, row_i, row_f, col_i, col_f);
-	double sum=0.0;
-	int n = (1+(row_f-row_i))*(1+(col_f-col_i));
-	for (int i=row_i; i<=row_f; i++)
-	{
-		for (int j=col_i; j<=col_f; j++)
-			sum += pow(m->get(i,j) - avg, 2);
-	}
+    double avg = average(m, row_i, row_f, col_i, col_f);
+    double sum=0.0;
+    int n = (1+(row_f-row_i))*(1+(col_f-col_i));
+    for (int i=row_i; i<=row_f; i++)
+    {
+        for (int j=col_i; j<=col_f; j++)
+            sum += pow(m->get(i,j) - avg, 2);
+    }
 
-	return sqrt(sum/double(n-1));
+    return sqrt(sum/double(n-1));
 }
 
 double NormalizedCrossCorrelation::covXY(Matrix *X, Matrix *Y, int row_x_i, int row_x_f, int col_x_i, int col_x_f, int row_y_i, int row_y_f, int col_y_i, int col_y_f)
 {
-	// If assigned with 0, calculate the standard deviation for the whole matrix
-	if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) ||(col_x_f < 1))
-	{
-		row_x_i = 1;
-		col_x_i = 1;
-		row_x_f = X->getRows();
-		col_x_f = X->getCols();
-	}
+    // If assigned with 0, calculate the standard deviation for the whole matrix
+    if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) ||(col_x_f < 1))
+    {
+        row_x_i = 1;
+        col_x_i = 1;
+        row_x_f = X->getRows();
+        col_x_f = X->getCols();
+    }
 
-	if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) ||(col_y_f < 1))
-	{
-		row_y_i = 1;
-		col_y_i = 1;
-		row_y_f = Y->getRows();
-		col_y_f = Y->getCols();
-	}
+    if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) ||(col_y_f < 1))
+    {
+        row_y_i = 1;
+        col_y_i = 1;
+        row_y_f = Y->getRows();
+        col_y_f = Y->getCols();
+    }
 
-	int delta_i = row_y_i - row_x_i;
-	int delta_j = col_y_i - col_x_i;
-	double avgX = average(X, row_x_i, row_x_f, col_x_i, col_x_f);
-	double avgY = average(Y, row_y_i, row_y_f, col_y_i, col_y_f);
-	double sum=0.0;
-	int n = (1+(row_x_f-row_x_i))*(1+(col_x_f-col_x_i));
-	for (int i=row_x_i; i<=row_x_f; i++)
-	{
-		for (int j=col_x_i; j<=col_x_f; j++)
-		{
-			sum += (X->get(i,j) - avgX)*(Y->get(i+delta_i, j+delta_j) - avgY);
-		}
-	}
+    int delta_i = row_y_i - row_x_i;
+    int delta_j = col_y_i - col_x_i;
+    double avgX = average(X, row_x_i, row_x_f, col_x_i, col_x_f);
+    double avgY = average(Y, row_y_i, row_y_f, col_y_i, col_y_f);
+    double sum=0.0;
+    int n = (1+(row_x_f-row_x_i))*(1+(col_x_f-col_x_i));
+    for (int i=row_x_i; i<=row_x_f; i++)
+    {
+        for (int j=col_x_i; j<=col_x_f; j++)
+        {
+            sum += (X->get(i,j) - avgX)*(Y->get(i+delta_i, j+delta_j) - avgY);
+        }
+    }
 
-	return sum/double(n-1);
+    return sum/double(n-1);
 }
 
 /*
@@ -241,41 +242,116 @@ double NormalizedCrossCorrelation::directCorrelation(Matrix *X, Matrix *Y, int t
     int matching_window_xi = 1 + matching_cx - delta_tx, matching_window_yi = 1 + matching_cy - delta_ty;
     int matching_window_xf = matching_window_xi + (template_width - 1), matching_window_yf = matching_window_yi + (template_height - 1);
 
-    return correlation(X, Y, template_yi, template_yf, template_xi, template_xf, matching_window_yi, matching_window_yf, matching_window_xi, matching_window_xf);
+    double p = correlation(X, Y, template_yi, template_yf, template_xi, template_xf, matching_window_yi, matching_window_yf, matching_window_xi, matching_window_xf);
+
+    return p;
+}
+
+double NormalizedCrossCorrelation::oldCorrelation(Matrix *X, Matrix *Y, int row_x_i, int row_x_f, int col_x_i, int col_x_f, int row_y_i, int row_y_f, int col_y_i, int col_y_f)
+{
+    // If assigned with 0, calculate the standard deviation for the whole matrix
+    if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) || (col_x_f < 1))
+    {
+        row_x_i = 1;
+        col_x_i = 1;
+        row_x_f = X->getRows();
+        col_x_f = X->getCols();
+    }
+
+    if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) || (col_y_f < 1))
+    {
+        row_y_i = 1;
+        col_y_i = 1;
+        row_y_f = Y->getRows();
+        col_y_f = Y->getCols();
+    }
+
+    if ((unsigned int)row_x_f > X->getRows()) return 0;
+    if ((unsigned int)col_x_f > X->getCols()) return 0;
+    if ((unsigned int)row_y_f > Y->getRows()) return 0;
+    if ((unsigned int)col_y_f > Y->getCols()) return 0;
+
+    return covXY(X, Y, row_x_i, row_x_f, col_x_i, col_x_f, row_y_i, row_y_f, col_y_i, col_y_f) / (stddev(X, row_x_i, row_x_f, col_x_i, col_x_f) * stddev(Y, row_y_i, row_y_f, col_y_i, col_y_f));
 }
 
 double NormalizedCrossCorrelation::correlation(Matrix *X, Matrix *Y, int row_x_i, int row_x_f, int col_x_i, int col_x_f, int row_y_i, int row_y_f, int col_y_i, int col_y_f)
 {
-	// If assigned with 0, calculate the standard deviation for the whole matrix
-	if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) ||(col_x_f < 1))
-	{
-		row_x_i = 1;
-		col_x_i = 1;
-		row_x_f = X->getRows();
-		col_x_f = X->getCols();
-	}
+    // If assigned with 0, calculate the standard deviation for the whole matrix
+    if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) ||(col_x_f < 1))
+    {
+        row_x_i = 1;
+        col_x_i = 1;
+        row_x_f = X->getRows();
+        col_x_f = X->getCols();
+    }
+    if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) ||(col_y_f < 1))
+    {
+        row_y_i = 1;
+        col_y_i = 1;
+        row_y_f = Y->getRows();
+        col_y_f = Y->getCols();
+    }
 
-	if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) ||(col_y_f < 1))
-	{
-		row_y_i = 1;
-		col_y_i = 1;
-		row_y_f = Y->getRows();
-		col_y_f = Y->getCols();
-	}
+    // Checks respect for the image boundaries
+    if ((unsigned int)row_x_f > X->getRows()) return 0;
+    if ((unsigned int)col_x_f > X->getCols()) return 0;
+    if ((unsigned int)row_y_f > Y->getRows()) return 0;
+    if ((unsigned int)col_y_f > Y->getCols()) return 0;
 
-	return covXY(X, Y, row_x_i, row_x_f, col_x_i, col_x_f, row_y_i, row_y_f, col_y_i, col_y_f) / (stddev(X, row_x_i, row_x_f, col_x_i, col_x_f) * stddev(Y, row_y_i, row_y_f, col_y_i, col_y_f));
+    // Define number of elements in submatrix
+    int n = (1+(row_x_f-row_x_i))*(1+(col_x_f-col_x_i));
+
+    // Define delta (the translation)
+    int delta_i = row_y_i - row_x_i;
+    int delta_j = col_y_i - col_x_i;
+
+    // Calculate the Average X & Average Y
+    double avgX = 0.0;
+    double avgY = 0.0;
+    for (int i=row_x_i; i<=row_x_f; i++)
+    {
+        for (int j=col_x_i; j<=col_x_f; j++)
+        {
+            avgX += X->get(i,j);
+            avgY += Y->get(i+delta_i,j+delta_j);
+        }
+    }
+    avgX = avgX/double(n);
+    avgY = avgY/double(n);
+
+    // Calculate the Standard Deviation X, Standard Deviation Y and Covariance XY
+    double covXY = 0.0;
+    double stdDevX = 0.0;
+    double stdDevY = 0.0;
+    {
+        for (int i=row_x_i; i<=row_x_f; i++)
+        {
+            for (int j=col_x_i; j<=col_x_f; j++)
+            {
+                covXY += (X->get(i,j) - avgX)*(Y->get(i+delta_i, j+delta_j) - avgY);
+                stdDevX += pow(X->get(i,j) - avgX, 2);
+                stdDevY += pow(Y->get(i+delta_i,j+delta_j) - avgY, 2);
+            }
+        }
+    }
+    covXY = covXY/double(n-1);
+    stdDevX = sqrt(stdDevX/double(n-1));
+    stdDevY = sqrt(stdDevY/double(n-1));
+
+    // Calculate the Correlation
+    return covXY / (stdDevX * stdDevY);
 }
 
 bool NormalizedCrossCorrelation::checkTemplateStd(Matrix *refmat)
 {
-	return (calculateTemplateStd(refmat) >= min_std_acceptance);
+    return (calculateTemplateStd(refmat) >= min_std_acceptance);
 }
 
 double NormalizedCrossCorrelation::calculateTemplateStd(Matrix *refmat)
 {
         calculateTemplateBoundingBox();
 
-	return stddev(refmat, template_yi, template_yf, template_xi, template_xf);
+    return stddev(refmat, template_yi, template_yf, template_xi, template_xf);
 }
 
 void NormalizedCrossCorrelation::calculateTemplateBoundingBox()

@@ -18,7 +18,7 @@
 #include "Interpolation.h"
 
 #include "Matrix.h"
-#include <math.h>
+//#include <math.h>
 
 namespace br {
 namespace uerj {

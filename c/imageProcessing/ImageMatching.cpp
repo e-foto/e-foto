@@ -1,6 +1,6 @@
 #include "ImageMatching.h"
 #include "DEMManager.h"
-#include <sys/time.h>
+//#include <sys/time.h>
 #include <time.h>
 
 namespace br {
@@ -66,11 +66,11 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
         //
         // Calculate operation time
         //
-        struct timeval begin;
-        struct timeval end;
-        int MICRO_PER_SECOND = 1000000;
+        //struct timeval begin;
+        //struct timeval end;
+        //int MICRO_PER_SECOND = 1000000;
 
-        gettimeofday(&begin,NULL);
+        //gettimeofday(&begin,NULL);
 
         //
         // Step 1 - Radiometric Tranformation
@@ -171,10 +171,10 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
         // Finish time calculation
         //
 
-        gettimeofday(&end,NULL);
-        float etime = (float)(end.tv_sec - begin.tv_sec);
-        etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-        elap_time = double(etime);
+        //gettimeofday(&end,NULL);
+        //float etime = (float)(end.tv_sec - begin.tv_sec);
+        //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+        elap_time = 0.0;//double(etime);
 }
 
 /*

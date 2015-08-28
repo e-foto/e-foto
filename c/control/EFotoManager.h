@@ -61,16 +61,16 @@ private:
     std::string interfaceType;
 
 
-        ProjectManager* project;
+    ProjectManager* project;
 	IOManager* interiorOrientation;
 	SRManager* spatialRessection;
 	PTManager* fotoTri;
 	DEMManager* dem;
 	OrthoManager* ortho;
 	SPManager* sp;
-        ReportManager* report;
-        XmlUpdater updater;
-        Project report_project;
+    ReportManager* report;
+    XmlUpdater updater;
+    Project report_project;
 
 	Terrain* theTerrain;
     std::deque<Sensor*> sensors;

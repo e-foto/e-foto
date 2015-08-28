@@ -1,5 +1,5 @@
 #include "SingleScene.h"
-#include <math.h>
+//#include <math.h>
 #include "Matrix.h"
 
 namespace br {

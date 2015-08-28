@@ -1505,7 +1505,7 @@ bool BundleAdjustment::testResiduo()
         int rowsMatRes=matRes.getRows();
         for (int i=1;i<=rowsMatRes;i++)
         {
-                if (fabs(matRes.get(i,1)>MAXRESIDUO))
+                if (fabs(double(matRes.get(i,1)>MAXRESIDUO)))
                 {
                         return false;
                 }
@@ -1574,13 +1574,13 @@ int BundleAdjustment::testConverged()
                 }
                 if (i%6<3)//Os trÃªs primeiros elementos sÃ£o Xo,Yo,Zo
                 {
-                        if (fabs(x1.get(i+1,1)>metricConvergency))
+                        if (fabs(double(x1.get(i+1,1)>metricConvergency)))
                                 return 0;
                 }
                 else // Os trÃªs ultimos elementos sÃ£o omega, phi, kappa
                 {
                         //printf("x1(%d)= %.5f\n",i+1,fabs(x1.get(i+1,1)));
-                        if (fabs(x1.get(i+1,1)>angularConvergency))
+                        if (fabs(double(x1.get(i+1,1)>angularConvergency)))
                         {
                                 //printf("angulo nao convergido x1(%d,1)= %.5f \tangular convergency: %.5f\n",i+1,fabs(x1.get(i+1,1)),angularConvergency);
                                 return 0;
@@ -1600,7 +1600,7 @@ int BundleAdjustment::testConverged()
                         qDebug("numero e NAN");
                         return -1;
                 }
-                if (fabs(x2.get(i,1)>metricConvergency))
+                if (fabs(double(x2.get(i,1)>metricConvergency)))
                 {
                         return 0;
                 }

@@ -1,19 +1,22 @@
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
-    e-foto is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	e-foto is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    e-foto is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	e-foto is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
 
 #include "PTManager.h"
 #include "EFotoManager.h"
@@ -30,15 +33,20 @@
 #include "Dms.h"
 #include "Flight.h"
 #include "Terrain.h"
+#include "ProjectiveRay.h"
+#include "PositionMatrix.h"
+#include "ImageSpaceCoordinate.h"
+#include "ExteriorOrientation.h"
 
 #include <stdlib.h>
-#include <math.h>
 #include <sstream>
 
 #include "EPolygon.h"
 
-//#include <QDebug>
+//#define _USE_MATH_DEFINES // for C++
+//#include <cmath>
 
+//#include <math.h>
 
 #define NUNES
 
@@ -49,20 +57,20 @@ namespace efoto {
 
 
 PTManager::PTManager(EFotoManager *newManager, std::deque<Image*>images, std::deque<InteriorOrientation*> ois,Sensor *sensor, Flight *flight, Terrain *terrain)
-    : efotoManager(newManager),
-      listAllImages(images),
-      listOis(ois),
-      mySensor(sensor),
-      myFlight(flight),
-      myTerrain(terrain),
-      marksSaveState(true),
-      started(false),
-      status(false),
-      localTopocentricMode(false),
-      previousData(false),
-      maxIterations(6),
-      metricConvergency(0.001),
-      angularConvergency(0.001)
+	: efotoManager(newManager),
+	  listAllImages(images),
+	  listOis(ois),
+	  mySensor(sensor),
+	  myFlight(flight),
+	  myTerrain(terrain),
+	  marksSaveState(true),
+	  started(false),
+	  status(false),
+	  localTopocentricMode(false),
+	  previousData(false),
+	  maxIterations(6),
+	  metricConvergency(0.001),
+	  angularConvergency(0.001)
 {
 
 	setListPoint();//lista todos os pontos
@@ -161,7 +169,7 @@ bool PTManager::exec()
 			myInterface = PTUserInterface_Qt::instance(this);
 		}
 		//myFlight->setSensor(mySensor);
-        for (size_t i=0; i<listAllImages.size(); i++)
+		for (size_t i=0; i<listAllImages.size(); i++)
 		{
 			mySensor->putImage(listAllImages.at(i));
 			listAllImages.at(i)->setSensor(mySensor);
@@ -193,7 +201,7 @@ void PTManager::returnProject()
 /*
 std::string PTManager::getImagefile(int imageId)
 {
-                std::string imagefile=listAllImages.at(imageId)->getFilepath();
+				std::string imagefile=listAllImages.at(imageId)->getFilepath();
 				imagefile +="/";
 				imagefile +=listAllImages.at(imageId)->getFilename();
 				return imagefile;
@@ -231,7 +239,7 @@ if (localTopocentricMode)
 		if (hasAllImagesInitialValues())
 		{
 			Matrix matInitialValues(listSelectedImages.size(),6);
-            for (size_t i=0;i<listSelectedImages.size();i++)
+			for (size_t i=0;i<listSelectedImages.size();i++)
 			{
 				Image *img=listSelectedImages.at(i);
 				if(img->isInsAvailable() && img->getInsType()=="Initial")
@@ -251,7 +259,7 @@ if (localTopocentricMode)
 		}
 
 
-                bool result=pt->calculate(false);
+		bool result=pt->calculate(false);
 		setMatrixAFP(pt->getAFP());
 
 		if (localTopocentricMode)
@@ -268,7 +276,7 @@ if (localTopocentricMode)
 void PTManager::setMatrixAFP(Matrix afp)
 {
 	Matrix result(afp.getRows(),afp.getCols());
-    for (size_t i=1;i<=afp.getRows();i++)
+	for (size_t i=1;i<=afp.getRows();i++)
 	{
 		result.set(i,1,Dms::radianoToDegreeDecimal(afp.get(i,1)));
 		result.set(i,2,Dms::radianoToDegreeDecimal(afp.get(i,2)));
@@ -301,7 +309,7 @@ void PTManager::setENH()
 	Matrix points(listAllPoints.size(),3);
 	Matrix pointKeys(listAllPoints.size(),1);
 	//for (int i=1;i<=children;i++)
-    for (size_t i=0;i<listAllPoints.size();i++)
+	for (size_t i=0;i<listAllPoints.size();i++)
 	{
 		//EDomElement point=pointsXml.elementByTagAtt("point","key",Conversion::intToString(i));
 
@@ -340,13 +348,13 @@ bool PTManager::connectImagePoints()
 	{
 		qApp->processEvents();
 		EDomElement xmlPoints(efotoManager->getXml("points"));
-        std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+		std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 		for (unsigned int j = 0; j < listAllImages.size(); j++)
 		{
 			//listAllImages.at(j)->clearPoints();
 			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
-                std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key",Conversion::intToString(listAllImages.at(j)->getId())).getContent();
+				std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key",Conversion::intToString(listAllImages.at(j)->getId())).getContent();
 				//qDebug("%s\n",data.c_str());
 				if (data != "")
 				{
@@ -371,10 +379,10 @@ bool PTManager::connectImagePoints()
 void PTManager::setListPoint()
 {
 	EDomElement xmlPoints(efotoManager->getXml("points"));
-    std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
-    for(size_t i=0;i<allPoints.size();i++)
+	std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
+	for(size_t i=0;i<allPoints.size();i++)
 	{
-		Point* point= efotoManager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
+		Point* point = efotoManager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
 		if (point != NULL)// && !point->getType() == Point::CHECKING)
 			listAllPoints.push_back(point);
 	}
@@ -383,20 +391,20 @@ void PTManager::setListPoint()
 // retorna uma lista com os nomes das imagens
 std::deque<std::string> PTManager::getStringImages()
 {
-    std::deque<std::string> list;
-    size_t numImages=listAllImages.size();
-    for (size_t i=0;i<numImages;i++)
+	std::deque<std::string> list;
+	size_t numImages=listAllImages.size();
+	for (size_t i=0;i<numImages;i++)
 		list.push_back(listAllImages.at(i)->getFilename());
 	return list;
 }
 
 std::string PTManager::getFilePath(std::string fileName)
 {
-    size_t numImages=listAllImages.size();
-    for (size_t i=0;i<numImages;i++)
+	size_t numImages=listAllImages.size();
+	for (size_t i=0;i<numImages;i++)
 		if(listAllImages.at(i)->getFilename()==fileName)
 		{
-            std::string file = listAllImages.at(i)->getFilepath() + "/" +fileName;
+			std::string file = listAllImages.at(i)->getFilepath() + "/" +fileName;
 			return file;
 		}
 	return "";
@@ -404,11 +412,11 @@ std::string PTManager::getFilePath(std::string fileName)
 
 std::string PTManager::getFilePath(int imageKey)
 {
-    size_t numImages=listAllImages.size();
-    for (size_t i=0;i<numImages;i++)
+	size_t numImages=listAllImages.size();
+	for (size_t i=0;i<numImages;i++)
 		if(listAllImages.at(i)->getId()==imageKey)
 		{
-            std::string file = listAllImages.at(i)->getFilepath() + "/" + listAllImages.at(i)->getFilename();
+			std::string file = listAllImages.at(i)->getFilepath() + "/" + listAllImages.at(i)->getFilename();
 			return file;
 		}
 	return "";
@@ -417,11 +425,11 @@ std::string PTManager::getFilePath(int imageKey)
 
 std::deque<std::string> PTManager::getStringTypePoints(std::string imageFileName)
 {
-    std::deque<std::string> list;
+	std::deque<std::string> list;
 	if (imageFileName == "")
 	{
-        size_t numPnts=listAllPoints.size();
-        for (size_t i=0; i<numPnts; i++)
+		size_t numPnts=listAllPoints.size();
+		for (size_t i=0; i<numPnts; i++)
 		{
 			if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == Point::CONTROL)
 				list.push_back("Control");
@@ -435,8 +443,8 @@ std::deque<std::string> PTManager::getStringTypePoints(std::string imageFileName
 		return list;
 	}else
 	{
-        size_t numImages= listAllImages.size();
-        for (size_t i=0;i<numImages;i++)
+		size_t numImages= listAllImages.size();
+		for (size_t i=0;i<numImages;i++)
 		{
 			//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
 			//qDebug("Antes %s",imageFileName.c_str());
@@ -444,9 +452,9 @@ std::deque<std::string> PTManager::getStringTypePoints(std::string imageFileName
 			{
 				//qDebug("Achou %s",imageFileName.c_str());
 				Image *temp=listAllImages.at(i);
-                size_t numpnts=temp->countPoints();
+				size_t numpnts=temp->countPoints();
 
-                for (size_t j=0;j<numpnts;j++)
+				for (size_t j=0;j<numpnts;j++)
 				{
 					//qDebug("%s from %s",temp->getPointAt(j)->getPointId().c_str() , imageFileName.c_str());
 					if (temp && temp->getPointAt(j) && temp->getPointAt(j)->getType() == Point::CONTROL)
@@ -462,7 +470,7 @@ std::deque<std::string> PTManager::getStringTypePoints(std::string imageFileName
 			}
 		}
 	}
-    throw "Image file problem";
+	throw "Image file problem";
 }
 
 // preenche a lista de imagens selecionadas(listSelectedImages) atraves de um deque de strings com os caminhos das imagens
@@ -471,10 +479,10 @@ void PTManager::selectImages(std::deque<std::string> selectedImagesList)
 	if(listSelectedImages.size()!=0)
 		listSelectedImages.clear();
 
-    size_t numImgs= listAllImages.size();
-    size_t	numSelectedImgs=selectedImagesList.size();
-    for(size_t i=0;i<numSelectedImgs;i++)
-        for (size_t j=0;j<numImgs;j++)
+	size_t numImgs= listAllImages.size();
+	size_t	numSelectedImgs=selectedImagesList.size();
+	for(size_t i=0;i<numSelectedImgs;i++)
+		for (size_t j=0;j<numImgs;j++)
 			if (listAllImages.at(j)->getFilename()==selectedImagesList.at(i))
 			{
 				listSelectedImages.push_back(listAllImages.at(j));
@@ -489,11 +497,11 @@ void PTManager::selectPoints(std::deque<std::string> selectedPointsList)
 	if(listSelectedPoints.size()!=0)
 		listSelectedPoints.clear();
 
-    size_t numPnts= listAllPoints.size();
-    size_t	numSelectedPnts=selectedPointsList.size();
+	size_t numPnts= listAllPoints.size();
+	size_t	numSelectedPnts=selectedPointsList.size();
 
-    for(size_t i=0;i<numSelectedPnts;i++)
-        for (size_t j=0;j<numPnts;j++)
+	for(size_t i=0;i<numSelectedPnts;i++)
+		for (size_t j=0;j<numPnts;j++)
 			if (listAllPoints.at(j)->getPointId()==selectedPointsList.at(i) && listAllPoints.at(j)->getType() != Point::CHECKING)
 			{
 
@@ -517,11 +525,11 @@ std::string PTManager::getPointId(int pointKey)
 // retorna uma lista com os ids dos pontos
 std::deque<std::string> PTManager::getStringIdPoints(std::string imageFileName, std::string cond)
 {
-    std::deque<std::string> list;
+	std::deque<std::string> list;
 	if (imageFileName =="" && cond!="")
 	{
-        size_t numPnts=listAllPoints.size();
-        for (size_t i=0; i<numPnts; i++)
+		size_t numPnts=listAllPoints.size();
+		for (size_t i=0; i<numPnts; i++)
 		{
 			Point *pnt=listAllPoints.at(i);
 			int appearances = getImagesAppearances(pnt->getId()).size();
@@ -568,7 +576,7 @@ std::deque<std::string> PTManager::getStringIdPoints(std::string imageFileName, 
 
 std::deque<std::string> PTManager::getStringKeysPoints(std::string imageFileName)
 {
-    std::deque<std::string> list;
+	std::deque<std::string> list;
 
 	//qDebug("lista de imagens %d",listAllImages.size());
 	if (imageFileName =="")
@@ -601,7 +609,7 @@ std::deque<std::string> PTManager::getStringKeysPoints(std::string imageFileName
 			}
 		}
 	}
-    throw "Image file error";
+	throw "Image file error";
 }
 
 Matrix PTManager::getColLin(std::string imageFilename)
@@ -628,14 +636,14 @@ Matrix PTManager::getColLin(std::string imageFilename)
 			return result;
 		}
 	}
-    throw "image File do not found";
+	throw "image File do not found";
 }
 
 Matrix PTManager::getColLin(int imageKey)
 {
-    size_t numImages= listAllImages.size();
+	size_t numImages= listAllImages.size();
 	//qDebug("lista de imagens %d",listAllImages.size());
-    for (size_t i=0;i<numImages;i++)
+	for (size_t i=0;i<numImages;i++)
 	{
 		//qDebug("Imagens %s",listAllImages.at(i)->getFilename().c_str());
 		//qDebug("Antes %s",imageFileName.c_str());
@@ -655,7 +663,7 @@ Matrix PTManager::getColLin(int imageKey)
 			return result;
 		}
 	}
-    throw "imageKey do not found";
+	throw "imageKey do not found";
 }
 
 
@@ -691,9 +699,9 @@ int PTManager::getImageId(std::string imageFilename)
 
 void PTManager::sortPointsSelected()
 {
-    std::deque<Point *>listCtrl;
-    size_t numSelectedPoints = listSelectedPoints.size();
-    for(size_t i=0; i<numSelectedPoints ;i++)
+	std::deque<Point *>listCtrl;
+	size_t numSelectedPoints = listSelectedPoints.size();
+	for(size_t i=0; i<numSelectedPoints ;i++)
 	{
 		Point *pnt=listSelectedPoints.at(i);
 		if (pnt->getType() == Point::CONTROL)
@@ -707,9 +715,9 @@ void PTManager::sortPointsSelected()
 // retorna o ENH dos pontos Fotogrammetricos
 Matrix PTManager::getPhotogrammetricENH()
 {
-    size_t points=listSelectedPoints.size();
+	size_t points=listSelectedPoints.size();
 	Matrix enh(0,3);
-    for (size_t i=0;i<points;i++)
+	for (size_t i=0;i<points;i++)
 	{
 		Point *pnt=listSelectedPoints.at(i);
 		if (pnt->getType() == Point::PHOTOGRAMMETRIC)
@@ -727,9 +735,9 @@ Matrix PTManager::getPhotogrammetricENH()
 
 Matrix PTManager::getResiduoPhotogrammetric()
 {
-    size_t points=listSelectedPoints.size();
+	size_t points=listSelectedPoints.size();
 	Matrix residuos(0,3);
-    for (size_t i=0;i<points;i++)
+	for (size_t i=0;i<points;i++)
 	{
 		Point *pnt=listSelectedPoints.at(i);
 		if (pnt->getType() == Point::PHOTOGRAMMETRIC)
@@ -743,9 +751,9 @@ Matrix PTManager::getResiduoPhotogrammetric()
 
 std::deque<std::string> PTManager::getSelectedPointIdPhotogrammetric()
 {
-    size_t points=listSelectedPoints.size();
-    std::deque<std::string> selected;
-    for (size_t i=0;i<points;i++)
+	size_t points=listSelectedPoints.size();
+	std::deque<std::string> selected;
+	for (size_t i=0;i<points;i++)
 	{
 		Point *pnt=listSelectedPoints.at(i);
 		if (pnt->getType() == Point::PHOTOGRAMMETRIC)
@@ -757,7 +765,7 @@ std::deque<std::string> PTManager::getSelectedPointIdPhotogrammetric()
 void PTManager::saveResults()
 {
 	saveBundleAdjustment();
-    saveImages();
+	saveImages();
 	saveMarks();
 	setMarksSavedState(true);
 	efotoManager->setSavedState(false);
@@ -771,7 +779,7 @@ Matrix PTManager::getMVC()
 // Retorna uma lista dos fileNames das imagens que contem o ponto
 std::deque<std::string> PTManager::getImagesAppearances(int pointKey)
 {
-    std::deque<std::string> appearance;
+	std::deque<std::string> appearance;
 	Point *pnt=efotoManager->instancePoint(pointKey);
 	int numImages=pnt->countImages();
 	for(int i=0;i<numImages;i++)
@@ -781,35 +789,35 @@ std::deque<std::string> PTManager::getImagesAppearances(int pointKey)
 
 void PTManager::saveMarks()
 {
-    //qDebug("Chamado metodo para salvar as marcas");
-    std::string points="<points>\n";
-    for (size_t i=0; i<listAllPoints.size(); i++)
-        points += listAllPoints.at(i)->xmlGetData().c_str();
-    points+="</points>\n";
-    EDomElement newXml(efotoManager->xmlGetData());
-    newXml.replaceChildByTagName("points",points);
-    efotoManager->xmlSetData(newXml.getContent());
+	//qDebug("Chamado metodo para salvar as marcas");
+	std::string points="<points>\n";
+	for (size_t i=0; i<listAllPoints.size(); i++)
+		points += listAllPoints.at(i)->xmlGetData().c_str();
+	points+="</points>\n";
+	EDomElement newXml(efotoManager->xmlGetData());
+	newXml.replaceChildByTagName("points",points);
+	efotoManager->xmlSetData(newXml.getContent());
 
-    //qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
+	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
 }
 
 void PTManager::saveImages()
 {
-    std::string images="<images>\n";
-    for (size_t i=0; i<listAllImages.size(); i++)
-        images += listAllImages.at(i)->xmlGetData().c_str();
-    images+="</images>\n";
+	std::string images="<images>\n";
+	for (size_t i=0; i<listAllImages.size(); i++)
+		images += listAllImages.at(i)->xmlGetData().c_str();
+	images+="</images>\n";
 
-    EDomElement newXml(efotoManager->xmlGetData());
-    newXml.replaceChildByTagName("images",images);
-    efotoManager->xmlSetData(newXml.getContent());
+	EDomElement newXml(efotoManager->xmlGetData());
+	newXml.replaceChildByTagName("images",images);
+	efotoManager->xmlSetData(newXml.getContent());
 }
 
 void PTManager::saveBundleAdjustment()
 {
 	EDomElement newExteriorOrientationXml(createOESXml());
 	EDomElement oldExteriorOrientationXml(efotoManager->getXml("exteriorOrientation"));
-    std::deque<EDomElement> oldEos = oldExteriorOrientationXml.elementsByTagName("imageEO");
+	std::deque<EDomElement> oldEos = oldExteriorOrientationXml.elementsByTagName("imageEO");
 
 	EDomElement oldEpp(efotoManager->xmlGetData());
 	if (oldEpp.hasTagName("phototriangulation"))
@@ -818,10 +826,10 @@ void PTManager::saveBundleAdjustment()
 		oldEpp.addChildAtTagName("efotoPhotogrammetricProject",getPhotoTriXml());
 
 	EDomElement temp;
-    for (size_t i=0; i<oldEos.size() ;i++)
+	for (size_t i=0; i<oldEos.size() ;i++)
 	{
 		temp.setContent(oldEos.at(i).getContent());
-        std::string imageKey = temp.attribute("image_key");
+		std::string imageKey = temp.attribute("image_key");
 		if (newExteriorOrientationXml.elementByTagAtt("imageEO","image_key",imageKey).getContent()==""  && temp.attribute("type")=="spatialResection")
 			newExteriorOrientationXml.addChildAtTagName("exteriorOrientation",temp.getContent());
 	}
@@ -835,12 +843,12 @@ void PTManager::saveBundleAdjustment()
 
 std::string PTManager::createOESXml()
 {
-    std::stringstream fotoTriXml;
+	std::stringstream fotoTriXml;
 	//codigo de criacao da xml da bundle(multiplas tags de Orientacao Exterior)
 	//Matrix oe=pt->getAFP();
 	Matrix oe=AFP;
 	fotoTriXml << "<exteriorOrientation>\n";
-    for (size_t i=1;i<=oe.getRows();i++)
+	for (size_t i=1;i<=oe.getRows();i++)
 	{
 		Image *img = listSelectedImages.at(i-1);
 		fotoTriXml << "\t<imageEO type=\"photoTriangulation\" image_key=\"" << Conversion::intToString(img->getId()) << "\">\n";
@@ -870,14 +878,14 @@ std::string PTManager::createOESXml()
 
 std::string PTManager::getPhotoTriXml()
 {
-    std::stringstream fotoTriXml;
+	std::stringstream fotoTriXml;
 	fotoTriXml << "<phototriangulation>\n";
 
 	fotoTriXml << "\t<iterations>"<< Conversion::intToString(pt->getTotalIterations()) <<"</iterations>\n";
 	fotoTriXml << "\t<converged>"<< (pt->isConverged()? "true":"false")<<"</converged>\n";
-    fotoTriXml << "\t<metricConvergency uom=\"#m\">"<< pt->getMetricConvergencyValue()<<"</metricConvergency>\n";
-    fotoTriXml << "\t<angularConvergency uom=\"#rad\">"<< pt->getAngularConvergencyValue()<<"</angularConvergency>\n";
-    fotoTriXml << "\t<rmse>" << pt->calculateRMSE() << "</rmse>\n";
+	fotoTriXml << "\t<metricConvergency uom=\"#m\">"<< pt->getMetricConvergencyValue()<<"</metricConvergency>\n";
+	fotoTriXml << "\t<angularConvergency uom=\"#rad\">"<< pt->getAngularConvergencyValue()<<"</angularConvergency>\n";
+	fotoTriXml << "\t<rmse>" << pt->calculateRMSE() << "</rmse>\n";
 
 	fotoTriXml << getUsedPointsXml() << getUsedImagesXml();
 
@@ -889,9 +897,9 @@ std::string PTManager::getPhotoTriXml()
 
 std::string PTManager::getUsedPointsXml()
 {
-    std::stringstream usedPoints;
+	std::stringstream usedPoints;
 	usedPoints << "\t<usedPoints>\n";
-    for (size_t i=0;i<listSelectedPoints.size();i++)
+	for (size_t i=0;i<listSelectedPoints.size();i++)
 	{
 		Point *pnt=listSelectedPoints.at(i);
 		usedPoints << "\t\t<pointKey>" <<	pnt->getId()	<<"</pointKey>\n";
@@ -902,9 +910,9 @@ std::string PTManager::getUsedPointsXml()
 
 std::string PTManager::getUsedImagesXml()
 {
-    std::stringstream usedImages;
+	std::stringstream usedImages;
 	usedImages << "\t<usedImages>\n";
-    for (size_t i=0;i<listSelectedImages.size();i++)
+	for (size_t i=0;i<listSelectedImages.size();i++)
 	{
 		Image *img=listSelectedImages.at(i);
 		usedImages << "\t\t<imageKey>" <<	img->getId()	<<"</imageKey>\n";
@@ -933,7 +941,7 @@ void PTManager::loadFotoTriData(std::string fotoTriData)
 	// Ou deixar esses elementos numa area comun e so subdividir os parametros da orientacao
 
 	EDomElement oe(fotoTriData);
-    //int numIterations=oe.elementByTagName("iterations").toInt();
+	//int numIterations=oe.elementByTagName("iterations").toInt();
 	//bool converged = oe.elementByTagName("converged");
 	Matrix Lb;
 	Lb.xmlSetData(oe.elementByTagName("Lb").getContent());
@@ -947,7 +955,7 @@ bool PTManager::hasPreviousData()
 
 void PTManager::setImageFlightDirection(std::string imageFile, double flightDirection)
 {
-    for (size_t i=0;i<listAllImages.size();i++)
+	for (size_t i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)->getFilename() == imageFile)
 		{
 			listAllImages.at(i)->setFlightDirection(flightDirection);
@@ -965,7 +973,7 @@ void PTManager::setImageFlightDirection(int imageKey, double flightDirection)
 
 double PTManager::getImageFlightDirection(std::string imageFile)
 {
-    for (size_t i=0;i<listAllImages.size();i++)
+	for (size_t i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)->getFilename() == imageFile)
 		{
 			//qDebug("File %s kappa0 = %.7f",imageFile.c_str(),listAllImages.at(i)->getFlightDirection());
@@ -987,39 +995,37 @@ double PTManager::getImageFlightDirection(int imageKey)
 
 double PTManager::getLongitudinalOverlap(std::string imageFile)
 {
-    for (size_t i=0;i<listAllImages.size();i++)
+	for (size_t i=0;i<listAllImages.size();i++)
 		if(listAllImages.at(i)->getFilename() == imageFile)
 			return listAllImages.at(i)->getFlight()->getLongitudinalOverlap();
 	return -1;
 
 }
 
-std::string PTManager::exportBlockTokml(std::string fileName)
+std::string PTManager::exportBlockTokml(std::string fileName, bool fromXML)
 {
-	QList<EPolygon *> epolygons;
+	//QList<EPolygon *> epolygons;
 
 	int hemiLatitude = getTerrainLatHemisphere();
 	int zona=getTerrainZone();
 	GeoSystem sys=getTerrainDatum();
 
-
-
-    std::stringstream aux;
+	std::stringstream aux;
 	aux << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 	aux	<< "<Document>\n<name>" << fileName <<"</name>\n";
 
-    std::string controlPointIcon         = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
-    std::string photogrammetricPointIcon = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png";
-    //std::string photogrammetricPointIcon = "http://marmsx.msxall.com/artgallery/ink/efoto.png";
-    std::string checkingPointIcon        = "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png";
+	std::string controlPointIcon         = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+	std::string photogrammetricPointIcon = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png";
+	//std::string photogrammetricPointIcon = "http://marmsx.msxall.com/artgallery/ink/efoto.png";
+	std::string checkingPointIcon        = "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png";
 
-    std::string colorNormalControl="ff00ff00";
-    std::string colorNormalPhotogrammetric = "ff00ffff";
-    std::string colorNormalChecking ="ff12f580" ;//18--245-128
+	std::string colorNormalControl="ff00ff00";
+	std::string colorNormalPhotogrammetric = "ff00ffff";
+	std::string colorNormalChecking ="ff12f580" ;//18--245-128
 
-    std::string colorHighLightControl="ff0000ff";
-    std::string colorHighLightPhotogrammetric="ff0000ff";
-    std::string colorHighLightChecking="ff12f580";
+	std::string colorHighLightControl="ff0000ff";
+	std::string colorHighLightPhotogrammetric="ff0000ff";
+	std::string colorHighLightChecking="ff12f580";
 
 	// Style para pontos de controle
 	aux<<"<StyleMap id=\"controlPoint\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ControlPoint</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ControlPoint</styleUrl>\n</Pair>\n</StyleMap>\n";
@@ -1036,16 +1042,23 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 	aux<<"<Style id=\"sn_CheckingPoint\">\n<IconStyle>\n<color>"<<colorNormalChecking<<"</color>\n<scale>1.0</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 	aux<<"<Style id=\"sh_CheckingPoint\">\n<IconStyle>\n<color>"<<colorHighLightChecking<<"</color>\n<scale>1.1</scale>\n<Icon>\n<href>"<< checkingPointIcon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n</Style>\n";
 
-	Matrix oe=getMatrixOE();
+	if (fromXML)
+	{
+		AFP = eoParametersFromXml(false);
+		//Conectar imagens e respectivos sensores
+	}
+
+	Matrix oe = getMatrixOE();
 	//oe.show();
+
 	if (oe.getCols()>1 )
 	{
 		int B=0;
 		int G=0;
 		int R=0;
-        for (size_t i=0;i<listAllImages.size();i++)
+		for (size_t i=0;i<listAllImages.size();i++)
 		{
-            std::string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
+			std::string icon= "http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png";
 			switch (i%3)
 			{
 				case 0:	B=rand()%15;
@@ -1060,16 +1073,16 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 				break;
 			}
 
-            std::stringstream aux1;
+			std::stringstream aux1;
 
-            aux1 << std::hex << "ff"<< B << G << R << B << G << R;
+			aux1 << std::hex << "ff"<< B << G << R << B << G << R;
 
 
-            std::string lineColor =aux1.str();
+			std::string lineColor =aux1.str();
 			//qDebug("B: %d\tG: %d\tR: %d string: %s",B,G,R,lineColor.c_str());
 			//string lineColor= "ffff0000"; //codigo hexadecimal alphaBGR
 
-            std::string lineWidth= "2";
+			std::string lineWidth= "2";
 			aux<<"<StyleMap id=\"msn_ylw-pushpin" << Conversion::intToString(i) <<"\">\n<Pair>\n<key>normal</key>\n<styleUrl>#sn_ylw-pushpin"<<Conversion::intToString(i)<< "</styleUrl>\n</Pair>\n<Pair>\n<key>highlight</key>\n<styleUrl>#sh_ylw-pushpin"<<Conversion::intToString(i)<< "</styleUrl>\n</Pair>\n</StyleMap>\n";
 			aux<<"<Style id=\"sn_ylw-pushpin"<<Conversion::intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
 			aux<<"<Style id=\"sh_ylw-pushpin"<<Conversion::intToString(i)<< "\">\n<IconStyle>\n<scale>1.3</scale>\n<Icon>\n<href>"<< icon <<"</href>\n</Icon>\n<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>\n</IconStyle>\n" << "<LineStyle>\n<color>"<< lineColor <<"</color>\n<width>"<< lineWidth<<"</width>\n</LineStyle>\n<PolyStyle>\n<fill>0</fill>\n</PolyStyle>\n</Style>\n";
@@ -1096,16 +1109,6 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 			double E2=oe.get(i+1,4)+deltaE;
 			double N2=oe.get(i+1,5)-deltaN;
 
-
-			/*
-			QList<QPointF *> pnts;
-			pnts << new QPointF(E1,N1) <<  new QPointF(E2,N1) <<  new QPointF(E2,N2) << new QPointF(E1,N2);
-
-			EPolygon *polygon = new EPolygon(pnts);
-			polygon->setLabel(QString::fromStdString(img->getFilename()));
-			epolygons << polygon;
-
-			pnts.clear();*/
 			Matrix temp1= ConvertionsSystems::utmToGeo(E1,N1,zona,hemiLatitude,sys);
 			Matrix temp2= ConvertionsSystems::utmToGeo(E2,N2,zona,hemiLatitude,sys);
 
@@ -1146,30 +1149,19 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 				longi2 =plh2.get(1,2)*180/M_PI;
 			}
 
-            std::stringstream coord;
+			std::stringstream coord;
 			coord << Conversion::doubleToString(longi1) << "," <<Conversion::doubleToString(lat1) << ",0 ";
 			coord << Conversion::doubleToString(longi2) << "," <<Conversion::doubleToString(lat1) << ",0 ";
 			coord << Conversion::doubleToString(longi2) << "," <<Conversion::doubleToString(lat2) << ",0 ";
 			coord << Conversion::doubleToString(longi1) << "," <<Conversion::doubleToString(lat2) << ",0 ";
 			coord << Conversion::doubleToString(longi1) << "," <<Conversion::doubleToString(lat1) << ",0 ";
-            std::string coordenadas=coord.str();
+			std::string coordenadas=coord.str();
 
 			aux << "<Placemark>\n";
 			aux << "<name>"<< img->getFilename() << "</name>\n";
 			aux << "<styleUrl>";
 			aux << "#msn_ylw-pushpin" <<Conversion::intToString(i)<< "</styleUrl>\n";
-			/*
-  aux << "<Polygon>\n";
-  aux << "<tessellate>1</tessellate>\n";
-  aux << "<outerBoundaryIs>\n";
-  aux << "<LinearRing>\n";
-  aux << "<coordinates>\n";
-  aux << coordenadas << "\n";
-  aux << "</coordinates>\n";
-  aux << "</LinearRing>\n";
-  aux << "</outerBoundaryIs>\n";
-  aux << "</Polygon>\n";
-  */
+
 			aux << "<LineString>\n";
 			aux << "<tessellate>1</tessellate>\n";
 			aux << "<coordinates>\n";
@@ -1180,29 +1172,12 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 		}
 	}
 
-	/*
-				double interX=0.0;
-				double interY=0.0;
-				for( int i=0; i<epolygons.size()-1;i++)
-				{
-								EPolygon *temp1=epolygons.at(i);
-								for (int j=i+1; j<epolygons.size();j++)
-								{
-												EPolygon *temp2=epolygons.at(j);
-												if (temp1->isIntercepted(*temp2,interX,interY))
-												{
-																qDebug("%s intercepts %s in %.3f  %.3f",temp1->getLabel().toStdString().c_str(),temp2->getLabel().toStdString().c_str(),interX,interY);
-																//qDebug()<< temp1->getLabel()<< " intercepts "<< temp2->getLabel() << " in x = " << inter;
-												}
-								}
-				}
-*/
-    std::string controlPoint="";
-    std::string photogrammetricPoint="";
-    std::string checkingPoint="";
+	std::string controlPoint="";
+	std::string photogrammetricPoint="";
+	std::string checkingPoint="";
 
 	//qDebug("%c\t%d\t%s",latitude,zona,sys.getSystemName().c_str());
-    for(size_t i=0;i<listAllPoints.size();i++)
+	for(size_t i=0;i<listAllPoints.size();i++)
 	{
 		Point *pnt=listAllPoints.at(i);
 		//string pointType;
@@ -1244,7 +1219,7 @@ std::string PTManager::exportBlockTokml(std::string fileName)
 //string PTManager::pointToKml(Point *pnt, int zona,GeoSystem sys ,char hemiLatitude,string pointType)
 std::string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSystem sys,std::string pointType)
 {
-    std::stringstream pointString;
+	std::stringstream pointString;
 	double E=pnt->getObjectCoordinate().getX();
 	double N=pnt->getObjectCoordinate().getY();
 	double H=pnt->getObjectCoordinate().getZ();
@@ -1363,7 +1338,7 @@ void PTManager::reloadPointsCoordinates()
 // Retorna a posiÃ§ao de 'img' no deque de imagens selecionadas, se nao estiver retorna -1
 int PTManager::whereInSelectedImages(Image *img)
 {
-    for (size_t i=0;i<listSelectedImages.size();i++)
+	for (size_t i=0;i<listSelectedImages.size();i++)
 	{
 		if (listSelectedImages.at(i)==img)
 			return i;
@@ -1374,7 +1349,7 @@ int PTManager::whereInSelectedImages(Image *img)
 // Retorna a posiÃ§ao de 'img' no deque de imagens, se nao estiver retorna -1
 int PTManager::whereInImages(Image *img)
 {
-    for (size_t i=0;i<listAllImages.size();i++)
+	for (size_t i=0;i<listAllImages.size();i++)
 	{
 		if (listAllImages.at(i)==img)
 			return i;
@@ -1384,9 +1359,9 @@ int PTManager::whereInImages(Image *img)
 
 std::deque<std::string> PTManager::getPointsWithLesserThanOverlap(size_t overlap)
 {
-    std::deque<std::string> ids;
-    size_t numPoints=listAllPoints.size();
-    for (size_t i=0;i<numPoints;i++)
+	std::deque<std::string> ids;
+	size_t numPoints=listAllPoints.size();
+	for (size_t i=0;i<numPoints;i++)
 	{
 		Point * pnt=listAllPoints.at(i);
 		if(pnt->getType() == Point::PHOTOGRAMMETRIC)
@@ -1398,7 +1373,7 @@ std::deque<std::string> PTManager::getPointsWithLesserThanOverlap(size_t overlap
 
 int PTManager::createNewPoint()
 {
-    std::string text = "";
+	std::string text = "";
 
 	int currentItemId = efotoManager->getFreePointId();
 	text += "<point key=\"" + Conversion::intToString(currentItemId) + "\" type=\"photogrammetric\">\n";
@@ -1419,6 +1394,66 @@ int PTManager::createNewPoint()
 	return currentItemId;
 
 }
+
+void PTManager::runAutoMeasurement()
+{
+    bool notChanged = true;
+	size_t nImgs = listAllImages.size();
+	for (size_t i = 0; nImgs > i; i++)
+	{
+		Image* img = listAllImages.at(i);
+		ExteriorOrientation* imgEO = img->getEO();
+		if (img->getGnssType() == "Initial" || img->getGnssType() == "Fixed")
+			if (img->getInsType() == "Initial" || img->getInsType() == "Fixed")
+			{
+				Matrix Xa(6,1);
+				Xa.set(1,1, img->getGnssX0());
+				Xa.set(2,1, img->getGnssY0());
+				Xa.set(3,1, img->getGnssZ0());
+				Xa.set(4,1, img->getInsPhi());
+				Xa.set(5,1, img->getInsOmega());
+				Xa.set(6,1, img->getInsKappa());
+				ExteriorOrientation newEO;
+				newEO.setXa(Xa);
+				img->setEO(&newEO);
+				ProjectiveRay pr(img);
+
+				size_t nPnts = listAllPoints.size();
+				for (size_t j = 0; nPnts > j; j++)
+				{
+					Point* pnt = listAllPoints.at(j);
+					if (!pnt->hasImageCoordinate(img->getId()))
+					{
+						ImageSpaceCoordinate pos = pr.objectToImage(pnt->getObjectCoordinate(),false);
+						if (pos.getCol() > 0.1 && pos.getCol() < img->getWidth() && pos.getLin() > 0.1 && pos.getLin() < img->getHeight())
+						{
+							connectPointInImage(pnt->getId(), img->getId());
+                            pnt->putImageCoordinate(pos);
+                            notChanged = false;
+						}
+					}
+                }
+			}
+	}
+    setMarksSavedState(notChanged);
+}
+
+void PTManager::disconnectPointAndImage(int pointKey, int imageKey)
+{
+	Image* image = efotoManager->image(imageKey);
+	if (image != NULL)
+	{
+		Point* point = image->getPoint(pointKey);
+		if (point != NULL)
+		{
+			point->removeImage(imageKey);
+			point->deleteImageCoordinate(imageKey);
+			image->removePoint(pointKey);
+			setMarksSavedState(false);
+		}
+	}
+}
+
 void PTManager::connectPointInImage(int pointKey, int imageKey)
 {
 	Point* point = efotoManager->instancePoint(pointKey);
@@ -1426,7 +1461,6 @@ void PTManager::connectPointInImage(int pointKey, int imageKey)
 	point->putImage(image);
 	image->putPoint(point);
 	image->sortPoints();
-
 }
 
 bool PTManager::allKappaSet()
@@ -1443,7 +1477,7 @@ bool PTManager::allKappaSet()
 
 std::deque<std::string> PTManager::getImagesKappaSet()
 {
-    std::deque<std::string> list;
+	std::deque<std::string> list;
 	int nImages= listAllImages.size();
 	for (int i=0;i<nImages;i++)
 	{
@@ -1451,75 +1485,75 @@ std::deque<std::string> PTManager::getImagesKappaSet()
 		if (img->getFlightDirection()<2.5*M_PI && img->getFlightDirection()>=0)
 			list.push_back(img->getFilename());
 	}
-    return list;
+	return list;
 }
 
 std::string PTManager::getCoordinatesGeodesic()
 {
-    size_t rows=listAllPoints.size();
-    std::string result;
-    result+= "\t\t\tCoordinates in geodesic\n";
-    result+="PointId\t\tPhi\t\t\tLambda\n";
+	size_t rows=listAllPoints.size();
+	std::string result;
+	result+= "\t\t\tCoordinates in geodesic\n";
+	result+="PointId\t\tPhi\t\t\tLambda\n";
 
-    int hemi = getTerrainLatHemisphere();
-    int zone=getTerrainZone();
-    GeoSystem sys=getTerrainDatum();
+	int hemi = getTerrainLatHemisphere();
+	int zone=getTerrainZone();
+	GeoSystem sys=getTerrainDatum();
 
-    for (size_t i=0;i<rows;i++)
-    {
-        Point *pnt=listAllPoints.at(i);
-        ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
-        double E = temp.getX();
-        double N = temp.getY();
+	for (size_t i=0;i<rows;i++)
+	{
+		Point *pnt=listAllPoints.at(i);
+		ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+		double E = temp.getX();
+		double N = temp.getY();
 
-        Matrix gc= ConvertionsSystems::utmToGeo(E,N,zone,hemi,sys);
+		Matrix gc= ConvertionsSystems::utmToGeo(E,N,zone,hemi,sys);
 
-        result += pnt->getPointId();
-        result += "\t\t";
-        result += Conversion::doubleToString(gc.get(1,1)*180/M_PI,5);
-        result += "\t\t";
-        result += Conversion::doubleToString(gc.get(1,2)*180/M_PI,5);
-        result +="\n";
-    }
-    return result;
+		result += pnt->getPointId();
+		result += "\t\t";
+		result += Conversion::doubleToString(gc.get(1,1)*180/M_PI,5);
+		result += "\t\t";
+		result += Conversion::doubleToString(gc.get(1,2)*180/M_PI,5);
+		result +="\n";
+	}
+	return result;
 }
 
 std::string PTManager::getCoordinatesTopocentric()
 {
 
-    int rows=listAllPoints.size();
-    std::string result;
-    result += "\t\t\tCoordinates in Local Topocentric\n";
-    result +="PointId\t\tE\t\t\t\tN\t\t\t\tH\n";
-    int hemi = getTerrainLatHemisphere();
-    int zone=getTerrainZone();
-    double latterrain=getPhiTerrain();
-    double longterrain=getLambdaTerrain();
-    double h0=getAltitudeMedia();
-    GeoSystem sys=getTerrainDatum();
+	int rows=listAllPoints.size();
+	std::string result;
+	result += "\t\t\tCoordinates in Local Topocentric\n";
+	result +="PointId\t\tE\t\t\t\tN\t\t\t\tH\n";
+	int hemi = getTerrainLatHemisphere();
+	int zone=getTerrainZone();
+	double latterrain=getPhiTerrain();
+	double longterrain=getLambdaTerrain();
+	double h0=getAltitudeMedia();
+	GeoSystem sys=getTerrainDatum();
 
 
-    for (int i=0;i<rows;i++)
-        {
-            Point *pnt=listAllPoints.at(i);
-            ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
-            double E = temp.getX();
-            double N = temp.getY();
-            double H = temp.getZ();
+	for (int i=0;i<rows;i++)
+		{
+			Point *pnt=listAllPoints.at(i);
+			ObjectSpaceCoordinate temp = pnt->getObjectCoordinate();
+			double E = temp.getX();
+			double N = temp.getY();
+			double H = temp.getZ();
 
-            Matrix gc= ConvertionsSystems::utmToNunes(E,N,H,zone,hemi,latterrain,longterrain,h0,sys);
+			Matrix gc= ConvertionsSystems::utmToNunes(E,N,H,zone,hemi,latterrain,longterrain,h0,sys);
 
-            result += pnt->getPointId();
-            result += "\t\t";
-            result += Conversion::doubleToString(gc.get(1,1),3);
-            result += "\t\t\t";
-            result += Conversion::doubleToString(gc.get(1,2),3);
-            result += "\t\t\t";
-            result += Conversion::doubleToString(gc.get(1,3),3);
-            result +="\n";
-        }
+			result += pnt->getPointId();
+			result += "\t\t";
+			result += Conversion::doubleToString(gc.get(1,1),3);
+			result += "\t\t\t";
+			result += Conversion::doubleToString(gc.get(1,2),3);
+			result += "\t\t\t";
+			result += Conversion::doubleToString(gc.get(1,3),3);
+			result +="\n";
+		}
 
-    return result;
+	return result;
 }
 
 
@@ -1536,7 +1570,7 @@ Matrix PTManager::getDigitalCoordinate(int imageKey, int pointKey)
 
 bool PTManager::hasAllImagesInitialValues()
 {
-    for (size_t i=0;i<listAllImages.size();i++)
+	for (size_t i=0;i<listAllImages.size();i++)
 	{
 		Image *img=listAllImages.at(i);
 		if(!img->isInsAvailable())
@@ -1626,7 +1660,7 @@ void PTManager::convertToUTM(std::deque<Point*> points, GeoSystem sys)
 	// convertendo os parametros da OE
 	//Matrix oes=getMatrixOE();
 
-    for (size_t i=1; i<=AFP.getRows(); i++)
+	for (size_t i=1; i<=AFP.getRows(); i++)
 	{
 		double X0 = AFP.get(i,4);
 		double Y0 = AFP.get(i,5);
@@ -1647,16 +1681,21 @@ bool PTManager::hasEODone()
 	return false;
 }
 
-Matrix PTManager::eoParametersFromXml()
+Matrix PTManager::eoParametersFromXml(bool withIds)
 {
 	EDomElement tempXa;
 	EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
-    std::deque<EDomElement> oesXml=exteriorXml.elementsByTagName("imageEO");
+	std::deque<EDomElement> oesXml=exteriorXml.elementsByTagName("imageEO");
 
 	int imagekey;
 	double x0,y0,z0,omega,phi,kappa;
 	int numEO = oesXml.size();
-	Matrix oesMatrix(numEO,7);
+
+	Matrix oesMatrix;
+	if (withIds)
+		oesMatrix.resize(numEO,7);
+	else
+		oesMatrix.resize(numEO,6);
 
 	for (int i=0; i<numEO; i++)
 	{
@@ -1670,13 +1709,25 @@ Matrix PTManager::eoParametersFromXml()
 		phi=Conversion::stringToDouble(tempXa.elementByTagName("phi").toString())*180/M_PI;
 		kappa=Conversion::stringToDouble(tempXa.elementByTagName("kappa").toString())*180/M_PI;
 
-		oesMatrix.set(i+1,1,imagekey);
-		oesMatrix.set(i+1,2,omega);
-		oesMatrix.set(i+1,3,phi);
-		oesMatrix.set(i+1,4,kappa);
-		oesMatrix.set(i+1,5,x0);
-		oesMatrix.set(i+1,6,y0);
-		oesMatrix.set(i+1,7,z0);
+		if (withIds)
+		{
+			oesMatrix.set(i+1,1,imagekey);
+			oesMatrix.set(i+1,2,omega);
+			oesMatrix.set(i+1,3,phi);
+			oesMatrix.set(i+1,4,kappa);
+			oesMatrix.set(i+1,5,x0);
+			oesMatrix.set(i+1,6,y0);
+			oesMatrix.set(i+1,7,z0);
+		}
+		else
+		{
+			oesMatrix.set(i+1,1,omega);
+			oesMatrix.set(i+1,2,phi);
+			oesMatrix.set(i+1,3,kappa);
+			oesMatrix.set(i+1,4,x0);
+			oesMatrix.set(i+1,5,y0);
+			oesMatrix.set(i+1,6,z0);
+		}
 	}
 	return oesMatrix;
 }
@@ -1748,9 +1799,9 @@ bool PTManager::getLocalTopocentricMode()
 
 int PTManager::createPhototriReport(char *filename)
 {
-    PhotoTriReport pt_report(efotoManager);
+	PhotoTriReport pt_report(efotoManager);
 
-    return pt_report.createReport(filename);
+	return pt_report.createReport(filename);
 }
 
 } // namespace efoto

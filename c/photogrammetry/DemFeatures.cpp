@@ -15,16 +15,21 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "DemFeatures.h"
 
 #include "MatchingPoints.h"
 
-#include <math.h>
+//#include <math.h>
 
 #include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
+#include <stdlib.h>
+#include <stdio.h>
 
 namespace br {
 namespace uerj {
@@ -40,7 +45,7 @@ DemFeatures::DemFeatures()
     // No feature and point selected
     selected_feat = -1;
     selected_pt = -1;
-        img_left_width = img_left_height = img_right_width = img_right_height = -1;
+    img_left_width = img_left_height = img_right_width = img_right_height = -1;
 }
 
 
@@ -80,11 +85,14 @@ int DemFeatures::loadFeatures(char *filename/*, int mode*/, bool append=false)
     return loadFeatSp165(filename, append);
 }
 
-int DemFeatures::saveFeatures(char *filename/*, int mode, bool append=false*/)
+int DemFeatures::saveFeatures(char *filename, int mode/*, bool append=false*/)
 {
-        // 0- SP 1.65
-        // 1- This version - To be developed
-        return saveFeatSp165(filename/*, append*/);
+    // 0- SP 1.65
+    // 1- Shapefile
+
+    if (mode == 1)
+        return saveFeatShape(filename);
+    return saveFeatSp165(filename/*, append*/);
 }
 
 // Feature id ranges from 1-N
@@ -746,7 +754,7 @@ void DemFeatures::createClassesFromSp165()
     fc.name = "Paved street";
     feature_classes.push_back(fc);
     fc.outline_color = 0xFF808000;
-    //"Unpaved street"; /// ???
+    fc.name = "Unpaved street"; /// ???
     feature_classes.push_back(fc);
     fc.outline_color = 0xFF00FF00 ;
     fc.name = "Trail";
@@ -1026,6 +1034,135 @@ int DemFeatures::saveFeatSp165(char *filename/*, bool append*/)
 
     arq.close();
     return 1;
+}
+
+int DemFeatures::saveFeatShape(char *filename/*, bool append*/)
+{
+    // Retorna se não houverem feições para salvar
+    if (features.size() == 0)
+        return 1;
+
+    std::deque<SHPObject*> shpObjs;
+    std::deque<std::string> objNames;
+    int nShapeType;
+    DemFeature df;
+
+    // Para cada tipo de feição
+    for (int k = 1; k<=19; k++)
+    {
+        bool flag = false;
+
+        // Definindo o tipo do shape
+        if (k > 8)
+            nShapeType = SHPT_POLYGONZ;
+        else if (k > 2)
+            nShapeType = SHPT_ARCZ;
+        else if (k > 1)
+            nShapeType = SHPT_POINTZ;
+        else
+            nShapeType = SHPT_MULTIPOINTZ;
+
+        // Procura uma classe de feiçoes entre todas as feições
+        for (unsigned int i=0; i<features.size(); i++)
+        {
+            if (getFeatureClassId(i) == k)
+            {
+                // Se for encontrada uma feição da classe procurada habilita a gravação
+                flag = true;
+
+                // Aloca espaço para a criação de um novo objeto do shape
+                //SHPObject* obj = (SHPObject*) malloc(sizeof(SHPObject));
+
+                // Armazenando vétices da feição
+                df = features.at(i);
+                unsigned int nVertices = df.points.size();
+                if (nShapeType == SHPT_POLYGONZ) nVertices++;
+                double* padfX = (double *) malloc(sizeof(double) * nVertices);
+                double* padfY = (double *) malloc(sizeof(double) * nVertices);
+                double* padfZ = (double *) malloc(sizeof(double) * nVertices);
+                for (unsigned int j=0; j<nVertices; j++)
+                {
+                    DemFeaturePoints dfp;
+                    if (j != df.points.size())
+                        dfp = df.points.at(j);
+                    else
+                        dfp = df.points.at(0);
+                    padfX[j] = dfp.X;
+                    padfY[j] = dfp.Y;
+                    padfZ[j] = dfp.Z;
+                }
+
+                // Cria objeto
+                SHPObject* obj = SHPCreateSimpleObject(nShapeType, nVertices, padfX, padfY, padfZ );
+
+                // Guarda objeto e o nome
+                objNames.push_back(df.name);
+                shpObjs.push_back(obj);
+
+                //Liberando memória
+                free( padfX );
+                free( padfY );
+                free( padfZ );
+            }
+        }
+
+        // Gravando novo shape
+        if (flag)
+        {
+            // Concatenando nome de arquivo e nome de classe
+            std::string current_filename = std::string(filename);
+            current_filename.append("_").append(getFeatureClass(k)->name);
+
+            // Criando novo shape
+            SHPHandle mySHP = SHPCreate(current_filename.c_str(), nShapeType);
+            if( mySHP == NULL )
+            {
+                printf( "Unable to create shapefile.\n" );
+                return 2;
+            }
+
+            // Criando DBF
+            DBFHandle myDBF = DBFCreate(current_filename.c_str());
+            if( myDBF == NULL )
+            {
+                printf( "Unable to create DBF file.\n" );
+                return 3;
+            }
+
+            // Criando campo para armazenar os nomes das feições
+            int iField = DBFAddField(myDBF, "Nome", FTString, 255, 0);
+
+            // Inserindo objetos(feições) no novo shape
+            unsigned int nObjs = shpObjs.size();
+            for (unsigned int i=0; i<nObjs; i++)
+            {
+                std::string name = objNames.at(i);
+                SHPObject* obj = shpObjs.at(i);
+
+                // Identificando objeto
+                obj->nShapeId = i;
+
+                // Escrevendo objeto no shape
+                SHPWriteObject( mySHP, -1, obj );
+
+                // Inserindo registros para os objetos
+                DBFWriteStringAttribute( myDBF, obj->nShapeId, iField, name.c_str());
+
+                // Liberando memória
+                SHPDestroyObject( obj );
+            }
+
+            //Limpando as filas
+            shpObjs.clear();
+            objNames.clear();
+
+            // Fechando arquivos
+            SHPClose( mySHP );
+            DBFClose( myDBF );
+        }
+    }
+
+    return 0;
 }
 
 // Export features to text file

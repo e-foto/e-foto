@@ -138,8 +138,8 @@ class DEMManager
     DemGrid *grid;
     DemFeatures *df;
     StereoPair sp;
-        int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step, ncc_temp_max_size;
-        double dem_total_elapsed_time;
+    int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step, ncc_temp_max_size;
+    double dem_total_elapsed_time;
 
 public:
 

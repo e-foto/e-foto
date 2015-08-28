@@ -15,12 +15,15 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "Dms.h"
 
 #include "EDom.h"
 
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 
 #include <QDebug>
 

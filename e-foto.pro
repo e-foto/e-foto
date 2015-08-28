@@ -10,8 +10,9 @@ INCLUDEPATH += . \
 			   c/photogrammetry \
 			   c/infrastructure \
 			   c/xml_definitions \
-			   c/interface \
-			   c/imageProcessing \
+                           c/interface \
+                           c/imageProcessing \
+                           c/shapelib \
 			   qt/interface \
 			   qt/imageDisplay \
 			   qt/infrastructure \
@@ -96,6 +97,7 @@ HEADERS += c/control/DEMManager.h \
 		   c/xml_definitions/XMLSensorWithFiducialMarks.h \
 		   c/xml_definitions/XMLTerrain.h \
 		   c/xml_definitions/XmlUpdater.h \
+                   c/shapelib/shapefil.h \
 		   qt/formDisplay/AbstractForm.h \
 		   qt/formDisplay/ControlButtons.h \
 		   qt/formDisplay/FlightForm.h \
@@ -232,7 +234,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/photogrammetry/SpatialIntersection.cpp \
 		   c/photogrammetry/SpatialRessection.cpp \
 		   c/photogrammetry/StereoPair.cpp \
-		   c/photogrammetry/Terrain.cpp \
+                   c/photogrammetry/Terrain.cpp \
 		   c/xml_definitions/XMLAerial.cpp \
 		   c/xml_definitions/XMLFlight.cpp \
 		   c/xml_definitions/XMLProjectHeader.cpp \
@@ -288,7 +290,8 @@ MOC_DIR = ../temp/moc
 UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
-unix:LIBS += -lGL -lGLU
+unix:LIBS += -lGL -lGLU -lshp
+LIBS += c/shapelib/shapelib.lib
 
 # Autochange AboutForm code
 ABOUTDIR = qt/infrastructure/

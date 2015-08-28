@@ -30,7 +30,7 @@
 #include <qstring.h>
 #include "Orthorectification.h"
 #include "OrthoManager.h"
-#include <math.h>
+//#include <math.h>
 
 #include <QCloseEvent>
 

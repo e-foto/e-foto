@@ -17,6 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
+#define _USE_MATH_DEFINES // for C++
+#include <math.h>
+
 #include "EDom.h"
 
 #include <sstream>
@@ -129,7 +132,7 @@ std::string EDomElement::tagName(std::string tag)
 
 	try
 	{
-		while (not(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t' || tag.at(last) == '\n' || tag.at(last) == '/'))
+        while (!(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t' || tag.at(last) == '\n' || tag.at(last) == '/'))
 			last++;
 		return tag.substr(first, last - first);
 	}
@@ -625,7 +628,7 @@ std::string EDomElement::tagName()
 
 	try
 	{
-		while (not(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t' || tag.at(last) == '\n' || tag.at(last) == '/'))
+        while (!(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t' || tag.at(last) == '\n' || tag.at(last) == '/'))
 			last++;
 		return tag.substr(first, last - first);
 	}
