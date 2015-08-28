@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include "Matrix.h"
+#include "shapefil.h"
 
 /**
 * class DemFeatures
@@ -81,6 +82,7 @@ private:
     int img_left_width, img_left_height, img_right_width, img_right_height;
     int loadFeatSp165(char *filename, bool append);
     // todo: solve unused parameter append
+    int saveFeatShape(char *filename/*, bool append*/);
     int saveFeatSp165(char *filename/*, bool append*/);
     void convertClassesIdsFromSp165();
     void calculateFeaturesAttributes();
@@ -109,7 +111,7 @@ public:
     std::string getFeatureTypeName(int);
     //todo: solve unused parameters mode and append
     int loadFeatures(char *filename/*, int mode*/, bool append);
-    int saveFeatures(char *filename/*, int mode, bool append*/);
+    int saveFeatures(char *filename, int mode = 0/*, bool append*/);
     int exportFeatures(char *filename);
     DemFeature getFeature(int feat); // Read only
     DemFeature* getFeatureLink(int feat);

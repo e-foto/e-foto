@@ -15,6 +15,9 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "Matrix.h"
 
 #include "PositionMatrix.h"
@@ -22,7 +25,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <math.h>
+//#include <math.h>
 #include <sstream>
 #include <iomanip>
 
@@ -186,8 +189,8 @@ double Matrix::get(const unsigned int i, const unsigned int j) const
 {
     if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
         return _Mat[(i-1) * ncols + j - 1];
-    else
-        std::cerr << "Get ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << std::endl;
+    //else
+        //std::cerr << "Get ["<< Conversion::intToString(i) << ","<< Conversion::intToString(j) << "] values out of the range of the matrix." << std::endl;
     return 0;
 }
 
@@ -933,8 +936,8 @@ Matrix& Matrix::putMatrix(Matrix put, int lin, int col)
         //printf("sobrescrevendo matrix original\n");
     }
 
-    unsigned int newRows=std::max(lin-1+put.getRows(),this->getRows());
-    unsigned int newCols=std::max(col-1+put.getCols(),this->getCols());
+    unsigned int newRows=std::fmax(lin-1+put.getRows(),this->getRows());
+    unsigned int newCols=std::fmax(col-1+put.getCols(),this->getCols());
 
     Matrix temp(newRows,newCols);
     for(unsigned int i=1;i<=newRows;i++)

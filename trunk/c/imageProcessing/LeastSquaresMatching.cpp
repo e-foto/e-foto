@@ -18,7 +18,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "LeastSquaresMatching.h"
-#include <math.h>
+//#include <math.h>
 
 namespace br {
 namespace uerj {
@@ -182,10 +182,13 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
                     return -2;
                 }
 
+//#define FLOOR(A) ((floor(A)>0)?floor(A):1)
+#define FLOOR(A) floor(A)
+
                 // Calculate the gray level in search image using bilinear interpolation
                 delta_x = x - floor(x);
                 delta_y = y - floor(y);
-                Maux.set(l+2, k+2, img2->get(floor(y),floor(x))*(1-delta_x)*(1-delta_y) + img2->get(floor(y),floor(x)+1)*delta_x*(1-delta_y) + img2->get(floor(y)+1,floor(x))*delta_y*(1-delta_x) + img2->get(floor(y)+1,floor(x)+1)*delta_x*delta_y);
+                Maux.set(l+2, k+2, img2->get(FLOOR(y),FLOOR(x))*(1-delta_x)*(1-delta_y) + img2->get(FLOOR(y),FLOOR(x)+1)*delta_x*(1-delta_y) + img2->get(FLOOR(y)+1,FLOOR(x))*delta_y*(1-delta_x) + img2->get(FLOOR(y)+1,FLOOR(x)+1)*delta_x*delta_y);
             }
         }
 

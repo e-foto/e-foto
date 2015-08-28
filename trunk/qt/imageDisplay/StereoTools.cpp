@@ -15,11 +15,14 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "StereoTools.h"
 
 #include <QFileDialog>
 #include "StereoDisplay.h"
-#include <math.h>
+//#include <math.h>
 
 #define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
 

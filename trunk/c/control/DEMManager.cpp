@@ -18,6 +18,9 @@ DEMManager.cpp
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+
 #include "DEMManager.h"
 
 #include "Point.h"
@@ -33,8 +36,11 @@ DEMManager.cpp
 
 #include "ProjectiveRay.h"
 
-#include <math.h>
 #include <sstream>
+
+//#define _USE_MATH_DEFINES // for C++
+//#include <cmath>
+//#include <math.h>
 
 // Constructors and destructors
 //

@@ -26,7 +26,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include <math.h>
+//#include <math.h>
 
 #include <sstream>
 #include <fstream>
