@@ -14,13 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <sys/time.h>
+//#include <sys/time.h>
 #include <time.h>
 #include "DemGrid.h"
 #include "DEMManager.h"
 #include "MatchingPointsGrid.h"
 
-#include <math.h>
+//#include <math.h>
 
 #include <sstream>
 #include <iomanip>
@@ -347,12 +347,12 @@ void DemGrid::interpolateNearestPointFast()
     //int total = DEM.getCols()*DEM.getRows();
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
-        printf("Interpolating using Nearest Point Fast ...\n");
-    gettimeofday(&begin,NULL);
+    printf("Interpolating using Nearest Point Fast ...\n");
+    //gettimeofday(&begin,NULL);
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
         for (unsigned int x=1; x<=DEM.getCols(); x++)
@@ -377,13 +377,13 @@ void DemGrid::interpolateNearestPointFast()
         if (manager!=NULL)
             manager->setProgress((100*y)/DEM.getRows());
     }
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 
     delete mpg;
 }
@@ -415,12 +415,12 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
 
     Matrix X,A,L;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
-        printf("Interpolating using Trend Surface Fast ...\n");
-    gettimeofday(&begin,NULL);
+    printf("Interpolating using Trend Surface Fast ...\n");
+    //gettimeofday(&begin,NULL);
 
     // Size of the matrices
     switch (mode)
@@ -499,13 +499,13 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
             manager->setProgress((100*y)/DEM.getRows());
     }
 
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 }
 
 // Using fast structure
@@ -534,12 +534,12 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
 
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
         printf("Interpolating using Moving Average Fast ...\n");
-    gettimeofday(&begin,NULL);
+    //gettimeofday(&begin,NULL);
 
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
@@ -584,13 +584,13 @@ void DemGrid::interpolateMovingAverageFast(double n, double D0, int mode)
             manager->setProgress((100*y)/DEM.getRows());
     }
 
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 
     delete mpg;
 }
@@ -634,12 +634,12 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
         printf("Interpolating using Moving Surface Fast ...\n");
-    gettimeofday(&begin,NULL);
+    //gettimeofday(&begin,NULL);
 
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
@@ -750,13 +750,13 @@ void DemGrid::interpolateMovingSurfaceFast(double n, double D0, int mode, int mo
 
         eliminateBadPointsGrid(3.0);
 
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 
     delete mpg;
 }
@@ -1052,12 +1052,12 @@ void DemGrid::interpolateNearestPointNormal()
     //int total = DEM.getCols()*DEM.getRows();
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
     printf("Interpolating using Nearest Point ...\n");
-    gettimeofday(&begin,NULL);
+    //gettimeofday(&begin,NULL);
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
         for (unsigned int x=1; x<=DEM.getCols(); x++)
@@ -1086,13 +1086,13 @@ void DemGrid::interpolateNearestPointNormal()
         if (manager!=NULL)
             manager->setProgress((100*y)/DEM.getRows());
     }
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 }
 
 void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
@@ -1110,12 +1110,12 @@ void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
 
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
     printf("Interpolating using Moving Average ...\n");
-    gettimeofday(&begin,NULL);
+    //gettimeofday(&begin,NULL);
 
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
@@ -1153,13 +1153,13 @@ void DemGrid::interpolateMovingAverageNormal(double n, double D0, int mode)
             manager->setProgress((100*y)/DEM.getRows());
     }
 
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 }
 
 void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int mode2)
@@ -1191,12 +1191,12 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
 
     MatchingPoints *mp;
 
-    struct timeval begin;
-    struct timeval end;
-    int MICRO_PER_SECOND = 1000000;
+    //struct timeval begin;
+    //struct timeval end;
+    //int MICRO_PER_SECOND = 1000000;
 
     printf("Interpolating using Moving Surface ...\n");
-    gettimeofday(&begin,NULL);
+    //gettimeofday(&begin,NULL);
 
     for (unsigned int y=1; y<=DEM.getRows(); y++)
     {
@@ -1311,13 +1311,13 @@ void DemGrid::interpolateMovingSurfaceNormal(double n, double D0, int mode, int 
             manager->setProgress((100*y)/DEM.getRows());
     }
 
-    gettimeofday(&end,NULL);
+    //gettimeofday(&end,NULL);
 
-    float etime = (float)(end.tv_sec - begin.tv_sec);
-    etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = double(etime);
+    //float etime = (float)(end.tv_sec - begin.tv_sec);
+    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
+    elap_time = 0.0;//double(etime);
 
-    printf("Elapsed time: %.6f\n",etime);
+    //printf("Elapsed time: %.6f\n",etime);
 }
 
 

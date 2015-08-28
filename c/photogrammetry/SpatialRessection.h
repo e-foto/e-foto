@@ -6,23 +6,22 @@
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
-    e-foto is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	e-foto is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    e-foto is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	e-foto is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Matrix.h"
 #include "ExteriorOrientation.h"
-#include "EOQuality.h"
 #include "ImageSpaceCoordinate.h"
 #include "DetectorSpaceCoordinate.h"
 
@@ -47,7 +46,6 @@ class SpatialRessection : public ExteriorOrientation
 {
 	// Private attributes
 	//
-	Matrix Xa;
 	Matrix La;
 	Matrix A;
 	Matrix P;
@@ -55,25 +53,19 @@ class SpatialRessection : public ExteriorOrientation
 	Matrix L0;
 	Matrix Lb;
 	Matrix lastL0;
-    std::string type;
-    std::deque<double> rmse;
+	std::deque<double> rmse;
 
 	RayTester* rt;
 
 	double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
 	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
-    std::deque<int> selectedPoints;
-    bool flightDirectionAvailable;
-    bool pointForFlightDirectionAvailable;
-    ImageSpaceCoordinate pointForFlightDirection;
+	std::deque<int> selectedPoints;
+	bool flightDirectionAvailable;
+	bool pointForFlightDirectionAvailable;
+	ImageSpaceCoordinate pointForFlightDirection;
 
-	int totalIterations;
 	bool gnssConverged, insConverged;
 	bool useDistortions;
-
-	// Composed objects
-	//
-	EOQuality myQuality;
 
 	// Sets probably accessible only by the Mounter class.
 	//
@@ -95,7 +87,6 @@ public:
 
 	// Private attribute accessors
 	//
-	Matrix getXa();
 	Matrix getLa();
 	Matrix getA();
 	Matrix getP();
@@ -103,21 +94,15 @@ public:
 	Matrix getL0();
 	Matrix getLb();
 	Matrix getLastL0();
-    std::string getType() {return type;}
 
-    std::deque<int> getSelectedPoints();
+	std::deque<int> getSelectedPoints();
 	ImageSpaceCoordinate* getPointForFlightDirection();
 
-	int getTotalIterations();
 	bool getConverged();
 	bool getGnssConverged();
 	bool getInsConverged();
-    std::deque<double> getRMSE() {return rmse;}
+	std::deque<double> getRMSE() {return rmse;}
 
-	// Composed object accessors
-	//
-	void setQuality(EOQuality newQuality);
-	EOQuality getQuality();
 
 	// Selected points list manipulators
 	//
@@ -128,22 +113,22 @@ public:
 
 	//  Selected fiducial mark or point to indicate the direction of flight manipulators
 	//
-		void setFlightDirection(double kappa0);
-		void setPointForFlightDirection(double col, double row);
+	void setFlightDirection(double kappa0);
+	void setPointForFlightDirection(double col, double row);
 	void selectFiducialMarkForFlightDirection(int id);
 	void unsetPointForFlightDirection();
 
 	// EObject methods
 	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
+	std::string objectType(void);
+	std::string objectAssociations(void);
+	bool is(std::string s);
 
 	// XML methods
 	//
-    void xmlSetData(std::string xml);
-    std::string xmlGetData();
-    std::string xmlGetDataEO();
+	void xmlSetData(std::string xml);
+	std::string xmlGetData();
+	std::string xmlGetDataEO();
 
 	// Other methods
 	//
@@ -153,7 +138,7 @@ public:
 	void generateInitialP();
 	void generateA();
 	void generateL0();
-    void generateRMSE();
+	void generateRMSE();
 	void generateLb();
 	void generateP();
 	void generateX0();

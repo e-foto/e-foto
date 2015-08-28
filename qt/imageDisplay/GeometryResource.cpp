@@ -20,7 +20,7 @@
 
 #include "DemFeatures.h"
 
-#include <math.h>
+//#include <math.h>
 
 namespace br {
 namespace uerj {
@@ -538,8 +538,9 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
         {
             painter.setPen(QPen(Qt::green));
             QList<Coord> points = geometries_.at(i).listPoints();
-            double x[points.size()];
-            double y[points.size()];
+            size_t nsize = points.size();
+            double *x = new double[nsize];
+            double *y = new double[nsize];
             for (int j = 0; j<points.size();j++)
             {
                 x[j] = (points.at(j).x() -(viewpoint.x()-targetSize.width()/(2.0*scale)))*scale;
@@ -550,6 +551,8 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
                 int k = (j+1)%points.size();
                 painter.drawLine(QPointF(x[j],y[j]),QPointF(x[k],y[k]));
             }
+            delete[] x;
+            delete[] y;
         }
     }
     painter.end();
@@ -614,6 +617,8 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
     {
         DemFeature* df = dfs->getFeatureLink(dfs->selectedFeature());
         QVector<QPointF> poly;
+        if (df == NULL)
+            return result;
         for (unsigned int j = 0; j < df->points.size(); j++)
         {
             double x = 0;

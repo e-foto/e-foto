@@ -19,7 +19,7 @@
 #include "Matrix.h"
 
 #include <iomanip>
-#include <math.h>
+//#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>

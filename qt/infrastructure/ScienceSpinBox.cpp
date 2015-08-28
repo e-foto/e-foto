@@ -1,7 +1,7 @@
 #include "ScienceSpinBox.h"
 
 #include <limits>
-#include <math.h>
+//#include <math.h>
 
 namespace br {
 namespace uerj {
