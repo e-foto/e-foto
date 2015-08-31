@@ -17,8 +17,15 @@
 
 #include "MatchingPointsGrid.h"
 
+#ifdef win32
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
+
 #include <iostream>
-//#include <math.h>
 #include <MatchingPoints.h>
 
 namespace br {

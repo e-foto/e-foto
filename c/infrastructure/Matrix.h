@@ -18,6 +18,16 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#ifdef win32
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
+
+#define MAX(X,Y) (((X)>(Y))?(X):(Y))
+
 #include "RectSupport.h"
 
 namespace br {
