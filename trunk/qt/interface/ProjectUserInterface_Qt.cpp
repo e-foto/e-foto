@@ -15,8 +15,13 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef win32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
 
 #include "ProjectUserInterface_Qt.h"
 
@@ -26,8 +31,6 @@
 #include "LoadingScreen.h"
 #include "ETreeModel.h"
 #include "EDomValidator.h"
-
-//#include <math.h>
 
 #include <QFileDialog>
 #include <QInputDialog>

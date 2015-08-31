@@ -290,8 +290,9 @@ MOC_DIR = ../temp/moc
 UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
-unix:LIBS += -lGL -lGLU -lshp
-LIBS += c/shapelib/shapelib.lib
+
+win32: LIBS += c/shapelib/shapelib.lib
+unix: LIBS += -lGL -lGLU -lshp
 
 # Autochange AboutForm code
 ABOUTDIR = qt/infrastructure/
