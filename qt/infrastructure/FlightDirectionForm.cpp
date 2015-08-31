@@ -1,6 +1,11 @@
 
+#ifdef win32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
 
 #include "FlightDirectionForm.h"
 #include "math.h"

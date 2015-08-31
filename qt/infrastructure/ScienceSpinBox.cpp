@@ -1,7 +1,14 @@
 #include "ScienceSpinBox.h"
 
+#ifdef win32
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
+
 #include <limits>
-//#include <math.h>
 
 namespace br {
 namespace uerj {
@@ -855,7 +862,7 @@ void ScienceSpinBox::stepDownMantissa()
 	//qDebug("stepDownMantissa");
 	QString text = lineEdit()->text();
 	QString dest = mantissa();
-	QString src = locale().toString(dest.toDouble()-pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
+    QString src = locale().toString(dest.toDouble()-pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
 	int cursorPos = lineEdit()->cursorPosition();
 	if (cursorPos == delimiterPosition() || cursorPos == exponentialPosition()
 			|| (cursorPos==0 && valueFromText(text)<0))
@@ -896,7 +903,7 @@ void ScienceSpinBox::stepUpMantissa()
 	//qDebug("stepUpMantissa");
 	QString text = lineEdit()->text();
 	QString dest = mantissa();
-	QString src = locale().toString(dest.toDouble()+pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
+    QString src = locale().toString(dest.toDouble()+pow(10,decimalOffset()/*-dispDecimals*/), 'f', dispDecimals);
 	int cursorPos = lineEdit()->cursorPosition();
 	if (cursorPos == delimiterPosition() || cursorPos == exponentialPosition()
 			|| (cursorPos==0 && valueFromText(text)<0))

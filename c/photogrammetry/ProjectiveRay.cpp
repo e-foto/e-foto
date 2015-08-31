@@ -606,7 +606,6 @@ PositionMatrix ProjectiveRay::imageToObject(const PositionMatrix& myDigitalPosit
 		}
 }
 
-#include <stdio.h>
 ImageSpaceCoordinate ProjectiveRay::objectToImage(double X, double Y, double Z, bool useDistortions)
 {
 		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)

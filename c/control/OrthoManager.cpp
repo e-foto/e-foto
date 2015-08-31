@@ -31,8 +31,6 @@ OrthoManager.cpp
 #include "Interpolation.h"
 #include "Image.h"
 
-//#include <math.h>
-
 #include <sstream>
 
 namespace br {

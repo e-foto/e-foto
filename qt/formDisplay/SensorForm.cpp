@@ -904,6 +904,21 @@ void SensorForm::setFormLocale(QLocale locale)
 	sensorColsSpinBox->setLocale(locale);
 	sensorDimensionsLabel->setLocale(locale);
 
+
+    // Sigma content
+    calibratedSigmaContent->setLocale(locale);
+    fid0SigmaContent->setLocale(locale);
+    fid1SigmaContent->setLocale(locale);
+    fid2SigmaContent->setLocale(locale);
+    fid3SigmaContent->setLocale(locale);
+    fid4SigmaContent->setLocale(locale);
+    fid5SigmaContent->setLocale(locale);
+    fid6SigmaContent->setLocale(locale);
+    fid7SigmaContent->setLocale(locale);
+    radialSigmaContent->setLocale(locale);
+    decenteredSigmaContent->setLocale(locale);
+    principalSigmaContent->setLocale(locale);
+
 }
 
 } // namespace efoto

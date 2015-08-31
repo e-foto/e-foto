@@ -19,8 +19,13 @@
 SPManager.cpp
 **************************************************************************/
 
+#ifdef win32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
 
 #include "SPManager.h"
 #include "EFotoManager.h"
@@ -36,11 +41,6 @@ SPManager.cpp
 #include "Flight.h"
 
 #include <sstream>
-
-//#define _USE_MATH_DEFINES // for C++
-//#include <cmath>
-
-//#include <math.h>
 
 namespace br {
 namespace uerj {

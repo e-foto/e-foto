@@ -15,8 +15,13 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef win32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
+#endif
+#ifdef unix
+#include <math.h>
+#endif
 
 #include "Matrix.h"
 
@@ -25,7 +30,6 @@
 #include <iostream>
 #include <fstream>
 
-//#include <math.h>
 #include <sstream>
 #include <iomanip>
 
@@ -936,8 +940,8 @@ Matrix& Matrix::putMatrix(Matrix put, int lin, int col)
         //printf("sobrescrevendo matrix original\n");
     }
 
-    unsigned int newRows=std::fmax(lin-1+put.getRows(),this->getRows());
-    unsigned int newCols=std::fmax(col-1+put.getCols(),this->getCols());
+    unsigned int newRows= MAX(lin-1+put.getRows(),this->getRows());
+    unsigned int newCols= MAX(col-1+put.getCols(),this->getCols());
 
     Matrix temp(newRows,newCols);
     for(unsigned int i=1;i<=newRows;i++)
