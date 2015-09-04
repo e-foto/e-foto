@@ -18,7 +18,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#ifdef win32
+#ifdef WIN32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
 #endif
@@ -27,6 +27,7 @@
 #endif
 
 #define MAX(X,Y) (((X)>(Y))?(X):(Y))
+#define MIN(X,Y) (((X)<(Y))?(X):(Y))
 
 #include "RectSupport.h"
 
