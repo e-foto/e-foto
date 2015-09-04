@@ -62,6 +62,7 @@ protected slots:
 	void onLoadDemClicked();
         void onLoadOrthoClicked();
 	void onOrthoClicked();
+    void onOrthoGeoTiffClicked();
         void onOrthoQualityButtonClicked();
 	void onShowImageChanged(int);
         void onCloseOrthoQualityForm();

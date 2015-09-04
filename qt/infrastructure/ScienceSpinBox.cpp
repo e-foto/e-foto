@@ -1,6 +1,6 @@
 #include "ScienceSpinBox.h"
 
-#ifdef win32
+#ifdef WIN32
 #define _USE_MATH_DEFINES // for C++
 #include <cmath>
 #endif

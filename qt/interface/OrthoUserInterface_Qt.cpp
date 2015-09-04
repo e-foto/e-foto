@@ -87,9 +87,10 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 */
     this->manager = manager;
 
-    QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
-    QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
-    QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
+	QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
+	QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
+    QObject::connect(orthoButtonGeoTiff, SIGNAL(clicked()), this, SLOT(onOrthoGeoTiffClicked()));
     QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
     QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
@@ -257,14 +258,44 @@ void OrthoUserInterface_Qt::onOrthoClicked()
     int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-    disableOptions();
-    setAllowClose(false);
-    manager->setInterMethod(comboBox4->currentIndex());
-    // To do: solve unused field (comboBox3) of user interface
-    manager->orthoRectification((char *)filename.toStdString().c_str()/*,comboBox3->currentIndex()*/, comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
-    setAllowClose(true);
-    enableOptions();
-    setCurrentWork("Done");
+	disableOptions();
+	setAllowClose(false);
+	manager->setInterMethod(comboBox4->currentIndex());
+	manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+	setAllowClose(true);
+	enableOptions();
+	setCurrentWork("Done");
+        orthoQualityButton->setEnabled(true);
+}
+
+void OrthoUserInterface_Qt::onOrthoGeoTiffClicked()
+{
+        // Ortho clicked
+
+        if (!dem_load_flag)
+        {
+                QMessageBox::critical(this,"Error","Please, load a DEM first.");
+                return;
+        }
+
+        // Save dialog
+        // File open dialog
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), lastDir, tr("GeoTiff (*.tif)")) ;
+        // if no file name written, return
+        if (filename=="")
+                return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        lastDir = filename.left(i);
+
+        disableOptions();
+        setAllowClose(false);
+        manager->setInterMethod(comboBox4->currentIndex());
+        manager->orthoRectificationGeoTiff((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        setAllowClose(true);
+        enableOptions();
+        setCurrentWork("Done");
         orthoQualityButton->setEnabled(true);
 }
 

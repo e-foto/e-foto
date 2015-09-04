@@ -29,6 +29,7 @@ OrthoManager.cpp
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
 #include "Interpolation.h"
+#include "Terrain.h"
 #include "Image.h"
 
 #include <sstream>
@@ -394,7 +395,116 @@ void OrthoManager::runOrthoIndividual(int image)
     }
 }
 
-int OrthoManager::orthoRectification(char * filename/*, int fileType*/, int option, double user_res_x, double user_res_y)
+int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int option, double user_res_x, double user_res_y)
+{
+        // Create new orthoimage
+
+        if (ortho != NULL)
+                delete ortho;
+        //char * extGeoTiff(".tif");
+        std::string filenameGeoTiff(filename);
+        //filenameGeoTiff+=".tif";
+        double Xi, Yi, Xf, Yf, res_x, res_y;
+        grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+        ortho = new Orthorectification(Xi, Yi, Xf, Yf, user_res_x, user_res_y);
+                ortho->setNumberOfBands(3);
+                //Obter os dados XML do atributo manager e setar os atributos coord_system (CPS) e spheroid ou datum (GRS) de ortho
+                //EDomElement xml(manager->getXml());
+                //xml.elementByTagName();
+            Terrain* terrain = manager->instanceTerrain();
+
+            ortho->setUtmFuse(terrain->getUtmFuse());
+
+            if (terrain->getCPS().compare("UTM"))
+                ortho->setCoordinateSystem(0);
+            else
+                ortho->setCoordinateSystem(0);
+
+            if (terrain->getGRS().compare("SAD69"))
+                ortho->setDatum(0);
+            else if (terrain->getGRS().compare("WGS84"))
+                ortho->setDatum(1);
+            else if (terrain->getGRS().compare("SIRGAS2000"))
+                ortho->setDatum(2);
+            else
+                ortho->setDatum(0);
+
+
+        flag_cancel = false;
+
+        if (option == 0)
+        {
+                runAllOrthoTogether();
+
+                if (flag_cancel)
+                {
+                        flag_cancel = false;
+                        return -1;
+                }
+
+                //ortho->saveOrtho(filename, 0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
+
+        }
+
+        if (option == 1)
+        {
+                std::string base_fname(filename);
+                //string ext(".ort");
+                std::string ext(".tif");
+                size_t expos = base_fname.find(ext);
+                if (expos != -1)
+                        base_fname = base_fname.substr(0,expos);
+                base_fname = base_fname + "_";
+                std::string fname;
+                for(unsigned i=1; i<=listAllImages.size(); i++)
+                //for (int i=1; i<=project->allImages().size(); i++)
+                {
+                        runOrthoIndividual(i);
+                        fname = base_fname + Conversion::intToString(i) + ext;
+
+                        if (flag_cancel)
+                        {
+                                flag_cancel = false;
+                                return -1;
+                        }
+
+                        //ortho->saveOrtho((char *)fname.c_str(),0);
+                        //fname+=".tif";
+                        ortho->saveOrthoGeoTiff((char *)fname.c_str(),0);
+                }
+        }
+
+        if (option > 1)
+        {
+                runOrthoIndividual(option-1);
+
+                if (flag_cancel)
+                {
+                        flag_cancel = false;
+                        return -1;
+                }
+
+                //ortho->saveOrtho(filename, 0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
+        }
+
+        // Display results
+        if (show_image)
+        {
+                OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
+                Matrix * img = ortho->getOrthoImage();
+                                oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
+                delete img;
+        }
+
+    // Expanção do XML
+    //addOrthoToXML(string(filename));
+
+        return 1;
+}
+
+int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
 {
     // Create new orthoimage
     if (ortho != NULL)

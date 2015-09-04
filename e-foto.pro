@@ -291,8 +291,21 @@ UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
 
+# Set libshape usage
 win32: LIBS += c/shapelib/shapelib.lib
 unix: LIBS += -lGL -lGLU -lshp
+
+# Set gdal usage
+win32 {
+    LIBS += -Lc:/OSGeo4W64/lib -lgdal
+    INCLUDEPATH += c:/OSGeo4W64/include
+    DEPENDPATH += c:/OSGeo4W64/include
+}
+unix {
+    LIBS += -lgdal
+    INCLUDEPATH += /usr/include/gdal
+    DEPENDPATH += /usr/include/gdal
+}
 
 # Autochange AboutForm code
 ABOUTDIR = qt/infrastructure/

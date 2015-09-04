@@ -42,10 +42,11 @@ class Orthorectification
 private:
     Matrix orthoimage;
     double Xi, Yi, Xf, Yf, res_x, res_y;
-    int color_depth, no_bands, coord_system, spheroid, datum;
+    int color_depth, no_bands, coord_system, spheroid, datum, utmFuse;
     int ortho_width, ortho_height;
     void saveOrthoEfoto(char * filename);
     void loadOrthoEfoto(char * filename);
+    void saveOrthoGeoTiffEfoto(char * filename);
 
 public:
     Orthorectification(double, double, double, double, double, double);
@@ -53,6 +54,7 @@ public:
     void changeGridResolution(double, double);
     // todo: solve unused parameter mode
     void saveOrtho(char */*, int mode*/);
+    void saveOrthoGeoTiff(char *, int);
     void loadOrtho(char */*, int mode*/);
     void printData();
     Matrix getOrthoData() { return orthoimage; } // Read only
@@ -79,6 +81,8 @@ public:
     int getSpheroid() { return spheroid; }
     void setDatum(int _dt) { datum = _dt; }
     int getDatum() { return datum; }
+    void setUtmFuse(int _uf) { utmFuse = _uf; };
+    int getUtmFuse() { return utmFuse; };
     void getOrthoParametersA(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; }
     void getOrthoParametersB(int &_color, int &_bands, int &_coord, int &_sph, int &_datum) { _color = color_depth; _bands = no_bands; _coord = coord_system; _sph = spheroid; _datum = datum; }
 
