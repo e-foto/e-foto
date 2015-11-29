@@ -39,6 +39,7 @@ namespace efoto {
 
 class Orthorectification
 {
+    typedef enum { SAD69, SIRGAS2000, WGS84} DatumType;
 private:
     Matrix orthoimage;
     double Xi, Yi, Xf, Yf, res_x, res_y;
