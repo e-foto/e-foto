@@ -370,7 +370,6 @@ void OrthoUserInterface_Qt::onShowImageChanged(int opt)
 /*
  * Image dealing
  **/
-#include <qdebug.h>
 void OrthoUserInterface_Qt::loadImage(Matrix & I, char *filename, double sample)
 {
     QImage img;

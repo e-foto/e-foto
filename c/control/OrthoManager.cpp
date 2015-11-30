@@ -31,6 +31,7 @@ OrthoManager.cpp
 #include "Interpolation.h"
 #include "Terrain.h"
 #include "Image.h"
+#include "CommonDef.h"
 
 #include <sstream>
 
@@ -421,13 +422,13 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
                 ortho->setCoordinateSystem(0);
 
             if (terrain->getGRS().compare("SAD69"))
-                ortho->setDatum(0);
+                ortho->setDatum(SAD69);
             else if (terrain->getGRS().compare("WGS84"))
-                ortho->setDatum(1);
+                ortho->setDatum(WGS84);
             else if (terrain->getGRS().compare("SIRGAS2000"))
-                ortho->setDatum(2);
+                ortho->setDatum(SIRGAS2000);
             else
-                ortho->setDatum(0);
+                ortho->setDatum(SAD69);
 
 
         flag_cancel = false;
