@@ -1119,13 +1119,15 @@ std::string PTManager::exportBlockTokml(std::string fileName, bool fromXML)
 			qDebug("old system: %s",sys.getSystemName().c_str());
 			if (sys.getSystemName()!="WGS84")
 			{
-				double oldPhi1=temp1.get(1,1);
-				double oldLambda1=temp1.get(1,2);
+                double oldPhi1=temp1.get(1,1);
+                double oldLambda1=temp1.get(1,2);
 				double oldPhi2=temp2.get(1,1);
 				double oldLambda2=temp2.get(1,2);
 
-				plh1=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi1,oldLambda1,0);
-				plh2=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi2,oldLambda2,0);
+                GeoSystem newGeoSys(WGS84);
+
+                plh1=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,newGeoSys,oldPhi1,oldLambda1,0);
+                plh2=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,newGeoSys,oldPhi2,oldLambda2,0);
 
 				lat1 = plh1.get(1,1)*180/M_PI;
 				lat1 = (hemiLatitude =='S'? -lat1 : lat1);
@@ -1232,7 +1234,9 @@ std::string PTManager::pointToKml(Point *pnt, int zona,int hemiLatitude ,GeoSyst
 	{
 		double oldPhi=temp.get(1,1);
 		double oldLambda=temp.get(1,2);
-		plh=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,WGS84,oldPhi,oldLambda,H);
+        GeoSystem newGeoSys(WGS84);
+
+        plh=ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys,newGeoSys,oldPhi,oldLambda,H);
 		lat = plh.get(1,1)*180/M_PI;
 		lat = (hemiLatitude =='S'? -lat : lat);
 		longi = plh.get(1,2)*180/M_PI;

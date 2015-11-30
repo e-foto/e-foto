@@ -31,14 +31,18 @@ namespace efoto {
 /*
  * The orthoimage has values from 0-1
  **/
-Orthorectification::Orthorectification(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y)
+Orthorectification::Orthorectification(double _Xi,
+                                       double _Yi,
+                                       double _Xf,
+                                       double _Yf,
+                                       double _res_x,
+                                       double _res_y):
+    color_depth(8),
+    no_bands(1),
+    coord_system(0),
+    spheroid(0),
+    datum(SAD69)
 {
-    // Default values
-    color_depth = 8;
-    no_bands = 1;
-    coord_system = 0;
-    spheroid = 0;
-    datum = 0;
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
 
@@ -241,7 +245,7 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     no_bands = int(header[9]);
     coord_system = int(header[10]);
     spheroid = int(header[11]);
-    datum = int(header[12]);
+    datum = DatumType(header[12]);
 
     // Read DEM
     orthoimage.resize(ortho_height, ortho_width);
@@ -319,7 +323,7 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
     GDALRasterBand **poBand = new GDALRasterBand*[no_bands] ;
 
 #ifdef WIN32
-    GByte* abyRaster = new GByte[ortho_width*ortho_height];
+    GByte* abyRaster = new GByte[no_bands][ortho_width*ortho_height];
 #elif unix
     GByte abyRaster[no_bands][ortho_width*ortho_height];
 #endif
