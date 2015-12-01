@@ -118,9 +118,9 @@ public:
 	// Constructors and destructors
 	//
 	FrameSensor();
-	FrameSensor(const Sensor& sensor);
-	FrameSensor(const FrameSensor& sensor);
-	FrameSensor(int myId);
+    explicit FrameSensor(const Sensor& sensor);
+    explicit FrameSensor(const FrameSensor& sensor);
+    explicit FrameSensor(int myId);
 	virtual ~FrameSensor();
 
 	// Private attributes accessor methods

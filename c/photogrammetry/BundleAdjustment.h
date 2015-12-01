@@ -89,7 +89,7 @@ public:
     * \param listSelectedimages : Lista com todos as imagens que serÃ£o consideradas no calculo
     * \param listSelectedPoints : Lista com todos os pontos que serÃ£o consideradas no calculo
     */
-    BundleAdjustment(std::deque<Image*>listSelectedImages, std::deque<Point*> listSelectedPoints);
+    explicit BundleAdjustment(std::deque<Image*>listSelectedImages, std::deque<Point*> listSelectedPoints);
 
     /**
     * \brief Retorna o numero de equaÃ§Ãµes que o calculo atual tem que resolver

@@ -49,7 +49,7 @@ private:
     Matrix formatBundleX2();
 
 public:
-    PhotoTriReport (EFotoManager* newManager);
+    explicit PhotoTriReport (EFotoManager* newManager);
     int createReport(char *filename);
 
 };

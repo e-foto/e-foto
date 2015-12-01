@@ -51,7 +51,7 @@ public:
  * \param myId	Identificador da marca fiducial analógica.
  * \param mySensorId	Identificador do sensor ao qual a marca pertence.
  */
-	DetectorFiducialMark(int myId, int mySensorId);
+    explicit DetectorFiducialMark(int myId, int mySensorId);
 
 	/**
  * \brief Construtor que cria uma marca fiducial analógica com todos os seus valores.

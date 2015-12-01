@@ -42,12 +42,12 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-DemGrid::DemGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y)
+DemGrid::DemGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y):
+    point_list(NULL),
+    mpg(NULL),
+    manager(NULL)
 {
-    point_list = NULL;
-    mpg = NULL;
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
-    manager = NULL;
 }
 
 void DemGrid::createNewGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y)
@@ -922,7 +922,7 @@ void DemGrid::loadDemEfoto(char * filename)
 
     fclose(fp);
 
-    delete data;
+    delete []data;
 
     //	printData();
 }

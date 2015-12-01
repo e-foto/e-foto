@@ -106,8 +106,8 @@ public:
 	// Constructors and destructors
 	//
 	Sensor();
-	Sensor(const Sensor& sensor);
-	Sensor(int myId);
+    explicit Sensor(const Sensor& sensor);
+    explicit Sensor(int myId);
 	virtual ~Sensor();
 
 	// Private attributes accessor methods

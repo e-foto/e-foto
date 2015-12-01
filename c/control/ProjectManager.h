@@ -59,7 +59,7 @@ public:
 	* \brief Construtor padrão.
 	* \param manager : Controlador geral.
 	*/
-	ProjectManager(EFotoManager* manager);
+    explicit ProjectManager(EFotoManager* manager);
 	/**
 	* \brief Destrutor padrão.
 	*/

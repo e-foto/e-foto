@@ -42,7 +42,7 @@ public slots:
 protected:
     static DEMUserInterface_Qt* demInst;
     SeedEditorUserInterface_Qt* sed;
-    DEMUserInterface_Qt(DEMManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    explicit DEMUserInterface_Qt(DEMManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
     ~DEMUserInterface_Qt();
     DEMManager *manager;
     void closeEvent(QCloseEvent *e);
@@ -129,7 +129,7 @@ private:
         QString lastDir;
 
 public:
-	SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);
+    explicit SeedEditorUserInterface_Qt(DEMManager* manager, QWidget* parent = 0);
 
 public slots:
 	void imageClicked(QPointF);

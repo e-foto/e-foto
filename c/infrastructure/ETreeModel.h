@@ -47,13 +47,13 @@ public:
  * \param id	A chave de identificação do elemento descrito.
  * \param description	A descriçao do elemento.
  */
-    ETreeElement(int id, std::string description);
+    explicit ETreeElement(int id, std::string description);
 
 	/**
  * \brief Construtor de um elemento a partir de sua representação XML.
  * \param data	A representação XML do elemento.
  */
-    ETreeElement(std::string data);
+    explicit ETreeElement(std::string data);
 
 	/**
  * \brief Recupera a chave de identificação do elemento.
@@ -91,13 +91,13 @@ public:
  * \param description	A descrição do nó.
  * \param children	A lista de elementos filhos do nó.
  */
-    ETreeNode(std::string description, std::deque<ETreeElement> children);
+    explicit ETreeNode(std::string description, std::deque<ETreeElement> children);
 
 	/**
  * \brief Construtor de um nó a partir de sua representação XML.
  * \param data	A representação XML do nó.
  */
-    ETreeNode(std::string data);
+    explicit ETreeNode(std::string data);
 
 	/**
  * \brief Recupera a descrição textual do nó.
@@ -166,13 +166,13 @@ public:
  * \brief Construtor de uma árvore com estrutua conhecida.
  * \param children	A lista de nós da árvore.
  */
-    ETreeModel(std::deque<ETreeNode> children);
+    explicit ETreeModel(std::deque<ETreeNode> children);
 
 	/**
  * \brief Construtor de uma árvore a partir da raiz do xml contido em um arquivo .epp.
  * \param data	Uma string com o conteúdo do arquivo .epp.
  */
-    ETreeModel(std::string data);
+    explicit ETreeModel(std::string data);
 
 	/**
  * \brief Conta quantos nós a árvore possui.

@@ -16,7 +16,7 @@ class EPolygon //: public QPolygonF
 {
 public:
 	EPolygon();
-	EPolygon(QList<QPointF *> points);
+    explicit EPolygon(QList<QPointF *> points);
 
 	//QPolygonF *polygon;
 

@@ -56,7 +56,7 @@ public:
 
         // Constructors
         //
-        RayTester(Image* myImage);
+        explicit RayTester(Image* myImage);
 
         // Attribute accessors
         //

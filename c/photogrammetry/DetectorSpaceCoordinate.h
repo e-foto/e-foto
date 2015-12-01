@@ -50,7 +50,7 @@ public:
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem.
  * \param myImageId	Identificador da imagem à qual a coordenada pertence.
  */
-	DetectorSpaceCoordinate(int myImageId);
+    explicit DetectorSpaceCoordinate(int myImageId);
 
 	/**
  * \brief Construtor que cria uma coordenada analógica identificada sobre o espaço imagem com todos os seus valores.

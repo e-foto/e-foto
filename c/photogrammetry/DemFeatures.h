@@ -66,7 +66,7 @@ public:
 class DemFeature
 {
 public:
-    DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; is_on_screen = 0; };
+    explicit DemFeature() { feature_class = feature_type = layer = 1; perimeter = area = 0.0; flag_calc_centroid = 0; is_on_screen = 0; };
     int feature_class, feature_type, layer, is_on_screen;
     double perimeter, area;
     std::string name, description;

@@ -55,7 +55,7 @@ public:
 	// Constructors and destructors
 	//
 	StereoPair();
-	StereoPair(Image* myLeftImage, Image* myRightImage);
+    explicit StereoPair(Image* myLeftImage, Image* myRightImage);
 	~StereoPair();
 
 	// Aggregation modifiers

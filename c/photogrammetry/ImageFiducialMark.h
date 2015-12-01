@@ -50,7 +50,7 @@ public:
  * \param myId	Identificador da marca fiducial digital.
  * \param myImageId	Identificador da imagem à qual a marca pertence.
  */
-	ImageFiducialMark(int myId, int myImageId);
+    explicit ImageFiducialMark(int myId, int myImageId);
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com todos os seus valores.
@@ -59,7 +59,7 @@ public:
  * \param myCol	Valor da coluna.
  * \param myLin	Valor da linha.
  */
-	ImageFiducialMark(int myId, int myImageId, double myCol, double myLin);
+    explicit ImageFiducialMark(int myId, int myImageId, double myCol, double myLin);
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com todos os seus valores usando matrizes.
@@ -67,7 +67,7 @@ public:
  * \param myImageId	Identificador da imagem à qual a marca pertence.
  * \param myPositio	Matriz coluna com os valores de posicionamento da marca.
  */
-	ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition);
+    explicit ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition);
 
 	/**
  * \brief Destrutor padrão.

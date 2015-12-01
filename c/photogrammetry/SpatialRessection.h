@@ -82,7 +82,7 @@ public:
 	// Constructors and destructors
 	//
 	SpatialRessection();
-	SpatialRessection(int myImageId); // Constructor with ids only, needed in project use.
+    explicit SpatialRessection(int myImageId); // Constructor with ids only, needed in project use.
 	virtual ~SpatialRessection();
 
 	// Private attribute accessors

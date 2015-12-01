@@ -47,7 +47,7 @@ class SingleViewer : public QMainWindow, public Ui::EVMainWindow
 	void closeEvent(QCloseEvent *);
 
 public:
-	SingleViewer(QWidget *parent=0);
+    explicit SingleViewer(QWidget *parent=0);
 	SingleDisplay* getDisplay() {return sd;}
     MarkTool* getMarker();
 
@@ -77,7 +77,7 @@ class SeparatedStereoViewer : public QMainWindow
 	void closeEvent(QCloseEvent *);
 
 public:
-	SeparatedStereoViewer(QWidget *parent=0);
+    explicit SeparatedStereoViewer(QWidget *parent=0);
 	SingleDisplay* getLeftDisplay() {return leftDisplay;}
 	SingleDisplay* getRightDisplay() {return rightDisplay;}
     MarkTool& getLeftMarker();
@@ -106,7 +106,7 @@ class StereoViewer : public QMainWindow
 	void closeEvent(QCloseEvent *);
 
 public:
-	StereoViewer(QWidget *parent=0);
+    explicit StereoViewer(QWidget *parent=0);
     StereoDisplay* getDisplay() {return stereoDisplay;}
     MarkStereoTool& getMarker();
 	StereoToolsBar* getToolBar() {return stereoTool;}

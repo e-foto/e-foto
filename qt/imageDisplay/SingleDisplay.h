@@ -49,7 +49,7 @@ protected:
     void wheelEvent(QWheelEvent *e);
 
 public:
-    SingleDisplay(QWidget * parent = 0, AbstractScene* currentScene = NULL);
+    explicit SingleDisplay(QWidget * parent = 0, AbstractScene* currentScene = NULL);
     ~SingleDisplay();
 
     SingleDisplay* getOverDisplay();

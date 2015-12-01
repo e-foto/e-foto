@@ -59,7 +59,7 @@ public:
 	/**
 	* \brief Construtor vazio.
 	*/
-	ReportManager(EFotoManager* manager);
+    explicit ReportManager(EFotoManager* manager);
 	/**
 	* \brief Destrutor padro.
 	*/

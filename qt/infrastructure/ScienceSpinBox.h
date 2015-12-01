@@ -23,7 +23,7 @@ class ScienceSpinBox : public QDoubleSpinBox
 {
 	Q_OBJECT
 public:
-	ScienceSpinBox(QWidget * parent = 0);
+    explicit ScienceSpinBox(QWidget * parent = 0);
 
 	int decimals() const;
 	void setDecimals(int value);

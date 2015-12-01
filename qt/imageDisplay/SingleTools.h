@@ -31,7 +31,7 @@ class SingleTool : public QObject
     Q_OBJECT
 
 public:
-    SingleTool(SingleDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _posLabel = NULL; _propagateMoveTo = _propagateScaleTo = NULL;
+    explicit SingleTool(SingleDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _posLabel = NULL; _propagateMoveTo = _propagateScaleTo = NULL;
                                         connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); setImageMode(); _actualizePosLabel = true; }
     virtual ~SingleTool() {}
 
@@ -93,7 +93,7 @@ class ZoomTool : public SingleTool
 {
     bool _onRubberBand;
 public:
-    ZoomTool(SingleDisplay* display);
+    explicit ZoomTool(SingleDisplay* display);
     ~ZoomTool();
     void paintEvent(const QPaintEvent& event);
     //void resizeEvent(const QResizeEvent &event);
@@ -110,7 +110,7 @@ public:
 class MoveTool : public SingleTool
 {
 public:
-    MoveTool(SingleDisplay* display);
+    explicit MoveTool(SingleDisplay* display);
     ~MoveTool();
     //void paintEvent(const QPaintEvent& event);
     //void resizeEvent(const QResizeEvent &event);
@@ -133,7 +133,7 @@ class MarkTool : public SingleTool
     bool onlyEmitClickedMode;
 
 public:
-    MarkTool(SingleDisplay* display);
+    explicit MarkTool(SingleDisplay* display);
     ~MarkTool();
 
     void changeMarker(Marker marker);
@@ -199,7 +199,7 @@ class OverTool : public SingleTool
     QPointF _lastPos;
     bool _onMove;
 public:
-    OverTool(SingleDisplay* display);
+    explicit OverTool(SingleDisplay* display);
     ~OverTool();
 
     QDockWidget* getOverDock();
@@ -226,7 +226,7 @@ class NearTool : public SingleTool
     MarkTool* _marker;
     bool _cursorIsVisible;
 public:
-    NearTool(SingleDisplay* display);
+    explicit NearTool(SingleDisplay* display);
     ~NearTool();
 
     QDockWidget* getNearDock();
@@ -259,7 +259,7 @@ protected:
     SingleTool* currentTool;
 
 public:
-    SingleToolsBar(SingleDisplay* display, QWidget* parent);
+    explicit SingleToolsBar(SingleDisplay* display, QWidget* parent);
 
     QAction* setZoomTool;
     QAction* setMoveTool;
@@ -313,7 +313,7 @@ protected:
     SingleTool* currentRightTool;
 
 public:
-    SeparatedStereoToolsBar(SingleDisplay* leftDisplay, SingleDisplay* rightDisplay, QWidget* parent);
+    explicit SeparatedStereoToolsBar(SingleDisplay* leftDisplay, SingleDisplay* rightDisplay, QWidget* parent);
 
     QAction* setZoomTool;
     QAction* setMoveTool;

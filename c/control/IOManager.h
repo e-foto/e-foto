@@ -68,7 +68,7 @@ public:
 	* \param myImage Ponteiro para o objeto imagem utilizado.
 	* \param myIO Ponteiro para o objeto de cálculo utilizado.
 	*/
-	IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
+    explicit IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
 	/**
 	* \brief Destrutor padrão.
 	*/

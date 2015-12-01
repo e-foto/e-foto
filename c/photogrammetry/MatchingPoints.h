@@ -69,7 +69,7 @@ private:
 class MatchingPointsList
 {
 public:
-    MatchingPointsList() { bad_points = 0; }
+    explicit MatchingPointsList() { bad_points = 0; }
     enum saveType { saveFull, savePairs, savePairsHann, saveXYZ };
     enum loadType { loadFull, loadPairs, loadPairsHann, loadXYZ, loadidXYZ };
     enum sortCriteria { byLeft, byRight, by3D, byGridpos };

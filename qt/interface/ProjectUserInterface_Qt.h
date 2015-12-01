@@ -42,7 +42,7 @@ class ProjectUserInterface_Qt : public QMainWindow, public Ui::ProjectMainWindow
     Q_OBJECT
 
 public:
-    ProjectUserInterface_Qt(ProjectManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    explicit ProjectUserInterface_Qt(ProjectManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
     ~ProjectUserInterface_Qt();
 
 protected:

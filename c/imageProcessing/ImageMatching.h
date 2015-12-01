@@ -73,7 +73,7 @@ class ImageMatching
 
 public:
 	ImageMatching();
-	ImageMatching(DEMManager *);
+    explicit ImageMatching(DEMManager *);
 	enum matmet { NCC, LSM };
 	enum eadmod { Equalization, HistMatching };
 	void setMatchingMethod();

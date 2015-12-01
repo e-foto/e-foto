@@ -54,7 +54,7 @@ public:
 class MatchingPointsGrid
 {
 public:
-    MatchingPointsGrid(MatchingPointsList *, double, double);
+    explicit MatchingPointsGrid(MatchingPointsList *, double, double);
     void createNewGrid(double, double);
     int getNearestPoint(double, double);
     void getPointsClose(double, double, double);

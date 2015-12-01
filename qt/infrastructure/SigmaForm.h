@@ -38,8 +38,8 @@ protected:
 
 public:
 	SigmaFormController();
-    SigmaFormController(std::string myMode, unsigned int myDimension = 1);
-	SigmaFormController(Matrix myValues);
+    explicit SigmaFormController(std::string myMode, unsigned int myDimension = 1);
+    explicit SigmaFormController(Matrix myValues);
 
 protected:
 	void init();
@@ -82,7 +82,7 @@ class SigmaFormTypeSelector: public QComboBox
 protected:
 	SigmaFormController* controller;
 public:
-	SigmaFormTypeSelector(QWidget * parent = 0);
+    explicit SigmaFormTypeSelector(QWidget * parent = 0);
 	void setSigmaFormController(SigmaFormController* newController);
 	void disconnectSigmaFormController(SigmaFormController* oldController);
 	void blockCovarianceMatrixOption();
@@ -96,7 +96,7 @@ class SigmaFormContent: public QFrame
 protected:
 	SigmaFormController* controller;
 public:
-	SigmaFormContent(QWidget * parent = 0);
+    explicit SigmaFormContent(QWidget * parent = 0);
 	void setSigmaFormController(SigmaFormController* newController);
 };
 
@@ -106,7 +106,7 @@ class SigmaFormDialogButton: public QPushButton
 protected:
 	SigmaFormController* controller;
 public:
-	SigmaFormDialogButton(QWidget * parent = 0);
+    explicit SigmaFormDialogButton(QWidget * parent = 0);
 	void setSigmaFormController(SigmaFormController* newController);
 };
 
