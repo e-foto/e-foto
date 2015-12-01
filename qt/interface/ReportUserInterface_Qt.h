@@ -41,7 +41,7 @@ public slots:
 
 protected:
 	static ReportUserInterface_Qt* ReportInst;
-	ReportUserInterface_Qt(ReportManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    explicit ReportUserInterface_Qt(ReportManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~ReportUserInterface_Qt();
 	ReportManager *manager;        
 	void closeEvent(QCloseEvent *e);

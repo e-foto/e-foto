@@ -58,8 +58,8 @@ public:
 	//
 	SensorWithKnowDimensions();
 	SensorWithKnowDimensions(const Sensor& sensor);
-	SensorWithKnowDimensions(int myId);
-	SensorWithKnowDimensions(int myId, double myPixelSize, int myFrameRows, int myFrameColumns);
+    explicit SensorWithKnowDimensions(int myId);
+    explicit SensorWithKnowDimensions(int myId, double myPixelSize, int myFrameRows, int myFrameColumns);
 
 	//Private attribute accessor methods
 	//

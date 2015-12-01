@@ -59,9 +59,9 @@ public:
 	//
 	SensorWithFiducialMarks();
 	SensorWithFiducialMarks(const Sensor& sensor);
-	SensorWithFiducialMarks(int myId);
-	SensorWithFiducialMarks(int myId, const Matrix& myLb);
-	SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
+    explicit SensorWithFiducialMarks(int myId);
+    explicit SensorWithFiducialMarks(int myId, const Matrix& myLb);
+    explicit SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
 
 	//Private attribute accessor methods
 	//

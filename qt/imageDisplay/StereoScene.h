@@ -17,7 +17,7 @@ protected:
 	SingleScene* rightScene_;
 
 public:
-	StereoScene(QObject* parent, QString leftImageFilepath, QString rightImageFilepath);
+    explicit StereoScene(QObject* parent, QString leftImageFilepath, QString rightImageFilepath);
 	~StereoScene();
 
 	bool isValid();

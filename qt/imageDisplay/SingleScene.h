@@ -17,7 +17,7 @@ class Matrix;
 class AbstractScene: public QObject
 {
 protected:
-    AbstractScene(QObject* parent) : QObject(parent) {}
+    explicit AbstractScene(QObject* parent) : QObject(parent) {}
 
 public:
     virtual void centerContent() = 0;
@@ -65,7 +65,7 @@ protected:
     void limitScale();
 
 public:
-    SingleScene(QObject* parent, QString filepath);
+    explicit SingleScene(QObject* parent, QString filepath);
     ~SingleScene();
 
     bool createImage(QSize size, QColor color = QColor(Qt::transparent));

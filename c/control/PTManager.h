@@ -87,7 +87,7 @@ public:
  * \param sensor : Objeto Sensor, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  * \param flight : Objeto Flight, necessÃ¡rio para o calculo da fototriangulaÃ§Ã£o
  */
-		PTManager(EFotoManager* newManager, std::deque<Image*> images, std::deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
+        explicit PTManager(EFotoManager* newManager, std::deque<Image*> images, std::deque<InteriorOrientation*> ois, Sensor* sensor,Flight* flight, Terrain *);
 
 		/**
   * \brief Destrutor do objeto

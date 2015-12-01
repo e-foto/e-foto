@@ -73,7 +73,7 @@ public:
         // Constructors and destructors
         //
         InteriorOrientation();
-        InteriorOrientation(int myImageId); // Constructor with ids only, needed in project use.
+        explicit InteriorOrientation(int myImageId); // Constructor with ids only, needed in project use.
         virtual ~InteriorOrientation();
 
         // Private attribute accessors

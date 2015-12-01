@@ -58,9 +58,9 @@ public:
 	//
 	SensorWithKnowParameters();
 	SensorWithKnowParameters(const Sensor& sensor);
-	SensorWithKnowParameters(int myId);
-	SensorWithKnowParameters(int myId, const Matrix& myXa);
-	SensorWithKnowParameters(int myId, const Matrix& myXa, const Matrix& mySigmaXa);
+    explicit SensorWithKnowParameters(int myId);
+    explicit SensorWithKnowParameters(int myId, const Matrix& myXa);
+    explicit SensorWithKnowParameters(int myId, const Matrix& myXa, const Matrix& mySigmaXa);
 
 	//Private attribute accessor methods
 	//

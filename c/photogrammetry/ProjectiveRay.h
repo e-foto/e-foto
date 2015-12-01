@@ -61,7 +61,7 @@ public:
 
         // Constructors
         //
-        ProjectiveRay(Image* myImage);
+        explicit ProjectiveRay(Image* myImage);
 
         // Other methods
         //

@@ -90,7 +90,7 @@ public:
 
 	// Constructors and destructors
 	Image();
-	Image(int myId, int mySensorId); // Constructor with ids only, needed in project use.
+    explicit Image(int myId, int mySensorId); // Constructor with ids only, needed in project use.
 	virtual ~Image();
 
 	// Private attribute accessor methods

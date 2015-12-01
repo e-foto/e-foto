@@ -48,7 +48,7 @@ public:
  * \param myCol	Coluna da matriz na qual o elemento se encontra.
  * \param myValue	Valor do elemento.
  */
-    SparseMatrixElement(size_t myRow, size_t myCol, double myValue);
+    explicit SparseMatrixElement(size_t myRow, size_t myCol, double myValue);
 
 	/**
  * \brief Destrutor vazio padrão.
@@ -125,7 +125,7 @@ public:
  * \param source	A matriz padrão a ser utilizada como base na construção da matriz esparsa.
  * \param precision	A precisão a ser considerada para decidir se um elemento é nulo ou não.
  */
-	SparseMatrix(Matrix source, double precision = 1e-20);
+    explicit SparseMatrix(Matrix source, double precision = 1e-20);
 
 	/**
  * \brief Destrutor vazio padrão.

@@ -61,7 +61,7 @@ public:
 	* \brief Construtor default
 	* \param parent: Ponteiro para objeto QWidget pai
 	*/
-	ETableWidget(QWidget *parent=0);
+    explicit ETableWidget(QWidget *parent=0);
 
 	/**
 	* \brief Construtor com valores numéricos e alguma formatação para exibição da tabela
@@ -70,7 +70,7 @@ public:
 	* \param precision: Precisão com a qual os valores numericos serão exibidos
 	* \param parent: Ponteiro para objeto QWidget pai
 	*/
-	ETableWidget(Matrix values,char mode='e',int precision=6,QWidget *parent=0);
+    explicit ETableWidget(Matrix values,char mode='e',int precision=6,QWidget *parent=0);
 
 	/**
 	* \brief Metodo para inserir valores numericos na tabela a partir da coluna zero e linha zero

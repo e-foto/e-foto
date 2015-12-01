@@ -361,7 +361,7 @@ public:
  * \param keyImage : Key da imagem
  * \param id : texto contendo o id do ponto
  */
-	PointMark(QPointF coord,int keypoint ,int keyImage,QString id="PointId");
+    explicit PointMark(QPointF coord,int keypoint ,int keyImage,QString id="PointId");
 
 	/**
  * \brief Metodo para alterar a coordenada digital do ponto

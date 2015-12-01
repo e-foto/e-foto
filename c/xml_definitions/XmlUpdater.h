@@ -64,7 +64,7 @@ public:
  * \param allXml	Todo o conteúdo de um arquivo epp.
  * \param referenceBuild	Versão de referência para qual o xml deve ser atualizado. Por padrão é a última versão conhecida pela classe.
  */
-    XmlUpdater(std::string allXml, std::string referenceBuild = "");
+    explicit XmlUpdater(std::string allXml, std::string referenceBuild = "");
 
 	/**
  * \brief Método para retornar o conteúdo do arquivo xml armazenado.

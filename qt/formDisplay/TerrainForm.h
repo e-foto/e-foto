@@ -70,7 +70,7 @@ public:
  * \brief Construtor do formulario
  * \param parent : QWidget pai do formulario
  */
-	TerrainForm(QWidget *parent = 0);
+    explicit TerrainForm(QWidget *parent = 0);
 
 	/**
  * \brief Metodo que preenche um formulário previamente salvo em um arquivo *.epp

@@ -66,20 +66,20 @@ public:
  * \param mySigmaXZ	Valor de erro conjunto para as direções X e Z.
  * \param mySigmaYZ	Valor de erro conjunto para as direções Y e Z.
  */
-    ObjectSpaceCoordinate(std::string myUnit, double myX, double myY, double myZ, double mySigmaX = 1, double mySigmaY = 1, double mySigmaZ = 1, double mySigmaXY = 0, double mySigmaXZ = 0, double mySigmaYZ = 0);
+    explicit ObjectSpaceCoordinate(std::string myUnit, double myX, double myY, double myZ, double mySigmaX = 1, double mySigmaY = 1, double mySigmaZ = 1, double mySigmaXY = 0, double mySigmaXZ = 0, double mySigmaYZ = 0);
 
 	/**
  * \brief Construtor que cria uma coordenada de objeto sem erro conhecido usando matrizes.
  * \param myPositio	Matriz coluna com os valores de posicionamento da coordenada.
  */
-	ObjectSpaceCoordinate(const PositionMatrix& myPosition);
+    explicit ObjectSpaceCoordinate(const PositionMatrix& myPosition);
 
 	/**
  * \brief Construtor que cria uma coordenada de objeto com todos os seus valores usando matrizes.
  * \param myPositio	Matriz coluna com os valores de posicionamento da coordenada.
  * \param myPositionSigmas	Matriz sigma com os valores de erro para o posicionamento da coordenada.
  */
-	ObjectSpaceCoordinate(const PositionMatrix& myPosition, const Matrix& myPositionSigmas);
+    explicit ObjectSpaceCoordinate(const PositionMatrix& myPosition, const Matrix& myPositionSigmas);
 
 	/**
  * \brief Método para alterar o valor X num sistema de coordenadas (X, Y, Z).
