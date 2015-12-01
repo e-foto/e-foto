@@ -26,7 +26,7 @@ public:
 	* \brief Construtor default
 	* \param parent: Ponteiro para objeto QWidget pai
 	*/
-	EfotoDoubleSpinBox(QWidget *parent=0);
+    explicit EfotoDoubleSpinBox(QWidget *parent=0);
 
 	/**
 	* \brief Evento reimplementado para trocar ',' por '.' e vice-versa dependendo do local em que o usuario esta.

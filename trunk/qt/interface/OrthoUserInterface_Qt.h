@@ -49,7 +49,7 @@ public slots:
 
 protected:
 	static OrthoUserInterface_Qt* OrthoInst;
-	OrthoUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    explicit OrthoUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~OrthoUserInterface_Qt();
 	OrthoManager *manager;
 	void closeEvent(QCloseEvent *e);
@@ -112,7 +112,7 @@ private:
         QString lastDir;
 
 public:
-        OrthoQualityUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0);
+        explicit OrthoQualityUserInterface_Qt(OrthoManager* manager, QWidget* parent = 0);
         void showImage2D(Matrix* image, double xi, double dx, double yi, double dy, bool isGrayscale = true);
 
 public slots:

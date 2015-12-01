@@ -41,7 +41,7 @@ public:
  * \brief Construtor do formulario
  * \param parent : QWidget pai do formulario
  */
-	HeaderForm(QWidget *parent = 0);
+    explicit HeaderForm(QWidget *parent = 0);
 
 	/**
  * \brief Metodo que preenche um formulário previamente salvo em um arquivo *.epp

@@ -84,7 +84,7 @@ public:
     /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    OrthoManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
+    explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
     /**
     * \brief Destrutor padrão.
     */

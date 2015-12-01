@@ -48,7 +48,7 @@ public:
  * \brief Construtor que cria uma coordenada digital identificada sobre o espaço imagem.
  * \param myImageId	Identificador da imagem à qual a coordenada pertence.
  */
-	ImageSpaceCoordinate(int myImageId);
+    explicit ImageSpaceCoordinate(int myImageId);
 
 	/**
  * \brief Construtor que cria uma coordenada digital identificada sobre o espaço imagem com todos os seus valores.
@@ -56,14 +56,14 @@ public:
  * \param myCol	Valor da coluna.
  * \param myLin	Valor da linha.
  */
-	ImageSpaceCoordinate(int myImageId, double myCol, double myLin);
+    explicit ImageSpaceCoordinate(int myImageId, double myCol, double myLin);
 
 	/**
  * \brief Construtor que cria uma coordenada digital identificada sobre o espaço imagem com todos os seus valores usando matrizes.
  * \param myImageId	Identificador da imagem à qual a coordenada pertence.
  * \param myPositio	Matriz coluna com os valores de posicionamento da coordenada.
  */
-	ImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition);
+    explicit ImageSpaceCoordinate(int myImageId, const PositionMatrix& myPosition);
 
 	/**
  * \brief Destrutor padrão.

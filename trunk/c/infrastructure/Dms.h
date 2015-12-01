@@ -48,13 +48,13 @@ public:
     * \param second : valor do segundo
     * \param signal : sinal
     */
-    Dms(int degree, int minute, double second,bool signal=false);
+    explicit Dms(int degree, int minute, double second,bool signal=false);
 
     /**
     * \brief Construtor do tipo grau minuto segundo, informando apenas o total de segundos
     * \param seconds : total de segundos que um Dms possui
     */
-    Dms(double seconds);
+    explicit Dms(double seconds);
 
     /**
     * \brief Construtor do tipo grau minuto segundo, informando a QString equivalente
@@ -69,7 +69,7 @@ public:
     * \param dms : string no formato dd°mm'ss.sss" ou dd mm ss.sss
     * \attention string em outros formatos podem gerar resultados inesperados
     */
-    Dms(std::string dms);
+    explicit Dms(std::string dms);
 
     /**
     * \brief Metodo para retornar o valor absoluto do grau

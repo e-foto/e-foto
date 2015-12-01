@@ -87,7 +87,7 @@ public:
     // Constructors and Destructors
     //
     SPManager();
-    SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
+    explicit SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
     ~SPManager();
 
     // Association Methods

@@ -57,7 +57,7 @@ public:
 	// Constructors and destructors
 	//
 	SpatialIntersection();
-	SpatialIntersection(StereoPair* myStereoPair);
+    explicit SpatialIntersection(StereoPair* myStereoPair);
 	~SpatialIntersection();
 
 	// Aggregation modifiers

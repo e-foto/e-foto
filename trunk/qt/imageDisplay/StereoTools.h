@@ -27,7 +27,7 @@ class StereoTool : public QObject
     Q_OBJECT
 
 public:
-    StereoTool(StereoDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _leftPosLabel = NULL; _rightPosLabel = NULL; _3dPosLabel = NULL;
+    explicit StereoTool(StereoDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _leftPosLabel = NULL; _rightPosLabel = NULL; _3dPosLabel = NULL;
                                         connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); _hasButtomPressed = false; _actualizePosLabel = true;}
     virtual ~StereoTool() {}
 
@@ -79,7 +79,7 @@ class ZoomStereoTool : public StereoTool
 {
     bool _onRubberBand;
 public:
-    ZoomStereoTool(StereoDisplay* display);
+    explicit ZoomStereoTool(StereoDisplay* display);
     ~ZoomStereoTool();
     void paintEvent(const QPaintEvent& event);
     //void enterEvent(const QHoverEvent& event);
@@ -95,7 +95,7 @@ public:
 class MoveStereoTool : public StereoTool
 {
 public:
-    MoveStereoTool(StereoDisplay* display);
+    explicit MoveStereoTool(StereoDisplay* display);
     ~MoveStereoTool();
     //void paintEvent(const QPaintEvent& event);
     //void enterEvent(const QHoverEvent& event);
@@ -117,7 +117,7 @@ class MarkStereoTool : public StereoTool
     bool onlyEmitClickedMode;
 
 public:
-    MarkStereoTool(StereoDisplay* display);
+    explicit MarkStereoTool(StereoDisplay* display);
     ~MarkStereoTool();
 
     void changeMarker(Marker marker);
@@ -157,7 +157,7 @@ class NearStereoTool : public StereoTool
     bool _cursorIsVisible;
 
 public:
-    NearStereoTool(StereoDisplay* display);
+    explicit NearStereoTool(StereoDisplay* display);
     ~NearStereoTool();
 
     QDockWidget* getNearDock();
@@ -191,7 +191,7 @@ class OverStereoTool : public StereoTool
     bool _onMove;
 
 public:
-    OverStereoTool(StereoDisplay* display);
+    explicit OverStereoTool(StereoDisplay* display);
     ~OverStereoTool();
 
     QDockWidget* getOverDock();
@@ -224,7 +224,7 @@ protected:
     StereoTool* currentTool;
 
 public:
-    StereoToolsBar(StereoDisplay* display, QWidget* parent);
+    explicit StereoToolsBar(StereoDisplay* display, QWidget* parent);
     QAction* setZoomTool;
     QAction* setMoveTool;
     QAction* setMarkTool;

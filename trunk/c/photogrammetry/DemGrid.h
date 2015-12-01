@@ -46,7 +46,7 @@ class DemGrid
 {
 
 public:
-    DemGrid(double, double, double, double, double, double);
+    explicit DemGrid(double, double, double, double, double, double);
     void linkManager(DEMManager *_man) { manager = _man; };
     enum saveMode { efotoDEM, ascii };
     void saveDem(char *, int);

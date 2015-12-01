@@ -47,7 +47,7 @@ public:
  * \param parNcols	Número de colunas.
  * \param parNrows	Número de linhas.
  */
-	RectSupport(unsigned int parNcols, unsigned int parNrows);
+    explicit RectSupport(unsigned int parNcols, unsigned int parNrows);
 
 	/**
  * \brief Destrutor virtual padrão.

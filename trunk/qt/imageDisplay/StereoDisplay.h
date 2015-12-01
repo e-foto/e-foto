@@ -91,7 +91,7 @@ protected:
     double _fitScale;
 
 public:
-    StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
+    explicit StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
     ~StereoDisplay();
 
     StereoScene* getCurrentScene();

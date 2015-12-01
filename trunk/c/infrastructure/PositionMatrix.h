@@ -63,7 +63,7 @@ public:
  * \param dimensions	Define qual a dimensão utilizada para a coordenada a ser armazenada pela matriz de posição.
  * \param newunit	define qual o descritor textual da unidade de medida utilizada.
  */
-    PositionMatrix(unsigned int dimensions, std::string newUnit);
+    explicit PositionMatrix(unsigned int dimensions, std::string newUnit);
 
 	/**
  * \brief Construtor de cópia para matrizes de cálculos.

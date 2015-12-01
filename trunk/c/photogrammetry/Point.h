@@ -64,7 +64,7 @@ public:
 	// Constructors
 	//
 	Point();
-	Point(int myId);
+    explicit Point(int myId);
 	virtual ~Point();
 
 	// Private attribute accessor methods

@@ -29,7 +29,7 @@ namespace efoto {
 class FeatureItem
 {
 public:
-    FeatureItem(const QList<QVariant> &data, FeatureItem *parent = 0);
+    explicit FeatureItem(const QList<QVariant> &data, FeatureItem *parent = 0);
     ~FeatureItem();
 
     void appendChild(FeatureItem *child);
@@ -52,7 +52,7 @@ class TreeFeatures : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TreeFeatures(const QString &data, QObject *parent = 0);
+    explicit TreeFeatures(const QString &data, QObject *parent = 0);
     ~TreeFeatures();
 
     QVariant data(const QModelIndex &index, int role) const;

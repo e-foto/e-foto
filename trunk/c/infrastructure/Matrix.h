@@ -76,7 +76,7 @@ public:
  * \param rows	Define a quantidade de linhas da nova matriz.
  * \param cols	Define a quantidade de colunas da nova matriz.
  */
-    Matrix(unsigned int rows, unsigned int cols);
+    explicit Matrix(unsigned int rows, unsigned int cols);
 
     /**
  * \brief Construtor de cópia para matrizes de posição.

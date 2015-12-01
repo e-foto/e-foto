@@ -64,8 +64,8 @@ public:
 class Marker : public QImage
 {
 public:
-    Marker(const QImage &image2Mark);
-    Marker(DefaultMark defaultMarkType);
+    explicit Marker(const QImage &image2Mark);
+    explicit Marker(DefaultMark defaultMarkType);
 
     QImage toQImage();
 };
@@ -74,7 +74,7 @@ class Coord : public QPointF
 {
 public:
     Coord();
-    Coord(QPointF location, QString label, Marker* mark = NULL);
+    explicit Coord(QPointF location, QString label, Marker* mark = NULL);
     QString label_;
     Marker* marker_;
 };

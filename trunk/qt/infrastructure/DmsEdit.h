@@ -51,7 +51,7 @@ public:
 	* \brief Construtor da classe
 	* \param parent : Widget pai
 	*/
-	DmsEdit(QWidget *parent=0);
+    explicit DmsEdit(QWidget *parent=0);
 
 	/**
 	* \brief Metodo para alterar o valor de casas decimais do campo segundos quando no modo DMS
