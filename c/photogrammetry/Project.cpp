@@ -1071,60 +1071,6 @@ bool Project::getSaveState()
 }
 
 
-PhotoTri::PhotoTri()
-{
-
-}
-
-std::string PhotoTri::xmlGetData()
-{
-    // todo: make xml output
-    return "";
-}
-
-void PhotoTri::xmlSetData(std::string xml)
-{
-    EDomElement root(xml);
-
-    totalIterations = root.elementByTagName("iterations").toInt();
-    converged = root.elementByTagName("converged").toString() == "true";
-    metricConvergency = root.elementByTagName("metricConvergency").toDouble();
-    angularConvergency = root.elementByTagName("angularConvergency").toDouble();
-    rmse = root.elementByTagName("rmse").toDouble();
-
-    std::deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
-    for (unsigned int i = 0; i <pts.size(); i++)
-        pointKey.push_back(pts.at(i).elementByTagName("pointKey").toInt());
-
-    std::deque<EDomElement> imgs = root.elementByTagName("usedImages").children();
-    for (unsigned int i = 0; i <imgs.size(); i++)
-        imageKey.push_back(imgs.at(i).elementByTagName("imageKey").toInt());
-
-}
-
-void PhotoTri::putImage(Image *img)
-{
-    bool insert = true;
-    // Eliminamos primeiro a possibilidade duplicar uma associação.
-    for (unsigned int i = 0; i < image.size(); i++)
-        if (image.at(i) == img)
-            insert = false;
-    // Fazemos a nova associação.
-    if (insert)
-        image.push_back(img);
-}
-
-void PhotoTri::putPoint(Point *pt)
-{
-    bool insert = true;
-    // Eliminamos primeiro a possibilidade duplicar uma associação.
-    for (unsigned int i = 0; i < point.size(); i++)
-        if (point.at(i) == pt)
-            insert = false;
-    // Fazemos a nova associação.
-    if (insert)
-        point.push_back(pt);
-}
 
 } // namespace efoto
 } // namespace eng

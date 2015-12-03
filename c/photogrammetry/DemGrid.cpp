@@ -14,13 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-//#include <sys/time.h>
-#include <time.h>
+
 #include "DemGrid.h"
 #include "DEMManager.h"
 #include "MatchingPointsGrid.h"
-
-//#include <math.h>
 
 #include <sstream>
 #include <iomanip>
@@ -35,6 +32,7 @@
 * * * * * * * * * * * *
 * @date 11/10/2011
 * @version 1.0 - Marcelo Teixeira Silveira
+* @revision 2015.12 - João Araujo
 */
 
 namespace br {
@@ -68,11 +66,11 @@ void DemGrid::createNewGrid(double _Xi, double _Yi, double _Xf, double _Yf, doub
     DEM.resize(dem_height, dem_width);
 }
 
-void DemGrid::changeGridResolution(double _res_x, double _res_y)
+/*void DemGrid::changeGridResolution(double _res_x, double _res_y)
 {
     createNewGrid(Xi, Yi, Xf, Yf, _res_x, _res_y);
 }
-
+*/
 void DemGrid::setPointList(MatchingPointsList *mpl)
 {
     // Link
@@ -215,7 +213,7 @@ Matrix * DemGrid::getDemImage(double min, double max)
 }
 
 // Return a copy of the DEM
-Matrix & DemGrid::getDem()
+/*Matrix & DemGrid::getDem()
 {
     Matrix *m = new Matrix(DEM.getRows(),DEM.getCols());
     *m = DEM;
@@ -245,9 +243,9 @@ void DemGrid::getColRowAt(double X, double Y, int &col, int &row)
         col = int(1.0 + (X - Xi) / res_x);
         row = int(1.0 + (Y - Yi) / res_y);
 }
-
+*/
 /*
- * INTERPOOLATION DECISION METHOD
+ * INTERPOLATION DECISION METHOD
  */
 
 void DemGrid::interpolateNearestPoint()
@@ -498,14 +496,6 @@ void DemGrid::interpolateTrendSurfaceFast(int mode)
         if (manager!=NULL)
             manager->setProgress((100*y)/DEM.getRows());
     }
-
-    //gettimeofday(&end,NULL);
-
-    //float etime = (float)(end.tv_sec - begin.tv_sec);
-    //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-    elap_time = 0.0;//double(etime);
-
-    //printf("Elapsed time: %.6f\n",etime);
 }
 
 // Using fast structure
@@ -887,29 +877,31 @@ void DemGrid::saveDemEfoto(char * filename)
 
 void DemGrid::loadDemEfoto(char * filename)
 {
-    FILE *fp;
-
-    fp = fopen(filename,"rb");
+    std::ifstream fp;
+    fp.open(filename,std::ios::binary);
+    if (!fp)
+        return;
 
     // Read header
     double header[8];
-    fread(&header, 1, sizeof(double)*8, fp);
+    fp.read((char *)header, sizeof(header));
 
     Xi = header[0];
     Yi = header[1];
     Xf = header[2];
     Yf = header[3];
     res_x = header[4];
-        res_y = header[5];
+    res_y = header[5];
     dem_width = int(header[6]);
     dem_height = int(header[7]);
 
     // Read DEM
     DEM.resize(dem_height, dem_width);
+
     unsigned int file_size = dem_width*dem_height;
     double *data = new double[file_size];
     int p=0;
-    fread(data, 1, dem_width*dem_height*8, fp);
+    fp.read((char *)data, dem_width*dem_height*8);
 
     for (unsigned int i=1; i<=dem_height; i++)
     {
@@ -920,11 +912,9 @@ void DemGrid::loadDemEfoto(char * filename)
         }
     }
 
-    fclose(fp);
+    fp.close();
 
     delete []data;
-
-    //	printData();
 }
 
 void DemGrid::saveDemAscii(char * filename)
@@ -1024,8 +1014,6 @@ void DemGrid::loadDemAscii(char * filename)
     }
 
     arq.close();
-
-    //	printData();
 }
 
 
