@@ -17,6 +17,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "EObject.h"
+#include "PhotoTri.h"
 
 namespace br {
 namespace uerj {
@@ -32,50 +33,13 @@ class Sensor;
 class Flight;
 class InteriorOrientation;
 class ExteriorOrientation;
+class PhotoTri;
 
-class PhotoTri : public EObject
-{
-    int totalIterations;
-    bool converged;
-    double metricConvergency;
-    double angularConvergency;
-    double rmse;
-    std::deque<int> imageKey;
-    std::deque<int> pointKey;
-    std::deque<Image*> image;
-    std::deque<Point*> point;
-
-public:
-    PhotoTri();
-    virtual ~PhotoTri(){}
-
-    std::string xmlGetData();
-    void xmlSetData(std::string xml);
-
-    virtual std::string objectType(void) {return "PhotoTri";}
-    virtual std::string objectAssociations(void) {return "";}
-    virtual bool is(std::string s) {return s.compare("PhotoTri");}
-
-    int getTotalIterations() {return totalIterations;}
-    bool getConverged() {return converged;}
-    double getMetricConvergency() {return metricConvergency;}
-    double getAngularConvergency() {return angularConvergency;}
-    double getRmse() {return rmse;}
-
-    std::deque<int> getImageKeys() {return imageKey;}
-    std::deque<int> getPointKeys() {return pointKey;}
-    std::deque<Image*> getImages() {return image;}
-    std::deque<Point*> getPoints() {return point;}
-
-    void putImage(Image* img);
-    void putPoint(Point* pt);
-
-    void clearImages(){image.clear();}
-    void clearPoints(){point.clear();}
-};
 
 class Project
 {
+
+private:
     class DEM; //Dummy class. To be implemented
     class OrthoImage; //Dummy class. To be implemented
     class featuresFile; //Dummy class. To be implemented
@@ -97,7 +61,7 @@ class Project
     std::deque<ExteriorOrientation*> EOs;
     PhotoTri* thePhotoTri;
 
-protected:
+
 
     ProjectHeader* instanceHeader();
 

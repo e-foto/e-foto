@@ -79,6 +79,7 @@ HEADERS += c/control/DEMManager.h \
 		   c/photogrammetry/PhotoTriReport.h \
 		   c/photogrammetry/Point.h \
 		   c/photogrammetry/Project.h \
+		   c/photogrammetry/PhotoTri.h \
 		   c/photogrammetry/ProjectHeader.h \
 		   c/photogrammetry/ProjectiveRay.h \
 		   c/photogrammetry/RayTester.h \
@@ -97,7 +98,7 @@ HEADERS += c/control/DEMManager.h \
 		   c/xml_definitions/XMLSensorWithFiducialMarks.h \
 		   c/xml_definitions/XMLTerrain.h \
 		   c/xml_definitions/XmlUpdater.h \
-                   c/shapelib/shapefil.h \
+           c/shapelib/shapefil.h \
 		   qt/formDisplay/AbstractForm.h \
 		   qt/formDisplay/ControlButtons.h \
 		   qt/formDisplay/FlightForm.h \
@@ -224,6 +225,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/photogrammetry/PhotoTriReport.cpp \
 		   c/photogrammetry/Point.cpp \
 		   c/photogrammetry/Project.cpp \
+		   c/photogrammetry/PhotoTri.cpp \
 		   c/photogrammetry/ProjectHeader.cpp \
 		   c/photogrammetry/ProjectiveRay.cpp \
 		   c/photogrammetry/RayTester.cpp \
@@ -234,7 +236,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/photogrammetry/SpatialIntersection.cpp \
 		   c/photogrammetry/SpatialRessection.cpp \
 		   c/photogrammetry/StereoPair.cpp \
-                   c/photogrammetry/Terrain.cpp \
+           c/photogrammetry/Terrain.cpp \
 		   c/xml_definitions/XMLAerial.cpp \
 		   c/xml_definitions/XMLFlight.cpp \
 		   c/xml_definitions/XMLProjectHeader.cpp \

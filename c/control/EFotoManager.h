@@ -50,8 +50,8 @@ class EFotoManager
 {
 
 public:
-	enum nextModule_t {NEXT_NONE, NEXT_PROJECT, NEXT_RELOAD, NEXT_IO, 
-	  NEXT_SR, NEXT_PT, NEXT_DEM, NEXT_ORTHO, NEXT_SP, NEXT_Report, NEXT_PTReport};
+    typedef enum {NEXT_NONE, NEXT_PROJECT, NEXT_RELOAD, NEXT_IO,
+      NEXT_SR, NEXT_PT, NEXT_DEM, NEXT_ORTHO, NEXT_SP, NEXT_Report, NEXT_PTReport} nextModule_t;
 private:
 	nextModule_t nextModule;
 	int nextImage;
@@ -440,7 +440,7 @@ public:
 	*/
         void stopEPR();
 
-        bool loadProject();
+        //bool loadProject();
 
         Project* getProject() {return &report_project;}
         void execPTReport();
