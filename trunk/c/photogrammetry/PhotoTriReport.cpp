@@ -34,6 +34,7 @@
 #include "Point.h"
 #include "FrameSensor.h"
 #include "StereoPair.h"
+#include "PhotoTri.h"
 
 #include "math.h"
 
