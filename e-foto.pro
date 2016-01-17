@@ -292,6 +292,7 @@ MOC_DIR = ../temp/moc
 UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
+QMAKE_CXXFLAGS += -std=c++11
 
 # Set libshape usage
 win32: LIBS += c/shapelib/shapelib.lib

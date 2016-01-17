@@ -17,7 +17,6 @@
 
 #include "Orthorectification.h"
 
-//#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <gdal_priv.h>
@@ -36,12 +35,7 @@ Orthorectification::Orthorectification(double _Xi,
                                        double _Xf,
                                        double _Yf,
                                        double _res_x,
-                                       double _res_y):
-    color_depth(8),
-    no_bands(1),
-    coord_system(0),
-    spheroid(0),
-    datum(SAD69)
+                                       double _res_y)
 {
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
@@ -64,23 +58,8 @@ void Orthorectification::createNewGrid(double _Xi, double _Yi, double _Xf, doubl
     orthoimage.resize(ortho_height, ortho_width);
 }
 
-void Orthorectification::changeGridResolution(double _res_x, double _res_y)
-{
-    createNewGrid(Xi, Yi, Xf, Yf, _res_x, _res_y);
-}
-
-double Orthorectification::getOrthoimagePixel(double X, double Y)
-{
-    int col, lin;
-
-    col = int(1.0 + (X-Xi)/res_x);
-    lin = int(1.0 + (Y-Yi)/res_y);
-
-    return getOrthoimagePixel(col, lin);
-}
-
 // Always remember: values from 0-1
-double Orthorectification::getOrthoimagePixel(int col, int row)
+double Orthorectification::getOrthoimagePixel(int col, int row) const
 {
     if (col < 1 || row < 1 || col > ortho_width || row > ortho_height)
         return -1.0;
@@ -110,7 +89,7 @@ void Orthorectification::setOrthoimagePixel(int col, int row, double val)
     orthoimage.set(row, col, val);
 }
 
-void Orthorectification::getXYAt(int col, int row, double &X, double &Y)
+void Orthorectification::getXYAt(int col, int row, double &X, double &Y) const
 {
     X = res_x * (double(col) - 1.0) + Xi;
     Y = res_y * (double(row) - 1.0) + Yi;
@@ -128,7 +107,7 @@ void Orthorectification::getColRowAt(double X, double Y, double &col, double &ro
         row = 1.0 + (Y - Yi) / res_y;
 }
 
-void Orthorectification::getColRowAt(double X, double Y, int &col, int &row)
+void Orthorectification::getColRowAt(double X, double Y, int &col, int &row) const
 {
         col = int(1.0 + (X - Xi) / res_x);
         row = int(1.0 + (Y - Yi) / res_y);
@@ -140,28 +119,6 @@ void Orthorectification::getColRowAt(double X, double Y, int &col, int &row)
  *                      *
  ************************/
 
-// This is an internal function used to debug loading functions
-void Orthorectification::printData()
-{
-    std::cout << "Orthoimage header:\n";
-    std::cout << " Xi: " << Xi << "\t" << Yi << "\t" << Xf << "\t" << Yf << std::endl;
-    std::cout << " Resolution X: " << res_x << std::endl << "Resolution Y: " << res_y << std::endl;
-    std::cout << " GRID width: " << ortho_width << std::endl << "GRID height: " << ortho_height <<std::endl;
-    std::cout << " Image color depth: "<< color_depth <<" Number of bands: " << no_bands;
-    std::cout << " Coordinate system: " << coord_system << std::endl << "Spheroid: " << spheroid << std::endl << " Datum: " << datum << std::endl;
-    std::cout << "Sample Ortho data:\n";
-
-    unsigned int w,h;
-    (ortho_width < 10) ? w = ortho_width : w = 10;
-    (ortho_height < 10) ? h = ortho_height : h = 10;
-
-    for (unsigned int i=1; i<=h; i++)
-    {
-        for (unsigned int j=1; j<=w; j++)
-            std::cout << orthoimage.get(i,j);
-        std::cout << std::endl;
-    }
-}
 
 void Orthorectification::saveOrtho(char * filename/*, int mode*/)
 {
@@ -175,7 +132,7 @@ void Orthorectification::loadOrtho(char * filename/*, int mode*/)
     loadOrthoEfoto(filename);
 }
 
-void Orthorectification::saveOrthoEfoto(char * filename)
+void Orthorectification::saveOrthoEfoto(char * filename) const
 {
     FILE *fp;
 
@@ -251,9 +208,9 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     orthoimage.resize(ortho_height, ortho_width);
     unsigned int file_size = ortho_width*ortho_height;
     unsigned int file_size_bytes = file_size*8;
-    double *data = new double[file_size];
+    std::unique_ptr<double[]> data (new double[file_size]);
     int p=0;
-    fread(data, 1, file_size_bytes, fp);
+    fread(data.get(), 1, file_size_bytes, fp);
 
     for (int i=1; i<=ortho_height; i++)
     {
@@ -265,8 +222,6 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     }
 
     fclose(fp);
-
-    delete data;
 }
 
 /*
@@ -287,7 +242,7 @@ Matrix * Orthorectification::getOrthoImage()
     return img;
 }
 
-void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
+void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 {
     GDALAllRegister();
 
@@ -296,21 +251,21 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
 
     poDriver = GetGDALDriverManager()->GetDriverByName(pszFormat);
 
-    if( poDriver == NULL )
+    if( poDriver == nullptr )
     {
         exit( 1 );
         //CPLError();
     }
 
     GDALDataset *poDstDS;
-    char **papszOptions = NULL;
+    char **papszOptions = nullptr;
     papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
     papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "PACKBITS" );
 
     poDstDS = poDriver->Create( filename, ortho_width, ortho_height, no_bands, GDT_Byte,
                                 papszOptions );
 
-    if( poDstDS == NULL )
+    if( poDstDS == nullptr )
     {
         exit( 1 );
         //CPLError();
@@ -319,14 +274,12 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
 
     double adfGeoTransform[6] = { Xi, res_x, 0, Yi, 0, res_y };
     OGRSpatialReference oSRS;
-    char *pszSRS_WKT = NULL;
+    char *pszSRS_WKT = nullptr;
     GDALRasterBand **poBand = new GDALRasterBand*[no_bands] ;
 
-#ifdef WIN32
-    GByte* abyRaster = new GByte[no_bands][ortho_width*ortho_height];
-#elif unix
-    GByte abyRaster[no_bands][ortho_width*ortho_height];
-#endif
+    std::unique_ptr<GByte[]> abyRasterRed (new GByte[ortho_width*ortho_height]);
+    std::unique_ptr<GByte[]> abyRasterGreen (new GByte[ortho_width*ortho_height]);
+    std::unique_ptr<GByte[]> abyRasterBlue (new GByte[ortho_width*ortho_height]);
 
     poDstDS->SetGeoTransform( adfGeoTransform );
 
@@ -401,33 +354,27 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename)
  * a leitura em um buffer que contem dados intercalados (interleave) pixel por exemplo.
  */
 
-        for(int i = 0; i < ortho_height; i++)
+    for(int i = 0; i < ortho_height; i++)
+    {
+        for(int j = 0; j < ortho_width; j++)
         {
-            for(int j = 0; j < ortho_width; j++)
-            {
-                tmp=(orthoimage.get(i+1 ,j+1))*0xFFFFFF;
-                tmpint = ((int)tmp)&0xFFFFFF;
-                abyRaster[2][(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //red
-                tmpint >>=8;
-                abyRaster[1][(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //green
-                tmpint >>=8;
-                abyRaster[0][(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //blue
-            }
+            tmp=(orthoimage.get(i+1 ,j+1))*0xFFFFFF;
+            tmpint = ((int)tmp)&0xFFFFFF;
+            abyRasterRed[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //red
+            tmpint >>=8;
+            abyRasterGreen[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //green
+            tmpint >>=8;
+            abyRasterBlue[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //blue
         }
+    }
 
         //Acertar RasterIO(...)
-    for(int k=0 ; k < no_bands ; k++)
-    {
-        //poBand[i]->RasterIO(GF_Write, x, y, blockWidth, blockHeight,abyRaster, blockWidth, blockHeight,(GDALDataType)this->datatpye, 0, 0);
-        poBand[k]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRaster[k], ortho_width, ortho_height,GDT_Byte, 0, 0);
-    }
+    poBand[2]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterBlue.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
+    poBand[1]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterGreen.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
+    poBand[0]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterRed.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
 
     if(poDstDS!=NULL)
         GDALClose(poDstDS);
-
-#ifdef WIN32
-    delete abyRaster;
-#endif
 }
 
 

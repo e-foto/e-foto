@@ -84,7 +84,9 @@ public:
     /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
+    explicit OrthoManager(EFotoManager* manager,
+                          std::deque<Image*> images,
+                          std::deque<ExteriorOrientation*> eos);
     /**
     * \brief Destrutor padrão.
     */
@@ -123,11 +125,21 @@ public:
     * \brief Método que executa a ortorretificação.
     * \todo solve unused parameter fileType
     */
-    int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
+    int orthoRectification(char * filename,
+                           int fileType,
+                           int option,
+                           double
+                           user_res_x,
+                           double user_res_y);
     /**
-    * \brief Mtodo que executa a ortorretificao e salva em formato GeoTiff.
+    * \brief Method who exports the orthorectification and saves on Geotiff format.
     */
-    int orthoRectificationGeoTiff(char * filename, int fileType, int option, double user_res_x, double user_res_y);
+    int orthoRectificationGeoTiff(char * filename,
+                                  int fileType,
+                                  int option,
+                                  double
+                                  user_res_x,
+                                  double user_res_y);
     /**
     * \brief Método que interrompe a ortorretificação.
     */

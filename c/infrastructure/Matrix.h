@@ -23,12 +23,13 @@
 #include <cmath>
 #endif
 #ifdef unix
-#include <math.h>
+#include <cmath>
 #endif
 
 #define MAX(X,Y) (((X)>(Y))?(X):(Y))
 #define MIN(X,Y) (((X)<(Y))?(X):(Y))
 
+#include <cmath>
 #include "RectSupport.h"
 
 namespace br {

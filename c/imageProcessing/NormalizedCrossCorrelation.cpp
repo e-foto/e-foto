@@ -5,7 +5,7 @@
 #include "NormalizedCrossCorrelation.h"
 #include "Matrix.h"
 
-//#include <math.h>
+#include <cmath>
 #include <stdio.h>
 
 namespace br {

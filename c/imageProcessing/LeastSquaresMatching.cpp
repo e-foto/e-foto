@@ -18,7 +18,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "LeastSquaresMatching.h"
-//#include <math.h>
+#include <math.h>
 
 namespace br {
 namespace uerj {
