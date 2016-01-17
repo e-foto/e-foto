@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <MatchingPoints.h>
+#include <cmath>
 
 namespace br {
 namespace uerj {

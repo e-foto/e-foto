@@ -20,6 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <memory>
 #include "Matrix.h"
 #include "CommonDef.h"
 
@@ -38,36 +39,25 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-class Orthorectification
-{
+class Orthorectification{
 
 private:
     Matrix orthoimage;
     double Xi, Yi, Xf, Yf, res_x, res_y;
-    int color_depth, no_bands, coord_system, spheroid, utmFuse;
+    int color_depth {8};
+    int no_bands {1};
+    int coord_system {0};
+    int spheroid {0};
+    int utmFuse  {SAD69};
     DatumType datum;
     int ortho_width, ortho_height;
-    void saveOrthoEfoto(char * filename);
+    void saveOrthoEfoto(char * filename) const;
     void loadOrthoEfoto(char * filename);
-    void saveOrthoGeoTiffEfoto(char * filename);
-    void changeGridResolution(double, double);
-    void printData();
-    Matrix getOrthoData() { return orthoimage; } // Read only
-    int getWidth() { return ortho_width; }
-    double getOrthoimagePixel(int, int);
-    double getOrthoimagePixel(double, double);
-    void setColorDepth(int _cd) { color_depth = _cd; }
-    int getColorDepth() { return color_depth; }
-    int getNumberOfBands() { return no_bands; }
-    int getCoordinateSystem() { return coord_system; }
-    void setSpheroid(int _sp) { spheroid = _sp; }
-    int getSpheroid() { return spheroid; }
-    int getDatum() { return datum; }
-    int getUtmFuse() { return utmFuse; };
-    void getOrthoParametersB(int &_color, int &_bands, int &_coord, int &_sph, int &_datum) { _color = color_depth; _bands = no_bands; _coord = coord_system; _sph = spheroid; _datum = datum; }
+    void saveOrthoGeoTiffEfoto(char * filename) const;
+    double getOrthoimagePixel(int, int) const;
     void setOrthoimagePixel(int, int, double);
-    void getXYAt(int col, int row, double &X, double &Y);
-    void getColRowAt(double X, double Y, int &col, int &row);
+    void getXYAt(int col, int row, double &X, double &Y) const;
+    void getColRowAt(double X, double Y, int &col, int &row) const;
 
 public:
     explicit Orthorectification(double, double, double, double, double, double);
@@ -87,13 +77,18 @@ public:
     void setNumberOfBands(int _nb) { no_bands = _nb; }
     void setCoordinateSystem(int _cs) { coord_system = _cs; }
     void setDatum(DatumType _dt) { datum = _dt; }
-    void getOrthoParametersA(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; }
-
+    void getOrthoParametersA(double &_Xi,
+                             double &_Yi,
+                             double &_Xf,
+                             double &_Yf,
+                             double &_res_x,
+                             double &_res_y)
+    { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; }
 };
 
-} // namespace efoto
-} // namespace eng
-} // namespace uerj
-} // namespace br
+}  // namespace efoto
+}  // namespace eng
+}  // namespace uerj
+}  // namespace br
 
 #endif
