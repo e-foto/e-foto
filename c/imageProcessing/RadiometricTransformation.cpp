@@ -5,7 +5,7 @@
 #include "RadiometricTransformation.h"
 #include "Matrix.h"
 
-//#include <math.h>
+#include <cmath>
 
 /************************
  * IMAGE NORMALIZATION  *
