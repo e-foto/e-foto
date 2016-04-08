@@ -263,6 +263,14 @@ bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolera
 
 int DEMManager::getPairs()
 {
+    // This Method was unified in EFotoManager Class
+
+    manager->getPairs(listPairs);
+    addPairsToInterface();
+    return (listPairs.size() > 0);
+
+
+    /* old Method
         //
         // List Pairs description (0 - N-1):
         //
@@ -270,7 +278,6 @@ int DEMManager::getPairs()
         // left = num % no_imgs // Decoding
         // right =  num / no_imgs // Decoding
         //  Image ID ranges from 1-N
-
         // Clear list
         listPairs.clear();
 
@@ -340,7 +347,10 @@ int DEMManager::getPairs()
 
         addPairsToInterface();
 
+        qDebug("=========>%d<=========",listPairs.size());
+
         return (listPairs.size() > 0);
+        */
 }
 
 // Check if pair already exists and sort ids

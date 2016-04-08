@@ -205,7 +205,7 @@ void ETableWidget::autoCopy()
 			}
 			copyStr.append("\n");
 		}
-		//Gambiarra muito da feia, para acessar o clipboard do sistema
+        //Faz acesso ao clipboard do sistema
 		QLineEdit aux(copyStr);
 		aux.selectAll();
 		aux.copy();

@@ -311,7 +311,7 @@ bool PTUserInterface_Qt::exec()
 
 	/// Gambiarra para o Carlos
 	{
-        exportToKml(true);
+        ///exportToKml(true);
 	}
 	/// Gambiarra para o Carlos
 

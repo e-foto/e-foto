@@ -66,7 +66,6 @@ class Image : public EObject
 	std::string imageId;
 	ObjectSpaceCoordinate spatialCoordinates;
 
-	// IMPORTANTE: Gambiarra temporaria...
 	bool gnssAvailable; bool gnssSigmaAvailable; bool insAvailable; bool insSigmaAvailable;
 	std::string gnssType; std::string insType;
 	double gnssX0; double gnssY0; double gnssZ0;

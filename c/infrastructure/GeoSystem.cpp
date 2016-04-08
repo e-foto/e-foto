@@ -42,19 +42,19 @@ GeoSystem::GeoSystem(std::string sysName)
 {
 	if (sysName=="CORREGOALEGRE")
 	{
-        setSystem(DatumType::CORREGOALEGRE);
+        setSystem(CORREGOALEGRE);
 	}
 	else if (sysName=="SAD69")
 	{
-        setSystem(DatumType::SAD69);
+        setSystem(SAD69);
 	}
 	else if (sysName=="SIRGAS2000")
 	{
-        setSystem(DatumType::SIRGAS2000);
+        setSystem(SIRGAS2000);
 	}
     else
 	{
-        setSystem(DatumType::WGS84);
+        setSystem(WGS84);
 	}
 }
 
@@ -136,21 +136,21 @@ void GeoSystem::setSystem(DatumType system)
 {
 	switch (system)
 	{
-    case(DatumType::CORREGOALEGRE):
+	case(CORREGOALEGRE):
 		setEixoMaior(6378388.0);
 		setF(1.0/297);
 		setEixoMenor(6378388.0*(1-1.0/297));
 		setSystemName("CORREGO ALEGRE");
 		break;
 
-    case(DatumType::SAD69):
+	case(SAD69):
 		setEixoMaior(6378160.0);
 		setF(1/298.25);
 		setEixoMenor(6378160.0*(1-1/298.25));
 		setSystemName("SAD69");
 		break;
 
-    case(DatumType::SIRGAS2000):
+	case(SIRGAS2000):
 		setEixoMaior(6378137.0);
 		setF(1/298.257222101);
 		setEixoMenor(6378137.0*(1-1/298.257222101));

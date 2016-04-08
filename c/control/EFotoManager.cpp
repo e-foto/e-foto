@@ -1138,6 +1138,124 @@ void EFotoManager::execPTReport()
 	reloadProject();
 }
 
+// Internal function. Pos from 0 - N-1.
+void EFotoManager::getImagesId(int pos, int &left, int &right, std::deque<int> &listPairs)
+{
+    // Check pos
+    left = -1;
+    right = -1;
+    if (pos < 0 || unsigned(pos) > listPairs.size()-1)
+        return;
+
+    // Decode
+    int no_imgs = images.size();
+    left = 1 + (listPairs.at(pos) % no_imgs);
+    right = 1 + (listPairs.at(pos) / no_imgs);
+}
+
+// Check if pair already exists and sort ids
+bool EFotoManager::existPair(int &id1, int &id2, std::deque<int> &listPairs)
+{
+    int aux, pair_id1, pair_id2;
+
+    if (listPairs.size() == 0)
+        return false;
+
+    // Sort id
+    if (id1 > id2)
+    {
+        aux = id1;
+        id1 = id2;
+        id2 = aux;
+    }
+
+    for (size_t i=0; i<listPairs.size(); i++)
+    {
+        // Decode image list
+        getImagesId(i, pair_id1, pair_id2, listPairs);
+        if (pair_id1 == id1 && pair_id2 == id2)
+            return true;
+    }
+
+    return false;
+}
+
+int EFotoManager::getPairs(std::deque<int> &listPairs)
+{
+    //
+    // List Pairs description (0 - N-1):
+    //
+    // num = left + no_imgs*right // Encoding
+    // left = num % no_imgs // Decoding
+    // right =  num / no_imgs // Decoding
+    //  Image ID ranges from 1-N
+
+    // Clear list
+    listPairs.clear();
+
+    Image *img;
+    double X1, Y1, X2, Y2, S, dist, overlap;
+    int img_code, id1, id2;
+    size_t imagesSize = images.size();
+    Matrix Xa;
+    Flight* flight = instanceFlight(1);
+
+    // Calculate Images Radius, using the first image as reference
+    img = images.at(0);
+    // New D calcul
+    int maxDim = img->getWidth() > img->getHeight() ? img->getWidth() : img->getHeight();
+    S = maxDim * flight->getScaleDen() * 0.0254 / img->getResolution();
+    //S = maxDim * img->getFlight()->getScaleDen()  / (img->getResolution() * 0.0254);
+
+    for (size_t i=0; i<imagesSize; i++)
+    {
+       // Get reference image data
+        img = images.at(i);
+        Xa = img->getEO()->getXa();
+        X1 = Xa.get(1,1);
+        Y1 = Xa.get(2,1);
+
+        // Calculate the shortest image center
+        for (size_t j=i+1; j<imagesSize; j++)
+        {
+           // Get test image data
+            img = images.at(j);
+            Xa = img->getEO()->getXa();
+            X2 = Xa.get(1,1);
+            Y2 = Xa.get(2,1);
+
+            // Calculate dist
+            dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
+
+            // Check images overlapping
+            overlap = 100*(S - dist)/(S);
+
+            // The rule of thumb for overlapping calculations considers the
+            // average between the longitudinal and the transversal (or lateral) overlaps
+            double avg = (flight->getLongitudinalOverlap() + flight->getTransversalOverlap())/2.0;
+            if (overlap < avg)
+                continue;
+
+            // Assign image ids (in this case, the vector number - image id ranges from 1-N
+           id1 = i+1;
+           id2 = j+1;
+
+           // Check if pair exists
+           if (!existPair(id1, id2, listPairs))
+           {
+           // Add images to list
+               img_code = (id1-1) + images.size()*(id2-1);
+               listPairs.push_back(img_code);
+           }
+        }
+    }
+
+    //addPairsToInterface();
+
+    //qDebug("=========>%d<=========",listPairs.size());
+
+    return (listPairs.size() > 0);
+}
 
 } // namespace efoto
 } // namespace eng
