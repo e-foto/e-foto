@@ -1,5 +1,0 @@
-class DecenteredDistortionCoefficient
-!!!222712.cpp!!!	getValue() : double
-	return value;
-!!!222840.cpp!!!	getSigma() : double
-	return sigma;

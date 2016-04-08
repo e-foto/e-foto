@@ -1,3 +1,0 @@
-class IOUserInterface
-!!!206072.cpp!!!	getManager() : IOManager
-	return manager;

@@ -1,3 +1,0 @@
-class AboutForm
-!!!301560.cpp!!!	AboutForm()
-	setupUi(this);

@@ -1,5 +1,0 @@
-class RadialSymmetricDistortionCoefficient
-!!!222456.cpp!!!	getValue() : double
-	return value;
-!!!222584.cpp!!!	getSigma() : double
-	return sigma;
