@@ -416,20 +416,19 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
 
             ortho->setUtmFuse(terrain->getUtmFuse());
 
-            if (terrain->getCPS().compare("UTM"))
+            if (terrain->getCPS() == ("UTM"))
                 ortho->setCoordinateSystem(0);
             else
                 ortho->setCoordinateSystem(0);
 
-            if (terrain->getGRS().compare("SAD69"))
+            if (terrain->getGRS() == ("SAD69"))
                 ortho->setDatum(SAD69);
-            else if (terrain->getGRS().compare("WGS84"))
+            else if (terrain->getGRS() == ("WGS84"))
                 ortho->setDatum(WGS84);
-            else if (terrain->getGRS().compare("SIRGAS2000"))
+            else if (terrain->getGRS() == ("SIRGAS2000"))
                 ortho->setDatum(SIRGAS2000);
             else
                 ortho->setDatum(SAD69);
-
 
         flag_cancel = false;
 

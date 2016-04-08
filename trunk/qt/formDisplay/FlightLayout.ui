@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
+    <width>476</width>
     <height>468</height>
    </rect>
   </property>
@@ -99,7 +99,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QDateEdit" name="flightDateEdit">
                <property name="specialValueText">
-                <string> </string>
+                <string/>
                </property>
                <property name="minimumDate">
                 <date>
@@ -143,17 +143,13 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QDoubleSpinBox" name="flightHeightDoubleSpinBox">
                <property name="toolTip">
-                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Non used for calculations&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
                <property name="specialValueText">
-                <string> </string>
+                <string/>
                </property>
                <property name="accelerated">
                 <bool>true</bool>
@@ -190,7 +186,7 @@ p, li { white-space: pre-wrap; }
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
                <property name="specialValueText">
-                <string> </string>
+                <string/>
                </property>
                <property name="accelerated">
                 <bool>true</bool>
@@ -226,7 +222,7 @@ p, li { white-space: pre-wrap; }
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
                <property name="specialValueText">
-                <string> </string>
+                <string/>
                </property>
                <property name="accelerated">
                 <bool>true</bool>
@@ -259,7 +255,7 @@ p, li { white-space: pre-wrap; }
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
                <property name="specialValueText">
-                <string> </string>
+                <string/>
                </property>
                <property name="accelerated">
                 <bool>true</bool>

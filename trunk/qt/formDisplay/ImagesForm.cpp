@@ -156,27 +156,12 @@ void ImagesForm::setEOsAvailable(std::string xmlEOs)
         if(EOXml.getContent() != "")
         {
             label->setPixmap(QPixmap(":/image/checked.png"));
-
-            //EOItem->setIcon(QIcon(":/image/checked.png"));
-            /*
-   EOItem->setTextColor(QColor("green"));
-   EOItem->setText(QString::fromUtf8("✓"));
-   EOItem->setFont(QFont("Sans",20,QFont::Bold));
-            */
         }
         else
         {
             label->setPixmap(QPixmap(":/image/unchecked.png"));
-
-            //EOItem->setIcon(QIcon(":/image/unchecked.png"));
-            /*
-   EOItem->setTextColor(QColor("red"));
-   EOItem->setText("x");
-   EOItem->setFont(QFont("Sans",20));
-            */
         }
         imagesTable->setCellWidget(i,3,label);
-        //imagesTable->setItem(i,3,EOItem);
     }
 }
 

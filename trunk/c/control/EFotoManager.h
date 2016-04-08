@@ -421,29 +421,38 @@ public:
 	/**
 	* \brief Método que retorna uma imagem cadastrada que ainda não foi utilizada.
 	* \return int Identificador da Imagem.
-	*/
-	int getFreeImageId();
-	/**
-	* \brief Método que retorna um ponto cadastrado que ainda não foi utilizado.
-	* \return int Identificador do Ponto.
-	*/
-	int getFreePointId();
+    */
+    int getFreeImageId();
+    /**
+    * \brief Método que retorna um ponto cadastrado que ainda não foi utilizado.
+    * \return int Identificador do Ponto.
+    */
+    int getFreePointId();
 
-	/**
-	* \brief Método que carrega o módulo de Report.
-	* \return bool Retorna verdadeiro se o módulo FotoTri já tiver terminado de ser carregado. Retorna falso, caso contrário.
-	*/
-        bool execEPR();
+    /**
+    * \brief Método que carrega o módulo de Report.
+    * \return bool Retorna verdadeiro se o módulo FotoTri já tiver terminado de ser carregado. Retorna falso, caso contrário.
+    */
+    bool execEPR();
 
-	/**
-	* \brief Método que encerra o módulo de Report.
-	*/
-        void stopEPR();
+    /**
+    * \brief Método que encerra o módulo de Report.
+    */
+    void stopEPR();
 
-        //bool loadProject();
+    /**
+    * \brief Método que identifica pares estereoscópicos automaticamente.
+    */
+    int getPairs(std::deque<int> &listPairs);
 
-        Project* getProject() {return &report_project;}
-        void execPTReport();
+    void getImagesId(int pos, int &left, int &right, std::deque<int> &listPairs);
+
+    bool existPair(int &id1, int &id2, std::deque<int> &listPairs);
+
+    //bool loadProject();
+
+    Project* getProject() {return &report_project;}
+    void execPTReport();
 
 };
 
