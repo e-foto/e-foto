@@ -388,29 +388,27 @@ bool SPManager::checkAnglesAlligned(double angle1, double angle2, double toleran
 
 int SPManager::getPairs()
 {
-	//
-	// List Pairs description (0 - N-1):
-	//
-	// num = left + no_imgs*right // Encoding
-	// left = num % no_imgs // Decoding
-	// right =  num / no_imgs // Decoding
-	//  Image ID ranges from 1-N
+    // This Method was unified in EFotoManager Class
 
-	// Clear list
+    manager->getPairs(listPairs);
+    addPairsToInterface();
+    return (listPairs.size() > 0);
+
+    /* //Old Method
 	listPairs.clear();
 
 	Image *img;
-	double X1, Y1, X2, Y2, R, dist, overlap;
+    double X1, Y1, X2, Y2, S, dist, overlap;
 	int img_code, id1, id2;
 	size_t imagesSize = listAllImages.size();
 	Matrix Xa;
 
 	// Calculate Images Radius, using the first image as reference
 	img = listAllImages.at(0);
-	// New R calcul
+    // New D calcul
     int maxDim = img->getWidth() > img->getHeight() ? img->getWidth() : img->getHeight();
-    R = maxDim * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
-    //R = maxDim * img->getFlight()->getScaleDen()  / (img->getResolution() * 0.0254);
+    S = maxDim * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
+    //S = maxDim * img->getFlight()->getScaleDen()  / (img->getResolution() * 0.0254);
 
 	for (size_t i=0; i<imagesSize; i++)
 	{
@@ -433,8 +431,13 @@ int SPManager::getPairs()
 			dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
 
 			// Check images overlapping
-			overlap = 100*(R - dist)/(R);
-			if (overlap < 55.0 || overlap > 100.0)
+            overlap = 100*(S - dist)/(S);
+            Flight* flight = manager->instanceFlight(1);
+
+            // The rule of thumb for overlapping calculations considers the
+            // average between the longitudinal and the transversal (or lateral) overlaps
+            double avg = (flight->getLongitudinalOverlap() + flight->getTransversalOverlap())/2.0;
+            if (overlap < avg)
 				continue;
 
 			// Assign image ids (in this case, the vector number - image id ranges from 1-N
@@ -451,9 +454,10 @@ int SPManager::getPairs()
 		}
 	}
 
-	addPairsToInterface();
+    addPairsToInterface();
 
-   return (listPairs.size() > 0);
+    return (listPairs.size() > 0);
+    */
 }
 
 // Check if pair already exists and sort ids

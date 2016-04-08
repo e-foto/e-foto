@@ -615,8 +615,6 @@ void Image::xmlSetData(std::string xml)
 		insSigmaAvailable = true;
 		insSigma.xmlSetData(ins.elementByTagName("sigma").getContent());
 	}
-
-	// Fim da gambiarra temporaria.
 }
 
 /**
@@ -685,8 +683,6 @@ std::string Image::xmlGetData()
 
 		if (insAvailable)
 			result << "</INS>\n";
-
-	//Fim da gambiarra temporaria.
 
 	result << "</image>\n";
 	return result.str();

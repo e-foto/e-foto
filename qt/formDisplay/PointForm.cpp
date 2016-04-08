@@ -81,8 +81,8 @@ void PointForm::fillvalues(std::string values)
 	{
 		sigmaController->fillValues(ede.elementByTagName("sigma").getContent());
 		//Paulo: block e unblock signals
-		//Gambiarra feita para a classe sigma selector se atualizar sem zerar os stdev
-		//Caso contrario ela muda a combo box para um valor inexistente, causando um bug na exibiçao do conteudo
+        //Controle dos sinais feito para a classe sigma selector se atualizar sem zerar os stdev
+        //Caso contrario ela muda a combo box para um valor inexistente, causando um problema na exibiçao do conteudo
 		sigmaSelector->blockSignals(true);
 		sigmaSelector->setCurrentIndex(1);
 		sigmaSelector->blockSignals(false);

@@ -52,27 +52,30 @@ public:
     void saveDem(char *, int);
     void loadDem(char *, int);
 
+    //void changeGridResolution(double, double);
     void setPointList(MatchingPointsList *);
     void interpolateNearestPoint();
     void interpolateMovingAverage(double, double, int);
     void interpolateTrendSurface(int);
     void interpolateMovingSurface(double, double, int, int);
     double getElapsedTime() { return elap_time; };
+
+
     void getMinMax(double &, double &); // Return Min Z and Max Z
     double getMeanZ();
+
     double getHeightXY(double X, double Y);
     double getHeight(double row, double col);
     Matrix *getDemImage(double min=0.0, double max=0.0);
+    //Matrix &getDem();
     int getWidth() { return dem_width; };
     int getHeight() { return dem_height; };
     void printData();
-    void getDemParameters(double &_Xi,
-                          double &_Yi,
-                          double &_Xf,
-                          double &_Yf,
-                          double &_res_x,
-                          double &_res_y)
-    { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
+    //void getXYAt(int col, int row, double &X, double &Y);
+    //void getXYAt(double col, double row, double &X, double &Y);
+    //void getColRowAt(double X, double Y, int &col, int &row);
+    //void getColRowAt(double X, double Y, double &col, double &row);
+    void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
     std::string calculateDemQuality(MatchingPointsList mpl);
     void overlayMap(Matrix * map);
     void setCancel() { cancel_flag = true; };
@@ -95,7 +98,7 @@ private:
     // Used with a lot of points
     void interpolateNearestPointFast();
     void interpolateMovingAverageFast(double, double, int);
-    void interpolateTrendSurfaceFast(int mode);
+    void interpolateTrendSurfaceFast(int);
     void interpolateMovingSurfaceFast(double, double, int, int);
 
     // Used with a few points

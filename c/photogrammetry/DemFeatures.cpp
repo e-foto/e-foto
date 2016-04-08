@@ -29,6 +29,10 @@
 
 //#include <math.h>
 
+#include "ogrsf_frmts.h"
+#include <gdal_priv.h>
+#include <ogr_spatialref.h>
+
 #include <iomanip>
 #include <sstream>
 #include <fstream>
@@ -95,9 +99,28 @@ int DemFeatures::saveFeatures(char *filename, int mode/*, bool append=false*/)
     // 0- SP 1.65
     // 1- Shapefile
 
+    std::string basename;
+    std::string name = std::string(filename);
+
+    size_t pos = name.find_last_of(".");
+    if (pos == -1)
+    {
+        basename = name;
+    }
+    else
+    {
+        std::string ext = name.substr(pos+1);
+        basename = name.substr(0,pos);
+
+        if (ext == std::string("shp"))
+            mode = 1;
+        else if (ext ==  std::string("txt"))
+            mode = 0;
+    }
+
     if (mode == 1)
-        return saveFeatShape(filename);
-    return saveFeatSp165(filename/*, append*/);
+        return saveFeatShape((char*)basename.c_str());
+    return saveFeatSp165((char*)basename.c_str()/*, append*/);
 }
 
 // Feature id ranges from 1-N
@@ -973,8 +996,11 @@ int DemFeatures::saveFeatSp165(char *filename/*, bool append*/)
     if (features.size() == 0)
             return 0;
 
+    std::string name = std::string(filename);
+    name.append(".txt");
+
     // Open file to save
-    std::ofstream arq(filename);
+    std::ofstream arq(name);
     if (arq.fail())
     {
             printf("Problems while saving ...\n");
@@ -1053,24 +1079,24 @@ int DemFeatures::saveFeatShape(char *filename/*, bool append*/)
     DemFeature df;
 
     // Para cada tipo de feição
-    for (int k = 1; k<=19; k++)
+    for (int k = 0; k < feature_classes.size(); k++)
     {
         bool flag = false;
 
         // Definindo o tipo do shape
-        if (k > 8)
-            nShapeType = SHPT_POLYGONZ;
-        else if (k > 2)
-            nShapeType = SHPT_ARCZ;
-        else if (k > 1)
-            nShapeType = SHPT_POINTZ;
-        else
-            nShapeType = SHPT_MULTIPOINTZ;
+        FeatureClass fc = feature_classes.at(k);
+        switch (fc.type)
+        {
+        case 1: nShapeType = SHPT_POINTZ; break;
+        case 2: nShapeType = SHPT_ARCZ; break;
+        case 3: nShapeType = SHPT_POLYGONZ; break;
+        default: nShapeType = SHPT_MULTIPOINTZ;
+        }
 
         // Procura uma classe de feiçoes entre todas as feições
         for (unsigned int i=0; i<features.size(); i++)
         {
-            if (getFeatureClassId(i) == k)
+            if (getFeatureClassId(i+1) == k+1)
             {
                 // Se for encontrada uma feição da classe procurada habilita a gravação
                 flag = true;
@@ -1116,7 +1142,7 @@ int DemFeatures::saveFeatShape(char *filename/*, bool append*/)
         {
             // Concatenando nome de arquivo e nome de classe
             std::string current_filename = std::string(filename);
-            current_filename.append("_").append(getFeatureClass(k)->name);
+            current_filename.append("_").append(fc.name);
 
             // Criando novo shape
             SHPHandle mySHP = SHPCreate(current_filename.c_str(), nShapeType);

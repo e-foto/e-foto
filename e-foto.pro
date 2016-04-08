@@ -293,26 +293,56 @@ UI_DIR = ../temp/ui
 RCC_DIR = ../temp/rcc
 QT += opengl
 QMAKE_CXXFLAGS += -std=c++11
+#CONFIG += c++11
+
+#Rod
+# With C++11 support
+#greaterThan(QT_MAJOR_VERSION, 4){
+#    CONFIG += c++11
+#} else {
+#    QMAKE_CXXFLAGS += -std=c++11
+#    #QMAKE_CXXFLAGS += -std=c++0x
+#}
 
 # Set libshape usage
-win32: LIBS += c/shapelib/shapelib.lib
+#win32: LIBS += c/shapelib/shapelib.lib
+#win32: LIBS += c/shapelib/contrib/msvc/lib/shapelib.lib
 unix: LIBS += -lGL -lGLU -lshp
 
-# Set gdal usage
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/c/shapelib/contrib/msvc/lib/ -lshapelib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/c/shapelib/contrib/msvc/lib/ -lshapelibd
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lshp
+
 win32 {
-    LIBS += -Lc:/OSGeo4W64/lib -lgdal
-    INCLUDEPATH += c:/OSGeo4W64/include
-    DEPENDPATH += c:/OSGeo4W64/include
+    INCLUDEPATH += $$PWD/c/shapelib/contrib/msvc
+    DEPENDPATH += $$PWD/c/shapelib/contrib/msvc
 }
 unix {
-    LIBS += -lgdal
+    INCLUDEPATH += /usr/include/
+    DEPENDPATH += /usr/include/
+}
+
+
+# Set gdal usage
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/c/gdal/lib/ -lgdal_i
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/c/gdal/lib/ -lgdal_id
+else:unix: LIBS += -L/usr/include/gdal -lgdal
+
+win32 {
+    INCLUDEPATH += $$PWD/c/gdal/include
+    DEPENDPATH += $$PWD/c/gdal/include
+}
+unix {
     INCLUDEPATH += /usr/include/gdal
     DEPENDPATH += /usr/include/gdal
 }
 
+
 # Autochange AboutForm code
 ABOUTDIR = qt/infrastructure/
 unix {
+        DEFINES += unix
 	MYDATA = $$system(date -u +%Y.%m) # a versao release so precisa da data sem o dia!
 
 	# MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
