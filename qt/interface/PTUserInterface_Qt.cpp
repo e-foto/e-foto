@@ -1281,63 +1281,81 @@ void PTUserInterface_Qt::exportCoordinates()
 // Created by Marcelo Teixiera Silveira
 void PTUserInterface_Qt::onReportButtonClicked()
 {
-	if (!ptManager->hasEODone())
-	{
-		QMessageBox::warning(this,"Warning","Please, calculate photo-triangulation first.");
-		return;
-	}
+    if (!ptManager->hasEODone())
+    {
+        QMessageBox::warning(this,"Warning","Please, calculate photo-triangulation first.");
+        return;
+    }
 
-	QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
+    QFileDialog salvar(this,"Save file",".","*.txt");
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+        QString fileExport = salvar.selectedFiles()[0];
+        if (fileExport.isEmpty())
+            return;
 
-	if (fileExport == "")
-		return;
+        if(!fileExport.endsWith(".txt"))
+            fileExport.append(".txt");
 
-	if(!fileExport.endsWith(".txt"))
-		fileExport.append(".txt");
+        // This will run the complete report for PT. Still not working inside PT class due to conflicts with Project class.
+        //    manager->createPhototriReport((char *)fileExport.toStdString().c_str());
 
-	// This will run the complete report for PT. Still not working inside PT class due to conflicts with Project class.
-//    manager->createPhototriReport((char *)fileExport.toStdString().c_str());
-
-	// Create report using ftManager (report inside PhotoTriangulation)
-	saveFtReport((char *)fileExport.toStdString().c_str());
+        // Create report using ftManager (report inside PhotoTriangulation)
+        saveFtReport((char *)fileExport.toStdString().c_str());
+    }
 }
 
 void PTUserInterface_Qt::exportCoordinatesTxt()
 {
+    QFileDialog salvar(this,"Save file",".","*.txt");
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+        QString fileExport = salvar.selectedFiles()[0];
+        if (fileExport.isEmpty())
+            return;
 
-	QString fileExport= QFileDialog::getSaveFileName(this,"Save file",".","*.txt");
-	if(!fileExport.endsWith(".txt"))
-		fileExport.append(".txt");
+        if(!fileExport.endsWith(".txt"))
+            fileExport.append(".txt");
 
-	QFile *exportTxt=new QFile(fileExport);
-	exportTxt->setFileName(fileExport);
-	exportTxt->open(QIODevice::WriteOnly);
+        QFile *exportTxt=new QFile(fileExport);
+        exportTxt->setFileName(fileExport);
+        exportTxt->open(QIODevice::WriteOnly);
 
-	std::stringstream coordinates;
+        std::stringstream coordinates;
 
-	coordinates << ptManager->getCoordinatesGeodesic();
-	coordinates << ptManager->getCoordinatesTopocentric();
+        coordinates << ptManager->getCoordinatesGeodesic();
+        coordinates << ptManager->getCoordinatesTopocentric();
 
-	exportTxt->write(coordinates.str().data());
-	exportTxt->close();
+        exportTxt->write(coordinates.str().data());
+        exportTxt->close();
+    }
 }
-
 
 void PTUserInterface_Qt::exportToKml(bool fromXML)
 {
 
-	QString fileName=QFileDialog::getSaveFileName(this,"Save File",QDir::currentPath(),"*.kml");
-	if (fileName=="")
-		return;
+    QFileDialog salvar(this,"Save File",QDir::currentPath(),"*.kml");
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("kml");
+    if(salvar.exec())
+    {
+        QString fileName = salvar.selectedFiles()[0];
+        if (fileName.isEmpty())
+            return;
 
-	QFile *exported= new QFile(fileName);
-	QFileInfo file(*exported);
-	if (!file.fileName().endsWith(".kml"))
-		exported->setFileName(fileName.append(".kml"));
+        QFile *exported= new QFile(fileName);
+        QFileInfo file(*exported);
+        if (!file.fileName().endsWith(".kml"))
+            exported->setFileName(fileName.append(".kml"));
 
-	exported->open(QIODevice::WriteOnly);
-	exported->write(ptManager->exportBlockTokml(exported->fileName().toStdString().c_str(),fromXML).c_str());
-	exported->close();
+        exported->open(QIODevice::WriteOnly);
+        exported->write(ptManager->exportBlockTokml(exported->fileName().toStdString().c_str(),fromXML).c_str());
+        exported->close();
+    }
 }
 
 void PTUserInterface_Qt::autoMeasureClicked()
