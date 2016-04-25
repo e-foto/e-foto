@@ -249,41 +249,52 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 
     // Save dialog
     // File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), lastDir, tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)")) ;
-    // if no file name written, return
-    if (filename=="")
-        return;
+    QFileDialog salvar(this, tr("Save Orthoimage"), lastDir, tr("E-FOTO Orthoimage (*.eoi);; All files (*.*)"));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("eoi");
+    if(salvar.exec())
+    {
+        QString filename = salvar.selectedFiles()[0];
 
-    // Save last dir
-    int i=filename.lastIndexOf("/");
+        // if no file name written, return
+        if (filename.isEmpty())
+            return;
+
+        // Save last dir
+        int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-	disableOptions();
-	setAllowClose(false);
-	manager->setInterMethod(comboBox4->currentIndex());
-	manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
-	setAllowClose(true);
-	enableOptions();
-	setCurrentWork("Done");
+        disableOptions();
+        setAllowClose(false);
+        manager->setInterMethod(comboBox4->currentIndex());
+        manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        setAllowClose(true);
+        enableOptions();
+        setCurrentWork("Done");
         orthoQualityButton->setEnabled(true);
+    }
 }
-
 void OrthoUserInterface_Qt::onOrthoGeoTiffClicked()
 {
-        // Ortho clicked
+    // Ortho clicked
 
-        if (!dem_load_flag)
-        {
-                QMessageBox::critical(this,"Error","Please, load a DEM first.");
-                return;
-        }
+    if (!dem_load_flag)
+    {
+        QMessageBox::critical(this,"Error","Please, load a DEM first.");
+        return;
+    }
 
-        // Save dialog
-        // File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Save Orthoimage"), lastDir, tr("GeoTiff (*.tif)")) ;
+    // Save dialog
+    // File open dialog
+    QFileDialog salvar(this, tr("Save Orthoimage"), lastDir, tr("GeoTiff (*.tif)"));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("tif");
+    if(salvar.exec())
+    {
+        QString filename = salvar.selectedFiles()[0];
         // if no file name written, return
-        if (filename=="")
-                return;
+        if (filename.isEmpty())
+            return;
 
         // Save last dir
         int i=filename.lastIndexOf("/");
@@ -297,8 +308,8 @@ void OrthoUserInterface_Qt::onOrthoGeoTiffClicked()
         enableOptions();
         setCurrentWork("Done");
         orthoQualityButton->setEnabled(true);
+    }
 }
-
 void OrthoUserInterface_Qt::onOrthoQualityButtonClicked()
 {
     // Open Ortho-image Quality Editor
@@ -618,11 +629,15 @@ void OrthoQualityUserInterface_Qt::onDeletePoint()
 
 void OrthoQualityUserInterface_Qt::saveQuality()
 {
-        QString filename;
 
-        filename = QFileDialog::getSaveFileName(this, tr("Save ortho-image quality report"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
-        if (filename=="")
-                return;
+    QFileDialog salvar(this, tr("Save ortho-image quality report"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+        QString filename = salvar.selectedFiles()[0];
+        if (filename.isEmpty())
+            return;
 
         // Save last dir
         int i=filename.lastIndexOf("/");
@@ -631,7 +646,7 @@ void OrthoQualityUserInterface_Qt::saveQuality()
         std::ofstream outfile((char *)filename.toStdString().c_str());
 
         if (outfile.fail())
-                return;
+            return;
 
         outfile << std::setprecision(5);
 
@@ -644,6 +659,7 @@ void OrthoQualityUserInterface_Qt::saveQuality()
         }
 
         outfile.close();
+    }
 }
 
 void OrthoQualityUserInterface_Qt::loadPoints()

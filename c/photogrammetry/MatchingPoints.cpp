@@ -231,7 +231,7 @@ int MatchingPointsList::save(char *filename, int type)
         case 1 : outfile << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\n"; break;
         case 2 : outfile << i << "\t" << mp->left_x << "\t" <<  mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\n"; break;
         case 3 : outfile << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\n"; break;
-                case 4 : outfile << i << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\n"; break;
+        case 4 : outfile << i << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\n"; break;
         default: outfile << i << "\t" << mp->matching_id << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t" << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << "\n";
         }
     }

@@ -315,29 +315,45 @@ void SPUserInterface_Qt::onSaveButton()
 {
     // File open dialog
     QString mode;
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save features file"), lastDir, tr("Text file (*.txt);;Shape file (*.shp)"), &mode) ;
+    //
+    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);;Shape file (*.shp) - only for exportation in shape file."));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+
+
+        QString filename = salvar.selectedFiles()[0];
 
         // if no file name written, return
-    if (filename=="")
-                return;
+        if (filename.isEmpty())
+            return;
+        //
+        mode = salvar.selectedNameFilter();
 
-    // Save last dir
-    int i=filename.lastIndexOf("/");
-    lastDir = filename.left(i);
+        // Save last dir
+        int i=filename.lastIndexOf("/");
+        lastDir = filename.left(i);
 
-    // Save Features
-    if (mode.contains("Shape file (*.shp)"))
-        manager->saveFeatures((char *)filename.toStdString().c_str(), 1);
-    else
-        manager->saveFeatures((char *)filename.toStdString().c_str(), 0);
+        // Save Features
+        if (mode.contains("Text file (*.txt)"))
+            manager->saveFeatures((char *)filename.toStdString().c_str(), 0);
+        else
+            manager->saveFeatures((char *)filename.toStdString().c_str(), 1);
+    }
 }
 
 void SPUserInterface_Qt::onSaveTxtButton()
 {
-        // File open dialog
-        QString filename = QFileDialog::getSaveFileName(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+    // File open dialog
+    QFileDialog salvar(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+        QString filename = salvar.selectedFiles()[0];
         // if no file name written, return
-        if (filename=="")
+        if (filename.isEmpty())
             return;
 
         // Save last dir
@@ -346,6 +362,7 @@ void SPUserInterface_Qt::onSaveTxtButton()
 
         // Export features
         manager->exportFeatures((char *)filename.toStdString().c_str());
+    }
 }
 
 void SPUserInterface_Qt::onAddButton()

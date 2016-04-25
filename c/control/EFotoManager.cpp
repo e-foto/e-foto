@@ -1112,30 +1112,36 @@ int EFotoManager::getFreePointId()
 			result = Conversion::stringToInt(points.at(i).attribute("key"))+1;
 	}
 
-	return result;
+    return result;
 
 }
 
 void EFotoManager::execPTReport()
 {
-	report_project.setXml(xmlData);
+    report_project.setXml(xmlData);
+    //
+    QFileDialog salvar(0,"Save full PT report",".","*.txt");
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("txt");
+    if(salvar.exec())
+    {
+        QString fileExport = salvar.selectedFiles()[0];
 
-	QString fileExport= QFileDialog::getSaveFileName(0,"Save full PT report",".","*.txt");
+        if (fileExport.isEmpty())
+        {
+            reloadProject();
+            return;
+        }
 
-	if (fileExport.isEmpty())
-	{
-		reloadProject();
-		return;
-	}
+        if(!fileExport.endsWith(".txt"))
+            fileExport.append(".txt");
 
-	if(!fileExport.endsWith(".txt"))
-		fileExport.append(".txt");
+        // Create and run full report
+        PhotoTriReport pt_report(this);
+        pt_report.createReport((char *) fileExport.toStdString().c_str());
 
-	// Create and run full report
-	PhotoTriReport pt_report(this);
-	pt_report.createReport((char *) fileExport.toStdString().c_str());
-
-	reloadProject();
+        reloadProject();
+    }
 }
 
 // Internal function. Pos from 0 - N-1.

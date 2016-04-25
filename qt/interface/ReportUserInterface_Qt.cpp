@@ -390,89 +390,100 @@ void ReportUserInterface_Qt::unselectFatherByKid(QTreeWidgetItem* kid)
 bool ReportUserInterface_Qt::saveEPR()
 {
 
-  
-    QString* chosenExtension = new QString();
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"),chosenExtension);
-    QString filenameOriginal,filenameOriginalMask,filePathMask;
-    int idExt = 0;
-    if (filename == "")
+    QFileDialog salvar(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"));
+    salvar.setAcceptMode(QFileDialog::AcceptSave);
+    salvar.setDefaultSuffix("xml");
+    if(salvar.exec())
     {
+
+        QString filename = salvar.selectedFiles()[0];
+
+        //QString chosenExtension = new QString();
+        QString chosenExtension = salvar.selectedNameFilter();
+
+        QString filenameOriginal,filenameOriginalMask,filePathMask;
+        int idExt = 0;
+        if (filename.isEmpty())
+        {
             return false;
-    }
-    else
-    {        
-        int j=filename.lastIndexOf("/");
+        }
+        else
+        {
+            int j=filename.lastIndexOf("/");
 
-        filenameOriginal = filename.right(filename.length()-j-1);
+            filenameOriginal = filename.right(filename.length()-j-1);
 
-        if(!filename.endsWith(".xml"))
-            filename.append(".xml");
+            if(!filename.endsWith(".xml"))
+                filename.append(".xml");
 
-        chosenExtension->remove('*');
-
-        if (chosenExtension->toStdString() == ".xml"){
-            idExt = XMLTYPE;
-        } else {
-            if (chosenExtension->toStdString() == ".txt"){
-                idExt = TXTTYPE;
-                filenameOriginalMask = filenameOriginal;
-                filenameOriginalMask.prepend("~");
-                filePathMask = filename.left(j);
-                filename = filePathMask + "/" + filenameOriginalMask;
+            //chosenExtension->remove('*');
+            chosenExtension.remove('*');
+            //if (chosenExtension->toStdString() == ".xml"){
+            if (chosenExtension.toStdString() == ".xml"){
+                idExt = XMLTYPE;
             } else {
-                if (chosenExtension->toStdString() == ".html"){
-                    idExt = HTMTYPE;
+                //if (chosenExtension->toStdString() == ".txt"){
+                if (chosenExtension.toStdString() == ".txt"){
+                    idExt = TXTTYPE;
                     filenameOriginalMask = filenameOriginal;
                     filenameOriginalMask.prepend("~");
                     filePathMask = filename.left(j);
                     filename = filePathMask + "/" + filenameOriginalMask;
+                } else {
+                    //if (chosenExtension->toStdString() == ".html"){
+                    if (chosenExtension.toStdString() == ".html"){
+                        idExt = HTMTYPE;
+                        filenameOriginalMask = filenameOriginal;
+                        filenameOriginalMask.prepend("~");
+                        filePathMask = filename.left(j);
+                        filename = filePathMask + "/" + filenameOriginalMask;
+                    }
                 }
             }
         }
-    }
 
-    int i=filename.lastIndexOf("/");
-    QString filePath = filename.left(i);
+        int i=filename.lastIndexOf("/");
+        QString filePath = filename.left(i);
 
-    bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
-    bool doneXslt = false;
+        bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
+        bool doneXslt = false;
 
-    if(idExt == TXTTYPE)
-    {
-        doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
-    } else {
-        if(idExt == HTMTYPE)
-        {
-            doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
-        }
-        else
-        {
-            doneXslt = true;
-        }
-    }
-
-    if(done == true && doneXslt == true)
-    {
-        QProcess *pro = new QProcess();        
         if(idExt == TXTTYPE)
-        {            
-            QString output;
-            if(filenameOriginal.endsWith(".txt"))
-                output = filePath + "/" + filenameOriginal;
+        {
+            doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
+        } else {
+            if(idExt == HTMTYPE)
+            {
+                doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
+            }
             else
-                output = filePath + "/" + filenameOriginal + ".txt";
-            QString outxsl;
-            outxsl = filePath + "/" + "epr_txt.xsl";
-            QString outcmd;
-            #ifdef Q_WS_X11 //LINUX
+            {
+                doneXslt = true;
+            }
+        }
+
+        if(done == true && doneXslt == true)
+        {
+            QProcess *pro = new QProcess();
+            if(idExt == TXTTYPE)
+            {
+                QString output;
+                if(filenameOriginal.endsWith(".txt"))
+                    output = filePath + "/" + filenameOriginal;
+                else
+                    output = filePath + "/" + filenameOriginal + ".txt";
+                QString outxsl;
+                outxsl = filePath + "/" + "epr_txt.xsl";
+                QString outcmd;
+#ifdef Q_WS_X11 //LINUX
                 outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
                 pro->start("rm " + outxsl);
                 pro->waitForFinished(1000);
                 pro->start("rm " + filename);
-            #endif
-            #ifdef Q_WS_WIN //WINDOWS
+#endif
+#ifdef Q_WS_WIN //WINDOWS
                 outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
@@ -481,26 +492,26 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->start("cmd /C del \""+outxsl+"\"");
                 pro->waitForFinished(1000);
                 pro->start("cmd /C del \""+filename+"\"");
-            #endif
-        } else {
-            if(idExt == HTMTYPE){                   
-                QString output;
-                if(filenameOriginal.endsWith(".html"))
-                    output = filePath + "/" + filenameOriginal;
-                else
-                    output = filePath + "/" + filenameOriginal + ".html";
-                QString outxsl;
-                outxsl = filePath + "/" + "epr_html.xsl";
-                QString outcmd;                
-                #ifdef Q_WS_X11 //LINUX
+#endif
+            } else {
+                if(idExt == HTMTYPE){
+                    QString output;
+                    if(filenameOriginal.endsWith(".html"))
+                        output = filePath + "/" + filenameOriginal;
+                    else
+                        output = filePath + "/" + filenameOriginal + ".html";
+                    QString outxsl;
+                    outxsl = filePath + "/" + "epr_html.xsl";
+                    QString outcmd;
+#ifdef Q_WS_X11 //LINUX
                     outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                     pro->start(outcmd);
                     pro->waitForFinished(1000);
                     pro->start("rm " + outxsl);
                     pro->waitForFinished(1000);
                     pro->start("rm " + filename);
-                #endif
-                #ifdef Q_WS_WIN //WINDOWS
+#endif
+#ifdef Q_WS_WIN //WINDOWS
                     outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                     pro->start(outcmd);
                     pro->waitForFinished(1000);
@@ -509,21 +520,22 @@ bool ReportUserInterface_Qt::saveEPR()
                     pro->start("cmd /C del \""+outxsl+"\"");
                     pro->waitForFinished(1000);
                     pro->start("cmd /C del \""+filename+"\"");
-                #endif
+#endif
+                }
             }
-        }
-        pro->kill();
-/*
+            pro->kill();
+            /*
         // Removed
         QMessageBox msgBox;
         msgBox.setText("Foi salvo com sucesso.");
         msgBox.exec();
 */
-        return true;
-    }
-    else
-    {
-        return false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 

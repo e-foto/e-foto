@@ -621,63 +621,69 @@ namespace efoto {
     bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
     {
         QString filename;
-
+        QString caption;
         if (onNewProject)
-            filename = QFileDialog::getSaveFileName(this, tr("Save A New File"), ".", "*.epp");
+            caption = tr("Save A New File");
         else
-            filename = QFileDialog::getSaveFileName(this, tr("Save File As"), ".", "*.epp");
+            caption = tr("Save File As");
 
-        if (filename == "")
-            return false;
-        else
+        QFileDialog salvar(this,caption,".","*.epp");
+        salvar.setAcceptMode(QFileDialog::AcceptSave);
+        salvar.setDefaultSuffix("epp");
+        if(salvar.exec())
         {
-            //***************************************************************************************************
-            // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-            QString extension = filename.right(4);
-            if (extension.toLower() != ".epp")
-                filename.append(".epp");
-            int i=filename.lastIndexOf("/");
-
-            QString fileName = filename.right(filename.length()-i-1);
-            QString filePath = filename.left(i);
-
-            QString fileNameBackup = headerForm.lineEditFileName->text();
-            QString filePathBackup = headerForm.lineEditFilePath->text();
-            QDateTime dateTimeCreatBackup = headerForm.dateTimeEditCreationDate->dateTime();
-            QDateTime dateTimeModifBackup = headerForm.dateTimeEditModificationDate->dateTime();
-
-            headerForm.lineEditFilePath->setText(filePath);
-            headerForm.lineEditFileName->setText(fileName);
-            headerForm.dateTimeEditCreationDate->setDateTime(QDateTime::currentDateTime());
-            headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
-
-            manager->editComponent("Header", headerForm.getvalues());
-            //***************************************************************************************************
-
-            if (manager->saveFile(filename.toStdString()))
-            {
-                savedIn = filename.toStdString();
-                actionSave_file->setEnabled(false);
-            }
+            filename = salvar.selectedFiles()[0];
+            if (filename.isEmpty())
+                return false;
             else
             {
-                headerForm.lineEditFilePath->setText(filePathBackup);
-                headerForm.lineEditFileName->setText(fileNameBackup);
-                headerForm.dateTimeEditCreationDate->setDateTime(dateTimeCreatBackup);
-                headerForm.dateTimeEditModificationDate->setDateTime(dateTimeModifBackup);
+                //***************************************************************************************************
+                // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+                QString extension = filename.right(4);
+                if (extension.toLower() != ".epp")
+                    filename.append(".epp");
+                int i=filename.lastIndexOf("/");
+
+                QString fileName = filename.right(filename.length()-i-1);
+                QString filePath = filename.left(i);
+
+                QString fileNameBackup = headerForm.lineEditFileName->text();
+                QString filePathBackup = headerForm.lineEditFilePath->text();
+                QDateTime dateTimeCreatBackup = headerForm.dateTimeEditCreationDate->dateTime();
+                QDateTime dateTimeModifBackup = headerForm.dateTimeEditModificationDate->dateTime();
+
+                headerForm.lineEditFilePath->setText(filePath);
+                headerForm.lineEditFileName->setText(fileName);
+                headerForm.dateTimeEditCreationDate->setDateTime(QDateTime::currentDateTime());
+                headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
+
                 manager->editComponent("Header", headerForm.getvalues());
+                //***************************************************************************************************
 
-                QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - The file's name or path is invalid (maybe accented characters or whitespace);\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
-                alert->show();
-                return false;
+                if (manager->saveFile(filename.toStdString()))
+                {
+                    savedIn = filename.toStdString();
+                    actionSave_file->setEnabled(false);
+                }
+                else
+                {
+                    headerForm.lineEditFilePath->setText(filePathBackup);
+                    headerForm.lineEditFileName->setText(fileNameBackup);
+                    headerForm.dateTimeEditCreationDate->setDateTime(dateTimeCreatBackup);
+                    headerForm.dateTimeEditModificationDate->setDateTime(dateTimeModifBackup);
+                    manager->editComponent("Header", headerForm.getvalues());
+
+                    QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - The file's name or path is invalid (maybe accented characters or whitespace);\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
+                    alert->show();
+                    return false;
+                }
+                if (centerArea.currentIndex() == 0)
+                    viewHeader();
+                updateTree();
             }
-            if (centerArea.currentIndex() == 0)
-                viewHeader();
-            updateTree();
+            return true;
         }
-        return true;
     }
-
     void ProjectUserInterface_Qt::executeIO()
     {
         bool ok;
@@ -928,18 +934,26 @@ namespace efoto {
         QString chosen2 = QInputDialog::getItem(this, tr("Select right image!"), tr("Image name:"), items, 0, false, &ok);
         if (!ok) return;
 
-        QString filename = QFileDialog::getSaveFileName(this, "Save File", ".", "*.txt");
-
-        int image1 = manager->getImageId(chosen1.toStdString());
-        int image2 = manager->getImageId(chosen2.toStdString());
-        if (image1 != -1 && image2 != -1)
+        QFileDialog salvar(this, "Save File", ".", "*.txt");
+        salvar.setAcceptMode(QFileDialog::AcceptSave);
+        salvar.setDefaultSuffix("txt");
+        if(salvar.exec())
         {
-            bool result = manager->makeSPFile(filename.toStdString(), image1, image2);
-            if (result == false)
+            QString filename = salvar.selectedFiles()[0];
+            if (filename.isEmpty())
+                return;
+
+            int image1 = manager->getImageId(chosen1.toStdString());
+            int image2 = manager->getImageId(chosen2.toStdString());
+            if (image1 != -1 && image2 != -1)
             {
-                QMessageBox msgBox;
-                msgBox.setText("Error: invalid input parameters.");
-                msgBox.exec();
+                bool result = manager->makeSPFile(filename.toStdString(), image1, image2);
+                if (result == false)
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Error: invalid input parameters.");
+                    msgBox.exec();
+                }
             }
         }
     }
@@ -2365,47 +2379,53 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 */
     void ProjectUserInterface_Qt::exportPointsToTxt()
     {
-        QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export file"),".","*.txt");
-        if (fileSaveName=="")
-            return;
-        if (!fileSaveName.endsWith(".txt"))
-            fileSaveName.append(".txt");
-
-
-        QFile *exportFileName= new QFile(fileSaveName);
-        exportFileName->setFileName(fileSaveName);
-        exportFileName->open(QIODevice::WriteOnly);
-
-        EDomElement points(manager->getXml("points").c_str());
-
-        QWidget *loadWidget= new QWidget();
-        loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-        QProgressBar loading;
-        QPushButton cancelButton("Cancel");
-        loading.setRange(0,points.children().size());
-
-        QVBoxLayout loadLayout;
-        loadLayout.addWidget(&loading,Qt::AlignCenter);
-        loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-        connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-        loadWidget->setLayout(&loadLayout);
-        loadWidget->setWindowTitle(tr("Exporting Points"));
-        loading.setMinimumSize(300,30);
-        loadWidget->show();
-
-        std::deque<EDomElement> point=points.elementsByTagName("point");
-        for (int i=0; i< (int)point.size(); i++)
+        QFileDialog salvar(this,tr("Export file"),".","*.txt");
+        salvar.setAcceptMode(QFileDialog::AcceptSave);
+        salvar.setDefaultSuffix("txt");
+        if(salvar.exec())
         {
-            loading.setFormat(tr("Point %v/%m : %p%"));
-            loading.setValue(i);
-            exportFileName->write(edomPointToTxt(point.at(i)).data());
+            QString fileSaveName = salvar.selectedFiles()[0];
+            if (fileSaveName.isEmpty())
+                return;
+
+            if (!fileSaveName.endsWith(".txt"))
+                fileSaveName.append(".txt");
+
+
+            QFile *exportFileName= new QFile(fileSaveName);
+            exportFileName->setFileName(fileSaveName);
+            exportFileName->open(QIODevice::WriteOnly);
+
+            EDomElement points(manager->getXml("points").c_str());
+
+            QWidget *loadWidget= new QWidget();
+            loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+            QProgressBar loading;
+            QPushButton cancelButton("Cancel");
+            loading.setRange(0,points.children().size());
+
+            QVBoxLayout loadLayout;
+            loadLayout.addWidget(&loading,Qt::AlignCenter);
+            loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+            connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+            loadWidget->setLayout(&loadLayout);
+            loadWidget->setWindowTitle(tr("Exporting Points"));
+            loading.setMinimumSize(300,30);
+            loadWidget->show();
+
+            std::deque<EDomElement> point=points.elementsByTagName("point");
+            for (int i=0; i< (int)point.size(); i++)
+            {
+                loading.setFormat(tr("Point %v/%m : %p%"));
+                loading.setValue(i);
+                exportFileName->write(edomPointToTxt(point.at(i)).data());
+            }
+            loadWidget->close();
+            exportFileName->close();
+
+            //exportDigitalCoordinates();
         }
-        loadWidget->close();
-        exportFileName->close();
-
-        //exportDigitalCoordinates();
-
     }
 
     /** This function convert a EDomElement children Point in a line *.txt point format
@@ -2897,39 +2917,46 @@ bool ProjectUserInterface_Qt::availableOE()
 
     void ProjectUserInterface_Qt::exportDigitalCoordinates()
     {
-        QString fileSaveName= QFileDialog::getSaveFileName(this,tr("Export Digital Coordinates"),".","*.txt");
-        if (fileSaveName=="")
-            return;
-        QFile *exportFileName= new QFile(fileSaveName);
-        exportFileName->setFileName(fileSaveName);
-        exportFileName->open(QIODevice::WriteOnly);
-
-        EDomElement points(manager->getXml("points").c_str());
-
-        QWidget *loadWidget= new QWidget();
-        loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-        QProgressBar loading;
-        //	QPushButton cancelButton("Cancel");
-        loading.setRange(0,points.children().size());
-
-        QVBoxLayout loadLayout;
-        loadLayout.addWidget(&loading,Qt::AlignCenter);
-        //	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-        //	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-        loadWidget->setLayout(&loadLayout);
-        loadWidget->setWindowTitle(tr("Exporting Points"));
-        loading.setMinimumSize(300,30);
-        loadWidget->show();
-        std::deque<EDomElement> point=points.elementsByTagName("point");
-        for (int i=0; i<(int)point.size(); i++)
+        QFileDialog salvar(this,tr("Export Digital Coordinates"),".","*.txt");
+        salvar.setAcceptMode(QFileDialog::AcceptSave);
+        salvar.setDefaultSuffix("txt");
+        if(salvar.exec())
         {
-            loading.setFormat(tr("Point %v/%m : %p%"));
-            loading.setValue(i);
-            exportFileName->write(edomDigitalCoordinatesPointToTxt(point.at(i)).data());
+            QString fileSaveName = salvar.selectedFiles()[0];
+            if (fileSaveName.isEmpty())
+                return;
+
+            QFile *exportFileName= new QFile(fileSaveName);
+            exportFileName->setFileName(fileSaveName);
+            exportFileName->open(QIODevice::WriteOnly);
+
+            EDomElement points(manager->getXml("points").c_str());
+
+            QWidget *loadWidget= new QWidget();
+            loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+            QProgressBar loading;
+            //	QPushButton cancelButton("Cancel");
+            loading.setRange(0,points.children().size());
+
+            QVBoxLayout loadLayout;
+            loadLayout.addWidget(&loading,Qt::AlignCenter);
+            //	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
+            //	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
+
+            loadWidget->setLayout(&loadLayout);
+            loadWidget->setWindowTitle(tr("Exporting Points"));
+            loading.setMinimumSize(300,30);
+            loadWidget->show();
+            std::deque<EDomElement> point=points.elementsByTagName("point");
+            for (int i=0; i<(int)point.size(); i++)
+            {
+                loading.setFormat(tr("Point %v/%m : %p%"));
+                loading.setValue(i);
+                exportFileName->write(edomDigitalCoordinatesPointToTxt(point.at(i)).data());
+            }
+            loadWidget->close();
+            exportFileName->close();
         }
-        loadWidget->close();
-        exportFileName->close();
     }
 
     /** This function convert a EDomElement children Point in a line *.txt point format
