@@ -1646,15 +1646,15 @@ std::string BundleAdjustment::printAll()
                                 result +="\t";
                                 result += pnt->getPointId().c_str();
                                 result += " col: ";
-                                                                result += Conversion::doubleToString(col);
+                                result += Conversion::doubleToString(col);
                                 result += " lin: ";
-                                                                result += Conversion::doubleToString(lin);
+                                result += Conversion::doubleToString(lin);
                                 result += " X: ";
-                                                                result += Conversion::doubleToString(X);
+                                result += Conversion::doubleToString(X);
                                 result += " Y: ";
-                                                                result += Conversion::doubleToString(Y);
+                                result += Conversion::doubleToString(Y);
                                 result += " Z: ";
-                                                                result += Conversion::doubleToString(Z);
+                                result += Conversion::doubleToString(Z);
                                 result += "\n";
                         }
                         //printf("\t%s: col: %d lin %d\n",pnt->getPointId().c_str(),col,lin);

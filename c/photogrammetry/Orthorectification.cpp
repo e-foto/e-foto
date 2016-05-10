@@ -35,7 +35,12 @@ Orthorectification::Orthorectification(double _Xi,
                                        double _Xf,
                                        double _Yf,
                                        double _res_x,
-                                       double _res_y)
+                                       double _res_y):
+    color_depth(8),
+    no_bands(1),
+    coord_system(0),
+    spheroid(0),
+    datum(SAD69)
 {
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
@@ -195,14 +200,14 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     Xf = header[2];
     Yf = header[3];
     res_x = header[4];
-    res_x = header[5];
+    res_y = header[5];
     ortho_width = int(header[6]);
     ortho_height = int(header[7]);
     color_depth = int(header[8]);
     no_bands = int(header[9]);
     coord_system = int(header[10]);
     spheroid = int(header[11]);
-    datum = DatumType(header[12]);
+    datum = DatumType(int(header[12]));
 
     // Read DEM
     orthoimage.resize(ortho_height, ortho_width);
@@ -272,7 +277,8 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
         //CPLGetLastErrorMsg();
     }
 
-    double adfGeoTransform[6] = { Xi, res_x, 0, Yi, 0, res_y };
+    // O sinal eixo Y precisa ser invertido quando gravamos o Geotiff
+    double adfGeoTransform[6] = { Xi, res_x, 0, Yf, 0, -res_y };
     OGRSpatialReference oSRS;
     char *pszSRS_WKT = nullptr;
     GDALRasterBand **poBand = new GDALRasterBand*[no_bands] ;
@@ -354,24 +360,26 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
  * a leitura em um buffer que contem dados intercalados (interleave) pixel por exemplo.
  */
 
+#define X_Y(i,j)(j +(ortho_height-1-i)*ortho_width) // Mapeamento com inversão do eixo Y
+
     for(int i = 0; i < ortho_height; i++)
     {
         for(int j = 0; j < ortho_width; j++)
         {
             tmp=(orthoimage.get(i+1 ,j+1))*0xFFFFFF;
             tmpint = ((int)tmp)&0xFFFFFF;
-            abyRasterRed[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //red
+            abyRasterRed[X_Y(i,j)]= tmpint&0xFF; //red
             tmpint >>=8;
-            abyRasterGreen[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //green
+            abyRasterGreen[X_Y(i,j)]= tmpint&0xFF; //green
             tmpint >>=8;
-            abyRasterBlue[(ortho_height-i-1)*ortho_width+j]= tmpint&0xFF; //blue
+            abyRasterBlue[X_Y(i,j)]= tmpint&0xFF; //blue
         }
     }
 
         //Acertar RasterIO(...)
-    poBand[2]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterBlue.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
+    poBand[0]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterBlue.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
     poBand[1]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterGreen.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
-    poBand[0]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterRed.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
+    poBand[2]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterRed.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
 
     if(poDstDS!=NULL)
         GDALClose(poDstDS);
