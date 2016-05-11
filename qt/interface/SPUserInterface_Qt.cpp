@@ -272,7 +272,7 @@ void SPUserInterface_Qt::onStereoModeChanged(int option)
 {
     if (!viewer->getDisplay()->setStereoMode((bool)option))
     {
-        QMessageBox::critical(this,"Error","Your sistem does not support polarized stereo.");
+        QMessageBox::critical(this,"Error","Your system does not support polarized stereo.");
         comboBox_2->setCurrentIndex(0);
         comboBox_2->setEnabled(false);
     }
