@@ -316,9 +316,9 @@ void SPUserInterface_Qt::onSaveButton()
     // File open dialog
     QString mode;
     //
-    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);;Shape file (*.shp) - only for exportation in shape file."));
+    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);;Shape file - only for exportation in shape file (*.shp);;All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("txt");
+    //salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
 
