@@ -335,7 +335,7 @@ void DEMUserInterface_Qt::onDemSaveClicked()
     // File open dialog
     QFileDialog salvar(this,tr("Save file"),lastDir,tr("DEM (*.pix);; Text file (*.txt);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("pix");
+    //salvar.setDefaultSuffix("pix");
     if(salvar.exec())
     {
         //salvar.selectedNameFilter();

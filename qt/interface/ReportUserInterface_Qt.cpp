@@ -392,7 +392,7 @@ bool ReportUserInterface_Qt::saveEPR()
 
     QFileDialog salvar(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("xml");
+    //salvar.setDefaultSuffix("xml");
     if(salvar.exec())
     {
 
