@@ -23,12 +23,18 @@
      <x>0</x>
      <y>0</y>
      <width>1062</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>89</width>
+     <height>0</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -47,6 +53,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
+   <property name="minimumSize">
+    <size>
+     <width>181</width>
+     <height>0</height>
+    </size>
+   </property>
    <property name="maximumSize">
     <size>
      <width>500</width>
@@ -177,7 +189,7 @@
    <property name="minimumSize">
     <size>
      <width>222</width>
-     <height>280</height>
+     <height>161</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -220,7 +232,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -252,7 +264,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -284,7 +296,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -316,7 +328,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -369,7 +381,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -401,7 +413,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -436,7 +448,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -471,7 +483,7 @@
           <property name="minimumSize">
            <size>
             <width>40</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -515,164 +527,148 @@
        <property name="title">
         <string>Load / save - Exit</string>
        </property>
-       <widget class="QToolButton" name="saveTxtButton">
-        <property name="geometry">
-         <rect>
-          <x>115</x>
-          <y>25</y>
-          <width>44</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Export features as text</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../resource/resource.qrc">
-          <normaloff>:/icon/export.png</normaloff>:/icon/export.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="saveButton">
-        <property name="geometry">
-         <rect>
-          <x>66</x>
-          <y>25</y>
-          <width>43</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Save features</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../resource/resource.qrc">
-          <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="loadButton">
-        <property name="geometry">
-         <rect>
-          <x>17</x>
-          <y>25</y>
-          <width>43</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Load features</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../resource/resource.qrc">
-          <normaloff>:/icon/fileopen.png</normaloff>:/icon/fileopen.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="doneButton">
-        <property name="geometry">
-         <rect>
-          <x>165</x>
-          <y>25</y>
-          <width>43</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Exit Stereoplotter</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../resource/resource.qrc">
-          <normaloff>:/icon/done.png</normaloff>:/icon/done.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
+         <widget class="QToolButton" name="loadButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>10</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Load features</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resource/resource.qrc">
+            <normaloff>:/icon/fileopen.png</normaloff>:/icon/fileopen.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QToolButton" name="saveButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>10</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Save features</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resource/resource.qrc">
+            <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QToolButton" name="saveTxtButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>10</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Export features as text</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resource/resource.qrc">
+            <normaloff>:/icon/export.png</normaloff>:/icon/export.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QToolButton" name="doneButton">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>10</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Exit Stereoplotter</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resource/resource.qrc">
+            <normaloff>:/icon/done.png</normaloff>:/icon/done.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>40</width>
+            <height>40</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_4">
+   <property name="minimumSize">
+    <size>
+     <width>241</width>
+     <height>0</height>
+    </size>
+   </property>
    <property name="windowTitle">
     <string>General tools</string>
    </property>
