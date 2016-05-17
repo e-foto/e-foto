@@ -73,6 +73,7 @@ protected slots:
     virtual void validatingImage();
     virtual void validatingPoint();
     virtual bool confirmToClose();
+    virtual void refreshMenu();
 
 public:
 
