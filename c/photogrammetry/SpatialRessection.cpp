@@ -839,14 +839,16 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
                 {
                     for (int i = 1; i <= 3; i++)
                     {
-                        if (isinf(fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)))
+                        if (isinf(fabs(Xa.get(i,1))))
                         {
                             qDebug("Get INF on calculate!");
+                            gnssConverged=false;
                             return false;
                         }
-                        if (isnan(fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)))
+                        if (isnan(fabs(Xa.get(i,1))))
                         {
                             qDebug("Get NAN on calculate!");
+                            gnssConverged=false;
                             return false;
                         }
                         if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>gnssPrecision)
@@ -865,14 +867,16 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
                 {
                     for (int i = 4; i <= 6; i++)
                     {
-                        if (isinf(fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)))
+                        if (isinf(fabs(Xa.get(i,1))))
                         {
                             qDebug("Get INF on calculate!");
+                            insConverged=false;
                             return false;
                         }
-                        if (isnan(fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)))
+                        if (isnan(fabs(Xa.get(i,1))))
                         {
                             qDebug("Get NAN on calculate!");
+                            insConverged=false;
                             return false;
                         }
                         if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>insPrecision)

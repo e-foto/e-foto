@@ -144,18 +144,32 @@ void ImagesForm::setEOsAvailable(std::string xmlEOs)
 {
     EDomElement ede(xmlEOs);
 
-    for (int i=0;i<imagesTable->rowCount();i++)
+    EDomElement ptri = ede.elementByTagName("phototriangulation");
+    EDomElement srs = ede.elementByTagName("spatialResections");
+
+    for (int i=0;i < imagesTable->rowCount();i++)
     {
         int key = imagesTable->item(i,0)->text().toInt();
         EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
+
+        std::string type = EOXml.attribute("type");
+        bool converged = true;
+        if (type == "photoTriangulation")
+            converged = ptri.elementByTagName("converged").toBool();
+        else if (type == "spatialResection")
+            converged = srs.elementByTagAtt("imageSR","image_key",Conversion::intToString(key)).elementByTagName("converged").toBool();
+
         QTableWidgetItem *EOItem = new QTableWidgetItem();
         EOItem->setTextAlignment(Qt::AlignCenter);
-
         QLabel *label=new QLabel();
         label->setAlignment(Qt::AlignCenter);
+
         if(EOXml.getContent() != "")
         {
-            label->setPixmap(QPixmap(":/image/checked.png"));
+            if (converged)
+                label->setPixmap(QPixmap(":/image/checked.png"));
+            else
+                label->setPixmap(QPixmap(":/image/exclamation.png"));
         }
         else
         {

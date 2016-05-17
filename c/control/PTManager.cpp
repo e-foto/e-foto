@@ -1679,10 +1679,13 @@ void PTManager::convertToUTM(std::deque<Point*> points, GeoSystem sys)
 
 bool PTManager::hasEODone()
 {
-	EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
-	if(exteriorXml.hasTagName("imageEO"))
-		return true;
-	return false;
+    EDomElement phototriXml(efotoManager->getXml("phototriangulation"));
+    return phototriXml.elementByTagName("converged").toBool();
+
+    //EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
+    //if(exteriorXml.hasTagName("imageEO"))
+    //	return true;
+    //return false;
 }
 
 Matrix PTManager::eoParametersFromXml(bool withIds)

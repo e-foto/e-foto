@@ -71,13 +71,22 @@ std::string Conversion::intToString(int value)
 	return converter.str();
 }
 
+bool Conversion::stringToBool(std::string value)
+{
+    bool result;
+    std::stringstream converter;
+    converter << value;
+    converter >> std::boolalpha >> result;
+    return result;
+}
+
 int Conversion::stringToInt(std::string value)
 {
-	int result;
+    int result;
     std::stringstream converter;
-	converter << value;
-	converter >> result;
-	return result;
+    converter << value;
+    converter >> result;
+    return result;
 }
 
 std::string Conversion::longToString(long value)
@@ -722,6 +731,25 @@ std::string EDomElement::toString()
 
 		return "";
 	}
+}
+
+bool EDomElement::toBool()
+{
+    int result = 0;
+    try
+    {
+        if (content.find("/") != (content.find(">") - 1)) //Melhorar isso.
+        {
+            std::string value = content.substr(content.find(">") + 1, content.find("<", 1) - content.find(">") - 1);
+            result = Conversion::stringToBool(value);
+        }
+        return result;
+    }
+    catch (std::out_of_range& e)
+    {
+
+        return 0;
+    }
 }
 
 int EDomElement::toInt()

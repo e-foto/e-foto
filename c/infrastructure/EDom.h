@@ -69,7 +69,14 @@ public:
  */
     static std::string intToString(int value);
 
-	/**
+    /**
+ * \brief Método para conversão de string para booleano.
+ * \param value	Valor descrito em texto.
+ * \return bool	Valor convertido.
+ */
+    static bool stringToBool(std::string value);
+
+    /**
  * \brief Método para conversão de string para inteiro.
  * \param value	Valor descrito em texto.
  * \return int	Valor convertido.
@@ -305,12 +312,19 @@ public:
  */
     std::string toString();
 
-	/**
+    /**
+ * \brief Retorna o valor textual contido no elemento atual convertido em um booleano.
+ * \return bool	O valor contido no elemento atual.
+ * \attention As regras de conversão utilizadas são as definidas na classe Conversion.
+ */
+    bool toBool();
+
+    /**
  * \brief Retorna o valor textual contido no elemento atual convertido em um inteiro.
  * \return int	O valor contido no elemento atual.
  * \attention As regras de conversão utilizadas são as definidas na classe Conversion.
  */
-	int toInt();
+    int toInt();
 
 	/**
  * \brief Retorna o valor textual contido no elemento atual convertido em um inteiro longo.
