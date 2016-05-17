@@ -32,7 +32,7 @@ class Marker;
 class SeparatedViewer;
 class SeparatedStereoViewer;
 class SingleDisplay;
-class FlightDirectionForm;
+//class FlightDirectionForm;
 
 
 
@@ -82,7 +82,7 @@ protected:
 	WindowsSelectPage *selectionImagesView;
 	WindowsSelectPage *selectionPointsView;
 
-	FlightDirectionForm *flightDirectionForm;
+    //FlightDirectionForm *flightDirectionForm;
 
 	QList<PointMark*> undoStack;
 
@@ -335,8 +335,7 @@ protected slots:
 	* \brief MÃ©todo que substitui todos os "-1" para -- indicando que esse ponto ainda nÃ£o foi marcado na imagem
 	* \param imageTable: Tabela com valores a serem substituidos
 	*/
-	void replaceTo__(ETableWidget *imageTable);
-	//void openImagesFlightDirectionForm();
+    void replaceTo__(ETableWidget *imageTable);
 	//virtual bool confirmToClose();
 };
 
