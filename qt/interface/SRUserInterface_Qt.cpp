@@ -414,8 +414,6 @@ bool SRUserInterface_Qt::viewReport()
     sigmaView->setLayout(sigmaLayout);
     myTab->addTab(sigmaView, QString::fromUtf8("V"));
 
-
-
     QString itString("Iterations: ");
     itString += myValues.at(6).c_str();
     QLabel* itLabel = new QLabel(itString);
@@ -428,8 +426,7 @@ bool SRUserInterface_Qt::viewReport()
 
     QPushButton *acceptButton = new QPushButton("&Accept", this);
     QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptSR()));
-    if (myValues.at(7).compare("no") == 0)
-        acceptButton->setDisabled(true);
+    acceptButton->setDisabled( myValues.at(7).compare("no") == 0 );
 
     myLayout->addLayout(upperLayout);
     myLayout->addWidget(myTab);
