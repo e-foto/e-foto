@@ -89,7 +89,7 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
     //QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
     QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
     QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
-        QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
+    QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
 
     this->manager = manager;
     if (manager->exteriorDone())
@@ -155,9 +155,9 @@ void SRUserInterface_Qt::init()
 void SRUserInterface_Qt::informState()
 {
     //if (oldImageView->getViewMode() != 4)
-        //oldImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
+    //oldImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
     //else
-        //oldImageView->selectPoint("-1");
+    //oldImageView->selectPoint("-1");
 }
 
 void SRUserInterface_Qt::receivePoint(QPointF p)
@@ -201,7 +201,7 @@ void SRUserInterface_Qt::updateSelection(QStandardItem *item)
             {
                 manager->unselectPoint(points->data(points->index(item->row(),0)).toInt());
             }
-                        updateDisplayedPoints();
+            updateDisplayedPoints();
             makeRepaint();
             testActivateSR();
         }
@@ -280,7 +280,7 @@ bool SRUserInterface_Qt::calculateSR()
 {
     int iterations; double gnssPrecision, insPrecision;
 
-        iterations = QInputDialog::getInt(this,"Max. of iterations","Set max. number of iterations",10,1,50,1);
+    iterations = QInputDialog::getInt(this,"Max. of iterations","Set max. number of iterations",10,1,50,1);
     gnssPrecision = QInputDialog::getDouble(this,"Precision","Set the precision for camera coordinates (meters)",0.001,0.000001,10,6);
     insPrecision = QInputDialog::getDouble(this,"Precision","Set the precision for attitude angles (radians)",0.001,0.000001,1,6);
     bool result = manager->calculateSR(iterations, gnssPrecision, insPrecision);
@@ -338,7 +338,7 @@ bool SRUserInterface_Qt::viewReport()
     XaLayout->addLayout(xalabelLayout);
     XaLayout->addLayout(mvclabelLayout);
 
-    XaView->setLayout(XaLayout); // noivo
+    XaView->setLayout(XaLayout); // novo
     myTab->addTab(XaView, QString::fromUtf8("Xa"));
     connect(myXaView,SIGNAL(focusReceived()),mySXaView,SLOT(clearSelection()));
     connect(mySXaView,SIGNAL(focusReceived()),myXaView,SLOT(clearSelection()));
@@ -428,6 +428,8 @@ bool SRUserInterface_Qt::viewReport()
 
     QPushButton *acceptButton = new QPushButton("&Accept", this);
     QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptSR()));
+    if (myValues.at(7).compare("no") == 0)
+        acceptButton->setDisabled(true);
 
     myLayout->addLayout(upperLayout);
     myLayout->addWidget(myTab);
