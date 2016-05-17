@@ -27,17 +27,6 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_View">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionSet"/>
-    <addaction name="actionMove"/>
-    <addaction name="actionZoom"/>
-    <addaction name="separator"/>
-    <addaction name="actionFit"/>
-    <addaction name="actionInsert_Points"/>
-   </widget>
    <widget class="QMenu" name="menu_Execute">
     <property name="title">
      <string>&amp;Execute</string>
@@ -46,7 +35,6 @@
     <addaction name="actionSpatialRessection"/>
     <addaction name="actionTable"/>
    </widget>
-   <addaction name="menu_View"/>
    <addaction name="menu_Execute"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
