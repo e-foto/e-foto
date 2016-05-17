@@ -132,7 +132,7 @@ void SRUserInterface_Qt::init()
     setCentralWidget(centralwidget);
 
     // FlightDirectionDisabled!
-    setFlightDirection("",0);
+    setFlightDirection("", 0.0);
     actionFlight->setVisible(false);
     //flightDirectionForm = new FlightDirectionForm();
     //flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
