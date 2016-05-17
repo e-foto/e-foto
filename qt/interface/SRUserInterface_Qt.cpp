@@ -82,14 +82,16 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 
     //Tem que rever esse primeiro connect... o calculate da SR não é direto, tem que abrir a tela pra escolher iterações e precisão.
     QObject::connect(actionSpatialRessection, SIGNAL(triggered()), this, SLOT(calculateSR()));
+    QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
+    QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
     //QObject::connect(actionSet, SIGNAL(triggered()), this, SLOT(activeSetMode()));
     //QObject::connect(actionUnset, SIGNAL(triggered()), this, SLOT(activeUnsetMode()));
     //QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
     //QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
     //QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
-    QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
-    QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
-    QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
+
+    // FlightDirectionDisabled!
+    //QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
 
     this->manager = manager;
     if (manager->exteriorDone())
@@ -129,10 +131,13 @@ void SRUserInterface_Qt::init()
     gridLayout->addWidget(imageView, 0, 0, 1, 1);
     setCentralWidget(centralwidget);
 
-    flightDirectionForm = new FlightDirectionForm();
-    flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-    flightDirectionForm->imageLabel->setHidden(true);
-    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+    // FlightDirectionDisabled!
+    setFlightDirection("",0);
+    actionFlight->setVisible(false);
+    //flightDirectionForm = new FlightDirectionForm();
+    //flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
+    //flightDirectionForm->imageLabel->setHidden(true);
+    //connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
     markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
     markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
@@ -459,8 +464,9 @@ void SRUserInterface_Qt::testActivateSR()
 
 void SRUserInterface_Qt::setFlight()
 {
-    flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
-    flightDirectionForm->show();
+    // FlightDirectionDisabled!
+    //flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
+    //flightDirectionForm->show();
 }
 
 void SRUserInterface_Qt::acceptSR()

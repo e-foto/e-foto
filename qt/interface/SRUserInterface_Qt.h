@@ -77,7 +77,7 @@ protected:
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	bool flightAvailable;
-	FlightDirectionForm *flightDirectionForm;
+    //FlightDirectionForm *flightDirectionForm;
 	void closeEvent(QCloseEvent *e);
 
 public:
