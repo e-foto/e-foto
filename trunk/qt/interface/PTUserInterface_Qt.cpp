@@ -70,7 +70,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     viewerLayout->addWidget(viewer);
     QToolBar* controlTool = new QToolBar("Control Tools");
     controlTool->addWidget(markToolButton);
-    controlTool->addWidget(flightDirectionToolButton);
+    //controlTool->addWidget(flightDirectionToolButton);
     controlTool->addWidget(calculateFotoTriToolButton);
     controlTool->addWidget(saveMarksButton);
     controlTool->addWidget(viewReportToolButton);
@@ -113,15 +113,23 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(actionCalculateFotoTri,SIGNAL(triggered()),this,SLOT(showSelectionWindow()));
     connect(calculateFotoTriToolButton,SIGNAL(clicked()),this,SLOT(showSelectionWindow()));
     connect(saveMarksButton,SIGNAL(clicked()),this,SLOT(saveMarks()));
-    connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
     connect(markToolButton,SIGNAL(clicked()),this,SLOT(addPoint()));
     connect(insertPointInButton,SIGNAL(clicked(bool)),this,SLOT(toggleInsertPointMode(bool)));
     connect(viewReportToolButton,SIGNAL(clicked(bool)),this,SLOT(showReportXml()));
     connect(reportButton,SIGNAL(clicked(bool)),this,SLOT(onReportButtonClicked()));
     connect(doneButton,SIGNAL(clicked(bool)),this,SLOT(FTdone()));
-    //connect(leftDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
-    //connect(rightDisplay,SIGNAL(mousePositionChanged(QPointF*)),this,SLOT(updateCoordinatesInfo(QPointF*)));
     connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
+    // FlightDirectionDisabled!
+    for (int i = 0; i < listAllImages.size(); i++)
+        setFlightDirection(listAllImages.at(i),0);
+    actionCalculateFotoTri->setEnabled(true);
+    calculateFotoTriToolButton->setEnabled(true);
+    flightDirectionToolButton->setVisible(false);
+    //connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
+    //bool activeCalculate=ptManager->hasAllImagesInitialValues();
+    //actionCalculateFotoTri->setEnabled(activeCalculate);
+    //calculateFotoTriToolButton->setEnabled(activeCalculate);
+
 
     QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")),this);
     connect(undoShortcut, SIGNAL(activated()), this, SLOT(undoMark()));
@@ -138,10 +146,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     reportButton->setEnabled(false);
     exportToKmlButton->setEnabled(false);
 
-    //insertionMode=false;
-    bool activeCalculate=ptManager->hasAllImagesInitialValues();
-    actionCalculateFotoTri->setEnabled(activeCalculate);
-    calculateFotoTriToolButton->setEnabled(activeCalculate);
     imagesPointTreeWidget->setColumnHidden(3,true);
     imagesPointTreeWidget->setColumnHidden(4,true);
 
@@ -1218,13 +1222,13 @@ void PTUserInterface_Qt::saveMarks()
 
 void PTUserInterface_Qt::openImagesFlightDirectionForm()
 {
-    flightDirectionForm = new FlightDirectionForm(listAllImages,markedImages);
-    flightDirectionForm->setPassMode(true);
-
-    connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
-    connect(flightDirectionForm,SIGNAL(markedImagesList(QList<int>,QStringList)),this,SLOT(FlightFormClosed(QList<int>)));
-    flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
-    flightDirectionForm->show();
+    // FlightDirectionDisabled!
+    //flightDirectionForm = new FlightDirectionForm(listAllImages,markedImages);
+    //flightDirectionForm->setPassMode(true);
+    //connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
+    //connect(flightDirectionForm,SIGNAL(markedImagesList(QList<int>,QStringList)),this,SLOT(FlightFormClosed(QList<int>)));
+    //flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
+    //flightDirectionForm->show();
 }
 
 void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
@@ -1235,6 +1239,7 @@ void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 
 void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
 {
+    // FlightDirectionDisabled!
     markedImages=list;
     if (markedImages.size()==listAllImages.size())
     {
