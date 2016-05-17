@@ -134,7 +134,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
+        <item row="0" column="3">
          <widget class="QPushButton" name="loadButton">
           <property name="toolTip">
            <string>Load Extracted DEM</string>
@@ -2657,7 +2657,6 @@
   <tabstop>comboBox9</tabstop>
   <tabstop>seedsButton</tabstop>
   <tabstop>stereoButton</tabstop>
-  <tabstop>loadButton</tabstop>
   <tabstop>demButton</tabstop>
   <tabstop>saveButton2</tabstop>
   <tabstop>interButton</tabstop>
