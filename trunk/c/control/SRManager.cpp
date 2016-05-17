@@ -321,7 +321,7 @@ bool SRManager::flightDirection(double col, double lin)
 
 bool SRManager::flightDirection(double kappa0)
 {
-        if (started)
+        //if (started)
         {
                 mySR->setFlightDirection(kappa0);
                 return true;

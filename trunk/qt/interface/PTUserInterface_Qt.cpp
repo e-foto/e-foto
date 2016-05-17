@@ -120,8 +120,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(doneButton,SIGNAL(clicked(bool)),this,SLOT(FTdone()));
     connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
     // FlightDirectionDisabled!
-    for (int i = 0; i < listAllImages.size(); i++)
-        setFlightDirection(listAllImages.at(i),0);
     actionCalculateFotoTri->setEnabled(true);
     calculateFotoTriToolButton->setEnabled(true);
     flightDirectionToolButton->setVisible(false);
@@ -340,6 +338,10 @@ bool PTUserInterface_Qt::exec()
     this->show();
     LoadingScreen::instance().close();
     qApp->processEvents();
+
+    // FlightDirectionDisabled!
+    for (int i = 0; i < listAllImages.size(); i++)
+        setFlightDirection(listAllImages.at(i),0);
 
     return true;
 }
