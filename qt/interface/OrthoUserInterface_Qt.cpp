@@ -442,6 +442,7 @@ void OrthoUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, dou
         sv->setOrtoImageMode(xi, dx, yi, dy);
         sv->loadImage(image, isGrayscale);
         sv->blockOpen();
+        sv->blockSave();
         sv->blockMark();
         sv->show();
 }
@@ -452,6 +453,7 @@ void OrthoUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, dou
         sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
         sv->loadImage(image, isGrayscale);
         sv->blockOpen();
+        sv->blockSave();
         sv->blockMark();
         sv->show();
 }

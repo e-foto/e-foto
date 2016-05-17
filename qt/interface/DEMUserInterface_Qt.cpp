@@ -240,6 +240,7 @@ void DEMUserInterface_Qt::showImage2D(Matrix* image, double xi, double dx, doubl
     sv->setOrtoImageMode(xi, dx, yi, dy);
     sv->loadImage(image, isGrayscale);
     sv->blockOpen();
+    sv->blockSave();
     sv->blockMark();
     sv->show();
 }
@@ -250,6 +251,7 @@ void DEMUserInterface_Qt::showImage3D(Matrix* image, double xi, double dx, doubl
     sv->setElevationImageMode(xi, dx, yi, dy, zi, dz);
     sv->loadImage(image, isGrayscale);
     sv->blockOpen();
+    sv->blockSave();
     sv->blockMark();
     sv->show();
 }
