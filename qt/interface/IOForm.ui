@@ -30,17 +30,6 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionSet_mark"/>
-    <addaction name="actionMove"/>
-    <addaction name="actionZoom"/>
-    <addaction name="separator"/>
-    <addaction name="actionFit_view"/>
-    <addaction name="actionActive_grid"/>
-   </widget>
    <widget class="QMenu" name="menuExecute">
     <property name="title">
      <string>&amp;Execute</string>
@@ -48,7 +37,6 @@
     <addaction name="actionInterior_orientation"/>
     <addaction name="actionView_report"/>
    </widget>
-   <addaction name="menuView"/>
    <addaction name="menuExecute"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
