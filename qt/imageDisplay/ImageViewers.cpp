@@ -117,8 +117,7 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 	rightDisplay = new SingleDisplay(this);
 	tool = new SeparatedStereoToolsBar(leftDisplay, rightDisplay, this);
 
-	/** Mudança feita pelo Paulo para mudar o local inicial da toolbar*/
-	addToolBar(Qt::RightToolBarArea, tool);
+    addToolBar(Qt::LeftToolBarArea, tool);
 
 	leftPart->setCentralWidget(leftDisplay);
 	leftPart->statusBar()->addWidget(tool->getLeftInfo());
@@ -223,7 +222,7 @@ StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 	stereoDisplay = new StereoDisplay(this);
 	stereoTool = new StereoToolsBar(stereoDisplay, this);
 
-	addToolBar(Qt::TopToolBarArea,stereoTool);
+    addToolBar(Qt::LeftToolBarArea,stereoTool);
 
 	statusBar()->addWidget(stereoTool->getStereoInfo());
 	statusBar()->addWidget(stereoTool->getLeftInfo());
@@ -231,14 +230,19 @@ StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 
 	setCentralWidget(stereoDisplay);
 
-	QDockWidget* nearDock = stereoTool->getNearviews();
-	addDockWidget(Qt::RightDockWidgetArea, nearDock, Qt::Horizontal);
+    /*
+    QDockWidget* nearDock = stereoTool->getNearviews();
+    addDockWidget(Qt::RightDockWidgetArea, nearDock, Qt::Horizontal);
 
-	QDockWidget* overDock = stereoTool->getOverviews();
-	addDockWidget(Qt::RightDockWidgetArea, overDock, Qt::Vertical);
+    QDockWidget* overDock = stereoTool->getOverviews();
+    addDockWidget(Qt::RightDockWidgetArea, overDock, Qt::Vertical);
+    */
 
-	//QRect desktop = QDesktopWidget().screenGeometry();
-	//move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
+    QDockWidget* overDock = stereoTool->getOverviews();
+    addDockWidget(Qt::BottomDockWidgetArea, overDock, Qt::Horizontal);
+
+    QDockWidget* nearDock = stereoTool->getNearviews();
+    addDockWidget(Qt::BottomDockWidgetArea, nearDock, Qt::Horizontal);
 }
 
 MarkStereoTool& StereoViewer::getMarker() {return stereoTool->_mark;}
