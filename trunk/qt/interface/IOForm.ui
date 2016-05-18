@@ -44,7 +44,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Execute tools</string>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>

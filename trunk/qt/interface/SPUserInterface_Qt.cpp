@@ -33,6 +33,7 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDebug>
 
 namespace br {
 namespace uerj {
@@ -62,24 +63,28 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 
     // Connections
     QObject::connect(comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(updateClass(int)));
-    QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadButton()));
-    QObject::connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveButton()));
-    QObject::connect(addButton, SIGNAL(clicked()), this, SLOT(onAddButton()));
-    QObject::connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemoveButton()));
-    QObject::connect(removeAllButton, SIGNAL(clicked()), this, SLOT(onRemoveAllButton()));
-    QObject::connect(endButton, SIGNAL(clicked()), this, SLOT(onCloseFeature()));
-    QObject::connect(selButton, SIGNAL(clicked()), this, SLOT(onSelPtButton()));
-    QObject::connect(addPtButton, SIGNAL(clicked()), this, SLOT(onAddPtButton()));
-    QObject::connect(removePtButton, SIGNAL(clicked()), this, SLOT(onRemovePtButton()));
-    QObject::connect(editPtButton, SIGNAL(clicked()), this, SLOT(onEditPtButton()));
-    QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
     QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangePair(int)));
     QObject::connect(comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskLeft(int)));
     QObject::connect(comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(setColorMaskRight(int)));
     QObject::connect(comboBox_7, SIGNAL(currentIndexChanged(int)), this, SLOT(setReverseLensGlasses(int)));
-    QObject::connect(saveTxtButton, SIGNAL(clicked()), this, SLOT(onSaveTxtButton()));
-    QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
     QObject::connect(comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(onStereoModeChanged(int)));
+
+    QObject::connect(actionLoad, SIGNAL(triggered()), this, SLOT(onLoadButton()));
+    QObject::connect(actionSave, SIGNAL(triggered()), this, SLOT(onSaveButton()));
+    QObject::connect(actionExport, SIGNAL(triggered()), this, SLOT(onSaveTxtButton()));
+    //QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    QObject::connect(actionAdd, SIGNAL(triggered()), this, SLOT(onAddButton()));
+    QObject::connect(actionRemove, SIGNAL(triggered()), this, SLOT(onRemoveButton()));
+    QObject::connect(actionRemove_All, SIGNAL(triggered()), this, SLOT(onRemoveAllButton()));
+    QObject::connect(actionEnd, SIGNAL(triggered()), this, SLOT(onCloseFeature()));
+
+    QObject::connect(actionSelect, SIGNAL(triggered(bool)), this, SLOT(onSelPtButton()));
+    QObject::connect(actionInsert, SIGNAL(triggered(bool)), this, SLOT(onAddPtButton()));
+    QObject::connect(actionEdit, SIGNAL(triggered(bool)), this, SLOT(onEditPtButton()));
+    QObject::connect(actionRemove_Point, SIGNAL(triggered()), this, SLOT(onRemovePtButton()));
+
+    QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onFeatureListClicked(QModelIndex)));
 
     // Add color map
     // Anagliph colors: Red, Green, Blue, Cyan, Magenta, Yellow
@@ -173,26 +178,50 @@ bool SPUserInterface_Qt::exec()
     viewer->setFeatures(manager->getFeaturesLink());
     viewer->getMarker().setToOnlyEmitClickedMode();
 
-    viewerSeparated = new SeparatedStereoViewer();
-    viewerSeparated->blockOpen();
-    viewerSeparated->blockSave();
-    viewerSeparated->getLeftMarker().setToOnlyEmitClickedMode();
-    viewerSeparated->getRightMarker().setToOnlyEmitClickedMode();
-    viewerSeparated->getLeftDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getLeftScene());
-    viewerSeparated->getRightDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getRightScene());
+    //viewerSeparated = new SeparatedStereoViewer();
+    //viewerSeparated->blockOpen();
+    //viewerSeparated->blockSave();
+    //viewerSeparated->getLeftMarker().setToOnlyEmitClickedMode();
+    //viewerSeparated->getRightMarker().setToOnlyEmitClickedMode();
+    //viewerSeparated->getLeftDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getLeftScene());
+    //viewerSeparated->getRightDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getRightScene());
 
-    QTabWidget* viewersTab = new QTabWidget();
-    viewersTab->addTab(viewer,"StereoViewer");
-    viewersTab->addTab(viewerSeparated,"SeparatedViewers");
-    setCentralWidget(viewersTab);
+    //QTabWidget* viewersTab = new QTabWidget();
+    //viewersTab->addTab(viewer,"StereoViewer");
+    //viewersTab->addTab(viewerSeparated,"SeparatedViewers");
+    //setCentralWidget(viewersTab);
+    setCentralWidget(viewer);
 
     connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
     connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
     connect(viewer->getDisplay(),SIGNAL(resized(int,int)),this,SLOT(adjustFit(int,int)));
 
+    /*
+    viewer->addToolBar(Qt::LeftToolBarArea,featuresToolBar);
+    viewer->addToolBar(Qt::LeftToolBarArea,pointsToolBar);
+    viewer->addToolBar(Qt::LeftToolBarArea,filesToolBar);
+    viewer->setCorner(Qt::BottomRightCorner,Qt::RightDockWidgetArea);
+    viewer->addDockWidget(Qt::BottomDockWidgetArea, featureListDockWidget, Qt::Horizontal);
+    viewer->addDockWidget(Qt::RightDockWidgetArea, generalOptionsDockWidget, Qt::Vertical);
+    viewer->addDockWidget(Qt::RightDockWidgetArea, featureEditorDockWidget, Qt::Vertical);
+    viewer->tabifyDockWidget(generalOptionsDockWidget, featureEditorDockWidget);
+    statusBar()->setHidden(true);
+    */
+
+    viewer->addToolBar(Qt::LeftToolBarArea,featuresToolBar);
+    viewer->addToolBar(Qt::LeftToolBarArea,pointsToolBar);
+    viewer->addToolBar(Qt::LeftToolBarArea,filesToolBar);
+    viewer->setCorner(Qt::BottomRightCorner,Qt::RightDockWidgetArea);
+    viewer->addDockWidget(Qt::RightDockWidgetArea, featureListDockWidget, Qt::Vertical);
+    viewer->addDockWidget(Qt::RightDockWidgetArea, generalOptionsDockWidget, Qt::Vertical);
+    viewer->addDockWidget(Qt::RightDockWidgetArea, featureEditorDockWidget, Qt::Vertical);
+    viewer->tabifyDockWidget(generalOptionsDockWidget, featureEditorDockWidget);
+    statusBar()->setHidden(true);
+
     show();
     qApp->processEvents();
     changePair(1,2);
+    featureEditorDockWidget->setFocus();
     viewer->getToolBar()->executeAction(viewer->getToolBar()->setMoveTool);
     viewer->getDisplay()->updateAll();
 
@@ -204,7 +233,7 @@ void SPUserInterface_Qt::updateData()
 {
     updateTable();
     viewer->getDisplay()->updateAll();
-    viewerSeparated->update();
+    //viewerSeparated->update();
 }
 
 void SPUserInterface_Qt::updateTable()
@@ -397,40 +426,40 @@ void SPUserInterface_Qt::onRemoveAllButton()
 void SPUserInterface_Qt::onAddPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    viewerSeparated->getToolBar()->changeMode(1);
-    if (editPtButton->isChecked())
-        editPtButton->setChecked(false);
+    //viewerSeparated->getToolBar()->changeMode(1);
+    if (actionEdit->isChecked())
+        actionEdit->setChecked(false);
 
-    if (selButton->isChecked())
-        selButton->setChecked(false);
+    if (actionSelect->isChecked())
+        actionSelect->setChecked(false);
 
-    measure_mode = addPtButton->isChecked();
+    measure_mode = actionInsert->isChecked();
 }
 
 void SPUserInterface_Qt::onEditPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    viewerSeparated->getToolBar()->changeMode(1);
-    if (addPtButton->isChecked())
-        addPtButton->setChecked(false);
+    //viewerSeparated->getToolBar()->changeMode(1);
+    if (actionInsert->isChecked())
+        actionInsert->setChecked(false);
 
-    if (selButton->isChecked())
-        selButton->setChecked(false);
+    if (actionSelect->isChecked())
+        actionSelect->setChecked(false);
 
-    editPtButton->isChecked() ? measure_mode = 2 : measure_mode = 0;
+    actionEdit->isChecked() ? measure_mode = 2 : measure_mode = 0;
 }
 
 void SPUserInterface_Qt::onSelPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    viewerSeparated->getToolBar()->changeMode(1);
-    if (addPtButton->isChecked())
-        addPtButton->setChecked(false);
+    //viewerSeparated->getToolBar()->changeMode(1);
+    if (actionInsert->isChecked())
+        actionInsert->setChecked(false);
 
-    if (editPtButton->isChecked())
-        editPtButton->setChecked(false);
+    if (actionEdit->isChecked())
+        actionEdit->setChecked(false);
 
-    selButton->isChecked() ? measure_mode = 3 : measure_mode = 0;
+    actionSelect->isChecked() ? measure_mode = 3 : measure_mode = 0;
 }
 
 void SPUserInterface_Qt::onRemovePtButton()
