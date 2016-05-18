@@ -71,7 +71,7 @@ SPUserInterface_Qt::SPUserInterface_Qt(SPManager* manager, QWidget* parent, Qt::
 
     QObject::connect(actionLoad, SIGNAL(triggered()), this, SLOT(onLoadButton()));
     QObject::connect(actionSave, SIGNAL(triggered()), this, SLOT(onSaveButton()));
-    QObject::connect(actionExport, SIGNAL(triggered()), this, SLOT(onSaveTxtButton()));
+    QObject::connect(actionExport, SIGNAL(triggered()), this, SLOT(onExportButton()));
     //QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
 
     QObject::connect(actionAdd, SIGNAL(triggered()), this, SLOT(onAddButton()));
@@ -343,41 +343,33 @@ void SPUserInterface_Qt::onLoadButton()
 void SPUserInterface_Qt::onSaveButton()
 {
     // File open dialog
-    QString mode;
     //
-    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);;Shape file - only for exportation in shape file (*.shp);;All files (*.*)"));
+    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    //salvar.setDefaultSuffix("txt");
+    salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
-
-
         QString filename = salvar.selectedFiles()[0];
 
         // if no file name written, return
         if (filename.isEmpty())
             return;
-        //
-        mode = salvar.selectedNameFilter();
 
         // Save last dir
         int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
         // Save Features
-        if (mode.contains("Text file (*.txt)"))
-            manager->saveFeatures((char *)filename.toStdString().c_str(), 0);
-        else
-            manager->saveFeatures((char *)filename.toStdString().c_str(), 1);
+        manager->saveFeatures((char *)filename.toStdString().c_str());
     }
 }
 
-void SPUserInterface_Qt::onSaveTxtButton()
+void SPUserInterface_Qt::onExportButton()
 {
     // File open dialog
-    QFileDialog salvar(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
+    QFileDialog salvar(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; Shape file (*.shp)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("txt");
+    //salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
         QString filename = salvar.selectedFiles()[0];
@@ -385,12 +377,17 @@ void SPUserInterface_Qt::onSaveTxtButton()
         if (filename.isEmpty())
             return;
 
+        QString mode = salvar.selectedNameFilter();
+
         // Save last dir
         int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
         // Export features
-        manager->exportFeatures((char *)filename.toStdString().c_str());
+        if (mode.contains("Text file (*.txt)"))
+            manager->exportFeatures((char *)filename.toStdString().c_str(), 0);
+        else
+            manager->exportFeatures((char *)filename.toStdString().c_str(), 1);
     }
 }
 

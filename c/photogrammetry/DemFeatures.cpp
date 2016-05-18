@@ -87,17 +87,21 @@ std::string DemFeatures::getFeatureTypeName(int ftype)
     }
 }
 
-int DemFeatures::loadFeatures(char *filename/*, int mode*/, bool append=false)
+int DemFeatures::loadFeatures(char *filename, bool append=false)
 {
-    // 0- SP 1.65
-        // 1- This version - To be developed
     return loadFeatSp165(filename, append);
 }
 
-int DemFeatures::saveFeatures(char *filename, int mode/*, bool append=false*/)
+int DemFeatures::saveFeatures(char *filename)
 {
-    // 0- SP 1.65
-    // 1- Shapefile
+    return saveFeatSp165(filename);
+}
+
+// Export features
+int DemFeatures::exportFeatures(char *filename, int mode)
+{
+    // 0- Txt file
+    // 1- Shape file
 
     std::string basename;
     std::string name = std::string(filename);
@@ -119,8 +123,262 @@ int DemFeatures::saveFeatures(char *filename, int mode/*, bool append=false*/)
     }
 
     if (mode == 1)
-        return saveFeatShape((char*)basename.c_str());
-    return saveFeatSp165((char*)basename.c_str()/*, append*/);
+        return exportShpFeatures((char*)basename.c_str());
+    return exportTxtFeatures((char*)basename.c_str());
+}
+
+// Export features to txt file
+int DemFeatures::exportTxtFeatures(char *filename)
+{
+    std::string name = std::string(filename);
+    name.append(".txt");
+
+    // Open file to save
+    std::ofstream arq(name);
+    if (arq.fail())
+    {
+        printf("Problems while saving ...\n");
+        return 0;
+    }
+
+    arq << "E-FOTO Features File\n";
+    arq << "=====================\n\n";
+    arq << "Total features: " << features.size() << "\n\n";
+
+    // Change number precision
+    arq.precision(20);
+
+    DemFeature df;
+
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+        df = features.at(i);
+        arq << "Feature # " << i+1 << "\n";
+        arq << " Type: " << getFeatureTypeName(df.feature_type).c_str() << "\n";
+        arq << " Class: " << getFeatureClass(df.feature_class)->name.c_str() << "\n";
+        arq << " Name: " << df.name.c_str() << "\n";
+        arq << " Description: " << df.description.c_str() << "\n";
+        arq << " Number of points: " << df.points.size() << "\n";
+        arq << " Centroid coordinates: " << df.centroid.X << ", " << df.centroid.Y << "," << df.centroid.Z << "\n";
+        arq << " Perimeter: " << df.perimeter << "\n";
+        arq << " Area: " << df.area << "\n";
+        arq << " Points: number, X, Y, Z\n";
+
+        for (unsigned int k=0; k<df.points.size(); k++)
+            arq << "  " << k+1 << ", " << df.points.at(k).X << ", " << df.points.at(k).Y << ", " << df.points.at(k).Z << "\n";
+
+        arq << "\n";
+    }
+
+    arq.close();
+
+    return 1;
+}
+
+int DemFeatures::exportShpFeatures(char *filename)
+{
+    // Retorna se não houverem feições para salvar
+    if (features.size() == 0)
+        return 1;
+
+    std::deque<SHPObject*> shpObjs;
+    std::deque<std::string> objNames;
+    int nShapeType;
+    DemFeature df;
+
+    // Para cada tipo de feição
+    for (int k = 0; k < feature_classes.size(); k++)
+    {
+        bool flag = false;
+
+        // Definindo o tipo do shape
+        FeatureClass fc = feature_classes.at(k);
+        switch (fc.type)
+        {
+        case 1: nShapeType = SHPT_POINTZ; break;
+        case 2: nShapeType = SHPT_ARCZ; break;
+        case 3: nShapeType = SHPT_POLYGONZ; break;
+        default: nShapeType = SHPT_MULTIPOINTZ;
+        }
+
+        // Procura uma classe de feiçoes entre todas as feições
+        for (unsigned int i=0; i<features.size(); i++)
+        {
+            if (getFeatureClassId(i+1) == k+1)
+            {
+                // Se for encontrada uma feição da classe procurada habilita a gravação
+                flag = true;
+
+                // Aloca espaço para a criação de um novo objeto do shape
+                //SHPObject* obj = (SHPObject*) malloc(sizeof(SHPObject));
+
+                // Armazenando vétices da feição
+                df = features.at(i);
+                unsigned int nVertices = df.points.size();
+                if (nShapeType == SHPT_POLYGONZ) nVertices++;
+                double* padfX = (double *) malloc(sizeof(double) * nVertices);
+                double* padfY = (double *) malloc(sizeof(double) * nVertices);
+                double* padfZ = (double *) malloc(sizeof(double) * nVertices);
+                for (unsigned int j=0; j<nVertices; j++)
+                {
+                    DemFeaturePoints dfp;
+                    if (j != df.points.size())
+                        dfp = df.points.at(j);
+                    else
+                        dfp = df.points.at(0);
+                    padfX[j] = dfp.X;
+                    padfY[j] = dfp.Y;
+                    padfZ[j] = dfp.Z;
+                }
+
+                // Cria objeto
+                SHPObject* obj = SHPCreateSimpleObject(nShapeType, nVertices, padfX, padfY, padfZ );
+
+                // Guarda objeto e o nome
+                objNames.push_back(df.name);
+                shpObjs.push_back(obj);
+
+                //Liberando memória
+                free( padfX );
+                free( padfY );
+                free( padfZ );
+            }
+        }
+
+        // Gravando novo shape
+        if (flag)
+        {
+            // Concatenando nome de arquivo e nome de classe
+            std::string current_filename = std::string(filename);
+            current_filename.append("_").append(fc.name);
+
+            // Criando novo shape
+            SHPHandle mySHP = SHPCreate(current_filename.c_str(), nShapeType);
+            if( mySHP == NULL )
+            {
+                printf( "Unable to create shapefile.\n" );
+                return 2;
+            }
+
+            // Criando DBF
+            DBFHandle myDBF = DBFCreate(current_filename.c_str());
+            if( myDBF == NULL )
+            {
+                printf( "Unable to create DBF file.\n" );
+                return 3;
+            }
+
+            // Criando campo para armazenar os nomes das feições
+            int iField = DBFAddField(myDBF, "Nome", FTString, 255, 0);
+
+            // Inserindo objetos(feições) no novo shape
+            unsigned int nObjs = shpObjs.size();
+            for (unsigned int i=0; i<nObjs; i++)
+            {
+                std::string name = objNames.at(i);
+                SHPObject* obj = shpObjs.at(i);
+
+                // Identificando objeto
+                obj->nShapeId = i;
+
+                // Escrevendo objeto no shape
+                SHPWriteObject( mySHP, -1, obj );
+
+                // Inserindo registros para os objetos
+                DBFWriteStringAttribute( myDBF, obj->nShapeId, iField, name.c_str());
+
+                // Liberando memória
+                SHPDestroyObject( obj );
+            }
+
+            //Limpando as filas
+            shpObjs.clear();
+            objNames.clear();
+
+            // Fechando arquivos
+            SHPClose( mySHP );
+            DBFClose( myDBF );
+        }
+    }
+
+    return 0;
+}
+
+int DemFeatures::saveFeatSp165(char *filename)
+{
+    // If list is empty, return
+    if (features.size() == 0)
+        return 0;
+
+    std::string name = std::string(filename);
+    //name.append(".txt");
+
+    // Open file to save
+    std::ofstream arq(name);
+    if (arq.fail())
+    {
+        printf("Problems while saving ...\n");
+        return 0;
+    }
+
+    DemFeature df;
+
+    // Save polygon features first
+    arq << "<EFOTO_FEATURES>\n";
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+        df = features.at(i);
+        arq << i+1 << "\n"; // Feature ID
+        arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
+        arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
+        arq << df.name << "\n"; // Description (changed to name in this version)
+    }
+    arq << "</EFOTO_FEATURES>\n";
+
+    // Now, save the points
+    arq << "<EFOTO_POINTS>\n";
+    arq.precision(20);
+    //double lc,lr,rc,rr,X,Y,Z;
+    DemFeaturePoints dfp;
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+        df = features.at(i);
+        //pos = findFeature2D(i+1);
+
+        for (unsigned int j=0; j<df.points.size(); j++)
+        {
+            dfp = df.points.at(j);
+
+            arq << i+1 << "\n"; // Feature ID
+            arq << j+1 << "\n"; // Point ID
+            arq << dfp.left_x << "\n"; // Left Column
+            arq << dfp.left_y << "\n"; // Left Row
+            arq << dfp.right_x << "\n"; // Right Column
+            arq << dfp.right_y << "\n"; // Right Row
+            arq << dfp.X << "\n"; // X
+            arq << dfp.Y << "\n"; // Y
+            arq << dfp.Z << "\n"; // Z
+        }
+        // If feature is a polygon, close it with a C1 marker
+        if (df.feature_type > 2)
+        {
+            dfp = df.points.at(0);
+
+            arq << i+1 << "\n"; // Feature ID
+            arq << "C1" << "\n"; // Point ID
+            arq << dfp.left_x << "\n"; // Left Column
+            arq << dfp.left_y << "\n"; // Left Row
+            arq << dfp.right_x << "\n"; // Right Column
+            arq << dfp.right_y << "\n"; // Right Row
+            arq << dfp.X << "\n"; // X
+            arq << dfp.Y << "\n"; // Y
+            arq << dfp.Z << "\n"; // Z
+        }
+    }
+    arq << "</EFOTO_POINTS>\n";
+
+    arq.close();
+    return 1;
 }
 
 // Feature id ranges from 1-N
@@ -242,11 +500,11 @@ void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly, d
 {
     // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
-            return;
+        return;
 
     // check if point is valid
     if (pointid < 1 || unsigned(pointid) > features.at(featid-1).points.size())
-            return;
+        return;
 
     features.at(featid-1).points.at(pointid-1).left_x = lx;
     features.at(featid-1).points.at(pointid-1).left_y = ly;
@@ -491,7 +749,7 @@ void DemFeatures::calculateArea(int featid)
     if (featid < 1 || unsigned(featid) > features.size())
         return;
 
-        DemFeature *df = &features.at(featid-1);
+    DemFeature *df = &features.at(featid-1);
 
     // Calculate area only for polygons
     if (df->feature_type < 3)
@@ -500,12 +758,12 @@ void DemFeatures::calculateArea(int featid)
         return;
     }
 
-        int num_points = df->points.size();
-        if (num_points < 3)
-        {
-            df->area = 0.0;
-            return;
-        }
+    int num_points = df->points.size();
+    if (num_points < 3)
+    {
+        df->area = 0.0;
+        return;
+    }
 
     // Calculate normal vector
     double NX, NY, NZ, X1, Y1, Z1, X2, Y2, Z2, VX, VY, VZ;
@@ -524,7 +782,7 @@ void DemFeatures::calculateArea(int featid)
     }
 
     // Calculate area
-        for (int i=0; i<num_points - 1; i++)
+    for (int i=0; i<num_points - 1; i++)
     {
         X1 = df->points.at(i).X;
         Y1 = df->points.at(i).Y;
@@ -537,7 +795,7 @@ void DemFeatures::calculateArea(int featid)
         VZ += Z1-Z2;
     }
 
-        df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2)) / 2.0;
+    df->area = sqrt(pow(VX-NX,2)+pow(VY-NY,2)+pow(VZ-NZ,2)) / 2.0;
 }
 
 void DemFeatures::checkAllIsOnScreen()
@@ -549,7 +807,7 @@ void DemFeatures::checkAllIsOnScreen()
 void DemFeatures::checkIsOnScreen(int featid)
 {
     if (featid < 1 || unsigned(featid) > features.size())
-            return;
+        return;
 
     DemFeature *df = &features.at(featid-1);
 
@@ -584,24 +842,24 @@ int DemFeatures::getNearestFeature(double X, double Y, double Z)
 
     for (unsigned int i=1; i<features.size(); i++)
     {
-                dist = sqrt(pow(X - features.at(i).centroid.X, 2) + pow(Y - features.at(i).centroid.Y, 2) + pow(Z - features.at(i).centroid.Z, 2));
+        dist = sqrt(pow(X - features.at(i).centroid.X, 2) + pow(Y - features.at(i).centroid.Y, 2) + pow(Z - features.at(i).centroid.Z, 2));
 
-                // If line, set nearest point as distance
-                if (features.at(i).feature_type == 2)
-                {
-                    if (features.at(i).points.size() < 1)
-                        break;
+        // If line, set nearest point as distance
+        if (features.at(i).feature_type == 2)
+        {
+            if (features.at(i).points.size() < 1)
+                break;
 
-                    dist = sqrt(pow(X - features.at(i).points.at(0).X, 2) + pow(Y - features.at(i).points.at(0).Y, 2) + pow(Z - features.at(i).points.at(0).Z, 2));
+            dist = sqrt(pow(X - features.at(i).points.at(0).X, 2) + pow(Y - features.at(i).points.at(0).Y, 2) + pow(Z - features.at(i).points.at(0).Z, 2));
 
-                    for (unsigned int k=1; k<features.at(i).points.size(); k++)
-                    {
-                        dist_k = sqrt(pow(X - features.at(i).points.at(k).X, 2) + pow(Y - features.at(i).points.at(k).Y, 2) + pow(Z - features.at(i).points.at(k).Z, 2));
+            for (unsigned int k=1; k<features.at(i).points.size(); k++)
+            {
+                dist_k = sqrt(pow(X - features.at(i).points.at(k).X, 2) + pow(Y - features.at(i).points.at(k).Y, 2) + pow(Z - features.at(i).points.at(k).Z, 2));
 
-                        if (dist_k < dist)
-                            dist = dist_k;
-                    }
-                }
+                if (dist_k < dist)
+                    dist = dist_k;
+            }
+        }
 
         if (dist < best_dist)
         {
@@ -729,25 +987,25 @@ int DemFeatures::getClassIdToSp165(int new_class)
 
     switch (new_class)
     {
-        case 1 : old_class = 0; break;
-        case 2 : old_class = 1; break;
-        case 3 : old_class = 1; break;
-        case 4 : old_class = 2; break;
-        case 5 : old_class = 3; break;
-        case 6 : old_class = 4; break;
-        case 7 : old_class = 5; break;
-        case 8 : old_class = 6; break;
-        case 9 : old_class = 1; break;
-        case 10 : old_class = 2; break;
-        case 11 : old_class = 3; break;
-        case 12 : old_class = 4; break;
-        case 13 : old_class = 5; break;
-        case 14 : old_class = 6; break;
-        case 15 : old_class = 7; break;
-        case 16 : old_class = 8; break;
-        case 17 : old_class = 9; break;
-        case 18 : old_class = 10; break;
-        case 19 : old_class = 11; break;
+    case 1 : old_class = 0; break;
+    case 2 : old_class = 1; break;
+    case 3 : old_class = 1; break;
+    case 4 : old_class = 2; break;
+    case 5 : old_class = 3; break;
+    case 6 : old_class = 4; break;
+    case 7 : old_class = 5; break;
+    case 8 : old_class = 6; break;
+    case 9 : old_class = 1; break;
+    case 10 : old_class = 2; break;
+    case 11 : old_class = 3; break;
+    case 12 : old_class = 4; break;
+    case 13 : old_class = 5; break;
+    case 14 : old_class = 6; break;
+    case 15 : old_class = 7; break;
+    case 16 : old_class = 8; break;
+    case 17 : old_class = 9; break;
+    case 18 : old_class = 10; break;
+    case 19 : old_class = 11; break;
     }
 
     return old_class;
@@ -928,7 +1186,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
     // Start to read the points
     int feature_id, point_id;
     DemFeaturePoints dfp;
-        //double lx, ly, rx, ry;
+    //double lx, ly, rx, ry;
     while (!arq.fail())
     {
         // Points EOF
@@ -940,30 +1198,30 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
         feature_id = atoi(tag.c_str());
         feature_id += p_feat;
         getline(arq,tag); // 2nd line point_id
-                point_id = atoi(tag.c_str());
+        point_id = atoi(tag.c_str());
 
         // Check if point is not a closing point (string "C1")
         if (point_id != 0)
         {
-                        // Digital coords
+            // Digital coords
             getline(arq,tag); // 3rd line left_column
-                        dfp.left_x = Conversion::stringToDouble(tag);
+            dfp.left_x = Conversion::stringToDouble(tag);
             getline(arq,tag); // 4th line left_row
-                        dfp.left_y = Conversion::stringToDouble(tag);
+            dfp.left_y = Conversion::stringToDouble(tag);
             getline(arq,tag); // 5th line right_column
-                        dfp.right_x = Conversion::stringToDouble(tag);
+            dfp.right_x = Conversion::stringToDouble(tag);
             getline(arq,tag); // 6th line right_row
-                        dfp.right_y = Conversion::stringToDouble(tag);
+            dfp.right_y = Conversion::stringToDouble(tag);
 
-                        //insertFeature2D(feature_id, lx, ly, rx, ry);
+            //insertFeature2D(feature_id, lx, ly, rx, ry);
 
-                        // X, Y, Z
+            // X, Y, Z
             getline(arq,tag); // 7th line X
-                        dfp.X = Conversion::stringToDouble(tag);
+            dfp.X = Conversion::stringToDouble(tag);
             getline(arq,tag); // 8th line Y
-                        dfp.Y = Conversion::stringToDouble(tag);
+            dfp.Y = Conversion::stringToDouble(tag);
             getline(arq,tag); // 9th line Z
-                        dfp.Z = Conversion::stringToDouble(tag);
+            dfp.Z = Conversion::stringToDouble(tag);
 
             features.at(feature_id-1).points.push_back(dfp);
         }
@@ -982,263 +1240,12 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
     // Create classes from SP 1.65
     createClassesFromSp165();
-        convertClassesIdsFromSp165();
+    convertClassesIdsFromSp165();
 
-        // Check if points are on screen
-        checkAllIsOnScreen();
+    // Check if points are on screen
+    checkAllIsOnScreen();
 
     return 1;
-}
-
-int DemFeatures::saveFeatSp165(char *filename/*, bool append*/)
-{
-    // If list is empty, return
-    if (features.size() == 0)
-            return 0;
-
-    std::string name = std::string(filename);
-    name.append(".txt");
-
-    // Open file to save
-    std::ofstream arq(name);
-    if (arq.fail())
-    {
-            printf("Problems while saving ...\n");
-            return 0;
-    }
-
-    DemFeature df;
-
-    // Save polygon features first
-    arq << "<EFOTO_FEATURES>\n";
-    for (unsigned int i=0; i<features.size(); i++)
-    {
-            df = features.at(i);
-            arq << i+1 << "\n"; // Feature ID
-            arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
-            arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
-            arq << df.name << "\n"; // Description (changed to name in this version)
-    }
-    arq << "</EFOTO_FEATURES>\n";
-
-    // Now, save the points
-    arq << "<EFOTO_POINTS>\n";
-    arq.precision(20);
-    //double lc,lr,rc,rr,X,Y,Z;
-    DemFeaturePoints dfp;
-    for (unsigned int i=0; i<features.size(); i++)
-    {
-            df = features.at(i);
-            //pos = findFeature2D(i+1);
-
-            for (unsigned int j=0; j<df.points.size(); j++)
-            {
-                    dfp = df.points.at(j);
-
-                    arq << i+1 << "\n"; // Feature ID
-                    arq << j+1 << "\n"; // Point ID
-                    arq << dfp.left_x << "\n"; // Left Column
-                    arq << dfp.left_y << "\n"; // Left Row
-                    arq << dfp.right_x << "\n"; // Right Column
-                    arq << dfp.right_y << "\n"; // Right Row
-                    arq << dfp.X << "\n"; // X
-                    arq << dfp.Y << "\n"; // Y
-                    arq << dfp.Z << "\n"; // Z
-            }
-            // If feature is a polygon, close it with a C1 marker
-            if (df.feature_type > 2)
-            {
-                    dfp = df.points.at(0);
-
-                    arq << i+1 << "\n"; // Feature ID
-                    arq << "C1" << "\n"; // Point ID
-                    arq << dfp.left_x << "\n"; // Left Column
-                    arq << dfp.left_y << "\n"; // Left Row
-                    arq << dfp.right_x << "\n"; // Right Column
-                    arq << dfp.right_y << "\n"; // Right Row
-                    arq << dfp.X << "\n"; // X
-                    arq << dfp.Y << "\n"; // Y
-                    arq << dfp.Z << "\n"; // Z
-            }
-    }
-    arq << "</EFOTO_POINTS>\n";
-
-    arq.close();
-    return 1;
-}
-
-int DemFeatures::saveFeatShape(char *filename/*, bool append*/)
-{
-    // Retorna se não houverem feições para salvar
-    if (features.size() == 0)
-        return 1;
-
-    std::deque<SHPObject*> shpObjs;
-    std::deque<std::string> objNames;
-    int nShapeType;
-    DemFeature df;
-
-    // Para cada tipo de feição
-    for (int k = 0; k < feature_classes.size(); k++)
-    {
-        bool flag = false;
-
-        // Definindo o tipo do shape
-        FeatureClass fc = feature_classes.at(k);
-        switch (fc.type)
-        {
-        case 1: nShapeType = SHPT_POINTZ; break;
-        case 2: nShapeType = SHPT_ARCZ; break;
-        case 3: nShapeType = SHPT_POLYGONZ; break;
-        default: nShapeType = SHPT_MULTIPOINTZ;
-        }
-
-        // Procura uma classe de feiçoes entre todas as feições
-        for (unsigned int i=0; i<features.size(); i++)
-        {
-            if (getFeatureClassId(i+1) == k+1)
-            {
-                // Se for encontrada uma feição da classe procurada habilita a gravação
-                flag = true;
-
-                // Aloca espaço para a criação de um novo objeto do shape
-                //SHPObject* obj = (SHPObject*) malloc(sizeof(SHPObject));
-
-                // Armazenando vétices da feição
-                df = features.at(i);
-                unsigned int nVertices = df.points.size();
-                if (nShapeType == SHPT_POLYGONZ) nVertices++;
-                double* padfX = (double *) malloc(sizeof(double) * nVertices);
-                double* padfY = (double *) malloc(sizeof(double) * nVertices);
-                double* padfZ = (double *) malloc(sizeof(double) * nVertices);
-                for (unsigned int j=0; j<nVertices; j++)
-                {
-                    DemFeaturePoints dfp;
-                    if (j != df.points.size())
-                        dfp = df.points.at(j);
-                    else
-                        dfp = df.points.at(0);
-                    padfX[j] = dfp.X;
-                    padfY[j] = dfp.Y;
-                    padfZ[j] = dfp.Z;
-                }
-
-                // Cria objeto
-                SHPObject* obj = SHPCreateSimpleObject(nShapeType, nVertices, padfX, padfY, padfZ );
-
-                // Guarda objeto e o nome
-                objNames.push_back(df.name);
-                shpObjs.push_back(obj);
-
-                //Liberando memória
-                free( padfX );
-                free( padfY );
-                free( padfZ );
-            }
-        }
-
-        // Gravando novo shape
-        if (flag)
-        {
-            // Concatenando nome de arquivo e nome de classe
-            std::string current_filename = std::string(filename);
-            current_filename.append("_").append(fc.name);
-
-            // Criando novo shape
-            SHPHandle mySHP = SHPCreate(current_filename.c_str(), nShapeType);
-            if( mySHP == NULL )
-            {
-                printf( "Unable to create shapefile.\n" );
-                return 2;
-            }
-
-            // Criando DBF
-            DBFHandle myDBF = DBFCreate(current_filename.c_str());
-            if( myDBF == NULL )
-            {
-                printf( "Unable to create DBF file.\n" );
-                return 3;
-            }
-
-            // Criando campo para armazenar os nomes das feições
-            int iField = DBFAddField(myDBF, "Nome", FTString, 255, 0);
-
-            // Inserindo objetos(feições) no novo shape
-            unsigned int nObjs = shpObjs.size();
-            for (unsigned int i=0; i<nObjs; i++)
-            {
-                std::string name = objNames.at(i);
-                SHPObject* obj = shpObjs.at(i);
-
-                // Identificando objeto
-                obj->nShapeId = i;
-
-                // Escrevendo objeto no shape
-                SHPWriteObject( mySHP, -1, obj );
-
-                // Inserindo registros para os objetos
-                DBFWriteStringAttribute( myDBF, obj->nShapeId, iField, name.c_str());
-
-                // Liberando memória
-                SHPDestroyObject( obj );
-            }
-
-            //Limpando as filas
-            shpObjs.clear();
-            objNames.clear();
-
-            // Fechando arquivos
-            SHPClose( mySHP );
-            DBFClose( myDBF );
-        }
-    }
-
-    return 0;
-}
-
-// Export features to text file
-int DemFeatures::exportFeatures(char *filename)
-{
-        // Open file to save
-        std::ofstream arq(filename);
-        if (arq.fail())
-        {
-            printf("Problems while saving ...\n");
-                    return 0;
-        }
-
-        arq << "E-FOTO Features File\n";
-        arq << "=====================\n\n";
-        arq << "Total features: " << features.size() << "\n\n";
-
-        // Change number precision
-        arq.precision(20);
-
-        DemFeature df;
-
-        for (unsigned int i=0; i<features.size(); i++)
-        {
-                df = features.at(i);
-                arq << "Feature # " << i+1 << "\n";
-                arq << " Type: " << getFeatureTypeName(df.feature_type).c_str() << "\n";
-                arq << " Class: " << getFeatureClass(df.feature_class)->name.c_str() << "\n";
-                arq << " Name: " << df.name.c_str() << "\n";
-                arq << " Description: " << df.description.c_str() << "\n";
-                arq << " Number of points: " << df.points.size() << "\n";
-                arq << " Centroid coordinates: " << df.centroid.X << ", " << df.centroid.Y << "," << df.centroid.Z << "\n";
-                arq << " Perimeter: " << df.perimeter << "\n";
-                arq << " Area: " << df.area << "\n";
-                arq << " Points: number, X, Y, Z\n";
-
-                for (unsigned int k=0; k<df.points.size(); k++)
-                    arq << "  " << k+1 << ", " << df.points.at(k).X << ", " << df.points.at(k).Y << ", " << df.points.at(k).Z << "\n";
-
-                arq << "\n";
-        }
-
-        arq.close();
-
-        return 1;
 }
 
 //
@@ -1268,7 +1275,7 @@ void DemFeatures::showFeatures(bool full=false)
         printf(" Centroid: %f, %f, %f\n",df.centroid.X, df.centroid.Y, df.centroid.Z);
         printf(" Perimeter: %f\n",df.perimeter);
         printf(" Area: %f\n",df.area);
-                printf(" Is on screen flag: %d\n",df.is_on_screen);
+        printf(" Is on screen flag: %d\n",df.is_on_screen);
     }
 }
 
@@ -1420,7 +1427,7 @@ double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double
         D0 = sqrt(delta_X*delta_X + delta_Y*delta_Y);
     }
 
-        DemFeature *df = &features.at(feat_id-1);
+    DemFeature *df = &features.at(feat_id-1);
     int n = df->points.size();
 
     // Calculate weights
@@ -1515,12 +1522,12 @@ std::string DemFeatures::getFeaturesList()
 
     for (unsigned int i=0; i<features.size(); i++)
     {
-            df = features.at(i);
+        df = features.at(i);
 
-                        txt << "Feature #" << i+1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
+        txt << "Feature #" << i+1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
 
-            for (unsigned int k=0; k<df.points.size(); k++)
-                txt << "\tPoint #" << k+1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
+        for (unsigned int k=0; k<df.points.size(); k++)
+            txt << "\tPoint #" << k+1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
     }
 
     return txt.str();
@@ -1543,17 +1550,17 @@ std::string DemFeatures::getFeaturesToDisplay(int mode)
     //double lx, ly, rx, ry;
     for (unsigned int i=0; i<features.size(); i++)
     {
-            df = features.at(i);
+        df = features.at(i);
 
-            txt << df.feature_type << "\t " << df.points.size() << "\n";
+        txt << df.feature_type << "\t " << df.points.size() << "\n";
 
-            for (unsigned int k=0; k<df.points.size(); k++)
-            {
-                if (mode == 1)
-                    txt << df.points.at(k).X << "\t" << df.points.at(k).Y << "\t" << df.points.at(k).Z << "\n";
-                else
-                    txt << df.points.at(k).left_x << "\t" << df.points.at(k).left_y << "\t" << df.points.at(k).right_x << "\t" << df.points.at(k).right_y << "\n";
-            }
+        for (unsigned int k=0; k<df.points.size(); k++)
+        {
+            if (mode == 1)
+                txt << df.points.at(k).X << "\t" << df.points.at(k).Y << "\t" << df.points.at(k).Z << "\n";
+            else
+                txt << df.points.at(k).left_x << "\t" << df.points.at(k).left_y << "\t" << df.points.at(k).right_x << "\t" << df.points.at(k).right_y << "\n";
+        }
     }
 
     return txt.str();
