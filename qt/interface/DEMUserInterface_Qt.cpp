@@ -350,8 +350,8 @@ void DEMUserInterface_Qt::onDemSaveClicked()
     }
     else if (comboBox8->currentIndex() == 2)
     {
-        filter = tr("ASCII 2D Points (*.bluh);; All files (*.*)");
-        suffix = "bluh";
+        filter = tr("ASCII 2D Points (*.dat);; All files (*.*)");
+        suffix = "dat";
     }
     else if (comboBox8->currentIndex() == 3)
     {
@@ -435,7 +435,7 @@ void DEMUserInterface_Qt::onDemLoadClicked()
     }
     else if (comboBox8->currentIndex() == 2)
     {
-        filter = tr("ASCII 2D Points (*.bluh);; All files (*.*)");
+        filter = tr("ASCII 2D Points (*.dat);; All files (*.*)");
     }
     else if (comboBox8->currentIndex() == 3)
     {

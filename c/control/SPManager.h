@@ -52,9 +52,9 @@ class SPManager
     bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
     double getAngleBetweenImages(double X1, double Y1, double X2, double Y2);
     double fixAngle(double angle);
-        bool existPair(int &id1, int &id2);
-        void setListPoint();
-        double getTerrainMeanAltitude();
+    bool existPair(int &id1, int &id2);
+    void setListPoint();
+    double getTerrainMeanAltitude();
     std::deque<int> listPairs;
 
     SPUserInterface* myInterface;
@@ -63,10 +63,10 @@ class SPManager
     std::deque<Point*> listAllPoints;
     std::deque<ExteriorOrientation*> listEOs;
 
-        Image* leftImage;
-        Image* rightImage;
-        ProjectiveRay prL;
-        ProjectiveRay prR;
+    Image* leftImage;
+    Image* rightImage;
+    ProjectiveRay prL;
+    ProjectiveRay prR;
 
     /*
         Image * getImage(int);
@@ -100,8 +100,8 @@ public:
     bool exec();
     void returnProject();
     int loadFeatures(char *filename, bool append);
-    void saveFeatures(char *filename, int mode);
-    void exportFeatures(char *filename);
+    void saveFeatures(char *filename);
+    void exportFeatures(char *filename, int mode = 0);
     void addFeature(std::string name, int feattype, int featclass);
     int removeFeature();
     void removeAllFeatures();

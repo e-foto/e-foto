@@ -58,7 +58,7 @@ public slots:
     void updateClass(int feat_type);
     void onLoadButton();
     void onSaveButton();
-    void onSaveTxtButton();
+    void onExportButton();
     void onAddButton();
     void onRemoveButton();
     void onRemoveAllButton();

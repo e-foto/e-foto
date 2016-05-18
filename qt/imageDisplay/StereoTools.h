@@ -28,7 +28,7 @@ class StereoTool : public QObject
 
 public:
     explicit StereoTool(StereoDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _leftPosLabel = NULL; _rightPosLabel = NULL; _3dPosLabel = NULL;
-                                        connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); _hasButtomPressed = false; _actualizePosLabel = true;}
+                                                 connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); _hasButtomPressed = false; _actualizePosLabel = true;}
     virtual ~StereoTool() {}
 
     virtual void paintEvent(const QPaintEvent& event);
