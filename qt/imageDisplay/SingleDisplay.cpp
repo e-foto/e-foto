@@ -356,15 +356,13 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
             QImage detail = currentScene->getDetail(targetSize, currentScene->getDetailedPoint(), zoom);
             painter.drawImage(0, 0, detail);
 
-            /*
-   if (!_over->showDetailedArea())
-   {
-    QPixmap ico(_over->cursor().pixmap());
-    QRect reg(QPoint(),ico.size());
-    reg.moveCenter(QPoint(width()/2, height()/2));
-    painter.drawPixmap(reg,ico);
-   }
-   */
+            //if (false)
+            //{
+                //QPixmap ico(_over->cursor().pixmap());
+                //QRect reg(QPoint(),ico.size());
+                //reg.moveCenter(QPoint(width()/2, height()/2));
+                //painter.drawPixmap(reg,ico);
+            //}
         }
         painter.end();
     }
