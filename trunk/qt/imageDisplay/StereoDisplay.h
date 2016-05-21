@@ -29,13 +29,13 @@ protected:
 
     QPointF _mouseScreenPos;
     QImage _cursor;
-        bool _onPainting;
-        bool stereo_mode;
+    bool _onPainting;
+    bool stereo_mode;
 
-        // Anagliph filter
-        bool L_Red, L_Green, L_Blue;
-        bool R_Red, R_Green, R_Blue;
-        bool reverseLensGlasses;
+    // Anagliph filter
+    bool L_Red, L_Green, L_Blue;
+    bool R_Red, R_Green, R_Blue;
+    bool reverseLensGlasses;
 
     void initializeGL();
     void paintGL();
@@ -63,10 +63,10 @@ public:
     void setGLCursor(QImage cursor);
     QImage getGLCursor();
     void setGLBackground(QImage bg);
-        void setReverseLensGlasses(bool opt);
-        void setColorMaskLeft(bool r, bool g, bool b);
-        void setColorMaskRight(bool r, bool g, bool b);
-        int setStereoMode(bool mode);
+    void setReverseLensGlasses(bool opt);
+    void setColorMaskLeft(bool r, bool g, bool b);
+    void setColorMaskRight(bool r, bool g, bool b);
+    int setStereoMode(bool mode);
 
     bool painting();
 
@@ -109,7 +109,7 @@ public:
     void loadRightImage(QImage* image);
     void loadLeftImage(Matrix* image, bool isGrayscale = true);
     void loadRightImage(Matrix* image, bool isGrayscale = true);
-        int setStereoMode(bool mode);
+    int setStereoMode(bool mode);
 
     QPointF getLeftCursorOffset();
     QPointF getRightCursorOffset();

@@ -222,7 +222,8 @@ StereoViewer::StereoViewer(QWidget* parent) : QMainWindow(parent)
 	stereoDisplay = new StereoDisplay(this);
 	stereoTool = new StereoToolsBar(stereoDisplay, this);
 
-    addToolBar(Qt::LeftToolBarArea,stereoTool);
+    //412!
+    addToolBar(Qt::RightToolBarArea,stereoTool);
 
 	statusBar()->addWidget(stereoTool->getStereoInfo());
 	statusBar()->addWidget(stereoTool->getLeftInfo());
