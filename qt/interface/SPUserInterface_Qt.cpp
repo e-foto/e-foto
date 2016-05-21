@@ -208,9 +208,14 @@ bool SPUserInterface_Qt::exec()
     statusBar()->setHidden(true);
     */
 
-    viewer->addToolBar(Qt::LeftToolBarArea,featuresToolBar);
-    viewer->addToolBar(Qt::LeftToolBarArea,pointsToolBar);
-    viewer->addToolBar(Qt::LeftToolBarArea,filesToolBar);
+    // 412!
+    viewer->addToolBar(Qt::RightToolBarArea,featuresToolBar);
+    viewer->addToolBar(Qt::RightToolBarArea,pointsToolBar);
+    viewer->addToolBar(Qt::RightToolBarArea,filesToolBar);
+    actionAdd->setShortcut(QKeySequence(tr("Ctrl+A")));
+    actionEdit->setShortcut(QKeySequence(tr("Ctrl+D")));
+    actionSelect->setShortcut(QKeySequence(tr("Ctrl+S")));
+
     viewer->setCorner(Qt::BottomRightCorner,Qt::RightDockWidgetArea);
     viewer->addDockWidget(Qt::RightDockWidgetArea, featureListDockWidget, Qt::Vertical);
     viewer->addDockWidget(Qt::RightDockWidgetArea, generalOptionsDockWidget, Qt::Vertical);
@@ -401,6 +406,12 @@ void SPUserInterface_Qt::onAddButton()
     manager->getSelected(fid, pid);
 
     treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+
+    //412!
+    if(actionInsert->isChecked())
+        onAddPtButton();
+    else
+        actionInsert->trigger();
 }
 
 void SPUserInterface_Qt::onRemoveButton()

@@ -40,7 +40,8 @@ void StereoTool::paintEvent(const QPaintEvent& event)
     event.isAccepted();
     if (_display->painting())
     {
-        QPainter painter(_display);
+        // 412!
+        QPainter painter(_display->getRealDisplay());
         painter.setRenderHint(QPainter::Antialiasing);
 
         if (_autoPan != QPointF(0,0))
@@ -650,7 +651,7 @@ void MarkStereoTool::mousePressed(const QMouseEvent & event)
         QPointF lLocal = _display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint());
         QPointF rLocal = _display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint());
         if ((lLocal.x() >= 0 && lLocal.y() >= 0 && lLocal.x() <= _display->getCurrentScene()->getLeftScene()->getWidth() && lLocal.y() <= _display->getCurrentScene()->getLeftScene()->getHeight())
-            && (rLocal.x() >= 0 && rLocal.y() >= 0 && rLocal.x() <= _display->getCurrentScene()->getRightScene()->getWidth() && rLocal.y() <= _display->getCurrentScene()->getRightScene()->getHeight()))
+                && (rLocal.x() >= 0 && rLocal.y() >= 0 && rLocal.x() <= _display->getCurrentScene()->getRightScene()->getWidth() && rLocal.y() <= _display->getCurrentScene()->getRightScene()->getHeight()))
         {
             putClickOn(lLocal, rLocal);
         }
@@ -698,7 +699,8 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
     widget->setLayout(layout);
     _nearDock->setWidget(widget);
 
-    _cursorIsVisible = false;
+    // 412!
+    //_cursorIsVisible = false;
     //_marker = NULL;
 }
 
@@ -749,6 +751,9 @@ void NearStereoTool::setNearCursor(QCursor cursor)
 void NearStereoTool::paintEvent(const QPaintEvent &event)
 {
     event.isAccepted();
+
+    // 412!
+    //* this Code Cause Paint Warnings!
     QPixmap ico = QPixmap::fromImage(_display->getCursor());
     QRect reg(QPoint(), ico.size());
     if (_leftNear->painting())
@@ -789,6 +794,7 @@ void NearStereoTool::leaveEvent(const QHoverEvent& event)
 void NearStereoTool::moveEvent(const QHoverEvent& event)
 {
     event.isAccepted();
+
     /*
     if (_near->positionIsVisible(_display->getLastMousePosition()) || _cursorIsVisible)
     {
@@ -821,6 +827,15 @@ void NearStereoTool::mouseDblClicked(const QMouseEvent & event)
 
 void NearStereoTool::wheelEvent(const QWheelEvent & event)
 {
+    // 412!
+    if (_display->isStereoCursor())
+    {
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    }
+    _leftNear->update();
+    _rightNear->update();
+
     event.isAccepted();
 }
 
@@ -1001,8 +1016,10 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
     //_display->getCurrentScene()->setDetailZoom(2.0);
     //connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
 
-        setMarkTool->setShortcut(Qt::CTRL + Qt::Key_Z);
-        setMoveTool->setShortcut(Qt::CTRL + Qt::Key_X);
+    // 412!
+    setMarkTool->setShortcut(Qt::CTRL + Qt::Key_Z);
+    setMoveTool->setShortcut(Qt::CTRL + Qt::Key_X);
+    setZoomTool->setShortcut(Qt::CTRL + Qt::Key_C);
 
     addAction(openLeftImage);
     addAction(openRightImage);
