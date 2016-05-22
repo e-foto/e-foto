@@ -40,8 +40,12 @@ void StereoTool::paintEvent(const QPaintEvent& event)
     event.isAccepted();
     if (_display->painting())
     {
-        // 412!
+#ifdef WIN32
+        QPainter painter(_display);
+#endif
+#ifdef unix
         QPainter painter(_display->getRealDisplay());
+#endif
         painter.setRenderHint(QPainter::Antialiasing);
 
         if (_autoPan != QPointF(0,0))
@@ -370,6 +374,7 @@ void ZoomStereoTool::paintEvent(const QPaintEvent &event)
         {	_currentCursor = SymbolsResource::getMagnifyGlass("+");
             _display->setCursor(_currentCursor, false);
         }
+        _display->getRealDisplay()->updateGL();
         QPainter painter(_display->getRealDisplay());
         painter.setPen(QPen(Qt::yellow));
         painter.drawRect(QRect(_fixedPoint,_display->getMouseScreenPosition().toPoint()));
@@ -699,7 +704,6 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
     widget->setLayout(layout);
     _nearDock->setWidget(widget);
 
-    // 412!
     //_cursorIsVisible = false;
     //_marker = NULL;
 }
@@ -752,7 +756,6 @@ void NearStereoTool::paintEvent(const QPaintEvent &event)
 {
     event.isAccepted();
 
-    // 412!
     //* this Code Cause Paint Warnings!
     QPixmap ico = QPixmap::fromImage(_display->getCursor());
     QRect reg(QPoint(), ico.size());
@@ -827,7 +830,6 @@ void NearStereoTool::mouseDblClicked(const QMouseEvent & event)
 
 void NearStereoTool::wheelEvent(const QWheelEvent & event)
 {
-    // 412!
     if (_display->isStereoCursor())
     {
         _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
@@ -1016,7 +1018,6 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
     //_display->getCurrentScene()->setDetailZoom(2.0);
     //connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
 
-    // 412!
     setMarkTool->setShortcut(Qt::CTRL + Qt::Key_Z);
     setMoveTool->setShortcut(Qt::CTRL + Qt::Key_X);
     setZoomTool->setShortcut(Qt::CTRL + Qt::Key_C);
