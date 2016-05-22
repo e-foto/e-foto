@@ -154,7 +154,6 @@ class NearStereoTool : public StereoTool
     SingleDisplay* _leftNear;
     SingleDisplay* _rightNear;
     //MarkTool* _marker;
-    // 412!
     //bool _cursorIsVisible;
 
 public:

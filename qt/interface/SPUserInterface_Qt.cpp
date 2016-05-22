@@ -208,7 +208,6 @@ bool SPUserInterface_Qt::exec()
     statusBar()->setHidden(true);
     */
 
-    // 412!
     viewer->addToolBar(Qt::RightToolBarArea,featuresToolBar);
     viewer->addToolBar(Qt::RightToolBarArea,pointsToolBar);
     viewer->addToolBar(Qt::RightToolBarArea,filesToolBar);
@@ -407,7 +406,6 @@ void SPUserInterface_Qt::onAddButton()
 
     treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
 
-    //412!
     if(actionInsert->isChecked())
         onAddPtButton();
     else
