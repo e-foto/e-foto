@@ -265,7 +265,7 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     GDALDataset *poDstDS;
     char **papszOptions = nullptr;
     papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
-    papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "PACKBITS" );
+    //papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "PACKBITS" );
 
     poDstDS = poDriver->Create( filename, ortho_width, ortho_height, no_bands, GDT_Byte,
                                 papszOptions );
