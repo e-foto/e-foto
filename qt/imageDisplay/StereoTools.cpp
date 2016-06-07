@@ -686,7 +686,7 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
     StereoTool(display)
 {
     _nearDock = new QDockWidget("Detailview");
-    _nearDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    _nearDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 
     _leftNear = _display->getLeftNearDisplay();
     _rightNear = _display->getRightNearDisplay();
@@ -847,7 +847,7 @@ OverStereoTool::OverStereoTool(StereoDisplay* display) :
     StereoTool(display)
 {
     _overDock = new QDockWidget("Overview");
-    _overDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    _overDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 
     _leftOver = _display->getLeftOverDisplay();
     _rightOver = _display->getRightOverDisplay();
