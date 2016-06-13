@@ -69,7 +69,7 @@ public slots:
     void onFeatureListClicked(QModelIndex index);
     void onChangePair(int pos);
     void changePair(int leftKey, int rightKey);
-    void onFeatureSelected();
+    void refreshFeatureSelectedData();
     void onCloseFeature();
     void stereoClicked(QPointF, QPointF);
     void stereoMoved(QPointF, QPointF);

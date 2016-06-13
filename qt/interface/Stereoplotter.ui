@@ -65,11 +65,14 @@
      <height>250</height>
     </size>
    </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Feature editor</string>
+    <string>Feature data</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

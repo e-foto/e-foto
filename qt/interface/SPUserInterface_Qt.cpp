@@ -342,6 +342,7 @@ void SPUserInterface_Qt::onLoadButton()
 
     manager->updateProjections();
     updateData();
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onSaveButton()
@@ -410,13 +411,14 @@ void SPUserInterface_Qt::onAddButton()
         onAddPtButton();
     else
         actionInsert->trigger();
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onRemoveButton()
 {
     manager->removeFeature();
-
     updateData();
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onRemoveAllButton()
@@ -425,8 +427,8 @@ void SPUserInterface_Qt::onRemoveAllButton()
         return;
 
     manager->removeAllFeatures();
-
     updateData();
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onAddPtButton()
@@ -472,6 +474,7 @@ void SPUserInterface_Qt::onRemovePtButton()
 {
     manager->removePoint();
     updateData();
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
@@ -492,12 +495,12 @@ void SPUserInterface_Qt::onFeatureListClicked(QModelIndex index)
 
     manager->setSelected(feat_id, pt_id);
 
-    onFeatureSelected();
+    refreshFeatureSelectedData();
 
     viewer->getDisplay()->updateAll();
 }
 
-void SPUserInterface_Qt::onFeatureSelected()
+void SPUserInterface_Qt::refreshFeatureSelectedData()
 {
     // Get Feature data
     std::string fname;
@@ -537,6 +540,11 @@ void SPUserInterface_Qt::onCloseFeature()
     manager->setSelected(-1,-1);
     treeView->clearSelection();
     updateData();
+    refreshFeatureSelectedData();
+    if(actionSelect->isChecked())
+        onSelPtButton();
+    else
+        actionSelect->trigger();
 }
 
 void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
@@ -587,9 +595,11 @@ void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
         if (pid == -1) pid++;
         treeView->setCurrentIndex(tree->index(pid-1, 0, tree->index(fid-1, 0)));
         treeView->setExpanded(tree->index(fid-1, 0),true);
-        onFeatureSelected();
+        //onFeatureSelected();
         treeView->setFocus();
     }
+
+    refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::stereoMoved(QPointF lPos, QPointF rPos)
