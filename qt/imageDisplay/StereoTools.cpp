@@ -122,8 +122,16 @@ void StereoTool::moveEvent(const QHoverEvent& event)
     if (_actualizePosLabel)
         actualizePosLabel();
 
-    _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-    _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    if (_display->isStereoCursor())
+    {
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    }
+    else
+    {
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()));
+    }
 
     if (!_hasButtomPressed)
         _display->updateAll();
@@ -242,16 +250,22 @@ void StereoTool::wheelEvent(const QWheelEvent & event)
     double numSteps = event.delta() / (15.0 * 8.0);
     if (event.orientation() == Qt::Vertical)
     {
-        if (event.modifiers() == Qt::ShiftModifier)
-            _display->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
-        else if (event.modifiers() == Qt::ControlModifier)
-            _display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
-        else
+        if (_display->isStereoCursor())
         {
-            _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/fabs(numSteps),0));
-            _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/fabs(numSteps),0));
+            if (event.modifiers() == Qt::ShiftModifier)
+                _display->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
+            else if (event.modifiers() == Qt::ControlModifier)
+                _display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
+            else
+            {
+                _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/fabs(numSteps),0));
+                _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/fabs(numSteps),0));
+            }
+            actualizePosLabel();
+            emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+
+            _display->updateAll();
         }
-        _display->updateAll();
     }
 }
 
@@ -690,8 +704,6 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
 
     _leftNear = _display->getLeftNearDisplay();
     _rightNear = _display->getRightNearDisplay();
-    //_leftNear->setHidden(true);
-    //_rightNear->setHidden(true);
     _leftNear->setActivatedTool(this);
     _rightNear->setActivatedTool(this);
     _leftNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
@@ -797,15 +809,6 @@ void NearStereoTool::leaveEvent(const QHoverEvent& event)
 void NearStereoTool::moveEvent(const QHoverEvent& event)
 {
     event.isAccepted();
-
-    /*
-    if (_near->positionIsVisible(_display->getLastMousePosition()) || _cursorIsVisible)
-    {
-        _near->update();
-    }
-    _near->updateMousePosition();
-
-    actualizePosLabel(_near);*/
 }
 
 void NearStereoTool::mousePressed(const QMouseEvent & event)

@@ -543,8 +543,8 @@ StereoDisplay::StereoDisplay(QWidget *parent, StereoScene *currentScene):
         currentScene_ = new StereoScene(this, "", "");
 
     _currentZ = 0;
-    leftCursorOffset_ = QPointF(-4,0);
-    rightCursorOffset_ = QPointF(4,0);
+    leftCursorOffset_ = QPointF(-3,0);
+    rightCursorOffset_ = QPointF(3,0);
     glDisplay_ = new GLDisplay(this);
     QGridLayout* layout = new QGridLayout(this);
     layout->setContentsMargins(0,0,0,0);
