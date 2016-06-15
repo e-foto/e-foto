@@ -338,53 +338,12 @@ unix {
     DEPENDPATH += /usr/include/gdal
 }
 
-
-# Autochange AboutForm code
-ABOUTDIR = qt/infrastructure/
-unix {
-        DEFINES += unix
-	MYDATA = $$system(date -u +%Y.%m) # a versao release so precisa da data sem o dia!
-
-	# MYDATA = $$system(date -u +%y.%m.%d) # Data com o ano usando apenas com 2 digitos
-	MYREV = $$system(svnversion)
-	MYREV ~= s/[a-z]|[A-Z]/
-	CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-		system(sed -r s/[0-9]{4}\\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
-		system(sed -r s/Revision\\ [0-9]{3}/Revision\\ $${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o Build do AboutLayout
-		!build_pass:message(Release build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-	}
-	else:!build_pass:message(Debug build! UNIX)# Essa linha pode ser suprimida, isso so aparecera na saida do compilador(Compile Output)
-}
-win32 {
-	MYDATA = $$system(for /F \"usebackq tokens=1,2,3,4* delims=/| \" %a in (\'%date%\') do @echo %d %c %b %a)
-	MYDATA ~= s/\D/
-	MYYEAR = $$member(MYDATA,0).
-	MYMONTH = $$member(MYDATA,1).
-	MYDAY = $$member(MYDATA,2)
-	MYDATA = $$MYYEAR$$MYMONTH
-
-	# MYDATA2 = $${MYDATA}
-	# MYDATA2 ~= s/^[0-9]{3}/ #Retira os trs primeiros digitos do Ano na data, ou seja, yy.mm.dd
-	MYREV = $$system(subWCrev ../)
-	MYREV = $$find(MYREV, [0-9]{3}.)
-	MYREV ~= s/\D/ # Pega tudo menos numeros(Non-digit)
-	MYREV ~= s/^[0-9]{3}/ # Elimina os tres primeiros digitos
-	!build_pass:message(rev: $${MYREV})
-	!build_pass:message(data: $${MYDATA})
-	CONFIG(release, debug|release) { # Verifica se esta em modo RELEASE
-		system(sed -r s/[0-9]{4}\.[0-9]{2}/$${MYDATA}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza o data do BUILD AboutLayout.ui com a data da compilaçao
-
-		# system(sed -r s/Revision\" \"[0-9]{3}/Revision\" \"$${MYREV}/ -i $${ABOUTDIR}/AboutLayout.ui)# atualiza a revis�o do AboutLayout
-		!build_pass:message(Release build! WIN32)# Essa linha pode ser suprimida, isso s� aparecer� na saida do compilador(Compile Output)
-	}
-	else:!build_pass:message(Debug build! WIN32)# Essa linha pode ser suprimida, isso s� aparecer� na saida do compilador(Compile Output)
-}
-
 # e-foto icon
 RC_FILE = efotoIcon.rc
 
 # install settings
 unix{
+        DEFINES += unix
 	target.path = /usr/local/bin
 	desk.path = /usr/share/applications
 	desk.files += efoto.desktop
