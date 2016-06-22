@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DEM Extraction</string>
+   <string>DSM Extraction</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resource/resource.qrc">
@@ -59,7 +59,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resource/resource.qrc">
-            <normaloff>:/icon/stereo.png</normaloff>:/icon/stereo.png</iconset>
+            <normaloff>:/icon/fileopen.png</normaloff>:/icon/fileopen.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -88,7 +88,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox_11">
        <property name="title">
-        <string>DEM Extraction</string>
+        <string>DSM Extraction</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -97,7 +97,7 @@
         <item row="0" column="1">
          <widget class="QPushButton" name="demButton">
           <property name="toolTip">
-           <string>Automatic DEM extraction</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic DSM extraction&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string/>
@@ -117,7 +117,7 @@
         <item row="0" column="2">
          <widget class="QPushButton" name="saveButton2">
           <property name="toolTip">
-           <string>Save DEM</string>
+           <string>Save DSM</string>
           </property>
           <property name="text">
            <string/>
@@ -137,7 +137,7 @@
         <item row="0" column="3">
          <widget class="QPushButton" name="loadButton">
           <property name="toolTip">
-           <string>Load Extracted DEM</string>
+           <string>Load Extracted DSM</string>
           </property>
           <property name="text">
            <string/>
@@ -173,13 +173,13 @@
      <item>
       <widget class="QGroupBox" name="groupBox_12">
        <property name="title">
-        <string>DEM Interpolation</string>
+        <string>DSM Grid Interpolation</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_18">
         <item row="0" column="0">
          <widget class="QPushButton" name="interButton">
           <property name="toolTip">
-           <string>Interpolate DEM to grid</string>
+           <string>Interpolate DSM to grid</string>
           </property>
           <property name="text">
            <string/>
@@ -199,7 +199,7 @@
         <item row="0" column="1">
          <widget class="QPushButton" name="saveButton">
           <property name="toolTip">
-           <string>Save DEM</string>
+           <string>Save DSM Grid</string>
           </property>
           <property name="text">
            <string/>
@@ -219,7 +219,7 @@
         <item row="0" column="2">
          <widget class="QPushButton" name="loadButton2">
           <property name="toolTip">
-           <string>Load Interpolated DEM</string>
+           <string>Load DSM Grid</string>
           </property>
           <property name="text">
            <string/>
@@ -349,7 +349,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tab_7">
       <attribute name="title">
@@ -2423,12 +2423,12 @@
            </item>
            <item>
             <property name="text">
-             <string>ASCII 3D points (no index)</string>
+             <string>Point cloud (without index)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>ASCII 3D points (index)</string>
+             <string>Point cloud (with index)</string>
             </property>
            </item>
           </widget>
@@ -2460,12 +2460,12 @@
            </property>
            <item>
             <property name="text">
-             <string>Binary E-FOTO DEM format</string>
+             <string>Binary DSM Grid</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>ASCII 3D points</string>
+             <string>ASCII DSM Grid</string>
             </property>
            </item>
           </widget>
@@ -2502,7 +2502,7 @@
      </widget>
      <widget class="QWidget" name="tab_6">
       <attribute name="title">
-       <string>DEM Quality</string>
+       <string>DSM Quality</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_24">
        <item row="0" column="0">

@@ -314,7 +314,7 @@ void SPUserInterface_Qt::onStereoModeChanged(int option)
 void SPUserInterface_Qt::onLoadButton()
 {
     // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Stereo Plotter Features file (*.spf);; All files (*.*)")) ;
 
     // if no file name written, return
     if (filename=="")
@@ -349,9 +349,9 @@ void SPUserInterface_Qt::onSaveButton()
 {
     // File open dialog
     //
-    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Text file (*.txt);; All files (*.*)"));
+    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Stereo Plotter Features file (*.spf);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("txt");
+    salvar.setDefaultSuffix("spf");
     if(salvar.exec())
     {
         QString filename = salvar.selectedFiles()[0];
@@ -398,6 +398,7 @@ void SPUserInterface_Qt::onExportButton()
 
 void SPUserInterface_Qt::onAddButton()
 {
+
     manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, (comboBox_4->currentIndex()+1)%comboBox_4->count());
 
     updateData();
@@ -680,7 +681,64 @@ void SPUserInterface_Qt::setColorMaskRight(int option)
     updateData();
 }
 
+/*
+AddDialog::AddDialog(QWidget *parent) : QDialog(parent)
+{
+    nameLabel = new QLabel(tr("Name:"));
+    typeLabel = new QLabel(tr("Feature type:"));
+    classLabel = new QLabel(tr("Feature class:"));
 
+    nameEdit = new QLineEdit;
+    typeCombo = new QComboBox;
+    classCombo = new QComboBox;
+
+    nameLabel->setBuddy(nameEdit);
+    typeLabel->setBuddy(typeCombo);
+    classLabel->setBuddy(classCombo);
+
+    okButton = new QPushButton(tr("Ok"));
+    okButton->setDefault(true);
+
+    cancelButton = new QPushButton(tr("Cancel"));
+
+    buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(okButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+    QHBoxLayout *nameLayout = new QHBoxLayout;
+    nameLayout->addWidget(nameLabel);
+    nameLayout->addWidget(nameEdit);
+
+    QHBoxLayout *typeLayout = new QHBoxLayout;
+    typeLayout->addWidget(typeLabel);
+    typeLayout->addWidget(typeCombo);
+
+    QHBoxLayout *classLayout = new QHBoxLayout;
+    classLayout->addWidget(classLabel);
+    classLayout->addWidget(classLabel);
+
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    leftLayout->addLayout(topLeftLayout);
+    leftLayout->addWidget(caseCheckBox);
+    leftLayout->addWidget(fromStartCheckBox);
+
+    QGridLayout *mainLayout = new QGridLayout;
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_SIMULATOR)
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+#endif
+    mainLayout->addLayout(leftLayout, 0, 0);
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_SIMULATOR)
+    mainLayout->addWidget(buttonBox, 0, 1);
+#endif
+    mainLayout->addWidget(extension, 1, 0, 1, 2);
+    mainLayout->setRowStretch(2, 1);
+
+    setLayout(mainLayout);
+
+    setWindowTitle(tr("Extension"));
+    extension->hide();
+}
+*/
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

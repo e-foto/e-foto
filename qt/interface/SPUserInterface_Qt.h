@@ -99,6 +99,27 @@ public:
 
 };
 
+/*
+class AddDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    AddDialog(QWidget *parent = 0);
+
+private:
+    QLabel *nameLabel;
+    QLabel *typeLabel;
+    QLabel *classLabel;
+    QLineEdit *nameEdit;
+    QComboBox *typeCombo;
+    QComboBox *classCombo;
+    QPushButton *okButton;
+    QPushButton *cancelButton;
+    QDialogButtonBox *buttonBox;
+};
+*/
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj
