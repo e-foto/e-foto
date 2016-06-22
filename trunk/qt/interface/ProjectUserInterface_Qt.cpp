@@ -55,7 +55,6 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
     this->manager = manager;
     this->currentForm = NULL;
     this->currentItemId = 0;
-    this->savedIn = "";
     this->editState = false;
     this->addNewState = false;
     this->changeModule = false;
@@ -220,7 +219,7 @@ void ProjectUserInterface_Qt::newProject()
     controlButtons.setVisible(true);
     offset.setVisible(true);
 
-    manager->newProject(savedIn);
+    manager->newProject(manager->savedIn);
     //savedIn = "";
     actionSave_file->setEnabled(true);
     actionSave_file_as->setEnabled(true);
@@ -410,7 +409,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
             controlButtons.setVisible(true);
             offset.setVisible(true);
 
-            savedIn = filename.toStdString();
+            manager->savedIn = filename.toStdString();
             //qDebug("load savedIn: %s",savedIn.c_str());
 
             actionSave_file->setEnabled(false);
@@ -465,13 +464,13 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 
 void ProjectUserInterface_Qt::saveFile()
 {
-    if (!savedIn.empty())
+    if (!manager->savedIn.empty())
     {
         QDateTime dateTimeBackup = headerForm.dateTimeEditModificationDate->dateTime();
         //headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
         headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
         manager->editComponent("Header", headerForm.getvalues());
-        if (manager->saveFile(savedIn))
+        if (manager->saveFile(manager->savedIn))
         {
             actionSave_file->setEnabled(false);
         }
@@ -534,7 +533,7 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
 
             if (manager->saveFile(filename.toStdString()))
             {
-                savedIn = filename.toStdString();
+                manager->savedIn = filename.toStdString();
                 actionSave_file->setEnabled(false);
             }
             else
@@ -821,7 +820,7 @@ void ProjectUserInterface_Qt::newTree()
     treeWidget->clear();
     treeItems.clear();
     //this->treeWidget->setHeaderHidden(false);
-    if (savedIn == "")
+    if (manager->savedIn == "")
     {
         //treeWidget->setHeaderLabel(tr("New Project"));
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
@@ -872,7 +871,7 @@ void ProjectUserInterface_Qt::newTree()
 
 void ProjectUserInterface_Qt::updateTree()
 {
-    if (savedIn == "")
+    if (manager->savedIn == "")
     {
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
     }
@@ -2081,7 +2080,7 @@ QString ProjectUserInterface_Qt::getSavedIn()
     //cout<< "cout "<<savedIn.c_str()<<"\n"<<endl;
     //qDebug()<<headerForm.lineEditFilePath->text();
 
-    return  QString(savedIn.c_str()).left(savedIn.find_last_of('/'));
+    return  QString(manager->savedIn.c_str()).left(manager->savedIn.find_last_of('/'));
 
     //return parent->lineEditFilePath->text();
 }
@@ -2948,7 +2947,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 
     std::stringstream imageXml;
     QImage image(fileName);
-    QDir absolutePath (getSavedIn());
+    QDir absolutePath(QString::fromStdString(manager->savedIn));
     int i=fileName.lastIndexOf("/");
     int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
 
@@ -2976,7 +2975,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 {
 
     std::stringstream imageXml;
-    QDir absolutePath (getSavedIn());
+    QDir absolutePath (QString::fromStdString(manager->savedIn));
 
     int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
     QString fileImagePath(".");

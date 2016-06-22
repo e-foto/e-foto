@@ -796,7 +796,8 @@ void PTManager::saveMarks()
 	points+="</points>\n";
 	EDomElement newXml(efotoManager->xmlGetData());
 	newXml.replaceChildByTagName("points",points);
-	efotoManager->xmlSetData(newXml.getContent());
+    efotoManager->xmlSetData(newXml.getContent());
+    efotoManager->saveEPP();
 
 	//qDebug("NEWXML:\n%s",newXml.elementByTagName("points").getContent().c_str());
 }
@@ -923,9 +924,8 @@ std::string PTManager::getUsedImagesXml()
 
 void PTManager::setMarksSavedState(bool marksState)
 {
-	marksSaveState=marksState;
-	if (marksSaveState)
-		efotoManager->setSavedState(false);
+    marksSaveState=marksState;
+    efotoManager->setSavedState(marksState);
 }
 
 bool PTManager::getMarksSavedState()
