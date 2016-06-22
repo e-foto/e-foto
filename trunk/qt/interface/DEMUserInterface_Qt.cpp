@@ -169,7 +169,7 @@ void DEMUserInterface_Qt::closeEvent(QCloseEvent *e)
 
     if (manager->isDemUnsaved())
     {
-        if (QMessageBox::warning(this, "Unsaved work","A DEM was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
+        if (QMessageBox::warning(this, "Unsaved work","A DSM was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
         {
             e->ignore();
             return;
@@ -178,7 +178,7 @@ void DEMUserInterface_Qt::closeEvent(QCloseEvent *e)
 
     if (manager->isGridUnsaved())
     {
-        if (QMessageBox::warning(this, "Unsaved work","An interpolated DEM was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
+        if (QMessageBox::warning(this, "Unsaved work","An interpolated DSM Grid was generated and not saved. Continue?", QMessageBox::Ok, QMessageBox::No) == QMessageBox::No)
         {
             e->ignore();
             return;
@@ -340,7 +340,7 @@ void DEMUserInterface_Qt::onDemSaveClicked()
 
     if (comboBox8->currentIndex() == 0)
     {
-        filter = tr("Full Report (*.pix);; All files (*.*)");
+        filter = tr("ASCII Full 2D + 3D (*.pix);; All files (*.*)");
         suffix = "pix";
     }
     else if (comboBox8->currentIndex() == 1)
@@ -396,12 +396,12 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
 
     if (comboBox9->currentIndex() == 0)
     {
-        filter = tr("DEM Grid (*.dsm);; All files (*.*)");
+        filter = tr("Binary DSM Grid (*.dsm);; All files (*.*)");
         suffix = "dsm";
     }
     else
     {
-        filter = tr("ASCII DEM Grid (*.txt);; All files (*.*)");
+        filter = tr("ASCII DSM Grid (*.txt);; All files (*.*)");
         suffix = "txt";
     }
     QFileDialog salvar(this,tr("Open file"),lastDir,filter);
@@ -427,7 +427,7 @@ void DEMUserInterface_Qt::onDemLoadClicked()
     QString filter;
     if (comboBox8->currentIndex() == 0)
     {
-        filter = tr("Full Report (*.pix);; All files (*.*)");
+        filter = tr("ASCII Full 2D + 3D (*.pix);; All files (*.*)");
     }
     else if (comboBox8->currentIndex() == 1)
     {
@@ -449,7 +449,7 @@ void DEMUserInterface_Qt::onDemLoadClicked()
     {
         filter = tr("All files (*.*)");
     }
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, filter) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM file"), lastDir, filter) ;
     // if no file name written, return
     if (filename=="")
         return;
@@ -474,13 +474,13 @@ void DEMUserInterface_Qt::onDemGridLoadClicked()
     QString filter;
     if (comboBox9->currentIndex() == 0)
     {
-        filter = tr("DEM Grid (*.dsm);; All files (*.*)");
+        filter = tr("Binary DSM Grid (*.dsm);; All files (*.*)");
     }
     else
     {
-        filter = tr("ASCII DEM Grid (*.txt);; All files (*.*)");
+        filter = tr("ASCII DSM Grid (*.txt);; All files (*.*)");
     }
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM Grid file"), lastDir, filter) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM Grid file"), lastDir, filter) ;
     // if no file name written, return
     if (filename=="")
         return;
@@ -489,7 +489,7 @@ void DEMUserInterface_Qt::onDemGridLoadClicked()
     lastDir = filename.left(i);
 
     // Load DEM Grid
-    if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
+    if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox9->currentIndex()))
     {
         QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
         return;
@@ -643,7 +643,7 @@ void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
 void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 {
     // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("Text file (*.txt);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM file"), lastDir, tr("Point cloud (*.xyz);; All files (*.*)")) ;
     // if no file name written, return
     if (filename=="")
         return;
@@ -658,9 +658,9 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
 {
     // File open dialog
-    QFileDialog salvar(this,tr("Save DEM quality"),lastDir,tr("Text file (*.txt);; All files (*.*)"));
+    QFileDialog salvar(this,tr("Save DSM quality"),lastDir,tr("Point cloud (*.txt);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("txt");
+    salvar.setDefaultSuffix("xyz");
     if(salvar.exec())
     {
         QString filename = salvar.selectedFiles()[0];

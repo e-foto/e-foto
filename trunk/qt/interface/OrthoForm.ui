@@ -57,7 +57,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_30">
        <property name="text">
-        <string>DEM file format:</string>
+        <string>Grid file format:</string>
        </property>
       </widget>
      </item>
@@ -68,12 +68,12 @@
        </property>
        <item>
         <property name="text">
-         <string>Binary E-FOTO DEM format</string>
+         <string>Binary DSM Grid</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>ASCII 3D points</string>
+         <string>ASCII DSM Grid</string>
         </property>
        </item>
       </widget>
@@ -94,7 +94,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>DEM file:</string>
+        <string>Grid file name:</string>
        </property>
       </widget>
      </item>
@@ -199,7 +199,12 @@
       <widget class="QComboBox" name="comboBox3">
        <item>
         <property name="text">
-         <string>E-FOTO DEM 2.5</string>
+         <string>E-FOTO Ortho image</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GeoTIFF</string>
         </property>
        </item>
       </widget>
