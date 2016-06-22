@@ -468,6 +468,9 @@ void PTUserInterface_Qt::viewReport()
     connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
     resultView->setWindowModality(Qt::ApplicationModal);
 
+    //exportTxtButtonDisabled!
+    exportTxtButton->setVisible(false);
+
     resultView->show();
 }
 

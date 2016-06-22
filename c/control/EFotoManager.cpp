@@ -1139,9 +1139,9 @@ void EFotoManager::execPTReport()
         // Create and run full report
         PhotoTriReport pt_report(this);
         pt_report.createReport((char *) fileExport.toStdString().c_str());
-
-        reloadProject();
     }
+
+    reloadProject();
 }
 
 // Internal function. Pos from 0 - N-1.

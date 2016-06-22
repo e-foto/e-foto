@@ -192,8 +192,14 @@ void OrthoUserInterface_Qt::onAbortClicked()
 
 void OrthoUserInterface_Qt::onLoadDemClicked()
 {
+    QString fileformat;
+    if (comboBox2->currentIndex() == 0)
+        fileformat = tr("Binary DSM Grid (*.dsm);; All files (*.*)");
+    else
+        fileformat = tr("ASCII DSM Grid (*.txt);; All files (*.*)");
+
     // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open DEM file"), lastDir, tr("DEM (*.dsm);; Text file (*.txt);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM file"), lastDir, fileformat) ;
     // if no file name written, return
     if (filename=="")
         return;
@@ -211,7 +217,7 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
     // Report error
     if (!dem_load_flag)
     {
-        QMessageBox::critical(this,"Error","Invalid DEM file format.");
+        QMessageBox::critical(this,"Error","Invalid DSM file format.");
         return;
     }
 }
@@ -219,7 +225,7 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
 void OrthoUserInterface_Qt::onLoadOrthoClicked()
 {
         // File open dialog
-        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), lastDir, tr("EOI (*.eoi);; All files (*.*)")) ;
+        QString filename = QFileDialog::getOpenFileName(this, tr("Open Ortho-image file"), lastDir, tr("E-FOTO Ortho image (*.eoi);; All files (*.*)")) ;
         // if no file name written, return
         if (filename=="")
                 return;
@@ -243,7 +249,7 @@ void OrthoUserInterface_Qt::onOrthoClicked()
 
     if (!dem_load_flag)
     {
-        QMessageBox::critical(this,"Error","Please, load a DEM first.");
+        QMessageBox::critical(this,"Error","Please, load a DSM first.");
         return;
     }
 
@@ -280,7 +286,7 @@ void OrthoUserInterface_Qt::onOrthoGeoTiffClicked()
 
     if (!dem_load_flag)
     {
-        QMessageBox::critical(this,"Error","Please, load a DEM first.");
+        QMessageBox::critical(this,"Error","Please, load a DSM first.");
         return;
     }
 
