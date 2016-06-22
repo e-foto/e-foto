@@ -454,6 +454,7 @@ public:
     Project* getProject() {return &report_project;}
     void execPTReport();
 
+    void saveEPP();
 };
 
 } // namespace efoto

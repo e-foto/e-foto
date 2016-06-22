@@ -48,6 +48,7 @@ ProjectManager::ProjectManager()
 	this->manager = NULL;
 	this->treeModel = NULL;
 	this->updater = NULL;
+    this->savedIn = "";
 	//loadSettings();
 }
 
@@ -56,6 +57,7 @@ ProjectManager::ProjectManager(EFotoManager* manager)
 	this->manager = manager;
 	this->treeModel = NULL;
 	this->updater = NULL;
+    this->savedIn = "";
 }
 
 ProjectManager::~ProjectManager()
@@ -591,6 +593,15 @@ void ProjectManager::saveSettings(std::string filename)
 {
      QSettings efotoSettings("uerj","efoto");
      efotoSettings.setValue("lastProject",filename.c_str());
+}
+
+bool ProjectManager::execAutosave()
+{
+    if (myInterface != NULL)
+        myInterface->saveFile();
+    else
+        return false;
+    return true;
 }
 
 } // namespace efoto

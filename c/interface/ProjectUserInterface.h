@@ -55,7 +55,8 @@ public:
 
 	// Other Methods
 	//
-	virtual bool exec() = 0;
+    virtual bool exec() = 0;
+    virtual void saveFile() = 0;
 };
 
 } // namespace efoto

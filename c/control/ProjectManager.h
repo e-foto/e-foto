@@ -48,9 +48,11 @@ class ProjectManager
 	EFotoManager* manager;
 	ProjectUserInterface* myInterface;
 	XmlUpdater* updater;
-	ETreeModel* treeModel;
+    ETreeModel* treeModel;
 
 public:
+    std::string savedIn;
+
 	/**
 	* \brief Construtor vazio.
 	*/
@@ -217,6 +219,8 @@ public:
 	* \return bool Retorna verdadeiro se os arquivos foram criados com sucesso. Retorna falso, caso contrário.
 	*/
     bool makeSPFile(std::string filename, int image1, int image2);
+
+    bool execAutosave();
     
     // get and save settings JAR
 private:
