@@ -61,7 +61,6 @@ protected:
     PointForm pointForm;
     ControlButtons controlButtons;
     QModelIndex currentIndex;
-    std::string savedIn;
     bool editState; bool addNewState; bool changeModule;
 
 protected slots:

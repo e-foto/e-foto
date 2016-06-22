@@ -343,6 +343,9 @@ bool PTUserInterface_Qt::exec()
     for (int i = 0; i < listAllImages.size(); i++)
         setFlightDirection(listAllImages.at(i),0);
 
+    // AutoMeasurementDisabled!
+    autoMeasurementButton->setVisible(false);
+
     return true;
 }
 
@@ -373,6 +376,7 @@ void PTUserInterface_Qt::viewReport()
     QLabel *iterations = new QLabel(iter);
     QLabel *converged;
     QLabel *rmseLabel = new QLabel(rmse+" m");
+    QLabel *unitsLabel = new QLabel(QString::fromUtf8("(ω,φ,κ) in degrees and (X0,Y0,Z0) in meters"));
 
     if (ptManager->getBundleAdjustment()->isConverged())
         converged = new QLabel(tr("Converged: yes"));
@@ -386,6 +390,7 @@ void PTUserInterface_Qt::viewReport()
     infoLayout->addWidget(iterations);
     infoLayout->addWidget(converged);
     infoLayout->addWidget(rmseLabel);
+    infoLayout->addWidget(unitsLabel);
 
     /**///tabela das OEs
     QVBoxLayout *oeLayout= new QVBoxLayout();
@@ -492,11 +497,13 @@ void PTUserInterface_Qt::showReportXml()
     QString rmse="RMSE: ";
     rmse+=QString::number(ptManager->getPreviousRmseXML());
     QLabel *rmseLabel = new QLabel(rmse +" m");
+    QLabel *unitsLabel = new QLabel(QString::fromUtf8("(ω,φ,κ) in degrees and (X0,Y0,Z0) in meters"));
 
     QHBoxLayout *infoLayout= new QHBoxLayout();
     infoLayout->addWidget(iterations);
     infoLayout->addWidget(converged);
     infoLayout->addWidget(rmseLabel);
+    infoLayout->addWidget(unitsLabel);
 
     QStringList imagesSelected;
     //oesXml.show('f',3,"oesXml");

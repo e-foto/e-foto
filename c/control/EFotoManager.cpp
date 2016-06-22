@@ -1263,6 +1263,11 @@ int EFotoManager::getPairs(std::deque<int> &listPairs)
     return (listPairs.size() > 0);
 }
 
+void EFotoManager::saveEPP()
+{
+    project->execAutosave();
+}
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj
