@@ -20,6 +20,10 @@
 #include "ui_Stereoplotter.h"
 #include "SPUserInterface.h"
 
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QPushButton>
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -99,15 +103,15 @@ public:
 
 };
 
-/*
 class AddDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    AddDialog(QWidget *parent = 0);
+    AddDialog(SPManager* spmanager, QWidget *parent = 0);
 
 private:
+    SPManager *manager;
     QLabel *nameLabel;
     QLabel *typeLabel;
     QLabel *classLabel;
@@ -116,9 +120,17 @@ private:
     QComboBox *classCombo;
     QPushButton *okButton;
     QPushButton *cancelButton;
-    QDialogButtonBox *buttonBox;
+
+public slots:
+    void updateClassCombo(int);
+    void checkAcceptance(QString);
+    void accept();
+    void reject();
+
+signals:
+    void parametersAccepted(QString fname, int ftype, int fclass);
+
 };
-*/
 
 } // namespace efoto
 } // namespace eng

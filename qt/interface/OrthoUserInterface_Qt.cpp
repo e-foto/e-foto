@@ -90,7 +90,7 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 	QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
 	QObject::connect(abortButton, SIGNAL(clicked()), this, SLOT(onAbortClicked()));
 	QObject::connect(orthoButton, SIGNAL(clicked()), this, SLOT(onOrthoClicked()));
-    QObject::connect(orthoButtonGeoTiff, SIGNAL(clicked()), this, SLOT(onOrthoGeoTiffClicked()));
+    //QObject::connect(orthoButtonGeoTiff, SIGNAL(clicked()), this, SLOT(onOrthoGeoTiffClicked()));
     QObject::connect(loadDemButton, SIGNAL(clicked()), this, SLOT(onLoadDemClicked()));
         QObject::connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadOrthoClicked()));
     QObject::connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onShowImageChanged(int)));
@@ -243,7 +243,17 @@ void OrthoUserInterface_Qt::onLoadOrthoClicked()
         orthoQualityButton->setEnabled(true);
 }
 
+
 void OrthoUserInterface_Qt::onOrthoClicked()
+{
+    // Ortho clicked
+    if (comboBox3->currentIndex() == 0)
+        makeEfotoOrthoImage();
+    else
+        makeGeotiffOrthoImage();
+}
+
+void OrthoUserInterface_Qt::makeEfotoOrthoImage()
 {
     // Ortho clicked
 
@@ -280,7 +290,8 @@ void OrthoUserInterface_Qt::onOrthoClicked()
         orthoQualityButton->setEnabled(true);
     }
 }
-void OrthoUserInterface_Qt::onOrthoGeoTiffClicked()
+
+void OrthoUserInterface_Qt::makeGeotiffOrthoImage()
 {
     // Ortho clicked
 
