@@ -398,21 +398,30 @@ void SPUserInterface_Qt::onExportButton()
 
 void SPUserInterface_Qt::onAddButton()
 {
+    AddDialog addDialog(manager, this);
+    addDialog.setFixedWidth(300);
+    //addDialog.move(featuresToolBar->pos().x()-300,featuresToolBar->pos().y());
+    addDialog.move(QCursor::pos().x()-300,QCursor::pos().y());
+    addDialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 
-    manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, (comboBox_4->currentIndex()+1)%comboBox_4->count());
+    if (addDialog.exec() == QDialog::Accepted)
+    {
+        // Now, the feature is added by the addDialog form in accept method.
+        //manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, (comboBox_4->currentIndex()+1)%comboBox_4->count());
 
-    updateData();
+        updateData();
 
-    int fid, pid;
-    manager->getSelected(fid, pid);
+        int fid, pid;
+        manager->getSelected(fid, pid);
 
-    treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
+        treeView->setCurrentIndex(treeView->model()->index(fid-1,0));
 
-    if(actionInsert->isChecked())
-        onAddPtButton();
-    else
-        actionInsert->trigger();
-    refreshFeatureSelectedData();
+        if(actionInsert->isChecked())
+            onAddPtButton();
+        else
+            actionInsert->trigger();
+        refreshFeatureSelectedData();
+    }
 }
 
 void SPUserInterface_Qt::onRemoveButton()
@@ -681,9 +690,11 @@ void SPUserInterface_Qt::setColorMaskRight(int option)
     updateData();
 }
 
-/*
-AddDialog::AddDialog(QWidget *parent) : QDialog(parent)
+
+AddDialog::AddDialog(SPManager* spmanager, QWidget *parent) : QDialog(parent)
 {
+    manager = spmanager;
+
     nameLabel = new QLabel(tr("Name:"));
     typeLabel = new QLabel(tr("Feature type:"));
     classLabel = new QLabel(tr("Feature class:"));
@@ -696,14 +707,17 @@ AddDialog::AddDialog(QWidget *parent) : QDialog(parent)
     typeLabel->setBuddy(typeCombo);
     classLabel->setBuddy(classCombo);
 
-    okButton = new QPushButton(tr("Ok"));
-    okButton->setDefault(true);
-
     cancelButton = new QPushButton(tr("Cancel"));
+    okButton = new QPushButton(tr("Ok"));
 
-    buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(okButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
+    typeCombo->addItem("Point");
+    typeCombo->addItem("Line");
+    typeCombo->addItem("Polygon");
+    classCombo->addItem("Point");
+    typeCombo->setMinimumWidth(150);
+    classCombo->setMinimumWidth(150);
+    okButton->setDefault(true);
+    okButton->setDisabled(true);
 
     QHBoxLayout *nameLayout = new QHBoxLayout;
     nameLayout->addWidget(nameLabel);
@@ -715,30 +729,86 @@ AddDialog::AddDialog(QWidget *parent) : QDialog(parent)
 
     QHBoxLayout *classLayout = new QHBoxLayout;
     classLayout->addWidget(classLabel);
-    classLayout->addWidget(classLabel);
+    classLayout->addWidget(classCombo);
 
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    leftLayout->addLayout(topLeftLayout);
-    leftLayout->addWidget(caseCheckBox);
-    leftLayout->addWidget(fromStartCheckBox);
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
 
-    QGridLayout *mainLayout = new QGridLayout;
-#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_SIMULATOR)
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-#endif
-    mainLayout->addLayout(leftLayout, 0, 0);
-#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_SIMULATOR)
-    mainLayout->addWidget(buttonBox, 0, 1);
-#endif
-    mainLayout->addWidget(extension, 1, 0, 1, 2);
-    mainLayout->setRowStretch(2, 1);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addLayout(nameLayout);
+    layout->addLayout(typeLayout);
+    layout->addLayout(classLayout);
+    layout->addLayout(buttonLayout);
 
-    setLayout(mainLayout);
+    setLayout(layout);
 
-    setWindowTitle(tr("Extension"));
-    extension->hide();
+    connect(nameEdit, SIGNAL(textChanged(QString)), this, SLOT(checkAcceptance(QString)));
+    connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(typeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateClassCombo(int)));
+
+    nameEdit->setFocus();
+
+    setWindowTitle(tr("Add feature"));
 }
-*/
+
+void AddDialog::updateClassCombo(int feat_type)
+{
+    classCombo->clear();
+
+    // Point
+    if (feat_type == 0)
+    {
+        classCombo->addItem("Point");
+    }
+
+    // Line
+    if (feat_type == 1)
+    {
+        classCombo->addItem("Paved street");
+        classCombo->addItem("Unpaved street");
+        classCombo->addItem("Trail");
+        classCombo->addItem("Railway");
+        classCombo->addItem("River");
+        classCombo->addItem("Bridge");
+        classCombo->addItem("Undefined");
+    }
+
+    // Polygon
+    if (feat_type == 2)
+    {
+        classCombo->addItem("House");
+        classCombo->addItem("Building");
+        classCombo->addItem("Industrial");
+        classCombo->addItem("Club");
+        classCombo->addItem("Station");
+        classCombo->addItem("Wasteland");
+        classCombo->addItem("Square");
+        classCombo->addItem("Park");
+        classCombo->addItem("Forest");
+        classCombo->addItem("Lagoon");
+        classCombo->addItem("Pool");
+        classCombo->addItem("Undefined");
+    }
+}
+
+void AddDialog::checkAcceptance(QString fname)
+{
+    okButton->setDisabled(fname.isEmpty());
+}
+
+void AddDialog::accept()
+{
+    manager->addFeature(nameEdit->text().toStdString(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
+    done(QDialog::Accepted);
+}
+
+void AddDialog::reject()
+{
+    done(QDialog::Rejected);
+}
+
 } // namespace efoto
 } // namespace eng
 } // namespace uerj
