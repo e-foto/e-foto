@@ -740,9 +740,9 @@ void DEMManager::interpolateGrid(/*int source, */ int method, int garea, double 
     // Show image, if selected
     if (isShowImage && !cancel_flag)
     {
-                double res_z = (Zf-Zi)/255.0;
+        double res_z = (Zf-Zi)/255.0;
         Matrix * img = grid->getDemImage();
-                dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
+        dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
         delete img;
     }
 }

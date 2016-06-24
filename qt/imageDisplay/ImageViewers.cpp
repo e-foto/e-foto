@@ -67,6 +67,8 @@ void SingleViewer::loadImage(QImage *image)
 
 void SingleViewer::loadImage(Matrix *image, bool isGrayscale)
 {
+    if (image == NULL)
+        return;
 	SingleScene* ss = (SingleScene*) sd->getCurrentScene();
 	ss->loadImage(image, isGrayscale);
 	tool->setFitView->trigger();
