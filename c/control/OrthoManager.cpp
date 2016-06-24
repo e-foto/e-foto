@@ -320,7 +320,7 @@ void OrthoManager::runOrthoIndividual(int image)
     Xi_img = Xf; Yi_img = Yf; Xf_img = Xi; Yf_img = Yi;
     oui->setProgress(0);
     std::string strimg = Conversion::intToString(image);
-    oui->setCurrentWork("Calculating DEM bounding box for image "+strimg);
+    oui->setCurrentWork("Calculating DSM bounding box for image "+strimg);
 
     for (double Y=Yi; Y<Yf; Y+=res_y)
     {
