@@ -797,11 +797,11 @@ void DemGrid::cutGrid(double min, double max, bool fromList=true)
 // This is an internal function used to debug loading functions
 void DemGrid::printData()
 {
-    printf("DEM header:\n");
+    printf("DSM header:\n");
     printf(" Xi: %f\n Yi: %f\n Xf: %f\n Yf: %f\n",Xi,Yi,Xf,Yf);
     printf(" Resolution X: %f\n Resolution Y: %f\n",res_x,res_y);
     printf(" GRID width: %d\n GRID height: %d\n",dem_width,dem_height);
-    printf("Sample DEM data:\n");
+    printf("Sample DSM data:\n");
 
     unsigned int w,h;
     (dem_width < 10) ? w = dem_width : w = 10;
@@ -922,7 +922,7 @@ void DemGrid::saveDemAscii(char * filename)
     std::ofstream outfile(filename);
 
     // Write header
-    outfile << "-= EFOTO DEM GRID DATA =-\n\n";
+    outfile << "-= EFOTO DSM GRID DATA =-\n\n";
     outfile << "Header info:\n";
     outfile << std::fixed << std::setprecision(5);
     outfile << "Xi=" << Xi << "\nYi=" << Yi << "\nXf=" << Xf << "\nYf=" << Yf << "\n";
@@ -1325,7 +1325,7 @@ std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     Matrix Zerr(list_size,1);
     double Zerror;
 
-    txt << "E-FOTO DEM Quality\n\n";
+    txt << "E-FOTO DSM Quality\n\n";
     txt << "Number of testing points: " << list_size << "\n\n";
 
     // Calculate whole errors
