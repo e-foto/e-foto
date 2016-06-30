@@ -314,7 +314,7 @@ void SPUserInterface_Qt::onStereoModeChanged(int option)
 void SPUserInterface_Qt::onLoadButton()
 {
     // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Stereo Plotter Features file (*.spf);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Stereoplotter features file (*.spf);; All files (*.*)")) ;
 
     // if no file name written, return
     if (filename=="")
@@ -349,7 +349,7 @@ void SPUserInterface_Qt::onSaveButton()
 {
     // File open dialog
     //
-    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Stereo Plotter Features file (*.spf);; All files (*.*)"));
+    QFileDialog salvar(this, tr("Save features file"), lastDir, tr("Stereoplotter features file (*.spf);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
     salvar.setDefaultSuffix("spf");
     if(salvar.exec())
@@ -372,7 +372,7 @@ void SPUserInterface_Qt::onSaveButton()
 void SPUserInterface_Qt::onExportButton()
 {
     // File open dialog
-    QFileDialog salvar(this, tr("Export features as text file"), lastDir, tr("Text file (*.txt);; Shape file (*.shp)"));
+    QFileDialog salvar(this, tr("Export features"), lastDir, tr("Text file (*.txt);; Shape file (*.shp)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
     //salvar.setDefaultSuffix("txt");
     if(salvar.exec())

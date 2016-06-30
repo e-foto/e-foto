@@ -36,6 +36,7 @@
 
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 
 namespace br {
 namespace uerj {
@@ -501,7 +502,8 @@ OrthoQualityUserInterface_Qt::OrthoQualityUserInterface_Qt(OrthoManager *manager
 
         connect(viewer->getMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
         connect(loadButton,SIGNAL(clicked()),this,SLOT(loadPoints()));
-        connect(saveButton,SIGNAL(clicked()),this,SLOT(saveQuality()));
+        connect(saveQButton,SIGNAL(clicked()),this,SLOT(saveQuality()));
+        connect(loadQButton,SIGNAL(clicked()),this,SLOT(loadQuality()));
         connect(doneButton,SIGNAL(clicked()),this,SLOT(close()));
         connect(deleteButton,SIGNAL(clicked()),this,SLOT(onDeletePoint()));
         connect(calculateButton,SIGNAL(clicked()),this,SLOT(calculateAll()));
@@ -681,11 +683,41 @@ void OrthoQualityUserInterface_Qt::saveQuality()
     }
 }
 
+void OrthoQualityUserInterface_Qt::loadQuality()
+{
+    // Define file filters
+    QString filetype = tr("Text file (*.txt);; All files (*.*)");
+
+    // File open dialog
+    QString filename = QFileDialog::getOpenFileName(this, tr("Load ortho-image quality report"), lastDir, filetype);
+
+    // if no file name written, return
+    if (filename=="")
+            return;
+
+    // Save last dir
+    int i=filename.lastIndexOf("/");
+    lastDir = filename.left(i);
+
+    // Load points
+    loadPointsFromQuality((char *)filename.toStdString().c_str());
+    updateMarks();
+}
+
 void OrthoQualityUserInterface_Qt::loadPoints()
 {
-    QString filename;
+    // Define file filters
+    QString filetype;
+    switch (comboBox1->currentIndex())
+    {
+        case 0: filetype = tr("Point cloud (*.xyz);; All files (*.*)"); break;
+        case 1: filetype = tr("Stereoplotter features file(*.spf);; All files (*.*)"); break;
+    }
 
-    filename = QFileDialog::getOpenFileName(this, tr("Load points for testing quality"), lastDir, tr("Points (*.txt);; All files (*.*)"));
+    // File open dialog
+    QString filename = QFileDialog::getOpenFileName(this, tr("Load points for testing quality"), lastDir, filetype);
+
+    // if no file name written, return
     if (filename=="")
             return;
 
@@ -698,7 +730,6 @@ void OrthoQualityUserInterface_Qt::loadPoints()
     {
         case 0: loadPointsFromTxt((char *)filename.toStdString().c_str()); break;
         case 1: loadPointsFromSP((char *)filename.toStdString().c_str()); break;
-        case 2: loadPointsFromQuality((char *)filename.toStdString().c_str()); break;
     }
 
     updateMarks();
@@ -804,7 +835,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
     if (arq.fail())
             return 0;
 
-    double RX, RY, OX, OY, dX, dY, pm;
+    double data[7];
     tableWidget->setRowCount(0);
     QTableWidgetItem *newItem;
     int tab_pos = 0;
@@ -819,9 +850,17 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
         return 0;
     }
 
-    while (!arq.fail())
+    std::string line;
+    while(std::getline(arq,line))
     {
-        arq >> RX >> RY >> OX >> OY >> dX >> dY >> pm;
+        std::stringstream  lineStream(line);
+        std::string        cell;
+        int i = 0;
+        while(std::getline(lineStream,cell,'\t'))
+        {
+            data[i] = atof(cell.c_str());
+            i++;
+        }
 
         // Add new table items
         tableWidget->insertRow(tab_pos);
@@ -829,11 +868,11 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
         {
             switch (k)
             {
-                case 0 : newItem = new QTableWidgetItem(QString::number(RX,'f',5)); break;
-                case 1 : newItem = new QTableWidgetItem(QString::number(RY,'f',5)); break;
-                case 2 : newItem = new QTableWidgetItem(QString::number(OX,'f',5)); break;
-                case 3 : newItem = new QTableWidgetItem(QString::number(OY,'f',5)); break;
-                default : newItem = new QTableWidgetItem(""); break;
+            case 0 :
+            case 1 : newItem = new QTableWidgetItem(QString::number(data[k],'f',5)); break;
+            case 2 :
+            case 3 : newItem = (data[k] == 0.0) ? new QTableWidgetItem("") : new QTableWidgetItem(QString::number(data[k],'f',5)); break;
+            default : newItem = new QTableWidgetItem(""); break;
             }
             newItem->setTextAlignment(Qt::AlignCenter);
             tableWidget->setItem(tab_pos, k, newItem);
@@ -844,7 +883,8 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename)
 
     arq.close();
 
-    // Remove last 2 rows (avg and std)
+    // Remove last rows (avg and std)
+    tableWidget->removeRow(tableWidget->rowCount()-2);
     tableWidget->removeRow(tableWidget->rowCount()-1);
 
     tab_pos = tableWidget->rowCount();
@@ -920,37 +960,55 @@ void OrthoQualityUserInterface_Qt::calculateAll()
         return;
 
     // Calculate errors
+    int used_points = no_points;
     for (int i=0; i<no_points; i++)
     {
-        dX = getDoubleTableAt(i,2) - getDoubleTableAt(i,0);
-        dY = getDoubleTableAt(i,3) - getDoubleTableAt(i,1);
-        planerr = sqrt(dX*dX + dY*dY);
-        setTableAt(i,4,dX);
-        setTableAt(i,5,dY);
-        setTableAt(i,6,planerr);
+        if (getTableAt(i,2) != "" && getTableAt(i,3) != "")
+        {
+            dX = getDoubleTableAt(i,2) - getDoubleTableAt(i,0);
+            dY = getDoubleTableAt(i,3) - getDoubleTableAt(i,1);
+            planerr = sqrt(dX*dX + dY*dY);
+            setTableAt(i,4,dX);
+            setTableAt(i,5,dY);
+            setTableAt(i,6,planerr);
+        }
+        else
+            used_points--;
     }
 
     // Calculate average based on errors
     for (int i=0; i<no_points; i++)
     {
-        avg[0] += getDoubleTableAt(i,4);
-        avg[1] += getDoubleTableAt(i,5);
-        avg[2] += getDoubleTableAt(i,6);
+        if (getTableAt(i,4) != "")
+        {
+            avg[0] += getDoubleTableAt(i,4);
+            avg[1] += getDoubleTableAt(i,5);
+            avg[2] += getDoubleTableAt(i,6);
+        }
     }
-    avg[0] /= double(no_points);
-    avg[1] /= double(no_points);
-    avg[2] /= double(no_points);
+    if (used_points != 0)
+    {
+        avg[0] /= double(used_points);
+        avg[1] /= double(used_points);
+        avg[2] /= double(used_points);
+    }
 
     // Calculate standard deviation based on errors
     for (int i=0; i<no_points; i++)
     {
-        stddev[0] += pow(getDoubleTableAt(i,4) - avg[0], 2);
-        stddev[1] += pow(getDoubleTableAt(i,5) - avg[1], 2);
-        stddev[2] += pow(getDoubleTableAt(i,6) - avg[2], 2);
+        if (getTableAt(i,4) != "")
+        {
+            stddev[0] += pow(getDoubleTableAt(i,4) - avg[0], 2);
+            stddev[1] += pow(getDoubleTableAt(i,5) - avg[1], 2);
+            stddev[2] += pow(getDoubleTableAt(i,6) - avg[2], 2);
+        }
     }
-    stddev[0] = sqrt(stddev[0] / double(no_points));
-    stddev[1] = sqrt(stddev[1] / double(no_points));
-    stddev[2] = sqrt(stddev[2] / double(no_points));
+    if (used_points != 0)
+    {
+        stddev[0] = sqrt(stddev[0] / double(used_points));
+        stddev[1] = sqrt(stddev[1] / double(used_points));
+        stddev[2] = sqrt(stddev[2] / double(used_points));
+    }
 
     for (int i=0; i<3; i++)
     {

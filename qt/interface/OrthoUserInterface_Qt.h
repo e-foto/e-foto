@@ -119,6 +119,7 @@ public:
 public slots:
     void imageClicked(QPointF);
     void saveQuality();
+    void loadQuality();
     void loadPoints();
     void onDeletePoint();
     void calculateAll();
