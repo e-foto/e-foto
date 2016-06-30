@@ -642,8 +642,16 @@ void DEMUserInterface_Qt::onShowImageStateChanged(int opt)
 
 void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 {
+    // Define file filters
+    QString filetype;
+    if (comboBox->currentIndex() == 0)
+        filetype = tr("Point cloud (*.xyz);; All files (*.*)");
+    else
+        filetype = tr("Stereoplotter features file(*.spf);; All files (*.*)");
+
     // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM file"), lastDir, tr("Point cloud (*.xyz);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open DSM file"), lastDir, filetype) ;
+
     // if no file name written, return
     if (filename=="")
         return;
@@ -658,9 +666,9 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
 {
     // File open dialog
-    QFileDialog salvar(this,tr("Save DSM quality"),lastDir,tr("Point cloud (*.txt);; All files (*.*)"));
+    QFileDialog salvar(this,tr("Save DSM quality report"),lastDir,tr("Text file (*.txt);; All files (*.*)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("xyz");
+    salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
         QString filename = salvar.selectedFiles()[0];
@@ -779,7 +787,7 @@ void DEMUserInterface_Qt::onSeedEditorClosed()
 void DEMUserInterface_Qt::onStereoplotterClicked()
 {
     // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Stereoplotter file"), lastDir, tr("Stereoplotter file (*.txt);; All files (*.*)")) ;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Stereoplotter file"), lastDir, tr("Stereoplotter file (*.spf);; All files (*.*)")) ;
     // if no file name written, return
     if (filename=="")
         return;
