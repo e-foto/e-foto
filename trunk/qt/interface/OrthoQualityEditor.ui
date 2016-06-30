@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
+    <width>957</width>
     <height>530</height>
    </rect>
   </property>
@@ -49,33 +49,30 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Load points:</string>
+            <string>Input type:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QComboBox" name="comboBox1">
+           <property name="minimumSize">
+            <size>
+             <width>220</width>
+             <height>0</height>
+            </size>
+           </property>
            <item>
             <property name="text">
-             <string>Text - X, Y, Z</string>
+             <string>Point cloud (without index)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>E-FOTO Stereoplotter</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Ortho-image quality</string>
+             <string>Stereoplotter features</string>
             </property>
            </item>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QToolButton" name="loadButton">
            <property name="minimumSize">
@@ -97,7 +94,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="saveButton">
+          <widget class="QToolButton" name="deleteButton">
            <property name="minimumSize">
             <size>
              <width>50</width>
@@ -105,21 +102,31 @@
             </size>
            </property>
            <property name="toolTip">
-            <string>Save ortho-image quality report</string>
+            <string>Delete point</string>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset resource="../resource/resource.qrc">
-             <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
+             <normaloff>:/icon/remove.png</normaloff>:/icon/remove.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>Show terrain points</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -140,7 +147,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Calculate</string>
+          <string>Calculate quality</string>
          </property>
          <property name="text">
           <string/>
@@ -152,20 +159,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="deleteButton">
+        <widget class="QToolButton" name="saveQButton">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -173,14 +167,34 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Delete point</string>
+          <string>Save ortho-image quality report</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="../resource/resource.qrc">
-           <normaloff>:/icon/remove.png</normaloff>:/icon/remove.png</iconset>
+           <normaloff>:/icon/filesave</normaloff>:/icon/filesave</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="loadQButton">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Open ortho-image quality report</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resource/resource.qrc">
+           <normaloff>:/icon/fileopen.png</normaloff>:/icon/fileopen.png</iconset>
          </property>
         </widget>
        </item>
@@ -198,47 +212,28 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
-         <property name="text">
-          <string>Show terrain points</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="doneButton">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Exit</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../resource/resource.qrc">
-           <normaloff>:/icon/done.png</normaloff>:/icon/done.png</iconset>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QToolButton" name="doneButton">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Exit</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../resource/resource.qrc">
+             <normaloff>:/icon/done.png</normaloff>:/icon/done.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -270,9 +265,6 @@
        <property name="selectionBehavior">
         <enum>QAbstractItemView::SelectRows</enum>
        </property>
-       <attribute name="horizontalHeaderDefaultSectionSize">
-        <number>140</number>
-       </attribute>
        <attribute name="horizontalHeaderDefaultSectionSize">
         <number>140</number>
        </attribute>

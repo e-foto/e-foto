@@ -349,7 +349,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_7">
       <attribute name="title">
@@ -1139,12 +1139,18 @@
            <property name="text">
             <string>Eliminate bad points</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_2">
            <property name="text">
             <string>Clear matching list</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -2531,14 +2537,26 @@
           <layout class="QHBoxLayout" name="horizontalLayout_23">
            <item>
             <widget class="QComboBox" name="comboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>220</width>
+               <height>0</height>
+              </size>
+             </property>
              <item>
               <property name="text">
-               <string>Point list (X,Y,Z)</string>
+               <string>Point cloud (without index)</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>E-FOTO Features (SP 1.65)</string>
+               <string>Stereoplotter features</string>
               </property>
              </item>
             </widget>
