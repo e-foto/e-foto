@@ -30,6 +30,7 @@
 #include <QPushButton>
 #include <QInputDialog>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 namespace br {
 namespace uerj {
@@ -169,6 +170,13 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
 {
     if (p.x() < 0 || p.y() < 0)
         return;
+    if (table1->model()->rowCount() == 0)
+    {
+        QMessageBox* alert= new QMessageBox(QMessageBox::Warning,"Points missing","You need to add points in the project before performing this task.\n");
+        alert->show();
+        return;
+    }
+
     imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
 
     points->setData(points->index(table1->currentIndex().row(), 7), QVariant(p.x()));
