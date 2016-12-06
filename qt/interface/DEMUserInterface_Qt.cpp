@@ -459,7 +459,7 @@ void DEMUserInterface_Qt::onDemLoadClicked()
     lastDir = filename.left(i);
 
     // Load DEM
-    if (!manager->loadDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex()))
+    if (!manager->loadDem((char *)filename.toLocal8Bit().constData(), comboBox8->currentIndex()))
     {
         QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
         return;
@@ -489,7 +489,7 @@ void DEMUserInterface_Qt::onDemGridLoadClicked()
     lastDir = filename.left(i);
 
     // Load DEM Grid
-    if (!manager->loadDemGrid((char *)filename.toStdString().c_str(), comboBox9->currentIndex()))
+    if (!manager->loadDemGrid((char *)filename.toLocal8Bit().constData(), comboBox9->currentIndex()))
     {
         QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
         return;
@@ -660,7 +660,7 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
     int i=filename.lastIndexOf("/");
     lastDir = filename.left(i);
 
-    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toStdString().c_str(), comboBox->currentIndex())));
+    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex())));
 }
 
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
@@ -796,7 +796,7 @@ void DEMUserInterface_Qt::onStereoplotterClicked()
     int i=filename.lastIndexOf("/");
     lastDir = filename.left(i);
 
-    if (manager->loadDemFeature((char *) filename.toStdString().c_str()))
+    if (manager->loadDemFeature((char *) filename.toLocal8Bit().constData()))
         enableAfterDEM(2);
 }
 
@@ -1171,7 +1171,7 @@ void SeedEditorUserInterface_Qt::loadSeeds()
     lastDir = filename.left(i);
 
     // Load seeds
-    seeds.load((char *)filename.toStdString().c_str(), 0);
+    seeds.load((char *)filename.toLocal8Bit().constData(), 0);
 
     // Update data
     updateData(/*comboBox1->currentIndex()*/);

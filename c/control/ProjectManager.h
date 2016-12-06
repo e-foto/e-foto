@@ -97,7 +97,7 @@ public:
 	* \param  filename Nome do arquivo.
 	* \return  bool Retorna verdadeiro se o projeto foi carregado corretamente. Retorna falso, caso contrário.
 	*/
-    bool loadFile(std::string filename);
+    bool loadFile(const char *filename);
 	/**
 	* \brief Método que salva um projeto em um arquivo do tipo *.epp.
 	* \param  filename Nome do arquivo.
@@ -226,7 +226,7 @@ public:
 private:
 
  
-    void saveSettings(std::string filename);
+    void saveSettings(const char *filename);
 };
 
 } // namespace efoto

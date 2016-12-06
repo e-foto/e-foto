@@ -182,12 +182,12 @@ bool ProjectManager::saveProject()
 	return false;
 }
 
-bool ProjectManager::loadFile(std::string filename)
+bool ProjectManager::loadFile(const char *filename)
 {
 	if (manager != NULL)
 	{
         std::stringstream myData;
-        std::ifstream myFile(filename.c_str());
+        std::ifstream myFile(filename);
 		if (updater != NULL)
 		{
 			delete updater;
@@ -589,10 +589,10 @@ bool ProjectManager::makeSPFile(std::string filename, int image1, int image2)
 
 
  
-void ProjectManager::saveSettings(std::string filename)
+void ProjectManager::saveSettings(const char *filename)
 {
      QSettings efotoSettings("uerj","efoto");
-     efotoSettings.setValue("lastProject",filename.c_str());
+     efotoSettings.setValue("lastProject",filename);
 }
 
 bool ProjectManager::execAutosave()

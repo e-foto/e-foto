@@ -370,7 +370,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
         return;
     else
     {
-        if (manager->loadFile(filename.toStdString()))
+        if (manager->loadFile(filename.toLocal8Bit().constData()))
         {
             EDomElement imagesXml(manager->getXml("images").c_str());
             std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");

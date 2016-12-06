@@ -331,7 +331,7 @@ void SPUserInterface_Qt::onLoadButton()
         append = QMessageBox::question(this, "Open features", "Clear or append featues ?","Clear","Append");
 
     // Load DEM
-    bool sp_load_flag = manager->loadFeatures((char *)filename.toStdString().c_str(), append);
+    bool sp_load_flag = manager->loadFeatures((char *)filename.toLocal8Bit().constData(), append);
 
     // Report error
     if (!sp_load_flag)

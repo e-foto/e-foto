@@ -1138,7 +1138,7 @@ void EFotoManager::execPTReport()
 
         // Create and run full report
         PhotoTriReport pt_report(this);
-        pt_report.createReport((char *) fileExport.toStdString().c_str());
+        pt_report.createReport((char *) fileExport.toLocal8Bit().constData());
     }
 
     reloadProject();

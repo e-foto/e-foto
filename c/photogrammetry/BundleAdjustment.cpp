@@ -1562,12 +1562,12 @@ int BundleAdjustment::testConverged()
     // printf("testando X1");
     for (int i=0;i<rowsX1;i++)
     {
-        if (isinf(fabs(x1.get(i+1,1))))
+        if (std::isinf(fabs(x1.get(i+1,1))))
         {
             qDebug("numero e INFINITO");
             return -2;
         }
-        if (isnan(fabs(x1.get(i+1,1))))
+        if (std::isnan(fabs(x1.get(i+1,1))))
         {
             qDebug("numero e NAN");
             return -1;
@@ -1590,12 +1590,12 @@ int BundleAdjustment::testConverged()
     //printf("testando X2");
     for (int i=1;i<=rowsX2;i++)
     {
-        if (isinf(fabs(x2.get(i,1))))
+        if (std::isinf(fabs(x2.get(i,1))))
         {
             qDebug("numero e INFINITO");
             return -2;
         }
-        if (isnan(fabs(x2.get(i,1))))
+        if (std::isnan(fabs(x2.get(i,1))))
         {
             qDebug("numero e NAN");
             return -1;
