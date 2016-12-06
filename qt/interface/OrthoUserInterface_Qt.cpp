@@ -213,7 +213,7 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
     lineEdit->setText(filename);
 
     // Load DEM
-    dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toStdString().c_str(),comboBox2->currentIndex());
+    dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toLocal8Bit().constData(),comboBox2->currentIndex());
 
     // Report error
     if (!dem_load_flag)
@@ -239,7 +239,7 @@ void OrthoUserInterface_Qt::onLoadOrthoClicked()
         lineEdit->setText(filename);
 
         // Load Ortho
-        manager->loadOrtho((char *)lineEdit->text().toStdString().c_str());
+        manager->loadOrtho((char *)lineEdit->text().toLocal8Bit().constData());
 
         orthoQualityButton->setEnabled(true);
 }
@@ -700,7 +700,7 @@ void OrthoQualityUserInterface_Qt::loadQuality()
     lastDir = filename.left(i);
 
     // Load points
-    loadPointsFromQuality((char *)filename.toStdString().c_str());
+    loadPointsFromQuality((char *)filename.toLocal8Bit().constData());
     updateMarks();
 }
 
@@ -728,8 +728,8 @@ void OrthoQualityUserInterface_Qt::loadPoints()
     // Check open option
     switch (comboBox1->currentIndex())
     {
-        case 0: loadPointsFromTxt((char *)filename.toStdString().c_str()); break;
-        case 1: loadPointsFromSP((char *)filename.toStdString().c_str()); break;
+        case 0: loadPointsFromTxt((char *)filename.toLocal8Bit().constData()); break;
+        case 1: loadPointsFromSP((char *)filename.toLocal8Bit().constData()); break;
     }
 
     updateMarks();
