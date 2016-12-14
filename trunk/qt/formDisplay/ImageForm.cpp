@@ -330,12 +330,12 @@ void ImageForm::metadataVisibleChanged(QString newText)
 
 std::string ImageForm :: getFileImageName()
 {
-    return fileImageName.toStdString().c_str();
+    return fileImageName.toLocal8Bit().constData();
 }
 
 std::string ImageForm :: getFileImagePath()
 {
-    return fileImagePath.toStdString().c_str();
+    return fileImagePath.toLocal8Bit().constData();
 }
 
 bool ImageForm::isForm(std::string formName)

@@ -445,16 +445,19 @@ bool ReportUserInterface_Qt::saveEPR()
         int i=filename.lastIndexOf("/");
         QString filePath = filename.left(i);
 
-        bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
+        //bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
+        bool done = manager->makeFile(filename.toLocal8Bit().constData(),idExt,treeItems);
         bool doneXslt = false;
 
         if(idExt == TXTTYPE)
         {
-            doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
+           //doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
+            doneXslt = manager->makeXslt(TXTTYPE,filePath.toLocal8Bit().constData());
         } else {
             if(idExt == HTMTYPE)
             {
-                doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
+                //doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
+                doneXslt = manager->makeXslt(HTMTYPE,filePath.toLocal8Bit().constData());
             }
             else
             {

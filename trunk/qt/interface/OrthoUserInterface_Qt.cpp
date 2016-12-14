@@ -284,7 +284,7 @@ void OrthoUserInterface_Qt::makeEfotoOrthoImage()
         disableOptions();
         setAllowClose(false);
         manager->setInterMethod(comboBox4->currentIndex());
-        manager->orthoRectification((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        manager->orthoRectification((char *)filename.toLocal8Bit().constData(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();
         setCurrentWork("Done");
@@ -321,7 +321,7 @@ void OrthoUserInterface_Qt::makeGeotiffOrthoImage()
         disableOptions();
         setAllowClose(false);
         manager->setInterMethod(comboBox4->currentIndex());
-        manager->orthoRectificationGeoTiff((char *)filename.toStdString().c_str(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        manager->orthoRectificationGeoTiff((char *)filename.toLocal8Bit().constData(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();
         setCurrentWork("Done");
@@ -387,7 +387,7 @@ void OrthoUserInterface_Qt::setProgress(int progress)
 
 void OrthoUserInterface_Qt::setCurrentWork(std::string msg)
 {
-    QString qmsg = QString::fromStdString(msg);
+    QString qmsg = QString::fromLocal8Bit(msg.c_str());
     workLabel->setText(qmsg);
 }
 
@@ -664,7 +664,7 @@ void OrthoQualityUserInterface_Qt::saveQuality()
         int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-        std::ofstream outfile((char *)filename.toStdString().c_str());
+        std::ofstream outfile((char *)filename.toLocal8Bit().constData());
 
         if (outfile.fail())
             return;
