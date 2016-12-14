@@ -139,6 +139,6 @@ std::deque<std::string> WindowsSelectPage::getSelectedItens()
 	//qDebug()<<checkedModel->stringList();
 	int size=checkedModel->stringList().size();
 	for (int i=0;i<size;i++)
-		list.push_back(checkedModel->stringList().at(i).toStdString().c_str());
+        list.push_back(checkedModel->stringList().at(i).toLocal8Bit().constData());
 	return list;
 }

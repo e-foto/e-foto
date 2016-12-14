@@ -383,7 +383,7 @@ void DEMUserInterface_Qt::onDemSaveClicked()
         lastDir = filename.left(i);
 
         // Save DEM
-        manager->saveDem((char *)filename.toStdString().c_str(), comboBox8->currentIndex());
+        manager->saveDem((char *)filename.toLocal8Bit().constData(), comboBox8->currentIndex());
 
     }
 }
@@ -418,7 +418,7 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
         lastDir = filename.left(i);
 
         // Save DEM
-        manager->saveDemGrid((char *)filename.toStdString().c_str(), comboBox9->currentIndex());
+        manager->saveDemGrid((char *)filename.toLocal8Bit().constData(), comboBox9->currentIndex());
     }
 }
 void DEMUserInterface_Qt::onDemLoadClicked()
@@ -660,7 +660,7 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked()
     int i=filename.lastIndexOf("/");
     lastDir = filename.left(i);
 
-    textEdit->setText(QString::fromStdString(manager->getDemQuality((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex())));
+    textEdit->setText(QString::fromLocal8Bit(manager->getDemQuality((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex()).c_str()));
 }
 
 void DEMUserInterface_Qt::onSavePtsButtonClicked()
@@ -684,9 +684,10 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked()
         int i=filename.lastIndexOf("/");
         lastDir = filename.left(i);
 
-        std::ofstream outfile(filename.toStdString().c_str());
+        std::ofstream outfile(filename.toLocal8Bit().constData());
 
-        outfile << textEdit->toPlainText().toStdString();
+        //outfile << textEdit->toPlainText().toStdString();
+        outfile << textEdit->toPlainText().toLocal8Bit().constData();
 
         outfile.close();
     }
@@ -1153,9 +1154,10 @@ void SeedEditorUserInterface_Qt::saveSeeds()
         lastDir = filename.left(i);
 
         // Save seeds
-        seeds.save((char *)filename.toStdString().c_str(), 0);
+        seeds.save((char *)filename.toLocal8Bit().constData(), 0);
         // Expanção do XML
-        manager->addSeedsToXML(filename.toStdString());
+        //manager->addSeedsToXML(filename.toStdString());
+        manager->addSeedsToXML(filename.toLocal8Bit().constData());
     }
 }
 void SeedEditorUserInterface_Qt::loadSeeds()
@@ -1335,8 +1337,10 @@ void SeedEditorUserInterface_Qt::updateData(/*int i*/)
     std::string left_file = listAllImages.at(left_id-1)->getFilepath() + '/' + listAllImages.at(left_id-1)->getFilename();
     std::string right_file = listAllImages.at(right_id-1)->getFilepath() + '/' + listAllImages.at(right_id-1)->getFilename();
 
-    viewer->loadLeftImage(QString::fromStdString(left_file));
-    viewer->loadRightImage(QString::fromStdString(right_file));
+    //viewer->loadLeftImage(QString::fromStdString(left_file));
+    viewer->loadLeftImage(QString::fromLocal8Bit(left_file.c_str()));
+    //viewer->loadRightImage(QString::fromStdString(right_file));
+    viewer->loadRightImage(QString::fromLocal8Bit(right_file.c_str()));
 
     //
     // Update marks

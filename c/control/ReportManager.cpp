@@ -517,10 +517,10 @@ std::string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*> treeI
 						for(unsigned int j = 0; j < fidMarks.size(); j++)
 						{
 							txt += "<fidMark>\n";
-							QStringList gmlpos = QString::fromStdString(sensor->getAnaFidMarkAt(j).getGmlPos()).split(" ");
+                            QStringList gmlpos = QString::fromLocal8Bit(sensor->getAnaFidMarkAt(j).getGmlPos().c_str()).split(" ");
 							txt += "<fidMarkNo>" + Conversion::intToString(j+1) + "</fidMarkNo>\n";
-							txt += "<gmlX>" + gmlpos.at(0).toStdString() + "</gmlX>\n";
-							txt += "<gmlY>" + gmlpos.at(1).toStdString() + "</gmlY>\n";
+                            txt += "<gmlX>" + std::string(gmlpos.at(0).toLocal8Bit().constData()) + "</gmlX>\n";
+                            txt += "<gmlY>" + std::string(gmlpos.at(1).toLocal8Bit().constData()) + "</gmlY>\n";
 							txt += "<lin>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getLin()) + "</lin>\n";
 							txt += "<col>" + Conversion::doubleToString(io->getImage()->getDigFidMarkAt(j).getCol()) + "</col>\n";
 							txt += "</fidMark>\n";

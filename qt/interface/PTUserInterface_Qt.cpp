@@ -318,11 +318,11 @@ bool PTUserInterface_Qt::exec()
     /// Gambiarra para o Carlos
 
     /** carregar imagem da esquerda*/
-    viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
+    viewer->loadLeftImage(QString::fromLocal8Bit(ptManager->getFilePath(leftImageString).c_str()));
     viewer->getLeftDisplay()->getCurrentScene()->scaleTo(1);
 
     /** carregar imagem da direita*/
-    viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
+    viewer->loadRightImage(QString::fromLocal8Bit(ptManager->getFilePath(rightImageString).c_str()));
     viewer->getRightDisplay()->getCurrentScene()->scaleTo(1);
 
     updateImageTable(leftImageTableWidget, leftImageString);
@@ -513,7 +513,7 @@ void PTUserInterface_Qt::showReportXml()
     for (size_t i=0; i<oesXml.getRows();i++)
     {
         //qDebug("imageID: %d\n",oesXml.getInt(i+1,1));
-        imagesSelected << QString::fromStdString(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
+        imagesSelected << QString::fromLocal8Bit(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
     }
     oesXml=oesXml.sel(1,oesXml.getRows(),2,7);
     ETableWidget *table= new ETableWidget();
@@ -580,7 +580,7 @@ void PTUserInterface_Qt::showSelectionWindow()
         QString ids="";
         for (size_t i=0;i<idsOut.size() ; i++)
         {
-            ids+=QString::fromStdString(idsOut.at(i));
+            ids+=QString::fromLocal8Bit(idsOut.at(i).c_str());
             ids+=", ";
         }
         ids.chop(2);
@@ -687,7 +687,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 
     if(sender()==leftImageComboBox)
     {
-        leftImageString=imageFilename.toStdString().c_str();
+        leftImageString=imageFilename.toLocal8Bit().constData();
         leftImageKey = ptManager->getImageId(leftImageString);
         QString currentRightImage=rightImageComboBox->currentText();
         rightImageComboBox->blockSignals(true);
@@ -696,14 +696,14 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
         rightImageComboBox->addItems(listImageRight);
         rightImageComboBox->setCurrentIndex(rightImageComboBox->findText(currentRightImage,Qt::MatchExactly));
         rightImageComboBox->blockSignals(false);
-        viewer->loadLeftImage(QString::fromStdString(ptManager->getFilePath(leftImageString)));
+        viewer->loadLeftImage(QString::fromLocal8Bit(ptManager->getFilePath(leftImageString).c_str()));
         updateImageTable(leftImageTableWidget,leftImageString);
         clearAllMarks(viewer->getLeftDisplay()); markAllpoints(viewer->getLeftDisplay());
         viewer->getLeftDisplay()->updateAll();
     }
     else if(sender()==rightImageComboBox)
     {
-        rightImageString = imageFilename.toStdString().c_str();
+        rightImageString = imageFilename.toLocal8Bit().constData();
         rightImageKey = ptManager->getImageId(rightImageString);
         QString currentLefttImage=leftImageComboBox->currentText();
         leftImageComboBox->blockSignals(true);
@@ -712,7 +712,7 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
         leftImageComboBox->addItems(listImageLeft);
         leftImageComboBox->setCurrentIndex(leftImageComboBox->findText(currentLefttImage,Qt::MatchExactly));
         leftImageComboBox->blockSignals(false);
-        viewer->loadRightImage(QString::fromStdString(ptManager->getFilePath(rightImageString)));
+        viewer->loadRightImage(QString::fromLocal8Bit(ptManager->getFilePath(rightImageString).c_str()));
         updateImageTable(rightImageTableWidget,rightImageString);
         clearAllMarks(viewer->getRightDisplay()); markAllpoints(viewer->getRightDisplay());
         viewer->getRightDisplay()->updateAll();
@@ -1192,7 +1192,7 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
     std::deque<std::string> appearances=ptManager->getImagesAppearances(pointKey);
 
     if (appearances.size()==0)
-        return pointIdLabel->setText(QString("Point %1").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
+        return pointIdLabel->setText(QString("Point %1").arg(QString::fromLocal8Bit(ptManager->getPointId(pointKey).c_str())));
 
     QList<QTreeWidgetItem*> treelist;
     for(size_t i=0;i<appearances.size();i++)
@@ -1208,7 +1208,7 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
         }
         QStringList stringList;
         //stringList << QString::fromStdString(appearances.at(i)) << QString::number(coord.get(1,1))<< QString::number(coord.get(1,2)) << imageKey;
-        stringList << QString::fromStdString(appearances.at(i)) << linStr<< colStr << imageKey << QString::number(pointKey);
+        stringList << QString::fromLocal8Bit(appearances.at(i).c_str()) << linStr<< colStr << imageKey << QString::number(pointKey);
         QTreeWidgetItem *item=new QTreeWidgetItem(stringList);
         item->setTextAlignment(0,Qt::AlignCenter);
         item->setTextAlignment(1,Qt::AlignCenter);
@@ -1222,7 +1222,7 @@ void PTUserInterface_Qt::showImagesAppearances(int pointKey)
     imagesPointTreeWidget->resizeColumnToContents(2);
 
     removeAllButton->setEnabled(true);
-    pointIdLabel->setText(QString("Point %1").arg(QString::fromStdString(ptManager->getPointId(pointKey))));
+    pointIdLabel->setText(QString("Point %1").arg(QString::fromLocal8Bit(ptManager->getPointId(pointKey).c_str())));
 }
 
 void PTUserInterface_Qt::saveMarks()
@@ -1245,7 +1245,7 @@ void PTUserInterface_Qt::openImagesFlightDirectionForm()
 
 void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
-    int imageKey = ptManager->getImageId(imageFile.toStdString().c_str());
+    int imageKey = ptManager->getImageId(imageFile.toLocal8Bit().constData());
     ptManager->setImageFlightDirection(imageKey, kappa0);
 }
 
@@ -1323,7 +1323,7 @@ void PTUserInterface_Qt::onReportButtonClicked()
         //    manager->createPhototriReport((char *)fileExport.toStdString().c_str());
 
         // Create report using ftManager (report inside PhotoTriangulation)
-        saveFtReport((char *)fileExport.toStdString().c_str());
+        saveFtReport((char *)fileExport.toLocal8Bit().constData());
     }
 }
 
@@ -1373,7 +1373,7 @@ void PTUserInterface_Qt::exportToKml(bool fromXML)
             exported->setFileName(fileName.append(".kml"));
 
         exported->open(QIODevice::WriteOnly);
-        exported->write(ptManager->exportBlockTokml(exported->fileName().toStdString().c_str(),fromXML).c_str());
+        exported->write(ptManager->exportBlockTokml(exported->fileName().toLocal8Bit().constData(),fromXML).c_str());
         exported->close();
     }
 }
