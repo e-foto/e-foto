@@ -242,7 +242,7 @@ void SPUserInterface_Qt::updateData()
 
 void SPUserInterface_Qt::updateTable()
 {
-    QString txt = QString::fromStdString(manager->getFeaturesList());
+    QString txt = QString::fromLocal8Bit(manager->getFeaturesList().c_str());
     TreeFeatures* newTree = new TreeFeatures(txt);
     treeView->setModel(newTree);
     delete tree;
@@ -365,7 +365,8 @@ void SPUserInterface_Qt::onSaveButton()
         lastDir = filename.left(i);
 
         // Save Features
-        manager->saveFeatures((char *)filename.toStdString().c_str());
+        //manager->saveFeatures((char *)filename.toStdString().c_str());
+        manager->saveFeatures((char *)filename.toLocal8Bit().constData());
     }
 }
 
@@ -390,9 +391,15 @@ void SPUserInterface_Qt::onExportButton()
 
         // Export features
         if (mode.contains("Text file (*.txt)"))
-            manager->exportFeatures((char *)filename.toStdString().c_str(), 0);
+        {
+            //manager->exportFeatures((char *)filename.toStdString().c_str(), 0);
+            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 0);
+        }
         else
-            manager->exportFeatures((char *)filename.toStdString().c_str(), 1);
+        {
+            //manager->exportFeatures((char *)filename.toStdString().c_str(), 1);
+            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 1);
+        }
     }
 }
 
@@ -531,7 +538,7 @@ void SPUserInterface_Qt::refreshFeatureSelectedData()
 
     // If has feature selected
     featureIdLabel->setText(QString::number(sel_feat));
-    nameEdit->setText(QString::fromStdString(fname));
+    nameEdit->setText(QString::fromLocal8Bit(fname.c_str()));
     comboBox_3->setCurrentIndex(ftype-1);
     comboBox_4->setCurrentIndex(fclass-1>=0? fclass-1 : comboBox_4->count()-1);
     noPointsLabel->setText(QString::number(no_points));
@@ -642,8 +649,8 @@ void SPUserInterface_Qt::centerImages(ObjectSpaceCoordinate coord, double zoom)
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
 {
-    viewer->loadLeftImage(QString(manager->getFullImagePath(leftKey).c_str()));
-    viewer->loadRightImage(QString(manager->getFullImagePath(rightKey).c_str()));
+    viewer->loadLeftImage(QString::fromLocal8Bit(manager->getFullImagePath(leftKey).c_str()));
+    viewer->loadRightImage(QString::fromLocal8Bit(manager->getFullImagePath(rightKey).c_str()));
     viewer->update();
 }
 
@@ -800,7 +807,8 @@ void AddDialog::checkAcceptance(QString fname)
 
 void AddDialog::accept()
 {
-    manager->addFeature(nameEdit->text().toStdString(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
+    //manager->addFeature(nameEdit->text().toStdString(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
+    manager->addFeature(nameEdit->text().toLocal8Bit().constData(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
     done(QDialog::Accepted);
 }
 

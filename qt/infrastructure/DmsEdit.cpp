@@ -679,7 +679,7 @@ void DmsEdit::qStringToDms(QString dmsQString)
     dmsQString.replace("\'"," ");
     dmsQString.replace("\""," ");
 
-    degMinSecLine->stringToDms(dmsQString.toStdString());
+    degMinSecLine->stringToDms(dmsQString.toLocal8Bit().constData());
    // Dms * newDms= new Dms(dmsQString);
     //return newDms;
 }

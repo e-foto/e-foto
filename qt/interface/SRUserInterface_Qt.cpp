@@ -582,7 +582,7 @@ bool SRUserInterface_Qt::exec()
     LoadingScreen::instance().close();
     qApp->processEvents();
     //oldImageView = new ImageView(centralwidget);
-    imageView->loadImage(QString(manager->getImageFile().c_str()));
+    imageView->loadImage(QString::fromLocal8Bit(manager->getImageFile().c_str()));
     {
         //oldImageView->createPoints(points,2);
         //oldImageView->drawPoints(points,2);

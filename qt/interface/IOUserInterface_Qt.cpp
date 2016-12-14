@@ -424,8 +424,9 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
-		{
+        //imageView->loadImage(QString(manager->getImageFile().c_str()));
+        imageView->loadImage(QString::fromLocal8Bit(manager->getImageFile().c_str()));
+        {
 			//REVER
 			//oldImageView->createPoints(points,1);
 			//oldImageView->drawPoints(points,1);
@@ -494,7 +495,8 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
+        //imageView->loadImage(QString(manager->getImageFile().c_str()));
+        imageView->loadImage(QString::fromLocal8Bit(manager->getImageFile().c_str()));
 		{
 			//REVER
 			//oldImageView->createPoints(points,1);
@@ -566,8 +568,9 @@ bool IOUserInterface_Qt::exec()
 		qApp->processEvents();
 		//myImageView = new ImageView(centralwidget);
 		//if (oldImageView->loadImage(QString(manager->getImageFile().c_str())))
-		imageView->loadImage(QString(manager->getImageFile().c_str()));
-		{
+        //imageView->loadImage(QString(manager->getImageFile().c_str()));
+        imageView->loadImage(QString::fromLocal8Bit(manager->getImageFile().c_str()));
+        {
 			//REVER
 			//myImageView->createPoints(points,1);
 			//myImageView->drawPoints(points,1);

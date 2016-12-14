@@ -206,7 +206,7 @@ bool RasterResource::load(QString filepath)
 
 bool RasterResource::save(QString filepath, QString format)
 {
-	if (_pyramid && _pyramid[0]->save(filepath,format.toStdString().c_str()))
+    if (_pyramid && _pyramid[0]->save(filepath,format.toLocal8Bit().constData()))
 		return true;
 	return false;
 }

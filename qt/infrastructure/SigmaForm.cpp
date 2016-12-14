@@ -213,9 +213,9 @@ bool SigmaFormController::getValidate()
 	return true;
 }
 
-void SigmaFormController::toMode(QString newMode)
+void SigmaFormController::toMode(QString newMode)//???
 {
-	if (newMode == "Not Available")
+    if (newMode == "Not Available")
 	{
 		this->toNotAvailable();
 	}

@@ -121,6 +121,7 @@ void OrthoManager::addImagesToForm()
     OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
 
     for (unsigned i=1; i<=listAllImages.size(); i++)
+        //oui->comboBox->addItem("Image "+QString::fromLocal8Bit(listAllImages.at(i-1)->getImageId()));???
         oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
 }
 

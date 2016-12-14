@@ -363,7 +363,9 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
     }
     else
     {
-        filename = QString(filenameAtStart.c_str());
+        //filename = QString(filenameAtStart.c_str());
+        //const char* name = filenameAtStart.c_str();
+        filename = QString::fromLocal8Bit(filenameAtStart.c_str());
     }
 
     if (filename == "")
@@ -409,7 +411,9 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
             controlButtons.setVisible(true);
             offset.setVisible(true);
 
-            manager->savedIn = filename.toStdString();
+
+            manager->savedIn = filename.toLocal8Bit().constData();
+            //manager->savedIn = filename.toStdString();
             //qDebug("load savedIn: %s",savedIn.c_str());
 
             actionSave_file->setEnabled(false);
@@ -424,8 +428,8 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 
             EDomElement node(manager->getXml("projectHeader"));
 
-            node.replaceChildByTagName("fileName",fileName.toStdString());
-            node.replaceChildByTagName("filePath",filePath.toStdString());
+            node.replaceChildByTagName("fileName",fileName.toLocal8Bit().constData());
+            node.replaceChildByTagName("filePath",filePath.toLocal8Bit().constData());
 
             manager->editComponent("Header", node.getContent());
             //***************************************************************************************************
@@ -531,9 +535,9 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
             manager->editComponent("Header", headerForm.getvalues());
             //***************************************************************************************************
 
-            if (manager->saveFile(filename.toStdString()))
+            if (manager->saveFile(filename.toLocal8Bit().constData()))
             {
-                manager->savedIn = filename.toStdString();
+                manager->savedIn = filename.toLocal8Bit().constData();
                 actionSave_file->setEnabled(false);
             }
             else
@@ -566,7 +570,7 @@ void ProjectUserInterface_Qt::executeIO()
     QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
     if (ok)
     {
-        int value = manager->getImageId(chosen.toStdString());
+        int value = manager->getImageId(chosen.toLocal8Bit().constData());
         if (value != -1)
         {
             changeModule = true;
@@ -590,7 +594,7 @@ void ProjectUserInterface_Qt::executeSR()
     QString chosen = QInputDialog::getItem(this, tr("Select your image!"), tr("Image name:"), items, 0, false, &ok);
     if (ok)
     {
-        int value = manager->getImageId(chosen.toStdString());
+        int value = manager->getImageId(chosen.toLocal8Bit().constData());
         if (value != -1)
         {
             changeModule = true;
@@ -794,11 +798,11 @@ void ProjectUserInterface_Qt::exportSPFile()
         if (filename.isEmpty())
             return;
 
-        int image1 = manager->getImageId(chosen1.toStdString());
-        int image2 = manager->getImageId(chosen2.toStdString());
+        int image1 = manager->getImageId(chosen1.toLocal8Bit().constData());
+        int image2 = manager->getImageId(chosen2.toLocal8Bit().constData());
         if (image1 != -1 && image2 != -1)
         {
-            bool result = manager->makeSPFile(filename.toStdString(), image1, image2);
+            bool result = manager->makeSPFile(filename.toLocal8Bit().constData(), image1, image2);
             if (result == false)
             {
                 QMessageBox msgBox;
@@ -2080,8 +2084,8 @@ QString ProjectUserInterface_Qt::getSavedIn()
     //cout<< "cout "<<savedIn.c_str()<<"\n"<<endl;
     //qDebug()<<headerForm.lineEditFilePath->text();
 
-    return  QString(manager->savedIn.c_str()).left(manager->savedIn.find_last_of('/'));
-
+    //return  QString(manager->savedIn.c_str()).left(manager->savedIn.find_last_of('/'));
+    return  QString(QString::fromLocal8Bit(manager->savedIn.c_str())).left(manager->savedIn.find_last_of('/'));
     //return parent->lineEditFilePath->text();
 }
 
@@ -2153,7 +2157,7 @@ std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
     if (fields.length() == 7)
     {
 
-        gcpIdField = fields.at(0).toStdString().c_str();
+        gcpIdField = fields.at(0).toLocal8Bit().constData();
         /*
   typeField = point.split("\t").at(1).toStdString().c_str();
   if(typeField == "Tie")
@@ -2947,7 +2951,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 
     std::stringstream imageXml;
     QImage image(fileName);
-    QDir absolutePath(QString::fromStdString(manager->savedIn));
+    QDir absolutePath(QString::fromLocal8Bit(manager->savedIn.c_str()));
     int i=fileName.lastIndexOf("/");
     int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
 
@@ -2959,11 +2963,14 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     sugestionID.chop(4);//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
 
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-    imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+    //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+    imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(image.width())<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(image.height())<<"</height>\n";
-    imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toStdString()<<"</fileName>\n";
-    imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+    //imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toStdString()<<"</fileName>\n";
+    imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toLocal8Bit().constData()<<"</fileName>\n";
+    //imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+    imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
     imageXml << "\t</image>\n";
 
@@ -2975,7 +2982,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 {
 
     std::stringstream imageXml;
-    QDir absolutePath (QString::fromStdString(manager->savedIn));
+    QDir absolutePath (QString::fromLocal8Bit(manager->savedIn.c_str()));
 
     int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
     QString fileImagePath(".");
@@ -2986,11 +2993,14 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
     sugestionID.chop(4);
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-    imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+    //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
+    imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(widthImages)<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
-    imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
-    imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+    //imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
+    imageXml << "\t\t<fileName>"<< fileName.toLocal8Bit().constData()<<"</fileName>\n";
+    //imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+    imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
     imageXml << "\t</image>\n";
 
@@ -3105,8 +3115,11 @@ void ProjectUserInterface_Qt::updateLabelFileName()
 void ProjectUserInterface_Qt::loadLastProject()
 {
     QSettings efotoSettings("uerj","efoto");
-    QString filename = efotoSettings.value("lastProject").toString();
-    loadFile(filename.toStdString());
+    //QString filename = efotoSettings.value("lastProject").toString();
+    QString filename = QString::fromLocal8Bit(efotoSettings.value("lastProject").toByteArray().constData());
+
+    //loadFile(filename.toStdString());
+    loadFile(filename.toLocal8Bit().constData());
 }
 
 } // namespace efoto
