@@ -389,7 +389,7 @@ void MatchingPointsList::boundingBox(double &xi, double &yi, double &xf, double 
     if (list.size()<1)
         return;
 
-    double x,y,z;
+    double x,y,z = 0.0;
 
     switch(type)
     {
