@@ -123,8 +123,8 @@ double DemGrid::getMeanZ()
 
 double DemGrid::getStdZ()
 {
-        double meanZ = getMeanZ(), stdZ, Z;
-        unsigned int count=0;
+        double meanZ = getMeanZ(), stdZ = 0.0, Z;
+        unsigned int count=0; 
 
         for (unsigned int i=1; i<=dem_height; i++)
         {
@@ -284,21 +284,23 @@ int DemGrid::chooseBestInterpolationMethod(double nf)
 {
     int no_points = point_list->size();
 
-    if (no_points < 1000)
+    if (no_points < 1000) {
         return 0;
+    }
 
-        // May have very large numbers - double prefered !!
-        double area = double(dem_width) * double (dem_height); // Calculate DEM matrix area - not terrain area
-        double grid_density = double(no_points)/double(area); // Points per area
+    // May have very large numbers - double prefered !!
+    double area = double(dem_width) * double (dem_height); // Calculate DEM matrix area - not terrain area
+    double grid_density = double(no_points)/double(area); // Points per area
 
-        // If density is less than a cell size
-        if (grid_density < 1.0)
-                grid_density = 1.0;
+    // If density is less than a cell size
+    if (grid_density < 1.0) {
+        grid_density = 1.0;
+    }
 
-        // Let's calculate the computational effort for each grid cell
-        // For not overfloating values, we consider the sqtr for both equations
-        double no_its_normal = no_points;           // no_points^2
-        double no_its_fast = sqrt(area*grid_density*nf); // area*density*nf
+    // Let's calculate the computational effort for each grid cell
+    // For not overfloating values, we consider the sqtr for both equations
+    double no_its_normal = no_points;           // no_points^2
+    double no_its_fast = sqrt(area*grid_density*nf); // area*density*nf
 
     return (no_its_normal > no_its_fast);
 }

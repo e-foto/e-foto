@@ -98,7 +98,6 @@ HEADERS += c/control/DEMManager.h \
 		   c/xml_definitions/XMLSensorWithFiducialMarks.h \
 		   c/xml_definitions/XMLTerrain.h \
 		   c/xml_definitions/XmlUpdater.h \
-           c/shapelib/shapefil.h \
 		   qt/formDisplay/AbstractForm.h \
 		   qt/formDisplay/ControlButtons.h \
 		   qt/formDisplay/FlightForm.h \
@@ -286,14 +285,17 @@ SOURCES += c/control/DEMManager.cpp \
 RESOURCES += qt/resource/resource.qrc
 
 # Build Settings
-DESTDIR = ../bin
-OBJECTS_DIR = ../temp/obj
-MOC_DIR = ../temp/moc
-UI_DIR = ../temp/ui
-RCC_DIR = ../temp/rcc
+DESTDIR = build/bin
+OBJECTS_DIR = build/temp/obj
+MOC_DIR = build/temp/moc
+UI_DIR = build/temp/ui
+RCC_DIR = build/temp/rcc
 QT += opengl
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 
 #CONFIG += c++11
+
+# CXX=g++-4.9 is workaround for compiler missing <stdlib.h>
+#CXX=g++-4.9
 
 #Rod
 # With C++11 support
@@ -344,7 +346,7 @@ RC_FILE = efotoIcon.rc
 # install settings
 unix{
         DEFINES += unix
-	target.path = /usr/local/bin
+	target.path = /usr/bin
 	desk.path = /usr/share/applications
 	desk.files += efoto.desktop
 	icon.path = /usr/share/applications/pixmaps
