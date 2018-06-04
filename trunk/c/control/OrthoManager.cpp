@@ -397,7 +397,7 @@ void OrthoManager::runOrthoIndividual(int image)
     }
 }
 
-int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int option, double user_res_x, double user_res_y)
+int OrthoManager::orthoRectificationGeoTiff(char * filename, int option, double user_res_x, double user_res_y)
 {
         // Create new orthoimage
 
@@ -444,7 +444,7 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
                 }
 
                 //ortho->saveOrtho(filename, 0);
-                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str());
 
         }
 
@@ -454,7 +454,7 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
                 //string ext(".ort");
                 std::string ext(".tif");
                 size_t expos = base_fname.find(ext);
-                if (expos != -1)
+                if (expos != std::string::npos)
                         base_fname = base_fname.substr(0,expos);
                 base_fname = base_fname + "_";
                 std::string fname;
@@ -472,7 +472,7 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
 
                         //ortho->saveOrtho((char *)fname.c_str(),0);
                         //fname+=".tif";
-                        ortho->saveOrthoGeoTiff((char *)fname.c_str(),0);
+                        ortho->saveOrthoGeoTiff((char *)fname.c_str());
                 }
         }
 
@@ -487,7 +487,7 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
                 }
 
                 //ortho->saveOrtho(filename, 0);
-                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str(),0);
+                ortho->saveOrthoGeoTiff((char *)filenameGeoTiff.c_str());
         }
 
         // Display results
@@ -505,7 +505,7 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int fileType, int o
         return 1;
 }
 
-int OrthoManager::orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y)
+int OrthoManager::orthoRectification(char * filename, int option, double user_res_x, double user_res_y)
 {
     // Create new orthoimage
     if (ortho != NULL)

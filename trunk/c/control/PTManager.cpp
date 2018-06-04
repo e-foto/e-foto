@@ -1406,7 +1406,6 @@ void PTManager::runAutoMeasurement()
 	for (size_t i = 0; nImgs > i; i++)
 	{
 		Image* img = listAllImages.at(i);
-		ExteriorOrientation* imgEO = img->getEO();
 		if (img->getGnssType() == "Initial" || img->getGnssType() == "Fixed")
 			if (img->getInsType() == "Initial" || img->getInsType() == "Fixed")
 			{

@@ -558,6 +558,7 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
         }
         return true;
     }
+    return false;
 }
 
 void ProjectUserInterface_Qt::executeIO()
@@ -2521,7 +2522,7 @@ bool ProjectUserInterface_Qt::availableStereoPlotter()
 
     bool hasAllEOs = true;
 
-    for (int i = 0;i < images.size(); i++)
+    for (unsigned int i = 0;i < images.size(); i++)
     {
         EDomElement img(images.at(i));
         int key = Conversion::stringToInt(img.attribute("key"));
