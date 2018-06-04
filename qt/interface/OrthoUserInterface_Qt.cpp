@@ -284,7 +284,7 @@ void OrthoUserInterface_Qt::makeEfotoOrthoImage()
         disableOptions();
         setAllowClose(false);
         manager->setInterMethod(comboBox4->currentIndex());
-        manager->orthoRectification((char *)filename.toLocal8Bit().constData(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        manager->orthoRectification((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();
         setCurrentWork("Done");
@@ -321,7 +321,7 @@ void OrthoUserInterface_Qt::makeGeotiffOrthoImage()
         disableOptions();
         setAllowClose(false);
         manager->setInterMethod(comboBox4->currentIndex());
-        manager->orthoRectificationGeoTiff((char *)filename.toLocal8Bit().constData(),comboBox3->currentIndex(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
+        manager->orthoRectificationGeoTiff((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();
         setCurrentWork("Done");

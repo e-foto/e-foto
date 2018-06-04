@@ -193,8 +193,11 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     // Read header
     double header[13];
     unsigned int header_size_bytes = 13 * 8;
-    fread(&header, 1, header_size_bytes, fp);
-
+    unsigned int result = fread(&header, 1, header_size_bytes, fp);
+    if (result != header_size_bytes) {
+		throw std::runtime_error( "Invalid header" );
+	}
+	
     Xi = header[0];
     Yi = header[1];
     Xf = header[2];
@@ -215,7 +218,10 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     unsigned int file_size_bytes = file_size*8;
     std::unique_ptr<double[]> data (new double[file_size]);
     int p=0;
-    fread(data.get(), 1, file_size_bytes, fp);
+    result = fread(data.get(), 1, file_size_bytes, fp);
+    if (result != header_size_bytes) {
+		throw std::runtime_error( "Invalid DEM" );
+	}
 
     for (int i=1; i<=ortho_height; i++)
     {
@@ -386,7 +392,7 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 }
 
 
-void Orthorectification::saveOrthoGeoTiff(char * filename, int mode)
+void Orthorectification::saveOrthoGeoTiff(char * filename)
 {
     saveOrthoGeoTiffEfoto(filename);
 }

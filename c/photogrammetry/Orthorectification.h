@@ -64,7 +64,7 @@ public:
     void createNewGrid(double, double, double, double, double, double);
     // todo: solve unused parameter mode
     void saveOrtho(char */*, int mode*/);
-    void saveOrthoGeoTiff(char *, int);
+    void saveOrthoGeoTiff(char *);
     void loadOrtho(char */*, int mode*/);
     Matrix * getOrthoImage();
     int getHeight() { return ortho_height; }

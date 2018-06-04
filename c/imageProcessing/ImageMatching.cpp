@@ -388,7 +388,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
 {
         int i, j, ncc_flag, lsm_flag;
         double lx, ly, rx, ry;
-        double new_x, new_y, p;
+        double new_x=0.0, new_y=0.0, p=0.0;
 
         emptyStack();
         push(x,y,sx,sy);

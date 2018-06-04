@@ -100,6 +100,7 @@ std::string ExteriorOrientation::xmlGetData()
 
 void ExteriorOrientation::xmlSetData(std::string xml)
 {
+	EDomElement root(xml);
 	// extrair codigo da SR para este ponto
 }
 

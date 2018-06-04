@@ -902,8 +902,8 @@ std::string ReportManager::eprStereoPairs()
 		return "<stereoPairs></stereoPairs>\n";
 
 	Image *img;
-	double X1, Y1, X2, Y2, R, dist, best_dist, bX2, bY2, overlap, align_ang, kappa;
-	int best_img;
+	double X1, Y1, X2, Y2, R, dist, best_dist, bX2=0.0, bY2=0.0, overlap, align_ang, kappa;
+	int best_img = 0;
 	Matrix Xa;
 
 	// Calculate Image Radius

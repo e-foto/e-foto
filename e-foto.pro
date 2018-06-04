@@ -291,7 +291,8 @@ MOC_DIR = build/temp/moc
 UI_DIR = build/temp/ui
 RCC_DIR = build/temp/rcc
 QT += opengl
-QMAKE_CXXFLAGS += -std=c++11 
+QMAKE_CXXFLAGS += -std=c++11 -Wall 
+#QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
 #CONFIG += c++11
 
 # CXX=g++-4.9 is workaround for compiler missing <stdlib.h>

@@ -123,11 +123,11 @@ public:
     * \brief Método que executa a ortorretificação.
     * \todo solve unused parameter fileType
     */
-    int orthoRectification(char * filename, int fileType, int option, double user_res_x, double user_res_y);
+    int orthoRectification(char * filename, int option, double user_res_x, double user_res_y);
     /**
     * \brief Mtodo que executa a ortorretificao e salva em formato GeoTiff.
     */
-    int orthoRectificationGeoTiff(char * filename, int fileType, int option, double user_res_x, double user_res_y);
+    int orthoRectificationGeoTiff(char * filename, int option, double user_res_x, double user_res_y);
     /**
     * \brief Método que interrompe a ortorretificação.
     */
