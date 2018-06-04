@@ -107,7 +107,7 @@ int DemFeatures::exportFeatures(char *filename, int mode)
     std::string name = std::string(filename);
 
     size_t pos = name.find_last_of(".");
-    if (pos == -1)
+    if (pos == std::string::npos)
     {
         basename = name;
     }
@@ -187,7 +187,7 @@ int DemFeatures::exportShpFeatures(char *filename)
     DemFeature df;
 
     // Para cada tipo de feição
-    for (int k = 0; k < feature_classes.size(); k++)
+    for (unsigned int k = 0; k < feature_classes.size(); k++)
     {
         bool flag = false;
 
@@ -204,7 +204,8 @@ int DemFeatures::exportShpFeatures(char *filename)
         // Procura uma classe de feiçoes entre todas as feições
         for (unsigned int i=0; i<features.size(); i++)
         {
-            if (getFeatureClassId(i+1) == k+1)
+			int featureClassId = getFeatureClassId(i+1);
+            if ( featureClassId >= 0 &&  static_cast<unsigned int>(featureClassId) == k+1)
             {
                 // Se for encontrada uma feição da classe procurada habilita a gravação
                 flag = true;
@@ -212,7 +213,7 @@ int DemFeatures::exportShpFeatures(char *filename)
                 // Aloca espaço para a criação de um novo objeto do shape
                 //SHPObject* obj = (SHPObject*) malloc(sizeof(SHPObject));
 
-                // Armazenando vétices da feição
+                // Armazenando vértices da feição
                 df = features.at(i);
                 unsigned int nVertices = df.points.size();
                 if (nShapeType == SHPT_POLYGONZ) nVertices++;
@@ -937,7 +938,7 @@ void DemFeatures::convertClassesIdsFromSp165()
 
 int DemFeatures::convClassFromSp165(int ft, int fc)
 {
-    int new_fc;
+    int new_fc = 1;
 
     if (ft == 1)
         return 2;
@@ -983,7 +984,7 @@ int DemFeatures::convClassFromSp165(int ft, int fc)
 
 int DemFeatures::getClassIdToSp165(int new_class)
 {
-    int old_class;
+    int old_class = 0;
 
     switch (new_class)
     {

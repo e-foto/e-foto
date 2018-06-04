@@ -540,6 +540,7 @@ bool ReportUserInterface_Qt::saveEPR()
             return false;
         }
     }
+    return false;
 }
 
 } // namespace efoto
