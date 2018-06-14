@@ -139,35 +139,6 @@ Image* InteriorOrientation::getImage()
 		return myImage;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string InteriorOrientation::objectType(void)
-{
-        std::stringstream result;
-		result << "InteriorOrientation " << imageId;
-		return result.str();
-}
-
-/**
- *
- */
-std::string InteriorOrientation::objectAssociations(void)
-{
-		return myImage->objectType();
-}
-
-/**
- *
- */
-bool InteriorOrientation::is(std::string s)
-{
-		return (s == "InteriorOrientation" ? true : false);
-}
-
 // XML methods
 //
 

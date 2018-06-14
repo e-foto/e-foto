@@ -232,27 +232,6 @@ void SensorWithFiducialMarks::clearAnaFidMarks()
 	anaFidMarks.clear();
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string SensorWithFiducialMarks::objectType(void)
-{
-    std::stringstream result;
-	result << "SensorWithFiducialMarks " << id;
-	return result.str();
-}
-
-/**
- *
- */
-std::string SensorWithFiducialMarks::objectAssociations(void)
-{
-	return "";
-}
-
 /**
  *
  */

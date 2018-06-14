@@ -78,33 +78,6 @@ Matrix EOQuality::getSigmaLa()
 	return SigmaLa;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string EOQuality::objectType(void)
-{
-	return "EOQuality";
-}
-
-/**
- *
- */
-std::string EOQuality::objectAssociations(void)
-{
-	return "";
-}
-
-/**
- *
- */
-bool EOQuality::is(std::string s)
-{
-	return (s == "EOQuality" ? true : false);
-}
-
 // XML methods
 //
 

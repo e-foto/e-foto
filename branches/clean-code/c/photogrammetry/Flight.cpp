@@ -324,23 +324,6 @@ Image* Flight::getImageAt(unsigned int index)
 	return NULL;
 }
 
-std::string Flight::objectType(void)
-{
-    std::stringstream result;
-	result << "Flight " << id;
-	return result.str();
-}
-
-std::string Flight::objectAssociations(void)
-{
-	return mySensor->objectType();
-}
-
-bool Flight::is(std::string s)
-{
-	return (s == "Flight" ? true : false);
-}
-
 void Flight::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

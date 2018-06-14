@@ -28,8 +28,8 @@ namespace efoto {
 
 void PositionMatrix::del()
 {
-	delete[] _Mat;
-	_Mat = NULL;
+    delete[] Mat_;
+    Mat_ = NULL;
 	ncols = 0;
 	nrows = 0;
 	unit = "";
@@ -37,10 +37,10 @@ void PositionMatrix::del()
 
 void PositionMatrix::nw(const unsigned int rows, const unsigned int cols)
 {
-	_Mat = new double[rows * cols];               // Allocate matrix
+    Mat_ = new double[rows * cols];               // Allocate matrix
 	nrows = rows; ncols = cols;                   // Fill matrix' attributes.
 	for(unsigned int i = 0; i < (rows * cols); i++) //set its elements to zero
-		_Mat[i] = 0;
+        Mat_[i] = 0;
 	unit = "";
 }
 
@@ -64,7 +64,7 @@ PositionMatrix::PositionMatrix(const PositionMatrix& anotherMatrix):RectSupport(
 
 PositionMatrix::PositionMatrix():RectSupport(0, 0)
 {
-	_Mat = NULL;
+    Mat_ = NULL;
 }
 
 PositionMatrix::~PositionMatrix()
@@ -86,7 +86,7 @@ PositionMatrix& PositionMatrix::resize(unsigned int rows, unsigned int cols)
 PositionMatrix& PositionMatrix::zero()
 {
 	for(unsigned int i = 0; i < (nrows * ncols); i++)
-		_Mat[i] = 0;
+        Mat_[i] = 0;
 	return *this;
 }
 
@@ -116,7 +116,7 @@ int PositionMatrix::load(char* filename)
 					}
 					for (unsigned int i=0; (!arq.eof())||(!arq.fail())||(i < (cols * rows)); i++)
 					{
-						arq >> _Mat[i]; // read one matrix element
+                        arq >> Mat_[i]; // read one matrix element
 					}
 					arq.close();
 					return 1;
@@ -144,7 +144,7 @@ int PositionMatrix::save(char* filename)
 				{
 					for (unsigned int i = 0; (i < (ncols * nrows)); i++)
 					{
-						emfile << _Mat[i] << " "; // write one matrix element
+                        emfile << Mat_[i] << " "; // write one matrix element
 					}
 					emfile.close();
 					return 1;
@@ -159,7 +159,7 @@ int PositionMatrix::save(char* filename)
 double PositionMatrix::get(const unsigned int i, const unsigned int j) const
 {
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
-		return _Mat[(i-1) * ncols + j - 1];
+        return Mat_[(i-1) * ncols + j - 1];
 	else
         std::cerr << "i, j values out of the range of the matrix." << std::endl;
 	return 0;
@@ -217,7 +217,7 @@ void PositionMatrix::show()
 void PositionMatrix::set(unsigned int i, unsigned int j, double value) const
 {
 	if ((i >= 1)&&(i <= nrows)&&(j >= 1)&&(j <= ncols))
-		_Mat[(i-1) * ncols + j - 1]=value;
+        Mat_[(i-1) * ncols + j - 1]=value;
 	else
         std::cerr << "i, j values out of the range of the matrix." << std::endl;
 }
@@ -312,7 +312,7 @@ PositionMatrix& PositionMatrix::operator =(const Matrix& Par_Matrix)
 	}
 	for (unsigned int i = 0; i < (nrows*ncols); i++)
 	{
-		_Mat[i]=Par_Matrix._Mat[i];
+        Mat_[i]=Par_Matrix.Mat_[i];
 	}
     unit = Par_Matrix.unit_;
 	return *this;
@@ -327,7 +327,7 @@ PositionMatrix& PositionMatrix::operator =(const PositionMatrix& Par_Matrix)
 	}
 	for (unsigned int i = 0; i < (nrows*ncols); i++)
 	{
-		_Mat[i]=Par_Matrix._Mat[i];
+        Mat_[i]=Par_Matrix.Mat_[i];
 	}
 	unit = Par_Matrix.unit;
 	return *this;
@@ -339,7 +339,7 @@ bool PositionMatrix::operator ==(const Matrix& Par_Matrix)
 		return 0;
 	else
 		for (unsigned int i = 0; i < (ncols*nrows); i++)
-			if (_Mat[i] - Par_Matrix._Mat[i] > 0.00000001 || _Mat[i] - Par_Matrix._Mat[i] < -0.00000001)
+            if (Mat_[i] - Par_Matrix.Mat_[i] > 0.00000001 || Mat_[i] - Par_Matrix.Mat_[i] < -0.00000001)
 				return 0;
 	return 1;
 }
@@ -350,7 +350,7 @@ bool PositionMatrix::operator ==(const PositionMatrix& Par_Matrix)
 		return 0;
 	else
 		for (unsigned int i = 0; i < (ncols*nrows); i++)
-			if (_Mat[i] - Par_Matrix._Mat[i] > 0.00000001 || _Mat[i] - Par_Matrix._Mat[i] < -0.00000001)
+            if (Mat_[i] - Par_Matrix.Mat_[i] > 0.00000001 || Mat_[i] - Par_Matrix.Mat_[i] < -0.00000001)
 				return 0;
 	return 1;
 }
@@ -361,7 +361,7 @@ bool PositionMatrix::operator !=(const Matrix& Par_Matrix)
 		return 1;
 	else
 		for (unsigned int i = 0; i < (ncols*nrows); i++)
-			if (_Mat[i] - Par_Matrix._Mat[i] > 0.00000001 || _Mat[i] - Par_Matrix._Mat[i] < -0.00000001)
+            if (Mat_[i] - Par_Matrix.Mat_[i] > 0.00000001 || Mat_[i] - Par_Matrix.Mat_[i] < -0.00000001)
 				return 1;
 	return 0;
 }
@@ -372,24 +372,9 @@ bool PositionMatrix::operator !=(const PositionMatrix& Par_Matrix)
 		return 1;
 	else
 		for (unsigned int i = 0; i < (ncols*nrows); i++)
-			if (_Mat[i] - Par_Matrix._Mat[i] > 0.00000001 || _Mat[i] - Par_Matrix._Mat[i] < -0.00000001)
+            if (Mat_[i] - Par_Matrix.Mat_[i] > 0.00000001 || Mat_[i] - Par_Matrix.Mat_[i] < -0.00000001)
 				return 1;
 	return 0;
-}
-
-std::string PositionMatrix::objectType(void)
-{
-	return "PositionMatrix";
-}
-
-std::string PositionMatrix::objectAssociations(void)
-{
-	return "";
-}
-
-bool PositionMatrix::is(std::string s)
-{
-	return (s == "PositionMatrix" ? true : false);
 }
 
 std::string PositionMatrix::xmlGetData()

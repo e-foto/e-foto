@@ -61,12 +61,6 @@ public:
 	void setCol(double newCol);
 
 	/**
- * \brief Método para alterar a unidade em que a coordenada é considerada.
- * \param newUnit	Texto descritor da nova unidade de medidas considerada para a coordenada.
- */
-    void setUnit(std::string newUnit);
-
-	/**
  * \brief Método para retornar o valor de Linha num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da linha.
  */
@@ -95,12 +89,6 @@ public:
  * \return PositionMatrix	Matriz coluna com os valores de posicionamento da coordenada.
  */
 	PositionMatrix getPosition();
-
-	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
 
 };
 

@@ -74,9 +74,6 @@ public:
 	//
 
 	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
     bool is(std::string s);
 
 	// XML methods

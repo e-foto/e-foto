@@ -43,7 +43,7 @@ class Image;
   *
   */
 
-class InteriorOrientation : public EObject
+class InteriorOrientation : public EDom
 {
 
         //EOBJECT
@@ -96,12 +96,6 @@ public:
 
         void setImage(Image *myNewImage);
         Image* getImage();
-
-        // EObject methods
-        //
-        std::string objectType(void);
-        std::string objectAssociations(void);
-        bool is(std::string s);
 
         // XML methods
         //

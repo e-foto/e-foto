@@ -112,20 +112,6 @@ Matrix SensorWithKnowDimensions::forgeLb()
 //
 
 // EObject methods
-//
-
-std::string SensorWithKnowDimensions::objectType(void)
-{
-    std::stringstream result;
-	result << "SensorWithKnowDimensions " << id;
-	return result.str();
-}
-
-std::string SensorWithKnowDimensions::objectAssociations(void)
-{
-	return "";
-}
-
 bool SensorWithKnowDimensions::is(std::string s)
 {
 	return (s == "SensorWithKnowDimensions" ? true : false);

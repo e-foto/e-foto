@@ -95,21 +95,6 @@ int DetectorSpaceCoordinate::getImageId()
 	return imageId;
 }
 
-std::string DetectorSpaceCoordinate::objectType(void)
-{
-	return "DetectorSpaceCoordinate";
-}
-
-std::string DetectorSpaceCoordinate::objectAssociations(void)
-{
-	return "";
-}
-
-bool DetectorSpaceCoordinate::is(std::string s)
-{
-	return (s == "DetectorSpaceCoordinate" ? true : false);
-}
-
 void DetectorSpaceCoordinate::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

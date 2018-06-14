@@ -92,23 +92,6 @@ int ImageFiducialMark::getImageId()
 	return imageId;
 }
 
-std::string ImageFiducialMark::objectType(void)
-{
-    std::stringstream result;
-	result << "ImageFiducialMark " << id;
-	return result.str();
-}
-
-std::string ImageFiducialMark::objectAssociations(void)
-{
-	return "";
-}
-
-bool ImageFiducialMark::is(std::string s)
-{
-	return (s == "ImageFiducialMark" ? true : false);
-}
-
 void ImageFiducialMark::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

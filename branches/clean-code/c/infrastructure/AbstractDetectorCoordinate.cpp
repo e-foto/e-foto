@@ -39,26 +39,6 @@ void AbstractDetectorCoordinate::setEta(double newEta)
 	eta = newEta;
 }
 
-void AbstractDetectorCoordinate::setSigmaXi(double newSigmaXi)
-{
-	sigmaXi = newSigmaXi;
-}
-
-void AbstractDetectorCoordinate::setSigmaEta(double newSigmaEta)
-{
-	sigmaEta = newSigmaEta;
-}
-
-void AbstractDetectorCoordinate::setSigmaXiEta(double newSigmaXiEta)
-{
-	sigmaXi = newSigmaXiEta;
-}
-
-void AbstractDetectorCoordinate::setUnit(std::string newUnit)
-{
-	unit = newUnit;
-}
-
 double AbstractDetectorCoordinate::getXi()
 {
 	return xi;
@@ -102,8 +82,8 @@ void AbstractDetectorCoordinate::setPosition(const PositionMatrix& newPosition)
 
 void AbstractDetectorCoordinate::setPositionSigmas(const Matrix& newPositionSigmas)
 {
-	if (newPositionSigmas.getRows() == 2 && newPositionSigmas.getCols() == 1)
-	{
+    if (newPositionSigmas.getRows() == 2 && newPositionSigmas.getCols() == 1)
+    {
 		sigmaXi = newPositionSigmas.get(1,1);
 		sigmaEta = newPositionSigmas.get(2,1);
 		sigmaXiEta = 0;
@@ -133,11 +113,6 @@ Matrix AbstractDetectorCoordinate::getPositionSigmas()
 	positionSigmas.set(1,2,sigmaXiEta);
 	positionSigmas.set(2,1,sigmaXiEta);
 	return positionSigmas;
-}
-
-std::string AbstractDetectorCoordinate::objectType(void)
-{
-	return "AbstractDetectorCoordinate";
 }
 
 } // namespace efoto

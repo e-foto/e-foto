@@ -42,10 +42,8 @@ namespace efoto {
 class ProjectiveRay;
 class StereoPair;
 
-class SpatialIntersection : public EObject
+class SpatialIntersection : public EDom
 {
-	//EOBJECT
-
 	// Aggregated objects
 	//
 	StereoPair* stereoPair;
@@ -73,12 +71,6 @@ public:
 	ObjectSpaceCoordinate calculateIntersectionSubPixel(double colLeft, double rowLeft, double colRight, double rowRight);
 	ObjectSpaceCoordinate calculateIntersection(ImageSpaceCoordinate leftCoord, ImageSpaceCoordinate rightCoord);
 	PositionMatrix calculateIntersection(PositionMatrix leftPos, PositionMatrix rightPos);
-
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
 
 	// XML methods
 	//

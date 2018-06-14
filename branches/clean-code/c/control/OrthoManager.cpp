@@ -25,7 +25,6 @@ OrthoManager.cpp
 #include "EFotoManager.h"
 #include "OrthoUserInterface.h"
 #include "OrthoUserInterface_Qt.h"
-#include "DemGrid.h"
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
 #include "Interpolation.h"
@@ -125,7 +124,7 @@ void OrthoManager::addImagesToForm()
         oui->comboBox->addItem("Image "+QString::fromStdString(listAllImages.at(i-1)->getImageId()));
 }
 
-int OrthoManager::loadDemGrid(char * filename, int fileType)
+int OrthoManager::loadDemGrid(char * filename, Filetype fileType)
 {
     if (grid != NULL)
         delete grid;

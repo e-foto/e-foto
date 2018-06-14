@@ -123,13 +123,6 @@ std::deque<DecenteredDistortionCoefficient> FrameSensor::getDecenteredCoefficien
 	return dCoefficients;
 }
 
-// EObject methods
-//
-
-std::string FrameSensor::objectType(void)
-{
-	return "FrameSensor";
-}
 
 } // namespace efoto
 } // namespace eng

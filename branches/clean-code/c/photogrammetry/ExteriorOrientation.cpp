@@ -63,33 +63,13 @@ Image* ExteriorOrientation::getImage() const
 	return myImage;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string ExteriorOrientation::objectType(void)
-{
-	std::stringstream result;
-	result << "ExteriorOrientation " << imageId;
-	return result.str();
-}
-
-/**
- *
- */
-std::string ExteriorOrientation::objectAssociations(void)
-{
-	return myImage->objectType();
-}
 
 /**
  *
  */
 bool ExteriorOrientation::is(std::string s)
 {
-	return (s == "ExteriorOrientation" ? true : false);
+    return (s == "ExteriorOrientation" ? true : false);
 }
 
 std::string ExteriorOrientation::xmlGetData()

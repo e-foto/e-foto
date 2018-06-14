@@ -83,33 +83,6 @@ Matrix IOQuality::getSigmaLa()
 
 /** @} */
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string IOQuality::objectType(void)
-{
-	return "IOQuality";
-}
-
-/**
- *
- */
-std::string IOQuality::objectAssociations(void)
-{
-	return "";
-}
-
-/**
- *
- */
-bool IOQuality::is(std::string s)
-{
-	return (s == "IOQuality" ? true : false);
-}
-
 // XML methods
 //
 

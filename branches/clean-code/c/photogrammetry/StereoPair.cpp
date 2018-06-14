@@ -127,25 +127,6 @@ bool StereoPair::hasOrientations()
 		return false;
 }
 
-// EObject methods
-//
-std::string StereoPair::objectType(void)
-{
-    std::stringstream result;
-	result << "StereoPair " << leftImage->getId() << " " << rightImage->getId();
-	return result.str();
-}
-
-std::string StereoPair::objectAssociations(void)
-{
-	return "";
-}
-
-bool StereoPair::is(std::string s)
-{
-	return (s == "StereoPair" ? true : false);
-}
-
 // XML methods
 //
 void StereoPair::xmlSetData(std::string xml)

@@ -21,6 +21,7 @@
 */
 
 #include "Matrix.h"
+#include "EDom.h"
 
 namespace br {
 namespace uerj {
@@ -41,14 +42,9 @@ class InteriorOrientation;
   *
   */
 
-class IOQuality : public EObject
+class IOQuality : public EDom
 {
 private:
-
-	//EOBJECT
-
-	// Private attributes
-	//
 	Matrix V;
 	double sigma0Squared;
 	Matrix SigmaXa;
@@ -67,13 +63,7 @@ public:
 	Matrix getSigmaXa();
 	Matrix getSigmaLa();
 
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
-
-	// XML methods
+    // XML methods
 	//
     void xmlSetData(std::string xml);
     std::string xmlGetData();

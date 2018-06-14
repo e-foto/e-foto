@@ -337,27 +337,6 @@ void SpatialRessection::unsetPointForFlightDirection()
     flightDirectionAvailable = false;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string SpatialRessection::objectType(void)
-{
-    std::stringstream result;
-    result << "SpatialResection " << imageId;
-    return result.str();
-}
-
-/**
- *
- */
-std::string SpatialRessection::objectAssociations(void)
-{
-    return myImage->objectType();
-}
-
 /**
  *
  */

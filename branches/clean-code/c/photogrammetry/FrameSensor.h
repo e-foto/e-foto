@@ -138,21 +138,6 @@ public:
     std::deque<RadialSymmetricDistortionCoefficient> getRadialSymmetricCoefficients();
     std::deque<DecenteredDistortionCoefficient> getDecenteredCoefficients();
 
-	// Associated object accessor methods
-	//
-	//void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
-	//void putFlight(Flight* newFligthAssociation);
-	//Image* getImage(int imageId); // Get associated image or flight at sensor by id.
-	//Flight* getFlight(int flightId);
-	//int countImages(); // Inform the number of images or flights associated the sensor.
-	//int countFlights();
-	//Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
-	//Flight* getFlightAt(unsigned int index);
-
-	// EObject methods
-	//
-    virtual std::string objectType(void);
-
 };
 
 } // namespace efoto

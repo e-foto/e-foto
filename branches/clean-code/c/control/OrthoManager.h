@@ -23,6 +23,7 @@ OrthoManager.h
 
 #include <deque>
 #include <string>
+#include "DemGrid.h"
 
 namespace br {
 namespace uerj {
@@ -118,7 +119,7 @@ public:
     /**
     * \brief Método que carrega a grade do DEM a partir de um arquivo.
     */
-    int loadDemGrid(char * filename, int fileType);
+    int loadDemGrid(char * filename, Filetype fileType);
     /**
     * \brief Método que executa a ortorretificação.
     * \todo solve unused parameter fileType

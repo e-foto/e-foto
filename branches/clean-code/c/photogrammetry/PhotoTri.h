@@ -17,7 +17,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 #include "Point.h"
 
 namespace br {
@@ -26,7 +26,7 @@ namespace eng {
 namespace efoto {
 
 
-class PhotoTri : public EObject
+class PhotoTri : public EDom
 {
     int totalIterations;
     bool converged;
@@ -44,10 +44,6 @@ public:
 
     std::string xmlGetData();
     void xmlSetData(std::string xml);
-
-    virtual std::string objectType(void) {return "PhotoTri";}
-    virtual std::string objectAssociations(void) {return "";}
-    virtual bool is(std::string s) {return s.compare("PhotoTri");}
 
     int getTotalIterations() {return totalIterations;}
     bool getConverged() {return converged;}

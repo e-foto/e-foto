@@ -109,23 +109,6 @@ int DetectorFiducialMark::getSensorId()
 	return sensorId;
 }
 
-std::string DetectorFiducialMark::objectType(void)
-{
-    std::stringstream result;
-	result << "DetectorFiducialMark " << id;
-	return result.str();
-}
-
-std::string DetectorFiducialMark::objectAssociations(void)
-{
-	return "";
-}
-
-bool DetectorFiducialMark::is(std::string s)
-{
-	return (s == "DetectorFiducialMark" ? true : false);
-}
-
 void DetectorFiducialMark::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

@@ -107,20 +107,6 @@ Matrix SensorWithKnowParameters::getSigmaXa()
 //
 
 // EObject methods
-//
-
-std::string SensorWithKnowParameters::objectType(void)
-{
-    std::stringstream result;
-	result << "SensorWithKnowParameters " << id;
-	return result.str();
-}
-
-std::string SensorWithKnowParameters::objectAssociations(void)
-{
-	return "";
-}
-
 bool SensorWithKnowParameters::is(std::string s)
 {
 	return (s == "SensorWithKnowParameters" ? true : false);

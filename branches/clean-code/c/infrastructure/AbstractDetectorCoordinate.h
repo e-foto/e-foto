@@ -63,30 +63,6 @@ public:
 	void setEta(double newEta);
 
 	/**
- * \brief Método para alterar o valor de erro (variância) na direção Xi.
- * \param newSigmaXi	Novo valor erro para Xi.
- */
-	void setSigmaXi(double newSigmaXi);
-
-	/**
- * \brief Método para alterar o valor de erro (variância) na direção Eta.
- * \param newSigmaEta	Novo valor erro para Eta.
- */
-	void setSigmaEta(double newSigmaEta);
-
-	/**
- * \brief Método para alterar o valor de erro (covariância) conjunto nas direções Xi e Eta.
- * \param newSigmaXiEta	Novo valor erro para Xi e Eta.
- */
-	void setSigmaXiEta(double newSigmaXiEta);
-
-	/**
- * \brief Método para alterar a unidade em que a coordenada é considerada.
- * \param newUnit	Texto descritor da nova unidade de medidas considerada para a coordenada.
- */
-    void setUnit(std::string newUnit);
-
-	/**
  * \brief Método para retornar o valor Xi num sistema de coordenadas (Xi, Eta).
  * \return double	Valor Xi.
  */
@@ -145,12 +121,6 @@ public:
  * \return Matrix	Matriz sigma com os valores de erro para o posicionamento da coordenada.
  */
 	Matrix getPositionSigmas();
-
-	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
 
 };
 

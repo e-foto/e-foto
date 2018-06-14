@@ -20,7 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 
 #include <string>
 
@@ -41,7 +41,7 @@ namespace efoto {
 
 class Image;
 
-class StereoPair : public EObject
+class StereoPair : public EDom
 {
 	//EOBJECT
 
@@ -74,12 +74,6 @@ public:
 	bool leftOriented();
 	bool rightOriented();
 	bool hasOrientations();
-
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
 
 	// XML methods
 	//

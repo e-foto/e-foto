@@ -125,21 +125,6 @@ int Terrain::getUtmFuse()
 	return utmFuse;
 }
 
-std::string Terrain::objectType(void)
-{
-	return "Terrain";
-}
-
-std::string Terrain::objectAssociations(void)
-{
-	return "";
-}
-
-bool Terrain::is(std::string s)
-{
-	return (s == "Terrain" ? true : false);
-}
-
 void Terrain::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

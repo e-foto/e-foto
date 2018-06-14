@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "EObject.h"
+#include "EDom.h"
 #include "PhotoTri.h"
 
 namespace br {
@@ -249,13 +249,6 @@ public:
     * \return std::string	Retorna o nome de classe do objeto.
     */
     std::string objectType(void);
-
-    /**
-    * \brief Método para emitir as associações de uma instância.
-    * \return std::string	Retorna vazio para esta classe.
-    * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
-    */
-    std::string objectAssociations(void);
 
     /**
     * \brief Método de teste para o nome/tipo de instância.

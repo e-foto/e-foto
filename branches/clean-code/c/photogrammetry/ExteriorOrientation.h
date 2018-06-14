@@ -21,7 +21,7 @@
 #ifndef EXTERIORORIENTATION_H
 #define EXTERIORORIENTATION_H
 
-#include "EObject.h"
+#include "EDom.h"
 #include "Matrix.h"
 #include "EOQuality.h"
 
@@ -42,7 +42,7 @@ class Image;
   * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
-class ExteriorOrientation : public EObject
+class ExteriorOrientation : public EDom
 {
 	//EOBJECT
 
@@ -83,11 +83,7 @@ public:
 	void setQuality(EOQuality newQuality);
 	EOQuality getQuality();
 
-	// EObject methods
-	//
-	std::string objectType(void);
-	std::string objectAssociations(void);
-	bool is(std::string s);
+    bool is(std::string s);
 
 	std::string xmlGetData();
 	void xmlSetData(std::string xml);

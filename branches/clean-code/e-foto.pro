@@ -40,7 +40,6 @@ HEADERS += c/control/DEMManager.h \
 		   c/infrastructure/Dms.h \
 		   c/infrastructure/EDom.h \
 		   c/infrastructure/EDomValidator.h \
-		   c/infrastructure/EObject.h \
 		   c/infrastructure/ETreeModel.h \
 		   c/infrastructure/GeoSystem.h \
 		   c/infrastructure/Matrix.h \

@@ -826,14 +826,6 @@ std::string Project::objectType(void)
 /**
  *
  */
-std::string Project::objectAssociations(void)
-{
-    return "";
-}
-
-/**
- *
- */
 bool Project::is(std::string s)
 {
     return (s == "Project" ? true : false);

@@ -220,21 +220,6 @@ Matrix ObjectSpaceCoordinate::getPositionSigmas()
 	return positionSigmas;
 }
 
-std::string ObjectSpaceCoordinate::objectType(void)
-{
-	return "ObjectSpaceCoordinate";
-}
-
-std::string ObjectSpaceCoordinate::objectAssociations(void)
-{
-	return "";
-}
-
-bool ObjectSpaceCoordinate::is(std::string s)
-{
-	return (s == "ObjectSpaceCoordinate" ? true : false);
-}
-
 void ObjectSpaceCoordinate::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

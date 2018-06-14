@@ -20,7 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 
 namespace br {
 namespace uerj {
@@ -69,7 +69,7 @@ public:
   *
   */
 
-class Sensor : public EObject
+class Sensor : public EDom
 {
 	//EOBJECT
 
@@ -79,9 +79,6 @@ protected:
 	//
 	int id;
     std::string sensorId;
-	//double focalDistance;
-	//double focalDistanceSigma;
-	//DetectorSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
     std::string description;
     std::string geometry;
     std::string detector;
@@ -90,11 +87,8 @@ protected:
     std::string calibrationCertificateNumber;
     std::string calibrationCertificateDispatch;
     std::string calibrationCertificateExpiration;
-    //std::string focalDistanceUnit;
     std::string spectralRangesUnit;
     std::deque<SpectralRange> spectralRanges;
-	//deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
-	//deque<DecenteredDistortionCoefficient> dCoefficients;
 
 	// Associated Objects
 	//
@@ -114,9 +108,6 @@ public:
     //
         void setId(int newId);
         void setSensorId(std::string nickname);
-	//void setFocalDistance(double newFocalDistance);
-	//void setFocalDistanceSigma(double newFocalDistanceSigma);
-	//void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates);
     void setDescription(std::string newDescription);
     void setCalculationMode(std::string newCalculationMode);
 	int getId();
@@ -140,9 +131,13 @@ public:
 	Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
 	Flight* getFlightAt(unsigned int index);
 
-	// EObject methods
-	//
-    virtual std::string objectType(void);
+    /**
+ * \brief Método de teste para o nome/tipo de instância.
+ * \param s	Texto com o nome da classe que é esperado.
+ * \return bool	Retorna verdadeiro caso o nome da classe seja aquele passado. Retorna falso no caso contrário.
+ */
+    virtual bool is(std::string s) = 0;
+
 
 };
 

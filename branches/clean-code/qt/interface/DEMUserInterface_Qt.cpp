@@ -21,12 +21,12 @@
 #include "SingleDisplay.h"
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
+#include "DemGrid.h"
 
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QMessageBox>
 
-//#include <math.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -418,7 +418,12 @@ void DEMUserInterface_Qt::onDemGridSaveClicked()
         lastDir = filename.left(i);
 
         // Save DEM
-        manager->saveDemGrid((char *)filename.toLocal8Bit().constData(), comboBox9->currentIndex());
+        if (comboBox9->currentIndex() == 0){
+            manager->saveDemGrid((char *)filename.toLocal8Bit().constData(), Filetype::BINARY);
+        } else {
+            manager->saveDemGrid((char *)filename.toLocal8Bit().constData(), Filetype::TEXT);
+        }
+
     }
 }
 void DEMUserInterface_Qt::onDemLoadClicked()
@@ -489,8 +494,14 @@ void DEMUserInterface_Qt::onDemGridLoadClicked()
     lastDir = filename.left(i);
 
     // Load DEM Grid
-    if (!manager->loadDemGrid((char *)filename.toLocal8Bit().constData(), comboBox9->currentIndex()))
-    {
+    bool result;
+
+    if (comboBox9->currentIndex() == 0){
+        result = manager->loadDemGrid((char *)filename.toLocal8Bit().constData(), Filetype::BINARY);
+    } else {
+        result = manager->loadDemGrid((char *)filename.toLocal8Bit().constData(), Filetype::TEXT);
+    }
+    if (!result){
         QMessageBox::critical(this,"Load error","Error while loading file. Check if file format option matches the file.");
         return;
     }
@@ -533,7 +544,43 @@ void DEMUserInterface_Qt::onDemGridClicked()
         return;
 
     // Perform interpolation
-    manager->interpolateGrid(/*comboBox0->currentIndex(), */ comboBox1->currentIndex(), comboBox2_2->currentIndex(), XilineEdit->text().toDouble(), YilineEdit->text().toDouble(), XflineEdit->text().toDouble(), YflineEdit->text().toDouble(), doubleSpinBox_8->value(), doubleSpinBox_9->value(), comboBox6->currentIndex(), doubleSpinBox15->value(), doubleSpinBox16->value(), comboBox7->currentIndex(), comboBox0->currentIndex());
+    InterpolationMethod method;
+    switch (comboBox1->currentIndex()){
+    case 1 : method = InterpolationMethod::MOVING_SURFACE; break;
+    case 2 : method = InterpolationMethod::TREND_SURFACE; break;
+    case 3 : method = InterpolationMethod::NEAREST_POINT; break;
+    default : method = InterpolationMethod::MOVING_AVERAGE;
+    }
+
+    MAWeight ma_weight;
+    if (comboBox7->currentIndex()==0){
+        ma_weight = MAWeight::INVERSE_DIST;
+    } else{
+        ma_weight = MAWeight::LINEAR_DEC;
+    }
+
+    TSSurface ts_surface;
+    switch (comboBoxTrendSurface->currentIndex()){
+    case 1 : ts_surface = TSSurface::LINEAR; break;
+    case 2 : ts_surface = TSSurface::PARABOLIC; break;
+    case 3 : ts_surface = TSSurface::SECONDDEGREE; break;
+    case 4 : ts_surface = TSSurface::THIRDDEGREE; break;
+    default : ts_surface = TSSurface::PLANE;
+    }
+
+    manager->interpolateGrid(method,
+                             comboBox2_2->currentIndex(),
+                             XilineEdit->text().toDouble(),
+                             YilineEdit->text().toDouble(),
+                             XflineEdit->text().toDouble(),
+                             YflineEdit->text().toDouble(),
+                             doubleSpinBox_8->value(),
+                             doubleSpinBox_9->value(),
+                             ts_surface,
+                             doubleSpinBox15->value(),
+                             doubleSpinBox16->value(),
+                             ma_weight,
+                             comboBox0->currentIndex());
 
     if (manager->cancelFlag())
         return;

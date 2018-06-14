@@ -213,7 +213,11 @@ void OrthoUserInterface_Qt::onLoadDemClicked()
     lineEdit->setText(filename);
 
     // Load DEM
-    dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toLocal8Bit().constData(),comboBox2->currentIndex());
+    if (comboBox2->currentIndex()==0){
+        dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toLocal8Bit().constData(), Filetype::BINARY);
+    } else {
+        dem_load_flag = manager->loadDemGrid((char *)lineEdit->text().toLocal8Bit().constData(),Filetype::TEXT);
+    }
 
     // Report error
     if (!dem_load_flag)

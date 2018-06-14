@@ -24,10 +24,6 @@
 * class DemGrid
 *
 * @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 11/10/2011
-* @version 1.0 - Marcelo Teixeira Silveira
 */
 
 #include <string>
@@ -42,73 +38,112 @@ namespace efoto {
 class DEMManager;
 class MatchingPointsGrid;
 
-class DemGrid
-{
+enum class Filetype {BINARY, TEXT};
+enum class InterpolationMethod {MOVING_AVERAGE,
+                                MOVING_SURFACE,
+                                TREND_SURFACE,
+                                NEAREST_POINT
+                               };
+enum class MAWeight {INVERSE_DIST, LINEAR_DEC};
+enum class TSSurface {PLANE,
+                      LINEAR,
+                      PARABOLIC,
+                      SECONDDEGREE,
+                      THIRDDEGREE
+                     };
+
+class DemGrid {
 
 public:
     explicit DemGrid(double, double, double, double, double, double);
-    void linkManager(DEMManager *_man) { manager = _man; };
+    void linkManager(DEMManager* man)
+    {
+        manager_ = man;
+    };
     enum saveMode { efotoDEM, ascii };
-    void saveDem(char *, int);
-    void loadDem(char *, int);
+    void saveDem(const char*, Filetype) const;
+    void loadDem(char*, Filetype);
 
-    //void changeGridResolution(double, double);
-    void setPointList(MatchingPointsList *);
+    void setPointList(MatchingPointsList*);
     void interpolateNearestPoint();
-    void interpolateMovingAverage(double, double, int);
-    void interpolateTrendSurface(int);
-    void interpolateMovingSurface(double, double, int, int);
-    double getElapsedTime() { return elap_time; };
+    void interpolateMovingAverage(double, double, MAWeight);
+    void interpolateTrendSurface(TSSurface);
+    void interpolateMovingSurface(double, double, MAWeight, TSSurface);
+    double getElapsedTime()
+    {
+        return elap_time_;
+    };
 
 
-    void getMinMax(double &, double &); // Return Min Z and Max Z
+    void getMinMax(double&, double&);   // Return Min Z and Max Z
     double getMeanZ();
 
     double getHeightXY(double X, double Y);
     double getHeight(double row, double col);
-    Matrix *getDemImage(double min=0.0, double max=0.0);
-    //Matrix &getDem();
-    int getWidth() { return dem_width; };
-    int getHeight() { return dem_height; };
+    Matrix* getDemImage(double min = 0.0, double max = 0.0);
+    int getWidth()
+    {
+        return dem_width_;
+    };
+    int getHeight()
+    {
+        return dem_height_;
+    };
     void printData();
-    //void getXYAt(int col, int row, double &X, double &Y);
-    //void getXYAt(double col, double row, double &X, double &Y);
-    //void getColRowAt(double X, double Y, int &col, int &row);
-    //void getColRowAt(double X, double Y, double &col, double &row);
-    void getDemParameters(double &_Xi, double &_Yi, double &_Xf, double &_Yf, double &_res_x, double &_res_y) { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; };
+    void getDemParameters(double& Xi,
+                          double& Yi,
+                          double& Xf,
+                          double& Yf,
+                          double& res_x,
+                          double& res_y)
+    {
+        Xi = Xi_;
+        Yi = Yi_;
+        Xf = Xf_;
+        Yf = Yf_;
+        res_x = res_x_;
+        res_y = res_y_;
+    };
     std::string calculateDemQuality(MatchingPointsList mpl);
-    void overlayMap(Matrix * map);
-    void setCancel() { cancel_flag = true; };
+    void overlayMap(const Matrix* const map);
+    void setCancel()
+    {
+        cancel_flag_ = true;
+    };
 
 private:
-    Matrix DEM;
-    bool cancel_flag;
-    double Xi, Yi, Xf, Yf, res_x, res_y;
-    double elap_time;
-    unsigned int dem_width, dem_height;
-    MatchingPointsList *point_list;
-    MatchingPointsGrid *mpg;
-    void saveDemEfoto(char *);
-    void loadDemEfoto(char *);
-    void saveDemAscii(char *);
-    double getAsciiParameter(std::ifstream *, std::string);
-    void loadDemAscii(char *);
-    DEMManager* manager;
+    Matrix DEM_;
+    bool cancel_flag_;
+    double Xi_, Yi_, Xf_, Yf_, res_x_, res_y_;
+    double elap_time_;
+    unsigned int dem_width_, dem_height_;
+    MatchingPointsList* point_list_;
+    MatchingPointsGrid* mpg_;
+    DEMManager* manager_;
+    enum class InterpolationMode {NORMAL, FAST};
+
+    void saveDemEfoto(const char*) const;
+    void loadDemEfoto(const char*);
+    void saveDemAscii(const char*) const;
+    double getAsciiParameter(std::ifstream*, std::string);
+    void loadDemAscii(char*);
 
     // Used with a lot of points
     void interpolateNearestPointFast();
-    void interpolateMovingAverageFast(double, double, int);
-    void interpolateTrendSurfaceFast(int);
-    void interpolateMovingSurfaceFast(double, double, int, int);
+    void interpolateMovingAverageFast(double, double, MAWeight);
+    void interpolateTrendSurfaceFast(TSSurface);
+    void interpolateMovingSurfaceFast(double, double, MAWeight, TSSurface);
 
     // Used with a few points
     void interpolateNearestPointNormal();
-    void interpolateMovingAverageNormal(double, double, int);
-    void interpolateMovingSurfaceNormal(double, double, int, int);
+    void interpolateMovingAverageNormal(double, double, MAWeight);
+    void interpolateMovingSurfaceNormal(double, double, MAWeight, TSSurface);
 
-    int chooseBestInterpolationMethod(double nf);
+    //int chooseBestInterpolationMethod(double nf);
+    InterpolationMode chooseBestInterpolationMethod(double nf);
 
-    void createNewGrid(double, double, double, double, double, double);
+    void createNewGrid(double, double, double Xf, double Yf, double res_x,
+                       double res_y);
     void cutGrid(double min, double max, bool fromList);
     void eliminateBadPointsGrid(double sigma);
     double getStdZ();

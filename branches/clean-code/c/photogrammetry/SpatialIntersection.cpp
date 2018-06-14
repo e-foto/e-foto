@@ -172,25 +172,6 @@ PositionMatrix SpatialIntersection::calculateIntersection(PositionMatrix leftPos
     }
 }
 
-// EObject methods
-//
-std::string SpatialIntersection::objectType(void)
-{
-    std::stringstream result;
-    result << "SpatialIntersection " << stereoPair->getLeftImage()->getId() << " " << stereoPair->getRightImage()->getId();
-    return result.str();
-}
-
-std::string SpatialIntersection::objectAssociations(void)
-{
-    return "";
-}
-
-bool SpatialIntersection::is(std::string s)
-{
-    return (s == "SpatialIntersection" ? true : false);
-}
-
 // XML methods
 //
 void SpatialIntersection::xmlSetData(std::string xml)

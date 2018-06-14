@@ -37,7 +37,7 @@ class PositionMatrix : public RectSupport
 {
 
 private:
-	double* _Mat;
+    double* Mat_;
     std::string unit;
 
 protected:
@@ -254,26 +254,6 @@ public:
  * \return bool	Retorna verdadeiro se existir alguma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
  */
 	bool operator !=(const PositionMatrix& Par_Matrix);
-
-	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
-
-	/**
- * \brief Método para emitir as associações de uma instância.
- * \return std::string	Retorna vazio para esta classe.
- * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
- */
-    std::string objectAssociations(void);
-
-	/**
- * \brief Método de teste para o nome/tipo de instância.
- * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja PositionMatrix. Retorna falso no caso contrário.
- */
-    bool is(std::string s);
 
 	/**
  * \brief Método para extrair o equivalente em dados xml (gml:pos) da matriz de posição.

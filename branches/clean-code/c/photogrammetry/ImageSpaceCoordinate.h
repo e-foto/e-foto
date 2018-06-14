@@ -83,26 +83,6 @@ public:
 	int getImageId();
 
 	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-	std::string objectType(void);
-
-	/**
- * \brief Método para emitir as associações de uma instância.
- * \return std::string	Retorna vazio para esta classe.
- * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
- */
-	std::string objectAssociations(void);
-
-	/**
- * \brief Método de teste para o nome/tipo de instância.
- * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja ImageSpaceCoordinate. Retorna falso no caso contrário.
- */
-	bool is(std::string s);
-
-	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
  * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe ImageSpaceCoordinate.
  */

@@ -30,6 +30,7 @@ namespace efoto {
 class SeedEditorUserInterface_Qt;
 class SeparatedStereoViewer;
 class Marker;
+enum class InterpolationMethod;
 
 class DEMUserInterface_Qt : public QWidget, public Ui::DEMInterface, public DEMUserInterface
 {

@@ -17,7 +17,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 
 namespace br {
 namespace uerj {
@@ -35,7 +35,7 @@ class Image;
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class Flight : public EObject
+class Flight : public EDom
 {
 
 private:
@@ -254,26 +254,6 @@ public:
  * \return Image*	Ponteiro para a imagem.
  */
 	Image* getImageAt(unsigned int index);
-
-	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
-
-	/**
- * \brief Método para emitir as associações de uma instância.
- * \return std::string	Retorna Sensor e o id deste sensor no projeto se ele estiver conectado a um sensor.
- * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
- */
-    std::string objectAssociations(void);
-
-	/**
- * \brief Método de teste para o nome/tipo de instância.
- * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja Flight. Retorna falso no caso contrário.
- */
-    bool is(std::string s);
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

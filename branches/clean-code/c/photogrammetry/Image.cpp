@@ -512,37 +512,6 @@ Point* Image::getPointAt(unsigned int index)
 	return NULL;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string Image::objectType(void)
-{
-	std::stringstream result;
-	result << "Image " << id;
-	return result.str();
-}
-
-/**
- *
- */
-std::string Image::objectAssociations(void)
-{
-	std::stringstream result;
-	result << mySensor->objectType() << " " << myFlight->objectType();
-	return result.str();
-}
-
-/**
- *
- */
-bool Image::is(std::string s)
-{
-	return (s == "Image" ? true : false);
-}
-
 // XML methods
 //
 

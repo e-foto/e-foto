@@ -17,12 +17,13 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
 
 /**
 * \file RectSupport.h
@@ -33,7 +34,7 @@ namespace efoto {
 * \copyright E-Foto group
 * \authors Guilherme Abelha, Rafael Aguiar & Irving Badolato.
 */
-class RectSupport : public EObject
+class RectSupport : public EDom
 {
 
 protected:
@@ -55,16 +56,10 @@ public:
 	virtual ~RectSupport();
 
 	/**
- * \brief Método para emitir o nome de classe.
- * \return string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
-
-	/**
  * \brief Método para retornar o número de colunas da matriz.
  * \return unsigned	Número de colunas.
  */
-	unsigned int getCols() const;
+    size_t getCols() const;
 
 	/**
  * \brief Método para retornar o número de linhas da matriz.

@@ -24,6 +24,7 @@
 #endif
 
 #include "DemFeatures.h"
+#include "EDom.h"
 
 #include "MatchingPoints.h"
 

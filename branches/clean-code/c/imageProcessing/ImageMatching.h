@@ -28,12 +28,6 @@
 /**
 * class ImageMatching
 *
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 18/08/2011
-* @version 1.0 - Marcelo Teixeira Silveira
-* @version 2.0 - Marcelo Teixeira Silveira
 */
 
 namespace br {
@@ -44,95 +38,128 @@ namespace efoto {
 class MatchingPointsList;
 
 class DEMManager;
-/*
-// INTEGER STACK
-// For integer stack usage, please check float stack and uncheck this class
-// It takes 8 x sizeof(stackCell*) bytes for each object
-class stackCell
-{
-public:
-	stackCell() { prev = NULL; };
-	int coord, scoord;
-	stackCell *prev;
-};
-*/
-
 // FLOAT STACK
 // For float stack usage, please check integer stack and uncheck this class
 // It takes 16 x sizeof(stackCell*) bytes for each object
-class stackCell
-{
-public:
-        stackCell() { prev = NULL; };
-        float ref_x, ref_y, cor_x, cor_y;
-        stackCell *prev;
+class stackCell {
+ public:
+    stackCell()
+    {
+        prev = NULL;
+    };
+    float ref_x, ref_y, cor_x, cor_y;
+    stackCell* prev;
 };
 
-class ImageMatching
-{
+class ImageMatching {
+ public:
+    ImageMatching();
+    explicit ImageMatching(DEMManager*);
+    enum matmet { NCC, LSM };
+    enum eadmod { Equalization, HistMatching };
+    void setMatchingMethod();
+    LeastSquaresMatching* getLSM()
+    {
+        return &lsm;
+    };
+    NormalizedCrossCorrelation* getNCC()
+    {
+        return &ncc;
+    };
+    void setPerformRadiometric(bool pr)
+    {
+        perform_readiometric_ = pr;
+    };
+    void setMatchingMethod(int mode)
+    {
+        matching_method_ = mode % 2;
+    };
+    void setRadiometricMode(int mode)
+    {
+        radiometric_mode_ = mode % 2;
+    };
+    void setImageDepth(int depth)
+    {
+        image_depth_ = depth;
+    };
+    void performImageMatching(Matrix*, Matrix*, MatchingPointsList*,
+                              MatchingPointsList*);
+    void setMatchingLimits(int, int, int, int);
+    void setImagesIds(int lid, int rid)
+    {
+        left_image_id = lid;
+        right_image_id = rid;
+    };
+    void setStep(int, int);
+    void setCorrelationThreshold(double th)
+    {
+        corr_th_ = th;
+    };
+    double getCoverage()
+    {
+        return 100.0 * coverage;
+    };
+    void setMinStd(double);
+    void setElimanteBadPoints(bool el)
+    {
+        elim_bad_pts_ = el;
+    };
+    void setCancel()
+    {
+        cancel_flag_ = true;
+    };
+    Matrix& getMap()
+    {
+        return map;
+    };
+    double getElapsedTime()
+    {
+        return elap_time_;
+    };
+    void setPerformRegionGrowing(bool p_rg)
+    {
+        perform_RG = p_rg;
+    };
 
-public:
-	ImageMatching();
-    explicit ImageMatching(DEMManager *);
-	enum matmet { NCC, LSM };
-	enum eadmod { Equalization, HistMatching };
-	void setMatchingMethod();
-	LeastSquaresMatching* getLSM() { return &lsm; };
-	NormalizedCrossCorrelation* getNCC() { return &ncc; };
-	void setPerformRadiometric(bool _pr) { perform_readiometric = _pr; };
-	void setMatchingMethod(int _mode) { matching_method = _mode % 2; };
-	void setRadiometricMode(int _mode) { radiometric_mode = _mode % 2; };
-	void setImageDepth(int _depth) { image_depth = _depth; };
-	void performImageMatching(Matrix *, Matrix *, MatchingPointsList *, MatchingPointsList *);
-	void setMatchingLimits(int, int, int, int);
-	void setImagesIds(int _lid, int _rid) { left_image_id = _lid; right_image_id = _rid; };
-	void setStep(int, int);
-	void setCorrelationThreshold(double _th) { corr_th = _th; };
-	double getCoverage() { return 100.0*coverage; };
-	void setMinStd(double);
-	void setElimanteBadPoints(bool _el) { elim_bad_pts = _el; };
-	void setCancel() { cancel_flag = true; };
-	Matrix & getMap() { return map; };
-        double getElapsedTime() { return elap_time; };
-        void setPerformRegionGrowing(bool _p_rg) { perform_RG = _p_rg; };
+ private:
+    DEMManager* manager_;
+    Matrix map;
+    int image_depth_;
+    double coverage, max_size, num_visited;
+    double corr_th_;
+    bool perform_readiometric_, radiometric_mode_;
+    bool cancel_flag_;
+    int matching_xi_, matching_xf_, matching_yi_, matching_yf_;
+    int smatching_xi, smatching_yi, smatching_xf, smatching_yf;
+    int left_image_id, right_image_id;
+    int step_x_, step_y_;
+    int img_width, img_height, simg_width, simg_height;
+    int matching_method_;
+    stackCell* stack_;
+    RadiometricTransformation rt;
+    LeastSquaresMatching lsm;
+    NormalizedCrossCorrelation ncc;
+    bool elim_bad_pts_;
+    bool perform_RG;
+    double elap_time_;
 
-private:
-        int image_depth;
-	double coverage, max_size, num_visited;
-	double corr_th;
-	bool perform_readiometric, radiometric_mode;
-	bool cancel_flag;
-	int matching_xi, matching_yi, matching_xf, matching_yf;
-	int smatching_xi, smatching_yi, smatching_xf, smatching_yf;
-	int left_image_id, right_image_id;
-	int step_x, step_y;
-	int img_width, img_height, simg_width, simg_height;
-	int matching_method;
-	stackCell *stack, *aux;
-	RadiometricTransformation rt;
-	LeastSquaresMatching lsm;
-	NormalizedCrossCorrelation ncc;
-	Matrix map;
-	DEMManager *manager;
-	void init();
-	void fillMap(MatchingPointsList *);
-	bool elim_bad_pts;
-        bool perform_RG;
-        double elap_time;
-        // INTEGER STACK
-/*	bool pop(int&, int&, int&, int&);
-        bool push(int,int,int,int);
-        void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy); */
-        // DOUBLE STACK
-        bool pop(double&, double&, double&, double&);
-        bool push(double,double,double,double);
-        void region_growing(Matrix *, Matrix *, MatchingPointsList *, double x, double y, double sx, double sy);
-        void emptyStack();
+    void fillMap(MatchingPointsList*);
+    // DOUBLE STACK
+    bool pop(double&, double&, double&, double&);
+    bool push(double, double, double, double);
+    void region_growing(Matrix*,
+                        Matrix*,
+                        MatchingPointsList*,
+                        double x,
+                        double y,
+                        double sx,
+                        double sy);
+    void emptyStack();
 };
 
-} // namespace efoto
-} // namespace eng
-} // namespace uerj
-} // namespace br
+}  // namespace efoto
+}  // namespace eng
+}  // namespace uerj
+}  // namespace br
 
-#endif
+#endif  // IMAGE_MATCHING

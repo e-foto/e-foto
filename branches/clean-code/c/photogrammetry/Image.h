@@ -20,7 +20,7 @@
 	You should have received a copy of the GNU General Public License
 	along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-//#include "EObject.h"
+//#include "EDom.h"
 #include "ImageFiducialMark.h"
 #include "ObjectSpaceCoordinate.h"
 
@@ -45,7 +45,7 @@ class ExteriorOrientation;
 * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato.
 */
 
-class Image : public EObject
+class Image : public EDom
 {
 	//EOBJECT
 
@@ -162,11 +162,6 @@ public:
 	Point* getPointAt(unsigned int index); // Get associated point at image by index in deque for iterations.
 
 	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints //Paulo 27/09/2011
-	// EObject methods
-	//
-	std::string objectType(void);
-	std::string objectAssociations(void);
-	bool is(std::string s);
 
 	// XML methods
 	//

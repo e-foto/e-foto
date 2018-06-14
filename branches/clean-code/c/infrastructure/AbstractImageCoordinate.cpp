@@ -40,11 +40,6 @@ void AbstractImageCoordinate::setLin(double newLin)
 	lin = newLin;
 }
 
-void AbstractImageCoordinate::setUnit(std::string newUnit)
-{
-	unit = newUnit;
-}
-
 double AbstractImageCoordinate::getCol()
 {
 	return col;
@@ -77,11 +72,6 @@ PositionMatrix AbstractImageCoordinate::getPosition()
 	position.set(1, col);
 	position.set(2, lin);
 	return position;
-}
-
-std::string AbstractImageCoordinate::objectType(void)
-{
-	return "AbstractImageCoordinate";
 }
 
 } // namespace efoto

@@ -20,7 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EObject.h"
+#include "EDom.h"
 #include "Matrix.h"
 
 namespace br {
@@ -42,7 +42,7 @@ class SpatialRessection;
   *
   */
 
-class EOQuality : public EObject
+class EOQuality : public EDom
 {
 	//EOBJECT
 
@@ -68,12 +68,6 @@ public:
 	double getsigma0Squared();
 	Matrix getSigmaXa();
 	Matrix getSigmaLa();
-
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
 
 	// XML methods
 	//

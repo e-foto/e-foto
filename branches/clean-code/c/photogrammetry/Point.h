@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "EObject.h"
+#include "EDom.h"
 #include "ObjectSpaceCoordinate.h"
 #include "ImageSpaceCoordinate.h"
 #include "DetectorSpaceCoordinate.h"
@@ -38,7 +38,7 @@ class Image;
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class Point : public EObject
+class Point : public EDom
 {
 public:
 
@@ -115,12 +115,6 @@ public:
 	//
 	bool hasImageCoordinate(int imageId);
 	bool hasDetectorCoordinate(int imageId);
-
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
 
 	// Other methods
 	//

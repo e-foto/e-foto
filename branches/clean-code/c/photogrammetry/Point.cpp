@@ -431,40 +431,6 @@ bool Point::hasDetectorCoordinate(int imageId)
 
 }
 
-// EObject methods
-//
-
-/**
- *
- */
-std::string Point::objectType(void)
-{
-    std::stringstream result;
-	result << "Point " << id;
-	return result.str();
-}
-
-/**
- *
- */
-std::string Point::objectAssociations(void)
-{
-    std::stringstream result;
-	if (countImages() != 0)
-		result << "Image";
-	for (int i = 0; i < countImages(); i++)
-		result << " " << getImageAt(i)->getId();
-	return result.str();
-}
-
-/**
- *
- */
-bool Point::is(std::string s)
-{
-	return (s == "Point" ? true : false);
-}
-
 void Point::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);

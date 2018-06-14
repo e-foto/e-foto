@@ -33,7 +33,7 @@ namespace efoto {
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class Coordinate : public EObject
+class Coordinate : public EDom
 {
 
 protected:

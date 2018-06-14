@@ -191,14 +191,6 @@ Flight* Sensor::getFlightAt(unsigned int index)
 	return NULL;
 }
 
-// EObject methods
-//
-
-std::string Sensor::objectType(void)
-{
-	return "Sensor";
-}
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

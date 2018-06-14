@@ -78,21 +78,6 @@ int ImageSpaceCoordinate::getImageId()
 	return imageId;
 }
 
-std::string ImageSpaceCoordinate::objectType(void)
-{
-	return "ImageSpaceCoordinate";
-}
-
-std::string ImageSpaceCoordinate::objectAssociations(void)
-{
-	return "";
-}
-
-bool ImageSpaceCoordinate::is(std::string s)
-{
-	return (s == "ImageSpaceCoordinate" ? true : false);
-}
-
 void ImageSpaceCoordinate::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
