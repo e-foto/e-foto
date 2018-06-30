@@ -77,15 +77,15 @@ public:
     int searchHomologous(Matrix*, Matrix*);
     double directCorrelation(Matrix* X, Matrix* Y, int template_cx, int template_cy,
                              int matching_cx, int matching_cy);
-    double getBestP()
+    double getBestP() const
     {
         return best_p;
     };
-    double getBestX()
+    double getBestX() const
     {
         return best_x;
     };
-    double getBestY()
+    double getBestY() const
     {
         return best_y;
     };
@@ -116,14 +116,11 @@ private:
     double min_std_acceptance_;
     int temp_growth_step_, temp_max_size_;
 
-    double average(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
+    static double average(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
                    int col_f = 0);
-    double stddev(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
+    static double stddev(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
                   int col_f = 0);
-    double covXY(Matrix* X, Matrix* Y, int row_x_i = 0, int row_x_f = 0,
-                 int col_x_i = 0, int col_x_f = 0, int row_y_i = 0, int row_y_f = 0,
-                 int col_y_i = 0, int col_y_f = 0);
-    double correlation(Matrix* X, Matrix* Y, int row_x_i = 0, int row_x_f = 0,
+    static double correlation(Matrix* X, Matrix* Y, int row_x_i = 0, int row_x_f = 0,
                        int col_x_i = 0, int col_x_f = 0, int row_y_i = 0, int row_y_f = 0,
                        int col_y_i = 0, int col_y_f = 0);
     double calculateTemplateStd(Matrix* refmat);

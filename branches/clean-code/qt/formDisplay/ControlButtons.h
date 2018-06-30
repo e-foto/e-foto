@@ -38,13 +38,11 @@ public:
 	ControlButtons();
 
 public slots:
-	virtual void toSimpleMode();
-	virtual void toSingleMode();
+    virtual void toSingleMode();
 	virtual void toMultiMode();
 	virtual void toEditMode();
 	virtual void toInvisibleMode();
 	virtual void disconnectAll();
-	virtual void simpleConnect();
 	virtual void singleConnect();
 	virtual void multiConnect();
 };

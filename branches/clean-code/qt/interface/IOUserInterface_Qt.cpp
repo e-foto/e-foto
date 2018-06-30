@@ -80,11 +80,7 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 
 	QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
 	QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
-        QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(OIdone()));
-	//QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-	//QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-	//QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-	//QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
+    QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(OIdone()));
 
 	this->manager = manager;
 	if (manager->interiorDone())
@@ -98,15 +94,6 @@ IOUserInterface_Qt::IOUserInterface_Qt(IOManager* manager, QWidget* parent, Qt::
 IOUserInterface_Qt::~IOUserInterface_Qt()
 {
 	// no need to delete child widgets, Qt does it all for us
-}
-
-void IOUserInterface_Qt::languageChange()
-{
-	retranslateUi(this);
-}
-
-void IOUserInterface_Qt::informState()
-{
 }
 
 void IOUserInterface_Qt::receiveMark(QPointF p)
@@ -129,21 +116,6 @@ void IOUserInterface_Qt::makeRepaint()
 {
 	imageView->update();
 	table1->repaint();
-}
-
-void IOUserInterface_Qt::activeSetMode()
-{
-	//oldImageView->setViewMode(1);
-}
-
-void IOUserInterface_Qt::activePanMode()
-{
-	//oldImageView->setViewMode(2);
-}
-
-void IOUserInterface_Qt::activeZoomMode()
-{
-	//oldImageView->setViewMode(3);
 }
 
 void IOUserInterface_Qt::fitView()

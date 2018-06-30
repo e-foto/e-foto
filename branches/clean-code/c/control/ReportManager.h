@@ -1,7 +1,7 @@
 #ifndef REPORTMANAGER_H
 #define REPORTMANAGER_H
 /**************************************************************************
-		  ReportManager.h
+          ReportManager.h
 **************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
@@ -38,57 +38,42 @@ class EFotoManager;
 class Project;
 
 
-class ReportManager
-{
-	// Private Attributes
-	//
-	bool started;
-	bool status;
-    EFotoManager* efotoManager;
-    Project* project;
-	ReportUserInterface* myInterface;
+class ReportManager {
+    // Private Attributes
+    //
+    EFotoManager* efotoManager_;
+    Project* project_;
+    ReportUserInterface* myInterface_;
+    bool started_;
 
 public:
 
-	// Constructors and Destructors
-	//
-	/**
-	* \brief Construtor vazio.
-	*/
-	ReportManager();
-	/**
-	* \brief Construtor vazio.
-	*/
+    // Constructors and Destructors
+    //
+    /**
+    * \brief Construtor vazio.
+    */
+    ReportManager();
+    /**
+    * \brief Construtor vazio.
+    */
     explicit ReportManager(EFotoManager* manager);
-	/**
-	* \brief Destrutor padro.
-	*/
-	~ReportManager();
+    /**
+    * \brief Destrutor padro.
+    */
+    ~ReportManager();
 
-	// Association Methods
-	//
-	/**
-    * \brief Metodo de associcao que seta uma interface.
-	* \param newInterface Interface que ser usada.
-	*/
-	void setInterface(ReportUserInterface* newInterface);
-	/**
-    * \brief Metodo que retorna a Interface corrente.
-	* \return IOUserInterface Interface corrente.
-	*/
-	ReportUserInterface* getInterface();
-
-	// Other Methods
-	//
-	/**
+    // Other Methods
+    //
+    /**
     * \brief Metodo que inicia o mdulo de Orientao Interior e retorna se foi feito algum clculo neste mesmo mdulo anteriormente para a alertar o usurio, caso o projeto no tenha sido salvo.
-	* \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contrrio.
-	*/
-	bool exec();
-	/**
+    * \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contrrio.
+    */
+    bool exec();
+    /**
     * \brief Metodo que carrega a interface do projeto quando o mdulo de Orientao Interior  finalizado.
-	*/
-	void returnProject();
+    */
+    void returnProject();
 
     /**
     * \brief Metodo que bloqueia as opcoes da arvore que ainda nao foram obtidas durante o projeto fotogrametrico.
@@ -167,19 +152,19 @@ public:
     * \return string XML da opcao pai Stereo Plotting.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    std::string eprStereoPlotting();
+    static std::string eprStereoPlotting();
     /**
     * \brief Metodo que retorna o XML da opcao pai DSM.
     * \return string XML da opcao pai DSM.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    std::string eprDSM();
+    static std::string eprDSM();
     /**
     * \brief Metodo que retorna o XML da opcao pai Ortho Rectification.
     * \return string XML da opcao pai Ortho Rectification.
     * \todo Metodo nao finalizado. Usar o metodo makeThumbnail.
     */
-    std::string eprOrthorectification();
+    static std::string eprOrthorectification();
 
     /**
     * \brief Metodo que chama os metodos necessarios, de acordo com as opcoes marcadas da arvore, e cria o arquivo XML do relatorio.
@@ -188,32 +173,15 @@ public:
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return bool Retorna se o arquivo XML foi criado com sucesso.
     */
-    bool makeFile(std::string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
+    bool makeFile(std::string filename, int idExt,
+                  QList<QTreeWidgetItem*> treeItems);
     /**
     * \brief Metodo que cria o arquivo XSL correspondente a escolha do usuario
     * \param idExt Id do tipo de formato escolhido pelo usuario.
     * \param path Caminho para salvar o arquivo.
     * \return bool Retorna se o arquivo XSL foi criado com sucesso.
     */
-    bool makeXslt(int idExt, std::string path);
-
-    /**
-    * \brief Metodo que gera thumbnail de imagens.
-    * \param filename Nome do arquivo imagem.
-    * \param maxW Tamanho maximo da largura.
-    * \param maxH Tamanho maximo da altura.
-    * \return QImage O thumbnail gerado.
-    */
-    QImage makeThumbnail(QString filename, int maxW, int maxH);
-
-    /*
-    #ifdef Q_WS_X11 //LINUX
-    #endif
-    #ifdef Q_WS_WIN //WINDOWS
-    #endif
-    #ifdef Q_WS_MACX //MAC
-    #endif
-    */
+    static bool makeXslt(int idExt, std::string path);
 };
 
 } // namespace efoto

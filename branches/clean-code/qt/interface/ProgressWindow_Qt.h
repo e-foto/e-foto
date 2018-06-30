@@ -24,7 +24,7 @@ class ProgressWindow : public QWidget
 	Q_OBJECT
 
 public:
-	ProgressWindow(QWidget *parent = 0);
+    explicit ProgressWindow(QWidget *parent = 0);
 	void setProgress(int prog);
 	void setDescription(QString desc);
 	void setAllowClose(bool sac) { allow_close = sac; };

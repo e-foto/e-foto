@@ -36,15 +36,14 @@ class Flight;
 class DetectorSpaceCoordinate;
 
 // Classes/Structs used in Sensor only.
-//
-
 class SpectralRange
 {
-	int band;
-	double inferiorLimit;
-	double superiorLimit;
+    int band{0};
+    double inferiorLimit{0.0};
+    double superiorLimit{0.0};
 
 public:
+    SpectralRange(){};
 
 	friend class Sensor;
 	friend class FrameSensor;
@@ -77,23 +76,23 @@ protected:
 
 	// Private attributes
 	//
-	int id;
-    std::string sensorId;
-    std::string description;
-    std::string geometry;
-    std::string detector;
-    std::string energySource;
-    std::string calculationMode;
-    std::string calibrationCertificateNumber;
-    std::string calibrationCertificateDispatch;
-    std::string calibrationCertificateExpiration;
-    std::string spectralRangesUnit;
-    std::deque<SpectralRange> spectralRanges;
+    int id_{-1};
+    std::string sensorId_{""};
+    std::string description_{""};
+    std::string geometry_{""};
+    std::string detector_{""};
+    std::string energySource_{""};
+    std::string calculationMode_{""};
+    std::string calibrationCertificateNumber_{""};
+    std::string calibrationCertificateDispatch_{""};
+    std::string calibrationCertificateExpiration_{""};
+    std::string spectralRangesUnit_{""};
+    std::deque<SpectralRange> spectralRanges_{};
 
 	// Associated Objects
 	//
-    std::deque<Image*> myImages;
-    std::deque<Flight*> myFlights;
+    std::deque<Image*> myImages_{};
+    std::deque<Flight*> myFlights_{};
 
 public:
 
@@ -109,27 +108,24 @@ public:
         void setId(int newId);
         void setSensorId(std::string nickname);
     void setDescription(std::string newDescription);
-    void setCalculationMode(std::string newCalculationMode);
-	int getId();
-        std::string getSensorId();
+    int getId() const;
+        std::string getSensorId() const;
 	virtual double getFocalDistance() = 0;
 	virtual double getFocalDistanceSigma() = 0;
 	virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
-    std::string getDescription();
-    std::string getCalculationMode();
+    std::string getDescription() const;
+    std::string getCalculationMode() const;
 
 	// Associated object accessor methods
 	//
 	void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
 	void putFlight(Flight* newFligthAssociation);
-        void clearImages() {myImages.clear();} // Remove associations.
-        void clearFlights() {myFlights.clear();}
+        void clearImages() {myImages_.clear();} // Remove associations.
+        void clearFlights() {myFlights_.clear();}
 	Image* getImage(int imageId); // Get associated image or flight at sensor by id.
 	Flight* getFlight(int flightId);
-	int countImages(); // Inform the number of images or flights associated the sensor.
-	int countFlights();
+    int countImages() const; // Inform the number of images or flights associated the sensor.
 	Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
-	Flight* getFlightAt(unsigned int index);
 
     /**
  * \brief Método de teste para o nome/tipo de instância.

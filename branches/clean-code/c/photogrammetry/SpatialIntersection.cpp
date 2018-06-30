@@ -82,11 +82,6 @@ void SpatialIntersection::setStereoPair(StereoPair* newPair)
     rightRay = new ProjectiveRay(stereoPair->getRightImage());
 }
 
-StereoPair* SpatialIntersection::getStereoPair()
-{
-    return stereoPair;
-}
-
 // Other methods
 
 ObjectSpaceCoordinate SpatialIntersection::calculateIntersection(double xiLeft, double etaLeft, double xiRight, double etaRight)
@@ -176,7 +171,6 @@ PositionMatrix SpatialIntersection::calculateIntersection(PositionMatrix leftPos
 //
 void SpatialIntersection::xmlSetData(std::string xml)
 {
-    std::string none = xml;
 }
 
 std::string SpatialIntersection::xmlGetData()

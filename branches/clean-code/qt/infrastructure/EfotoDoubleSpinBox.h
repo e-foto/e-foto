@@ -30,7 +30,7 @@ public:
 
 	/**
 	* \brief Evento reimplementado para trocar ',' por '.' e vice-versa dependendo do local em que o usuario esta.
-	* \param Objeto de evento contendo as informaçoes sobre as teclas pressionadas
+	* \param Objeto de evento contendo as informaÃ§oes sobre as teclas pressionadas
 	*/
 	void keyPressEvent(QKeyEvent *event);
 

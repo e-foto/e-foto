@@ -77,27 +77,6 @@ public:
  */
 	void cleanForm();
 
-	/**
- * \brief Metodo que retorna um texto contendo o caminho do arquivo de imagem apontado no formulario
- * \return std::string : Caminho do arquivo de imagem
- */
-    std::string getFileImagePath();
-
-	/**
- * \brief Metodo que retorna um texto contendo o nome do arquivo de imagem apontado no formulario
- * \return std::string : Nome do arquivo de imagem
- */
-    std::string getFileImageName();
-
-
-	/**
- * \brief Metodo que informa se o formulario é o mesmo do parametro formName
- * \param formName : nome do formulario
- * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário
- */
-    bool isForm(std::string formName);
-
-
 private slots:
 	/**
  * \brief Metodo que informa o nome do arquivo de imagem escolhido pelo usuario no formulario e obtem as dimensões das imagens

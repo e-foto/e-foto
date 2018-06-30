@@ -40,22 +40,22 @@ XmlUpdater::XmlUpdater(std::string xml,std::string referenceBuild)
 
 }
 
-EDomElement XmlUpdater::getAllXml()
+EDomElement XmlUpdater::getAllXml() const
 {
     return allXml;
 }
 
-int XmlUpdater::getError()
+int XmlUpdater::getError() const
 {
     return error;
 }
 
-bool XmlUpdater::isUpdated()
+bool XmlUpdater::isUpdated() const
 {
     return updated;
 }
 
-std::string XmlUpdater::getReferenceBuild()
+std::string XmlUpdater::getReferenceBuild() const
 {
     return referenceBuild;
 }

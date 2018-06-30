@@ -20,6 +20,7 @@
 #include "ui_SeedEditor.h"
 #include "DEMUserInterface.h"
 #include "ProgressWindow_Qt.h"
+#include <string>
 
 
 namespace br {
@@ -52,7 +53,6 @@ protected:
     QString lastDir;
 
 protected slots:
-    virtual void languageChange();
     void onDemExtractionClicked();
     void onDemLoadClicked();
     void onDemGridLoadClicked();
@@ -88,8 +88,8 @@ public:
     bool exec();
     void loadImage(Matrix & I, char *filename, double sample=1.0);
     int saveImage(char *filename, Matrix *I);
-    void addImagePair(char *);
-    void setStatus(char *);
+    void addImagePair(std::string);
+    void setStatus(std::string);
     void setAutoExtInfo(int, int , double, double);
     void setManualExtInfo(int, double, double);
     void updateSeedsLabel(int nseeds);

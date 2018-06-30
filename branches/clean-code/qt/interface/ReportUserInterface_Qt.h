@@ -48,9 +48,6 @@ protected:
 	void newTree();        
         QList<QTreeWidgetItem*> treeItems;
 
-protected slots:
-	virtual void languageChange();
-
 private:
         void init();
 

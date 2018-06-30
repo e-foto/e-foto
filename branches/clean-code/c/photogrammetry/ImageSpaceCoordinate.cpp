@@ -73,7 +73,7 @@ void ImageSpaceCoordinate::setImageId(int newImageId)
 	imageId = newImageId;
 }
 
-int ImageSpaceCoordinate::getImageId()
+int ImageSpaceCoordinate::getImageId() const
 {
 	return imageId;
 }

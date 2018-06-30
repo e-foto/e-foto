@@ -38,23 +38,10 @@ namespace efoto {
 
 class IOManager;
 
-class IOUserInterface //: public EObject
+class IOUserInterface
 {
 
-protected:
-
-	// Associated Objects
-	//
-	IOManager* manager;
-
 public:
-
-	// Association Methods
-	//
-	IOManager* getManager();
-
-	// Other Methods
-	//
 	virtual bool measureMark(int id, double col, double lin) = 0;
 	virtual bool calculateIO() = 0;
 	virtual bool exec() = 0;

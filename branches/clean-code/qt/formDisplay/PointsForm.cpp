@@ -95,12 +95,6 @@ void PointsForm :: emitSignal(int i)
     emit clicked(i);
 }
 
-bool PointsForm::isForm(std::string formName)
-{
-    return !formName.compare("PointsForm");
-}
-
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

@@ -111,52 +111,22 @@ void ObjectSpaceCoordinate::setUnit(std::string newUnit)
 	unit = newUnit;
 }
 
-double ObjectSpaceCoordinate::getX()
+double ObjectSpaceCoordinate::getX() const
 {
 	return x;
 }
 
-double ObjectSpaceCoordinate::getY()
+double ObjectSpaceCoordinate::getY() const
 {
 	return y;
 }
 
-double ObjectSpaceCoordinate::getZ()
+double ObjectSpaceCoordinate::getZ() const
 {
 	return z;
 }
 
-double ObjectSpaceCoordinate::getSigmaX()
-{
-	return sigmaX;
-}
-
-double ObjectSpaceCoordinate::getSigmaY()
-{
-	return sigmaY;
-}
-
-double ObjectSpaceCoordinate::getSigmaZ()
-{
-	return sigmaZ;
-}
-
-double ObjectSpaceCoordinate::getSigmaXY()
-{
-	return sigmaXY;
-}
-
-double ObjectSpaceCoordinate::getSigmaXZ()
-{
-	return sigmaXZ;
-}
-
-double ObjectSpaceCoordinate::getSigmaYZ()
-{
-	return sigmaYZ;
-}
-
-std::string ObjectSpaceCoordinate::getUnit()
+std::string ObjectSpaceCoordinate::getUnit() const
 {
 	return unit;
 }

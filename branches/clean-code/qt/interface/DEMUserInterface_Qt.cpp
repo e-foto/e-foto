@@ -125,11 +125,6 @@ DEMUserInterface_Qt::~DEMUserInterface_Qt()
     // no need to delete child widgets, Qt does it all for us
 }
 
-void DEMUserInterface_Qt::languageChange()
-{
-    retranslateUi(this);
-}
-
 void DEMUserInterface_Qt::init()
 {
     /*
@@ -284,15 +279,15 @@ void DEMUserInterface_Qt::enableOptions()
     doneButton->setEnabled(true);
 }
 
-void DEMUserInterface_Qt::addImagePair(char *item)
+void DEMUserInterface_Qt::addImagePair(std::string item)
 {
-    QString text = QString::fromAscii(item);
+    QString text = QString::fromStdString(item);
     comboBox5->addItem(text);
 }
 
-void DEMUserInterface_Qt::setStatus(char *txt)
+void DEMUserInterface_Qt::setStatus(std::string txt)
 {
-    workLabel->setText(QString::fromAscii(txt));
+    workLabel->setText(QString::fromStdString(txt));
 }
 
 void DEMUserInterface_Qt::setProgress(int progress)
@@ -1073,10 +1068,9 @@ void SeedEditorUserInterface_Qt::onRemoveButtonClicked()
     }
 
     // Start to erase
-    int seed_id;
     for (int i=sel_seeds.size()-1; i>=0; i--)
     {
-        seed_id = tableWidget->item(sel_seeds.at(i),0)->text().toInt();
+        int seed_id = tableWidget->item(sel_seeds.at(i),0)->text().toInt();
         seeds.remove(seed_id);
     }
 
@@ -1167,7 +1161,6 @@ void SeedEditorUserInterface_Qt::addPairs()
     std::deque<Image*> listAllImages = manager->getImages();
 
     // Add pairs to the interface
-    int left_id, right_id;
     int no_imgs = listAllImages.size();
     std::string str_left, str_right;
     std::stringstream txt;
@@ -1175,8 +1168,8 @@ void SeedEditorUserInterface_Qt::addPairs()
     for (unsigned int i=0; i<listPairs.size(); i++)
     {
         // Decode
-        left_id = 1 + (listPairs.at(i) % no_imgs);
-        right_id = 1 + (listPairs.at(i) / no_imgs);
+        int left_id = 1 + (listPairs.at(i) % no_imgs);
+        int right_id = 1 + (listPairs.at(i) / no_imgs);
         str_left = listAllImages.at(left_id-1)->getImageId();
         str_right = listAllImages.at(right_id-1)->getImageId();
         txt.str(""); // Clear stream
@@ -1236,7 +1229,6 @@ void SeedEditorUserInterface_Qt::onComboBox1Changed(/*int index*/)
  */
 void SeedEditorUserInterface_Qt::addMatchingPoints()
 {
-    MatchingPoints *mp;
     QPointF left_coord, right_coord;
     int left_id, right_id;
     getImagesIds(left_id,right_id);
@@ -1251,7 +1243,7 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
         pw.setProgress(100*(i+1)/total_pairs);
         qApp->processEvents();
 
-        mp = pairs.get(i+1);
+        MatchingPoints *mp = pairs.get(i+1);
 
         if (mp->left_image_id != left_id || mp->right_image_id != right_id)
             continue;
@@ -1277,7 +1269,6 @@ void SeedEditorUserInterface_Qt::addMatchingPoints()
  */
 void SeedEditorUserInterface_Qt::addSeedsAndTable()
 {
-    MatchingPoints *mp;
     QPointF left_coord, right_coord;
     int left_id, right_id;
     getImagesIds(left_id,right_id);
@@ -1290,7 +1281,7 @@ void SeedEditorUserInterface_Qt::addSeedsAndTable()
 
     for (unsigned int i=0; i<seeds.size(); i++)
     {
-        mp = seeds.get(i+1);
+        MatchingPoints *mp = seeds.get(i+1);
 
         if (mp->left_image_id != left_id || mp->right_image_id != right_id)
             continue;

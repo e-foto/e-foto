@@ -159,12 +159,7 @@ public slots:
  */
 	bool calculatePT();
 
-	/**
- * \brief Metodo que abre um widget parao usuario informar a direÃ§ao de voo de cada imagem
- */
-	void openImagesFlightDirectionForm();
-
-	/**
+/**
  * \brief Metodo que altera o valor da direÃ§ao de voo da imagem
  * \param imageFile : Nome do arquivo de imagem
  * \param kappa0 : Valor do angulo, em radianos, da direÃ§ao de voo
@@ -305,18 +300,10 @@ public slots:
 */
 	void showReportXml();
 
-	void FlightFormClosed(QList<int> list);
-		// Deixa o usuario entrar com o valor da linha e coluna na mao atualizando na interface Atualmente desabilitada
-	//void updatePoint(int, int, double);
-
 	void exportCoordinatesTxt();
 
-	void exportCoordinates();
-
-
 protected slots:
-
-	/**
+/**
  * \brief Metodo que responsavel por desfazes a ultima maracaÃ§ao do usuario
  */
 	void undoMark();
@@ -396,19 +383,19 @@ public:
  * \brief Metodo para retornar o id do ponto
  * \return QString : Texto contendo o id do ponto
  */
-	QString getPointId();
+    QString getPointId() const;
 
 	/**
  * \brief Metodo para retornar a key do ponto
  * \return int : Key do ponto
  */
-	unsigned int getKeyPoint();
+    unsigned int getKeyPoint() const;
 
 	/**
  * \brief Metodo para retornar a key do ponto
  * \return int : Key da imagem
  */
-	unsigned int getKeyImage();
+    unsigned int getKeyImage() const;
 
 	/**
  * \brief Metodo que retorna um texto contendo os valores dos atributos do objeto

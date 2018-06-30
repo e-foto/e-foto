@@ -46,36 +46,32 @@ class SpatialRessection : public ExteriorOrientation
 {
 	// Private attributes
 	//
-	Matrix La;
-	Matrix A;
-	Matrix P;
-	Matrix X0;
-	Matrix L0;
-	Matrix Lb;
-	Matrix lastL0;
-	std::deque<double> rmse;
+    Matrix La{};
+    Matrix A{};
+    Matrix P{};
+    Matrix X0{};
+    Matrix L0{};
+    Matrix Lb{};
+    Matrix lastL0{};
+    std::deque<double> rmse{};
 
-	RayTester* rt;
+    RayTester* rt{nullptr};
 
-	double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
-	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
-	std::deque<int> selectedPoints;
-	bool flightDirectionAvailable;
-	bool pointForFlightDirectionAvailable;
-	ImageSpaceCoordinate pointForFlightDirection;
+    // Variables just for speeding up calculations, not really needed.
+    double X00{0.0}, Y00{0.0}, Z00{0.0}, omega0{0.0}, phi0{0.0}, kappa0{0.0};
 
-	bool gnssConverged, insConverged;
-	bool useDistortions;
+    std::deque<int> selectedPoints{};
+    bool flightDirectionAvailable{false};
+    bool pointForFlightDirectionAvailable{false};
+    ImageSpaceCoordinate pointForFlightDirection{};
 
-	// Sets probably accessible only by the Mounter class.
-	//
-	void setXa(const Matrix& newXa);
-	void setLa(const Matrix& newLa);
-	void setA(const Matrix& newA);
-	void setP(const Matrix& newP);
-	void setX0(const Matrix& newX0);
-	void setL0(const Matrix& newL0);
-	void setLb(const Matrix& newLb);
+    bool gnssConverged{false}, insConverged{false};
+    bool useDistortions{false};
+
+    // Sets probably accessible only by the Mounter class.
+    //
+    void setXa(const Matrix& newXa);
+    void setLb(const Matrix& newLb);
 
 public:
 
@@ -87,38 +83,31 @@ public:
 
 	// Private attribute accessors
 	//
-	Matrix getLa();
-	Matrix getA();
-	Matrix getP();
-	Matrix getX0();
-	Matrix getL0();
-	Matrix getLb();
-	Matrix getLastL0();
+    Matrix getLa() const;
+    Matrix getA() const;
+    Matrix getP() const;
+    Matrix getLb() const;
+    Matrix getLastL0() const;
 
-	std::deque<int> getSelectedPoints();
-	ImageSpaceCoordinate* getPointForFlightDirection();
+    std::deque<int> getSelectedPoints() const;
 
-	bool getConverged();
-	bool getGnssConverged();
-	bool getInsConverged();
-	std::deque<double> getRMSE() {return rmse;}
+    bool getConverged() const;
+    std::deque<double> getRMSE() const {return rmse;}
 
 
 	// Selected points list manipulators
 	//
 	void selectPoint(int id);
 	void unselectPoint(int id);
-	void unselectAllPoints();
-	int countSelectedPoints();
+    int countSelectedPoints() const;
 
 	//  Selected fiducial mark or point to indicate the direction of flight manipulators
 	//
 	void setFlightDirection(double kappa0);
 	void setPointForFlightDirection(double col, double row);
 	void selectFiducialMarkForFlightDirection(int id);
-	void unsetPointForFlightDirection();
 
-	bool is(std::string s);
+    static bool is(std::string s);
 
 	// XML methods
 	//
@@ -134,7 +123,6 @@ public:
 	void generateInitialP();
 	void generateA();
 	void generateL0();
-	void generateRMSE();
 	void generateLb();
 	void generateP();
 	void generateX0();

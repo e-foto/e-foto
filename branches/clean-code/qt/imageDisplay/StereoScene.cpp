@@ -6,47 +6,34 @@ namespace eng {
 namespace efoto {
 
 // StereoScene class
-StereoScene::StereoScene(QObject* parent, QString leftImageFilepath, QString rightImageFilepath):
-	QObject(parent)
-{
-	leftScene_ = new SingleScene(parent, leftImageFilepath);
-	rightScene_ = new SingleScene(parent, rightImageFilepath);
+StereoScene::StereoScene(QObject* parent, QString leftImageFilepath,
+                         QString rightImageFilepath):
+    QObject(parent) {
+    leftScene_ = new SingleScene(parent, leftImageFilepath);
+    rightScene_ = new SingleScene(parent, rightImageFilepath);
 }
 
-StereoScene::~StereoScene()
-{
-	leftScene_ = rightScene_ = NULL;
+StereoScene::~StereoScene() {
+    leftScene_ = rightScene_ = NULL;
 }
 
-void StereoScene::setLeftScene(SingleScene* leftScene)
-{
-	leftScene_ = leftScene;
+void StereoScene::setViewport(QSize viewportSize) {
+    leftScene_->setViewport(viewportSize);
+    rightScene_->setViewport(viewportSize);
 }
 
-void StereoScene::setRightScene(SingleScene* rightScene)
-{
-	rightScene_ = rightScene;
+QPointF StereoScene::getChannelsOffset() {
+    return rightScene_->getViewpoint() - leftScene_->getViewpoint();
 }
 
-void StereoScene::setViewport(QSize viewportSize)
-{
-	leftScene_->setViewport(viewportSize);
-	rightScene_->setViewport(viewportSize);
+unsigned int StereoScene::getWidth() {
+    return leftScene_->getWidth() / 2.0 + getChannelsOffset().x() +
+           rightScene_->getWidth() / 2.0;
 }
 
-QPointF StereoScene::getChannelsOffset()
-{
-	return rightScene_->getViewpoint() - leftScene_->getViewpoint();
-}
-
-unsigned int StereoScene::getWidth()
-{
-	return leftScene_->getWidth()/2.0 + getChannelsOffset().x() + rightScene_->getWidth()/2.0;
-}
-
-unsigned int StereoScene::getHeight()
-{
-	return leftScene_->getHeight()/2.0 + getChannelsOffset().y() + rightScene_->getHeight()/2.0;
+unsigned int StereoScene::getHeight() {
+    return leftScene_->getHeight() / 2.0 + getChannelsOffset().y() +
+           rightScene_->getHeight() / 2.0;
 }
 
 } // namespace efoto

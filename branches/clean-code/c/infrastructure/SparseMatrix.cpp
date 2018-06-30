@@ -37,17 +37,17 @@ SparseMatrixElement::~SparseMatrixElement()
 
 }
 
-size_t SparseMatrixElement::getRow()
+size_t SparseMatrixElement::getRow() const
 {
     return row_;
 }
 
-size_t SparseMatrixElement::getCol()
+size_t SparseMatrixElement::getCol() const
 {
     return col_;
 }
 
-double SparseMatrixElement::getValue()
+double SparseMatrixElement::getValue() const
 {
     return value_;
 }
@@ -55,11 +55,6 @@ double SparseMatrixElement::getValue()
 SparseMatrixElement* SparseMatrixElement::getNext()
 {
     return next_;
-}
-
-void SparseMatrixElement::setRow(size_t newRow)
-{
-    row_ = newRow;
 }
 
 void SparseMatrixElement::setCol(size_t newCol)
@@ -80,7 +75,6 @@ void SparseMatrixElement::setNext(SparseMatrixElement* newNext)
 
 SparseMatrix::SparseMatrix(Matrix source, double precision)
 {
-	bool firstOfRow;
     SparseMatrixElement* newElement = NULL;
     SparseMatrixElement* lastElement = NULL;
 
@@ -89,7 +83,7 @@ SparseMatrix::SparseMatrix(Matrix source, double precision)
 
     for (size_t i = 1; i <= rows_; i++)
 	{
-		firstOfRow = true;
+        bool firstOfRow = true;
         for (size_t j = 1; j <= cols_; j++)
 		{
 			if (fabs(source.get(i,j)) > precision)
@@ -149,18 +143,17 @@ Matrix SparseMatrix::operator*(Matrix target)
 {
     Matrix result(rows_, target.getCols());
 	SparseMatrixElement* currentElement;
-	double value;
-	int currentRow;
 
     if (cols_ == target.getRows())
 	{
         for (size_t i = 0; i < elements_.size(); i++)
 		{
             for (size_t j = 1; j <= target.getCols(); j++)
-			{
-				value = 0.0;
+			{                
                 currentElement = elements_.at(i);
-				currentRow = currentElement->getRow();
+                int currentRow = currentElement->getRow();
+
+                double value = 0.0;
 				while (currentElement != NULL)
 				{
 					value += currentElement->getValue() * target.get(currentElement->getCol(), j);

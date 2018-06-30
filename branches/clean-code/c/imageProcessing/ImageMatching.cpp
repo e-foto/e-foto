@@ -30,6 +30,9 @@ ImageMatching::ImageMatching():
 ImageMatching::ImageMatching(DEMManager* man):
     manager_{man},
     image_depth_{256},
+    coverage{0.0},
+    max_size{0.0},
+    num_visited{0.0},
     corr_th_{0.7},
     perform_readiometric_{true},
     radiometric_mode_{HistMatching},
@@ -38,29 +41,24 @@ ImageMatching::ImageMatching(DEMManager* man):
     matching_xf_{0},
     matching_yi_{0},
     matching_yf_{0},
+    smatching_xi_{0},
+    smatching_xf_{0},
+    smatching_yi_{0},
+    smatching_yf_{0},
+    left_image_id{0},
+    right_image_id{0},
     step_x_{3},
     step_y_{3},
+    img_width{0},
+    img_height{0},
+    simg_width{0},
+    simg_height{0},
     matching_method_{LSM},
     stack_{nullptr},
     elim_bad_pts_{false},
+    perform_RG{false},
     elap_time_{0.0}
 {
-}
-
-void ImageMatching::setMatchingLimits(int xi, int xf, int yi, int yf)
-{
-    // Convert C++ vector coordinate system (0 to N-1)
-    // to matrix coordinate system (1 to N)
-    matching_xi_ = xi + 1;
-    matching_xf_ = xf + 1;
-    matching_yi_ = yi + 1;
-    matching_yf_ = yf + 1;
-}
-
-void ImageMatching::setStep(int sx, int sy)
-{
-    step_x_ = (sx < 3) ? 3 : sx;
-    step_y_ = (sy < 3) ? 3 : sy;
 }
 
 void ImageMatching::setMinStd(double std)
@@ -111,10 +109,10 @@ void ImageMatching::performImageMatching(Matrix* img1, Matrix* img2,
         matching_yf_ = img_height - border;
     }
 
-    smatching_xi = 1 + border;
-    smatching_xf = simg_width - border;
-    smatching_yi = 1 + border;
-    smatching_yf =  simg_height - border;
+    smatching_xi_ = 1 + border;
+    smatching_xf_ = simg_width - border;
+    smatching_yi_ = 1 + border;
+    smatching_yf_ =  simg_height - border;
     // Step 3 - Create Region Growing map
     auto map_width = 1 + (img_width / step_x_),
          map_height = 1 + (img_height / step_y_);
@@ -123,9 +121,7 @@ void ImageMatching::performImageMatching(Matrix* img1, Matrix* img2,
     // Step 4 - Read seed repository
     // NOTE: NCC and LSM parameters must be set by the parent class or program
     const int num_seeds = repository->size();
-    MatchingPoints mp;
-    double lx, ly, rx, ry;
-    int curr_left_id, curr_right_id;
+
     // Calculate coverage
     coverage = 0.0;
     max_size = static_cast<double>(map.getCols() * map.getRows());
@@ -133,13 +129,13 @@ void ImageMatching::performImageMatching(Matrix* img1, Matrix* img2,
 
     for (int i = 1; i <= num_seeds; i++) {
         // Read current seed, converting to matrix coordinate system
-        mp = *repository->get(i);
-        lx = mp.left_x + 1.0;
-        ly = mp.left_y + 1.0;
-        rx = mp.right_x + 1.0;
-        ry = mp.right_y + 1.0;
-        curr_left_id = mp.left_image_id;
-        curr_right_id = mp.right_image_id;
+        MatchingPoints mp = *repository->get(i);
+        double lx = mp.left_x + 1.0;
+        double ly = mp.left_y + 1.0;
+        double rx = mp.right_x + 1.0;
+        double ry = mp.right_y + 1.0;
+        int curr_left_id = mp.left_image_id;
+        int curr_right_id = mp.right_image_id;
 
         // Step 5 - Perform Region Growing
         if (curr_left_id == left_image_id && curr_right_id == right_image_id) {
@@ -163,13 +159,10 @@ void ImageMatching::performImageMatching(Matrix* img1, Matrix* img2,
 /*
  * Fill map using matching list, if this is the 2nd or greater running time
  **/
-void ImageMatching::fillMap(MatchingPointsList* mpoints)
+void ImageMatching::fillMap(MatchingPointsList* mpoints) const
 {
-    MatchingPoints* mp;
-    int i, j, lx, ly;
-
     for (size_t f = 1; f <= mpoints->size(); f++) {
-        mp = mpoints->get(f);
+        MatchingPoints* mp = mpoints->get(f);
 
         if (left_image_id != mp->left_image_id
                 || right_image_id != mp->right_image_id) {
@@ -180,10 +173,10 @@ void ImageMatching::fillMap(MatchingPointsList* mpoints)
          * onde esta o ponto zero do pixel este ponto vai ser alterado
          * com a adicao de uma estrutura condicional.
          */
-        lx = static_cast<int>(mp->left_x);
-        ly = static_cast<int>(mp->left_y);
-        i = (ly / step_y_) + 1;
-        j = (lx / step_x_) + 1;
+        int lx = static_cast<int>(mp->left_x);
+        int ly = static_cast<int>(mp->left_y);
+        int i = (ly / step_y_) + 1;
+        int j = (lx / step_x_) + 1;
         map.set(i, j, 1.0);
     }
 }
@@ -235,7 +228,7 @@ void ImageMatching::region_growing(Matrix* img1,
                                    double sx,
                                    double sy)
 {
-    int i, j, ncc_flag, lsm_flag;
+    int ncc_flag, lsm_flag;
     double lx, ly, rx, ry;
     double new_x = 0.0, new_y = 0.0, p = 0.0;
     emptyStack();
@@ -243,8 +236,8 @@ void ImageMatching::region_growing(Matrix* img1,
 
     while (pop(lx, ly, rx, ry)) {
         // Map coordinates
-        i = (static_cast<int>(ly) / step_y_) + 1;
-        j = (static_cast<int>(lx) / step_x_) + 1;
+        int i = (static_cast<int>(ly) / step_y_) + 1;
+        int j = (static_cast<int>(lx) / step_x_) + 1;
 
         // Check if current point is inside determined area
         if (lx < matching_xi_ || lx > matching_xf_ || ly < matching_yi_
@@ -252,8 +245,8 @@ void ImageMatching::region_growing(Matrix* img1,
             continue;
         }
 
-        if (rx < smatching_xi || rx > smatching_xf || ry < smatching_yi
-                || ry > smatching_yf) {
+        if (rx < smatching_xi_ || rx > smatching_xf_ || ry < smatching_yi_
+                || ry > smatching_yf_) {
             continue;
         }
 

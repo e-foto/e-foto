@@ -203,11 +203,6 @@ void TerrainForm::setFormLocale(QLocale locale)
 	longDmsEdit->setLocale(locale);
 }
 
-bool TerrainForm::isForm(std::string formName)
-{
-	return !formName.compare("TerrainForm");
-}
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

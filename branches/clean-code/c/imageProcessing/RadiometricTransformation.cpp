@@ -79,11 +79,10 @@ int RadiometricTransformation::histmatching(Matrix* m1, Matrix* m2, int levels)
     V = imcdf(m2, levels);
     // Create mapping function
     Matrix map(levels, 1);
-    double p, q;
 
     for (int i = 1; i <= levels; i++) {
-        q = fabs(V.get(i, 1) - S.get(1, 1));
-        p = 1;
+        double q = fabs(V.get(i, 1) - S.get(1, 1));
+        double p = 1;
 
         for (int k = 2; k <= levels; k++) {
             if (fabs(V.get(i, 1) - S.get(k, 1)) < q) {
@@ -164,11 +163,11 @@ Matrix& RadiometricTransformation::imcdf(Matrix* m, int levels)
     Matrix* s = new Matrix(levels, 1);
     Matrix hist = imhist(m, levels);
     // Calculate s = T(r)
-    double p, n = double(m->getRows() * m->getCols());
+    double n = double(m->getRows() * m->getCols());
 
     for (int k = 1; k <= levels; k++) {
         // Calculate cumulated probability p
-        p = 0.0;
+        double p = 0.0;
 
         for (int j = 1; j <= k; j++) {
             p += hist.get(j, 1) / n;
@@ -179,38 +178,6 @@ Matrix& RadiometricTransformation::imcdf(Matrix* m, int levels)
 
     return *s;
 }
-
-/* Methods into disuse:
- *
- /Convert image to 0 and 1 space
-int RadiometricTransformation::im2double(Matrix *m, int levels)
-{
-    if (levels<1)
-        levels = 1;
-
-    double pixel;
-    for (unsigned int i=1; i<= m->getRows(); i++)
-    {
-        for (unsigned int j=1; j<= m->getCols(); j++)
-        {
-            // Get pixel
-            pixel = m->get(i,j);
-
-            // Check
-            if (pixel < 0.0)
-                pixel = 0.0;
-            if (pixel > double(levels-1))
-                pixel = double(levels-1);
-
-            // Calculate new value
-            pixel = pixel / double(levels-1);
-
-            // Set value
-            m->set(i,j,pixel);
-        }
-    }
-}
-*/
 
 } // namespace efoto
 } // namespace eng

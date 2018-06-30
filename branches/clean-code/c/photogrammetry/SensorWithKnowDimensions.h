@@ -39,50 +39,27 @@ namespace efoto {
 
 class SensorWithKnowDimensions : public FrameSensor
 {
-
-	//EOBJECT
-
-private:
-
-	//Private attributes
-	//
-	double pixelSize;
-	int frameColumns; int frameRows;
-
-	//Composed objects
-	//
-
 public:
-
-	//Constructors
-	//
 	SensorWithKnowDimensions();
-	SensorWithKnowDimensions(const Sensor& sensor);
+    explicit SensorWithKnowDimensions(const Sensor& sensor);
     explicit SensorWithKnowDimensions(int myId);
     explicit SensorWithKnowDimensions(int myId, double myPixelSize, int myFrameRows, int myFrameColumns);
 
-	//Private attribute accessor methods
-	//
-	void setPixelSize(double newPixelSize);
-	void setFrameDimensions(int newFrameRows, int newFrameColumns);
-	double getPixelSize();
-	int getFrameRows();
-	int getFrameColumns();
-	Matrix forgeLb();
+    double getPixelSize() const;
+    int getFrameRows() const;
+    int getFrameColumns() const;
+    Matrix forgeLb() const;
 
-	//Composed object accessor methods
-	//
-
-	// EObject methods
     bool is(std::string s);
 
-	// XML methods
-	//
     void xmlSetData(std::string xml);
     std::string xmlGetData();
 
-	//Other methods
-	//
+private:
+    double pixelSize{0.0};
+    int frameColumns{0};
+    int frameRows{0};
+
 };
 
 } // namespace efoto

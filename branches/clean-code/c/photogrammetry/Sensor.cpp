@@ -31,7 +31,6 @@ namespace efoto {
 
 Sensor::Sensor()
 {
-
 }
 
 Sensor::Sensor(const Sensor& sensor)
@@ -39,87 +38,47 @@ Sensor::Sensor(const Sensor& sensor)
 	*this = sensor;
 }
 
-Sensor::Sensor(int myId)
+Sensor::Sensor(int myId):
+    id_{myId}
 {
-	id = myId;
 }
 
 Sensor::~Sensor()
 {
-
 }
 
-
-
 // Private attributes accessor methods
-//
-
 void Sensor::setId(int newId)
 {
-	id = newId;
+    id_ = newId;
 }
 
 void Sensor::setSensorId(std::string nickname) {
-        sensorId = nickname;
-}
-/*
-void Sensor::setFocalDistance(double newFocalDistance)
-{
- focalDistance = newFocalDistance;
+        sensorId_ = nickname;
 }
 
-void Sensor::setFocalDistanceSigma(double newFocalDistanceSigma)
-{
- focalDistanceSigma = newFocalDistanceSigma;
-}
-
-void Sensor::setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates)
-{
- principalPointCoordinates = newCoordinates;
-}
-*/
 void Sensor::setDescription(std::string newDescription)
 {
-	description = newDescription;
+    description_ = newDescription;
 }
 
-void Sensor::setCalculationMode(std::string newCalculationMode)
+int Sensor::getId() const
 {
-	calculationMode = newCalculationMode;
+    return id_;
+}
+std::string Sensor::getSensorId() const
+{
+        return sensorId_;
 }
 
-int Sensor::getId()
+std::string Sensor::getDescription() const
 {
-	return id;
-}
-std::string Sensor::getSensorId()
-{
-        return sensorId;
-}
-/*
-double Sensor::getFocalDistance()
-{
- return focalDistance;
+    return description_;
 }
 
-double Sensor::getFocalDistanceSigma()
+std::string Sensor::getCalculationMode() const
 {
- return focalDistanceSigma;
-}
-
-DetectorSpaceCoordinate Sensor::getPrincipalPointCoordinates()
-{
- return principalPointCoordinates;
-}
-*/
-std::string Sensor::getDescription()
-{
-	return description;
-}
-
-std::string Sensor::getCalculationMode()
-{
-	return calculationMode;
+    return calculationMode_;
 }
 
 
@@ -131,63 +90,51 @@ void Sensor::putImage(Image* newImageAssociation)
 {
 	bool insert = true;
 	// Eliminamos primeiro a possibilidade duplicar uma associação.
-	for (unsigned int i = 0; i < myImages.size(); i++)
-		if (myImages.at(i) == newImageAssociation)
+    for (unsigned int i = 0; i < myImages_.size(); i++)
+        if (myImages_.at(i) == newImageAssociation)
 			insert = false;
 	// Fazemos a nova associação.
 	if (insert)
-		myImages.push_back(newImageAssociation);
+        myImages_.push_back(newImageAssociation);
 }
 
 void Sensor::putFlight(Flight* newFlightAssociation)
 {
 	// Eliminamos primeiro a possibilidade duplicar uma associação.
 	bool insert = true;
-	for (unsigned int i = 0; i < myFlights.size(); i++)
-		if (myFlights.at(i) == newFlightAssociation)
+    for (unsigned int i = 0; i < myFlights_.size(); i++)
+        if (myFlights_.at(i) == newFlightAssociation)
 			insert = false;
 	// Fazemos a nova associação.
 	if (insert)
-		myFlights.push_back(newFlightAssociation);
+        myFlights_.push_back(newFlightAssociation);
 }
 
 Image* Sensor::getImage(int imageId)
 {
-	for (unsigned int i = 0; i < myImages.size(); i++)
-		if (myImages.at(i)->getId() == imageId)
-			return myImages.at(i);
+    for (unsigned int i = 0; i < myImages_.size(); i++)
+        if (myImages_.at(i)->getId() == imageId)
+            return myImages_.at(i);
 	return NULL;
 }
 
 Flight* Sensor::getFlight(int flightId)
 {
-	for (unsigned int i = 0; i < myFlights.size(); i++)
-		if (myFlights.at(i)->getId() == flightId)
-			return myFlights.at(i);
+    for (unsigned int i = 0; i < myFlights_.size(); i++)
+        if (myFlights_.at(i)->getId() == flightId)
+            return myFlights_.at(i);
 	return NULL;
 }
 
-int Sensor::countImages()
+int Sensor::countImages() const
 {
-	return myImages.size();
-}
-
-int Sensor::countFlights()
-{
-	return myFlights.size();
+    return myImages_.size();
 }
 
 Image* Sensor::getImageAt(unsigned int index)
 {
-	if (index < myImages.size())
-		return myImages.at(index);
-	return NULL;
-}
-
-Flight* Sensor::getFlightAt(unsigned int index)
-{
-	if (index < myFlights.size())
-		return myFlights.at(index);
+    if (index < myImages_.size())
+        return myImages_.at(index);
 	return NULL;
 }
 

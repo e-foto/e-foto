@@ -60,13 +60,6 @@ public:
  */
 	void setReadOnly(bool state);
 
-	/**
- * \brief Metodo que informa se o formulario é o mesmo do parametro formName
- * \param formName : nome do formulario
- * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário
- */
-    bool isForm(std::string formName);
-
 private slots:
 
 	/**

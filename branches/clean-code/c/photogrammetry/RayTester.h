@@ -46,35 +46,26 @@ class RayTester
 
 protected:
 
-        Image* myImage;
-        double a0, a1, a2, b0, b1, b2;
-        double X0, Y0, Z0, omega, phi, kappa;
-        double r11, r12, r13, r21, r22, r23, r31, r32, r33;
-        bool hasIO, hasEO, hasRotations;
+        Image* myImage_;
+        double a0_{0.0}, a1_{0.0}, a2_{0.0}, b0_{0.0}, b1_{0.0}, b2_{0.0};
+        double X0_{0.0}, Y0_{0.0}, Z0_{0.0}, omega_{0.0}, phi_{0.0}, kappa_{0.0};
+        double r11_{0.0}, r12_{0.0}, r13_{0.0}, r21_{0.0}, r22_{0.0}, r23_{0.0}, r31_{0.0}, r32_{0.0}, r33_{0.0};
+        bool hasIO_{false}, hasEO_{false}, hasRotations_{false};
 
 public:
-
-        // Constructors
-        //
-        explicit RayTester(Image* myImage);
+        explicit RayTester(Image* myImage_);
 
         // Attribute accessors
-        //
         void setIOParameters(Matrix params);
         void setEOParameters(Matrix params);
-        Matrix getIOParameters();
-        Matrix getEOParameters();
 
         // Other parameters
-        //
-        Matrix getRotations();
         double getKx(double xi, double eta);
         double getKy(double xi, double eta);
 
 protected:
 
         PositionMatrix imageZToDetectorZ(const PositionMatrix& myDigitalPositionsWithZ);
-        PositionMatrix detectorZToImageZ(const PositionMatrix& myAnalogPositionsWithZ);
         PositionMatrix removeDistortionsZ(const PositionMatrix& myAnalogPositionsWithZ);
         void calculateRotations();
 
@@ -90,9 +81,9 @@ public:
         DetectorSpaceCoordinate imageToDetector(double col, double lin);
         DetectorSpaceCoordinate imageToDetector(ImageSpaceCoordinate myDigitalCoordinate);
         PositionMatrix imageToDetector(const PositionMatrix& myDigitalPositions);
-        ImageSpaceCoordinate detectorToImage(double xi, double eta);
-        ImageSpaceCoordinate detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate);
-        PositionMatrix detectorToImage(const PositionMatrix& myAnalogPositions);
+        ImageSpaceCoordinate detectorToImage(double xi, double eta) const;
+        ImageSpaceCoordinate detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate) const;
+        PositionMatrix detectorToImage(const PositionMatrix& myAnalogPositions) const;
 
         ObjectSpaceCoordinate detectorToObject(double xi, double eta, double Z);
         ObjectSpaceCoordinate detectorToObject(DetectorSpaceCoordinate myAnalogCoordinate, double Z);

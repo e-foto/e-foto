@@ -57,7 +57,6 @@ protected:
     OrthoQualityUserInterface_Qt *ortho_qual_form;
 
 protected slots:
-    virtual void languageChange();
     void onAbortClicked();
     void onLoadDemClicked();
     void onLoadOrthoClicked();

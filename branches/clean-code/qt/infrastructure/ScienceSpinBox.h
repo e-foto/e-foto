@@ -27,8 +27,6 @@ public:
 
 	int decimals() const;
 	void setDecimals(int value);
-
-	QString textFromValue ( double value ) const;
 	double valueFromText ( const QString & text ) const;
 
 	void setFullRange();
@@ -60,7 +58,6 @@ private:
 	bool isIntermediateValue(const QString &str) const;
 	QVariant validateAndInterpret(QString &input, int &pos, QValidator::State &state) const;
 	QValidator::State validate(QString &text, int &pos) const;
-	void fixup(QString &input) const;
 	QString stripped(const QString &t, int *pos) const;
 	double round(double value) const;
 	void stepBy(int steps);
@@ -70,10 +67,6 @@ public slots:
 	void stepUp();
 	void stepDownMantissa();
 	void stepUpMantissa();
-
-private slots:
-	void adjustDisplay();
-
 };
 
 } // namespace efoto

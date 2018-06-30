@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2018 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -70,15 +70,13 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     viewerLayout->addWidget(viewer);
     QToolBar* controlTool = new QToolBar("Control Tools");
     controlTool->addWidget(markToolButton);
-    //controlTool->addWidget(flightDirectionToolButton);
     controlTool->addWidget(calculateFotoTriToolButton);
     controlTool->addWidget(saveMarksButton);
     controlTool->addWidget(viewReportToolButton);
     controlTool->addWidget(exportToKmlButton);
     controlTool->addWidget(reportButton);
     controlTool->addWidget(doneButton);
-    //controlTool->addWidget(insertPointInButton);
-    /*viewer->*/addToolBar(Qt::LeftToolBarArea,controlTool);
+    addToolBar(Qt::LeftToolBarArea,controlTool);
     addToolBar(Qt::LeftToolBarArea,viewer->getToolBar());
     toolsDockWidget->setHidden(true);
     mark = new Marker(SymbolsResource::getTriangle(QColor(255,255,0,255), QColor(Qt::transparent),QSize(24,24), 2, true));
@@ -95,18 +93,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(&viewer->getLeftMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
     connect(&viewer->getRightMarker(),SIGNAL(clicked(QPointF)),this,SLOT(imageClicked(QPointF)));
 
-    //Marker mark(SymbolsResource::getX(Qt::yellow, QSize(24, 24),2)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-    //viewer->getLeftMarker().changeMarker(mark);
-    //viewer->getRightMarker().changeMarker(mark);
-
-    // Isso permanece aqui para permitir testar uma visualização de resultados ainda em fase de montagem e testes. Isso foi denominado (GraphicWorkAround) para facilitar encontrar as mudanças ou adições no código.
-    //SeparatedStereoToolsBar* tool = viewer->getToolBar();
-    //QAction* showFotoIndice = new QAction("Results",tool);
-    //showFotoIndice->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Show Results</span></p></body></html>");
-    //tool->addSeparator();
-    //tool->addAction(showFotoIndice);
-    //connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
-
     setWindowTitle("E-foto - Phototriangulation");
 
     connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
@@ -119,15 +105,9 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     connect(reportButton,SIGNAL(clicked(bool)),this,SLOT(onReportButtonClicked()));
     connect(doneButton,SIGNAL(clicked(bool)),this,SLOT(FTdone()));
     connect(exportToKmlButton,SIGNAL(clicked()),this,SLOT(exportToKml()));
-    // FlightDirectionDisabled!
     actionCalculateFotoTri->setEnabled(true);
     calculateFotoTriToolButton->setEnabled(true);
     flightDirectionToolButton->setVisible(false);
-    //connect(flightDirectionToolButton,SIGNAL(clicked()),this,SLOT(openImagesFlightDirectionForm()));
-    //bool activeCalculate=ptManager->hasAllImagesInitialValues();
-    //actionCalculateFotoTri->setEnabled(activeCalculate);
-    //calculateFotoTriToolButton->setEnabled(activeCalculate);
-
 
     QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")),this);
     connect(undoShortcut, SIGNAL(activated()), this, SLOT(undoMark()));
@@ -150,7 +130,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent, Qt::
     setWindowState(this->windowState() | Qt::WindowMaximized);
 
     qApp->processEvents();
-    //qDebug("Construtor");
     init();
 }
 
@@ -159,63 +138,8 @@ PTUserInterface_Qt::~PTUserInterface_Qt()
 
 }
 
-/* Methods into disuse:
- *
-void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
-{
-    SingleViewer* graphicResults = new SingleViewer(0);
-
-    // Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e converta em matrix gerando um deque de matrizes
-    std::deque<Matrix*> imgs = getImageMatrixes();
-    //deque<Matrix> IOs = getImageIOs();
-    //deque<Matrix> EOs = getImageEOs();
-
-
-    // Passo 2: Repasse ao Manager o deque de imagens e um deque com as IOs e EOs atualizadas (somente Xa). Assinatura do método no manager: Matrix getFotoIndice(deque<Matrix*> imgs, deque<Matrix> IOs, deque<Matrix> EOs, int width, int height, Matrix& dim);
-    // Passo 3: Pegue a matrix resultante e carregue-a no visualizador.
-    //Matrix dim;
-    //graphicResults->loadImage(manager->getFotoIndice( imgs, IOs, EOs, 3000, 1000, dim));
-    for (size_t i = 0; i < imgs.size(); i++)
-        delete(imgs.at(i));
-
-    // Passo 4: Dê a métrica correta ao visualizador usando o resumo das dimensões da imagem de fotoindice
-    //graphicResults->setOrtoImageMode(dim.get(1,1) ,dim.get(2,1) ,dim.get(3,1) ,dim.get(4,1));
-
-    graphicResults->show();
-}
-
-std::deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() // (GraphicWorkAround).
-{
-    std::deque<Matrix*> result;
-
-    // Para cada imagem do projeto abra a imagem com um QImage e faça: Matrix* getImageMatrix(QImage img)
-    // Dai é só guardar cada ponteiro no deque e retornar.
-}
-
-Matrix* PTUserInterface_Qt::getImageMatrix(QImage img) // (GraphicWorkAround). // Aqui eu considero que isso vai apenas gerar imagens em tons de cinza para o fotoindice. Caso desejem fazer o fotoindice colorido, devido as restrições da classe matrix vamos ter de fazer um foto indice por canal e depois juntar os canais no final do processamento dos fotoindices.
-{
-    // Transforma a QImage em matrix num oposto direto ao que o Marcelo vem fazendo em suas classes.
-    Matrix* mat = new Matrix(img.width(), img.height()); // Note que coluna vira linha e vice-versa.
-    double pixel;
-
-    // Convert QImage to Matrix
-    for (int i = 0; i <= img.width(); i++)
-    {
-        for (int j = 0; j <= img.height(); j++)
-        {
-            // Isso está transpondo a imagem ao construir a matrix, ou seja, (x,y) vira (i,j). O valor em tons de cinza vai ser redimensionado para o espaço normalizado, entre 0 e 1.
-            int c = qGray(img.pixel(i, j));
-            pixel = (double)c/255.0;
-            mat->set(i, j, pixel);
-        }
-    }
-    return mat;
-}
-*/
-
 void PTUserInterface_Qt::init()
 {
-    //qDebug("INIT");
     std::deque<std::string> images =ptManager->getStringImages();
     std::deque<std::string> points =ptManager->getStringIdPoints();
     for (size_t i=0;i<images.size();i++)
@@ -239,7 +163,7 @@ void PTUserInterface_Qt::init()
 
     leftImageComboBox->addItems(listImageLeft);
     rightImageComboBox->addItems(listImageRight);
-    //QTableWidget
+
     //Esconde as colunas das keys
     leftImageTableWidget->setColumnHidden(3,true);
     pointsTableWidget->setColumnHidden(5,true);
@@ -260,20 +184,8 @@ void PTUserInterface_Qt::init()
     connect(removeAllButton,SIGNAL(clicked()),this, SLOT( removeAllMeasurements() ));
     connect(autoMeasurementButton,SIGNAL(clicked()),this, SLOT( autoMeasureClicked()));
 
-    //connect(leftImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
-    //connect(rightImageTableWidget,SIGNAL(validatedItem(int,int,double)),this,SLOT(updatePoint(int,int,double)));
-
-    /*Permite ediÃ§ao de coordenada via tabela*/
-    //leftImageTableWidget->setType(1,"QSpinBox");
-    //leftImageTableWidget->setType(2,"QSpinBox");
-
-    //rightImageTableWidget->setType(1,"QSpinBox");
-    //rightImageTableWidget->setType(2,"QSpinBox");
-
     // Se tiver sido calculado antes habilita o botão
     viewReportToolButton->setEnabled(ptManager->hasEODone());
-
-    //	connect(new QKeySequence())
 }
 
 void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
@@ -290,7 +202,6 @@ void PTUserInterface_Qt::closeEvent(QCloseEvent *event)
         {
             event->ignore();
             return;
-            //QMainWindow::closeEvent(event);
         }
 
     }
@@ -311,12 +222,6 @@ bool PTUserInterface_Qt::exec()
 {
     bool ok;
 
-    /// Gambiarra para o Carlos
-    {
-        ///exportToKml(true);
-    }
-    /// Gambiarra para o Carlos
-
     /** carregar imagem da esquerda*/
     viewer->loadLeftImage(QString::fromLocal8Bit(ptManager->getFilePath(leftImageString).c_str()));
     viewer->getLeftDisplay()->getCurrentScene()->scaleTo(1);
@@ -327,7 +232,6 @@ bool PTUserInterface_Qt::exec()
 
     updateImageTable(leftImageTableWidget, leftImageString);
     updatePointsTable();
-    //pointsTableWidget->resizeTable();
     updateImageTable(rightImageTableWidget, rightImageString);
 
     markAllpoints(viewer->getLeftDisplay());
@@ -364,7 +268,6 @@ void PTUserInterface_Qt::viewReport()
     buttonsLayout->addWidget(exportTxtButton);
 
     QStringList oeHeaderLabels;
-    //omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
     oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0"<<QString::fromUtf8("δω") << QString::fromUtf8("δφ") << QString::fromUtf8("δκ") << QString::fromUtf8("δX0") << QString::fromUtf8("δY0") << QString::fromUtf8("δZ0");
 
     QString iter="Iterations: ";
@@ -409,18 +312,6 @@ void PTUserInterface_Qt::viewReport()
 
     oeLayout->addLayout(infoLayout);
     oeLayout->addWidget(oeTable);
-    /*
- QVBoxLayout *mvcLayout= new QVBoxLayout();
- QLabel *mvcLabel= new QLabel("<font size=5>MVC");
- mvcLabel->setTextFormat(Qt::RichText);
- mvcLabel->setAlignment(Qt::AlignHCenter);
- ETableWidget *mvcTable = new ETableWidget(ptManager->getMVC(),'f',10);
- mvcLayout->addWidget(mvcLabel);
- mvcLayout->addWidget(mvcTable);
- oeLayout->addLayout(mvcLayout);
- horizontalLayout->addLayout(oeLayout);
-*/
-    /**/
     horizontalLayout->setStretchFactor(oeLayout,13);
     /**///tabela dos pontos fotogrametricos
 
@@ -448,15 +339,11 @@ void PTUserInterface_Qt::viewReport()
         photogrammetricTable->setSortingEnabled(true);
         phtgLayout->addWidget(phtgLabel);
         phtgLayout->addWidget(photogrammetricTable);
-        //horizontalLayout->addLayout(phtgLayout);
         oeLayout->addLayout(phtgLayout);
-        //horizontalLayout->setStretchFactor(phtgLayout,7);
     }
     /**/
 
     QVBoxLayout *reportLayout= new QVBoxLayout;
-    //reportLayout->addLayout(infoLayout);
-    //reportLayout->addLayout(horizontalLayout);
     reportLayout->addLayout(oeLayout);
     reportLayout->addLayout(buttonsLayout);
 
@@ -468,7 +355,6 @@ void PTUserInterface_Qt::viewReport()
     connect(exportTxtButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
     resultView->setWindowModality(Qt::ApplicationModal);
 
-    //exportTxtButtonDisabled!
     exportTxtButton->setVisible(false);
 
     resultView->show();
@@ -482,9 +368,7 @@ void PTUserInterface_Qt::showReportXml()
 
     dockResultView->setWidget(resultView);
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
-    //qDebug("Vendo Report");
     QStringList oeHeaderLabels;
-    //omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
     oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0";
 
     QString iter="Iterations: ";
@@ -509,10 +393,8 @@ void PTUserInterface_Qt::showReportXml()
     infoLayout->addWidget(unitsLabel);
 
     QStringList imagesSelected;
-    //oesXml.show('f',3,"oesXml");
     for (size_t i=0; i<oesXml.getRows();i++)
     {
-        //qDebug("imageID: %d\n",oesXml.getInt(i+1,1));
         imagesSelected << QString::fromLocal8Bit(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
     }
     oesXml=oesXml.sel(1,oesXml.getRows(),2,7);
@@ -530,10 +412,7 @@ void PTUserInterface_Qt::showReportXml()
     reportLayout->addLayout(infoLayout);
     reportLayout->addLayout(horizontalLayout);
 
-    //reportLayout->setStretchFactor(horizontalLayout,7);
     resultView->setLayout(reportLayout);
-    // int tableHeight = table->rowHeight(0)*table->rowCount()+100 > 600 ? 600 : table->rowHeight(0)*table->rowCount()+100 ;
-    //resultView->setMinimumSize(resultView->width()+50,tableHeight);
 
     dockResultView->setFloating(true);
     dockResultView->show();
@@ -545,8 +424,6 @@ bool PTUserInterface_Qt::calculatePT()
 
     ptManager->selectImages(selectionImagesView->getSelectedItens());
     ptManager->selectPoints(selectionPointsView->getSelectedItens());
-
-    //int answer=QMessageBox::Question(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
 
     int answer = QMessageBox::question(this,tr("Calculating PhotoTriangulation"),tr("Do you want to calculate in Local Topocentric Mode?\nThis mode converts all control points coordinates in local topocentric coordinates then calculate photo triangulation.\n\n\nThis may take awhile.\nPlease wait until window with results appears"),QMessageBox::Yes, QMessageBox::No);
     if (answer== QMessageBox::Yes)
@@ -589,12 +466,9 @@ void PTUserInterface_Qt::showSelectionWindow()
     }
 
 
-    //if (selectionImagesView==NULL || selectionPointsView==NULL)
-    {
-        //qDebug("Ponteiros nulos");
-        selectionImagesView= new WindowsSelectPage(tr("Images available"),tr("Images selected"));
+         selectionImagesView= new WindowsSelectPage(tr("Images available"),tr("Images selected"));
         selectionPointsView= new WindowsSelectPage(tr("Points available"),tr("Points selected"));
-    }
+
 
     QStringList listImages;
     std::deque<std::string> lista;
@@ -683,7 +557,6 @@ void PTUserInterface_Qt::updateImagesList(QString imageFilename)
             index=i;
     QStringList temp=listAllImages;
     temp.removeAt(index);
-    //qDebug()<<"chamou updateImagesList: "<< imageFilename;
 
     if(sender()==leftImageComboBox)
     {
@@ -732,14 +605,11 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, std::string 
         keysImagePoints << QString(keysPoints.at(i).c_str());
     }
     Matrix imageColLin= ptManager->getColLin(imageFilename);
-    //qDebug()<< "keys " <<imageFilename.c_str() << " : "<<keysImagePoints;
-    //if(imageTable=="leftImage")
-    //{
     imageTable->setSortingEnabled(false);
     imageTable->clearContents();
     imageTable->setRowCount(0);
     imageTable->putInColumn(idImagesPoints,0);
-    imageTable->putIn(imageColLin,0,1,'f',3);//,"QSpinBox",true,0,dim.getInt(1,1),dim.getInt(1,2));
+    imageTable->putIn(imageColLin,0,1,'f',3);
     imageTable->putInColumn(keysImagePoints,3);
 
     replaceTo__(imageTable);
@@ -752,15 +622,11 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, std::string 
         double lin =imageTable->item(pos,2)->text().toDouble(&ok);
         QPointF pixel(col,lin);
 
-        //qDebug("left image coord %dx%d",col,lin);
         if (imageTable==leftImageTableWidget)
         {
-            //clearAllMarks(viewer->getLeftDisplay());
-            //markAllpoints(viewer->getLeftDisplay());
-            //qDebug("mark all left");
             if (move)
             {
-                SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+                SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getLeftDisplay()->getCurrentScene());
                 scene->moveTo(pixel);
                 scene->setDetailedPoint(pixel);
             }
@@ -768,12 +634,9 @@ void PTUserInterface_Qt::updateImageTable(ETableWidget *imageTable, std::string 
         }
         else
         {
-            //clearAllMarks(viewer->getRightDisplay());
-            //markAllpoints(viewer->getRightDisplay());
-            //qDebug("mark all right");
             if (move)
             {
-                SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+                SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getRightDisplay()->getCurrentScene());
                 scene->moveTo(pixel);
                 scene->setDetailedPoint(pixel);
             }
@@ -891,7 +754,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
     if (display == viewer->getLeftDisplay())
     {
         int pos=findKeyAppearances(leftImageTableWidget, pointKey);
-        SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+        SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getLeftDisplay()->getCurrentScene());
         if(pos<0 || col>scene->imageSize().width() || lin>scene->imageSize().height())
             return;
         saveMarksButton->setEnabled(true);
@@ -928,7 +791,7 @@ void PTUserInterface_Qt::updateMark(SingleDisplay *display, int imageKey, int po
     }else if(display == viewer->getRightDisplay())
     {
         int pos=findKeyAppearances(rightImageTableWidget, pointKey);
-        SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+        SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getRightDisplay()->getCurrentScene());
         if(pos<0 || col>scene->imageSize().width() || lin>scene->imageSize().height())
             return;
         saveMarksButton->setEnabled(true);
@@ -1232,70 +1095,10 @@ void PTUserInterface_Qt::saveMarks()
     saveMarksButton->setEnabled(false);
 }
 
-void PTUserInterface_Qt::openImagesFlightDirectionForm()
-{
-    // FlightDirectionDisabled!
-    //flightDirectionForm = new FlightDirectionForm(listAllImages,markedImages);
-    //flightDirectionForm->setPassMode(true);
-    //connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
-    //connect(flightDirectionForm,SIGNAL(markedImagesList(QList<int>,QStringList)),this,SLOT(FlightFormClosed(QList<int>)));
-    //flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
-    //flightDirectionForm->show();
-}
-
 void PTUserInterface_Qt::setFlightDirection(QString imageFile, double kappa0)
 {
     int imageKey = ptManager->getImageId(imageFile.toLocal8Bit().constData());
     ptManager->setImageFlightDirection(imageKey, kappa0);
-}
-
-void PTUserInterface_Qt::FlightFormClosed(QList<int> list)
-{
-    // FlightDirectionDisabled!
-    markedImages=list;
-    if (markedImages.size()==listAllImages.size())
-    {
-        actionCalculateFotoTri->setEnabled(true);
-        calculateFotoTriToolButton->setEnabled(true);
-        //flightDirectionForm->close();
-    }
-}
-
-void PTUserInterface_Qt::exportCoordinates()
-{
-    QWidget *chooseSystem=new QWidget();
-
-    QHBoxLayout *hl1=new QHBoxLayout();
-    QHBoxLayout *hl2=new QHBoxLayout();
-    QVBoxLayout *vl1= new QVBoxLayout();
-
-    QLabel *lbl1= new QLabel("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose system(s) to export</p></body></html>");
-    QLabel *lbl2= new QLabel("File: ");
-    geodesicCheckBox= new QCheckBox("Geodesic",this);
-    topocentricCheckBox= new QCheckBox("Local Topocentric",this);
-    QLineEdit *fileLineEdit = new QLineEdit(this);
-    QToolButton *fileChooseButton= new QToolButton(this);
-    fileChooseButton->setText("...");
-    fileChooseButton->setToolTip("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#000000;\">Choose file and path to txt flie</span></p></body></html>");
-    QPushButton *exportButton =  new QPushButton("Export");
-
-    hl1->addWidget(geodesicCheckBox);
-    hl1->addWidget(topocentricCheckBox);
-    hl2->addWidget(lbl2);
-    hl2->addWidget(fileLineEdit);
-    hl2->addWidget(fileChooseButton);
-    vl1->addWidget(lbl1);
-    vl1->addLayout(hl1);
-    vl1->addLayout(hl2);
-    vl1->addWidget(exportButton);
-    chooseSystem->setLayout(vl1);
-    fileLineEdit->setReadOnly(true);
-    chooseSystem->show();
-
-    qDebug() << "Entrou ";
-    connect(exportButton,SIGNAL(clicked()),this,SLOT(exportCoordinatesTxt()));
-
-
 }
 
 // Created by Marcelo Teixiera Silveira
@@ -1467,7 +1270,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
         leftLin=leftImageTableWidget->item(tableRow,2)->text().toDouble(&ok);
         if (leftImageTableWidget->item(tableRow,1)->text()!="--" && leftImageTableWidget->item(tableRow,2)->text()!="--")
         {
-            SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+            SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getLeftDisplay()->getCurrentScene());
             scene->moveTo(QPointF(leftCol,leftLin));
             scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(tableRow,0)->text(),pointMark);
             scene->setDetailedPoint(QPointF(leftCol,leftLin));
@@ -1488,7 +1291,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
 
         if (rightImageTableWidget->item(tableRow,1)->text()!="--" && rightImageTableWidget->item(tableRow,2)->text()!="--")
         {
-            SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+            SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getRightDisplay()->getCurrentScene());
             scene->moveTo(QPointF(rightCol,rightLin));
             scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(tableRow,0)->text(),pointMark);
             scene->setDetailedPoint(QPointF(rightCol,rightLin));
@@ -1512,7 +1315,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
             leftLin=leftImageTableWidget->item(leftTableIndex,2)->text().toDouble(&ok);
             if (leftImageTableWidget->item(leftTableIndex,1)->text()!="--" && leftImageTableWidget->item(leftTableIndex,2)->text()!="--")
             {
-                SingleScene* scene = (SingleScene*)viewer->getLeftDisplay()->getCurrentScene();
+                SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getLeftDisplay()->getCurrentScene());
                 scene->moveTo(QPointF(leftCol,leftLin));
                 scene->geometry()->updatePoint(QPointF(leftCol,leftLin),currentPointKey,leftImageTableWidget->item(leftTableIndex,0)->text(),pointMark);
                 scene->setDetailedPoint(QPointF(leftCol,leftLin));
@@ -1525,7 +1328,7 @@ void PTUserInterface_Qt::tableClicked(QTableWidgetItem* item)
             rightLin=rightImageTableWidget->item(rightTableIndex,2)->text().toDouble(&ok);
             if (rightImageTableWidget->item(rightTableIndex,1)->text()!="--" && rightImageTableWidget->item(rightTableIndex,2)->text()!="--")
             {
-                SingleScene* scene = (SingleScene*)viewer->getRightDisplay()->getCurrentScene();
+                SingleScene* scene = dynamic_cast<SingleScene*>(viewer->getRightDisplay()->getCurrentScene());
                 scene->moveTo(QPointF(rightCol,rightLin));
                 scene->geometry()->updatePoint(QPointF(rightCol,rightLin),currentPointKey,rightImageTableWidget->item(rightTableIndex,0)->text(),pointMark);
                 scene->setDetailedPoint(QPointF(rightCol,rightLin));
@@ -1756,17 +1559,17 @@ QPointF * PointMark::getDigitalCoordinate()
     return digitalCoordinate;
 }
 
-QString PointMark::getPointId()
+QString PointMark::getPointId() const
 {
     return pointId;
 }
 
-unsigned int PointMark::getKeyPoint()
+unsigned int PointMark::getKeyPoint() const
 {
     return keyPoint;
 }
 
-unsigned int PointMark::getKeyImage()
+unsigned int PointMark::getKeyImage() const
 {
     return keyImage;
 }

@@ -46,7 +46,7 @@ EOQuality::~EOQuality()
  * Get the value of V.
  * @return the value of V
  */
-Matrix EOQuality::getV()
+Matrix EOQuality::getV() const
 {
 	return V;
 }
@@ -55,7 +55,7 @@ Matrix EOQuality::getV()
  * Get the value of sigma0Squared.
  * @return the value of sigma0Squared
  */
-double EOQuality::getsigma0Squared()
+double EOQuality::getsigma0Squared() const
 {
 	return sigma0Squared;
 }
@@ -64,7 +64,7 @@ double EOQuality::getsigma0Squared()
  * Get the value of SigmaXa.
  * @return the value of SigmaXa
  */
-Matrix EOQuality::getSigmaXa()
+Matrix EOQuality::getSigmaXa() const
 {
 	return SigmaXa;
 }
@@ -73,7 +73,7 @@ Matrix EOQuality::getSigmaXa()
  * Get the value of SigmaLa.
  * @return the value of SigmaLa
  */
-Matrix EOQuality::getSigmaLa()
+Matrix EOQuality::getSigmaLa() const
 {
 	return SigmaLa;
 }

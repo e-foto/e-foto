@@ -45,31 +45,23 @@ class InteriorOrientation;
 class IOQuality : public EDom
 {
 private:
-	Matrix V;
-	double sigma0Squared;
-	Matrix SigmaXa;
-	Matrix SigmaLa;
+    Matrix V{};
+    double sigma0Squared{0.0};
+    Matrix SigmaXa{};
+    Matrix SigmaLa{};
 
 public:
-
-	// Constructors and Destructor
-	//
+    IOQuality(){};
 	virtual ~IOQuality();
 
-	// Private attribute accessors
-	//
-	Matrix getV();
-	double getsigma0Squared();
-	Matrix getSigmaXa();
-	Matrix getSigmaLa();
+    Matrix getV() const;
+    double getsigma0Squared() const;
+    Matrix getSigmaXa() const;
+    Matrix getSigmaLa() const;
 
-    // XML methods
-	//
     void xmlSetData(std::string xml);
     std::string xmlGetData();
 
-	// Other method
-	//
 	void calculate(InteriorOrientation* myIO, Sensor* mySensor);
 
 };

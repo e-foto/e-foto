@@ -70,19 +70,19 @@ public:
  * \brief Método para retornar o conteúdo do arquivo xml armazenado.
  * \return EDomElement	Elemento contendo o xml (epp) atualizado.
  */
-	EDomElement getAllXml();
+    EDomElement getAllXml() const;
 
 	/**
  * \brief Método para retornar a avaliação do processo de atualização.
  * \return bool	Retorna verdadeiro se houve erro na atualização e falso em caso contrário.
  */
-	int getError();
+    int getError() const;
 
 	/**
  * \brief Método que verifica se o arquivo epp está atualizado.
  * \return bool	Retorna verdadeiro se o arquivo epp está atualizado e falso em caso contrário.
  */
-	bool isUpdated();
+    bool isUpdated() const;
 
 	/**
  * \brief Método para retornar a versão do arquivo epp.
@@ -94,7 +94,7 @@ public:
  * \brief Método para retornar a versão mais atual de arquivo epp conhecida por esta classe.
  * \return string	Retorna a descritor da última versão reconhecida por esta classe.
  */
-    std::string getReferenceBuild();
+    std::string getReferenceBuild() const;
 
 	/**
  * \brief Método para informar se uma versão de arquivo epp é uma versão conhecida.
@@ -132,7 +132,7 @@ public:
 	  * \param newWord: Palavra a ser colocada no lugar da palavra procurada
 	  * \return bool : Informa se a palavra foi encontrada ou nao, no texto.
 	  */
-    bool replacer(std::string &text,std::string oldWord,std::string newWord);
+    static bool replacer(std::string &text,std::string oldWord,std::string newWord);
 
 };
 

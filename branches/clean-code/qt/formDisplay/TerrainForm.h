@@ -90,12 +90,6 @@ public:
  */
 	void setReadOnly(bool state);
 
-	/**
- * \brief Metodo que altera todos os objetos do formulario para convenção de data, hora etc. para o local especificado
- * \param locale : Objeto que informa o local
- */
-    bool isForm(std::string formName);
-
 public slots:
 	/**
  * \brief Metodo auxiliar para não deixar o usuario colocar a altitude media menor que altitude minima ou maior que a altitude maxima

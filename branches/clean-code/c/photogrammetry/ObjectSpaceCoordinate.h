@@ -34,18 +34,6 @@ namespace efoto {
 class ObjectSpaceCoordinate : public Coordinate
 {
 
-private:
-	double x;
-	double y;
-	double z;
-	double sigmaX;
-	double sigmaY;
-	double sigmaZ;
-	double sigmaXY;
-	double sigmaXZ;
-	double sigmaYZ;
-    std::string unit;
-
 public:
 
 	/**
@@ -145,61 +133,25 @@ public:
  * \brief Método para retornar o valor X num sistema de coordenadas (X, Y, Z).
  * \return double	Valor X.
  */
-	double getX();
+    double getX() const;
 
 	/**
  * \brief Método para retornar o valor Y num sistema de coordenadas (X, Y, Z).
  * \return double	Valor Y.
  */
-	double getY();
+    double getY() const;
 
 	/**
  * \brief Método para retornar o valor Z num sistema de coordenadas (X, Y, Z).
  * \return double	Valor Z.
  */
-	double getZ();
+    double getZ() const;
 
-	/**
- * \brief Método para retornar o valor de erro na direção X.
- * \return double	Valor do erro na direção X.
- */
-	double getSigmaX();
-
-	/**
- * \brief Método para retornar o valor de erro na direção Y.
- * \return double	Valor do erro na direção Y.
- */
-	double getSigmaY();
-
-	/**
- * \brief Método para retornar o valor de erro na direção Z.
- * \return double	Valor do erro na direção Z.
- */
-	double getSigmaZ();
-
-	/**
- * \brief Método para retornar o valor de erro conjunto para as direções X e Y.
- * \return double	Valor de erro conjunto para as direções X e Y.
- */
-	double getSigmaXY();
-
-	/**
- * \brief Método para retornar o valor de erro conjunto para as direções X e Z.
- * \return double	Valor de erro conjunto para as direções X e Z.
- */
-	double getSigmaXZ();
-
-	/**
- * \brief Método para retornar o valor de erro conjunto para as direções Y e Z.
- * \return double	Valor de erro conjunto para as direções Y e Z.
- */
-	double getSigmaYZ();
-
-	/**
+/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
  * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-    std::string getUnit();
+    std::string getUnit() const;
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.
@@ -237,6 +189,17 @@ public:
  */
     std::string xmlGetData();
 
+private:
+    double x{0.0};
+    double y{0.0};
+    double z{0.0};
+    double sigmaX{0.0};
+    double sigmaY{0.0};
+    double sigmaZ{0.0};
+    double sigmaXY{0.0};
+    double sigmaXZ{0.0};
+    double sigmaYZ{0.0};
+    std::string unit{""};
 };
 
 } // namespace efoto

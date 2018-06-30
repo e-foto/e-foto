@@ -63,15 +63,9 @@ public:
  * \brief Método para informar se a coordenada possui um valor válido.
  * \return PositionMatrix	Retorna verdadeiro se existir um valor válido armazenado para a coordenada e falso em caso contrário.
  */
-	bool isAvailable();
+    bool isAvailable() const;
 
-	/**
- * \brief Método para informar se uma coordenada possui um erro sigma conhecido.
- * \return bool	Retorna verdadeiro se existir um erro sigma conhecido para aquela coordenada e falso em caso contrário.
- */
-	bool isSigmaAvailable();
-
-	/**
+    /**
  * \brief Método para retornar a coordenada em uma matriz coluna.
  * \return PositionMatrix	Matriz coluna com os valores de posicionamento da coordenada.
  */

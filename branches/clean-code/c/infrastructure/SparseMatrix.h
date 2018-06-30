@@ -59,19 +59,19 @@ public:
  * \brief Recupera o índice da linha onde o elemento se encontra.
  * \return int	A linha na qual elemento se encontra.
  */
-    size_t getRow();
+    size_t getRow() const;
 
 	/**
  * \brief Recupera o índice da coluna onde o elemento se encontra.
  * \return int	A coluna na qual o elemento se encontra.
  */
-    size_t getCol();
+    size_t getCol() const;
 
 	/**
  * \brief Recupera o valor do elemento.
  * \return double	O valor do elemento.
  */
-	double getValue();
+    double getValue() const;
 
 	/**
  * \brief Recupera um ponteiro para o próximo elemento não-nulo (diferente de 0.0) localizado na mesma linha que o elemento atual.
@@ -79,13 +79,7 @@ public:
  */
 	SparseMatrixElement* getNext();
 
-	/**
- * \brief Modifica o índice da linha onde o elemento se encontra.
- * \param newRow	A nova linha onde o elemento se encontra.
- */
-    void setRow(size_t newRow);
-
-	/**
+/**
  * \brief Modifica o índice da coluna onde o elemento se encontra.
  * \param newCol	A nova coluna onde o elemento se encontra.
  */

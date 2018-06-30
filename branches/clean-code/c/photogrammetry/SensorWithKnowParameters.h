@@ -57,7 +57,7 @@ public:
 	//Constructors
 	//
 	SensorWithKnowParameters();
-	SensorWithKnowParameters(const Sensor& sensor);
+    explicit SensorWithKnowParameters(const Sensor& sensor);
     explicit SensorWithKnowParameters(int myId);
     explicit SensorWithKnowParameters(int myId, const Matrix& myXa);
     explicit SensorWithKnowParameters(int myId, const Matrix& myXa, const Matrix& mySigmaXa);
@@ -66,8 +66,8 @@ public:
 	//
 	void setXa(const Matrix& newXa);
 	void setXa(const Matrix& myXa, const Matrix& mySigmaXa);
-	Matrix getXa();
-	Matrix getSigmaXa();
+    Matrix getXa() const;
+    Matrix getSigmaXa() const;
 
 	//Composed object accessor methods
 	//

@@ -40,17 +40,17 @@ void AbstractImageCoordinate::setLin(double newLin)
 	lin = newLin;
 }
 
-double AbstractImageCoordinate::getCol()
+double AbstractImageCoordinate::getCol() const
 {
 	return col;
 }
 
-double AbstractImageCoordinate::getLin()
+double AbstractImageCoordinate::getLin() const
 {
 	return lin;
 }
 
-std::string AbstractImageCoordinate::getUnit()
+std::string AbstractImageCoordinate::getUnit() const
 {
 	return unit;
 }

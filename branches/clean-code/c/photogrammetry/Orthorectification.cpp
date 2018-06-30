@@ -63,16 +63,7 @@ void Orthorectification::createNewGrid(double _Xi, double _Yi, double _Xf, doubl
     orthoimage.resize(ortho_height, ortho_width);
 }
 
-// Always remember: values from 0-1
-double Orthorectification::getOrthoimagePixel(int col, int row) const
-{
-    if (col < 1 || row < 1 || col > ortho_width || row > ortho_height)
-        return -1.0;
-
-    return orthoimage.get(row, col);
-}
-
-void Orthorectification::setOrthoimagePixel(double X, double Y, double val)
+void Orthorectification::setOrthoimagePixel(double X, double Y, double val) const
 {
     int col, lin;
 
@@ -83,7 +74,7 @@ void Orthorectification::setOrthoimagePixel(double X, double Y, double val)
 }
 
 // Always remember: values from 0-1
-void Orthorectification::setOrthoimagePixel(int col, int row, double val)
+void Orthorectification::setOrthoimagePixel(int col, int row, double val) const
 {
     if (col < 1 || row < 1 || col > ortho_width || row > ortho_height)
         return;
@@ -94,28 +85,16 @@ void Orthorectification::setOrthoimagePixel(int col, int row, double val)
     orthoimage.set(row, col, val);
 }
 
-void Orthorectification::getXYAt(int col, int row, double &X, double &Y) const
-{
-    X = res_x * (double(col) - 1.0) + Xi;
-    Y = res_y * (double(row) - 1.0) + Yi;
-}
-
-void Orthorectification::getXYAt(double col, double row, double &X, double &Y)
+void Orthorectification::getXYAt(double col, double row, double &X, double &Y) const
 {
         X = res_x * (double(col) - 1.0) + Xi;
         Y = res_y * (double(row) - 1.0) + Yi;
 }
 
-void Orthorectification::getColRowAt(double X, double Y, double &col, double &row)
+void Orthorectification::getColRowAt(double X, double Y, double &col, double &row) const
 {
         col = 1.0 + (X - Xi) / res_x;
         row = 1.0 + (Y - Yi) / res_y;
-}
-
-void Orthorectification::getColRowAt(double X, double Y, int &col, int &row) const
-{
-        col = int(1.0 + (X - Xi) / res_x);
-        row = int(1.0 + (Y - Yi) / res_y);
 }
 
 /************************
@@ -125,7 +104,7 @@ void Orthorectification::getColRowAt(double X, double Y, int &col, int &row) con
  ************************/
 
 
-void Orthorectification::saveOrtho(char * filename/*, int mode*/)
+void Orthorectification::saveOrtho(char * filename) const
 {
     // Only one option
     saveOrthoEfoto(filename);
@@ -181,7 +160,7 @@ void Orthorectification::saveOrthoEfoto(char * filename) const
 
     fclose(fp);
 
-    delete data;
+    delete[] data;
 }
 
 void Orthorectification::loadOrthoEfoto(char * filename)
@@ -195,6 +174,7 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     unsigned int header_size_bytes = 13 * 8;
     unsigned int result = fread(&header, 1, header_size_bytes, fp);
     if (result != header_size_bytes) {
+        fclose(fp);
 		throw std::runtime_error( "Invalid header" );
 	}
 	
@@ -220,6 +200,7 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     int p=0;
     result = fread(data.get(), 1, file_size_bytes, fp);
     if (result != header_size_bytes) {
+        fclose(fp);
 		throw std::runtime_error( "Invalid DEM" );
 	}
 
@@ -265,13 +246,11 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     if( poDriver == nullptr )
     {
         exit( 1 );
-        //CPLError();
     }
 
     GDALDataset *poDstDS;
     char **papszOptions = nullptr;
     papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
-    //papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "PACKBITS" );
 
     poDstDS = poDriver->Create( filename, ortho_width, ortho_height, no_bands, GDT_Byte,
                                 papszOptions );
@@ -279,8 +258,6 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     if( poDstDS == nullptr )
     {
         exit( 1 );
-        //CPLError();
-        //CPLGetLastErrorMsg();
     }
 
     // O sinal eixo Y precisa ser invertido quando gravamos o Geotiff
@@ -295,22 +272,16 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 
     poDstDS->SetGeoTransform( adfGeoTransform );
 
-    //bool sph = (spheroid==1)  ? TRUE : FALSE;
     oSRS.SetUTM( utmFuse, spheroid);//TRUE: hemisfério norte -- FALSE: hemisfério sul
 
     //well known name accepted by SetWellKnownGeogCS(), such as NAD27, NAD83, WGS84 or WGS72.
-    //OGRErr OGRSpatialReference::SetFromUserInput 	( 	const char *  	pszDefinition 	 )  -->>Verificar documentação
     switch (datum) {
     case SAD69:
-        //oSRS.SetWellKnownGeogCS( "SAD69" );
         oSRS.importFromEPSG(4618);
         break;
     case WGS84:
-        oSRS.SetWellKnownGeogCS( "WGS84" );
         break;
     case SIRGAS2000:
-        //oSRS.SetWellKnownGeogCS( "SIRGAS2000" );
-        //Scope: Geodetic survey.
         oSRS.importFromEPSG(4989);
         break;
     default:
@@ -389,10 +360,17 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 
     if(poDstDS!=NULL)
         GDALClose(poDstDS);
+
+    // freeing memory
+    for(int i=0 ; i < no_bands ; i++)
+    {
+        delete poBand[i];
+    }
+    delete[] poBand;
 }
 
 
-void Orthorectification::saveOrthoGeoTiff(char * filename)
+void Orthorectification::saveOrthoGeoTiff(char * filename) const
 {
     saveOrthoGeoTiffEfoto(filename);
 }

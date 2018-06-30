@@ -78,12 +78,6 @@ private:
   */
     void setSystem(double a, double f, std::string newName);
 
-    /**
-  * \brief Retorna umm representaçao textual do objeto, ou seja, seus principais atributos em forma de texto
-  * \return string : Texto com os principais atributos do objeto, a saber, semi-eixo maior, menor e achatamento do elipsoide
-  */
-    std::string toString();
-
 public:
 	/**
   * \brief Construtor a partir de um enumerador
@@ -110,19 +104,19 @@ public:
   * \brief Retorna o valor do semi-eixo maior
   * \return double : Valor se a;
   */
-	double getA();
+    double getA() const;
 
 	/**
   * \brief Retorna o valor do semi-eixo menor
   * \return double : Valor se b;
   */
-	double getB();
+    double getB() const;
 
 	/**
   * \brief Retorna o valor do achatamento
   * \return double : Valor se f;
   */
-	double getF();
+    double getF() const;
 
 	/**
   * \brief Metodo que retorna o valor da primeira excentricidade do elipsoide
@@ -140,7 +134,7 @@ public:
   * \brief Retorna o nome do sistema geodesico
   * \return string : Valor de systemName;
   */
-    std::string getSystemName();
+    std::string getSystemName() const;
 
 
 };

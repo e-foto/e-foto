@@ -33,43 +33,28 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors and destructors
-//
-
-/**
- *
- */
 InteriorOrientation::InteriorOrientation()
 {
-
 }
 
 /**
- *
+ * Constructor with ids only, needed in project use.
  */
-InteriorOrientation::InteriorOrientation(int myImageId) // Constructor with ids only, needed in project use.
+InteriorOrientation::InteriorOrientation(int myImageId):
+    imageId{myImageId}
 {
-		imageId = myImageId;
 }
 
-/**
- *
- */
 InteriorOrientation::~InteriorOrientation()
 {
 
 }
 
-
-
-// Private attribute accessors
-//
-
 /**
  * Get the value of imageId
  * @return the value of imageId
  */
-int InteriorOrientation::getImageId()
+int InteriorOrientation::getImageId() const
 {
 		return imageId;
 }
@@ -78,7 +63,7 @@ int InteriorOrientation::getImageId()
  * Get the value of Xa
  * @return the value of Xa
  */
-Matrix InteriorOrientation::getXa()
+Matrix InteriorOrientation::getXa() const
 {
 		return Xa;
 }
@@ -87,7 +72,7 @@ Matrix InteriorOrientation::getXa()
  * Get the value of La
  * @return the value of La
  */
-Matrix InteriorOrientation::getLa()
+Matrix InteriorOrientation::getLa() const
 {
 		return La;
 }
@@ -96,7 +81,7 @@ Matrix InteriorOrientation::getLa()
  * Get the value of A
  * @return the value of A
  */
-Matrix InteriorOrientation::getA()
+Matrix InteriorOrientation::getA() const
 {
 		return A;
 }
@@ -105,7 +90,7 @@ Matrix InteriorOrientation::getA()
  * Get the value of P
  * @return the value of P
  */
-Matrix InteriorOrientation::getP()
+Matrix InteriorOrientation::getP() const
 {
 		return P;
 }
@@ -118,7 +103,7 @@ Matrix InteriorOrientation::getP()
  * Get the value of myQuality
  * @return the value of myQuality
  */
-IOQuality InteriorOrientation::getQuality()
+IOQuality InteriorOrientation::getQuality() const
 {
 		return myQuality;
 }
@@ -220,7 +205,7 @@ void InteriorOrientation::calculate()
 {
 		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithFiducialMarks"))
 		{
-				SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*) myImage->getSensor();
+                SensorWithFiducialMarks* sensor = dynamic_cast<SensorWithFiducialMarks*>(myImage->getSensor());
 				if (sensor!=NULL && myImage->getDigFidMarks().size() >= 4 && myImage->getDigFidMarks().size() <= 8)
 				{
 						//Generate A from digMarks.
@@ -252,7 +237,7 @@ void InteriorOrientation::calculate()
 		}
 		else if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithKnowDimensions"))
 		{
-				SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*) myImage->getSensor();
+                SensorWithKnowDimensions* sensor = dynamic_cast<SensorWithKnowDimensions*>(myImage->getSensor());
 				if (sensor!=NULL && myImage->getDigFidMarks().size() == 4)
 				{
 						//Generate A from digMarks.
@@ -276,7 +261,7 @@ void InteriorOrientation::calculate()
 		}
 		else if (myImage != NULL && myImage->getSensor() != NULL && myImage->getSensor()->is("SensorWithKnowParameters"))
 		{
-				SensorWithKnowParameters* sensor = (SensorWithKnowParameters*) myImage->getSensor();
+                SensorWithKnowParameters* sensor = dynamic_cast<SensorWithKnowParameters*>(myImage->getSensor());
 				if (sensor!=NULL)
 				{
 						//Generate A from digMarks is unnecessary.
@@ -406,7 +391,7 @@ PositionMatrix InteriorOrientation::imageToDetector(const PositionMatrix& myDigi
  * This method transforms analogic coordinates into pixel coordinates.
  * @param x, y
  */
-ImageSpaceCoordinate InteriorOrientation::detectorToImage(double x, double y)
+ImageSpaceCoordinate InteriorOrientation::detectorToImage(double x, double y) const
 {
 		// For affine transformation
 		ImageSpaceCoordinate result;
@@ -429,7 +414,7 @@ ImageSpaceCoordinate InteriorOrientation::detectorToImage(double x, double y)
  * This overloaded method transforms analogic coordinates into pixel coordinates.
  * @param myAnalogCoordinate
  */
-ImageSpaceCoordinate InteriorOrientation::detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate)
+ImageSpaceCoordinate InteriorOrientation::detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate) const
 {
 		// For affine transformation
 		ImageSpaceCoordinate result;
@@ -452,7 +437,7 @@ ImageSpaceCoordinate InteriorOrientation::detectorToImage(DetectorSpaceCoordinat
  * This overloaded method transforms analogic coordinates into pixel coordinates.
  * @param myAnalogPositions
  */
-PositionMatrix InteriorOrientation::detectorToImage(const PositionMatrix& myAnalogPositions)
+PositionMatrix InteriorOrientation::detectorToImage(const PositionMatrix& myAnalogPositions) const
 {
 		// For affine transformation
 		PositionMatrix result(myAnalogPositions.getRows(), "px");

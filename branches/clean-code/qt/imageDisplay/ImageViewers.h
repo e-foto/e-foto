@@ -1,6 +1,6 @@
 #ifndef IMAGEVIEWERS_H
 #define IMAGEVIEWERS_H
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2018 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -38,90 +38,99 @@ class StereoToolsBar;
 class MarkStereoTool;
 class Matrix;
 
-class SingleViewer : public QMainWindow, public Ui::EVMainWindow
-{
-	Q_OBJECT
+class SingleViewer : public QMainWindow, public Ui::EVMainWindow {
+    Q_OBJECT
 
-	SingleDisplay* sd;
-	SingleToolsBar* tool;
-	void closeEvent(QCloseEvent *);
+    SingleDisplay* sd_;
+    SingleToolsBar* tool_;
+    void closeEvent(QCloseEvent*);
 
-public:
-    explicit SingleViewer(QWidget *parent=0);
-	SingleDisplay* getDisplay() {return sd;}
+  public:
+    explicit SingleViewer(QWidget* parent = 0);
+    SingleDisplay* getDisplay() {
+        return sd_;
+    }
     MarkTool* getMarker();
 
-public slots:
-	void loadImage(QString filename);
-	void loadImage(QImage* image);
-	void loadImage(Matrix* image, bool isGrayscale = true);
-	void blockOpen();
-	void blockSave();
-	void blockMark();
+  public slots:
+    void loadImage(QString filename);
+    void loadImage(QImage* image);
+    void loadImage(Matrix* image, bool isGrayscale = true);
+    void blockOpen();
+    void blockSave();
+    void blockMark();
 
-	void setImageMode();
-	void setOrtoImageMode(double xi, double dx, double yi, double dy);
-	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
+    void setImageMode();
+    void setOrtoImageMode(double xi, double dx, double yi, double dy);
+    void setElevationImageMode(double xi, double dx, double yi, double dy,
+                               double zi, double dz);
 
 };
 
-class SeparatedStereoViewer : public QMainWindow
-{
-	Q_OBJECT
+class SeparatedStereoViewer : public QMainWindow {
+    Q_OBJECT
 
-	SingleDisplay* leftDisplay;
-	SingleDisplay* rightDisplay;
-	SeparatedStereoToolsBar* tool;
-	//SingleToolsBar* leftTool;
-	//SingleToolsBar* rightTool;
-	void closeEvent(QCloseEvent *);
+    SingleDisplay* leftDisplay_;
+    SingleDisplay* rightDisplay_;
+    SeparatedStereoToolsBar* tool;
+    void closeEvent(QCloseEvent*);
 
-public:
-    explicit SeparatedStereoViewer(QWidget *parent=0);
-	SingleDisplay* getLeftDisplay() {return leftDisplay;}
-	SingleDisplay* getRightDisplay() {return rightDisplay;}
+  public:
+    explicit SeparatedStereoViewer(QWidget* parent = 0);
+    SingleDisplay* getLeftDisplay() {
+        return leftDisplay_;
+    }
+    SingleDisplay* getRightDisplay() {
+        return rightDisplay_;
+    }
     MarkTool& getLeftMarker();
     MarkTool& getRightMarker();
-	SeparatedStereoToolsBar* getToolBar() {return tool;}
+    SeparatedStereoToolsBar* getToolBar() {
+        return tool;
+    }
 
-public slots:
-	void loadLeftImage(QString filename);
-	void loadRightImage(QString filename);
-	void loadLeftImage(QImage* image);
-	void loadRightImage(QImage* image);
-	void loadLeftImage(Matrix* image, bool isGrayscale = true);
-	void loadRightImage(Matrix* image, bool isGrayscale = true);
-	void setFeatures(DemFeatures* df);
-	void blockOpen();
-	void blockSave();
-	void blockMark();
+  public slots:
+    void loadLeftImage(QString filename);
+    void loadRightImage(QString filename);
+    void loadLeftImage(QImage* image);
+    void loadRightImage(QImage* image);
+    void loadLeftImage(Matrix* image, bool isGrayscale = true);
+    void loadRightImage(Matrix* image, bool isGrayscale = true);
+    void setFeatures(DemFeatures* df);
+    void blockOpen();
+    void blockSave();
+    void blockMark();
 };
 
-class StereoViewer : public QMainWindow
-{
-	Q_OBJECT
+class StereoViewer : public QMainWindow {
+    Q_OBJECT
 
-	StereoDisplay* stereoDisplay;
-	StereoToolsBar* stereoTool;
-	void closeEvent(QCloseEvent *);
+    StereoDisplay* stereoDisplay_;
+    StereoToolsBar* stereoTool_;
 
-public:
-    explicit StereoViewer(QWidget *parent=0);
-    StereoDisplay* getDisplay() {return stereoDisplay;}
+    void closeEvent(QCloseEvent*);
+
+  public:
+    explicit StereoViewer(QWidget* parent = 0);
+    StereoDisplay* getDisplay() {
+        return stereoDisplay_;
+    }
     MarkStereoTool& getMarker();
-	StereoToolsBar* getToolBar() {return stereoTool;}
+    StereoToolsBar* getToolBar() {
+        return stereoTool_;
+    }
 
-public slots:
-	void loadLeftImage(QString filename);
-	void loadRightImage(QString filename);
-	void loadLeftImage(QImage* image);
-	void loadRightImage(QImage* image);
-	void loadLeftImage(Matrix* image, bool isGrayscale = true);
-	void loadRightImage(Matrix* image, bool isGrayscale = true);
-	void setFeatures(DemFeatures* df);
-	void blockOpen();
-	void blockSave();
-	void blockMark();
+  public slots:
+    void loadLeftImage(QString filename);
+    void loadRightImage(QString filename);
+    void loadLeftImage(QImage* image);
+    void loadRightImage(QImage* image);
+    void loadLeftImage(Matrix* image, bool isGrayscale = true);
+    void loadRightImage(Matrix* image, bool isGrayscale = true);
+    void setFeatures(DemFeatures* df);
+    void blockOpen();
+    void blockSave();
+    void blockMark();
 };
 
 } // namespace efoto

@@ -48,21 +48,13 @@ public:
     * \param second : valor do segundo
     * \param signal : sinal
     */
-    explicit Dms(int degree, int minute, double second,bool signal=false);
+    explicit Dms(int degree_, int minute, double second,bool signal_=false);
 
     /**
     * \brief Construtor do tipo grau minuto segundo, informando apenas o total de segundos
     * \param seconds : total de segundos que um Dms possui
     */
     explicit Dms(double seconds);
-
-    /**
-    * \brief Construtor do tipo grau minuto segundo, informando a QString equivalente
-    * \param dms : QString no formato dd°mm'ss.sss" ou dd mm ss.sss
-    * \attention QString em outros formatos podem gerar resultados inesperados
-    */
-    //Dms(QString dms);
-
 
     /**
     * \brief Construtor do tipo grau minuto segundo, informando a QString equivalente
@@ -75,37 +67,31 @@ public:
     * \brief Metodo para retornar o valor absoluto do grau
     * \return int : Valor do grau do Dms
     */
-    int getDegree();
+    int getDegree() const;
 
     /**
     * \brief Metodo para retornar o valor absoluto do minuto
     * \return int : Valor do minuto do Dms
     */
-    int getMinute();
+    int getMinute() const;
 
     /**
     * \brief Metodo para retornar o valor absoluto do segundo
     * \return int : Valor do segundo do Dms
     */
-    double getSeconds();
+    double getSeconds() const;
 
     /**
     * \brief Metodo que retorna o sinal do Dms
     * \return bool : sinal
     */
-    bool hasSignal();
+    bool hasSignal() const;
 
     /**
     * \brief Metodo para retornar se o Dms e valido ou nao, ou seja, se grau, minuto e segundo sao valores validos
     * \return bool : Validade do Dms
     */
-    bool isValid();
-
-    /**
-    * \brief Retorna ponteiro para o objeto
-    * \return Dms : ponteiro para o objeto
-    */
-    Dms* getDms();
+    bool isValid() const;
 
     /**
     * \brief Metodo para retornar o objeto em formato texto, com precisao nos segundos
@@ -150,7 +136,7 @@ public:
     * \param seconds : Novo valor de segundo
     * \param signal : Novo sinal
     */
-    void setDms(int degree, int minute , double seconds, bool signal=false);
+    void setDms(int degree_, int minute , double seconds, bool signal_=false);
 
     /**
     * \brief Metodo para alterar o valor do grau
@@ -181,24 +167,6 @@ public:
     * \param precision : digitos da precisao
     */
     void setSecondsPrecision(int precision=2);
-
-    /**
-    * \brief Retorna o valor da precisao dos segundos
-    * \return int : precisao numerica dos segundos
-    */
-    int getSecondsPrecision();
-
-    /**
-    * \brief Soma ao objeto os valores dos atributos de degMinSec
-    * \param degMinSec1 : Objeto a ser somado
-    */
-    void addDegMinSecs(Dms* degMinSec);
-
-    /**
-    * \brief Multiplica o objeto por uma constante inteira
-    * \param factor : fator de multiplicaçao
-    */
-    void mulDegMinSecs(int factor);
 
     /**
     * \brief Converte o objeto Dms para grau decimal
@@ -240,13 +208,6 @@ public:
     static double radianoToDegreeDecimal(double radiano);
 
     /**
-    * \brief Metodo para converter um valor em segundos em um objeto Dms
-    * \param seconds : Total de segundos
-    * \return Dms : ponteiro para objeto
-    */
-    static Dms * secondsToDms(double seconds);
-
-    /**
     * \brief Metodo para comparar dois objetos Dms, se degMinSec for maior retorna 1, se for menor retorna -1, se for igual retorna 0
     * \param degMinSec : objeto a ser comparado
     * \return int : valor de comparaçao
@@ -255,11 +216,11 @@ public:
 
 
 protected:
-    int degree;
-    int min;
-    double sec;
-    bool signal;
-    int secondsPrecision;
+    int degree_;
+    int min_;
+    double sec_;
+    bool signal_;
+    int secondsPrecision_;
 };
 
 } // namespace efoto

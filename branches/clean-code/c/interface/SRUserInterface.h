@@ -29,7 +29,6 @@ class SRUserInterface
 protected:
     SRManager* manager;
 public:
-    SRManager* getManager();
     virtual bool exec() = 0;
 };
 

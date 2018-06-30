@@ -38,9 +38,6 @@ class SRUserInterface_Qt : public QMainWindow, public Ui::SRMainWindow, public S
 {
 	Q_OBJECT
 
-protected slots:
-	virtual void languageChange();
-
 public slots:
 	virtual void informState();
     virtual void receivePoint(QPointF p);
@@ -49,17 +46,13 @@ public slots:
     virtual void updateSelection(QStandardItem* item);
     virtual void updateAll();
 	virtual void makeRepaint();
-	virtual void activeSetMode();
-	virtual void activeUnsetMode();
-	virtual void activePanMode();
-	virtual void activeZoomMode();
 	virtual void fitView();
 	virtual bool calculateSR();
 	virtual bool viewReport();
 	virtual void testActivateSR();
 	virtual void setFlight();
 	virtual void acceptSR();
-        virtual void EOdone();
+    virtual void EOdone();
 
 private:
 	void init();
@@ -70,14 +63,12 @@ protected:
     explicit SRUserInterface_Qt(SRManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
 	~SRUserInterface_Qt();
 	QWidget *windowReport;
-	//ImageView *oldImageView;
 	Marker *markOn;
 	Marker *markOff;
 	SingleViewer *imageView;
 	QGridLayout *imageLayout;
 	QStandardItemModel *points;
 	bool flightAvailable;
-    //FlightDirectionForm *flightDirectionForm;
 	void closeEvent(QCloseEvent *e);
 
 public:

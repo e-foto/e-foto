@@ -328,21 +328,6 @@ void ImageForm::metadataVisibleChanged(QString newText)
         metadataGroup->setVisible(true);
 }
 
-std::string ImageForm :: getFileImageName()
-{
-    return fileImageName.toLocal8Bit().constData();
-}
-
-std::string ImageForm :: getFileImagePath()
-{
-    return fileImagePath.toLocal8Bit().constData();
-}
-
-bool ImageForm::isForm(std::string formName)
-{
-    return !formName.compare("ImageForm");
-}
-
 void ImageForm::cleanForm()
 {
     imageIDLine->clear();

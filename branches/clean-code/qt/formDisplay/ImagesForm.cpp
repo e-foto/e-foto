@@ -91,11 +91,6 @@ void ImagesForm :: emitSignal(int i)
     emit clicked(i);
 }
 
-bool ImagesForm::isForm(std::string formName)
-{
-    return !formName.compare("HeaderForm");
-}
-
 void ImagesForm::setIOsAvailable(std::string xmlIOs)
 {
     EDomElement ede(xmlIOs);

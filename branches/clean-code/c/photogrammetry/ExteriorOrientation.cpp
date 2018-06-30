@@ -29,14 +29,15 @@ namespace efoto {
 
 // Associated object accessor methods
 //
-ExteriorOrientation::ExteriorOrientation():imageId(-1), myImage(NULL)
+ExteriorOrientation::ExteriorOrientation():
+    imageId_(-1),
+    myImage_(NULL)
 {
-
 }
 
 void ExteriorOrientation::setImageId(int newImageId)
 {
-	imageId = newImageId;
+    imageId_ = newImageId;
 }
 
 /**
@@ -45,13 +46,13 @@ void ExteriorOrientation::setImageId(int newImageId)
  */
 void ExteriorOrientation::setImage(Image* newImage)
 {
-	myImage = newImage;
+    myImage_ = newImage;
 }
 
 
 int ExteriorOrientation::getImageId() const
 {
-	return imageId;
+    return imageId_;
 }
 
 /**
@@ -60,7 +61,7 @@ int ExteriorOrientation::getImageId() const
  */
 Image* ExteriorOrientation::getImage() const
 {
-	return myImage;
+    return myImage_;
 }
 
 
@@ -85,15 +86,9 @@ void ExteriorOrientation::xmlSetData(std::string xml)
 }
 
 // Composed object accessors
-//
-void ExteriorOrientation::setQuality(EOQuality newQuality)
+EOQuality ExteriorOrientation::getQuality() const
 {
-	myQuality = newQuality;
-}
-
-EOQuality ExteriorOrientation::getQuality()
-{
-	return myQuality;
+    return myQuality_;
 }
 
 } // namespace efoto

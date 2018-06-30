@@ -51,23 +51,21 @@ private:
 
 	// Private attributes
 	//
-	Matrix V;
-	double sigma0Squared;
-	Matrix SigmaXa;
-	Matrix SigmaLa;
+    Matrix V{};
+    double sigma0Squared{0.0};
+    Matrix SigmaXa{};
+    Matrix SigmaLa{};
 
 public:
-
-	// Constructors and Destructor
-	//
+    EOQuality(){};
 	virtual ~EOQuality();
 
 	// Private attribute accessors
 	//
-	Matrix getV();
-	double getsigma0Squared();
-	Matrix getSigmaXa();
-	Matrix getSigmaLa();
+    Matrix getV() const;
+    double getsigma0Squared() const;
+    Matrix getSigmaXa() const;
+    Matrix getSigmaLa() const;
 
 	// XML methods
 	//

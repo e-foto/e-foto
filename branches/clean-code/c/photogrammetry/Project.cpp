@@ -42,13 +42,13 @@ namespace efoto {
 /**
  *
  */
-Project::Project()
+Project::Project():
+    xmlData_ {""},
+    theHeader_ {nullptr},
+        theTerrain_ {nullptr},
+    processStates_ {""},
+    thePhotoTri_ {nullptr}
 {
-    xmlData = "";
-    processStates = "";
-    theTerrain = NULL;
-    theHeader = NULL;
-    thePhotoTri = NULL;
 }
 
 /**
@@ -68,29 +68,29 @@ Project::~Project()
  */
 ProjectHeader *Project::instanceHeader()
 {
-    if (theHeader != NULL)
-        return theHeader;
-    EDomElement root(xmlData);
+    if (theHeader_ != NULL)
+        return theHeader_;
+    EDomElement root(xmlData_);
     EDomElement xmlHeader = root.elementByTagName("projectHeader");
     if (xmlHeader.getContent().compare("") == 0)
         return NULL;
-    theHeader = new ProjectHeader;
-    theHeader->xmlSetData(xmlHeader.getContent());
-    return theHeader;
+    theHeader_ = new ProjectHeader;
+    theHeader_->xmlSetData(xmlHeader.getContent());
+    return theHeader_;
 
 }
 
 Terrain* Project::instanceTerrain()
 {
-    if (theTerrain != NULL)
-        return theTerrain;
-    EDomElement root(xmlData);
+    if (theTerrain_ != NULL)
+        return theTerrain_;
+    EDomElement root(xmlData_);
     EDomElement xmlTerrain = root.elementByTagName("terrain");
     if (xmlTerrain.getContent().compare("") == 0)
         return NULL;
-    theTerrain = new Terrain();
-    theTerrain->xmlSetData(xmlTerrain.getContent());
-    return theTerrain;
+    theTerrain_ = new Terrain();
+    theTerrain_->xmlSetData(xmlTerrain.getContent());
+    return theTerrain_;
 }
 
 /**
@@ -98,10 +98,10 @@ Terrain* Project::instanceTerrain()
  */
 Sensor* Project::instanceSensor(int id)
 {
-    for (unsigned int i = 0; i < sensors.size(); i++)
-        if (sensors.at(i)->getId() == id)
-            return sensors.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < sensors_.size(); i++)
+        if (sensors_.at(i)->getId() == id)
+            return sensors_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlSensor = root.elementByTagAtt("sensor", "key", Conversion::intToString(id));
     if (xmlSensor.getContent().compare("") == 0)
         return NULL;
@@ -110,26 +110,26 @@ Sensor* Project::instanceSensor(int id)
     {
         SensorWithFiducialMarks* newSensorWithFiducialMarks = new SensorWithFiducialMarks();
         newSensorWithFiducialMarks->xmlSetData(xmlSensor.getContent());
-        sensors.push_back(newSensorWithFiducialMarks);
-        return (Sensor*) newSensorWithFiducialMarks;
+        sensors_.push_back(newSensorWithFiducialMarks);
+        return dynamic_cast<Sensor*>(newSensorWithFiducialMarks);
     }
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
             xmlSensor.elementByTagName("calculationMode").toString().compare("With Sensor Dimensions") == 0)
     {
         SensorWithKnowDimensions* newSensorWithKnowDimensions = new SensorWithKnowDimensions();
         newSensorWithKnowDimensions->xmlSetData(xmlSensor.getContent());
-        sensors.push_back(newSensorWithKnowDimensions);
-        return (Sensor*) newSensorWithKnowDimensions;
+        sensors_.push_back(newSensorWithKnowDimensions);
+        return dynamic_cast<Sensor*>(newSensorWithKnowDimensions);
     }
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
             xmlSensor.elementByTagName("calculationMode").toString().compare("Fixed Parameters") == 0)
     {
         SensorWithKnowParameters* newSensorWithKnowParameters = new SensorWithKnowParameters();
         newSensorWithKnowParameters->xmlSetData(xmlSensor.getContent());
-        sensors.push_back(newSensorWithKnowParameters);
-        return (Sensor*) newSensorWithKnowParameters;
+        sensors_.push_back(newSensorWithKnowParameters);
+        return dynamic_cast<Sensor*>(newSensorWithKnowParameters);
     }
-    return NULL;
+    return nullptr;
 }
 
 /**
@@ -137,16 +137,16 @@ Sensor* Project::instanceSensor(int id)
  */
 Flight* Project::instanceFlight(int id)
 {
-    for (unsigned int i = 0; i < flights.size(); i++)
-        if (flights.at(i)->getId() == id)
-            return flights.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < flights_.size(); i++)
+        if (flights_.at(i)->getId() == id)
+            return flights_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlFlight = root.elementByTagAtt("flight", "key", Conversion::intToString(id));
     if (xmlFlight.getContent().compare("") == 0)
         return NULL;
     Flight* newFlight = new Flight();
     newFlight->xmlSetData(xmlFlight.getContent());
-    flights.push_back(newFlight);
+    flights_.push_back(newFlight);
     return newFlight;
 }
 
@@ -155,22 +155,22 @@ Flight* Project::instanceFlight(int id)
  */
 Image* Project::instanceImage(int id)
 {
-    for (unsigned int i = 0; i < images.size(); i++)
-        if (images.at(i)->getId() == id)
-            return images.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < images_.size(); i++)
+        if (images_.at(i)->getId() == id)
+            return images_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlImage = root.elementByTagAtt("image", "key", Conversion::intToString(id));
     if (xmlImage.getContent().compare("") == 0)
         return NULL;
     Image* newImage = new Image();
     newImage->xmlSetData(xmlImage.getContent());
-    images.push_back(newImage);
+    images_.push_back(newImage);
     return newImage;
 }
 
 void Project::instanceAllImages()
 {
-    EDomElement root(xmlData);
+    EDomElement root(xmlData_);
     std::deque<EDomElement> xmlAllImages = root.elementsByTagName("image");
     for (unsigned int i = 0 ;i < xmlAllImages.size();i++)
     {
@@ -178,14 +178,14 @@ void Project::instanceAllImages()
         if (xmlAllImages.at(i).getContent().compare("") == 0)
             continue;
         bool notAvailable = true;
-        for (unsigned int j = 0; j < images.size() && notAvailable; j++)
-            if (images.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(i).attribute("key")))
+        for (unsigned int j = 0; j < images_.size() && notAvailable; j++)
+            if (images_.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(i).attribute("key")))
                 notAvailable = false;
         if (notAvailable)
         {
             Image* newImage = new Image();
             newImage->xmlSetData(xmlAllImages.at(i).getContent());
-            images.push_back(newImage);
+            images_.push_back(newImage);
         }
     }
 }
@@ -195,7 +195,7 @@ void Project::instanceAllImages()
  */
 void Project::instanceAllPoints()
 {
-    EDomElement root(xmlData);
+    EDomElement root(xmlData_);
     std::deque<EDomElement> xmlAllPoint = root.elementsByTagName("point");
 
     for (unsigned int i = 0; i < xmlAllPoint.size(); i++)
@@ -206,14 +206,14 @@ void Project::instanceAllPoints()
 
         // Evita reinstaciar pontos que ja estejam disponiveis
         bool notAvailable = true;
-        for (unsigned int j = 0; j < points.size() && notAvailable; j++)
-            if (points.at(j)->getId() == Conversion::stringToInt(xmlAllPoint.at(i).attribute("key")))
+        for (unsigned int j = 0; j < points_.size() && notAvailable; j++)
+            if (points_.at(j)->getId() == Conversion::stringToInt(xmlAllPoint.at(i).attribute("key")))
                 notAvailable = false;
         if (notAvailable)
         {
             Point* newPoint = new Point();
             newPoint->xmlSetData(xmlAllPoint.at(i).getContent());
-            points.push_back(newPoint);
+            points_.push_back(newPoint);
         }
     }
 }
@@ -221,18 +221,18 @@ void Project::instanceAllPoints()
 
 Point* Project::instancePoint(int id)
 {
-    for (unsigned int i = 0; i < points.size(); i++)
-        if (points.at(i)->getId() == id)
-            return points.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < points_.size(); i++)
+        if (points_.at(i)->getId() == id)
+            return points_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlPoint = root.elementByTagAtt("point", "key", Conversion::intToString(id));
     if (xmlPoint.getContent().compare("") == 0)
         return NULL;
 
     Point* newPoint = new Point();
     newPoint->xmlSetData(xmlPoint.getContent());
-    points.push_back(newPoint);
-    return (Point*) newPoint;
+    points_.push_back(newPoint);
+    return dynamic_cast<Point*>(newPoint);
 }
 
 /**
@@ -240,10 +240,10 @@ Point* Project::instancePoint(int id)
  */
 InteriorOrientation* Project::instanceIO(int imageId)
 {
-    for (unsigned int i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == imageId)
-            return IOs.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < IOs_.size(); i++)
+        if (IOs_.at(i)->getImageId() == imageId)
+            return IOs_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlIO = root.elementByTagAtt("imageIO", "image_key", Conversion::intToString(imageId));
     if (xmlIO.getContent().compare("") == 0)
         return NULL;
@@ -251,13 +251,13 @@ InteriorOrientation* Project::instanceIO(int imageId)
     newIO->setImage(image(imageId));
     newIO->xmlSetData(xmlIO.getContent());
     newIO->setImage(NULL);
-    IOs.push_back(newIO);
+    IOs_.push_back(newIO);
     return newIO;
 }
 
 void Project::instanceAllIOs()
 {
-    EDomElement root(xmlData);
+    EDomElement root(xmlData_);
     std::deque<EDomElement> xmlAllIOs = root.elementsByTagName("imageIO");
     for (unsigned int i = 0 ;i < xmlAllIOs.size();i++)
     {
@@ -265,8 +265,8 @@ void Project::instanceAllIOs()
         if (xmlAllIOs.at(i).getContent().compare("") == 0)
             continue;
         bool notAvailable = true;
-        for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
-            if (IOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key")))
+        for (unsigned int j = 0; j < IOs_.size() && notAvailable; j++)
+            if (IOs_.at(j)->getImageId() == Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key")))
                 notAvailable = false;
         //InteriorOrientation *pkj;
         //pkj->getImageId()
@@ -276,7 +276,7 @@ void Project::instanceAllIOs()
             newIO->setImage(image(Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key"))));
             newIO->xmlSetData(xmlAllIOs.at(i).getContent());
             newIO->setImage(NULL);
-            IOs.push_back(newIO);
+            IOs_.push_back(newIO);
         }
     }
 }
@@ -286,10 +286,10 @@ void Project::instanceAllIOs()
  */
 ExteriorOrientation* Project::instanceEO(int imageId)
 {
-    for (unsigned int i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == imageId)
-            return EOs.at(i);
-    EDomElement root(xmlData);
+    for (unsigned int i = 0; i < EOs_.size(); i++)
+        if (EOs_.at(i)->getImageId() == imageId)
+            return EOs_.at(i);
+    EDomElement root(xmlData_);
     EDomElement xmlEO = root.elementByTagAtt("imageEO", "image_key", Conversion::intToString(imageId));
     EDomElement xmlSR = root.elementByTagAtt("imageSR", "image_key", Conversion::intToString(imageId));
     if (xmlEO.getContent().compare("") == 0 || xmlSR.getContent().compare("") == 0)
@@ -298,15 +298,15 @@ ExteriorOrientation* Project::instanceEO(int imageId)
     {
         SpatialRessection* newEO = new SpatialRessection();
         newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
-        EOs.push_back(newEO);
-        return (ExteriorOrientation*) newEO;
+        EOs_.push_back(newEO);
+        return dynamic_cast<ExteriorOrientation*>(newEO);
     }
     return NULL;
 }
 
 void Project::instanceAllEOs()
 {
-    EDomElement root(xmlData);
+    EDomElement root(xmlData_);
     std::deque<EDomElement> xmlAllEOs = root.elementsByTagName("imageEO");
     std::deque<EDomElement> xmlAllSRs = root.elementsByTagName("imageSR");
     for (unsigned int i = 0 ;i < xmlAllEOs.size();i++)
@@ -315,8 +315,8 @@ void Project::instanceAllEOs()
         if (xmlAllEOs.at(i).getContent().compare("") == 0)
             continue;
         bool notAvailable = true;
-        for (unsigned int j = 0; j < EOs.size() && notAvailable; j++)
-            if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key")))
+        for (unsigned int j = 0; j < EOs_.size() && notAvailable; j++)
+            if (EOs_.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key")))
                 notAvailable = false;
         //InteriorOrientation *pkj;
         //pkj->getImageId()
@@ -336,45 +336,33 @@ void Project::instanceAllEOs()
             if (!hasSR)
                 newEO->xmlSetData(xmlAllEOs.at(i).getContent());
             newEO->setImage(NULL);
-            EOs.push_back(newEO);
+            EOs_.push_back(newEO);
         }
     }
 }
 
 PhotoTri *Project::instancePhotoTri()
 {
-    if (thePhotoTri != NULL)
-        return thePhotoTri;
-    EDomElement root(xmlData);
+    if (thePhotoTri_ != NULL)
+        return thePhotoTri_;
+    EDomElement root(xmlData_);
     EDomElement xmlPhoto = root.elementByTagName("phototriangulation");
     if (xmlPhoto.getContent().compare("") == 0)
         return NULL;
-    thePhotoTri = new PhotoTri;
-    thePhotoTri->xmlSetData(xmlPhoto.getContent());
-    return thePhotoTri;
+    thePhotoTri_ = new PhotoTri;
+    thePhotoTri_->xmlSetData(xmlPhoto.getContent());
+    return thePhotoTri_;
 }
-
-void Project::deleteHeader(bool makeReconnections)
-{
-    if (theHeader != NULL)
-    {
-        delete(theHeader);
-        theHeader = NULL;
-    }
-    if (makeReconnections)
-        linkAll();
-}
-
 
 /**
  *
  */
 void Project::deleteTerrain(bool makeReconnections)
 {
-    if (theTerrain != NULL)
+    if (theTerrain_ != NULL)
     {
-        delete(theTerrain);
-        theTerrain = NULL;
+        delete(theTerrain_);
+        theTerrain_ = NULL;
     }
     if (makeReconnections)
         linkAll();
@@ -387,10 +375,10 @@ void Project::deleteSensor(int id, bool makeReconnections)
 {
     unsigned int i;
     Sensor* mySensor = NULL;
-    for (i = 0; i < sensors.size(); i++)
-        if (sensors.at(i)->getId() == id)
+    for (i = 0; i < sensors_.size(); i++)
+        if (sensors_.at(i)->getId() == id)
         {
-            mySensor = sensors.at(i);
+            mySensor = sensors_.at(i);
             break;
         }
     if (mySensor != NULL)
@@ -400,10 +388,11 @@ void Project::deleteSensor(int id, bool makeReconnections)
                 xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
                 xmlSensor.elementByTagName("detector").toString().compare("film") == 0)
         {
-            SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+            SensorWithFiducialMarks* mySensorWithFiducialMarks =
+                    dynamic_cast<SensorWithFiducialMarks*>(mySensor);
             delete(mySensorWithFiducialMarks);
         }
-        sensors.erase(sensors.begin() + i);
+        sensors_.erase(sensors_.begin() + i);
     }
     if (makeReconnections)
         linkAll();
@@ -416,16 +405,16 @@ void Project::deleteFlight(int id, bool makeReconnections)
 {
     unsigned int i;
     Flight* myFlight = NULL;
-    for (i = 0; i < flights.size(); i++)
-        if (flights.at(i)->getId() == id)
+    for (i = 0; i < flights_.size(); i++)
+        if (flights_.at(i)->getId() == id)
         {
-            myFlight = flights.at(i);
+            myFlight = flights_.at(i);
             break;
         }
     if (myFlight != NULL)
     {
         delete(myFlight);
-        flights.erase(flights.begin() + i);
+        flights_.erase(flights_.begin() + i);
     }
     if (makeReconnections)
         linkAll();
@@ -438,16 +427,16 @@ void Project::deleteImage(int id, bool makeReconnections)
 {
     unsigned int i;
     Image* myImage = NULL;
-    for (i = 0; i < images.size(); i++)
-        if (images.at(i)->getId() == id)
+    for (i = 0; i < images_.size(); i++)
+        if (images_.at(i)->getId() == id)
         {
-            myImage = images.at(i);
+            myImage = images_.at(i);
             break;
         }
     if (myImage != NULL)
     {
         delete(myImage);
-        images.erase(images.begin() + i);
+        images_.erase(images_.begin() + i);
     }
     if (makeReconnections)
         linkAll();
@@ -460,17 +449,17 @@ void Project::deletePoint(int id, bool makeReconnections)
 {
     unsigned int i;
     Point* myPoint = NULL;
-    for (i = 0; i < points.size(); i++)
-        if (points.at(i)->getId() == id)
+    for (i = 0; i < points_.size(); i++)
+        if (points_.at(i)->getId() == id)
         {
-            myPoint = points.at(i);
+            myPoint = points_.at(i);
             break;
         }
     if (myPoint != NULL)
     {
         Point* point = myPoint;
             delete(point);
-        points.erase(points.begin() + i);
+        points_.erase(points_.begin() + i);
     }
     if (makeReconnections)
         linkAll();
@@ -483,16 +472,16 @@ void Project::deleteIO(int id, bool makeReconnections)
 {
     unsigned int i;
     InteriorOrientation* myIO = NULL;
-    for (i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == id)
+    for (i = 0; i < IOs_.size(); i++)
+        if (IOs_.at(i)->getImageId() == id)
         {
-            myIO = IOs.at(i);
+            myIO = IOs_.at(i);
             break;
         }
     if (myIO != NULL)
     {
         delete(myIO);
-        IOs.erase(IOs.begin() + i);
+        IOs_.erase(IOs_.begin() + i);
     }
     if (makeReconnections)
         linkAll();
@@ -505,10 +494,10 @@ void Project::deleteEO(int id, bool makeReconnections)
 {
     unsigned int i;
     ExteriorOrientation* myEO = NULL;
-    for (i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == id)
+    for (i = 0; i < EOs_.size(); i++)
+        if (EOs_.at(i)->getImageId() == id)
         {
-            myEO = EOs.at(i);
+            myEO = EOs_.at(i);
             break;
         }
     if (myEO != NULL)
@@ -517,120 +506,11 @@ void Project::deleteEO(int id, bool makeReconnections)
         //if (xmlEO.attribute("type").compare("spatialRessection") == 0)
         if (myEO->is("SpatialResection"))
         {
-            SpatialRessection* mySR = (SpatialRessection*) myEO;
+            SpatialRessection* mySR = dynamic_cast<SpatialRessection*>(myEO);
             delete(mySR);
         }
-        EOs.erase(EOs.begin() + i);
+        EOs_.erase(EOs_.begin() + i);
     }
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::deletePhotoTri(bool makeReconnections)
-{
-    if (thePhotoTri != NULL)
-    {
-        delete(thePhotoTri);
-        thePhotoTri = NULL;
-    }
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::closeProject()
-{
-    //Rever
-}
-
-void Project::addSensor(std::string data, bool makeReconnections)
-{
-    if (data != "")
-    {
-        EDomElement xmlSensor(data);
-        int id = Conversion::stringToInt(xmlSensor.elementByTagName("sensor").attribute("key"));
-        for (int i = sensors.size()-1; i >= 0; i--)
-            if (sensors.at(i)->getId() == id)
-            {
-                delete sensors.at(i);
-                sensors.erase(sensors.begin()+i);
-            }
-        if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-                xmlSensor.elementByTagName("calculationMode").toString().compare("With Fiducial Marks") == 0)
-        {
-            SensorWithFiducialMarks* newSensorWithFiducialMarks = new SensorWithFiducialMarks();
-            newSensorWithFiducialMarks->xmlSetData(xmlSensor.getContent());
-            sensors.push_back(newSensorWithFiducialMarks);
-        }
-        else if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-                 xmlSensor.elementByTagName("calculationMode").toString().compare("With Sensor Dimensions") == 0)
-        {
-            SensorWithKnowDimensions* newSensorWithKnowDimensions = new SensorWithKnowDimensions();
-            newSensorWithKnowDimensions->xmlSetData(xmlSensor.getContent());
-            sensors.push_back(newSensorWithKnowDimensions);
-        }
-        else if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
-                 xmlSensor.elementByTagName("calculationMode").toString().compare("Fixed Parameters") == 0)
-        {
-            SensorWithKnowParameters* newSensorWithKnowParameters = new SensorWithKnowParameters();
-            newSensorWithKnowParameters->xmlSetData(xmlSensor.getContent());
-            sensors.push_back(newSensorWithKnowParameters);
-        }
-    }
-    else
-    {
-        sensors.push_back(new SensorWithFiducialMarks(getFreeSensorId()));
-    }
-
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::addFlight(std::string data, bool makeReconnections)
-{
-    if (data != "")
-    {
-        EDomElement xmlFlight(data);
-        int id = Conversion::stringToInt(xmlFlight.elementByTagName("flight").attribute("key"));
-        for (int i = flights.size()-1; i >= 0; i--)
-            if (flights.at(i)->getId() == id)
-            {
-                delete flights.at(i);
-                flights.erase(flights.begin()+i);
-            }
-        Flight* flight = new Flight();
-        flight->xmlSetData(xmlFlight.getContent());
-        flights.push_back(flight);
-    }
-    else
-    {
-        flights.push_back(new Flight(getFreeFlightId(),1));
-    }
-
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::addImage(std::string data, bool makeReconnections)
-{
-    if (data != "")
-    {
-        EDomElement xmlImage(data);
-        int id = Conversion::stringToInt(xmlImage.elementByTagName("image").attribute("key"));
-        for (int i = images.size()-1; i >= 0; i--)
-            if (images.at(i)->getId() == id)
-            {
-                delete images.at(i);
-                images.erase(images.begin()+i);
-            }
-        Image* image = new Image();
-        image->xmlSetData(xmlImage.getContent());
-        images.push_back(image);
-    }
-    else
-    {
-        images.push_back(new Image(getFreeImageId(),1));
-    }
-
     if (makeReconnections)
         linkAll();
 }
@@ -641,62 +521,19 @@ void Project::addPoint(std::string data, bool makeReconnections)
     {
         EDomElement xmlPoint(data);
         int id = Conversion::stringToInt(xmlPoint.elementByTagName("point").attribute("key"));
-        for (int i = points.size()-1; i >= 0; i--)
-            if (points.at(i)->getId() == id)
+        for (int i = points_.size()-1; i >= 0; i--)
+            if (points_.at(i)->getId() == id)
             {
-                delete points.at(i);
-                points.erase(points.begin()+i);
+                delete points_.at(i);
+                points_.erase(points_.begin()+i);
             }
         Point* point = new Point();
         point->xmlSetData(xmlPoint.getContent());
-        points.push_back(point);
+        points_.push_back(point);
     }
     else
     {
-        points.push_back(new Point(getFreePointId()));
-    }
-
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::addIO(std::string data, bool makeReconnections)
-{
-    if (data != "")
-    {
-        EDomElement xmlIO(data);
-        int id = Conversion::stringToInt(xmlIO.elementByTagName("imageIO").attribute("key"));
-        for (int i = IOs.size()-1; i >= 0; i--)
-            if (IOs.at(i)->getImageId() == id)
-            {
-                delete IOs.at(i);
-                IOs.erase(IOs.begin()+i);
-            }
-        InteriorOrientation* io = new InteriorOrientation();
-        io->xmlSetData(xmlIO.getContent());
-        IOs.push_back(io);
-    }
-
-    if (makeReconnections)
-        linkAll();
-}
-
-void Project::addEO(std::string data, bool makeReconnections)
-{
-    if (data != "")
-    {
-        EDomElement xmlEO(data);
-        int id = Conversion::stringToInt(xmlEO.elementByTagName("imageEO").attribute("key"));
-        for (int i = EOs.size()-1; i >= 0; i--)
-            if (EOs.at(i)->getImageId() == id)
-            {
-                SpatialRessection *EO = (SpatialRessection*) EOs.at(i);
-                delete EO;
-                EOs.erase(EOs.begin()+i);
-            }
-        SpatialRessection* eo = new SpatialRessection();
-        eo->xmlSetData(xmlEO.getContent());
-        EOs.push_back((ExteriorOrientation*)eo);
+        points_.push_back(new Point(getFreePointId()));
     }
 
     if (makeReconnections)
@@ -705,8 +542,8 @@ void Project::addEO(std::string data, bool makeReconnections)
 
 ProjectHeader *Project::header()
 {
-    if (theHeader != NULL)
-        return theHeader;
+    if (theHeader_ != NULL)
+        return theHeader_;
     return NULL;
 }
 
@@ -715,8 +552,8 @@ ProjectHeader *Project::header()
  */
 Terrain* Project::terrain()
 {
-    if (theTerrain != NULL)
-        return theTerrain;
+    if (theTerrain_ != NULL)
+        return theTerrain_;
     return NULL;
 }
 
@@ -725,9 +562,9 @@ Terrain* Project::terrain()
  */
 Sensor* Project::sensor(int id)
 {
-    for (unsigned int i = 0; i < sensors.size(); i++)
-        if (sensors.at(i)->getId() == id)
-            return sensors.at(i);
+    for (unsigned int i = 0; i < sensors_.size(); i++)
+        if (sensors_.at(i)->getId() == id)
+            return sensors_.at(i);
     return NULL;
 }
 
@@ -736,9 +573,9 @@ Sensor* Project::sensor(int id)
  */
 Flight* Project::flight(int id)
 {
-    for (unsigned int i = 0; i < flights.size(); i++)
-        if (flights.at(i)->getId() == id)
-            return flights.at(i);
+    for (unsigned int i = 0; i < flights_.size(); i++)
+        if (flights_.at(i)->getId() == id)
+            return flights_.at(i);
     return NULL;
 }
 
@@ -747,9 +584,9 @@ Flight* Project::flight(int id)
  */
 Image* Project::image(int id)
 {
-    for (unsigned int i = 0; i < images.size(); i++)
-        if (images.at(i)->getId() == id)
-            return images.at(i);
+    for (unsigned int i = 0; i < images_.size(); i++)
+        if (images_.at(i)->getId() == id)
+            return images_.at(i);
     return NULL;
 }
 
@@ -758,38 +595,16 @@ Image* Project::image(int id)
  */
 Point* Project::point(int id)
 {
-    for (unsigned int i = 0; i < points.size(); i++)
-        if (points.at(i)->getId() == id)
-            return points.at(i);
-    return NULL;
-}
-
-/**
- *
- */
-InteriorOrientation* Project::IO(int id)
-{
-    for (unsigned int i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == id)
-            return IOs.at(i);
-    return NULL;
-}
-
-/**
- *
- */
-ExteriorOrientation* Project::EO(int id)
-{
-    for (unsigned int i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == id)
-            return EOs.at(i);
+    for (unsigned int i = 0; i < points_.size(); i++)
+        if (points_.at(i)->getId() == id)
+            return points_.at(i);
     return NULL;
 }
 
 PhotoTri *Project::photoTri()
 {
-    if (thePhotoTri != NULL)
-        return thePhotoTri;
+    if (thePhotoTri_ != NULL)
+        return thePhotoTri_;
     return NULL;
 }
 
@@ -813,16 +628,6 @@ std::string Project::getXml(std::string tagname, std::string att, std::string va
 
 
 // EObject methods
-//
-
-/**
- *
- */
-std::string Project::objectType(void)
-{
-    return "Project";
-}
-
 /**
  *
  */
@@ -836,17 +641,17 @@ bool Project::is(std::string s)
 //
 void Project::setXml(std::string xml)
 {
-    xmlData = xml;
+    xmlData_ = xml;
 
-    EDomElement ede(xmlData);
+    EDomElement ede(xmlData_);
     //EDomElement dem = ede.elementByTagName("DEMs");
     //EDomElement eoi = ede.elementByTagName("orthoImages");
     //EDomElement feat = ede.elementByTagName("features");
     EDomElement sr = ede.elementByTagName("spatialResections");
 
     // Rever a parte de estados de processos... armazenados e acessados na string processStates
-    processStates = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ sr.getContent();
-    xmlData = ede.indent('\t').getContent();
+    processStates_ = /*dem.getContent() + eoi.getContent() + feat.getContent() +*/ sr.getContent();
+    xmlData_ = ede.indent('\t').getContent();
 
     instanceAllImages();
     instanceAllPoints();
@@ -871,7 +676,7 @@ void Project::linkAll()
 
     if (flt)
     {
-        flt->setTerrain(theTerrain);
+        flt->setTerrain(theTerrain_);
         flt->setSensor(sns);
         flt->clearImages();
     }
@@ -882,20 +687,20 @@ void Project::linkAll()
         sns->putFlight(flt);
     }
 
-    for (unsigned int i = 0; i < points.size(); i++)
+    for (unsigned int i = 0; i < points_.size(); i++)
     {
-        Point* point = points.at(i);
+        Point* point = points_.at(i);
         point->clearImages();
     }
 
-    for (unsigned int j = 0; j < images.size(); j++)
+    for (unsigned int j = 0; j < images_.size(); j++)
     {
-        Image *img = images.at(j);
+        Image *img = images_.at(j);
         img->clearPoints();
 
-        for (unsigned int i = 0; i < points.size(); i++)
+        for (unsigned int i = 0; i < points_.size(); i++)
         {
-            Point* pointToInsert = points.at(i);
+            Point* pointToInsert = points_.at(i);
 
             if (pointToInsert->hasImageCoordinate(img->getId()))
             {
@@ -911,43 +716,43 @@ void Project::linkAll()
 
     }
 
-    for (unsigned int i=0;i<IOs.size();i++)
+    for (unsigned int i=0;i<IOs_.size();i++)
     {
-        InteriorOrientation *io=IOs.at(i);
+        InteriorOrientation *io=IOs_.at(i);
         Image *img = image(io->getImageId());
         io->setImage(img);
         if (img) img->setIO(io);
     }
 
-    for (unsigned int i=0;i<EOs.size();i++)
+    for (unsigned int i=0;i<EOs_.size();i++)
     {
-        ExteriorOrientation *eo=EOs.at(i);
+        ExteriorOrientation *eo=EOs_.at(i);
         Image *img = image(eo->getImageId());
         eo->setImage(img);
-        if (img) img->setEO((SpatialRessection*)eo);
+        if (img) img->setEO(dynamic_cast<SpatialRessection*>(eo));
     }
 
-    if (thePhotoTri)
+    if (thePhotoTri_)
     {
-        thePhotoTri->clearImages();
-        for (unsigned int i=0; i<thePhotoTri->getImageKeys().size(); i++)
+        thePhotoTri_->clearImages();
+        for (unsigned int i=0; i<thePhotoTri_->getImageKeys().size(); i++)
         {
-            Image *img = image(thePhotoTri->getImageKeys().at(i));
-            if (img) thePhotoTri->putImage(img);
+            Image *img = image(thePhotoTri_->getImageKeys().at(i));
+            if (img) thePhotoTri_->putImage(img);
         }
 
-        thePhotoTri->clearPoints();
-        for (unsigned int i=0; i<thePhotoTri->getPointKeys().size(); i++)
+        thePhotoTri_->clearPoints();
+        for (unsigned int i=0; i<thePhotoTri_->getPointKeys().size(); i++)
         {
-            Point *pt = point(thePhotoTri->getPointKeys().at(i));
-            if (pt) thePhotoTri->putPoint(pt);
+            Point *pt = point(thePhotoTri_->getPointKeys().at(i));
+            if (pt) thePhotoTri_->putPoint(pt);
         }
     }
 }
 
 std::string Project::getXml()
 {
-    if (xmlData.empty())
+    if (xmlData_.empty())
         return "";
 
     std::string xmlData = "";
@@ -966,27 +771,27 @@ std::string Project::getXml()
     xmlData += flight(1) ? flight(1)->xmlGetData() : "";
     xmlData += "</flights>\n";
     xmlData += "<points>\n";
-    for(unsigned int i=0; i<points.size(); i++)
+    for(unsigned int i=0; i<points_.size(); i++)
     {
-        xmlData += points.at(i)->xmlGetData();
+        xmlData += points_.at(i)->xmlGetData();
     }
     xmlData += "</points>\n";
     xmlData += "<images>\n";
-    for(unsigned int i=0; i<images.size(); i++)
+    for(unsigned int i=0; i<images_.size(); i++)
     {
-        xmlData += images.at(i)->xmlGetData();
+        xmlData += images_.at(i)->xmlGetData();
     }
     xmlData += "</images>\n";
     xmlData += "<interiorOrientation>\n";
-    for(unsigned int i=0; i<IOs.size(); i++)
+    for(unsigned int i=0; i<IOs_.size(); i++)
     {
-        xmlData += IOs.at(i)->xmlGetData();
+        xmlData += IOs_.at(i)->xmlGetData();
     }
     xmlData += "</interiorOrientation>\n";
     xmlData += "<exteriorOrientation>\n";
-    for(unsigned int i=0; i<EOs.size(); i++)
+    for(unsigned int i=0; i<EOs_.size(); i++)
     {
-        SpatialRessection* sp = (SpatialRessection*) EOs.at(i);
+        SpatialRessection* sp = dynamic_cast<SpatialRessection*>(EOs_.at(i));
         xmlData += sp->xmlGetDataEO();
     }
     xmlData += "</exteriorOrientation>\n";
@@ -994,9 +799,9 @@ std::string Project::getXml()
     // Rever aqui para adicionar os DEMs, EOIs e FEATs ao xml de saida.
 
     xmlData += "<spatialResections>\n";
-    for(unsigned int i=0; i<EOs.size(); i++)
+    for(unsigned int i=0; i<EOs_.size(); i++)
     {
-        SpatialRessection* sp = (SpatialRessection*) EOs.at(i);
+        SpatialRessection* sp = dynamic_cast<SpatialRessection*>(EOs_.at(i));
         xmlData += sp->xmlGetDataEO();
     }
     xmlData += "</spatialResections>\n";
@@ -1012,36 +817,13 @@ std::string Project::getXml()
     return xmlData;
 }
 
-
-int Project::getFreeSensorId()
-{
-    int result = 1;
-    for (int i = sensors.size()-1; i >= 0; i--)
-    {
-        if (sensors.at(i)->getId() >= result)
-            result = sensors.at(i)->getId()+1;
-    }
-    return result;
-}
-
-int Project::getFreeFlightId()
-{
-    int result = 1;
-    for (int i = flights.size()-1; i >= 0; i--)
-    {
-        if (flights.at(i)->getId() >= result)
-            result = flights.at(i)->getId()+1;
-    }
-    return result;
-}
-
 int Project::getFreeImageId()
 {
     int result = 1;
-    for (int i = images.size()-1; i >= 0; i--)
+    for (int i = images_.size()-1; i >= 0; i--)
     {
-        if (images.at(i)->getId() >= result)
-            result = images.at(i)->getId()+1;
+        if (images_.at(i)->getId() >= result)
+            result = images_.at(i)->getId()+1;
     }
     return result;
 }
@@ -1049,20 +831,13 @@ int Project::getFreeImageId()
 int Project::getFreePointId()
 {
     int result = 1;
-    for (int i = points.size()-1; i >= 0; i--)
+    for (int i = points_.size()-1; i >= 0; i--)
     {
-        if (points.at(i)->getId() >= result)
-            result = points.at(i)->getId()+1;
+        if (points_.at(i)->getId() >= result)
+            result = points_.at(i)->getId()+1;
     }
     return result;
 }
-
-bool Project::getSaveState()
-{
-    return xmlData.compare(getXml()) == 0;
-}
-
-
 
 } // namespace efoto
 } // namespace eng

@@ -35,55 +35,43 @@ SensorWithKnowDimensions::SensorWithKnowDimensions():FrameSensor()
 
 }
 
-SensorWithKnowDimensions::SensorWithKnowDimensions(const Sensor& sensor):FrameSensor(sensor)
+SensorWithKnowDimensions::SensorWithKnowDimensions(const Sensor& sensor):
+    FrameSensor{sensor}
 {
 
 }
 
-SensorWithKnowDimensions::SensorWithKnowDimensions(int myId):FrameSensor(myId)
+SensorWithKnowDimensions::SensorWithKnowDimensions(int myId):
+    FrameSensor{myId}
 {
 
 }
 
-SensorWithKnowDimensions::SensorWithKnowDimensions(int myId, double myPixelSize, int myFrameRows, int myFrameColumns):FrameSensor(myId)
+SensorWithKnowDimensions::SensorWithKnowDimensions(int myId, double myPixelSize, int myFrameRows, int myFrameColumns):
+    FrameSensor{myId}
 {
 	pixelSize = myPixelSize;
 	frameRows = myFrameRows;
 	frameColumns = myFrameColumns;
 }
 
-
-
 // Private attribute accessor methods
-//
-
-void SensorWithKnowDimensions::setPixelSize(double newPixelSize)
-{
-	pixelSize = newPixelSize;
-}
-
-void SensorWithKnowDimensions::setFrameDimensions(int newFrameRows, int newFrameColumns)
-{
-	frameRows = newFrameRows;
-	frameColumns = newFrameColumns;
-}
-
-double SensorWithKnowDimensions::getPixelSize()
+double SensorWithKnowDimensions::getPixelSize() const
 {
 	return pixelSize;
 }
 
-int SensorWithKnowDimensions::getFrameRows()
+int SensorWithKnowDimensions::getFrameRows() const
 {
 	return frameRows;
 }
 
-int SensorWithKnowDimensions::getFrameColumns()
+int SensorWithKnowDimensions::getFrameColumns() const
 {
 	return frameColumns;
 }
 
-Matrix SensorWithKnowDimensions::forgeLb()
+Matrix SensorWithKnowDimensions::forgeLb() const
 {
 	double rowsSize = frameRows * pixelSize / 1000.0;
 	double columnsSize = frameColumns * pixelSize / 1000.0;
@@ -123,29 +111,29 @@ bool SensorWithKnowDimensions::is(std::string s)
 void SensorWithKnowDimensions::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	id = Conversion::stringToInt(root.attribute("key"));
-	sensorId = root.elementByTagName("sensorId").toString();
-	geometry = root.elementByTagName("geometry").toString();
-	detector = root.elementByTagName("detector").toString();
-	energySource = root.elementByTagName("energySource").toString();
-	calculationMode = root.elementByTagName("calculationMode").toString();
+	id_ = Conversion::stringToInt(root.attribute("key"));
+	sensorId_ = root.elementByTagName("sensorId").toString();
+	geometry_ = root.elementByTagName("geometry").toString();
+	detector_ = root.elementByTagName("detector").toString();
+	energySource_ = root.elementByTagName("energySource").toString();
+	calculationMode_ = root.elementByTagName("calculationMode").toString();
 
-	spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
+	spectralRangesUnit_ = root.elementByTagName("spectralRanges").attribute("uom");
     std::deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
-	spectralRanges.clear();
+	spectralRanges_.clear();
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
 		SpectralRange* spec = new SpectralRange;
 		spec->band = Conversion::stringToInt(xmlSpectralRanges.at(i).attribute("band"));
 		spec->inferiorLimit = xmlSpectralRanges.at(i).elementByTagName("inferiorLimit").toDouble();
 		spec->superiorLimit = xmlSpectralRanges.at(i).elementByTagName("superiorLimit").toDouble();
-		spectralRanges.push_back(*spec);
+		spectralRanges_.push_back(*spec);
 	}
 
-	description = root.elementByTagName("description").toString();
-	calibrationCertificateNumber = root.elementByTagName("number").toString();
-	calibrationCertificateNumber = root.elementByTagName("dispatch").toString();
-	calibrationCertificateExpiration = root.elementByTagName("expiration").toString();
+	description_ = root.elementByTagName("description").toString();
+	calibrationCertificateNumber_ = root.elementByTagName("number").toString();
+	calibrationCertificateNumber_ = root.elementByTagName("dispatch").toString();
+	calibrationCertificateExpiration_ = root.elementByTagName("expiration").toString();
 
 	EDomElement xmlFocalDistance = root.elementByTagName("focalDistance");
 	focalDistanceUnit = xmlFocalDistance.attribute("uom");
@@ -192,28 +180,28 @@ void SensorWithKnowDimensions::xmlSetData(std::string xml)
 std::string SensorWithKnowDimensions::xmlGetData()
 {
     std::stringstream result;
-	result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
-	result << "<sensorId>" << sensorId << "</sensorId>\n";
+	result << "<sensor key=\"" << Conversion::intToString(id_) << "\">\n";
+	result << "<sensorId>" << sensorId_ << "</sensorId>\n";
 	result << "<type>\n";
-	result << "<geometry>" << geometry << "</geometry>\n";
+	result << "<geometry>" << geometry_ << "</geometry>\n";
 	result << "<platform>aerial</platform>\n";
-	result << "<detector>" << detector << "</detector>\n";
-	result << "<energySource>" << energySource << "</energySource>\n";
-	result << "<calculationMode>" << calculationMode << "</calculationMode>\n";
-	result << "<spectralRanges uom=\"" << spectralRangesUnit << "\">\n";
-	for (unsigned int i = 0; i < spectralRanges.size(); i++)
+	result << "<detector>" << detector_ << "</detector>\n";
+	result << "<energySource>" << energySource_ << "</energySource>\n";
+	result << "<calculationMode>" << calculationMode_ << "</calculationMode>\n";
+	result << "<spectralRanges uom=\"" << spectralRangesUnit_ << "\">\n";
+	for (unsigned int i = 0; i < spectralRanges_.size(); i++)
 	{
-		result << "<spectralRange band=\"" << Conversion::intToString(spectralRanges.at(i).band) << "\">\n";
-		result << "<inferiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).inferiorLimit) << "</inferiorLimit>\n";
-		result << "<superiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).superiorLimit) << "</superiorLimit>\n";
+		result << "<spectralRange band=\"" << Conversion::intToString(spectralRanges_.at(i).band) << "\">\n";
+		result << "<inferiorLimit>" << Conversion::doubleToString(spectralRanges_.at(i).inferiorLimit) << "</inferiorLimit>\n";
+		result << "<superiorLimit>" << Conversion::doubleToString(spectralRanges_.at(i).superiorLimit) << "</superiorLimit>\n";
 		result << "</spectralRange>\n";
 	}
 	result << "</spectralRanges>\n";
 	result << "</type>\n";
-	result << "<description>" << description << "</description>\n";
+	result << "<description>" << description_ << "</description>\n";
 	result << "<calibrationCertificate>\n";
-	result << "<number>" << calibrationCertificateNumber << "</number>\n";
-	result << "<expiration>" << calibrationCertificateExpiration << "</expiration>\n";
+	result << "<number>" << calibrationCertificateNumber_ << "</number>\n";
+	result << "<expiration>" << calibrationCertificateExpiration_ << "</expiration>\n";
 	result << "</calibrationCertificate>\n";
 	result << "<focalDistance uom=\"" << focalDistanceUnit << "\">\n";
 	result << "<value>" << Conversion::doubleToString(focalDistance) << "</value>\n";

@@ -47,70 +47,9 @@ public:
 	DetectorFiducialMark();
 
 	/**
- * \brief Construtor que cria uma marca fiducial analógica com seus identificadores.
- * \param myId	Identificador da marca fiducial analógica.
- * \param mySensorId	Identificador do sensor ao qual a marca pertence.
- */
-    explicit DetectorFiducialMark(int myId, int mySensorId);
-
-	/**
- * \brief Construtor que cria uma marca fiducial analógica com todos os seus valores.
- * \param myId	Identificador da marca fiducial analógica.
- * \param mySensorId	Identificador do sensor ao qual a marca pertence.
- * \param myUnit	Texto descritor da unidade de medidas considerada para a marca.
- * \param myXi	Valor Xi.
- * \param myEta	Valor Eta.
- * \param mySigmaXi	Valor do erro na direção Xi.
- * \param mySigmaEta	Valor do erro na direção Eta.
- * \param mySigmaXiEta	Valor de erro conjunto para as direções Xi e Eta.
- */
-    DetectorFiducialMark(int myId, int mySensorId, std::string myUnit, double myXi, double myEta, double mySigmaXi = 1, double mySigmaEta = 1, double mySigmaXiEta = 0);
-
-	/**
- * \brief Construtor que cria uma marca fiducial analógica sem erro conhecido usando matrizes.
- * \param myId	Identificador da marca fiducial analógica.
- * \param mySensorId	Identificador do sensor ao qual a marca pertence.
- * \param myPosition	Matriz coluna com os valores de posicionamento da marca.
- */
-	DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition);
-
-	/**
- * \brief Construtor que cria uma marca fiducial analógica com todos os seus valores usando matrizes.
- * \param myId	Identificador da marca fiducial analógica.
- * \param mySensorId	Identificador do sensor ao qual a marca pertence.
- * \param myPositio	Matriz coluna com os valores de posicionamento da marca.
- * \param myPositionSigmas	Matriz sigma com os valores de erro para o posicionamento da marca.
- */
-	DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas);
-
-	/**
  * \brief Destrutor padrão.
  */
 	~DetectorFiducialMark();
-
-	/**
- * \brief Método de acesso que seta o valor de id da marca fiducial analógica.
- * \param newId	Novo identificador da marca fiducial analógica.
- */
-	void setId(int newId);
-
-	/**
- * \brief Método de acesso que seta o valor de id do sensor ao qual a marca pertence.
- * \param newSensorId	Novo identificador do sensor ao qual a marca pertence.
- */
-	void setSensorId(int newSensorId);
-
-	/**
- * \brief Método de acesso que retorna o valor de id da marca fiducial analógica.
- * \return int	Identificador da marca fiducial analógica.
- */
-	int getId();
-
-	/**
- * \brief Método de acesso que retorna o valor de id do sensor ao qual a marca pertence.
- * \return int	Identificador do sensor ao qual a marca pertence.
- */
-	int getSensorId();
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

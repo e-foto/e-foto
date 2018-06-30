@@ -44,24 +44,20 @@ class Image;
 
 class ExteriorOrientation : public EDom
 {
-	//EOBJECT
-
 protected:
 
 	// Protected attributes
 	//
-	Matrix Xa;
-	std::string type;
-	int totalIterations;
+    Matrix Xa_{};
+    std::string type_{};
+    int totalIterations_{0};
 
 	// Composed objects
-	//
-	EOQuality myQuality;
+    EOQuality myQuality_{};
 
 	// Associated objects
-	//
-	int imageId;
-	Image* myImage;
+    int imageId_{-1};
+    Image* myImage_{nullptr};
 
 public:
 
@@ -72,18 +68,16 @@ public:
 	void setImage(Image* newImage);
 	int getImageId()const;
 	Image* getImage() const;
-	Matrix getXa() {return Xa;}
-	void setXa(const Matrix& newXa) {Xa = newXa;}
-	std::string getType() {return type;}
-	void setType(std::string newType) {type = newType;}
-	int getTotalIterations() {return totalIterations;}
+    Matrix getXa() const {return Xa_;}
+    void setXa(const Matrix& newXa) {Xa_ = newXa;}
+    std::string getType() const {return type_;}
+    void setType(std::string newType) {type_ = newType;}
+    int getTotalIterations() const {return totalIterations_;}
 
 	// Composed object accessors
-	//
-	void setQuality(EOQuality newQuality);
-	EOQuality getQuality();
+    EOQuality getQuality() const;
 
-    bool is(std::string s);
+    static bool is(std::string s);
 
 	std::string xmlGetData();
 	void xmlSetData(std::string xml);

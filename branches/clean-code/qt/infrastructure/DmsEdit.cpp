@@ -12,12 +12,6 @@ namespace efoto {
 DmsEdit::DmsEdit(QWidget *parent):
     QLineEdit(parent)
 {
-    //radValidator=new QDoubleValidator(-2*M_PI,2*M_PI,getDecimals(),this);
-    //degValidator=new QDoubleValidator(-359.9999999,359.9999999,getDecimals(),this);
-
-    //qDebug()<< "language:"<<locale().name();
-    //qDebug()<<"simbolo decimal: "<<locale().decimalPoint();
-
     installEventFilter(this);
     degMinSecLine= new Dms("0 0 0");
     oldDegMinSecLine= new Dms("0 0 0");
@@ -598,39 +592,9 @@ void DmsEdit::updateValue(QString newValue)
     // qDebug("rad value = %f",radValue);
 }
 
-double DmsEdit::getRadianValue()
-{
-    return radValue;
-}
-
-double DmsEdit::getDegreeValue()
-{
-    return degValue;
-}
-
 Dms* DmsEdit::getDmsValue()
 {
     return degMinSecLine;
-}
-
-double DmsEdit::getMaximumDeg()
-{
-    return degMax;
-}
-
-double DmsEdit::getMinimumDeg()
-{
-    return degMin;
-}
-
-double DmsEdit::getMaximumRad()
-{
-    return radMax;
-}
-
-double DmsEdit::getMinimumRad()
-{
-    return radMin;
 }
 
 Dms* DmsEdit::getMaximumDms()

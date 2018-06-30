@@ -15,112 +15,42 @@ Terrain::~Terrain()
 {
 }
 
-void Terrain::setMeanAltitude(double newMeanAltitude)
-{
-	meanAltitude = newMeanAltitude;
-}
-
-void Terrain::setMeanAltitudeUnit(std::string newMeanAltitudeUnit)
-{
-	meanAltitudeUnit = newMeanAltitudeUnit;
-}
-
-void Terrain::setMinAltitude(double newMinAltitude)
-{
-	minAltitude = newMinAltitude;
-}
-
-void Terrain::setMinAltitudeUnit(std::string newMinAltitudeUnit)
-{
-	minAltitudeUnit = newMinAltitudeUnit;
-}
-
-void Terrain::setMaxAltitude(double newMaxAltitude)
-{
-	maxAltitude = newMaxAltitude;
-}
-
-void Terrain::setMaxAltitudeUnit(std::string newMaxAltitudeUnit)
-{
-	maxAltitudeUnit = newMaxAltitudeUnit;
-}
-
-void Terrain::setGRS(std::string newGRS)
-{
-	GRS = newGRS;
-}
-
-void Terrain::setCPS(std::string newCPS)
-{
-	CPS = newCPS;
-}
-
-void Terrain::setCentralCoordLat(std::string newCentralCoordLat)
-{
-	workAreaCentralCoordinateLat = newCentralCoordLat;
-}
-
-void Terrain::setCentralCoordLong(std::string newCentralCoordLong)
-{
-	workAreaCentralCoordinateLong = newCentralCoordLong;
-}
-
-void Terrain::setUtmFuse(int newUtmFuse)
-{
-	utmFuse = newUtmFuse;
-}
-
-double Terrain::getMeanAltitude()
+double Terrain::getMeanAltitude() const
 {
 	return meanAltitude;
 }
 
-std::string Terrain::getMeanAltitudeUnit()
-{
-	return meanAltitudeUnit;
-}
-
-double Terrain::getMinAltitude()
+double Terrain::getMinAltitude() const
 {
 	return minAltitude;
 }
 
-std::string Terrain::getMinAltitudeUnit()
-{
-	return minAltitudeUnit;
-}
-
-double Terrain::getMaxAltitude()
+double Terrain::getMaxAltitude() const
 {
 	return maxAltitude;
 }
 
-std::string Terrain::getMaxAltitudeUnit()
-{
-	return maxAltitudeUnit;
-}
-
-std::string Terrain::getGRS()
+std::string Terrain::getGRS() const
 {
 	return GRS;
 }
 
-std::string Terrain::getCPS()
+std::string Terrain::getCPS() const
 {
 	return CPS;
 }
 
-std::string Terrain::getCentralCoordLat()
+std::string Terrain::getCentralCoordLat() const
 {
 	return workAreaCentralCoordinateLat;
 }
 
-std::string Terrain::getCentralCoordLong()
+std::string Terrain::getCentralCoordLong() const
 {
 	return workAreaCentralCoordinateLong;
 }
 
-int Terrain::getUtmFuse()
+int Terrain::getUtmFuse() const
 {
 	return utmFuse;
 }

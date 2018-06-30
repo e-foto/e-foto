@@ -35,156 +35,69 @@ class Terrain : public EDom
 {
 
 private:
-	double meanAltitude;
-    std::string meanAltitudeUnit;
-	double minAltitude;
-    std::string minAltitudeUnit;
-	double maxAltitude;
-    std::string maxAltitudeUnit;
-    std::string GRS;
-    std::string CPS;
-    std::string workAreaCentralCoordinateLat;
-    std::string workAreaCentralCoordinateLong;
-	int utmFuse;
+    double meanAltitude{0.0};
+    std::string meanAltitudeUnit{""};
+    double minAltitude{0.0};
+    std::string minAltitudeUnit{""};
+    double maxAltitude{0.0};
+    std::string maxAltitudeUnit{""};
+    std::string GRS{""};
+    std::string CPS{""};
+    std::string workAreaCentralCoordinateLat{""};
+    std::string workAreaCentralCoordinateLong{""};
+    int utmFuse{0};
 
 public:
-
-	/**
- * \brief Destrutor padrão.
- */
+    Terrain(){};
 	virtual ~Terrain();
-
-	/**
- * \brief Método que seta a altura média do Terreno.
- * \param newMeanAltitude	Nova altura média.
- */
-	void setMeanAltitude(double newMeanAltitude);
-
-	/**
- * \brief Método que seta a unidade da altura média do Terreno.
- * \param  newMeanAltitudeUnit	Nova unidade.
- */
-    void setMeanAltitudeUnit(std::string newMeanAltitudeUnit);
-
-	/**
- * \brief Método que seta a menor altura do Terreno.
- * \param newMinAltitude	Nova altura mínima.
- */
-	void setMinAltitude(double newMinAltitude);
-
-	/**
- * \brief Método que seta a unidade da menor altura do Terreno.
- * \param newMinAltitudeUnit	Nova unidade.
- */
-    void setMinAltitudeUnit(std::string newMinAltitudeUnit);
-
-	/**
- * \brief Método que seta a maior altura do Terreno.
- * \param newMaxAltitude	Nova altura máxima.
- */
-	void setMaxAltitude(double newMaxAltitude);
-
-	/**
- * \brief Método que seta a unidade da maior altura do Terreno.
- * \param newMaxAltitudeUnit	Nova unidade.
- */
-    void setMaxAltitudeUnit(std::string newMaxAltitudeUnit);
-
-	/**
- * \brief Método que seta a Geodesic Reference System (GRS) do Terreno.
- * \param newGRS	Nova GRS.
- */
-    void setGRS(std::string newGRS);
-
-	/**
- * \brief Método que seta a Cartographic Projection System (CPS) do Terreno.
- * \param newCPS	Nova CPS.
- */
-    void setCPS(std::string newCPS);
-
-	/**
- * \brief Método que seta a latitude da coodernada central do Terreno.
- * \param newCentralCoordLat	Nova latitude descrita e texto equivalente a "graus minutos segundos direção".
- */
-    void setCentralCoordLat(std::string newCentralCoordLat);
-
-	/**
- * \brief Método que seta a longitude da coodernada central do Terreno.
- * \param newCentralCoordLong	Nova longitude descrita e texto equivalente a "graus minutos segundos direção".
- */
-    void setCentralCoordLong(std::string newCentralCoordLong);
-
-	/**
- * \brief Método que seta em qual fuso do terreno no sistema de coordenadas Universal Transversa de Mercator (UTM).
- * \param newUtmFuse	Novo fuso.
- */
-	void setUtmFuse(int newUtmFuse);
 
 	/**
  * \brief Método que retorna a altura média do Terreno.
  * \return double	Retorna a altura média do Terreno.
  */
-	double getMeanAltitude();
-
-	/**
- * \brief Método que retorna a unidade da altura média do Terreno.
- * \return std::string	A unidade da altura média do Terreno.
- */
-    std::string getMeanAltitudeUnit();
+    double getMeanAltitude() const;
 
 	/**
  * \brief Método que retorna a menor altura do Terreno.
  * \return double	Retorna a menor altura do Terreno.
  */
-	double getMinAltitude();
-
-	/**
- * \brief Método que retorna a unidade da menor altura do Terreno.
- * \return std::string	A unidade da menor altura do Terreno.
- */
-    std::string getMinAltitudeUnit();
+    double getMinAltitude() const;
 
 	/**
  * \brief Método que retorna a maior altura do Terreno.
  * \return double	Retorna a maior altura do Terreno.
  */
-	double getMaxAltitude();
+    double getMaxAltitude() const;
 
-	/**
- * \brief Método que retorna a unidade da maior altura do Terreno.
- * \return std::string	A unidade da maior altura do Terreno.
- */
-    std::string getMaxAltitudeUnit();
-
-	/**
+/**
  * \brief Método que retorna a GRS do Terreno.
  * \return std::string	Retorna a GRS do Terreno.
  */
-    std::string getGRS();
+    std::string getGRS() const;
 
 	/**
  * \brief Método que retorna a CPS do Terreno.
  * \return std::string	Retorna a CPS do Terreno.
  */
-    std::string getCPS();
+    std::string getCPS() const;
 
 	/**
  * \brief Método que retorna a latitude da coodernada central do Terreno.
  * \return std::string	A latitude da coodernada central do Terreno.
  */
-    std::string getCentralCoordLat();
+    std::string getCentralCoordLat() const;
 
 	/**
  * \brief Método que retorna a longitude da coodernada central do Terreno.
  * \return std::string	A longitude da coodernada central do Terreno.
  */
-    std::string getCentralCoordLong();
+    std::string getCentralCoordLong() const;
 
 	/**
  * \brief Método que retorna a qual fuso UTM o Terreno pertence.
  * \return int	O fuso UTM do terreno.
  */
-	int getUtmFuse();
+    int getUtmFuse() const;
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

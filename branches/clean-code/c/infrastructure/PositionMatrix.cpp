@@ -92,19 +92,19 @@ PositionMatrix& PositionMatrix::zero()
 
 int PositionMatrix::load(char* filename)
 {
-	char str[256];
-	unsigned int cols;
 	unsigned int rows;
 
     std::ifstream arq(filename); // open the emf file
 	if (!arq.fail())
 	{
+        char str[256];
 		arq.getline(str,255); // read file header
 		if (!arq.fail())
 		{
 			arq.getline(str,255); // read filename
 			if (!arq.fail())
 			{
+                unsigned int cols;
 				arq >> cols;
 				if (!arq.fail())
 				{
@@ -128,7 +128,7 @@ int PositionMatrix::load(char* filename)
 	return 0;
 }
 
-int PositionMatrix::save(char* filename)
+int PositionMatrix::save(char* filename) const
 {
     std::ofstream emfile(filename); // open the emf file
 	if (!emfile.fail())
@@ -176,7 +176,7 @@ std::string PositionMatrix::getUnit() const
 }
 
 PositionMatrix PositionMatrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
-								   const unsigned int FirstCol, const unsigned int LastCol)
+                                   const unsigned int FirstCol, const unsigned int LastCol) const
 {
 	PositionMatrix DraftResult;
 	PositionMatrix Result;
@@ -199,14 +199,13 @@ PositionMatrix PositionMatrix::sel(const unsigned int FirstRow, const unsigned i
 	return Result;
 }
 
-void PositionMatrix::show()
+void PositionMatrix::show() const
 {
     std::cout << "PositionMatrix " << nrows << 'x' << ncols << " (" << unit << ")" << std::endl;
     std::cout.setf(std::ios::fixed | std::ios::scientific);
 	for (unsigned int i = 1; i <= nrows; i++)
 	{
 		for (unsigned int j = 1; j <= ncols; j++)
-			//printf("%10.1f ", get((unsigned int) i, (unsigned int) j));
             std::cout << std::setw(9) << std::setprecision(3) <<  get((unsigned int) i, (unsigned int) j) << " ";
         std::cout << std::endl;
 	}
@@ -333,7 +332,7 @@ PositionMatrix& PositionMatrix::operator =(const PositionMatrix& Par_Matrix)
 	return *this;
 }
 
-bool PositionMatrix::operator ==(const Matrix& Par_Matrix)
+bool PositionMatrix::operator ==(const Matrix& Par_Matrix) const
 {
 	if ((nrows!=Par_Matrix.nrows)||(ncols!=Par_Matrix.ncols))
 		return 0;
@@ -344,7 +343,7 @@ bool PositionMatrix::operator ==(const Matrix& Par_Matrix)
 	return 1;
 }
 
-bool PositionMatrix::operator ==(const PositionMatrix& Par_Matrix)
+bool PositionMatrix::operator ==(const PositionMatrix& Par_Matrix) const
 {
 	if ((nrows!=Par_Matrix.nrows)||(ncols!=Par_Matrix.ncols))
 		return 0;
@@ -355,7 +354,7 @@ bool PositionMatrix::operator ==(const PositionMatrix& Par_Matrix)
 	return 1;
 }
 
-bool PositionMatrix::operator !=(const Matrix& Par_Matrix)
+bool PositionMatrix::operator !=(const Matrix& Par_Matrix) const
 {
 	if ((nrows!=Par_Matrix.nrows)||(ncols!=Par_Matrix.ncols))
 		return 1;
@@ -366,7 +365,7 @@ bool PositionMatrix::operator !=(const Matrix& Par_Matrix)
 	return 0;
 }
 
-bool PositionMatrix::operator !=(const PositionMatrix& Par_Matrix)
+bool PositionMatrix::operator !=(const PositionMatrix& Par_Matrix) const
 {
 	if ((nrows!=Par_Matrix.nrows)||(ncols!=Par_Matrix.ncols))
 		return 1;
@@ -408,7 +407,7 @@ PositionMatrix PositionMatrix::toDiagonal()
 	return Result;
 }
 
-std::string PositionMatrix::toGmlPosFormat()
+std::string PositionMatrix::toGmlPosFormat() const
 {
     std::stringstream oss;
 	for (unsigned int i = 1; i <= nrows; i++)

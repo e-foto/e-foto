@@ -41,17 +41,17 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ProjectiveRay::ProjectiveRay(Image *myImage)
+ProjectiveRay::ProjectiveRay(Image *myImage):
+    myImage_{myImage},
+    hasRotations_{false}
 {
-		this->myImage = myImage;
-		this->hasRotations = false;
 }
 
 // Internal methods
 
 PositionMatrix ProjectiveRay::imageZToDetectorZ(const PositionMatrix& myDigitalPositionsWithZ)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				PositionMatrix result(myDigitalPositionsWithZ.getRows(), "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -72,32 +72,9 @@ PositionMatrix ProjectiveRay::imageZToDetectorZ(const PositionMatrix& myDigitalP
 		}
 }
 
-PositionMatrix ProjectiveRay::detectorZToImageZ(const PositionMatrix& myAnalogPositionsWithZ)
-{
-		if (myImage != NULL && myImage->getIO() != NULL)
-		{
-				PositionMatrix result(myAnalogPositionsWithZ.getRows(), "px");
-				ImageSpaceCoordinate digitalCoordinate;
-
-				for (unsigned int i = 1; i+2 <= myAnalogPositionsWithZ.getRows(); i += 3)
-				{
-						digitalCoordinate = detectorToImage(myAnalogPositionsWithZ.get(i),myAnalogPositionsWithZ.get(i+1));
-						result.set(i,digitalCoordinate.getCol());
-						result.set(i+1,digitalCoordinate.getLin());
-						result.set(i+2,myAnalogPositionsWithZ.get(i+2));
-				}
-
-				return result;
-		}
-		else
-		{
-				return PositionMatrix();
-		}
-}
-
 PositionMatrix ProjectiveRay::applyDistortionsZ(const PositionMatrix& myAnalogPositionsWithZ)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix result(myAnalogPositionsWithZ.getRows(), "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -120,11 +97,11 @@ PositionMatrix ProjectiveRay::applyDistortionsZ(const PositionMatrix& myAnalogPo
 
 void ProjectiveRay::calculateRotations()
 {
-		if (myImage != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getEO() != NULL)
 		{
-				double phi = myImage->getEO()->getXa().get(4,1);
-				double omega = myImage->getEO()->getXa().get(5,1);
-				double kappa = myImage->getEO()->getXa().get(6,1);
+                double phi = myImage_->getEO()->getXa().get(4,1);
+                double omega = myImage_->getEO()->getXa().get(5,1);
+                double kappa = myImage_->getEO()->getXa().get(6,1);
 
 				r11 = cos(phi)*cos(kappa);
 				r12 = -cos(phi)*sin(kappa);
@@ -136,20 +113,20 @@ void ProjectiveRay::calculateRotations()
 				r32 = sin(omega)*cos(kappa)+cos(omega)*sin(phi)*sin(kappa);
 				r33 = cos(omega)*cos(phi);
 
-				hasRotations = true;
+                hasRotations_ = true;
 		}
 }
 
 double ProjectiveRay::getKx(double xi, double eta)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
-				if (!hasRotations)
+                if (!hasRotations_)
 						calculateRotations();
 
-				double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-				double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-				double c = myImage->getSensor()->getFocalDistance();
+                double xi0 = myImage_->getSensor()->getPrincipalPointCoordinates().getXi();
+                double eta0 = myImage_->getSensor()->getPrincipalPointCoordinates().getEta();
+                double c = myImage_->getSensor()->getFocalDistance();
 
 				return (r11*(xi-xi0) + r12*(eta-eta0) - r13*c) / (r31*(xi-xi0) + r32*(eta-eta0) - r33*c);
 		}
@@ -161,14 +138,14 @@ double ProjectiveRay::getKx(double xi, double eta)
 
 double ProjectiveRay::getKy(double xi, double eta)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
-				if (!hasRotations)
+                if (!hasRotations_)
 						calculateRotations();
 
-				double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-				double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-				double c = myImage->getSensor()->getFocalDistance();
+                double xi0 = myImage_->getSensor()->getPrincipalPointCoordinates().getXi();
+                double eta0 = myImage_->getSensor()->getPrincipalPointCoordinates().getEta();
+                double c = myImage_->getSensor()->getFocalDistance();
 
 				return (r21*(xi-xi0) + r22*(eta-eta0) - r23*c) / (r31*(xi-xi0) + r32*(eta-eta0) - r33*c);
 		}
@@ -182,11 +159,11 @@ double ProjectiveRay::getKy(double xi, double eta)
 
 DetectorSpaceCoordinate ProjectiveRay::imageToDetector(double col, double lin)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				DetectorSpaceCoordinate result;
 
-				Matrix Xa = myImage->getIO()->getXa();
+                Matrix Xa = myImage_->getIO()->getXa();
 
 				result.setXi(Xa.get(1,1) + Xa.get(2,1)*col + Xa.get(3,1)*lin);
 				result.setEta(Xa.get(4,1) + Xa.get(5,1)*col + Xa.get(6,1)*lin);
@@ -199,7 +176,7 @@ DetectorSpaceCoordinate ProjectiveRay::imageToDetector(double col, double lin)
 				positionA.set(2,5,col);
 				positionA.set(2,6,lin);
 
-				Matrix positionSigmas = positionA * myImage->getIO()->getQuality().getSigmaXa() * positionA.transpose();
+                Matrix positionSigmas = positionA * myImage_->getIO()->getQuality().getSigmaXa() * positionA.transpose();
 				result.setPositionSigmas(positionSigmas);
 
 				result.setAvailable(true);
@@ -220,7 +197,7 @@ DetectorSpaceCoordinate ProjectiveRay::imageToDetector(ImageSpaceCoordinate myDi
 
 PositionMatrix ProjectiveRay::imageToDetector(const PositionMatrix& myDigitalPositions)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				PositionMatrix result(myDigitalPositions.getRows(), "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -242,11 +219,11 @@ PositionMatrix ProjectiveRay::imageToDetector(const PositionMatrix& myDigitalPos
 
 void ProjectiveRay::detectorToImage(double xi, double eta, double &x, double &y)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				ImageSpaceCoordinate result;
 
-				Matrix Xa = myImage->getIO()->getXa();
+                Matrix Xa = myImage_->getIO()->getXa();
 				double a0, a1, a2, b0, b1, b2;
 				a0 = Xa.get(1,1);
 				a1 = Xa.get(2,1);
@@ -263,12 +240,12 @@ void ProjectiveRay::detectorToImage(double xi, double eta, double &x, double &y)
 
 ImageSpaceCoordinate ProjectiveRay::detectorToImage(double xi, double eta)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				ImageSpaceCoordinate result;
-                result.setImageId(myImage->getId());
+                result.setImageId(myImage_->getId());
 
-				Matrix Xa = myImage->getIO()->getXa();
+                Matrix Xa = myImage_->getIO()->getXa();
 				double a0, a1, a2, b0, b1, b2;
 				a0 = Xa.get(1,1);
 				a1 = Xa.get(2,1);
@@ -298,7 +275,7 @@ ImageSpaceCoordinate ProjectiveRay::detectorToImage(DetectorSpaceCoordinate myAn
 
 PositionMatrix ProjectiveRay::detectorToImage(const PositionMatrix& myAnalogPositions)
 {
-		if (myImage != NULL && myImage->getIO() != NULL)
+        if (myImage_ != NULL && myImage_->getIO() != NULL)
 		{
 				PositionMatrix result(myAnalogPositions.getRows(), "px");
 				ImageSpaceCoordinate digitalCoordinate;
@@ -320,18 +297,18 @@ PositionMatrix ProjectiveRay::detectorToImage(const PositionMatrix& myAnalogPosi
 
 ObjectSpaceCoordinate ProjectiveRay::detectorToObject(double xi, double eta, double Z)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				ObjectSpaceCoordinate result;
 
-				if (!hasRotations)
+                if (!hasRotations_)
 						calculateRotations();
 
-				double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-				double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-				double c = myImage->getSensor()->getFocalDistance();
+                double xi0 = myImage_->getSensor()->getPrincipalPointCoordinates().getXi();
+                double eta0 = myImage_->getSensor()->getPrincipalPointCoordinates().getEta();
+                double c = myImage_->getSensor()->getFocalDistance();
 
-				Matrix Xa = myImage->getEO()->getXa();
+                Matrix Xa = myImage_->getEO()->getXa();
 				double X0 = Xa.get(1,1);
 				double Y0 = Xa.get(2,1);
 				double Z0 = Xa.get(3,1);
@@ -363,7 +340,7 @@ ObjectSpaceCoordinate ProjectiveRay::detectorToObject(DetectorSpaceCoordinate my
 // Note: this only works with fixed Z value!
 PositionMatrix ProjectiveRay::detectorToObject(const PositionMatrix& myAnalogPositions, double Z)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL && myAnalogPositions.getRows()%2 == 0)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL && myAnalogPositions.getRows()%2 == 0)
 		{
 				PositionMatrix result(myAnalogPositions.getRows() * 3 / 2, "m");
 				ObjectSpaceCoordinate objectCoordinate;
@@ -388,7 +365,7 @@ PositionMatrix ProjectiveRay::detectorToObject(const PositionMatrix& myAnalogPos
 // Note: for this one, the analogic positions matrix must have the Z value for each coordinate!
 PositionMatrix ProjectiveRay::detectorToObject(const PositionMatrix& myAnalogPositionsWithZ)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix result(myAnalogPositionsWithZ.getRows(), "m");
 				ObjectSpaceCoordinate objectCoordinate;
@@ -411,18 +388,18 @@ PositionMatrix ProjectiveRay::detectorToObject(const PositionMatrix& myAnalogPos
 
 DetectorSpaceCoordinate ProjectiveRay::objectToDetector(double X, double Y, double Z)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				DetectorSpaceCoordinate result;
 
-				if (!hasRotations)
+                if (!hasRotations_)
 						calculateRotations();
 
-				double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-				double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-				double c = myImage->getSensor()->getFocalDistance();
+                double xi0 = myImage_->getSensor()->getPrincipalPointCoordinates().getXi();
+                double eta0 = myImage_->getSensor()->getPrincipalPointCoordinates().getEta();
+                double c = myImage_->getSensor()->getFocalDistance();
 
-				Matrix Xa = myImage->getEO()->getXa();
+                Matrix Xa = myImage_->getEO()->getXa();
 				double X0 = Xa.get(1,1);
 				double Y0 = Xa.get(2,1);
 				double Z0 = Xa.get(3,1);
@@ -449,7 +426,7 @@ DetectorSpaceCoordinate ProjectiveRay::objectToDetector(ObjectSpaceCoordinate my
 
 PositionMatrix ProjectiveRay::objectToDetector(const PositionMatrix& myObjectPositions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL && myObjectPositions.getRows()%3 == 0)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL && myObjectPositions.getRows()%3 == 0)
 		{
 				PositionMatrix result(myObjectPositions.getRows() * 2 / 3, "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -501,7 +478,7 @@ DetectorSpaceCoordinate ProjectiveRay::applyDistortions(DetectorSpaceCoordinate 
 
 PositionMatrix ProjectiveRay::applyDistortions(const PositionMatrix& myAnalogPositions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix result(myAnalogPositions.getRows(), "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -534,7 +511,7 @@ DetectorSpaceCoordinate ProjectiveRay::removeDistortions(DetectorSpaceCoordinate
 
 PositionMatrix ProjectiveRay::removeDistortions(const PositionMatrix& myAnalogPositions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix result(myAnalogPositions.getRows(), "mm");
 				DetectorSpaceCoordinate analogCoordinate;
@@ -556,7 +533,7 @@ PositionMatrix ProjectiveRay::removeDistortions(const PositionMatrix& myAnalogPo
 
 ObjectSpaceCoordinate ProjectiveRay::imageToObject(double col, double lin, double Z, bool useDistortions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getIO() != NULL && myImage_->getEO() != NULL)
 		{
 				DetectorSpaceCoordinate analog = imageToDetector(col, lin);
 				if (useDistortions)
@@ -577,7 +554,7 @@ ObjectSpaceCoordinate ProjectiveRay::imageToObject(ImageSpaceCoordinate myDigita
 // Note: this only works with fixed Z value!
 PositionMatrix ProjectiveRay::imageToObject(const PositionMatrix& myDigitalPositions, double Z, bool useDistortions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getIO() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix myAnalogPositions = imageToDetector(myDigitalPositions);
 				if (useDistortions)
@@ -593,7 +570,7 @@ PositionMatrix ProjectiveRay::imageToObject(const PositionMatrix& myDigitalPosit
 // Note: for this one, the digital positions matrix must have the Z value for each coordinate!
 PositionMatrix ProjectiveRay::imageToObject(const PositionMatrix& myDigitalPositionsWithZ, bool useDistortions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getIO() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix myAnalogPositions = imageZToDetectorZ(myDigitalPositionsWithZ);
 				if (useDistortions)
@@ -608,7 +585,7 @@ PositionMatrix ProjectiveRay::imageToObject(const PositionMatrix& myDigitalPosit
 
 ImageSpaceCoordinate ProjectiveRay::objectToImage(double X, double Y, double Z, bool useDistortions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getIO() != NULL && myImage_->getEO() != NULL)
 		{
 				DetectorSpaceCoordinate analog = objectToDetector(X, Y, Z);
 				if (useDistortions)
@@ -628,7 +605,7 @@ ImageSpaceCoordinate ProjectiveRay::objectToImage(ObjectSpaceCoordinate myObject
 
 PositionMatrix ProjectiveRay::objectToImage(const PositionMatrix& myObjectPositions, bool useDistortions)
 {
-		if (myImage != NULL && myImage->getSensor() != NULL && myImage->getIO() != NULL && myImage->getEO() != NULL)
+        if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getIO() != NULL && myImage_->getEO() != NULL)
 		{
 				PositionMatrix myAnalogPositions = objectToDetector(myObjectPositions);
 				if (useDistortions)
@@ -650,7 +627,7 @@ DetectorSpaceCoordinate ProjectiveRay::getRadialDistortions(double xi, double et
 		result.setEta(0.0);
 		result.setAvailable(true);
 
-		Sensor* sensor = myImage->getSensor();
+        Sensor* sensor = myImage_->getSensor();
 		FrameSensor* frame = dynamic_cast<FrameSensor*>(sensor);
 		if (frame != NULL)
 		{
@@ -673,32 +650,6 @@ DetectorSpaceCoordinate ProjectiveRay::getRadialDistortions(double xi, double et
 		return result;
 }
 
-DetectorSpaceCoordinate ProjectiveRay::getDecenteredDistortions(double xi, double eta)
-{
-		DetectorSpaceCoordinate result;
-		result.setXi(0.0);
-		result.setEta(0.0);
-		result.setAvailable(true);
-
-		Sensor* sensor = myImage->getSensor();
-		FrameSensor* frame = dynamic_cast<FrameSensor*>(sensor);
-		if (frame != NULL)
-		{
-				double r = sqrt(xi*xi+eta*eta);
-				std::deque<DecenteredDistortionCoefficient> dec = frame->getDecenteredCoefficients();
-				double P1 = dec.at(0).getValue();
-				double P2 = dec.at(1).getValue();
-
-				double dx = P1 * (r*r + 2*xi*xi) + 2*P2*xi*eta;
-				double dy = 2*P1*xi*eta + P2 * (r*r + 2*eta*eta);
-
-				result.setXi(dx);
-				result.setEta(dy);
-		}
-
-		return result;
-}
-
 DetectorSpaceCoordinate ProjectiveRay::getAtmosphereDistortions(double xi, double eta)
 {
 		DetectorSpaceCoordinate result;
@@ -706,17 +657,17 @@ DetectorSpaceCoordinate ProjectiveRay::getAtmosphereDistortions(double xi, doubl
 		result.setEta(0.0);
 		result.setAvailable(true);
 
-		Flight* flight = myImage->getFlight();
-		Sensor* sensor = myImage->getSensor();
+        Flight* flight = myImage_->getFlight();
+        Sensor* sensor = myImage_->getSensor();
 		if (flight != NULL && sensor != NULL)
 		{
 				Terrain* terrain = flight->getTerrain();
 				if (terrain != NULL)
 				{
 						double Z0, Zp;
-						if (myImage->getEO() != NULL)
+                        if (myImage_->getEO() != NULL)
 						{
-								Z0 = myImage->getEO()->getXa().get(3,1);
+                                Z0 = myImage_->getEO()->getXa().get(3,1);
 						}
 						else
 						{
@@ -755,17 +706,17 @@ DetectorSpaceCoordinate ProjectiveRay::getCurvatureDistortions(double xi, double
 		result.setEta(0.0);
 		result.setAvailable(true);
 
-		Flight* flight = myImage->getFlight();
-		Sensor* sensor = myImage->getSensor();
+        Flight* flight = myImage_->getFlight();
+        Sensor* sensor = myImage_->getSensor();
 		if (flight != NULL && sensor != NULL)
 		{
 				Terrain* terrain = flight->getTerrain();
 				if (terrain != NULL)
 				{
 						double Z0;
-						if (myImage->getEO() != NULL)
+                        if (myImage_->getEO() != NULL)
 						{
-								Z0 = myImage->getEO()->getXa().get(3,1);
+                                Z0 = myImage_->getEO()->getXa().get(3,1);
 						}
 						else
 						{

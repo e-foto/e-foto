@@ -64,19 +64,19 @@ public:
  * \brief Método para retornar o valor de Linha num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da linha.
  */
-	double getLin();
+    double getLin() const;
 
 	/**
  * \brief Método para retornar o valor de Coluna num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da coluna.
  */
-	double getCol();
+    double getCol() const;
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
  * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-    std::string getUnit();
+    std::string getUnit() const;
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.

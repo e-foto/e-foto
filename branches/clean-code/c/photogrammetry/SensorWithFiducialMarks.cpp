@@ -132,7 +132,7 @@ Matrix SensorWithFiducialMarks::getLb()
  * Get the value of Lb.
  * @return the value of Lb
  */
-Matrix SensorWithFiducialMarks::getSigmaLb()
+Matrix SensorWithFiducialMarks::getSigmaLb() const
 {
 	return SigmaLb;
 }
@@ -140,48 +140,6 @@ Matrix SensorWithFiducialMarks::getSigmaLb()
 
 
 // Composed objects accessor methods
-//
-
-/**
- * Set all the values of anaFidMarks deque at once
- * @param newAnaFidMarks a deque with the new values
- */
-void SensorWithFiducialMarks::setAnaFidMarks(std::deque<DetectorFiducialMark> newAnaFidMarks)
-{
-	anaFidMarks = newAnaFidMarks;
-}
-
-/**
- * Get all the values of anaFidMarks deque at once
- * @return a deque the values of anaFidMarks
- */
-std::deque<DetectorFiducialMark> SensorWithFiducialMarks::getAnaFidMarks()
-{
-	return anaFidMarks;
-}
-
-/**
- * Add one value to anaFidMarks deque
- * @param newAnaFidMark the value to be added
- */
-void SensorWithFiducialMarks::putAnaFidMark(DetectorFiducialMark newAnaFidMark)
-{
-	anaFidMarks.push_back(newAnaFidMark);
-}
-
-/**
- * Get one value from anaFidMarks deque
- * @param id the id of the value
- * @return the value of the DetectorFiducialMark
- */
-DetectorFiducialMark SensorWithFiducialMarks::getAnaFidMark(int id)
-{
-	for (unsigned int i = 0; i < anaFidMarks.size(); i++)
-		if (anaFidMarks.at(i).getId() == id)
-			return anaFidMarks.at(i);
-	return DetectorFiducialMark();
-}
-
 /**
  * Get one value from anaFidMarks deque
  * @param index the position of the value
@@ -192,44 +150,6 @@ DetectorFiducialMark SensorWithFiducialMarks::getAnaFidMarkAt(unsigned int index
 	if (index < anaFidMarks.size())
 		return anaFidMarks.at(index);
 	return DetectorFiducialMark();
-}
-
-/**
- * Count the number of value in anaFidMarks deque
- * @return the number of values
- */
-int SensorWithFiducialMarks::countAnaFidMarks()
-{
-	return anaFidMarks.size();
-}
-
-/**
- * Remove one value from anaFidMarks deque
- * @param id the id of the value
- */
-void SensorWithFiducialMarks::deleteAnaFidMark(int id)
-{
-	for (unsigned int i = 0; i < anaFidMarks.size(); i++)
-		if (anaFidMarks.at(i).getId() == id)
-			anaFidMarks.erase(anaFidMarks.begin()+i);
-}
-
-/**
- * Remove one value from anaFidMarks deque
- * @param index the position of the value
- */
-void SensorWithFiducialMarks::deleteAnaFidMarkAt(unsigned int index)
-{
-	if (index < anaFidMarks.size())
-		anaFidMarks.erase(anaFidMarks.begin()+index);
-}
-
-/**
- * Clear all the values of the anaFidMarks deque
- */
-void SensorWithFiducialMarks::clearAnaFidMarks()
-{
-	anaFidMarks.clear();
 }
 
 /**
@@ -249,29 +169,29 @@ bool SensorWithFiducialMarks::is(std::string s)
 void SensorWithFiducialMarks::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	id = Conversion::stringToInt(root.attribute("key"));
-	sensorId = root.elementByTagName("sensorId").toString();
-	geometry = root.elementByTagName("geometry").toString();
-	detector = root.elementByTagName("detector").toString();
-	energySource = root.elementByTagName("energySource").toString();
-	calculationMode = root.elementByTagName("calculationMode").toString();
+	id_ = Conversion::stringToInt(root.attribute("key"));
+	sensorId_ = root.elementByTagName("sensorId").toString();
+	geometry_ = root.elementByTagName("geometry").toString();
+	detector_ = root.elementByTagName("detector").toString();
+	energySource_ = root.elementByTagName("energySource").toString();
+	calculationMode_ = root.elementByTagName("calculationMode").toString();
 
-	spectralRangesUnit = root.elementByTagName("spectralRanges").attribute("uom");
+	spectralRangesUnit_ = root.elementByTagName("spectralRanges").attribute("uom");
     std::deque<EDomElement> xmlSpectralRanges = root.elementsByTagName("spectralRange");
-	spectralRanges.clear();
+	spectralRanges_.clear();
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
 		SpectralRange* spec = new SpectralRange;
 		spec->band = Conversion::stringToInt(xmlSpectralRanges.at(i).attribute("band"));
 		spec->inferiorLimit = xmlSpectralRanges.at(i).elementByTagName("inferiorLimit").toDouble();
 		spec->superiorLimit = xmlSpectralRanges.at(i).elementByTagName("superiorLimit").toDouble();
-		spectralRanges.push_back(*spec);
+		spectralRanges_.push_back(*spec);
 	}
 
-	description = root.elementByTagName("description").toString();
-	calibrationCertificateNumber = root.elementByTagName("number").toString();
-	calibrationCertificateNumber = root.elementByTagName("dispatch").toString();
-	calibrationCertificateExpiration = root.elementByTagName("expiration").toString();
+	description_ = root.elementByTagName("description").toString();
+	calibrationCertificateNumber_ = root.elementByTagName("number").toString();
+	calibrationCertificateNumber_ = root.elementByTagName("dispatch").toString();
+	calibrationCertificateExpiration_ = root.elementByTagName("expiration").toString();
 
 	EDomElement xmlFocalDistance = root.elementByTagName("focalDistance");
 	focalDistanceUnit = xmlFocalDistance.attribute("uom");
@@ -325,28 +245,28 @@ void SensorWithFiducialMarks::xmlSetData(std::string xml)
 std::string SensorWithFiducialMarks::xmlGetData()
 {
     std::stringstream result;
-	result << "<sensor key=\"" << Conversion::intToString(id) << "\">\n";
-	result << "<sensorId>" << sensorId << "</sensorId>\n";
+	result << "<sensor key=\"" << Conversion::intToString(id_) << "\">\n";
+	result << "<sensorId>" << sensorId_ << "</sensorId>\n";
 	result << "<type>\n";
-	result << "<geometry>" << geometry << "</geometry>\n";
+	result << "<geometry>" << geometry_ << "</geometry>\n";
 	result << "<platform>aerial</platform>\n";
-	result << "<detector>" << detector << "</detector>\n";
-	result << "<energySource>" << energySource << "</energySource>\n";
-	result << "<calculationMode>" << calculationMode << "</calculationMode>\n";
-	result << "<spectralRanges uom=\"" << spectralRangesUnit << "\">\n";
-	for (unsigned int i = 0; i < spectralRanges.size(); i++)
+	result << "<detector>" << detector_ << "</detector>\n";
+	result << "<energySource>" << energySource_ << "</energySource>\n";
+	result << "<calculationMode>" << calculationMode_ << "</calculationMode>\n";
+	result << "<spectralRanges uom=\"" << spectralRangesUnit_ << "\">\n";
+	for (unsigned int i = 0; i < spectralRanges_.size(); i++)
 	{
-		result << "<spectralRange band=\"" << Conversion::intToString(spectralRanges.at(i).band) << "\">\n";
-		result << "<inferiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).inferiorLimit) << "</inferiorLimit>\n";
-		result << "<superiorLimit>" << Conversion::doubleToString(spectralRanges.at(i).superiorLimit) << "</superiorLimit>\n";
+		result << "<spectralRange band=\"" << Conversion::intToString(spectralRanges_.at(i).band) << "\">\n";
+		result << "<inferiorLimit>" << Conversion::doubleToString(spectralRanges_.at(i).inferiorLimit) << "</inferiorLimit>\n";
+		result << "<superiorLimit>" << Conversion::doubleToString(spectralRanges_.at(i).superiorLimit) << "</superiorLimit>\n";
 		result << "</spectralRange>\n";
 	}
 	result << "</spectralRanges>\n";
 	result << "</type>\n";
-	result << "<description>" << description << "</description>\n";
+	result << "<description>" << description_ << "</description>\n";
 	result << "<calibrationCertificate>\n";
-	result << "<number>" << calibrationCertificateNumber << "</number>\n";
-	result << "<expiration>" << calibrationCertificateExpiration << "</expiration>\n";
+	result << "<number>" << calibrationCertificateNumber_ << "</number>\n";
+	result << "<expiration>" << calibrationCertificateExpiration_ << "</expiration>\n";
 	result << "</calibrationCertificate>\n";
 	result << "<focalDistance uom=\"" << focalDistanceUnit << "\">\n";
 	result << "<value>" << Conversion::doubleToString(focalDistance) << "</value>\n";

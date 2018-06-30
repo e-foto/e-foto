@@ -13,7 +13,7 @@ namespace efoto {
 /**
 * \file FlightDirectionForm.h
 * \class FlightDirectionform
-* \brief Classe que controla o widget usado para indicar direçao de voo
+* \brief Classe que controla o widget usado para indicar direÃ§ao de voo
 * \copyright E-foto group
 * \author Paulo Andre Batista Pupim
 */
@@ -33,15 +33,11 @@ public:
 	* \brief Construtor padrao
 	* \param parent : ponteiro para o QWidget pai
 	*/
-	FlightDirectionForm(QWidget *parent = 0);
+    explicit FlightDirectionForm(QWidget *parent = 0);
 
-	bool getPassMode();
-	void setPassMode(bool status);
 	bool isMarked(int comboIndex);
 	void setMarkedImages(QList<int> indexesCombo);
-	QList<int> getMarkedImages();
 	QStringList getStringMarkedImages();
-	int getIndexCombo(QString comboText);
 
 public slots:
 
@@ -73,7 +69,7 @@ protected slots:
 signals:
 
 	/**
-	* \brief Sinal contendo o texto com o arquivo de imagem e o valor do angulo da direçao de voo em radianos
+	* \brief Sinal contendo o texto com o arquivo de imagem e o valor do angulo da direÃ§ao de voo em radianos
 	*/
 	void valuesFlightDirectionForm(QString,double);
 

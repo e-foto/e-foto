@@ -51,27 +51,35 @@ class Image : public EDom
 
 	// Private attributes
 	//
-	int id;
-	int sensorId;
-	int flightId;
-	unsigned int resolution;
-	std::string resolutionUnit;
-	unsigned int width;
-	unsigned int height;
-	std::string filename;
-	std::string filepath;
-	double flightDirection;
-	bool flightDirectionAvailable;
+    int id{-1};
+    int sensorId{-1};
+    int flightId{-1};
+    int resolution{0};
+    std::string resolutionUnit{""};
+    int width{0};
+    int height{0};
+    std::string filename{""};
+    std::string filepath{""};
+    double flightDirection{0.0};
+    bool flightDirectionAvailable{false};
 
-	std::string imageId;
+    std::string imageId{""};
 	ObjectSpaceCoordinate spatialCoordinates;
 
-	bool gnssAvailable; bool gnssSigmaAvailable; bool insAvailable; bool insSigmaAvailable;
-	std::string gnssType; std::string insType;
-	double gnssX0; double gnssY0; double gnssZ0;
+    bool gnssAvailable{false};
+    bool gnssSigmaAvailable{false};
+    bool insAvailable{false};
+    bool insSigmaAvailable{false};
+    std::string gnssType{};
+    std::string insType{};
+    double gnssX0{0.0};
+    double gnssY0{0.0};
+    double gnssZ0{0.0};
 	Matrix gnssSigma;
-	double insOmega; double insPhi; double insKappa;
-	Matrix insSigma;
+    double insOmega{0.0};
+    double insPhi{0.0};
+    double insKappa{0.0};
+    Matrix insSigma{};
 
 	// Composed objects
 	//
@@ -79,11 +87,11 @@ class Image : public EDom
 
 	// Associated objects
 	//
-	Sensor* mySensor;
-	Flight* myFlight;
-	InteriorOrientation* myIO;
-	ExteriorOrientation* myEO; // Muito em breve (quando definirmos a fototri) a classe usada aqui será uma ExteriorOrientation.
-	std::deque<Point*> myPoints;
+    Sensor* mySensor{nullptr};
+    Flight* myFlight{nullptr};
+    InteriorOrientation* myIO{nullptr};
+    ExteriorOrientation* myEO{nullptr}; // Muito em breve (quando definirmos a fototri) a classe usada aqui será uma ExteriorOrientation.
+    std::deque<Point*> myPoints{};
 
 public:
 
@@ -93,53 +101,38 @@ public:
 	virtual ~Image();
 
 	// Private attribute accessor methods
-	//
-	void setId(int newId);
-	void setSensorId(int newSensorId);
-	void setFlightId(int newFlightId);
-	void setResolution(unsigned int newResolution);
-	void setResolutionUnit(std::string newResolutionUnit);
-	void setWidth(unsigned int newWidth);
-	void setHeight(unsigned int newHeight);
-	void setFilename(std::string newFilename);
-	void setFilepath(std::string newFilepath);
-	int getId();
-	int getSensorId();
-	int getFlightId();
-	unsigned int getResolution();
-	std::string getResolutionUnit();
-	unsigned int getWidth();
-	unsigned int getHeight();
-	std::string getFilename();
-	std::string getFilepath();
-	std::string getImageId();
-	bool isGnssAvailable();
-	bool isInsAvailable();
-	double getGnssX0();
-	double getGnssY0();
-	double getGnssZ0();
-	std::string getGnssType();
-	double getInsOmega();
-	double getInsPhi();
-	double getInsKappa();
-	std::string getInsType();
+    int getId() const;
+    int getSensorId() const;
+    int getFlightId() const;
+    unsigned int getResolution() const;
+    unsigned int getWidth() const;
+    unsigned int getHeight() const;
+    std::string getFilename() const;
+    std::string getFilepath() const;
+    std::string getImageId() const;
+    bool isGnssAvailable() const;
+    bool isInsAvailable() const;
+    double getGnssX0() const;
+    double getGnssY0() const;
+    double getGnssZ0() const;
+    std::string getGnssType() const;
+    double getInsOmega() const;
+    double getInsPhi() const;
+    double getInsKappa() const;
+    std::string getInsType() const;
 
 	void setFlightDirection(double radianAngle);//Paulo 27/09/11
-	double getFlightDirection();//Paulo 27/09/11
-	bool isFlightDirectionAvailable() {return flightDirectionAvailable;}
+    double getFlightDirection() const;//Paulo 27/09/11
 
 	// Composed objects accessor methods
-	//
-	void setDigFidMarks(std::deque<ImageFiducialMark> newDigFidMarks); // Set for many DigFidMarks using deque.
-	std::deque<ImageFiducialMark> getDigFidMarks(); // Get for all DigFidMarks using deque.
+    std::deque<ImageFiducialMark> getDigFidMarks() const; // Get for all DigFidMarks using deque.
 
 	void putDigFidMark(ImageFiducialMark newDigFidMark); // Put one DigFidMark between the components of the image.
 	ImageFiducialMark getDigFidMark(int id);
 	ImageFiducialMark getDigFidMarkAt(unsigned int index); // Get one DigFidMark by index for iterations.
-	int countDigFidMarks();  // Inform the number of DigFidMarks composed in the image.
+    int countDigFidMarks() const;  // Inform the number of DigFidMarks composed in the image.
 
 	void deleteDigFidMark(int id); // Delete one DigFidMark by id in the image.
-	void deleteDigFidMarkAt(unsigned int index); // Delete one DigFidMark by index in the image.
 	void clearDigFidMarks(); // Delete all DigFidMarks composed in the image.
 
 	// Associated object accessor methods
@@ -158,7 +151,7 @@ public:
 	void clearPoints(); // Remove associations.
 	void removePoint(int id); // Remove one association;
 	Point* getPoint(int pointId); // Get associated point at image by id.
-	int countPoints(); // Inform the number of points associated the image.
+    int countPoints() const; // Inform the number of points associated the image.
 	Point* getPointAt(unsigned int index); // Get associated point at image by index in deque for iterations.
 
 	void sortPoints(); // sort points with ControlPoints before PhotogrammetricPoints //Paulo 27/09/2011
@@ -170,7 +163,7 @@ public:
 
 	//Other methods
 	//
-	int load(); // Try load the image using filePath and fileName sets in the image.
+    static int load(); // Try load the image using filePath and fileName sets in the image.
 
 };
 

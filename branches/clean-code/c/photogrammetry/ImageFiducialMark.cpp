@@ -82,12 +82,12 @@ void ImageFiducialMark::setImageId(int newImageId)
 	imageId = newImageId;
 }
 
-int ImageFiducialMark::getId()
+int ImageFiducialMark::getId() const
 {
 	return id;
 }
 
-int ImageFiducialMark::getImageId()
+int ImageFiducialMark::getImageId() const
 {
 	return imageId;
 }

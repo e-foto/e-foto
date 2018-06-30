@@ -42,7 +42,7 @@ public:
   * \brief Construtor do formulario
   * \param parent : QWidget pai do formulario
   */
-	FlightForm(QWidget *parent = 0);
+    explicit FlightForm(QWidget *parent = 0);
 
 	/**
   * \brief Metodo que preenche um formulário previamente salvo em um arquivo *.epp
@@ -73,7 +73,7 @@ public:
   */
 	void cleanForm();
 
-	/**
+    /**
   * \brief Metodo que informa se o formulario é o mesmo do parametro formName
   * \param formName : nome do formulario
   * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário

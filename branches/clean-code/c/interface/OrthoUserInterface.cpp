@@ -8,11 +8,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-OrthoManager* OrthoUserInterface::getManager()
-{
-	return manager;
-}
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

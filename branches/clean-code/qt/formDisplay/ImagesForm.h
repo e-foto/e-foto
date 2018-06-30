@@ -60,14 +60,7 @@ public:
  */
 	void setReadOnly(bool state);
 
-	/**
- * \brief Metodo que informa se o formulario é o mesmo do parametro formName
- * \param formName : nome do formulario
- * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário
- */
-    bool isForm(std::string formName);
-
-	/**
+/**
  * \brief Metodo que informa no formulario se a orientaçao interior foi feita ou não para cada imagem
  * \param xmlIOs : string informando se o estado da orientaçao interior de todas as imagens cadastradas no projeto
  */

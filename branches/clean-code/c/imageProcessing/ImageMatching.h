@@ -43,9 +43,13 @@ class DEMManager;
 // It takes 16 x sizeof(stackCell*) bytes for each object
 class stackCell {
  public:
-    stackCell()
+    stackCell():
+        ref_x {0.0},
+        ref_y{0.0},
+        cor_x{0.0},
+        cor_y{0.0},
+        prev{nullptr}
     {
-        prev = NULL;
     };
     float ref_x, ref_y, cor_x, cor_y;
     stackCell* prev;
@@ -78,27 +82,19 @@ class ImageMatching {
     {
         radiometric_mode_ = mode % 2;
     };
-    void setImageDepth(int depth)
-    {
-        image_depth_ = depth;
-    };
+
     void performImageMatching(Matrix*, Matrix*, MatchingPointsList*,
                               MatchingPointsList*);
-    void setMatchingLimits(int, int, int, int);
     void setImagesIds(int lid, int rid)
     {
         left_image_id = lid;
         right_image_id = rid;
     };
-    void setStep(int, int);
     void setCorrelationThreshold(double th)
     {
         corr_th_ = th;
     };
-    double getCoverage()
-    {
-        return 100.0 * coverage;
-    };
+
     void setMinStd(double);
     void setElimanteBadPoints(bool el)
     {
@@ -108,11 +104,8 @@ class ImageMatching {
     {
         cancel_flag_ = true;
     };
-    Matrix& getMap()
-    {
-        return map;
-    };
-    double getElapsedTime()
+
+    double getElapsedTime() const
     {
         return elap_time_;
     };
@@ -130,7 +123,7 @@ class ImageMatching {
     bool perform_readiometric_, radiometric_mode_;
     bool cancel_flag_;
     int matching_xi_, matching_xf_, matching_yi_, matching_yf_;
-    int smatching_xi, smatching_yi, smatching_xf, smatching_yf;
+    int smatching_xi_, smatching_xf_, smatching_yi_, smatching_yf_;
     int left_image_id, right_image_id;
     int step_x_, step_y_;
     int img_width, img_height, simg_width, simg_height;
@@ -143,7 +136,7 @@ class ImageMatching {
     bool perform_RG;
     double elap_time_;
 
-    void fillMap(MatchingPointsList*);
+    void fillMap(MatchingPointsList*) const;
     // DOUBLE STACK
     bool pop(double&, double&, double&, double&);
     bool push(double, double, double, double);

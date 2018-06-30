@@ -5,38 +5,36 @@
 #include <QImage>
 #include <QColor>
 
-class RasterResource
-{
-protected:
-	QImage** _pyramid;
-	QSize _imageDim;
-	int _levels;
-	bool _isValid;
-	bool _useSmoothIn;
-	bool _useSmoothOut;
+class RasterResource {
+  protected:
+    QImage** pyramid_{nullptr};
+    QSize imageDim_{};
+    int levels_{0};
+    bool isValid_{false};
+    bool useSmoothIn_{false};
+    bool useSmoothOut_{false};
 
-public:
-	RasterResource(QString filepath, bool withSmoothIn = false, bool withSmoothOut = true);
-	~RasterResource();
+  public:
+    RasterResource(QString filepath, bool withSmoothIn = false,
+                   bool withSmoothOut = true);
+    ~RasterResource();
 
-	void emitLoadError();
-	bool load(QImage image);
-	bool load(QString filepath);
-	bool save(QString filepath, QString format);
+    static void emitLoadError();
+    bool load(QImage image);
+    bool load(QString filepath);
+    bool save(QString filepath, QString format);
 
-	bool isValid();
-	int levels();
+    bool isValid() const;
 
-	int width();
-	int height();
-	QSize size();
-	QPointF center();
+    int width();
+    int height();
+    QSize size() const;
+    QPointF center();
 
-	QImage getImageCut(QSize targetSize, QRectF imageCut);
-	QColor getColor(QPoint at);
-	unsigned int getGrayColor(QPointF at, bool linear = false);
-	void useSmoothIn(bool useSmooth);
-	void transformImage(double H[9]);
+    QImage getImageCut(QSize targetSize, QRectF imageCut);
+    QColor getColor(QPoint at);
+    unsigned int getGrayColor(QPointF at, bool linear = false);
+    void useSmoothIn(bool useSmooth);
 };
 
 #endif // RASTERRESOURCE_H

@@ -40,73 +40,9 @@ DetectorFiducialMark::DetectorFiducialMark()
 	sigmaAvailable = false;
 }
 
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId)
-{
-	id = myId;
-	sensorId = mySensorId;
-	unit = "";
-	xi = 0;
-	eta = 0;
-	sigmaXi = 0;
-	sigmaEta = 0;
-	sigmaXiEta = 0;
-	available = false;
-	sigmaAvailable = false;
-}
-
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, std::string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
-{
-	id = myId;
-	sensorId = mySensorId;
-	unit = myUnit;
-	xi = myXi;
-	eta = myEta;
-	sigmaXi = mySigmaXi;
-	sigmaEta = mySigmaEta;
-	sigmaXiEta = mySigmaXiEta;
-	available = true;
-	sigmaAvailable = true;
-}
-
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition)
-{
-	id = myId;
-	sensorId = mySensorId;
-	setPosition(myPosition);
-	sigmaAvailable = false;
-}
-
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
-{
-	id = myId;
-	sensorId = mySensorId;
-	setPosition(myPosition);
-	setPositionSigmas(myPositionSigmas);
-}
-
 DetectorFiducialMark::~DetectorFiducialMark()
 {
 
-}
-
-void DetectorFiducialMark::setId(int newId)
-{
-	id = newId;
-}
-
-void DetectorFiducialMark::setSensorId(int newSensorId)
-{
-	sensorId = newSensorId;
-}
-
-int DetectorFiducialMark::getId()
-{
-	return id;
-}
-
-int DetectorFiducialMark::getSensorId()
-{
-	return sensorId;
 }
 
 void DetectorFiducialMark::xmlSetData(std::string xml)

@@ -49,7 +49,7 @@ IOQuality::~IOQuality()
  * Get the value of V.
  * @return the value of V
  */
-Matrix IOQuality::getV()
+Matrix IOQuality::getV() const
 {
 	return V;
 }
@@ -58,7 +58,7 @@ Matrix IOQuality::getV()
  * Get the value of sigma0Squared.
  * @return the value of sigma0Squared
  */
-double IOQuality::getsigma0Squared()
+double IOQuality::getsigma0Squared() const
 {
 	return sigma0Squared;
 }
@@ -67,7 +67,7 @@ double IOQuality::getsigma0Squared()
  * Get the value of SigmaXa.
  * @return the value of SigmaXa
  */
-Matrix IOQuality::getSigmaXa()
+Matrix IOQuality::getSigmaXa() const
 {
 	return SigmaXa;
 }
@@ -76,7 +76,7 @@ Matrix IOQuality::getSigmaXa()
  * Get the value of SigmaLa.
  * @return the value of SigmaLa
  */
-Matrix IOQuality::getSigmaLa()
+Matrix IOQuality::getSigmaLa() const
 {
 	return SigmaLa;
 }
@@ -163,7 +163,7 @@ void IOQuality::calculate(InteriorOrientation* myIO, Sensor* mySensor)
 {
 	if (mySensor->is("SensorWithFiducialMarks"))
 	{
-		SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*) mySensor;
+        SensorWithFiducialMarks* mySensorWithFiducialMarks = dynamic_cast<SensorWithFiducialMarks*>(mySensor);
 		V = (myIO->getA() * myIO->getXa()) - mySensorWithFiducialMarks->getLb();
 		sigma0Squared = (((V.transpose() * myIO->getP()) * V) / (mySensorWithFiducialMarks->getLb().getRows() - myIO->getXa().getRows())).get(1,1);
 		SigmaXa = ((myIO->getA().transpose() * myIO->getP()) * myIO->getA()).inverse() * sigma0Squared;
@@ -171,7 +171,7 @@ void IOQuality::calculate(InteriorOrientation* myIO, Sensor* mySensor)
 	}
 	else if (mySensor->is("SensorWithKnowDimensions"))
 	{
-		SensorWithKnowDimensions* mySensorWithKnowDimensions = (SensorWithKnowDimensions*) mySensor;
+        SensorWithKnowDimensions* mySensorWithKnowDimensions = dynamic_cast<SensorWithKnowDimensions*>(mySensor);
 		V = (myIO->getA() * myIO->getXa()) - mySensorWithKnowDimensions->forgeLb();
 		sigma0Squared = (((V.transpose() * myIO->getP()) * V) / (mySensorWithKnowDimensions->forgeLb().getRows() - myIO->getXa().getRows())).get(1,1);
 		SigmaXa = ((myIO->getA().transpose() * myIO->getP()) * myIO->getA()).inverse() * sigma0Squared;

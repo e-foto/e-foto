@@ -64,7 +64,6 @@ protected:
     bool editState; bool addNewState; bool changeModule;
 
 protected slots:
-    virtual void languageChange();
     virtual void newTree();
     virtual void updateTree();
     virtual void validatingSensor();
@@ -81,9 +80,7 @@ public:
 
     void viewHeader();
     void viewTerrain();
-    void viewFlights();
     void viewFlight(int id);
-    void viewSensors();
     void viewSensor(int id);
     void viewPoints();
     void viewPoint(int id);
@@ -93,14 +90,8 @@ public:
     std::string pointTxtToXml(QString point, int key, int line, std::string typePoint="control");
     std::string edomPointToTxt(EDomElement points);
 
-    std::string pointTxtToXml2(QString point, int key/*, int line*/, std::string typePoint="photogrammetric");
-
-
-
-    EDomElement imageTxtToXml(/*QString image, int key, int line, int sensorKey=0, int flightKey=0*/);
     std::string edomImageToTxt(EDomElement images);
 
-    bool insertDigitalCoordinates(QString coordinates);
     bool availableSR();
     bool availablePhotoTri();
     bool availableStereoPlotter();
@@ -146,8 +137,6 @@ public slots:
     virtual void cancelSensor();
     virtual void cancelPoint();
     virtual void cancelImage();
-    virtual void cancelFlights();
-    virtual void cancelSensors();
     virtual void cancelPoints();
     virtual void cancelImages();
     // Criando um vazio de cada view...
@@ -156,8 +145,6 @@ public slots:
     virtual void newPoint();
     virtual void newImage();
     // Salvando um novo de cada view...
-    virtual void saveNewFlight();
-    virtual void saveNewSensor();
     virtual void saveNewPoint();
     virtual void saveNewImage();
     // Apagando cada view...
@@ -173,21 +160,10 @@ public slots:
     void exportPointsToTxt();
     void importImagesBatch();
 
-    void importImagesFromTxt();
-    void importPointsFromTxt2();
-
     std::string addImageXml(QString fileName, int keyImage, int dpi = 0);
     std::string addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi = 0 );
-    void importOIDigitalMarks();
-    std::string OIToXml(QStringList oiMarks, int imageKey);
 
-    void importDigitalCoordinatesFromTxt();
     void updateCurrentForm();
-    void deleteEmptyPoints();
-
-    void exportDigitalCoordinates();
-    std::string edomDigitalCoordinatesPointToTxt(EDomElement points);
-
 };
 
 } // namespace efoto

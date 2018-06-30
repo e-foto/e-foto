@@ -84,8 +84,6 @@ int PhotoTriReport::createReport(char *filename)
 	arq << "Input Images:\n";
 	arq << "=============\n\n";
 
-	InteriorOrientation* io;
-	ExteriorOrientation* eo;
 	Image *img;
 	Point *pnt;
 	double row, col;
@@ -110,7 +108,7 @@ int PhotoTriReport::createReport(char *filename)
 
 		arq << "\n";
 
-		io = img->getIO();
+        InteriorOrientation* io = img->getIO();
 
 		arq << "Affine coefficients from image (pixels) to film (millimeters):\n";
 		arq << std::setw(9) << "A0 " << std::setw(20) << "A1" << std::setw(20) << "A2" << std::setw(20) << "B0" << std::setw(20) << "B1" << std::setw(20) << "B2\n";
@@ -145,18 +143,18 @@ int PhotoTriReport::createReport(char *filename)
 	for (int i=0; i<no_imgs; i++)
 	{
 		img = project->allImages().at(i);
-		eo = img->getEO();
+        ExteriorOrientation* eo = img->getEO();
 		arq << img->getId() << std::setw(30) << Conversion::doubleToString(eo->getXa().get(1,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(2,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(3,1),10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(4,1)*rad_to_deg,10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(5,1)*rad_to_deg,10) << std::setw(20) << Conversion::doubleToString(eo->getXa().get(6,1)*rad_to_deg,10) << "\n";
 	}
 
 	arq << "\n\n";
 	arq << "The Interior Orientation parameters:\n";
 	arq << "Image ID " << std::setw(7) << "f(mm)" << std::setw(15) << "x0" << std::setw(15) << "y0\n";
-	Sensor * sensor;
+
 	for (int i=0; i<no_imgs; i++)
 	{
 		img = project->allImages().at(i);
-		sensor = img->getSensor();
+        Sensor *sensor = img->getSensor();
 		arq << img->getId() << std::setw(17) << Conversion::doubleToString(sensor->getFocalDistance(),5) << std::setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getXi(),5) << std::setw(15) << Conversion::doubleToString(sensor->getPrincipalPointCoordinates().getEta(),5) << "\n";
 	}
 
@@ -179,7 +177,7 @@ int PhotoTriReport::createReport(char *filename)
 	arq << "The coordinates of object points:\n";
 	arq << "Image ID " << std::setw(13) << "X " << std::setw(15) << "Y" << std::setw(15) << "Z" << std::setw(30) << "Measured in image(s)\n";
 
-	for (unsigned int i=0; i<project->allPoints().size(); i++)
+    for (size_t i=0; i<project->allPoints().size(); i++)
 	{
 		pnt = project->allPoints().at(i);
 		arq << pnt->getId() << std::setw(25) << Conversion::doubleToString(pnt->getObjectCoordinate().getX(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getY(),5) << std::setw(15) << Conversion::doubleToString(pnt->getObjectCoordinate().getZ(),5) << std::setw(10);

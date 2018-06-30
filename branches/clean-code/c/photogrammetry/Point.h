@@ -44,82 +44,57 @@ public:
 
 	enum PointType { PHOTOGRAMMETRIC, CHECKING, CONTROL, UNKNOWN};
 
-protected:
-	int id;
-    std::string pointId;
-    std::string description;
-	PointType type;
-
-	ObjectSpaceCoordinate objectCoordinate;
-    std::deque<ImageSpaceCoordinate> imageCoordinates;
-    std::deque<DetectorSpaceCoordinate> detectorCoordinates;
-
-    std::deque<Image*> myImages;
-
-    PointType readPointType(std::string type);
-    std::string writePointType(PointType type);
-
-public:
-
-	// Constructors
-	//
 	Point();
     explicit Point(int myId);
 	virtual ~Point();
 
-	// Private attribute accessor methods
-	//
 	void setId(int newId);
     void setPointId(std::string newPointId);
     void setDescription(std::string newDescription);
 	void setType(PointType type);
-	int getId();
-    std::string getPointId();
-    std::string getDescription();
-	PointType getType();
+    int getId() const;
+    std::string getPointId() const;
+    std::string getDescription() const;
+    PointType getType() const;
 
-	// Composed Objects accessor methods
-	//
 	void setObjectCoordinate(ObjectSpaceCoordinate newObject);
-	ObjectSpaceCoordinate getObjectCoordinate();
-
-    void setImageCoordinates(std::deque<ImageSpaceCoordinate> newImageCoordinates);
-    void setDetectorCoordinates(std::deque<DetectorSpaceCoordinate> newDetectorCoordinates);
-    std::deque<ImageSpaceCoordinate> getImageCoordinates();
-    std::deque<DetectorSpaceCoordinate> getDetectorCoordinates();
-
-	int putImageCoordinate(ImageSpaceCoordinate newimageCoordinate);
+    ObjectSpaceCoordinate getObjectCoordinate() const;
+    std::deque<ImageSpaceCoordinate> getImageCoordinates() const;
+    int putImageCoordinate(ImageSpaceCoordinate newimageCoordinate);
 	int putDetectorCoordinate(DetectorSpaceCoordinate newdetectorCoordinate);
 	ImageSpaceCoordinate getImageCoordinate(int imageId);
 	DetectorSpaceCoordinate getDetectorCoordinate(int imageId);
 	ImageSpaceCoordinate getImageCoordinateAt(unsigned int index);
-	DetectorSpaceCoordinate getDetectorCoordinateAt(unsigned int index);
-	unsigned int countImageCoordinates();
-	unsigned int countDetectorCoordinates();
 
-	void clearImageCoordinates();
-	void clearDetectorCoordinates();
 	void deleteImageCoordinate(int imageId);
-	void deleteDetectorCoordinate(int imageId);
 
-	// Associated object accessor methods
-	//
 	void putImage(Image* newImageAssociation); // Set point associations. Generally from zero to many images.
     void clearImages(); // Remove associations.
     void removeImage(int id); // Remove one association;
 	Image* getImage(int imageId); // Get associated point at image by id.
-	int countImages(); // Inform the number of points associated the image.
+    int countImages() const; // Inform the number of points associated the image.
     Image* getImageAt(unsigned int index); // Get associated point at image by index in std::deque for iterations.
 
-	// Check methods
-	//
 	bool hasImageCoordinate(int imageId);
 	bool hasDetectorCoordinate(int imageId);
 
-	// Other methods
-	//
     void xmlSetData(std::string xml);
     std::string xmlGetData();
+
+private:
+    int id{-1};
+    std::string pointId{""};
+    std::string description{""};
+    PointType type{};
+
+    ObjectSpaceCoordinate objectCoordinate{};
+    std::deque<ImageSpaceCoordinate> imageCoordinates{};
+    std::deque<DetectorSpaceCoordinate> detectorCoordinates{};
+
+    std::deque<Image*> myImages{};
+
+    PointType readPointType(std::string type) const;
+    std::string writePointType(PointType type);
 };
 
 } // namespace efoto

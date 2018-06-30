@@ -14,17 +14,16 @@ namespace efoto {
 
 class Matrix;
 
-class AbstractScene: public QObject
-{
-protected:
+class AbstractScene: public QObject {
+  protected:
     explicit AbstractScene(QObject* parent) : QObject(parent) {}
 
-public:
+  public:
     virtual void centerContent() = 0;
     virtual void moveTo(QPointF pos) = 0;
     virtual void pan(QPointF dPos) = 0;
-    virtual void scaleTo(double newScale, QPointF at = QPointF(-1,-1)) = 0;
-    virtual void zoom(double zoomFactor, QPointF at = QPointF(-1,-1)) = 0;
+    virtual void scaleTo(double newScale, QPointF at = QPointF(-1, -1)) = 0;
+    virtual void zoom(double zoomFactor, QPointF at = QPointF(-1, -1)) = 0;
     virtual void setViewport(QSize viewportSize) = 0;
 
     virtual bool isValid() = 0;
@@ -36,56 +35,34 @@ public:
     virtual QImage getFrame(QSize targetSize) = 0;
     virtual QImage getFrame(QSize targetSize, QSize rectSize) = 0;
     virtual QImage getFrame(QSize targetSize, double scale) = 0;
-    virtual QImage getThumb(QSize targetSize, QRect* rect = NULL) = 0;
+    virtual QImage getThumb(QSize targetSize, QRect* rect = nullptr) = 0;
     virtual QImage getDetail(QSize targetSize, QPointF point, double zoom) = 0;
     virtual QColor getColor(QPoint at) = 0;
     virtual unsigned int getGrayColor(QPointF at, bool linear = false) = 0;
 
-    virtual RasterResource* rasters(int &rastersCount) = 0;
-    virtual GeometryResource* geometries(int &geometriesCount) = 0;
-    // todo: solve unused parameter at
-    virtual RasterResource* raster(/*int at = -1*/) = 0;
-    virtual GeometryResource* geometry(/*int at = -1*/) = 0;
+    virtual GeometryResource* geometry() = 0;
 };
 
-class SingleScene: public AbstractScene
-{
+class SingleScene: public AbstractScene {
     Q_OBJECT
-protected:
-    RasterResource* rasterRsrc_;
-    GeometryResource geometryRsrc_;
-    QPointF viewpoint_;
-    double scale_;
-    double maxScale_;
-    double minScale_;
-    double thumbScale_;
-    double detailZoom_;
-    QPointF detailViewpoint_;
-    QSize viewportSize_;
-    void limitScale();
 
-public:
+  public:
     explicit SingleScene(QObject* parent, QString filepath);
     ~SingleScene();
 
-    bool createImage(QSize size, QColor color = QColor(Qt::transparent));
     bool loadImage(QString filepath);
     bool loadImage(QImage image);
     bool loadImage(Matrix* image, bool isGrayscale = true);
-    bool saveImage(QString filepath, QString format);
-    void transformImage(double H[9]);
 
     QSize imageSize();
-    QImage getImage();
 
     void centerContent();
     void moveTo(QPointF pos);
     void pan(QPointF dPos);
-    void scaleTo(double newScale, QPointF at = QPointF(-1,-1));
-    void zoom(double zoomFactor, QPointF at = QPointF(-1,-1));
+    void scaleTo(double newScale, QPointF at = QPointF(-1, -1));
+    void zoom(double zoomFactor, QPointF at = QPointF(-1, -1));
     void setViewport(QSize viewportSize);
     void setLimitScale(double minScale, double maxScale);
-    double getMinScale();
     double getMaxScale();
 
     bool isValid();
@@ -108,16 +85,28 @@ public:
     QImage getFrame(QSize targetSize);
     QImage getFrame(QSize targetSize, QSize rectSize);
     QImage getFrame(QSize targetSize, double scale);
-    QImage getThumb(QSize targetSize, QRect* rect = NULL);
+    QImage getThumb(QSize targetSize, QRect* rect = nullptr);
     QImage getDetail(QSize targetSize, QPointF point, double zoom);
     QColor getColor(QPoint at);
     unsigned int getGrayColor(QPointF at, bool linear = false);
 
-    RasterResource* rasters(int &rastersCount);
-    GeometryResource* geometries(int &geometriesCount);
-    // todo: solve unused parameter at
-    RasterResource* raster(/*int at = -1*/);
-    GeometryResource* geometry(/*int at = -1*/);
+    GeometryResource* geometry();
+
+  private:
+    RasterResource* rasterRsrc_{nullptr};
+    GeometryResource geometryRsrc_{};
+    QPointF viewpoint_{};
+    double scale_{0.0};
+    double maxScale_{0.0};
+    double minScale_{0.0};
+    double thumbScale_{0.0};
+    double detailZoom_{0.0};
+    QPointF detailViewpoint_{};
+    QSize viewportSize_{};
+
+    void limitScale();
+
+
 };
 
 } // namespace efoto

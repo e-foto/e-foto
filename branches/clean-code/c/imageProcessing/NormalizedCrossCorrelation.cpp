@@ -18,6 +18,19 @@ NormalizedCrossCorrelation::NormalizedCrossCorrelation():
     template_height_{7},
     search_window_width_{50},
     search_window_height_{50},
+    template_center_x{0},
+    template_center_y{0},
+    search_window_center_x{0},
+    search_window_center_y{0},
+    template_xi{0},
+    template_xf{0},
+    template_yi{0},
+    template_yf{0},
+    frac_tc_x{0.0},
+    frac_tc_y{0.0},
+    best_p{0.0},
+    best_x{0.0},
+    best_y{0.0},
     min_std_acceptance_{0.15},
     temp_growth_step_{2},
     temp_max_size_{50}
@@ -192,41 +205,6 @@ double NormalizedCrossCorrelation::stddev(Matrix* m,
     }
 
     return sqrt(sum / double(n - 1));
-}
-
-double NormalizedCrossCorrelation::covXY(Matrix* X, Matrix* Y, int row_x_i,
-        int row_x_f, int col_x_i, int col_x_f, int row_y_i, int row_y_f, int col_y_i,
-        int col_y_f)
-{
-    // If assigned with 0, calculate the standard deviation for the whole matrix
-    if ((row_x_i < 1) || (row_x_f < 1) || (col_x_i < 1) || (col_x_f < 1)) {
-        row_x_i = 1;
-        col_x_i = 1;
-        row_x_f = X->getRows();
-        col_x_f = X->getCols();
-    }
-
-    if ((row_y_i < 1) || (row_y_f < 1) || (col_y_i < 1) || (col_y_f < 1)) {
-        row_y_i = 1;
-        col_y_i = 1;
-        row_y_f = Y->getRows();
-        col_y_f = Y->getCols();
-    }
-
-    const int delta_i = row_y_i - row_x_i;
-    const int delta_j = col_y_i - col_x_i;
-    const double avgX = average(X, row_x_i, row_x_f, col_x_i, col_x_f);
-    const double avgY = average(Y, row_y_i, row_y_f, col_y_i, col_y_f);
-    double sum = 0.0;
-    int n = (1 + (row_x_f - row_x_i)) * (1 + (col_x_f - col_x_i));
-
-    for (auto i = row_x_i; i <= row_x_f; i++) {
-        for (auto j = col_x_i; j <= col_x_f; j++) {
-            sum += (X->get(i, j) - avgX) * (Y->get(i + delta_i, j + delta_j) - avgY);
-        }
-    }
-
-    return sum / double(n - 1);
 }
 
 /*

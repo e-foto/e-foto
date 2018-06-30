@@ -93,7 +93,7 @@ std::string FlightForm::getvalues()
 	auxStream << "</flight>\n";
 
 	xmlString = auxStream.str();
-	return xmlString.c_str();
+    return xmlString;
 }
 
 void FlightForm::setReadOnly(bool state)
@@ -130,11 +130,6 @@ void FlightForm::setFormLocale(QLocale locale)
 	nominalScaleSpinBox->setLocale(locale);
 	horizontalOverlapDoubleSpinBox->setLocale(locale);
 	verticalOverlapDoubleSpinBox->setLocale(locale);
-}
-
-bool FlightForm::isForm(std::string formName)
-{
-	return !formName.compare("FlightForm");
 }
 
 } // namespace efoto

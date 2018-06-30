@@ -30,7 +30,6 @@
 #include "AboutForm.h"
 #include "LoadingScreen.h"
 #include "ETreeModel.h"
-#include "EDomValidator.h"
 
 #include <QFileDialog>
 #include <QInputDialog>
@@ -111,9 +110,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
     connect(pointsForm.importButton, SIGNAL(clicked()), this, SLOT( importPointsFromTxt() ) );
     connect(pointsForm.exportToTxtButton, SIGNAL(clicked()), this, SLOT(exportPointsToTxt()) );
     connect(imagesForm.importButton, SIGNAL(clicked()), this, SLOT( importImagesBatch() ) );
-    //imagesForm.importButton->setEnabled(false);
 
-    //setGeometry(qApp->desktop()->availableGeometry());
     setWindowState(this->windowState() | Qt::WindowMaximized);
     qApp->processEvents();
     // Bloqueia alguns dos dipositivos
@@ -167,20 +164,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
     QShortcut* shortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+D", "Debug")),this);
     connect(shortcut, SIGNAL(activated()), this, SLOT(toggleDebug()));
 
-    // Inserido pelo Paulo 05/09/2011
-    // Adiciona um atalho para os desenvolvedores dar upload das coordenadas digitais do export do LPS
-    //QShortcut* shortcut2 = new QShortcut(QKeySequence(tr("Ctrl+Shift+P", "Import")),this);
-    //connect(shortcut2, SIGNAL(activated()), this, SLOT(importPointsFromTxt2()));
-
-    //QShortcut* shortcut3 = new QShortcut(QKeySequence(tr("Ctrl+Shift+I", "Import")),this);
-    //connect(shortcut3, SIGNAL(activated()), this, SLOT(importImagesBatch()));
-
-
-    //QShortcut* shortcut4 = new QShortcut(QKeySequence(tr("Ctrl+Shift+O", "Import")),this);
-    //connect(shortcut4, SIGNAL(activated()), this, SLOT(importOIDigitalMarks()));
-
-
-    refreshMenu();
+      refreshMenu();
     actionLoad_last_project->setEnabled(availableLP());
 
 }
@@ -192,7 +176,6 @@ ProjectUserInterface_Qt::~ProjectUserInterface_Qt()
 
 void ProjectUserInterface_Qt::closeEvent(QCloseEvent *event)
 {
-    //qDebug() << changeModule;
     if (changeModule || confirmToClose())
         event->accept();
     else
@@ -288,16 +271,6 @@ void ProjectUserInterface_Qt::newProject()
     text +=	"<principalPointCoordinates uom=\"#mm\">\n";
     text +=	"<gml:pos></gml:pos>\n";
     text +=	"<sigma>\n";
-    //text +=	"<mml:matrix>\n";
-    //text +=	"<mml:matrixrow>\n";
-    //text +=	"<mml:cn></mml:cn>\n";
-    //text +=	"<mml:cn></mml:cn>\n";
-    //text +=	"</mml:matrixrow>\n";
-    //text +=	"<mml:matrixrow>\n";
-    //text +=	"<mml:cn></mml:cn>\n";
-    //text +=	"<mml:cn></mml:cn>\n";
-    //text +=	"\t\t\t\t</mml:matrixrow>\n";
-    //text +=	"\t\t\t</mml:matrix>\n";
     text +=	"</sigma>\n";
     text +=	"</principalPointCoordinates>\n";
     text +=	"<fiducialMarks uom=\"#mm\">\n";
@@ -344,7 +317,7 @@ void ProjectUserInterface_Qt::newProject()
 
     manager->addComponent(text, "flights");
 
-    // Estas linhas fazem parte realmente deste cÃÂ³digo e nÃÂ£o sÃÂ£o parte da gambiarra a cima
+    // Estas linhas fazem parte realmente deste código e não são parte da gambiarra a cima
     saveFile();
 
     refreshMenu();
@@ -363,8 +336,6 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
     }
     else
     {
-        //filename = QString(filenameAtStart.c_str());
-        //const char* name = filenameAtStart.c_str();
         filename = QString::fromLocal8Bit(filenameAtStart.c_str());
     }
 
@@ -413,8 +384,6 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 
 
             manager->savedIn = filename.toLocal8Bit().constData();
-            //manager->savedIn = filename.toStdString();
-            //qDebug("load savedIn: %s",savedIn.c_str());
 
             actionSave_file->setEnabled(false);
             actionSave_file_as->setEnabled(true);
@@ -432,7 +401,6 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
             node.replaceChildByTagName("filePath",filePath.toLocal8Bit().constData());
 
             manager->editComponent("Header", node.getContent());
-            //***************************************************************************************************
 
             QDir dir(filename.left(i));
             dir.setCurrent(dir.absolutePath());
@@ -471,7 +439,6 @@ void ProjectUserInterface_Qt::saveFile()
     if (!manager->savedIn.empty())
     {
         QDateTime dateTimeBackup = headerForm.dateTimeEditModificationDate->dateTime();
-        //headerForm.dateTimeEditModificationDate->setTime(QTime::currentTime());
         headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
         manager->editComponent("Header", headerForm.getvalues());
         if (manager->saveFile(manager->savedIn))
@@ -490,7 +457,7 @@ void ProjectUserInterface_Qt::saveFile()
         updateTree();
     }
     else
-        saveFileAs(); // Isso jÃÂ¡ nÃÂ£o executa nunca mais. Eu acho!
+        saveFileAs(); // Isso já não executa nunca mais. Eu acho!
 }
 
 bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
@@ -712,9 +679,6 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
             }
             else
             {
-                //if (addNewState)
-                //  treeWidget->setCurrentIndex(0);
-                //else
                 treeWidget->setCurrentIndex(currentIndex);
                 return;
             }
@@ -734,12 +698,10 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
         }
         else if (etm->dataAt(index.row()) == "sensors")
         {
-            //viewSensors(); mudanÃÂ§a temporaria
             viewSensor(1);
         }
         else if (etm->dataAt(index.row()) == "flights")
         {
-            //viewFlights(); mudanÃÂ§a temporaria
             viewFlight(1);
         }
         else if (etm->dataAt(index.row()) == "images")
@@ -755,12 +717,10 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index)
     {
         if (etm->dataAt(index.parent().row()) == "sensors")
         {
-            //viewSensor(etm->idAt(index.parent().row(), index.row())); mudanÃÂ§a temporaria
             viewSensor(1);
         }
         else if (etm->dataAt(index.parent().row()) == "flights")
         {
-            //viewFlight(etm->idAt(index.parent().row(), index.row())); mudanÃÂ§a temporaria
             viewFlight(1);
         }
         else if (etm->dataAt(index.parent().row()) == "images")
@@ -814,12 +774,6 @@ void ProjectUserInterface_Qt::exportSPFile()
     }
 }
 
-//Metodo que sera reescrito depois que trabalharmos esta interface grafica com o QLinguist
-void ProjectUserInterface_Qt::languageChange()
-{
-    //retranslateUi(this);
-}
-
 void ProjectUserInterface_Qt::newTree()
 {
     treeWidget->clear();
@@ -827,12 +781,10 @@ void ProjectUserInterface_Qt::newTree()
     //this->treeWidget->setHeaderHidden(false);
     if (manager->savedIn == "")
     {
-        //treeWidget->setHeaderLabel(tr("New Project"));
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
     }
     else
     {
-        //treeWidget->setHeaderLabel(headerForm.lineEditFileName->text());
         if (actionSave_file->isEnabled())
             projectDockWidget->setWindowTitle(QString(tr("Open Project: *")) + headerForm.lineEditFileName->text());
         else
@@ -962,8 +914,7 @@ bool ProjectUserInterface_Qt::exec()
     qApp->processEvents();
     changeModule = false;
     updateLabelFileName();
-    //if (qApp->exec())
-    //return false;
+
     return true;
 }
 
@@ -1029,33 +980,6 @@ void ProjectUserInterface_Qt::viewTerrain()
     controlButtons.saveButton->setEnabled(true);
 }
 
-void ProjectUserInterface_Qt::viewSensors()
-{
-    // Por enquanto este metodo esta fora de uso.
-    /*
-controlButtons.disconnectAll();
-controlButtons.multiConnect();
-connect((&controlButtons)->newButton, SIGNAL(clicked()), this, SLOT(newSensor()));
-connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewSensor()));
-connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelSensors()));
-
-EDomElement node(manager->getXml("sensors"));
-
-sensorsForm.fillvalues(node.getContent());
-centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
-centerArea.setCurrentIndex(X); // falta definir este indice
-currentForm = &sensorsForm;
-currentForm->setReadOnly(true);
-
-debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
-debuggerTextEdit->setReadOnly(true);
-
-menuProject->setEnabled(true);
-menuExecute->setEnabled(true);
-*/
-}
-
 void ProjectUserInterface_Qt::viewSensor(int id)
 {
     currentItemId = id;
@@ -1081,33 +1005,6 @@ void ProjectUserInterface_Qt::viewSensor(int id)
 
     menuProject->setEnabled(true);
     enableExecuteMenu(true);
-}
-
-void ProjectUserInterface_Qt::viewFlights()
-{
-    // Por enquanto este metodo esta fora de uso.
-    /*
-controlButtons.disconnectAll();
-controlButtons.multiConnect();
-connect((&controlButtons)->newButton, SIGNAL(clicked()), this, SLOT(newFlight()));
-connect((&controlButtons)->saveButton, SIGNAL(clicked()), this, SLOT(saveNewFlight()));
-connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this, SLOT(cancelFlights()));
-
-EDomElement node(manager->getXml("flights"));
-
-flightsForm.fillvalues(node.getContent());
-centerArea.setStyleSheet("QScrollArea, QWidget {background: #FFFFFF} QScrollArea {border: 0px}");
-centerArea.setCurrentIndex(X); // falta definir este indice
-currentForm = &flightsForm;
-currentForm->setReadOnly(true);
-
-debuggerTextEdit->clear();
-debuggerTextEdit->setText(QString::fromUtf8(node.indent('\t').getContent().c_str()));
-debuggerTextEdit->setReadOnly(true);
-
-menuProject->setEnabled(true);
-menuExecute->setEnabled(true);
-*/
 }
 
 void ProjectUserInterface_Qt::viewFlight(int id)
@@ -1306,14 +1203,6 @@ void ProjectUserInterface_Qt::enableExecuteMenu(bool status)
     menuExecute->setEnabled(status);
 
     refreshMenu();
-    //actionInterior_Orientation->setEnabled(status);
-    //actionSpatial_resection->setEnabled(status);
-    //actionFoto_Tri->setEnabled(status);
-    //actionStereo->setEnabled(status);
-    //actionDEMExtraction->setEnabled(status);
-    //actionOrtho_rectification->setEnabled(status);
-    //actionPTReport->setEnabled(status);
-    //actionReport->setEnabled(status);
 }
 
 // Habilitando cada view...
@@ -1368,17 +1257,16 @@ void ProjectUserInterface_Qt::saveFlight()
 
 void ProjectUserInterface_Qt::saveImage()
 {
-    std::string xmlString="";
     std::stringstream eoXML;
-    bool existOE, userOE=false;
-
     editState = false;
-    xmlString = imageForm.getvalues();
+
+    std::string  xmlString = imageForm.getvalues();
     manager->editComponent("Image", currentItemId, xmlString);
     EDomElement imageUserEO(xmlString);
     if (imageUserEO.hasTagName("GNSS") && imageUserEO.hasTagName("INS"))
     {
-        existOE = !(manager->getXml("imageEO","image_key",Conversion::intToString(currentItemId))=="");
+        bool userOE=false;
+        bool existOE = !(manager->getXml("imageEO","image_key",Conversion::intToString(currentItemId))=="");
         if (existOE)
         {
             EDomElement oeXMLObj(manager->getXml("imageEO","image_key",Conversion::intToString(currentItemId)));
@@ -1461,18 +1349,6 @@ void ProjectUserInterface_Qt::cancelPoint()
     viewPoint(currentItemId);
 }
 
-void ProjectUserInterface_Qt::cancelSensors()
-{
-    addNewState = false;
-    viewSensors();
-}
-
-void ProjectUserInterface_Qt::cancelFlights()
-{
-    addNewState = false;
-    viewFlights();
-}
-
 void ProjectUserInterface_Qt::cancelImages()
 {
     addNewState = false;
@@ -1489,125 +1365,10 @@ void ProjectUserInterface_Qt::cancelPoints()
 
 void ProjectUserInterface_Qt::newSensor()
 {
-    // Por enquanto este metodo esta fora de uso.
-    /*
-std::string text = "";
-
-text += "<sensor key=\"\">\n";
-text +=	"<sensorId></sensorId>\n";
-text +=	"<type>\n";
-text +=	"<geometry></geometry>\n";
-text +=	"<platform></platform>\n";
-text +=	"<detector></detector>\n";
-text +=	"<energySource></energySource>\n";
-text +=	"<spectralRanges uom=\"#um\">\n";
-text +=	"<spectralRange band=\"\">\n";
-text +=	"<inferiorLimit></inferiorLimit>\n";
-text +=	"<superiorLimit></superiorLimit>\n";
-text +=	"</spectralRange>\n";
-text +=	"</spectralRanges>\n";
-text +=	"</type>\n";
-text +=	"<description></description>\n";
-text +=	"<calibrationCertificate>\n";
-text +=	"<number></number>\n";
-text +=	"<dispatch></dispatch>\n";
-text +=	"<expiration></expiration>\n";
-text +=	"</calibrationCertificate>\n";
-text +=	"<focalDistance uom=\"#mm\">\n";
-text +=	"<value></value>\n";
-text +=	"<sigma></sigma>\n";
-text +=	"</focalDistance>\n";
-text +=	"<distortionCoefficients>\n";
-text +=	"<radialSymmetric>\n";
-text +=	"<k0>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</k0>\n";
-text +=	"<k1>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</k1>\n";
-text +=	"<k2>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</k2>\n";
-text +=	"<k3>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</k3>\n";
-text +=	"</radialSymmetric>\n";
-text +=	"<decentered>\n";
-text +=	"<P1>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</P1>\n";
-text +=	"<P2>\n";
-text +=	"<value></value>\n";
-text += "<sigma></sigma>\n";
-text +=	"</P2>\n";
-text +=	"</decentered>\n";
-text +=	"</distortionCoefficients>\n";
-text +=	"<principalPointCoordinates uom=\"#mm\">\n";
-text +=	"<gml:pos></gml:pos>\n";
-text +=	"<sigma>\n";
-text +=	"<mml:matrix>\n";
-text +=	"<mml:matrixrow>\n";
-text +=	"<mml:cn></mml:cn>\n";
-text +=	"<mml:cn></mml:cn>\n";
-text +=	"</mml:matrixrow>\n";
-text +=	"<mml:matrixrow>\n";
-text +=	"<mml:cn></mml:cn>\n";
-text +=	"<mml:cn></mml:cn>\n";
-text +=	"</mml:matrixrow>\n";
-text +=	"</mml:matrix>\n";
-text +=	"</sigma>\n";
-text +=	"</principalPointCoordinates>\n";
-text +=	"<fiducialMarks uom=\"#mm\">\n";
-text +=	"<fiducialMark key=\"1\">\n";
-text +=	"<gml:pos></gml:pos>\n";
-text +=	"<sigma></sigma>\n";
-text +=	"</fiducialMark>\n";
-text +=	"<fiducialMark key=\"2\">\n";
-text +=	"<gml:pos></gml:pos>\n";
-text +=	"<sigma></sigma>\n";
-text +=	"</fiducialMark>\n";
-text +=	"<fiducialMark key=\"3\">\n";
-text +=	"<gml:pos></gml:pos>\n";
-text +=	"<sigma></sigma>\n";
-text +=	"</fiducialMark>\n";
-text +=	"<fiducialMark key=\"4\">\n";
-text +=	"<gml:pos></gml:pos>\n";
-text +=	"<sigma></sigma>\n";
-text +=	"</fiducialMark>\n";
-text +=	"</fiducialMarks>\n";
-text += "</sensor>";
-*/
 }
 
 void ProjectUserInterface_Qt::newFlight()
 {
-    // Por enquanto este metodo esta fora de uso.
-    /*
-std::string text = "";
-
-text += "<flight key=\"\" sensor_key=\"\">\n";
-text += "<flightId></flightId>\n";
-text += "<description></description>\n";
-text += "<execution></execution>\n";
-text += "<producerName></producerName>\n";
-text += "<nominalScale>\n";
-text += "<mml:mfrac>\n";
-text += "<mml:mn></mml:mn>\n";
-text += "<mml:mn></mml:mn>\n";
-text += "</mml:mfrac>\n";
-text += "</nominalScale>\n";
-text += "<flightHeight uom=\"#m\"></flightHeight>\n";
-text += "<overlap>\n";
-text += "<longitudinal uom=\"#%\"></longitudinal>\n";
-text += "<transversal uom=\"#%\"></transversal>\n";
-text += "</overlap>\n";
-text += "</flight>";
-*/
 }
 
 void ProjectUserInterface_Qt::newImage()
@@ -1668,47 +1429,6 @@ void ProjectUserInterface_Qt::newPoint()
 }
 
 // Salvando um novo de cada view...
-
-void ProjectUserInterface_Qt::saveNewSensor()
-{
-    /*
-std::string currentData = debuggerTextEdit->toPlainText().toStdString();
-if (EDomValidator::validateSensor(currentData))
-{
-manager->addComponent(currentData, "sensors");
-newTree();
-viewSensors();
-}
-else
-{
-QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado ÃÂ© invÃÂ¡lido.");
-msgBox.exec();
-emit viewButtons->editButton->click();
-}
-*/
-}
-
-void ProjectUserInterface_Qt::saveNewFlight()
-{
-    /*
-std::string currentData = debuggerTextEdit->toPlainText().toStdString();
-if (EDomValidator::validateFlight(currentData))
-{
-manager->addComponent(currentData, "flights");
-newTree();
-viewFlights();
-}
-else
-{
-QMessageBox msgBox;
-msgBox.setText("Erro: Xml passado ÃÂ© invÃÂ¡lido.");
-msgBox.exec();
-emit viewButtons->editButton->click();
-}
-*/
-}
-
 void ProjectUserInterface_Qt::saveNewImage()
 {
     addNewState = false;
@@ -1758,208 +1478,6 @@ void ProjectUserInterface_Qt::showAbout()
     AboutForm* about = new AboutForm();
     about->show();
 }
-
-// CÃÂ³digos das classes extras.
-
-//#include <QStringList>
-
-/*TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
-{
- parentItem = parent;
- itemData = data;
-}
-
-TreeItem::~TreeItem()
-{
- qDeleteAll(childItems);
-}
-
-void TreeItem::appendChild(TreeItem *item)
-{
- childItems.append(item);
-}
-
-TreeItem *TreeItem::child(int row)
-{
- return childItems.value(row);
-}
-
-int TreeItem::childCount() const
-{
- return childItems.count();
-}
-
-int TreeItem::columnCount() const
-{
- return itemData.count();
-}
-
-QVariant TreeItem::data(int column) const
-{
- return itemData.value(column);
-}
-
-TreeItem *TreeItem::parent()
-{
- return parentItem;
-}
-
-int TreeItem::row() const
-{
- if (parentItem)
-  return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
-
- return 0;
-}
-
-TreeModel::TreeModel(const QString &data, QObject *parent)
- : QAbstractItemModel(parent)
-{
- QList<QVariant> rootData;
- rootData << "";
- rootItem = new TreeItem(rootData);
- setupModelData(data.split(QString("\n")), rootItem);
-}
-
-TreeModel::~TreeModel()
-{
- delete rootItem;
-}
-
-int TreeModel::columnCount(const QModelIndex &parent) const
-{
- if (parent.isValid())
-  return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
- else
-  return rootItem->columnCount();
-}
-
-QVariant TreeModel::data(const QModelIndex &index, int role) const
-{
- if (!index.isValid())
-  return QVariant();
-
- if (role != Qt::DisplayRole)
-  return QVariant();
-
- TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-
- return item->data(index.column());
-}
-
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
-{
- if (!index.isValid())
-  return 0;
-
- return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-}
-
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
-                  int role) const
-{
- if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-  return rootItem->data(section);
-
- return QVariant();
-}
-
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
-  const
-{
- if (!hasIndex(row, column, parent))
-  return QModelIndex();
-
- TreeItem *parentItem;
-
- if (!parent.isValid())
-  parentItem = rootItem;
- else
-  parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
- TreeItem *childItem = parentItem->child(row);
- if (childItem)
-  return createIndex(row, column, childItem);
- else
-  return QModelIndex();
-}
-
-QModelIndex TreeModel::parent(const QModelIndex &index) const
-{
- if (!index.isValid())
-  return QModelIndex();
-
- TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
- TreeItem *parentItem = childItem->parent();
-
- if (parentItem == rootItem)
-  return QModelIndex();
-
- return createIndex(parentItem->row(), 0, parentItem);
-}
-
-int TreeModel::rowCount(const QModelIndex &parent) const
-{
- TreeItem *parentItem;
- if (parent.column() > 0)
-  return 0;
-
- if (!parent.isValid())
-  parentItem = rootItem;
- else
-  parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
- return parentItem->childCount();
-}
-
-void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
-{
- QList<TreeItem*> parents;
- QList<int> indentations;
- parents << parent;
- indentations << 0;
-
- int number = 0;
-
- while (number < lines.count()) {
-  int position = 0;
-  while (position < lines[number].length()) {
-   if (lines[number].mid(position, 1) != " ")
-        break;
-   position++;
-  }
-
-  QString lineData = lines[number].mid(position).trimmed();
-
-  if (!lineData.isEmpty()) {
-   // Read the column data from the rest of the line.
-   QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
-   QList<QVariant> columnData;
-   for (int column = 0; column < columnStrings.count(); ++column)
-        columnData << columnStrings[column];
-
-   if (position > indentations.last()) {
-        // The last child of the current parent is now the new parent
-        // unless the current parent has no children.
-
-        if (parents.last()->childCount() > 0) {
-         parents << parents.last()->child(parents.last()->childCount()-1);
-         indentations << position;
-        }
-   } else {
-        while (position < indentations.last() && parents.count() > 0) {
-         parents.pop_back();
-         indentations.pop_back();
-        }
-   }
-
-   // Append a new item to the current parent's list of children.
-   parents.last()->appendChild(new TreeItem(columnData, parents.last()));
-  }
-
-  number++;
- }
-}*/
 
 void ProjectUserInterface_Qt::validatingSensor()
 {
@@ -2047,7 +1565,7 @@ bool ProjectUserInterface_Qt::confirmToClose()
             }
         }
     }
-    //qDebug() << actionSave_file->isEnabled();
+
     if (actionSave_file->isEnabled())
     {
         QMessageBox::StandardButton reply;
@@ -2079,15 +1597,7 @@ void ProjectUserInterface_Qt::refreshMenu()
 
 QString ProjectUserInterface_Qt::getSavedIn()
 {
-    //HeaderForm* parent =(HeaderForm*)&(this->headerForm);
-    //qDebug("saved in %s",savedIn.c_str());
-
-    //cout<< "cout "<<savedIn.c_str()<<"\n"<<endl;
-    //qDebug()<<headerForm.lineEditFilePath->text();
-
-    //return  QString(manager->savedIn.c_str()).left(manager->savedIn.find_last_of('/'));
     return  QString(QString::fromLocal8Bit(manager->savedIn.c_str())).left(manager->savedIn.find_last_of('/'));
-    //return parent->lineEditFilePath->text();
 }
 
 /** This function import points from a *.txt file with a one point in each line
@@ -2107,7 +1617,6 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
     {
         QByteArray line = importFile->readLine();
         QString aux(line);
-        //pointsList << aux.left(aux.lastIndexOf('\n'));
         pointsList << aux.simplified();;
     }
     importFile->close();
@@ -2129,15 +1638,11 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
     loadWidget->show();
 
     std::string newPointXML;
-    for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
+    for (int i=0; i<pointsList.length();i++)
     {
         loading.setFormat(tr("%v/%m : %p%"));
         loading.setValue(i+1);
         newPointXML+=pointTxtToXml(pointsList.at(i),manager->getFreePointId()+i,i+1);
-        /*if ( newPointXML.hasTagName("pointId") )
-  {
-   manager->addComponent(newPointXML.getContent().data(),"points");
-  }*/
     }
     manager->addComponent(newPointXML,"points");
     loadWidget->close();
@@ -2152,22 +1657,13 @@ void ProjectUserInterface_Qt::importPointsFromTxt()
 std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int line, std::string typePoint)
 {
     std::stringstream aux;
-    std::string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
+    std::string gcpIdField, eField, nField, hField, dEField, dNField, dHField;
     QStringList fields= point.split(QRegExp("\\s+")); // split by any sequences of whitespace
     // check	control	 tie
     if (fields.length() == 7)
     {
 
         gcpIdField = fields.at(0).toLocal8Bit().constData();
-        /*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
         eField = fields.at(1).toStdString();
         nField = fields.at(2).toStdString();
         hField = fields.at(3).toStdString();
@@ -2202,15 +1698,6 @@ std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
     {
         //gcpIdField = point.split("\t").at(0).toStdString().c_str();
         gcpIdField = fields.at(0).toStdString();
-        /*
-  typeField = point.split("\t").at(1).toStdString().c_str();
-  if(typeField == "Tie")
-   typePoint="photogrammetric";
-  else if (typeField== "Control")
-   typePoint="control";
-  else if (typeField== "Check")
-   typePoint="verification";
-*/
         eField = fields.at(1).toStdString();
         nField = fields.at(2).toStdString();
         hField = fields.at(3).toStdString();
@@ -2231,8 +1718,6 @@ std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
     }
 
     return aux.str();
-    //EDomElement newPointXml(newXml.c_str());
-
 }
 
 /** This function exports all points in current XML to *.txt file with a one point in
@@ -2294,7 +1779,6 @@ void ProjectUserInterface_Qt::exportPointsToTxt()
 std::string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 {
     std::stringstream aux;
-    std::stringstream stdev;
     QString gmlpos=points.elementByTagName("gml:pos").toString().c_str();
     aux << points.elementByTagName("pointId").toString().c_str()<< "\t";
     //aux << points.attribute("type")<< "\t";
@@ -2306,11 +1790,6 @@ std::string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 
     if (points.hasTagName("mml:matrix"))
     {
-        /*
-        aux << "\t" << points.elementsByTagName("mml:cn").at(0).toString().c_str() <<"\t";
-        aux << points.elementsByTagName("mml:cn").at(1).toString().c_str() <<"\t";
-        aux << points.elementsByTagName("mml:cn").at(2).toString().c_str();
-        */
         aux << "\t" << stdevMatrix.get(1,1) <<"\t";
         aux << stdevMatrix.get(2,2) <<"\t";
         aux << stdevMatrix.get(3,3);
@@ -2318,181 +1797,14 @@ std::string ProjectUserInterface_Qt::edomPointToTxt(EDomElement points)
 
     aux <<"\n";
     std::string result=aux.str();
-    //qDebug("tamanho: %d",points.elementsByTagName("mml:matrix").size());
 
-    //qDebug("stdev:%s",stdev.str().c_str());
-    //qDebug("result:%s",result.c_str());
-
-    return result.c_str();
-}
-
-/** This function import images from a *.txt file with a one image in each line
-*   in pattern ...
-*/
-void ProjectUserInterface_Qt::importImagesFromTxt()
-{
-    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
-    QFile *importFile = new QFile(importFileName);
-    QStringList imagesList;
-
-    importFile->open(QIODevice::ReadOnly);
-
-    while(!importFile->atEnd())
-    {
-        QByteArray line = importFile->readLine();
-        QString aux(line);
-        imagesList << aux.remove('\n');
-    }
-
-    importFile->close();
-
-    for (int i=0; i<imagesList.length();i++)
-    {
-        EDomElement newImageXML=imageTxtToXml(/*imagesList.at(i),manager->getFreeImageId(),i+1*/);
-        if ( newImageXML.hasTagName("imageId") )
-        {
-            manager->addComponent(newImageXML.getContent().data(),"images");
-        }
-    }
-    updateTree();
-    viewImages();
-
-}
-
-/** This function convert image data from a *.txt line in a children image XML valid
-*
-*/
-EDomElement ProjectUserInterface_Qt::imageTxtToXml(/*QString image, int key, int line, int sensorKey, int flightKey*/)
-{
-    std::stringstream aux;
-
-    // implementar o xml de images aqui
-    /*
- aux << "<image key=\""<< intToString(key)<<"\" sensor_key=\"" << sensorKey << "\">" << "\" flight_key=\"" << flightKey << "\">\n";
- aux << "<imageId>" << "" << "</imageId>\n";
- aux << "<width uom=\"#px\"" << "" << "</width>\n";
- aux << "<height uom=\"#px\"" << ""  << "</height>\n";
- aux << "<fileName>" << "" << "</fileName>\n";
- aux << "<filePath>" << "" << "</filePath>\n";
- aux << "<resolution uom=\"#dpi\">" << "" << "</resolution>\n";
- aux << "<GNSS uom=\"#m\" type=\"Unknown\">\n";
- aux << "<gml:pos>" << "E" << " " << "N" << " " << "H" << "</gml:pos>\n";
- aux << "<sigma>Not Available</sigma>\n";
- aux << "</GNSS>\n";
- aux << "<INS uom=\"#rad\" type=\"Unknown\">\n";
- aux << "<omega>" << "" << "</omega>\n";
- aux << "<phi>" << "" << "</phi>\n";
- aux << "<kappa>" << "" << "</kappa>\n";
- aux << "<sigma>Not Available</sigma>\n";
- aux << "</INS>\n";
- aux << "</image>";
-
- QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(line));
-
- */
-    std::string newXml=aux.str();
-    EDomElement newImageXml(newXml.c_str());
-
-    return newImageXml;
-}
-
-//inserido pelo Paulo 05/09/2011
-// Coloca as coordenadas digitais linha e coluna nos pontos;
-void ProjectUserInterface_Qt::importDigitalCoordinatesFromTxt()
-{
-    importPointsFromTxt2();
-
-    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import File"),".","*.txt");
-    if(importFileName=="")
-        return;
-    QFile *importFile = new QFile(importFileName);
-    QStringList pointsList;
-
-    importFile->open(QIODevice::ReadOnly);
-
-    while(!importFile->atEnd())
-    {
-        QByteArray line = importFile->readLine();
-        QString aux(line);
-        pointsList << aux.remove('\n');
-    }
-
-    importFile->close();
-
-    QWidget *loadWidget= new QWidget();
-    loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-    QProgressBar loading;
-    QPushButton cancelButton("Cancel");
-    loading.setRange(0,pointsList.length());
-
-    QVBoxLayout loadLayout;
-    loadLayout.addWidget(&loading,Qt::AlignCenter);
-    loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-    connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-    loadWidget->setLayout(&loadLayout);
-    loadWidget->setWindowTitle(tr("Loading Digitals Coordinates"));
-    loading.setMinimumSize(300,30);
-    loadWidget->show();
-
-    EDomElement imagesXml(manager->getXml("points").c_str());
-    std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("point");
-
-    for (int i=0; i<pointsList.length() ;i++)
-    {
-        /*
-            loading.setFormat(tr("Coordinate %v/%m : %p%"));
-            loading.setValue(i+1);
-            QStringList digitalPoint=coordinates.split("\t");
-            string imagekey=digitalPoint.at(0).toStdString().c_str();
-            string pointkey=digitalPoint.at(1).toStdString().c_str();
-            string colValue=digitalPoint.at(2).toStdString().c_str();
-            string linValue=digitalPoint.at(3).toStdString().c_str();
-
-            if (pointkey=imagesEdom.at(i))
-                stringstream aux;
-            aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">\n";
-            aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>\n";
-            aux << "</imageCoordinates>";
-            */
-        if(!insertDigitalCoordinates(pointsList.at(i)))//,imagesEdom.at()))
-            QMessageBox::warning(this, tr(" Warning "), tr("The point in line %1 from imported file\nhas incomplete or corrupted data").arg(i));
-    }
-    loadWidget->close();
-    updateTree();
-    viewPoints();
-    actionSave_file->setEnabled(true);
-}
-
-bool ProjectUserInterface_Qt::insertDigitalCoordinates(QString coordinates)
-{
-    QStringList digitalPoint=coordinates.split("\t");
-    if (digitalPoint.size()!=4)
-        return false;
-    else
-    {
-        std::string imagekey=digitalPoint.at(0).toStdString().c_str();
-        std::string pointkey=digitalPoint.at(1).toStdString().c_str();
-        std::string colValue=digitalPoint.at(2).toStdString().c_str();
-        std::string linValue=digitalPoint.at(3).toStdString().c_str();
-
-        EDomElement pointsXML(manager->getXml("points").c_str());
-        EDomElement point(pointsXML.elementByTagAtt("point","key",pointkey));
-        std::stringstream aux;
-        aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
-        aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
-        aux << "</imageCoordinates>\n";
-        point.addChildAtTagName("imagesMeasurements",aux.str());
-        manager->editComponent("Point",Conversion::stringToInt(pointkey),point.getContent());
-        return true;
-    }
+    return result;
 }
 
 bool ProjectUserInterface_Qt::availablePhotoTri()
 {
     EDomElement ois(manager->getXml("interiorOrientation"));
     EDomElement images(manager->getXml(("images")));
-    //qDebug("numero Images = %d, OIS feitas %d",images.children().size(),ois.children().size());
 
     if(images.children().size()<=ois.children().size())
         return true;
@@ -2559,37 +1871,7 @@ bool ProjectUserInterface_Qt::availableOrthoImage()
 {
     return availableStereoPlotter();
 }
-//**********
 
-/*
-// Se houver imagens cadastradas, poderÃÂ¡ se fazer a OrientaÃÂ§ÃÂ£o interior
-bool ProjectUserInterface_Qt::availabeOI()
-{
- EDomElement images(manager->getXml(("images")));
- if(images.children().size()>0)
-  return true;
- else
-  return false;
-}
-// Paulo 24/09/2011
-// Se houver pelo menos uma OI e um ponto cadastrado na imagem, poderÃÂ¡ se fazer a OrientaÃÂ§ao exterior
-// OBS.: Aqui nÃÂ£o ÃÂ© feita a filtragem de quais imagens poderÃÂ£o ser feitas as OEs!!!!
-bool ProjectUserInterface_Qt::availableOE()
-{
- EDomElement ois(manager->getXml("interiorOrientation"));
- EDomElement points(manager->getXml("points"));
- deque<EDomElement> point=points.elementsByTagName("point");
-
- //points.elementByTagAtt("imageCoordinates","key",intToString(i))
- //points.hasTagName("imageCoordinates")
- for (int i=0;i<points.children().size();i++)
- {
-  if (point.at(i).hasTagName("imageCoordinates"))
-   return true;
- }
- return false;
-}
-*/
 void ProjectUserInterface_Qt::updateCurrentForm()
 {
     if(currentForm!=NULL)
@@ -2613,274 +1895,8 @@ void ProjectUserInterface_Qt::updateCurrentForm()
     }
 }
 
-void ProjectUserInterface_Qt::importPointsFromTxt2()
-{
-    //primeiro arquivo
-    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import ENH file"),".","*.txt");
-    if(importFileName=="")
-        return;
-    QFile *importFile = new QFile(importFileName);
-    QStringList pointsList;
-
-    importFile->open(QIODevice::ReadOnly);
-
-    while(!importFile->atEnd())
-    {
-        QByteArray line = importFile->readLine();
-        QString aux(line);
-        //pointsList << aux.left(aux.lastIndexOf('\n'));
-        pointsList << aux.remove('\n');
-    }
-    importFile->close();
-
-    //segundo arquivo
-    QString importFileName2 = QFileDialog::getOpenFileName(this,tr("Open Import Digital File"),".","*.txt");
-    if(importFileName2=="")
-        return;
-    QFile *importFile2 = new QFile(importFileName2);
-    QStringList pointsList2;
-
-    importFile2->open(QIODevice::ReadOnly);
-
-    while(!importFile2->atEnd())
-    {
-        QByteArray line2 = importFile2->readLine();
-        QString aux2(line2);
-        //pointsList << aux.left(aux.lastIndexOf('\n'));
-        pointsList2 << aux2.remove('\n');
-    }
-    importFile2->close();
-
-    // Procura e concatena o ponto as suas coordenadas digitais nas imagens
-    int cont=0;
-    for (int i=0;i<pointsList.size();i++ )
-    {
-        QStringList fields= pointsList.at(i).split("\t");
-        QString gcpIdField = fields.at(0);
-        for (int j=0;j<pointsList2.size() && cont!=-1;j++)
-        {
-            QStringList fieldsDigital= pointsList2.at(j).split("\t");
-            //qDebug()<<fieldsDigital;
-            QString gcpIdFieldDigital = fieldsDigital.at(1);
-            if(gcpIdField.compare(gcpIdFieldDigital)==0)
-            {
-                //field.append(pointsList2.at(j));
-                QString temp=pointsList.at(i);
-                temp+="\t";
-                temp +=pointsList2.at(j);
-                pointsList.replace(i, temp);
-                cont++;
-            }
-        }
-
-    }
-    //for (int i=0;i<pointsList.size();i++ )
-    //qDebug()<< "Lista " << pointsList.at(0);
-
-    QWidget *loadWidget= new QWidget();
-    loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-    QProgressBar loading;
-    QPushButton cancelButton("Cancel");
-    loading.setRange(0,pointsList.size());
-
-    QVBoxLayout loadLayout;
-    loadLayout.addWidget(&loading,Qt::AlignCenter);
-    loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-    connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-    loadWidget->setLayout(&loadLayout);
-    loadWidget->setWindowTitle(tr("Loading Points"));
-    loading.setMinimumSize(300,30);
-    loadWidget->show();
-
-    std::string newPointXML;
-    for (int i=0; i<pointsList.length() && loadWidget!=NULL;i++)
-    {
-        loading.setFormat(tr("%v/%m : %p%"));
-        loading.setValue(i+1);
-        newPointXML+=pointTxtToXml2(pointsList.at(i),manager->getFreePointId()+i/*,i+1*/);
-        /*if ( newPointXML.hasTagName("pointId") )
-  {
-   manager->addComponent(newPointXML.getContent().data(),"points");
-  }*/
-    }
-    manager->addComponent(newPointXML,"points");
-    loadWidget->close();
-    updateTree();
-    viewPoints();
-    actionSave_file->setEnabled(true);
-
-}
-
-/** This function convert a point data from a *.txt line in a children point XML valid*/
-std::string ProjectUserInterface_Qt::pointTxtToXml2(QString point, int key/*, int line*/, std::string typePoint)
-{
-    bool ok;
-    std::stringstream aux;
-    std::string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
-    QStringList fields= point.split("\t");
-    int numImagesInPoint=fields.size()/4-1;
-
-    gcpIdField = fields.at(0).toStdString().c_str();
-    /*
-        typeField = point.split("\t").at(1).toStdString().c_str();
-            if(typeField == "Tie")
-                typePoint="photogrammetric";
-            else if (typeField== "Control")
-                typePoint="control";
-            else if (typeField== "Check")
-                typePoint="verification";
-        */
-    eField = fields.at(1).toStdString();
-    nField = fields.at(2).toStdString();
-    hField = fields.at(3).toStdString();
-    //		dEField = fields.at(4).toStdString();
-    //		dNField = fields.at(5).toStdString();
-    //		dHField = fields.at(6).toStdString();
-
-    aux << "<point key=\""<< Conversion::intToString(key)<<"\" type=\"" << typePoint << "\">\n";
-    aux << "<pointId>" << gcpIdField << "</pointId>\n";
-    aux << "<description>" << "Put point description here" << "</description>\n";
-    aux << "<spatialCoordinates uom=\"#" << "m" << "\">\n";
-    aux << "<gml:pos>" << eField << " " << nField << " " << hField << "</gml:pos>\n";
-    /*aux << "<sigma>\n";
-        aux << "<mml:matrix>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dEField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dNField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "<mml:matrixrow>\n";
-        aux << "<mml:cn>" << dHField << "</mml:cn>\n";
-        aux << "</mml:matrixrow>\n";
-        aux << "</mml:matrix>\n";
-        aux << "</sigma>\n";*/
-    aux << "</spatialCoordinates>\n";
-    aux << "<imagesMeasurements>\n";
-    for(int i=0;i<numImagesInPoint;i++)
-    {
-        std::string imagekey =fields.at(4*(i+1)).toStdString();
-        //string colValue =(fields.at(4*(i+1)+2).toInt(&ok)).toStdString();
-        //string linValue =fields.at(4*(i+1)+3).toStdString();
-
-        int colValue =(fields.at(4*(i+1)+2)).toInt(&ok);
-        int linValue =(fields.at(4*(i+1)+3)).toInt(&ok);
-
-        aux << "<imageCoordinates uom=\"#px\" image_key=\""<< imagekey <<"\">";
-        aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
-        aux << "</imageCoordinates>\n";
-    }
-
-    aux << "</imagesMeasurements>\n";
-    aux << "</point>\n";
-
-    return aux.str();
-    //EDomElement newPointXml(newXml.c_str());
-
-}
-
-void ProjectUserInterface_Qt::deleteEmptyPoints()
-{
-    EDomElement points(manager->getXml("points"));
-    std::deque<EDomElement> pnts=(points.elementsByTagName("point"));
-
-    //stringstream allPoints;
-    //int cont=0;
-    for (int i=0; i< (int)pnts.size();i++)
-    {
-        //		points.attribute();
-        if (!pnts.at(i).hasTagName("imageCoordinates"))
-        {
-            //	allPoints << pnts.at(i).getContent();
-            //qDebug("%s",pnts.at(i).getContent().c_str()) ;
-            //	cont++;
-            manager->editComponent("point",Conversion::stringToInt(pnts.at(i).attribute("key")),"");
-        }
-    }
-    //qDebug("%d",cont);
-
-}
-
-void ProjectUserInterface_Qt::exportDigitalCoordinates()
-{
-    QFileDialog salvar(this,tr("Export Digital Coordinates"),".","*.txt");
-    salvar.setAcceptMode(QFileDialog::AcceptSave);
-    salvar.setDefaultSuffix("txt");
-    if(salvar.exec())
-    {
-        QString fileSaveName = salvar.selectedFiles()[0];
-        if (fileSaveName.isEmpty())
-            return;
-
-        QFile *exportFileName= new QFile(fileSaveName);
-        exportFileName->setFileName(fileSaveName);
-        exportFileName->open(QIODevice::WriteOnly);
-
-        EDomElement points(manager->getXml("points").c_str());
-
-        QWidget *loadWidget= new QWidget();
-        loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-        QProgressBar loading;
-        //	QPushButton cancelButton("Cancel");
-        loading.setRange(0,points.children().size());
-
-        QVBoxLayout loadLayout;
-        loadLayout.addWidget(&loading,Qt::AlignCenter);
-        //	loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-        //	connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-        loadWidget->setLayout(&loadLayout);
-        loadWidget->setWindowTitle(tr("Exporting Points"));
-        loading.setMinimumSize(300,30);
-        loadWidget->show();
-        std::deque<EDomElement> point=points.elementsByTagName("point");
-        for (int i=0; i<(int)point.size(); i++)
-        {
-            loading.setFormat(tr("Point %v/%m : %p%"));
-            loading.setValue(i);
-            exportFileName->write(edomDigitalCoordinatesPointToTxt(point.at(i)).data());
-        }
-        loadWidget->close();
-        exportFileName->close();
-    }
-}
-
-/** This function convert a EDomElement children Point in a line *.txt point format
- */
-
-std::string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElement points)
-{
-    std::stringstream aux;
-    std::deque<EDomElement> digitalCoordinates=points.elementsByTagName("imageCoordinates");
-
-    std::string pointId=points.elementByTagName("pointId").toString();
-    EDomElement ede;
-    QString gmlpos;
-    bool ok;
-    for (int i=0; i<(int)digitalCoordinates.size();i++)
-    {
-        ede=digitalCoordinates.at(i);
-        gmlpos=ede.elementByTagName("gml:pos").toString().c_str();
-        //string col = (gmlpos.split(" ").at(0)).toStdString();
-        //string lin = (gmlpos.split(" ").at(1)).toStdString();
-        double col = (gmlpos.split(" ").at(0)).toDouble(&ok);
-        double lin = (gmlpos.split(" ").at(1)).toDouble(&ok);
-        aux << ede.attribute("image_key") << "\t" << pointId << "\t" << col << "\t" << lin <<"\n";
-    }
-
-    std::string result=aux.str();
-    return result.c_str();
-}
-
-
 void ProjectUserInterface_Qt::importImagesBatch()
 {
-    //primeiro arquivo
-    //QString importDirName = QFileDialog::getExistingDirectory(this,tr("Open directory of images"),".",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    //if(importDirName=="")
-    //return;
-
     QStringList importFilesName = QFileDialog::getOpenFileNames(this, "Select all images files", ".", "*.tif *.png *.bmp *.jpg");
     if(importFilesName.size()==0)
         return;
@@ -2931,7 +1947,6 @@ void ProjectUserInterface_Qt::importImagesBatch()
         for (int i=0; i<importFilesName.size();i++)
         {
             loading.setFormat(tr("Image %v/%m : %p%"));
-            //QFileInfo imageFileInfo(importFilesName.at(i));
             // Paulo: Quando for liberado para o usuario futuramente, o metodo ira procurar uma key disponivel para a imagem, mesmo que as keys tenham "buracos"
             xmlImages+=addImageXml(importFilesName.at(i),manager->getFreeImageId()+i,imageWidth,imageHeight,dpi);
             loading.setValue(i+1);
@@ -2994,115 +2009,15 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
     sugestionID.chop(4);
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-    //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
     imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(widthImages)<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
-    //imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
     imageXml << "\t\t<fileName>"<< fileName.toLocal8Bit().constData()<<"</fileName>\n";
-    //imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
     imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
     imageXml << "\t</image>\n";
 
     return imageXml.str();
-}
-
-
-void ProjectUserInterface_Qt::importOIDigitalMarks()
-{
-    QString importFileName = QFileDialog::getOpenFileName(this,tr("Open Import OI Digital File"),".","*.txt");
-    if(importFileName=="")
-        return;
-    QFile *importFile = new QFile(importFileName);
-    QStringList marksList;
-
-    importFile->open(QIODevice::ReadOnly);
-
-    while(!importFile->atEnd())
-    {
-        QByteArray line = importFile->readLine();
-        QString aux(line);
-        marksList << aux.remove('\n');
-    }
-    importFile->close();
-
-    QWidget *loadWidget= new QWidget();
-    loadWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-    QProgressBar loading;
-    QPushButton cancelButton("Cancel");
-    loading.setRange(0,marksList.size());
-
-    QVBoxLayout loadLayout;
-    loadLayout.addWidget(&loading,Qt::AlignCenter);
-    loadLayout.addWidget(&cancelButton,Qt::AlignCenter);
-    connect(&cancelButton,SIGNAL(clicked()),loadWidget,SLOT(close()));
-
-    loadWidget->setLayout(&loadLayout);
-    loadWidget->setWindowTitle(tr("Loading OIs"));
-    loading.setMinimumSize(300,30);
-    loadWidget->show();
-
-    std::string newOIXML;
-    int imagescount=1;
-    for (int i=0; i<marksList.length() && loadWidget!=NULL;i+=4)
-    {
-        loading.setFormat(tr("%v/%m : %p%"));
-
-        QStringList OIMarks;
-        OIMarks<<marksList.at(i)<<marksList.at(i+1)<<marksList.at(i+2)<<marksList.at(i+3);
-        newOIXML+=OIToXml(OIMarks,imagescount++);
-        loading.setValue(i+1);
-    }
-
-    manager->addComponent(newOIXML,"interiorOrientation");
-    loadWidget->close();
-
-    updateTree();
-    viewPoints();
-    actionSave_file->setEnabled(true);
-}
-
-std::string ProjectUserInterface_Qt::OIToXml(QStringList oiMarks,int imageKey)
-{
-    std::stringstream OIxml;
-    bool ok;
-    //Paulo: Metodo Lusitano
-    double markx1=oiMarks.at(0).section('\t',0,0).toDouble(&ok);
-    double marky1=oiMarks.at(0).section('\t',1,1).toDouble(&ok);
-
-    double markx2=oiMarks.at(1).section('\t',0,0).toDouble(&ok);
-    double marky2=oiMarks.at(1).section('\t',1,1).toDouble(&ok);
-
-    double markx3=oiMarks.at(2).section('\t',0,0).toDouble(&ok);
-    double marky3=oiMarks.at(2).section('\t',1,1).toDouble(&ok);
-
-    double markx4=oiMarks.at(3).section('\t',0,0).toDouble(&ok);
-    double marky4=oiMarks.at(3).section('\t',1,1).toDouble(&ok);
-
-    OIxml << "<imageIO type=\"Affine\" image_key=\""<< Conversion::doubleToString(imageKey)<<"\">\n";
-    OIxml << "\t<fiducialMarks uom=\"#px\">\n";
-    OIxml << "\t\t<fiducialMark key=\"1\">\n";
-    OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx1) << " " << Conversion::doubleToString(marky1) << "</gml:pos>\n";
-    OIxml << "\t\t</fiducialMark>\n";
-
-    OIxml << "\t\t<fiducialMark key=\"2\">\n";
-    OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx2) << " " << Conversion::doubleToString(marky2) << "</gml:pos>\n";
-    OIxml << "\t\t</fiducialMark>\n";
-
-    OIxml << "\t\t<fiducialMark key=\"3\">\n";
-    OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx3) << " " << Conversion::doubleToString(marky3) << "</gml:pos>\n";
-    OIxml << "\t\t</fiducialMark>\n";
-
-    OIxml << "\t\t<fiducialMark key=\"4\">\n";
-    OIxml << "\t\t\t<gml:pos>"<< Conversion::doubleToString(markx4) << " " << Conversion::doubleToString(marky4) << "</gml:pos>\n";
-    OIxml << "\t\t</fiducialMark>\n";
-
-    OIxml << "\t</fiducialMarks>\n";
-
-    OIxml << "</imageIO>\n";
-
-    return OIxml.str();
 }
 
 void ProjectUserInterface_Qt::updateLabelFileName()
@@ -3116,10 +2031,8 @@ void ProjectUserInterface_Qt::updateLabelFileName()
 void ProjectUserInterface_Qt::loadLastProject()
 {
     QSettings efotoSettings("uerj","efoto");
-    //QString filename = efotoSettings.value("lastProject").toString();
     QString filename = QString::fromLocal8Bit(efotoSettings.value("lastProject").toByteArray().constData());
 
-    //loadFile(filename.toStdString());
     loadFile(filename.toLocal8Bit().constData());
 }
 

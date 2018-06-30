@@ -737,11 +737,6 @@ void SensorForm::calculationMode (int modeIndex)
 	}
 }
 
-bool SensorForm::isForm(std::string formName)
-{
-	return !formName.compare("SensorForm");
-}
-
 void SensorForm::updateSensorDiagonal()
 {
 	double x=pixelSizeDoubleSpinBox->value()*sensorColsSpinBox->value();

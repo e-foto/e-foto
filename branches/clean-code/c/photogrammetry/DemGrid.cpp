@@ -38,15 +38,17 @@ DemGrid::DemGrid(double Xi,
                  double Yf,
                  double res_x,
                  double res_y):
+    manager_{nullptr},
+    point_list_{nullptr},
+    mpg_{nullptr},
+    cancel_flag_{false},
     Xi_ {Xi},
     Yi_ {Yi},
     Xf_ {Xf},
     Yf_ {Yf},
     res_x_ {res_x},
     res_y_ {res_y},
-    point_list_{nullptr},
-    mpg_{nullptr},
-    manager_{nullptr}
+    elap_time_{0.0}
 {
     // Calculate DEM size
     dem_width_ = static_cast<int>(1.0 + floor((Xf_ - Xi_) / res_x_));
@@ -61,7 +63,7 @@ void DemGrid::setPointList(MatchingPointsList* mpl)
     point_list_ = mpl;
 }
 
-void DemGrid::getMinMax(double& min, double& max)
+void DemGrid::getMinMax(double& min, double& max) const
 {
     max = min = DEM_.get(1, 1);
     double Z;
@@ -83,7 +85,7 @@ void DemGrid::getMinMax(double& min, double& max)
     }
 }
 
-double DemGrid::getMeanZ()
+double DemGrid::getMeanZ() const
 {
     double meanZ {0.0}, Z{0.0};
     unsigned int count {0};
@@ -105,7 +107,7 @@ double DemGrid::getMeanZ()
     return meanZ / count;
 }
 
-double DemGrid::getStdZ()
+double DemGrid::getStdZ() const
 {
     const auto meanZ = getMeanZ();
     double stdZ {0.0}, Z{0.0};
@@ -128,7 +130,7 @@ double DemGrid::getStdZ()
     return sqrt(stdZ / count);
 }
 
-double DemGrid::getHeightXY(double X, double Y)
+double DemGrid::getHeightXY(double X, double Y) const
 {
     // Calculate col,row - double
     const auto col = 1.0 + (X - Xi_) / res_x_;
@@ -136,7 +138,7 @@ double DemGrid::getHeightXY(double X, double Y)
     return getHeight(row, col);
 }
 
-double DemGrid::getHeight(double row, double col)
+double DemGrid::getHeight(double row, double col) const
 {
     // Check limits
     if (col < 1.0) {
@@ -257,7 +259,8 @@ void DemGrid::interpolateMovingSurface(double n,
  * Output:
  *  Use normal or fast interpolation
  */
-DemGrid::InterpolationMode DemGrid::chooseBestInterpolationMethod(double nf)
+DemGrid::InterpolationMode DemGrid::chooseBestInterpolationMethod(
+    double nf) const
 {
     const auto no_points = point_list_->size();
 
@@ -357,12 +360,12 @@ void DemGrid::interpolateNearestPointFast()
     delete mpg_;
 }
 
-const std::map<TSSurface,unsigned> matriceSize{{TSSurface::PLANE, 3},
-                             {TSSurface::LINEAR, 4},
-                             {TSSurface::PARABOLIC, 5},
-                             {TSSurface::SECONDDEGREE, 6},
-                             {TSSurface::THIRDDEGREE, 10}
-                            };
+const std::map<TSSurface, unsigned> matriceSize{{TSSurface::PLANE, 3},
+    {TSSurface::LINEAR, 4},
+    {TSSurface::PARABOLIC, 5},
+    {TSSurface::SECONDDEGREE, 6},
+    {TSSurface::THIRDDEGREE, 10}
+};
 
 // This interpolation method does not use the fast structure
 void DemGrid::interpolateTrendSurfaceFast(TSSurface ts_surface)
@@ -388,10 +391,8 @@ void DemGrid::interpolateTrendSurfaceFast(TSSurface ts_surface)
     Matrix X, A, L;
     printf("Interpolating using Trend Surface Fast ...\n");
     const auto no_points = point_list_->size();
-
     A.resize(no_points, matriceSize.at(ts_surface));
     L.resize(no_points, 1);
-
     // Calculate the cendroid of the mass of data
     MatchingPoints* mp;
     double Cx{0.0}, Cy{0.0};
@@ -767,9 +768,8 @@ void DemGrid::eliminateBadPointsGrid(double sigma)
 
 void DemGrid::cutGrid(double min, double max, bool fromList = true)
 {
-    double Xi, Xf, Yi, Yf, Zi, Zf;
-
     if (fromList) {
+        double Xi, Xf, Yi, Yf, Zi, Zf;
         point_list_->XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
         min = Zi;
         max = Zf;
@@ -797,120 +797,101 @@ void DemGrid::cutGrid(double min, double max, bool fromList = true)
  *                      *
  ************************/
 
-// This is an internal function used to debug loading functions
-void DemGrid::printData()
-{
-    printf("DSM header:\n");
-    printf(" Xi: %f\n Yi: %f\n Xf: %f\n Yf: %f\n", Xi_, Yi_, Xf_, Yf_);
-    printf(" Resolution X: %f\n Resolution Y: %f\n", res_x_, res_y_);
-    printf(" GRID width: %d\n GRID height: %d\n", dem_width_, dem_height_);
-    printf("Sample DSM data:\n");
-    const size_t w = (dem_width_ < 10) ? dem_width_ : 10;
-    const size_t h = (dem_height_ < 10) ? dem_height_ : 10;
-
-    for (size_t i = 1; i <= h; i++) {
-        for (size_t j = 1; j <= w; j++) {
-            printf("%.2f  ", DEM_.get(i, j));
-        }
-
-        printf("\n");
-    }
-}
-
 void DemGrid::saveDem(const char* filename, Filetype mode) const
 {
-    switch (mode) {
-    case Filetype::BINARY :
+    if (mode == Filetype::BINARY) {
         saveDemEfoto(filename);
-        break;
-
-    default :
-        saveDemAscii(filename);
-        break;
+        return;
     }
+
+    saveDemAscii(filename);
+    return;
 }
 
 void DemGrid::loadDem(char* filename, Filetype mode)
 {
-    switch (mode) {
-    case Filetype::BINARY :
+    if (mode == Filetype::BINARY) {
         loadDemEfoto(filename);
-        break;
-
-    default :
-        loadDemAscii(filename);
-        break;
+        return;
     }
+
+    loadDemAscii(filename);
+    return;
 }
 
 void DemGrid::saveDemEfoto(const char* filename) const
 {
+    static_assert( sizeof(double) == 8, "Double must be 8 bytes in size" );
     FILE* fp;
     fp = fopen(filename, "wb");
-    // Write header
-    double header[8];
-    header[0] = Xi_;
-    header[1] = Yi_;
-    header[2] = Xf_;
-    header[3] = Yf_;
-    header[4] = res_x_;
-    header[5] = res_y_;
-    header[6] = static_cast<double>(dem_width_);
-    header[7] = static_cast<double>(dem_height_);
-    fwrite(&header, 1, 8 * 8, fp);
-    // Write DEM
-    int p{0};
-    size_t file_size{dem_width_ * dem_height_};
-    double* data = new double[file_size];
 
-    for (size_t i = 1; i <= dem_height_; i++) {
-        for (size_t j = 1; j <= dem_width_; j++) {
-            data[p] = DEM_.get(i, j);
-            p++;
+    if (fp) {
+        const int DOUBLE_SIZE = 8;
+        // Write header
+        double header[8];
+        header[0] = Xi_;
+        header[1] = Yi_;
+        header[2] = Xf_;
+        header[3] = Yf_;
+        header[4] = res_x_;
+        header[5] = res_y_;
+        header[6] = static_cast<double>(dem_width_);
+        header[7] = static_cast<double>(dem_height_);
+        fwrite(&header, 1, sizeof(header), fp);
+        // Write DEM
+        int p{0};
+        size_t file_size = dem_width_ * dem_height_;
+        double* data = new double[file_size];
+
+        for (size_t i = 1; i <= dem_height_; i++) {
+            for (size_t j = 1; j <= dem_width_; j++) {
+                data[p] = DEM_.get(i, j);
+                p++;
+            }
         }
-    }
 
-    fwrite(data, 1, file_size * 8, fp);
-    fclose(fp);
-    delete data;
+        fwrite(data, 1, file_size * DOUBLE_SIZE, fp);
+        fclose(fp);
+        delete[] data;
+    }
 }
 
 void DemGrid::loadDemEfoto(const char* filename)
 {
+    static_assert( sizeof(double) == 8, "Double must be 8 bytes in size" );
     std::ifstream fp;
     fp.open(filename, std::ios::binary);
 
-    if (!fp) {
-        return;
-    }
+    if (fp) {
+        const int DOUBLE_SIZE = 8;
+        // Read header
+        double header[8];
+        fp.read(reinterpret_cast<char*>(header), sizeof(header));
+        Xi_ = header[0];
+        Yi_ = header[1];
+        Xf_ = header[2];
+        Yf_ = header[3];
+        res_x_ = header[4];
+        res_y_ = header[5];
+        dem_width_ = static_cast<int>(header[6]);
+        dem_height_ = static_cast<int>(header[7]);
+        // Read DEM
+        DEM_.resize(dem_height_, dem_width_);
+        size_t file_size{dem_width_ * dem_height_};
+        double* data = new double[file_size];
+        fp.read(reinterpret_cast<char*>(data), dem_width_ * dem_height_ * DOUBLE_SIZE);
+        int p {0};
 
-    // Read header
-    double header[8];
-    fp.read(reinterpret_cast<char*>(header), sizeof(header));
-    Xi_ = header[0];
-    Yi_ = header[1];
-    Xf_ = header[2];
-    Yf_ = header[3];
-    res_x_ = header[4];
-    res_y_ = header[5];
-    dem_width_ = static_cast<int>(header[6]);
-    dem_height_ = static_cast<int>(header[7]);
-    // Read DEM
-    DEM_.resize(dem_height_, dem_width_);
-    size_t file_size{dem_width_ * dem_height_};
-    double* data = new double[file_size];
-    int p {0};
-    fp.read(reinterpret_cast<char*>(data), dem_width_ * dem_height_ * 8);
-
-    for (size_t i = 1; i <= dem_height_; i++) {
-        for (size_t j = 1; j <= dem_width_; j++) {
-            DEM_.set(i, j, data[p]);
-            p++;
+        for (size_t i = 1; i <= dem_height_; i++) {
+            for (size_t j = 1; j <= dem_width_; j++) {
+                DEM_.set(i, j, data[p]);
+                p++;
+            }
         }
-    }
 
-    fp.close();
-    delete []data;
+        fp.close();
+        delete []data;
+    }
 }
 
 void DemGrid::saveDemAscii(const char* filename) const
@@ -943,14 +924,14 @@ double DemGrid::getAsciiParameter(std::ifstream* file, std::string tag)
 {
     char line[256];
     std::string sline;
-    int line_count {0}, p{0};
+    int line_count {0};
     // find -1 = not found
     file->seekg(0, std::ios::beg);
 
     while (!file->eof() && line_count < 50) {
         file->getline(line, 256);
         sline = (std::string) line;
-        p = sline.find(tag);
+        int p = sline.find(tag);
 
         if (p >= 0) {
             sline = sline.substr(p + tag.length());
@@ -1312,11 +1293,10 @@ void DemGrid::interpolateMovingSurfaceNormal(double n,
  *             *
  ***************/
 
-std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
+std::string DemGrid::calculateDemQuality(MatchingPointsList mpl) const
 {
     std::stringstream txt;
     MatchingPoints* mp{nullptr};
-    double Z{0.0}, Zgrid{0.0};
     auto list_size = mpl.size();
     Matrix Zerr(list_size, 1);
     double Zerror{0.0};
@@ -1327,8 +1307,8 @@ std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
 
     for (size_t i = 0; i < list_size; i++) {
         mp = mpl.get(i + 1);
-        Z = mp->Z;
-        Zgrid = getHeightXY(mp->X, mp->Y);
+        double Z = mp->Z;
+        double Zgrid = getHeightXY(mp->X, mp->Y);
 
         // -1.0 is a DEM hole flag
         if (Zgrid - 0.0 < 0.0000000000000001) {
@@ -1406,7 +1386,7 @@ std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     return txt.str();
 }
 
-void DemGrid::overlayMap(const Matrix* const map)
+void DemGrid::overlayMap(const Matrix* const map) const
 {
     if (map->getCols() != DEM_.getCols() || map->getRows() != DEM_.getRows()) {
         return;

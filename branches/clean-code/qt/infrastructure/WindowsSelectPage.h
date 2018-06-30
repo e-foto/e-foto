@@ -14,7 +14,6 @@ public:
 	WindowsSelectPage(QString leftBox, QString rightBox,QWidget *parent = 0);
 	void setInitialList(QStringList list);
     std::deque<std::string> getSelectedItens();
-	void initializePage();
 
 public slots :
 	void addAllItems();

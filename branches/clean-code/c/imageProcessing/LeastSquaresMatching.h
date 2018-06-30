@@ -52,15 +52,15 @@ public:
     };
 
     int searchHomologous(Matrix*, Matrix*);
-    double getBestP()
+    double getBestP() const
     {
         return best_p;
     };
-    double getBestX()
+    double getBestX() const
     {
         return best_x;
     };
-    double getBestY()
+    double getBestY() const
     {
         return best_y;
     };
@@ -105,9 +105,9 @@ private:
     int template_width, template_height;
     int template_center_x, template_center_y, matching_window_center_x,
         matching_window_center_y;
-    double best_p, limit_shift_values, limit_scale_values, limit_shear_values,
+    double limit_shift_values, limit_scale_values, limit_shear_values,
            acceptance_correlation, acceptance_error_ellipse;
-    double best_x, best_y;
+    double best_p, best_x, best_y;
     double over_it_distance;
     bool over_it;
     int max_iterations, max_distance;

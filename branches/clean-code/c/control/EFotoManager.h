@@ -53,6 +53,15 @@ public:
                   NEXT_SR, NEXT_PT, NEXT_DEM, NEXT_ORTHO, NEXT_SP, NEXT_Report, NEXT_PTReport
                  } nextModule_t;
 private:
+    ProjectManager* project_;
+    IOManager* interiorOrientation;
+    SRManager* spatialRessection;
+    PTManager* fotoTri;
+    DEMManager* dem;
+    OrthoManager* ortho;
+    SPManager* sp;
+    ReportManager* report;
+    Project report_project;
     nextModule_t nextModule;
     int nextImage;
 
@@ -61,16 +70,7 @@ private:
     std::string interfaceType;
 
 
-    ProjectManager* project;
-    IOManager* interiorOrientation;
-    SRManager* spatialRessection;
-    PTManager* fotoTri;
-    DEMManager* dem;
-    OrthoManager* ortho;
-    SPManager* sp;
-    ReportManager* report;
-    XmlUpdater updater;
-    Project report_project;
+
 
     Terrain* theTerrain;
     std::deque<Sensor*> sensors;
@@ -236,20 +236,6 @@ public:
     Point* point(int id);
 
     /**
-    * \brief Método que retorna uma instância existente da classe InteriorOrientation.
-    * \param id Identificador da Orientação Interior.
-    * \return InteriorOrientation Instância da classe InteriorOrientation.
-    */
-    InteriorOrientation* IO(int id);
-
-    /**
-    * \brief Método que retorna uma instância existente da classe ExteriorOrientation.
-    * \param id Identificador da Orientação Exterior.
-    * \return ExteriorOrientation Instância da classe ExteriorOrientation.
-    */
-    ExteriorOrientation* EO(int id);
-
-    /**
     * \brief Método que retorna os valores de um nó do XML.
     * \param tagname Nome da tag do XML.
     * \return std::string Valores do Nó do XML que foi requisitado.
@@ -266,19 +252,6 @@ public:
     std::string getXml(std::string tagname, std::string att, std::string value);
 
     /**
-    * \brief Método para emitir o nome de classe.
-    * \return std::string   Retorna o nome de classe do objeto.
-    */
-    std::string objectType(void);
-
-    /**
-    * \brief Método de teste para o nome/tipo de instância.
-    * \param s  Texto com o nome da classe que é esperado.
-    * \return bool  Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
-    */
-    bool is(std::string s);
-
-    /**
     * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
     * \param xml    String contendo o xml com todos os valores de atributos adequados a uma instância da classe EFotoManager.
     */
@@ -288,7 +261,7 @@ public:
     * \brief Método para extrair o equivalente em dados xml de uma instância.
     * \return std::string   Retorna o string contendo o xml para uma instância da classe EFotoManager.
     */
-    std::string xmlGetData();
+    std::string xmlGetData() const;
 
     /**
     * \brief Método usado após aceitar uma IO ou SR para setar como default que o projeto ainda não foi salvo.
@@ -300,7 +273,7 @@ public:
     * \brief Método que retorna se o projeto foi salvo ou não.
     * \return bool Retorna verdadeiro caso o projeto tenha sido salvo. Retorna falso, caso contrário.
     */
-    bool getSavedState();
+    bool getSavedState() const;
 
     /**
     * \brief Método que seta o tipo de interface em que o programa irá rodar.
@@ -312,7 +285,7 @@ public:
     * \brief Método que retorna o tipo de interface corrente.
     * \return std::string O tipo de interface corrente.
     */
-    std::string getInterfaceType();
+    std::string getInterfaceType() const;
 
     /**
     * \brief Método que seta o próximo módulo a ser executado.
@@ -429,18 +402,14 @@ public:
     bool execEPR();
 
     /**
-    * \brief Método que encerra o módulo de Report.
-    */
-    void stopEPR();
-
-    /**
     * \brief Método que identifica pares estereoscópicos automaticamente.
     */
     int getPairs(std::deque<int>& listPairs);
 
-    void getImagesId(int pos, int& left, int& right, std::deque<int>& listPairs);
+    void getImagesId(int pos, int& left, int& right,
+                     std::deque<int>& listPairs) const;
 
-    bool existPair(int& id1, int& id2, std::deque<int>& listPairs);
+    bool existPair(int& id1, int& id2, std::deque<int>& listPairs) const;
 
     //bool loadProject();
 

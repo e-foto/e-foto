@@ -25,12 +25,11 @@ class AbstractForm : public QWidget
     Q_OBJECT
 
 public:
-    AbstractForm(QWidget *parent = 0) : QWidget(parent) {}
+    explicit AbstractForm(QWidget *parent = 0) : QWidget(parent) {}
 
     virtual void fillvalues(std::string values) = 0;
     virtual std::string getvalues() = 0;
     virtual void setReadOnly(bool state) = 0;
-    virtual bool isForm(std::string formName) = 0;
 };
 
 

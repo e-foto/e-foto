@@ -28,23 +28,9 @@ namespace efoto {
 
 class OrthoManager;
 
-class OrthoUserInterface //: public EObject
+class OrthoUserInterface
 {
-
-protected:
-
-	// Associated Objects
-	//
-	OrthoManager* manager;
-
 public:
-
-	// Association Methods
-	//
-	OrthoManager* getManager();
-
-	// Other Methods
-	//
 	virtual bool exec() = 0;
 
 };

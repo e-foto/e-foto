@@ -42,7 +42,7 @@ class PhotoTriReport
 private:
     EFotoManager* manager;
     Project * project;
-    Matrix calculateAvgStd(Matrix m);
+    static Matrix calculateAvgStd(Matrix m);
     Matrix calculateXYZerror();
     Matrix calculatePixelerror();
     Matrix formatBundleX1();

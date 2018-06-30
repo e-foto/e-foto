@@ -58,7 +58,6 @@ protected:
     void updateTable();
 
 public slots:
-    virtual void languageChange();
     void updateClass(int feat_type);
     void onLoadButton();
     void onSaveButton();

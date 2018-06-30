@@ -8,44 +8,39 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-class StereoScene: public QObject
-{
-	Q_OBJECT
+class StereoScene: public QObject {
+    Q_OBJECT
 
-protected:
-	SingleScene* leftScene_;
-	SingleScene* rightScene_;
+  protected:
+    SingleScene* leftScene_;
+    SingleScene* rightScene_;
 
-public:
-    explicit StereoScene(QObject* parent, QString leftImageFilepath, QString rightImageFilepath);
-	~StereoScene();
+  public:
+    explicit StereoScene(QObject* parent, QString leftImageFilepath,
+                         QString rightImageFilepath);
+    ~StereoScene();
 
-	bool isValid();
-	SingleScene* getLeftScene() const;
-	SingleScene* getRightScene() const;
+    bool isValid();
+    SingleScene* getLeftScene() const;
+    SingleScene* getRightScene() const;
 
-	double getScale() {return leftScene_->getScale();}
-
-	void setLeftScene(SingleScene* leftScene);
-	void setRightScene(SingleScene* rightScene);
-
-	void setViewport(QSize viewportSize);
-	QPointF getChannelsOffset();
-	unsigned int getWidth();
-	unsigned int getHeight();
+    double getScale() {
+        return leftScene_->getScale();
+    }
+    void setViewport(QSize viewportSize);
+    QPointF getChannelsOffset();
+    unsigned int getWidth();
+    unsigned int getHeight();
 };
 
-inline bool StereoScene::isValid()
-{
-	return leftScene_->isValid() && rightScene_->isValid();
+inline bool StereoScene::isValid() {
+    return leftScene_->isValid() && rightScene_->isValid();
 }
-inline SingleScene* StereoScene::getLeftScene() const
-{
-	return leftScene_;
+inline SingleScene* StereoScene::getLeftScene() const {
+    return leftScene_;
 }
-inline SingleScene* StereoScene::getRightScene() const
-{
-	return rightScene_;
+inline SingleScene* StereoScene::getRightScene() const {
+    return rightScene_;
 }
 
 } // namespace efoto

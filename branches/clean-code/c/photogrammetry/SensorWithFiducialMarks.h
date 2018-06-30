@@ -54,48 +54,29 @@ private:
     std::deque<DetectorFiducialMark> anaFidMarks;
 
 public:
-
 	//Constructors
-	//
 	SensorWithFiducialMarks();
-	SensorWithFiducialMarks(const Sensor& sensor);
+    explicit SensorWithFiducialMarks(const Sensor& sensor);
     explicit SensorWithFiducialMarks(int myId);
-    explicit SensorWithFiducialMarks(int myId, const Matrix& myLb);
-    explicit SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
+    SensorWithFiducialMarks(int myId, const Matrix& myLb);
+    SensorWithFiducialMarks(int myId, const Matrix& myLb, const Matrix& mySigmaLb);
 
 	//Private attribute accessor methods
-	//
 	void setLb(const Matrix& newLb);
 	void setLb(const Matrix& myLb, const Matrix& mySigmaLb);
 	Matrix getLb();
-	Matrix getSigmaLb();
+    Matrix getSigmaLb() const;
 
 	//Composed object accessor methods
-	//
-    void setAnaFidMarks(std::deque<DetectorFiducialMark> newAnaFidMarks);
-    std::deque<DetectorFiducialMark> getAnaFidMarks();
-
-	void putAnaFidMark(DetectorFiducialMark newAnaFidMark);
-	DetectorFiducialMark getAnaFidMark(int id);
 	DetectorFiducialMark getAnaFidMarkAt(unsigned int index);
-	int countAnaFidMarks();
 
-	void deleteAnaFidMark(int id);
-	void deleteAnaFidMarkAt(unsigned int index);
-	void clearAnaFidMarks();
-
-	// EObject methods
-	//
-    std::string objectType(void);
     bool is(std::string s);
 
 	// XML methods
-	//
     void xmlSetData(std::string xml);
     std::string xmlGetData();
 
 	//Other methods
-	//
 	void marksToLb();
 
 };

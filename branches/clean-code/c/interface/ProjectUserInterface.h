@@ -48,13 +48,7 @@ protected:
 	ProjectManager* manager;
 
 public:
-
-	// Association Methods
-	//
-	ProjectManager* getManager();
-
 	// Other Methods
-	//
     virtual bool exec() = 0;
     virtual void saveFile() = 0;
 };

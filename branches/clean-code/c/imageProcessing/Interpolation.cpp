@@ -25,12 +25,16 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-Interpolation::Interpolation()
+Interpolation::Interpolation():
+    dx{0.0},
+    dy{0.0},
+    mode{0},
+    ccolor{0},
+    img_{nullptr}
 {
     // Mode:
     // 0 - Grayscale (0-255) in double format (0.0 - 1.0)
     // 1 - Color (24-bit RRGGBB) in double format (0.0 - 1.0)
-    mode = 0;
 }
 
 double Interpolation::interpolate(Matrix* img,
@@ -89,7 +93,7 @@ double Interpolation::interpolate(Matrix* img,
  **/
 
 double Interpolation::interpolateNearestNeighbor(const double col,
-                                                 const double lin)
+                                                 const double lin) const
 {
     auto i = round(lin);
     auto j = round(col);
@@ -210,7 +214,7 @@ double Interpolation::interpolateLagrange(const double col, const double lin)
     return pixel;
 }
 
-double Interpolation::aa(const int n, const int i, const int j)
+double Interpolation::aa(const int n, const int i, const int j) const
 {
     return I(i - 1, j + n - 2) * (dx - 1.0) * (dx - 2.0) * (-dx / 6.0)
             + I(i, j + n - 2) * (dx + 1.0) * (dx - 1.0) * ((dx - 2.0) / 2.0)
@@ -223,7 +227,7 @@ double Interpolation::aa(const int n, const int i, const int j)
  * Read pixel
  **/
 
-double Interpolation::I(const int i, const int j)
+double Interpolation::I(const int i, const int j) const
 {
     if (ccolor == 0) {
         return img_->get(i, j);
@@ -257,7 +261,7 @@ double Interpolation::I(const int i, const int j)
  * Check limits
  **/
 
-bool Interpolation::checkLimits(int col, int row)
+bool Interpolation::checkLimits(int col, int row) const
 {
     return (col >= 1 && row >= 1 && unsigned(col) <= img_->getCols()
             && unsigned(row) <= img_->getRows());

@@ -31,27 +31,27 @@ ProjectHeader::~ProjectHeader()
 {
 }
 
-std::string ProjectHeader::getName()
+std::string ProjectHeader::getName() const
 {
     return name;
 }
 
-std::string ProjectHeader::getDescription()
+std::string ProjectHeader::getDescription() const
 {
     return description;
 }
 
-std::string ProjectHeader::getCreation()
+std::string ProjectHeader::getCreation() const
 {
     return creation;
 }
 
-std::string ProjectHeader::getModification()
+std::string ProjectHeader::getModification() const
 {
     return modification;
 }
 
-std::string ProjectHeader::getOwner()
+std::string ProjectHeader::getOwner() const
 {
     return owner;
 }

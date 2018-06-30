@@ -89,55 +89,38 @@ int Conversion::stringToInt(std::string value)
     return result;
 }
 
-std::string Conversion::longToString(long value)
-{
-    std::stringstream converter;
-    converter << value;
-    return converter.str();
-}
-
-long Conversion::stringToLong(std::string value)
-{
-    long result;
-    std::stringstream converter;
-    converter << value;
-    converter >> result;
-    return result;
-}
-
 // Private methods
-//
 int EDomElement::tagType(std::string tag)
 {
-    if (tag.find("<") != 0) {
-        return INVALID_TAG;
-    } else if (tag.find(">") != tag.length() - 1) {
-        return INVALID_TAG;
-    } else if (tag.find(">") == 1) {
-        return INVALID_TAG;
-    } else if (tag.at(1) == ' ' || tag.at(1) == '\t' || tag.at(1) == '\n') {
-        return INVALID_TAG;
-    } else if (tag.find("<?") != std::string::npos
-               || tag.find("?>") != std::string::npos) {
-        return INVALID_TAG;
-    } else if (tag.find("<!") != std::string::npos) {
-        return INVALID_TAG;
-    } else if (tag.find("</") == std::string::npos
-               && tag.find("/>") == std::string::npos) {
-        return OPEN_TAG;
-    } else if (tag.find("</") == 0 && tag.find("/>") == std::string::npos) {
-        return CLOSE_TAG;
-    } else if (tag.find("</") != 0 && tag.find("/>") != std::string::npos) {
-        return SIMPLE_TAG;
-    } else {
+    if (tag.at(0) != '<'
+            || tag.at(tag.length() - 1) != '>'
+            || tag.at(1) == '>'
+            || tag.at(1) == ' '
+            || tag.at(1) == '\t'
+            || tag.at(1) == '\n'
+            || tag.find("<?") != std::string::npos
+            || tag.find("?>") != std::string::npos
+            || tag.find("<!") != std::string::npos
+            ) {
         return INVALID_TAG;
     }
+
+    if (tag.find("</") == std::string::npos
+            && tag.find("/>") == std::string::npos) {
+        return OPEN_TAG;
+    }
+    if (tag.at(1) == '/' && tag.find("/>") == std::string::npos) {
+        return CLOSE_TAG;
+    }
+    if (tag.at(1) != '/' && tag.find("/>") != std::string::npos) {
+        return SIMPLE_TAG;
+    }
+    return INVALID_TAG;
 }
 
 std::string EDomElement::tagName(std::string tag)
 {
-    int first = 0;
-    int last;
+    auto first = 0;
 
     if (tagType(tag) == INVALID_TAG) {
         return "";
@@ -147,11 +130,14 @@ std::string EDomElement::tagName(std::string tag)
         first = 2;
     }
 
-    last = first;
+    auto last = first;
 
     try {
-        while (!(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t'
-                 || tag.at(last) == '\n' || tag.at(last) == '/')) {
+        while (!(tag.at(last) == '>'
+                 || tag.at(last) == ' '
+                 || tag.at(last) == '\t'
+                 || tag.at(last) == '\n'
+                 || tag.at(last) == '/')) {
             last++;
         }
 
@@ -224,14 +210,14 @@ bool EDomElement::addAttribute(std::string newAttName, std::string newAttValue)
 
 // Constructors and Destructors
 //
-EDomElement::EDomElement()
+EDomElement::EDomElement():
+    content{""}
 {
-    content = "";
 }
 
-EDomElement::EDomElement(std::string myXml)
+EDomElement::EDomElement(std::string myXml):
+    content{myXml}
 {
-    content = myXml;
 }
 
 EDomElement::~EDomElement()
@@ -245,7 +231,7 @@ void EDomElement::setContent(std::string newXml)
     content = newXml;
 }
 
-std::string EDomElement::getContent()
+std::string EDomElement::getContent() const
 {
     return content;
 }
@@ -255,20 +241,17 @@ std::string EDomElement::getContent()
 std::deque<EDomElement> EDomElement::children()
 {
     std::deque<EDomElement> result;
-    EDomElement* item;
-    unsigned long opening = 1;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
 
     try {
+        unsigned long opening = 1;
+        unsigned long closing = 0;
         while (opening < content.length()) {
             if (content.at(opening) == '<') {
                 closing = content.find(">", opening) + 1;
 
                 if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                    nesting = 1;
-                    pos = opening + 1;
+                    unsigned long nesting = 1;
+                    unsigned long pos = opening + 1;
 
                     while (nesting > 0) {
                         pos = content.find("<", pos);
@@ -288,7 +271,7 @@ std::deque<EDomElement> EDomElement::children()
                 }
 
                 if (closing != opening) {
-                    item = new EDomElement(content.substr(opening, closing - opening));
+                    EDomElement* item = new EDomElement(content.substr(opening, closing - opening));
                     result.push_back(*item);
                     opening = closing - 1;
                 }
@@ -308,21 +291,19 @@ std::deque<EDomElement> EDomElement::children()
 std::deque<EDomElement> EDomElement::elementsByTagName(std::string name)
 {
     std::deque<EDomElement> result;
-    EDomElement* item;
-    unsigned long opening = 0;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
 
     try {
+        unsigned long opening = 0;
+        unsigned long closing = 0;
+
         while (opening < content.length()) {
             if (content.at(opening) == '<') {
                 closing = content.find(">", opening) + 1;
 
                 if (tagName(content.substr(opening, closing - opening)).compare(name) == 0) {
                     if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                        nesting = 1;
-                        pos = opening + 1;
+                        unsigned long nesting = 1;
+                        unsigned long pos = opening + 1;
 
                         while (nesting > 0) {
                             pos = content.find("<", pos);
@@ -342,7 +323,7 @@ std::deque<EDomElement> EDomElement::elementsByTagName(std::string name)
                     }
 
                     if (closing != opening) {
-                        item = new EDomElement(content.substr(opening, closing - opening));
+                        EDomElement* item = new EDomElement(content.substr(opening, closing - opening));
                         result.push_back(*item);
                     }
                 }
@@ -400,21 +381,19 @@ EDomElement EDomElement::elementByTagAtt(std::string tagname, std::string att,
 
 bool EDomElement::addChildAtTagName(std::string tagname, std::string newChild)
 {
-    bool result = false;
-    unsigned long opening = 0;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
-
     try {
+        bool result = false;
+        unsigned long opening = 0;
+        unsigned long closing = 0;
+
         while (opening < content.length()) {
             if (content.at(opening) == '<') {
                 closing = content.find(">", opening) + 1;
 
                 if (tagName(content.substr(opening, closing - opening)).compare(tagname) == 0) {
                     if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                        nesting = 1;
-                        pos = opening + 1;
+                        unsigned long nesting = 1;
+                        unsigned long pos = opening + 1;
 
                         while (nesting > 0) {
                             pos = content.find("<", pos);
@@ -451,82 +430,21 @@ bool EDomElement::addChildAtTagName(std::string tagname, std::string newChild)
     }
 }
 
-bool EDomElement::addChildAtTagAtt(std::string tagname, std::string att,
-                                   std::string value, std::string newChild)
-{
-    bool result = false;
-    unsigned long opening = 0;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
-
-    try {
-        while (opening < content.length()) {
-            if (content.at(opening) == '<') {
-                closing = content.find(">", opening) + 1;
-
-                if (tagName(content.substr(opening, closing - opening)).compare(tagname) == 0) {
-                    if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                        nesting = 1;
-                        pos = opening + 1;
-
-                        while (nesting > 0) {
-                            pos = content.find("<", pos);
-                            {
-                                closing = content.find(">", pos) + 1;
-
-                                if (tagType(content.substr(pos, closing - pos)) == OPEN_TAG) {
-                                    nesting++;
-                                } else if (tagType(content.substr(pos, closing - pos)) == CLOSE_TAG) {
-                                    nesting--;
-                                }
-                            }
-                            pos = closing;
-                        }
-                    } else if (tagType(content.substr(opening, closing - opening)) != OPEN_TAG) {
-                        closing = opening;
-                    }
-
-                    if (closing != opening) {
-                        EDomElement tester(content.substr(opening, closing - opening));
-
-                        if (tester.attribute(att).compare(value) == 0) {
-                            int position = content.rfind("<", closing);
-                            content.insert(position, "\n");
-                            content.insert(position, newChild);
-                            result = true;
-                        }
-                    }
-                }
-            }
-
-            opening++;
-        }
-
-        return result;
-    } catch (std::out_of_range& e) {
-        return false;
-    }
-}
-
 bool EDomElement::replaceChildByTagName(std::string tagname,
                                         std::string newChild)
 {
-    bool result = false;
-    unsigned long opening = 0;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
-
     try {
+        bool result = false;
+        unsigned long opening = 0;
+
         while (opening < content.length()) {
             if (content.at(opening) == '<') {
-                closing = content.find(">", opening) + 1;
+                unsigned long closing = content.find(">", opening) + 1;
 
                 if (tagName(content.substr(opening, closing - opening)).compare(tagname) == 0) {
                     if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                        nesting = 1;
-                        pos = opening + 1;
+                        unsigned long nesting = 1;
+                        unsigned long pos = opening + 1;
 
                         while (nesting > 0) {
                             pos = content.find("<", pos);
@@ -564,21 +482,18 @@ bool EDomElement::replaceChildByTagName(std::string tagname,
 bool EDomElement::replaceChildByTagAtt(std::string tagname, std::string att,
                                        std::string value, std::string newChild)
 {
-    bool result = false;
-    unsigned long opening = 0;
-    unsigned long closing = 0;
-    unsigned long pos = 0;
-    unsigned long nesting = 0;
-
     try {
+        bool result = false;
+        unsigned long opening = 0;
+
         while (opening < content.length()) {
             if (content.at(opening) == '<') {
-                closing = content.find(">", opening) + 1;
+                unsigned long closing = content.find(">", opening) + 1;
 
                 if (tagName(content.substr(opening, closing - opening)).compare(tagname) == 0) {
                     if (tagType(content.substr(opening, closing - opening)) == OPEN_TAG) {
-                        nesting = 1;
-                        pos = opening + 1;
+                        unsigned long nesting = 1;
+                        unsigned long pos = opening + 1;
 
                         while (nesting > 0) {
                             pos = content.find("<", pos);
@@ -633,16 +548,16 @@ std::string EDomElement::tagName()
         return "";
     }
 
-    int first = 1;
-    int last = 1;
+
+
 
     try {
+        int last = 1;
         while (!(tag.at(last) == '>' || tag.at(last) == ' ' || tag.at(last) == '\t'
                  || tag.at(last) == '\n' || tag.at(last) == '/')) {
             last++;
         }
-
-        return tag.substr(first, last - first);
+        return tag.substr(1, last - 1);
     } catch (std::out_of_range& e) {
         return "";
     }
@@ -651,9 +566,10 @@ std::string EDomElement::tagName()
 std::string EDomElement::attribute(std::string att)
 {
     std::string result = "";
-    unsigned long pos = 0;
 
     try {
+        unsigned long pos = 0;
+
         while (pos < content.length() && content.at(pos) != '>') {
             if (content.substr(pos, att.length()).compare(att) == 0
                     && content.at(pos - 1) == ' ' && content.at(pos + att.length()) == '=') {
@@ -681,19 +597,6 @@ bool EDomElement::addAttributeByTagName(std::string tagname, std::string newAtt,
     }
 
     replaceChildByTagName(tagname, ede.getContent());
-    return true;
-}
-
-bool EDomElement::addAttributeByTagAtt(std::string tagname, std::string att,
-                                       std::string value, std::string newAtt, std::string newAttValue)
-{
-    EDomElement ede = elementByTagAtt(tagname, att, value);
-
-    if (!ede.addAttribute(newAtt, newAttValue)) {
-        return false;
-    }
-
-    replaceChildByTagAtt(tagname, att, value, ede.getContent());
     return true;
 }
 
@@ -741,9 +644,9 @@ std::string EDomElement::toString()
 
 bool EDomElement::toBool()
 {
-    int result = 0;
-
     try {
+        int result = 0;
+
         if (content.find("/") != (content.find(">") - 1)) { //Melhorar isso.
             std::string value = content.substr(content.find(">") + 1, content.find("<",
                                                1) - content.find(">") - 1);
@@ -758,9 +661,8 @@ bool EDomElement::toBool()
 
 int EDomElement::toInt()
 {
-    int result = 0;
-
     try {
+        int result = 0;
         if (content.find("/") != (content.find(">") - 1)) { //Melhorar isso.
             std::string value = content.substr(content.find(">") + 1, content.find("<",
                                                1) - content.find(">") - 1);
@@ -773,28 +675,10 @@ int EDomElement::toInt()
     }
 }
 
-long EDomElement::toLong()
-{
-    long result = 0;
-
-    try {
-        if (content.find("/") != (content.find(">") - 1)) { //Melhorar isso.
-            std::string value = content.substr(content.find(">") + 1, content.find("<",
-                                               1) - content.find(">") - 1);
-            result = Conversion::stringToLong(value);
-        }
-
-        return result;
-    } catch (std::out_of_range& e) {
-        return 0;
-    }
-}
-
 double EDomElement::toDouble()
 {
-    double result = 0.0;
-
-    try {
+   try {
+        double result = 0.0;
         if (content.find("/") != (content.find(">") - 1)) { //Melhorar isso.
             std::string value = content.substr(content.find(">") + 1, content.find("<",
                                                1) - content.find(">") - 1);
@@ -810,13 +694,13 @@ double EDomElement::toDouble()
 std::deque<double> EDomElement::toGmlPos()
 {
     std::deque<double> result;
-    std::string values = toString();
-    unsigned int pos = 0;
-    int limit;
+    std::string values = toString();  
 
     try {
+        unsigned int pos = 0;
         while (pos < values.length()) {
             double value;
+            int limit{0};
 
             if (values.find(" ", pos) != std::string::npos) {
                 limit = values.find(" ", pos);
@@ -871,10 +755,12 @@ bool EDomElement::hasTagName(std::string tagname)
 EDomElement EDomElement::indent(char indentation)
 {
     std::stringstream result;
-    long nesting = 0;
-    bool firstchar = true;
+
 
     try {
+        long nesting = 0;
+        bool firstchar = true;
+
         for (unsigned long pos = 0; pos < content.length(); pos++) {
             if ((content.at(pos) == '<' && content.at(pos + 1) == '/')
                     || (content.at(pos) == '/' && content.at(pos + 1) == '>')) {
@@ -914,42 +800,14 @@ EDomElement EDomElement::indent(char indentation)
     }
 }
 
-EDomElement EDomElement::trim(char charToTrim)
-{
-    std::stringstream result;
-    bool checkIndentation = true;
-
-    try {
-        for (unsigned long pos = 0; pos < content.length(); pos++) {
-            if (checkIndentation == true) {
-                if (content.at(pos) != charToTrim) {
-                    checkIndentation = false;
-                    result << content.at(pos);
-                }
-
-                //else ; //Indentation is removed
-            } else {
-                if (content.at(pos) == '\n') {
-                    checkIndentation = true;
-                }
-
-                result << content.at(pos);
-            }
-        }
-
-        return EDomElement(result.str());
-    } catch (std::out_of_range& e) {
-        return EDomElement();
-    }
-}
-
 EDomElement EDomElement::removeBlankLines(bool removeIndentation)
 {
     std::stringstream result;
-    bool isBlank = true;
-    unsigned long lineBegin = 0;
 
     try {
+        bool isBlank = true;
+        unsigned long lineBegin = 0;
+
         for (unsigned long pos = 0; pos < content.length(); pos++) {
             if (isBlank == true) {
                 if (content.at(pos) != ' ' && content.at(pos) != '\t'

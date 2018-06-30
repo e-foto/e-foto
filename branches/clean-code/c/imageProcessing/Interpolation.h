@@ -49,18 +49,19 @@ class Interpolation {
     };
 
  private:
-    double interpolateNearestNeighbor(double col, double lin);
-    double interpolateBilinear(double col, double lin);
-    double interpolateBicubic(double col, double lin);
-    double df(double x);
-    double a(int,int,int);
-    double interpolateLagrange(double col, double lin);
-    double aa(int n, int i, int j);
-    bool checkLimits(int col, int row);
     double dx, dy;
     int mode, ccolor;
     Matrix* img_;
-    double I(int i, int j);
+
+    double interpolateNearestNeighbor(double col, double lin) const;
+    double interpolateBilinear(double col, double lin);
+    double interpolateBicubic(double col, double lin);
+    static double df(double x);
+    double a(int,int,int);
+    double interpolateLagrange(double col, double lin);
+    double aa(int n, int i, int j) const;
+    bool checkLimits(int col, int row) const;
+    double I(int i, int j) const;
 };
 
 }  // namespace efoto

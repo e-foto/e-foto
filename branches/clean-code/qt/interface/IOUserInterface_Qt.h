@@ -37,12 +37,8 @@ class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public I
 public:
 
 public slots:
-	virtual void informState();
 	virtual void receiveMark(QPointF p);
 	virtual void makeRepaint();
-	virtual void activeSetMode();
-	virtual void activePanMode();
-	virtual void activeZoomMode();
 	virtual void fitView();
 	virtual bool calculateIO();
 	virtual bool viewReport();
@@ -65,9 +61,6 @@ protected:
 	IOManager *manager;
 	void closeEvent(QCloseEvent *e);
 
-protected slots:
-	virtual void languageChange();
-
 private:
 	void init();
 	bool measureMark(int id, double col, double lin);
@@ -75,7 +68,6 @@ private:
 public:
 	static IOUserInterface_Qt* instance(IOManager* manager);
 	// Other Methods
-	//
 	bool exec();
 
 };

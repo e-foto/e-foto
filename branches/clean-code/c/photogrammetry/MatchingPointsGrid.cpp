@@ -64,9 +64,6 @@ void MatchingPointsGrid::createNewGrid(double rx, double ry)
 
 void MatchingPointsGrid::createStructure()
 {
-    double X,Y;
-    int col,row;
-
     no_inside_points = no_outside_points = 0;
 
     MatchingPoints *mp;
@@ -82,12 +79,12 @@ void MatchingPointsGrid::createStructure()
     {
         mp = point_list->get(i);
 
-        X = mp->X;
-        Y = mp->Y;
+        double X = mp->X;
+        double Y = mp->Y;
 
         // Calculate grid position
-        col = round((X - Xi)/res_x);
-        row = round((Y - Yi)/res_y);
+        int col = round((X - Xi)/res_x);
+        int row = round((Y - Yi)/res_y);
 
         if (col<0 || row<0 || unsigned(col)>=width || unsigned(row)>=height)
         {
@@ -101,10 +98,6 @@ void MatchingPointsGrid::createStructure()
 
         gridMap.at(pos).points.push_back(i);
     }
-
-    //	printf("Number of inside points: %d\n",no_inside_points);
-    //	printf("Number of outside points: %d\n",no_outside_points);
-    //	printf("Total number of points: %d\n",no_inside_points+no_outside_points);
 }
 
 /*

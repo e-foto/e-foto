@@ -67,7 +67,6 @@ Matrix ConvertionsSystems::GeoelipToGeocentricCartesian(double phi, double lambd
 Matrix ConvertionsSystems::GeocentricCartesianToGeoelip(double Xi, double Yi, double Zi, GeoSystem system)
 {
     double a=system.getA();
-    //double f=system.getF();
     double b=system.getB();
     double e1=system.getFirstEccentricity();
     double e2=system.getSecondEccentricity();
@@ -82,13 +81,12 @@ Matrix ConvertionsSystems::GeocentricCartesianToGeoelip(double Xi, double Yi, do
 
     double L2=atan( (Zi+e2*e2*b*pow(senu,3)) / (Si-e1*e1*a*pow(cosu,3)) );
     int cont=0;
-    double Ni=0.0;
     double L1=0.0;
 
     while (fabs(L2-L1)>convergency && cont<50)
     {
         L1=L2;
-        Ni=a/(sqrt(1-e1*e1*sin(L1)*sin(L1)));
+        double Ni=a/(sqrt(1-e1*e1*sin(L1)*sin(L1)));
         L2=atan((Zi+Ni*e1*e1*sin(L1))/Si);
         cont++;
     }
@@ -102,34 +100,23 @@ Matrix ConvertionsSystems::GeocentricCartesianToGeoelip(double Xi, double Yi, do
     plh.set(1,1,phi);
     plh.set(1,2,lambda);
     plh.set(1,3,haltura);
-    //qDebug("Xi: %f\tYi: %f\tZi: %f",Xi,Yi,Zi);
-    //qDebug("Phi: %.16f\tLambda: %.16f\th: %.16f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
 
     return plh;
 }
 
 Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)//, char hemi, char side)
 {
-    //qDebug("phi %.15f \t lambda %.15f",phi*180/M_PI,lambda*180/M_PI);
-
-
-
     int hemisferio=1;
     if (phi<0)
         hemisferio=-1;
     double a=system.getA();
-    //double f=system.getF();
     double b=system.getB();
-    //double e=sqrt(1-(b*b)/(a*a));
     double e=system.getFirstEccentricity();
     double e1=e*a/b;
     double k0=0.9996;
     double n=(a-b)/(a+b);
 
     double v=a/sqrt(1-pow(e*sin(phi),2));
-
-
-    //qDebug("e %.15f \t e1 %.15f \t v %.15f",e,e1,v);
 
     int zona;
 
@@ -144,14 +131,8 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
     double C=(15*a*n*n/16)*(1-n+(3*n*n/4)*(1-n));
     double D=(35*a*pow(n,3)/48)*(1 - n + 11*n*n/16);
     double E2=(315*a*pow(n,4)/512)*(1-n);
-
-    //qDebug("A= %.14f \nB= %.14f \nC= %.14f \nD= %.14f \nE2= %.14f",A,B,C,D,E2);
-
-
     double S=A*phi - B*sin(2*phi) + C*sin(4*phi) - D*sin(6*phi) + E2*sin(8*phi);
 
-
-    //qDebug("%d",inteiro);
     int lambda0=6*zona-183;
 
     double dLambda=lambda-lambda0*M_PI/180;
@@ -166,14 +147,8 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
     double T8 = v*k0*pow(cos(phi),5)*(5-18*pow(tan(phi),2) + pow(tan(phi),4) + 14*pow(e1*cos(phi),2) - 58*pow(tan(phi)*e1*cos(phi),2) + 13*pow(e1*cos(phi),4) + 4*pow(e1*cos(phi),6) - 64*tan(phi)*tan(phi)*pow(e1*cos(phi),4) - 24*tan(phi)*tan(phi)*pow(e1*cos(phi),6) )/120;
     double T9 = v*k0*pow(cos(phi),7)*(61 - 479*pow(tan(phi),2) + 179*pow(tan(phi),4) - pow(tan(phi),6))/5040;
 
-  //qDebug("S= %.14f \nv= %.14f \np= %.14f",S,v,dLambda);
-  //qDebug("T1= %.14f \nT2= %.14f \nT3= %.14f ",T1,T2,T3);
-   // double A6=pow(M_PI/(3600*180)*dLambda,6)*(nu*sin(phi)*pow(cos(phi),5))*(61 - 58*pow(tan(phi),2) + pow(tan(phi),4) + 270*el2*pow(cos(phi),2) - 330*el2*pow(sin(phi),2) )*k0*1e24/720;
-
     double N=10000000 + T1 + T2*pow(dLambda,2) + T3*pow(dLambda,4) + T4*pow(dLambda,6) + T5*pow(dLambda,8);
     double E= 500000  + T6*dLambda + T7*pow(dLambda,3) + T8*pow(dLambda,5) + T9*pow(dLambda,7);
-    //if (N<0)
-      //  N=10000000+N;
 
     Matrix xyh(1,4);
 
@@ -182,13 +157,7 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
     xyh.setInt(1,3,zona);
     xyh.setInt(1,4,hemisferio);
 
-    //qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
-    //qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);
-
-   // qDebug("Phi: %.9f\tLambda: %.9f\t phi: %.9f lambda: %.9f\n",phi*180/M_PI,lambda*180/M_PI,phi,lambda);
-   // qDebug("E: %.9f\tN: %.9f\t zona: %d hemi: %d\n",xyh.get(1,1),xyh.get(1,2),xyh.get(1,3),xyh.get(1,4));
-
-   return xyh;
+    return xyh;
 }
 
 Matrix ConvertionsSystems::utmToGeo(double E, double N,int zona, int hemi, GeoSystem system)
@@ -227,14 +196,12 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N,int zona, int hemi, GeoSy
     double fp=mu+J1*sin(2*mu)+J2*sin(4*mu)+J3*sin(6*mu)+J4*sin(8*mu);
 
     double C1,T1,R1,N1,D,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Long,Lat;
-    double dLong=1.0;
 
     double e12=e*e/(1-e*e);
-    //while( fabs(dLong)>convergency && cont < 5000)
-    //fp=fp2;
+
     C1=e12*pow(cos(fp),2);
     T1=pow(tan(fp),2);
-    //T1=32.251831742;
+
     R1=a*(1-e*e)/pow(1-pow(e*sin(fp),2),1.5);
     N1=a/sqrt(1-pow(e*sin(fp),2));
     D=E1/(N1*k0);
@@ -247,121 +214,17 @@ Matrix ConvertionsSystems::utmToGeo(double E, double N,int zona, int hemi, GeoSy
     Q7=(5-2*C1+28*T1-3*C1*C1+8*e12+24*T1*T1)*pow(D,5)/120;
 
     Lat=fp-Q1*(Q2-Q3+Q4);
-    dLong=(Q5-Q6+Q7)/cos(fp);
+    double dLong=(Q5-Q6+Q7)/cos(fp);
     Long=MC*M_PI/180-dLong;  				//Longitude valor em radianos
     if (hemi < 0)
         Lat = -Lat;
-    //qDebug("Lat[1,1]: %.10f Long[1,2]: %.10f",Lat*180/M_PI,Long*180/M_PI);
 
     Matrix plh(1,2);
     plh.set(1,1,Lat);
     plh.set(1,2,Long);
 
-    //qDebug("E: %.9f\tN: %.9f\tH: %f",E,N,haltura);
-    //qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f\n",plh.get(1,1),plh.get(1,2),plh.get(1,3));
-   // qDebug("\n\nM= %.9f \nmu= %.9f \nfp= %.9f \ne12= %.9g",M,mu,fp,e12);
-   // qDebug("C1= %.9f \nT1= %.9f \nR1= %.9f \nN1= %.9f",C1,T1,R1,N1);
-
-   // qDebug("Q1= %.9f \nQ2= %.9f \nQ3= %.9g \nQ4= %.9g",Q1,Q2,Q3,Q4);
-   // qDebug("Q5= %.9f \nQ6= %.9g \nQ7= %.9g",Q5,Q6,Q7);
-
-
-    //qDebug("Phi: %.9f\tLambda: %.9f\t phi: %.9f lambda: %.9f\n",Lat*180/M_PI,Long*180/M_PI,Lat,Long);
-
-
     return plh;
 
-}
-
-Matrix ConvertionsSystems::convertSystems3Parameters(GeoSystem oldSystem, GeoSystem newSystem, Matrix coordinates)
-{
-    Matrix aux=GeoelipToGeocentricCartesian(coordinates.get(1,1),coordinates.get(1,2),coordinates.get(1,3),oldSystem);
-    if (oldSystem.getSystemName()=="SAD69")
-    {
-        if(newSystem.getSystemName()=="WGS84")
-        {
-            aux.set(1,1,aux.get(1,1)-66.87);
-            aux.set(1,2,aux.get(1,2)+4.37);
-            aux.set(1,3,aux.get(1,3)-38.52);
-        }
-        if(newSystem.getSystemName()=="CORREGO ALEGRE")
-        {
-            aux.set(1,1,aux.get(1,1)+138.70);
-            aux.set(1,2,aux.get(1,2)-164.40);
-            aux.set(1,3,aux.get(1,3)-34.40);
-        }
-        if(newSystem.getSystemName()=="SIRGAS2000")
-        {
-            aux.set(1,1,aux.get(1,1)-67.348);
-            aux.set(1,2,aux.get(1,2)+3.879);
-            aux.set(1,3,aux.get(1,3)-38.223);
-        }
-    }
-    else if (oldSystem.getSystemName()=="SIRGAS2000")
-    {
-        if(newSystem.getSystemName()=="WGS84")
-        {
-            aux.set(1,1,aux.get(1,1)+0.478);
-            aux.set(1,2,aux.get(1,2)+0.491);
-            aux.set(1,3,aux.get(1,3)-0.297);
-        }
-        if(newSystem.getSystemName()=="CORREGO ALEGRE")
-        {
-            aux.set(1,1,aux.get(1,1)+206.048);
-            aux.set(1,2,aux.get(1,2)-168.279);
-            aux.set(1,3,aux.get(1,3)+3.823);
-        }
-        if(newSystem.getSystemName()=="SAD69")
-        {
-            aux.set(1,1,aux.get(1,1)+67.348);
-            aux.set(1,2,aux.get(1,2)-3.879);
-            aux.set(1,3,aux.get(1,3)+38.223);
-        }
-    }
-    else if (oldSystem.getSystemName()=="CORREGO ALEGRE")
-    {
-        if(newSystem.getSystemName()=="WGS84")
-        {
-            aux.set(1,1,aux.get(1,1)-205.57);
-            aux.set(1,2,aux.get(1,2)+168.77);
-            aux.set(1,3,aux.get(1,3)-4.12);
-
-        }
-        if(newSystem.getSystemName()=="SIRGAS2000")
-        {
-            aux.set(1,1,aux.get(1,1)-206.048);
-            aux.set(1,2,aux.get(1,2)+168.279);
-            aux.set(1,3,aux.get(1,3)-3.823);
-        }
-        if(newSystem.getSystemName()=="SAD69")
-        {
-            aux.set(1,1,aux.get(1,1)-138.7);
-            aux.set(1,2,aux.get(1,2)+164.40);
-            aux.set(1,3,aux.get(1,3)-34.40);
-        }
-    }
-    else if (oldSystem.getSystemName()=="WGS84")
-    {
-        if(newSystem.getSystemName()=="SIRGAS2000")
-        {
-            aux.set(1,1,aux.get(1,1)-0.478);
-            aux.set(1,2,aux.get(1,2)-0.491);
-            aux.set(1,3,aux.get(1,3)+0.297);
-        }
-        if(newSystem.getSystemName()=="CORREGO ALEGRE")
-        {
-            aux.set(1,1,aux.get(1,1)+205.57);
-            aux.set(1,2,aux.get(1,2)-168.77);
-            aux.set(1,3,aux.get(1,3)-72.623);
-        }
-        if(newSystem.getSystemName()=="SAD69")
-        {
-            aux.set(1,1,aux.get(1,1)+66.87);
-            aux.set(1,2,aux.get(1,2)-4.37);
-            aux.set(1,3,aux.get(1,3)+38.52);
-        }
-    }
-    return GeocentricCartesianToGeoelip(aux.get(1,1),aux.get(1,2),aux.get(1,3),newSystem);
 }
 
 Matrix ConvertionsSystems::convertSystemsSimplifiedMolodensky(GeoSystem oldSystem, GeoSystem newSystem, double phi, double lambda, double haltura)
@@ -672,52 +535,6 @@ Matrix ConvertionsSystems::nunesToUtm(double X, double Y, double Z, double phi0,
     return result;
 
 }
-
-Matrix ConvertionsSystems::nunesToGeoElips(double X, double Y, double Z, double phi0, double lambda0, double h0,GeoSystem system)
-{
-
-    Matrix rot(3,3);
-    rot.set(1,1,-sin(lambda0));            rot.set(1,2,cos(lambda0));              rot.set(1,3,0);
-    rot.set(2,1,-sin(phi0)*cos(lambda0));  rot.set(2,2,-sin(phi0)*sin(lambda0));   rot.set(2,3,cos(phi0));
-    rot.set(3,1,cos(phi0)*cos(lambda0));   rot.set(3,2,cos(phi0)*sin(lambda0));    rot.set(3,3,sin(phi0));
-
-    Matrix xyz(3,1);
-    xyz.set(1,1,X);
-    xyz.set(2,1,Y);
-    xyz.set(3,1,Z);
-
-    Matrix delta(3,1);
-    delta=rot.transpose()*xyz;
-
-    Matrix XYZ0=GeoelipToGeocentricCartesian(phi0,lambda0,h0,system);
-    double X0 = XYZ0.get(1,1);
-    double Y0 = XYZ0.get(1,2);
-    double Z0 = XYZ0.get(1,3);
-
-    double x = delta.get(1,1)+X0;
-    double y = delta.get(2,1)+Y0;
-    double z = delta.get(3,1)+Z0;
-
-    Matrix result=GeocentricCartesianToGeoelip(x,y,z,system);
-
-    return result;
-}
-
-/* Method into disuse:
- *
-// E o Lambda0 nao serve para nada??
-double ConvertionsSystems::getNunesRaio(double phi0, double lambda0, GeoSystem sys)
-{
-    double a=sys.getA();
-    double e=sys.getFirstEccentricity();
-
-    double M=a*(1-e*e)/(pow(1-pow(e*sin(phi0),2),1.5));
-    double N=a/(sqrt(1-pow(e*sin(phi0),2)));
-
-    return sqrt(M*N);
-
-}
-*/
 
 } // namespace efoto
 } // namespace eng

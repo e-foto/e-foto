@@ -210,11 +210,6 @@ std::string PointForm::getType()
 	return "";
 }
 
-bool PointForm::isForm(std::string formName)
-{
-	return !formName.compare("PointForm");
-}
-
 void PointForm::cleanForm()
 {
 	lineEdit_gcp_id->clear();

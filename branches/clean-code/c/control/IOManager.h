@@ -1,5 +1,5 @@
 /**************************************************************************
-		  IOManager.h
+          IOManager.h
 **************************************************************************/
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
@@ -37,156 +37,135 @@ class EFotoManager;
 /**
 * \file IOManager.h
 * \class IOManager
-* \brief Classe de controle de OrientaÁ„o Interior.
+* \brief Classe de controle de Orienta√ß√£o Interior.
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class IOManager
-{
-	// Private Attributes
-	//
-	bool started;
-	bool status;
-	EFotoManager* manager;
-	Sensor* mySensor;
-	Image* myImage;
-	InteriorOrientation* myIO;
-	IOUserInterface* myInterface;
+class IOManager {
+    // Private Attributes
+    EFotoManager* manager_;
+    Sensor* mySensor_;
+    Image* myImage_;
+    InteriorOrientation* myIO_;
+    IOUserInterface* myInterface_;
+    bool started_;
+    bool status_;
 
 public:
 
-	// Constructors and Destructors
-	//
-	/**
-	* \brief Construtor vazio.
-	*/
-	IOManager();
-	/**
-	* \brief Construtor padr„o.
-	* \param manager Ponteiro para o controlador central da aplicaÁ„o.
-	* \param mySensor Ponteiro para o objeto sensor utilizado.
-	* \param myImage Ponteiro para o objeto imagem utilizado.
-	* \param myIO Ponteiro para o objeto de c·lculo utilizado.
-	*/
-    explicit IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage, InteriorOrientation* myIO);
-	/**
-	* \brief Destrutor padr„o.
-	*/
-	~IOManager();
+    // Constructors and Destructors
+    //
+    /**
+    * \brief Construtor vazio.
+    */
+    IOManager();
+    /**
+    * \brief Construtor padr√£o.
+    * \param manager Ponteiro para o controlador central da aplica√ß√£o.
+    * \param mySensor Ponteiro para o objeto sensor utilizado.
+    * \param myImage Ponteiro para o objeto imagem utilizado.
+    * \param myIO Ponteiro para o objeto de c√°lculo utilizado.
+    */
+    explicit IOManager(EFotoManager* manager_, Sensor* mySensor_, Image* myImage_,
+                       InteriorOrientation* myIO_);
 
-	// Association Methods
-	//
-	/**
-	* \brief MÈtodo de associaÁ„o que seta uma interface.
-	* \param newInterface Interface que ser· usada.
-	*/
-	void setInterface(IOUserInterface* newInterface);
-	/**
-	* \brief MÈtodo que retorna a Interface corrente.
-	* \return IOUserInterface Interface corrente.
-	*/
-	IOUserInterface* getInterface();
-
-	// Other Methods
-	//
-	/**
-	* \brief MÈtodo que retorna a posiÁ„o da matriz das marcas fiduciais analÛgicas.
-	* \return PositionMatrix PosiÁ„o da Matriz das Marcas Fiduciais AnalÛgicas.
-	*/
-	PositionMatrix getAnalogMarks();
-	/**
-	* \brief MÈtodo que substitui uma marca fiducial digital com novos dados.
-	* \param id Identificador da Marca Fiducial.
-	* \param col Valor da Coluna.
-	* \param lin Valor da Linha.
-	* \return bool Retorna verdadeiro caso a substituiÁ„o foi feita corretamente. Retorna falso, caso contr·rio.
-	*/
-	bool measureMark(int id, double col, double lin);
-	/**
-	* \brief MÈtodo que retorna o n˙mero de marcas fiduciais digitais.
-	* \return unsigned int Valor da quantidade de marcas fiduciais digitais.
-	*/
-	unsigned int countMarks();
-	/**
-	* \brief MÈtodo que armazena num deque as posiÁıes de marcas fiduciais analÛgicas e tambÈm de alguma marca fiducial digital.
-	* \param index PosiÁ„o do deque da marca fiducial.
+    // Other Methods
+    /**
+    * \brief M√©todo que retorna a posi√ß√£o da matriz das marcas fiduciais anal√≥gicas.
+    * \return PositionMatrix Posi√ß√£o da Matriz das Marcas Fiduciais Anal√≥gicas.
+    */
+    PositionMatrix getAnalogMarks();
+    /**
+    * \brief M√©todo que substitui uma marca fiducial digital com novos dados.
+    * \param id Identificador da Marca Fiducial.
+    * \param col Valor da Coluna.
+    * \param lin Valor da Linha.
+    * \return bool Retorna verdadeiro caso a substitui√ß√£o foi feita corretamente. Retorna falso, caso contr√°rio.
+    */
+    bool measureMark(int id, double col, double lin);
+    /**
+    * \brief M√©todo que retorna o n√∫mero de marcas fiduciais digitais.
+    * \return unsigned int Valor da quantidade de marcas fiduciais digitais.
+    */
+    unsigned int countMarks() const;
+    /**
+    * \brief M√©todo que armazena num deque as posi√ß√µes de marcas fiduciais anal√≥gicas e tamb√©m de alguma marca fiducial digital.
+    * \param index Posi√ß√£o do deque da marca fiducial.
     * \return deque<string> Deque de marcas fiduciais.
-	*/
+    */
     std::deque<std::string> markData(int index);
-	/**
-	* \brief MÈtodo que retorna o total de marcas fiduciais analÛgicas.
-	* \return unsigned int O valor da quantidade de marcas fiduciais analÛgicas.
-	*/
-	unsigned int getTotalMarks();
-	/**
-	* \brief MÈtodo que retorna o modo de c·lculo que ser· usado dependendo se estiver com marcas fiduciais, dimens„o dos sensores ou com par‚metros fixos.
-	* \return int O modo de c·lculo que ser· utilizado.
-	*/
-	int getCalculationMode();
-	/**
-	* \brief MÈtodo que diz se È possÌvel realizar o c·lculo de OrientaÁ„o Interior na imagem.
-	* \return bool Retorna verdadeiro se È possÌvel realizar o c·lculo. Retorna falso, caso contr·rio.
-	*/
-	bool calculateIO();
-	/**
-	* \brief MÈtodo que diz se a OrientaÁ„o Interior est· pronta.
-	* \return bool Retorna verdadeiro se a OrientaÁ„o Interior est· pronta. Retorna falso, caso contr·rio.
-	*/
-	bool interiorDone();
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
-	/**Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa Xa La sigma0squared V SigmaXa SigmaLa */
-	/**DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS DAR NOME AOS BOIS */
-	/**
-	* \brief MÈtodo que armazena num deque os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa vindos de um xml para exibir o relatÛrio na interface gr·fica.
+    /**
+    * \brief M√©todo que retorna o total de marcas fiduciais anal√≥gicas.
+    * \return unsigned int O valor da quantidade de marcas fiduciais anal√≥gicas.
+    */
+    unsigned int getTotalMarks();
+    /**
+    * \brief M√©todo que retorna o modo de c√°lculo que ser√° usado dependendo se estiver com marcas fiduciais, dimens√£o dos sensores ou com par√¢metros fixos.
+    * \return int O modo de c√°lculo que ser√° utilizado.
+    */
+    int getCalculationMode() const;
+    /**
+    * \brief M√©todo que diz se √© poss√≠vel realizar o c√°lculo de Orienta√ß√£o Interior na imagem.
+    * \return bool Retorna verdadeiro se √© poss√≠vel realizar o c√°lculo. Retorna falso, caso contr√°rio.
+    */
+    bool calculateIO();
+    /**
+    * \brief M√©todo que diz se a Orienta√ß√£o Interior est√° pronta.
+    * \return bool Retorna verdadeiro se a Orienta√ß√£o Interior est√° pronta. Retorna falso, caso contr√°rio.
+    */
+    bool interiorDone() const;
+
+    /**
+    * \brief M√©todo que armazena num deque os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa vindos de um xml para exibir o relat√≥rio na interface gr√°fica.
     * \return deque<string> Os valores de Xa, La, sigma0squared, V, SigmaXa e SigmaLa.
-	*/
+    */
     std::deque<std::string> makeReport();
-	/**
-	* \brief MÈtodo que inicia o mÛdulo de OrientaÁ„o Interior e retorna se foi feito algum c·lculo neste mesmo mÛdulo anteriormente para a alertar o usu·rio, caso o projeto n„o tenha sido salvo.
-	* \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contr·rio.
-	*/
-	bool exec();
-	/**
-	* \brief MÈtodo que retorna o identificador da imagem utilizada na OrientaÁ„o Interior.
-	* \return int Identificador da Imagem.
-	*/
-	int getId();
-	/**
-	* \brief MÈtodo que carrega a interface do projeto quando o mÛdulo de OrientaÁ„o Interior È finalizado.
-	*/
-	void returnProject();
-	/**
-	* \brief MÈtodo que salva o projeto e informa se o mesmo foi salvo com sucesso.
+    /**
+    * \brief M√©todo que inicia o m√≥dulo de Orienta√ß√£o Interior e retorna se foi feito algum c√°lculo neste mesmo m√≥dulo anteriormente para a alertar o usu√°rio, caso o projeto n√£o tenha sido salvo.
+    * \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contr√°rio.
+    */
+    bool exec();
+    /**
+    * \brief M√©todo que retorna o identificador da imagem utilizada na Orienta√ß√£o Interior.
+    * \return int Identificador da Imagem.
+    */
+    int getId() const;
+    /**
+    * \brief M√©todo que carrega a interface do projeto quando o m√≥dulo de Orienta√ß√£o Interior √© finalizado.
+    */
+    void returnProject();
+    /**
+    * \brief M√©todo que salva o projeto e informa se o mesmo foi salvo com sucesso.
     *
-	* \param path Caminho do projeto.
-	* \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contr·rio.
-	*/
+    * \param path Caminho do projeto.
+    * \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contr√°rio.
+    */
     bool save(std::string path);
-	/**
-	* \brief MÈtodo que carrega o projeto e informa se o mesmo foi salvo com sucesso.
-	* \param path Caminho do projeto.
-	* \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contr·rio.
-	*/
+    /**
+    * \brief M√©todo que carrega o projeto e informa se o mesmo foi salvo com sucesso.
+    * \param path Caminho do projeto.
+    * \return bool Retorna verdadeiro se foi salvo com sucesso. Retorna falso, caso contr√°rio.
+    */
     bool load(std::string path);
-	/**
-	* \brief MÈtodo que retorna o caminho da imagem com o nome do arquivo.
+    /**
+    * \brief M√©todo que retorna o caminho da imagem com o nome do arquivo.
     * \return string Caminho da imagem e o nome do arquivo.
-	*/
-    std::string getImageFile();
-	/**
-	* \brief MÈtodo que retorna o n˙mero de linhas quando o sensor conhece as dimensıes da imagem.
-	* \return int N˙mero de linhas.
-	*/
-	int getFrameRows();
-	/**
-	* \brief MÈtodo que retorna o n˙mero de colunas quando o sensor conhece as dimensıes da imagem.
-	* \return int N˙mero de colunas.
-	*/
-	int getFrameColumns();
-	/**
-	* \brief MÈtodo que salva os dados da OrientaÁ„o Interior no XML.
-	*/
-	void acceptIO();
+    */
+    std::string getImageFile() const;
+    /**
+    * \brief M√©todo que retorna o n√∫mero de linhas quando o sensor conhece as dimens√µes da imagem.
+    * \return int N√∫mero de linhas.
+    */
+    int getFrameRows();
+    /**
+    * \brief M√©todo que retorna o n√∫mero de colunas quando o sensor conhece as dimens√µes da imagem.
+    * \return int N√∫mero de colunas.
+    */
+    int getFrameColumns();
+    /**
+    * \brief M√©todo que salva os dados da Orienta√ß√£o Interior no XML.
+    */
+    void acceptIO();
 
 };
 

@@ -54,25 +54,22 @@ private:
     void saveOrthoEfoto(char * filename) const;
     void loadOrthoEfoto(char * filename);
     void saveOrthoGeoTiffEfoto(char * filename) const;
-    double getOrthoimagePixel(int, int) const;
-    void setOrthoimagePixel(int, int, double);
-    void getXYAt(int col, int row, double &X, double &Y) const;
-    void getColRowAt(double X, double Y, int &col, int &row) const;
+    void setOrthoimagePixel(int, int, double) const;
 
 public:
     explicit Orthorectification(double, double, double, double, double, double);
     void createNewGrid(double, double, double, double, double, double);
     // todo: solve unused parameter mode
-    void saveOrtho(char */*, int mode*/);
-    void saveOrthoGeoTiff(char *);
-    void loadOrtho(char */*, int mode*/);
+    void saveOrtho(char *) const;
+    void saveOrthoGeoTiff(char *) const;
+    void loadOrtho(char *);
     Matrix * getOrthoImage();
-    int getHeight() { return ortho_height; }
-    void setOrthoimagePixel(double, double, double);
-    void getXYAt(double col, double row, double &X, double &Y);
-    void getColRowAt(double X, double Y, double &col, double &row);
-    double getGridResX() { return res_x; }
-    double getGridResY() { return res_y; }
+    int getHeight() const { return ortho_height; }
+    void setOrthoimagePixel(double, double, double) const;
+    void getXYAt(double col, double row, double &X, double &Y) const;
+    void getColRowAt(double X, double Y, double &col, double &row) const;
+    double getGridResX() const { return res_x; }
+    double getGridResY() const { return res_y; }
     void setUtmFuse(int _uf) { utmFuse = _uf; };
     void setNumberOfBands(int _nb) { no_bands = _nb; }
     void setCoordinateSystem(int _cs) { coord_system = _cs; }
@@ -82,7 +79,7 @@ public:
                              double &_Xf,
                              double &_Yf,
                              double &_res_x,
-                             double &_res_y)
+                             double &_res_y) const
     { _Xi = Xi; _Yi = Yi; _Xf = Xf; _Yf = Yf; _res_x = res_x; _res_y = res_y; }
 };
 

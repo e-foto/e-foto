@@ -25,7 +25,7 @@ enum DmsEditMode { DMS, DEG, RAD };
 * \class DmsEdit
 * \brief Classe que controla um widget para mostrar valores no formato de angulos
 * \copyright E-Foto group
-* \author Paulo Andr� Batista Pupim e Irving Badolato
+* \author Paulo André Batista Pupim e Irving Badolato
 */
 
 class DmsEdit : public QLineEdit
@@ -67,21 +67,9 @@ public:
 
 	/**
 	* \brief Metodo para retornar o modo do widget, podendo ser DMS, grau decimal e radiano
-	* \return DmsEditMode : Enumerador que representa o modo de operação do widget
+	* \return DmsEditMode : Enumerador que representa o modo de operaÃ§Ã£o do widget
 	*/
 	DmsEditMode getDmsEditMode();
-
-	/**
-	* \brief Metodo que retorna o valor do angulo em radiano
-	* \return double : Valor do angulo em radiano
-	*/
-	double getRadianValue();
-
-	/**
-	* \brief Metodo que retorna o valor do angulo em grau decimal
-	* \return double : Valor do angulo em grau decimal
-	*/
-	double getDegreeValue();
 
 	/**
 	* \brief Metodo que retorna um objeto Dms correspondente ao valor atual do widget
@@ -94,7 +82,7 @@ public:
 	* \param degree  : Valor minimo do grau
 	* \param minutes : Valor minimo do minuto
 	* \param seconds : Valor minimo do segundo
-	* \param signal  : Booleano que informa se o valor é positivo ou negativo
+	* \param signal  : Booleano que informa se o valor Ã© positivo ou negativo
 	*/
 	void setDmsMinimum(int degree,int minutes, double seconds, bool signal);
 
@@ -103,33 +91,9 @@ public:
 	* \param degree  : Valor maximo do grau
 	* \param minutes : Valor maximo do minuto
 	* \param seconds : Valor maximo do segundo
-	* \param signal  : Booleano que informa se o valor é positivo ou negativo
+	* \param signal  : Booleano que informa se o valor Ã© positivo ou negativo
 	*/
 	void setDmsMaximum(int degree,int minutes, double seconds, bool signal);
-
-	/**
-	* \brief Metodo que retorna o valor minimo aceito pelo widget em graus decimais
-	* \return double : Valor minimo
-	*/
-	double getMinimumDeg();
-
-	/**
-	* \brief Metodo que retorna o valor maximo aceito pelo widget em graus decimais
-	* \return double : Valor maximo
-	*/
-	double getMaximumDeg();
-
-	/**
-	* \brief Metodo que retorna o valor minimo aceito pelo widget em radianos
-	* \return double : Valor minimo
-	*/
-	double getMinimumRad();
-
-	/**
-	* \brief Metodo que retorna o valor maximo aceito pelo widget em radianos
-	* \return double : Valor maximo
-	*/
-	double getMaximumRad();
 
 	/**
 	* \brief Metodo que retorna o valor minimo aceito pelo widget representado no objeto Dms
@@ -162,7 +126,7 @@ protected:
 
 	/**
 	* \brief Metodo sobrescrito da QLineEdit para atender os eventos de entrada de foco do widget
-	* \param evento : Evento de obtenção de foco pelo widget
+	* \param evento : Evento de obtenÃ§Ã£o de foco pelo widget
 	*/
 	void focusInEvent(QFocusEvent *evento);
 
@@ -175,14 +139,14 @@ protected:
 private:
 
 	/**
-	* \brief Metodo auxiliar que informa a posiçao atual do cursor do teclado no widget
+	* \brief Metodo auxiliar que informa a posiÃ§ao atual do cursor do teclado no widget
 	* \return PositionValue : Enumerador que indica em que campo esta o cursor do teclado
 	*/
 	PositionValue positionValue();
 
 	/**
-	* \brief Metodo auxiliar que informa a posiçao do cursor do teclado no widget
-	* \param pos : Valor posiçao do cursor
+	* \brief Metodo auxiliar que informa a posiÃ§ao do cursor do teclado no widget
+	* \param pos : Valor posiÃ§ao do cursor
 	* \return PositionValue : Enumerador que indica em que campo esta o cursor do teclado
 	*/
 	PositionValue positionValue(int pos);
@@ -218,14 +182,14 @@ public slots:
 
 	/**
 	* \brief Metodo auxiliar que determina de que campo para qual campo o cursor do teclado mudou
-	* \param oldPos : Valor inicial da posiçao do cursor
-	* \param newPos : Valor final da posiçao do cursor
+	* \param oldPos : Valor inicial da posiÃ§ao do cursor
+	* \param newPos : Valor final da posiÃ§ao do cursor
 	*/
 	void changedField(int oldPos, int newPos);
 
 	/**
 	* \brief Metodo que altera o modo em que o widget apresenta os angulos
-	* \param newMode : Enumerador que representa o modo de apresentação dos valores
+	* \param newMode : Enumerador que representa o modo de apresentaÃ§Ã£o dos valores
 	*/
 	void setDmsEditMode(DmsEditMode newMode);
 
@@ -244,7 +208,7 @@ public slots:
 
 	/**
 	* \brief Metodo que converte uma QString em objeto Dms
-	* \param dmsQString : QString contendo o valor do dms no formato dd°mm'ss.sss"
+	* \param dmsQString : QString contendo o valor do dms no formato ddÂ°mm'ss.sss"
 	*/
 	void qStringToDms(QString dmsQString);
 

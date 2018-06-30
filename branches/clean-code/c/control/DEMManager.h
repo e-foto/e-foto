@@ -26,6 +26,7 @@ DEMManager.h
 
 
 #include <deque>
+#include <tuple>
 
 namespace br {
 namespace uerj {
@@ -52,93 +53,16 @@ enum class TSSurface;
 * \attention Images between 0,0 and 1,0.
 */
 class DEMManager {
-    // Private Attributes
-    double bb_Xi, bb_Yi, bb_Xf, bb_Yf;
-    bool bb_empty;
-    void updateBoundingBox(double Xi, double Yi, double Xf, double Yf);
-    int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp,
-        ncc_sw;
-    double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std,
-           downsample;
-    bool perf_RG;
-    bool isShowImage;
-    bool started_;
-    bool status_;
-    bool over_it;
-    bool cancel_flag;
-    bool dem_unsaved;
-    bool grid_unsaved;
-    bool elim_bad_pts;
-    double over_it_dist;
-    DEMUserInterface* myInterface;
-    EFotoManager* manager;
-    std::deque<Image*> listAllImages;
-    std::deque<Point*> listAllPoints;
-    std::deque<int> listPairs;
-    std::deque<ExteriorOrientation*> listEOs;
-    MatchingPointsList seeds, pairs;
-    /**
-    * \brief Método privado que atualiza os número de sementes de dados.
-    */
-    void updateNoSeeds();
-    /**
-    * \brief Método privado que retorna um ponteiro para uma instância Image.
-    */
-    Image* getImage(int);
-    /**
-    * \brief Método privado que refaz a lista de pontos do projeto.
-    */
-    void setListPoint();
-    /**
-    * \brief Método privado que conecta pontos às imagens correspondentes.
-    */
-    bool connectImagePoints();
-
-    /**
-    * \brief Método privado que retorna os identificadores das imagens através do identificador do par dessas imagens.
-    */
-    void getImagesId(int, int&, int&);
-    /**
-    * \brief Método privado que adiciona um par à interface.
-    */
-    void addPairsToInterface();
-    /**
-    * \brief Metodo que realiza uma reamostragem nas coordenadas dos pontos, caso exista uma redução de qualidade da imagem. As coordenadas dos pontos devem ser ajustadas para a imagem em dimensoes reduzidas. Depois da correlacao, as coordenadas devem ser corrigidas por um fator igual a 1/taxa de reamostragem.
-    */
-    void resamplePoints(MatchingPointsList* list, double resample);
-    /**
-    * \brief Método que adiciona pontos de controle, fotogramétricos e de verificação à lista de sementes.
-    */
-    void createInitialSeeds();
-    /**
-    * \brief Método que inicia a extração automática.
-    */
-    void extractDEMPair(int);
-    /**
-    * \brief Método que calcula os pontos X, Y e Z depois do matching. A função de matching só encontra coordenadas 2D.
-    */
-    void calcPointsXYZ();
-
-    ImageMatching* im;
-    DemGrid* grid;
-    DemFeatures* df;
-    StereoPair sp;
-    int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step,
-        ncc_temp_max_size;
-    double dem_total_elapsed_time;
-
 public:
-
-    // Constructors and Destructors
-    //
     /**
-    * \brief Construtor padrão.
+    * \brief default Constructor.
     */
     DEMManager();
     /**
-    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
+    * \brief Construtor que já identifica o seu gerenciador, as imagens que serão
+    *        usadas e os dados de uma orientação exterior a serem extraídas.
     */
-    explicit DEMManager(EFotoManager* manager, std::deque<Image*> images,
+    explicit DEMManager(EFotoManager* manager_, std::deque<Image*> images,
                         std::deque<ExteriorOrientation*> eos);
     /**
     * \brief Destrutor padrão.
@@ -152,7 +76,7 @@ public:
     /**
     * \brief Método que interrompe o Gerenciador do DEM.
     */
-    void returnProject();
+    void returnProject() const;
     /**
     * \brief Construtor.
     */
@@ -165,39 +89,48 @@ public:
     *       etc.
     */
     int extractDEM(int, bool);
+
     /**
     * \brief Método que altera as configurações de extração automática.
     */
-    void setAutoExtractionSettings(int, int, int, double);
+    void setAutoExtractionSettings(int, int match_method, int, double);
+
     /**
     * \brief Método que altera as configurações do NCC.
     */
     void setNCCSettings(int, int, double, double);
+
     /**
     * \brief Método que altera as configurações do LSM.
     */
     void setLSMSettings(int, int, double, double, int, double,
                         double, double, int, double);
+
     /**
     * \brief Método que altera a barra de progresso na interface.
     */
-    void setProgress(int);
+    void setProgress(int) const;
+
     /**
     * \brief Método que salva o DEM.
     */
-    void saveDem(char* filename, int fileType);
+    void saveDem(const char* const filename, int fileType);
+
     /**
     * \brief Método que salva a grade.
     */
-    void saveDemGrid(char* filename, Filetype fileType);
+    void saveDemGrid(const char* const filename, Filetype fileType);
+
     /**
     * \brief Método que carrega o DEM.
     */
-    int loadDem(char* filename, int fileType);
+    bool loadDem(char* filename, int fileType);
+
     /**
     * \brief Método que carrega a grade.
     */
-    int loadDemGrid(char* filename, Filetype fileType);
+    bool loadDemGrid(char* filename, Filetype fileType);
+
     /**
     * \brief Método que interpola a grade.
     */
@@ -214,101 +147,120 @@ public:
                          double ma_dist,
                          MAWeight ma_weight,
                          int gridSource);
+
     /**
-    * \brief Método que ativa a função de cancelamento. Interrompe a extração do DEM ou a  ação de interpolação da grade.
+    * \brief Método que ativa a função de cancelamento. Interrompe a extração do DEM ou a  ação
+    *        de interpolação da grade.
     */
     void setCancel();
+
     /**
-    * \brief Método que altera o flag showImage. Se selecionado, após a extração do DEM ou interpolação da grade, uma janela surge mostrando os resultados.
+    * \brief Método que altera o flag showImage. Se selecionado, após a extração do DEM
+    *        ou interpolação da grade, uma janela surge mostrando os resultados.
     */
     void setShowImage(int _state)
     {
-        isShowImage = _state;
+        isShowImage_ = _state;
     };
 
     /**
     * \brief Método que verifica se alguma operação foi cancelada.
     */
-    bool cancelFlag()
+    bool cancelFlag() const
     {
-        return cancel_flag;
+        return cancel_flag_;
     };
+
     /**
     * \brief Método que verifica se a DEM foi salva.
     */
-    bool isDemUnsaved()
+    bool isDemUnsaved() const
     {
-        return dem_unsaved;
+        return dem_unsaved_;
     };
+
     /**
     * \brief Método que verifica se a grade foi salva.
     */
-    bool isGridUnsaved()
+    bool isGridUnsaved() const
     {
-        return grid_unsaved;
+        return grid_unsaved_;
     };
+
     /**
     * \brief Método que adiciona pares às sementes.
     */
-    void getPointList(MatchingPointsList& sd, MatchingPointsList& pr);
+    void getPointList(MatchingPointsList& sd, MatchingPointsList& pr) const;
+
     /**
     * \brief Método que retorna uma lista de instâncias da classe Image.
     */
     std::deque<Image*> getImages()
     {
-        return listAllImages;
+        return listAllImages_;
     };
+
     /**
     * \brief Método que retorna uma lista de pares de imagens.
     */
-    std::deque<int> getImagesPairs()
+    std::deque<int> getImagesPairs() const
     {
         return listPairs;
     };
+
     /**
-    * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
+    * \brief Método que força a sobreescrita na lista de sementes.
+    *        Chamada pelo editor de sementes.
     */
     void overwriteSeedsList(MatchingPointsList sedlist)
     {
-        seeds = sedlist;
+        seeds_ = sedlist;
         updateNoSeeds();
     };
+
     /**
     * \brief Método que carrega as feições do DEM.
     */
-    int loadDemFeature(char* filename);
+    bool loadDemFeature(char* filename);
+
     /**
     * \brief Método que carrega um arquivo com as qualidades do DEM.
     */
-    std::string getDemQuality(char* filename, int option);
+    std::string getDemQuality(char* filename, int option) const;
+
     /**
     * \brief Método que muda os parâmetros do LSM e NCC.
     */
     void setStdParameters(int _lsm_gr, int _lsm_ms, int _ncc_gr, int _ncc_ms,
                           int _perf_RG)
     {
-        lsm_temp_growth_step = _lsm_gr;
-        lsm_temp_max_size = _lsm_ms;
-        ncc_temp_growth_step = _ncc_gr;
-        ncc_temp_max_size = _ncc_ms;
+        lsm_temp_growth_step_ = _lsm_gr;
+        lsm_temp_max_size_ = _lsm_ms;
+        ncc_temp_growth_step_ = _ncc_gr;
+        ncc_temp_max_size_ = _ncc_ms;
         perf_RG = _perf_RG;
     };
+
     /**
     * \brief Método que calcula a resolução do DEM.
     */
     double calculateDemRes(double ds);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de matching.
     */
     void addPairsToXML(std::string filename);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de sementes para matching.
     */
     void addSeedsToXML(std::string filename);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de DEM.
     */
     void addDEMToXML(std::string filename);
+
     /**
     * \brief Ativar eliminação de pontos ruins.
     */
@@ -316,6 +268,98 @@ public:
     {
         pairs.filterBadPoints2D();
     }
+
+private:
+    EFotoManager* manager_;
+    bool cancel_flag_;
+    std::deque<Image*> listAllImages_;
+    std::deque<ExteriorOrientation*> listEOs_;
+    DemGrid* grid_;
+    ImageMatching* image_matching_;
+    DemFeatures* dem_feature_;
+    bool isShowImage_;
+    bool dem_unsaved_;
+    bool grid_unsaved_;
+    bool elim_bad_pts_;
+    bool bounding_box_empty_;
+    int lsm_temp_growth_step_;
+    int lsm_temp_max_size_;
+    int ncc_temp_growth_step_;
+    int ncc_temp_max_size_;
+
+    double bounding_box_Xi_, bounding_box_Yi_, bounding_box_Xf_, bounding_box_Yf_;
+    int rad_cor_, match_method_, rgx_, rgy_, lsm_temp_, lsm_it_, lsm_dist_,
+        ncc_temp_,
+        ncc_sw_;
+    double lsm_th_, lsm_std_, lsm_shift_, lsm_shear_, lsm_scale_, ncc_th_, ncc_std_,
+           downsample_;
+    bool perf_RG;
+    bool over_it_;
+    double over_it_dist_;
+    DEMUserInterface* myInterface;
+    std::deque<Point*> listAllPoints;
+    std::deque<int> listPairs;
+    MatchingPointsList seeds_, pairs;
+    StereoPair sp;
+    double dem_total_elapsed_time;
+    bool started_;
+
+    void updateBoundingBox(double Xi, double Yi, double Xf, double Yf);
+    /**
+    * \brief Método privado que atualiza os número de sementes de dados.
+    */
+    void updateNoSeeds();
+
+    /**
+    * \brief Método privado que retorna um ponteiro para uma instância Image.
+    */
+    Image* getImage(int) const;
+
+    /**
+    * \brief Método privado que refaz a lista de pontos do projeto.
+    */
+    void setListPoint();
+
+    /**
+    * \brief Método privado que conecta pontos às imagens correspondentes.
+    */
+    bool connectImagePoints();
+
+    /**
+    * \brief Método privado que retorna os identificadores das imagens através do
+    *        identificador do par dessas imagens.
+    */
+    std::tuple<int, int> getImagesId(int pos) const;
+
+    /**
+    * \brief Método privado que adiciona um par à interface.
+    */
+    void addPairsToInterface() const;
+
+    /**
+    * Metodo que realiza uma reamostragem nas coordenadas dos pontos, caso exista
+    * uma redução de qualidade da imagem. As coordenadas dos pontos devem ser
+    * ajustadas para a imagem em dimensoes reduzidas. Depois da correlacao, as
+    * coordenadas devem ser corrigidas por um fator igual a 1/taxa de reamostragem.
+    */
+    static void resamplePoints(MatchingPointsList* list, double resample);
+
+    /**
+    * \brief Método que adiciona pontos de controle, fotogramétricos e de verificação
+    *        à lista de sementes.
+    */
+    void createInitialSeeds();
+
+    /**
+    * \brief Método que inicia a extração automática.
+    */
+    void extractDEMPair(int);
+
+    /**
+    * \brief Método que calcula os pontos X, Y e Z depois do matching.
+    *        A função de matching só encontra coordenadas 2D.
+    */
+    void calcPointsXYZ();
 };
 
 } // namespace efoto

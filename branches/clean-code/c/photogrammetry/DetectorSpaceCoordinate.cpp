@@ -90,7 +90,7 @@ void DetectorSpaceCoordinate::setImageId(int newImageId)
 	imageId = newImageId;
 }
 
-int DetectorSpaceCoordinate::getImageId()
+int DetectorSpaceCoordinate::getImageId() const
 {
 	return imageId;
 }

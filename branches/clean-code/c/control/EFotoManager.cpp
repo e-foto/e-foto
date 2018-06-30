@@ -52,20 +52,21 @@ namespace efoto {
 /**
  *
  */
-EFotoManager::EFotoManager() : updater("")
+EFotoManager::EFotoManager() :
+    project_ {nullptr},
+    interiorOrientation {nullptr},
+    spatialRessection {nullptr},
+    fotoTri {nullptr},
+    dem {nullptr},
+    ortho {nullptr},
+    sp {nullptr},
+    report {nullptr},
+    nextModule {NEXT_PROJECT},
+    nextImage{0},
+    savedState {true},
+    xmlData {""},
+    theTerrain {nullptr}
 {
-    xmlData = "";
-    savedState = true;
-    project = NULL;
-    interiorOrientation = NULL;
-    spatialRessection = NULL;
-    fotoTri = NULL;
-    dem = NULL;
-    ortho = NULL;
-    sp = NULL;
-    theTerrain = NULL;
-    nextModule = NEXT_PROJECT;
-    report = NULL;
 }
 
 /**
@@ -75,15 +76,12 @@ EFotoManager::~EFotoManager()
 {
 }
 
-// Instance objects accessor methods
-//
-
 /**
  *
  */
 Terrain* EFotoManager::instanceTerrain()
 {
-    if (theTerrain != NULL) {
+    if (theTerrain != nullptr) {
         return theTerrain;
     }
 
@@ -91,7 +89,7 @@ Terrain* EFotoManager::instanceTerrain()
     EDomElement xmlTerrain = root.elementByTagName("terrain");
 
     if (xmlTerrain.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     theTerrain = new Terrain();
@@ -102,9 +100,9 @@ Terrain* EFotoManager::instanceTerrain()
 /**
  *
  */
-Sensor* EFotoManager::instanceSensor(int id)
+Sensor* EFotoManager::instanceSensor(const int id)
 {
-    for (unsigned int i = 0; i < sensors.size(); i++)
+    for (size_t i = 0; i < sensors.size(); i++)
         if (sensors.at(i)->getId() == id) {
             return sensors.at(i);
         }
@@ -114,7 +112,7 @@ Sensor* EFotoManager::instanceSensor(int id)
                             Conversion::intToString(id));
 
     if (xmlSensor.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
@@ -124,7 +122,7 @@ Sensor* EFotoManager::instanceSensor(int id)
         SensorWithFiducialMarks();
         newSensorWithFiducialMarks->xmlSetData(xmlSensor.getContent());
         sensors.push_back(newSensorWithFiducialMarks);
-        return (Sensor*) newSensorWithFiducialMarks;
+        return dynamic_cast<Sensor*>(newSensorWithFiducialMarks);
     }
 
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
@@ -134,7 +132,7 @@ Sensor* EFotoManager::instanceSensor(int id)
         SensorWithKnowDimensions();
         newSensorWithKnowDimensions->xmlSetData(xmlSensor.getContent());
         sensors.push_back(newSensorWithKnowDimensions);
-        return (Sensor*) newSensorWithKnowDimensions;
+        return dynamic_cast<Sensor*>(newSensorWithKnowDimensions);
     }
 
     if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
@@ -144,10 +142,10 @@ Sensor* EFotoManager::instanceSensor(int id)
         SensorWithKnowParameters();
         newSensorWithKnowParameters->xmlSetData(xmlSensor.getContent());
         sensors.push_back(newSensorWithKnowParameters);
-        return (Sensor*) newSensorWithKnowParameters;
+        return dynamic_cast<Sensor*>(newSensorWithKnowParameters);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /**
@@ -155,7 +153,7 @@ Sensor* EFotoManager::instanceSensor(int id)
  */
 Flight* EFotoManager::instanceFlight(int id)
 {
-    for (unsigned int i = 0; i < flights.size(); i++)
+    for (size_t i = 0; i < flights.size(); i++)
         if (flights.at(i)->getId() == id) {
             return flights.at(i);
         }
@@ -165,7 +163,7 @@ Flight* EFotoManager::instanceFlight(int id)
                             Conversion::intToString(id));
 
     if (xmlFlight.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     Flight* newFlight = new Flight();
@@ -179,7 +177,7 @@ Flight* EFotoManager::instanceFlight(int id)
  */
 Image* EFotoManager::instanceImage(int id)
 {
-    for (unsigned int i = 0; i < images.size(); i++)
+    for (size_t i = 0; i < images.size(); i++)
         if (images.at(i)->getId() == id) {
             return images.at(i);
         }
@@ -189,7 +187,7 @@ Image* EFotoManager::instanceImage(int id)
                            Conversion::intToString(id));
 
     if (xmlImage.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     Image* newImage = new Image();
@@ -212,9 +210,9 @@ void EFotoManager::instanceAllImages()
 
         bool notAvailable = true;
 
-        for (unsigned int j = 0; j < images.size() && notAvailable; j++)
-            if (images.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(
-                        i).attribute("key"))) {
+        for (size_t j = 0; j < images.size() && notAvailable; j++)
+            if (images.at(j)->getId() == Conversion::stringToInt(
+                        xmlAllImages.at(i).attribute("key"))) {
                 notAvailable = false;
             }
 
@@ -261,7 +259,7 @@ void EFotoManager::instanceAllPoints()
 
 Point* EFotoManager::instancePoint(int id)
 {
-    for (unsigned int i = 0; i < points.size(); i++)
+    for (size_t i = 0; i < points.size(); i++)
         if (points.at(i)->getId() == id) {
             return points.at(i);
         }
@@ -271,13 +269,13 @@ Point* EFotoManager::instancePoint(int id)
                            Conversion::intToString(id));
 
     if (xmlPoint.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     Point* newPoint = new Point();
     newPoint->xmlSetData(xmlPoint.getContent());
     points.push_back(newPoint);
-    return (Point*) newPoint;
+    return dynamic_cast<Point*>(newPoint);
 }
 
 /**
@@ -295,13 +293,13 @@ InteriorOrientation* EFotoManager::instanceIO(int imageId)
                         Conversion::intToString(imageId));
 
     if (xmlIO.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     InteriorOrientation* newIO = new InteriorOrientation();
     newIO->setImage(image(imageId));
     newIO->xmlSetData(xmlIO.getContent());
-    newIO->setImage(NULL);
+    newIO->setImage(nullptr);
     IOs.push_back(newIO);
     return newIO;
 }
@@ -333,7 +331,7 @@ void EFotoManager::instanceAllIOs()
             newIO->setImage(image(Conversion::stringToInt(xmlAllIOs.at(
                                       i).attribute("image_key"))));
             newIO->xmlSetData(xmlAllIOs.at(i).getContent());
-            newIO->setImage(NULL);
+            newIO->setImage(nullptr);
             IOs.push_back(newIO);
         }
     }
@@ -357,13 +355,13 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
 
     if (xmlEO.getContent().compare("") == 0
             || xmlSR.getContent().compare("") == 0) {
-        return NULL;
+        return nullptr;
     }
 
     SpatialRessection* newEO = new SpatialRessection();
     newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
     EOs.push_back(newEO);
-    return (ExteriorOrientation*) newEO;
+    return dynamic_cast<ExteriorOrientation*>(newEO);
 }
 
 void EFotoManager::instanceAllEOs()
@@ -392,7 +390,7 @@ void EFotoManager::instanceAllEOs()
             newEO->setImage(image(Conversion::stringToInt(xmlAllEOs.at(
                                       i).attribute("image_key"))));
             newEO->xmlSetData(xmlAllEOs.at(i).getContent());
-            newEO->setImage(NULL);
+            newEO->setImage(nullptr);
             EOs.push_back(newEO);
         }
     }
@@ -403,9 +401,9 @@ void EFotoManager::instanceAllEOs()
  */
 void EFotoManager::deleteTerrain()
 {
-    if (theTerrain != NULL) {
+    if (theTerrain != nullptr) {
         delete(theTerrain);
-        theTerrain = NULL;
+        theTerrain = nullptr;
     }
 }
 
@@ -415,7 +413,7 @@ void EFotoManager::deleteTerrain()
 void EFotoManager::deleteSensor(int id)
 {
     unsigned int i;
-    Sensor* mySensor = NULL;
+    Sensor* mySensor = nullptr;
 
     for (i = 0; i < sensors.size(); i++)
         if (sensors.at(i)->getId() == id) {
@@ -423,14 +421,14 @@ void EFotoManager::deleteSensor(int id)
             break;
         }
 
-    if (mySensor != NULL) {
+    if (mySensor != nullptr) {
         EDomElement xmlSensor(mySensor->xmlGetData());
 
         if (xmlSensor.elementByTagName("geometry").toString().compare("frame") == 0 &&
                 xmlSensor.elementByTagName("platform").toString().compare("aerial") == 0 &&
                 xmlSensor.elementByTagName("detector").toString().compare("film") == 0) {
-            SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*)
-                    mySensor;
+            SensorWithFiducialMarks* mySensorWithFiducialMarks = dynamic_cast<SensorWithFiducialMarks*>
+                    (mySensor);
             delete(mySensorWithFiducialMarks);
         }
 
@@ -444,7 +442,7 @@ void EFotoManager::deleteSensor(int id)
 void EFotoManager::deleteFlight(int id)
 {
     unsigned int i;
-    Flight* myFlight = NULL;
+    Flight* myFlight = nullptr;
 
     for (i = 0; i < flights.size(); i++)
         if (flights.at(i)->getId() == id) {
@@ -452,7 +450,7 @@ void EFotoManager::deleteFlight(int id)
             break;
         }
 
-    if (myFlight != NULL) {
+    if (myFlight != nullptr) {
         delete(myFlight);
         flights.erase(flights.begin() + i);
     }
@@ -464,7 +462,7 @@ void EFotoManager::deleteFlight(int id)
 void EFotoManager::deleteImage(int id)
 {
     unsigned int i;
-    Image* myImage = NULL;
+    Image* myImage = nullptr;
 
     for (i = 0; i < images.size(); i++)
         if (images.at(i)->getId() == id) {
@@ -472,7 +470,7 @@ void EFotoManager::deleteImage(int id)
             break;
         }
 
-    if (myImage != NULL) {
+    if (myImage != nullptr) {
         delete(myImage);
         images.erase(images.begin() + i);
     }
@@ -484,7 +482,7 @@ void EFotoManager::deleteImage(int id)
 void EFotoManager::deletePoint(int id)
 {
     unsigned int i;
-    Point* myPoint = NULL;
+    Point* myPoint = nullptr;
 
     for (i = 0; i < points.size(); i++)
         if (points.at(i)->getId() == id) {
@@ -492,7 +490,7 @@ void EFotoManager::deletePoint(int id)
             break;
         }
 
-    if (myPoint != NULL) {
+    if (myPoint != nullptr) {
         Point* point = myPoint;
         delete(point);
         points.erase(points.begin() + i);
@@ -505,7 +503,7 @@ void EFotoManager::deletePoint(int id)
 void EFotoManager::deleteIO(int id)
 {
     unsigned int i;
-    InteriorOrientation* myIO = NULL;
+    InteriorOrientation* myIO = nullptr;
 
     for (i = 0; i < IOs.size(); i++)
         if (IOs.at(i)->getImageId() == id) {
@@ -513,7 +511,7 @@ void EFotoManager::deleteIO(int id)
             break;
         }
 
-    if (myIO != NULL) {
+    if (myIO != nullptr) {
         delete(myIO);
         IOs.erase(IOs.begin() + i);
     }
@@ -525,7 +523,7 @@ void EFotoManager::deleteIO(int id)
 void EFotoManager::deleteEO(int id)
 {
     unsigned int i;
-    ExteriorOrientation* myEO = NULL;
+    ExteriorOrientation* myEO = nullptr;
 
     for (i = 0; i < EOs.size(); i++)
         if (EOs.at(i)->getImageId() == id) {
@@ -533,9 +531,9 @@ void EFotoManager::deleteEO(int id)
             break;
         }
 
-    if (myEO != NULL) {
+    if (myEO != nullptr) {
         if (myEO->is("SpatialRessection")) {
-            SpatialRessection* mySR = (SpatialRessection*) myEO;
+            SpatialRessection* mySR = dynamic_cast<SpatialRessection*>(myEO);
             delete(mySR);
         }
 
@@ -591,7 +589,7 @@ Image* EFotoManager::image(int id)
             return images.at(i);
         }
 
-    return NULL;
+    return nullptr;
 }
 
 /**
@@ -604,33 +602,7 @@ Point* EFotoManager::point(int id)
             return points.at(i);
         }
 
-    return NULL;
-}
-
-/**
- *
- */
-InteriorOrientation* EFotoManager::IO(int id)
-{
-    for (unsigned int i = 0; i < IOs.size(); i++)
-        if (IOs.at(i)->getImageId() == id) {
-            return IOs.at(i);
-        }
-
-    return NULL;
-}
-
-/**
- *
- */
-ExteriorOrientation* EFotoManager::EO(int id)
-{
-    for (unsigned int i = 0; i < EOs.size(); i++)
-        if (EOs.at(i)->getImageId() == id) {
-            return EOs.at(i);
-        }
-
-    return NULL;
+    return nullptr;
 }
 
 /**
@@ -652,27 +624,6 @@ std::string EFotoManager::getXml(std::string tagname, std::string att,
     return root.elementByTagAtt(tagname, att, value).getContent();
 }
 
-
-// EObject methods
-//
-
-/**
- *
- */
-std::string EFotoManager::objectType(void)
-{
-    return "EFotoManager";
-}
-
-/**
- *
- */
-bool EFotoManager::is(std::string s)
-{
-    return (s == "EFotoManager" ? true : false);
-}
-
-
 // XML methods
 //
 void EFotoManager::xmlSetData(std::string xml)
@@ -680,7 +631,7 @@ void EFotoManager::xmlSetData(std::string xml)
     xmlData = xml;
 }
 
-std::string EFotoManager::xmlGetData()
+std::string EFotoManager::xmlGetData() const
 {
     return xmlData;
 }
@@ -694,7 +645,7 @@ void EFotoManager::setSavedState(bool state)
     savedState = state;
 }
 
-bool EFotoManager::getSavedState()
+bool EFotoManager::getSavedState() const
 {
     return savedState; // O uso desta variável precisar ser revisto!
 }
@@ -710,7 +661,7 @@ void EFotoManager::setInterfaceType(std::string newInterfaceType)
 /**
  *
  */
-std::string EFotoManager::getInterfaceType()
+std::string EFotoManager::getInterfaceType() const
 {
     return interfaceType;
 }
@@ -739,11 +690,11 @@ bool EFotoManager::execProject(std::string filename)
     bool result;
     nextModule = NEXT_NONE;
 
-    if (project == NULL) {
-        project = new ProjectManager(this);
+    if (project_ == nullptr) {
+        project_ = new ProjectManager(this);
     }
 
-    result = project->exec(filename);
+    result = project_->exec(filename);
     return result;
 }
 
@@ -754,32 +705,32 @@ bool EFotoManager::reloadProject()
 {
     nextModule = NEXT_NONE;
 
-    if (project != NULL) {
-        if (fotoTri != NULL) {
+    if (project_ != nullptr) {
+        if (fotoTri != nullptr) {
             stopPT();
         }
 
-        if (interiorOrientation != NULL) {
+        if (interiorOrientation != nullptr) {
             stopIO(interiorOrientation->getId());
         }
 
-        if (spatialRessection != NULL) {
+        if (spatialRessection != nullptr) {
             stopSR(spatialRessection->getId());
         }
 
-        if (dem != NULL) {
+        if (dem != nullptr) {
             stopDEM();
         }
 
-        if (ortho != NULL) {
+        if (ortho != nullptr) {
             stopOrtho();
         }
 
-        if (sp != NULL) {
+        if (sp != nullptr) {
             stopSP();
         }
 
-        return project->reload();
+        return project_->reload();
     } else {
         return false;
     }
@@ -794,14 +745,14 @@ bool EFotoManager::execIO(int id)
     nextModule = NEXT_RELOAD;
     Image* ioImage = instanceImage(id);
 
-    if (ioImage == NULL) {
+    if (ioImage == nullptr) {
         return false;
     }
 
     Sensor* ioSensor = instanceSensor(ioImage->getSensorId());
     InteriorOrientation* io = instanceIO(id);
 
-    if (io == NULL) {
+    if (io == nullptr) {
         io = new InteriorOrientation(id);
         IOs.push_back(io);
     }
@@ -815,7 +766,7 @@ void EFotoManager::stopIO(int id)
 {
     Image* ioImage = instanceImage(id);
     delete interiorOrientation;
-    interiorOrientation = NULL;
+    interiorOrientation = nullptr;
     deleteIO(id);
     deleteSensor(ioImage->getSensorId());
     deleteImage(id);
@@ -829,14 +780,14 @@ bool EFotoManager::execSR(int id)
     bool result;
     nextModule = NEXT_RELOAD;
     Image* srImage = instanceImage(id);
-    SpatialRessection* sr = (SpatialRessection*) instanceEO(id);
+    SpatialRessection* sr = dynamic_cast<SpatialRessection*>(instanceEO(id));
 
-    if (sr == NULL) {
+    if (sr == nullptr) {
         sr = new SpatialRessection(id);
         EOs.push_back(sr);
     }
 
-    if (srImage == NULL) {
+    if (srImage == nullptr) {
         return false;
     }
 
@@ -858,7 +809,7 @@ void EFotoManager::stopSR(int id)
 {
     Image* srImage = instanceImage(id);
     delete spatialRessection;
-    spatialRessection = NULL;
+    spatialRessection = nullptr;
     deleteEO(id);
     deleteIO(id);
     deleteFlight(srImage->getFlightId());
@@ -891,7 +842,7 @@ bool EFotoManager::execSP()
         img->setIO(imgIO);
         img->setEO(imgEO);
 
-        if (imgIO == NULL || imgEO == NULL) {
+        if (imgIO == nullptr || imgEO == nullptr) {
             deleteImage(img->getId());
         }
     }
@@ -904,7 +855,7 @@ bool EFotoManager::execSP()
 void EFotoManager::stopSP()
 {
     delete sp;
-    sp = NULL;
+    sp = nullptr;
     //deleteSensor(images.at(0)->getSensorId());
     int numPoints = points.size();
     int numImages = images.size();
@@ -941,7 +892,7 @@ bool EFotoManager::execPT()
 void EFotoManager::stopPT()
 {
     delete fotoTri;
-    fotoTri = NULL;
+    fotoTri = nullptr;
     deleteSensor(images.at(0)->getSensorId());
     int numPoints = points.size();
     int numImages = images.size();
@@ -974,7 +925,7 @@ bool EFotoManager::execDEM()
         img->setIO(imgIO);
         img->setEO(imgEO);
 
-        if (imgIO == NULL || imgEO == NULL) {
+        if (imgIO == nullptr || imgEO == nullptr) {
             deleteImage(img->getId());
         }
     }
@@ -987,7 +938,7 @@ bool EFotoManager::execDEM()
 void EFotoManager::stopDEM()
 {
     delete dem;
-    dem = NULL;
+    dem = nullptr;
     int numPoints = points.size();
     int numImages = images.size();
 
@@ -1005,7 +956,6 @@ void EFotoManager::stopDEM()
 
 bool EFotoManager::execOrtho()
 {
-    bool result;
     nextModule = NEXT_RELOAD;
     instanceAllImages();
     instanceAllIOs();
@@ -1020,20 +970,19 @@ bool EFotoManager::execOrtho()
         img->setIO(imgIO);
         img->setEO(imgEO);
 
-        if (imgIO == NULL || imgEO == NULL) {
+        if (imgIO == nullptr || imgEO == nullptr) {
             deleteImage(img->getId());
         }
     }
 
     ortho = new OrthoManager(this, images, EOs);
-    result = ortho->exec();
-    return result;
+    return ortho->exec();
 }
 
 void EFotoManager::stopOrtho()
 {
     delete ortho;
-    ortho = NULL;
+    ortho = nullptr;
     int numPoints = points.size();
     int numImages = images.size();
 
@@ -1056,16 +1005,6 @@ bool EFotoManager::execEPR()
     result = report->exec();
     return result;
 }
-
-void EFotoManager::stopEPR()
-{
-    if (report != NULL) {
-        delete report;
-    }
-
-    report = NULL;
-}
-
 
 /**
  *
@@ -1192,7 +1131,7 @@ void EFotoManager::execPTReport()
 
 // Internal function. Pos from 0 - N-1.
 void EFotoManager::getImagesId(int pos, int& left, int& right,
-                               std::deque<int>& listPairs)
+                               std::deque<int>& listPairs) const
 {
     // Check pos
     left = -1;
@@ -1209,9 +1148,10 @@ void EFotoManager::getImagesId(int pos, int& left, int& right,
 }
 
 // Check if pair already exists and sort ids
-bool EFotoManager::existPair(int& id1, int& id2, std::deque<int>& listPairs)
+bool EFotoManager::existPair(int& id1, int& id2,
+                             std::deque<int>& listPairs) const
 {
-    int aux, pair_id1, pair_id2;
+    int pair_id1, pair_id2;
 
     if (listPairs.size() == 0) {
         return false;
@@ -1219,7 +1159,7 @@ bool EFotoManager::existPair(int& id1, int& id2, std::deque<int>& listPairs)
 
     // Sort id
     if (id1 > id2) {
-        aux = id1;
+        int aux = id1;
         id1 = id2;
         id2 = aux;
     }
@@ -1248,7 +1188,7 @@ int EFotoManager::getPairs(std::deque<int>& listPairs)
     // Clear list
     listPairs.clear();
     Image* img;
-    double X1, Y1, X2, Y2, S, dist, overlap;
+    double X2, Y2, S, dist, overlap;
     int img_code, id1, id2;
     size_t imagesSize = images.size();
     Matrix Xa;
@@ -1265,8 +1205,8 @@ int EFotoManager::getPairs(std::deque<int>& listPairs)
         // Get reference image data
         img = images.at(i);
         Xa = img->getEO()->getXa();
-        X1 = Xa.get(1, 1);
-        Y1 = Xa.get(2, 1);
+        double X1 = Xa.get(1, 1);
+        double Y1 = Xa.get(2, 1);
 
         // Calculate the shortest image center
         for (size_t j = i + 1; j < imagesSize; j++) {
@@ -1308,7 +1248,7 @@ int EFotoManager::getPairs(std::deque<int>& listPairs)
 
 void EFotoManager::saveEPP()
 {
-    project->execAutosave();
+    project_->execAutosave();
 }
 
 } // namespace efoto

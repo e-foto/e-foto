@@ -72,13 +72,6 @@ public:
  */
 	void setFormLocale(QLocale locale);
 
-	/**
- * \brief Metodo que informa se o formulario é o mesmo do parametro formName
- * \param formName : nome do formulario
- * \return bool : Verdadeiro se formName é esse formulario, falso caso contrário
- */
-    bool isForm(std::string formName);
-
 private slots:
 	/**
  * \brief Metodo que mostra ou não os metadados baseado no campo correspondente ao nome do arquivo.

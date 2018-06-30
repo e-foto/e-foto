@@ -54,31 +54,31 @@ public:
     * \brief Método que retorna o nome do Projeto.
     * \return std::string   Nome do Projeto.
     */
-    std::string getName();
+    std::string getName() const;
 
     /**
     * \brief Método que retorna a descrição do Projeto.
     * \return std::string   Descrição do Projeto.
     */
-    std::string getDescription();
+    std::string getDescription() const;
 
     /**
     * \brief Método que retorna a data e hora de criação do Projeto.
     * \return std::string   Data e hora de criação.
     */
-    std::string getCreation();
+    std::string getCreation() const;
 
     /**
     * \brief Método que retorna a data e hora da modificação do Projeto.
     * \return std::string   Data e hora de modificação.
     */
-    std::string getModification();
+    std::string getModification() const;
 
     /**
     * \brief Método que retorna o dono do Projeto.
     * \return std::string   Dono do projeto.
     */
-    std::string getOwner();
+    std::string getOwner() const;
 
     /**
     * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

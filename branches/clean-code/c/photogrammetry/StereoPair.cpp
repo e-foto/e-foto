@@ -131,7 +131,6 @@ bool StereoPair::hasOrientations()
 //
 void StereoPair::xmlSetData(std::string xml)
 {
-    std::string none = xml;
 }
 
 std::string StereoPair::xmlGetData()

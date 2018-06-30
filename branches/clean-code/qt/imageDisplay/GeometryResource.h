@@ -33,97 +33,108 @@ namespace efoto {
 class DemFeatures;
 
 enum DefaultMark {
-    NoMark, RedMark, GreenMark, BlueMark, CyanMark, MagentaMark, YellowMark, DarkRedMark, DarkGreenMark, DarkBlueMark, DarkCyanMark, DarkMagentaMark, DarkYellowMark, BlackMark, WhiteMark, GrayMark, BlackAndWhiteMark
+    NoMark, RedMark, GreenMark, BlueMark, CyanMark, MagentaMark,
+    YellowMark, DarkRedMark, DarkGreenMark, DarkBlueMark, DarkCyanMark,
+    DarkMagentaMark, DarkYellowMark, BlackMark, WhiteMark, GrayMark,
+    BlackAndWhiteMark
 };
 
-class SymbolsResource
-{
-public:
+class SymbolsResource {
+  public:
     // todo: Method getBackgorund has unused parameters for make a background with dotted pattern.
-    static QImage getBackGround(QColor color, QSize size = QSize(24,24)/*, QPoint pointedIn = QPoint(-2, -2), QColor pointColor = QColor(255,255,255,255), unsigned int pointWeigth = 2*/);
-    static QImage getCross(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
-    static QImage getBordedCross(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
-    static QImage getX(QColor color, QSize size = QSize(24,24), unsigned int weigth = 2);
-    static QImage getBordedX(QColor colorBrush, QColor colorPen, QSize size = QSize(24,24), unsigned int weigth = 3);
+    static QImage getBackGround(QColor color, QSize size = QSize(24, 24));
+    static QImage getCross(QColor color, QSize size = QSize(24, 24),
+                           unsigned int weigth = 2, bool pointingCenter = false);
+    static QImage getBordedCross(QColor colorBrush, QColor colorPen,
+                                 QSize size = QSize(24, 24), unsigned int weigth = 3);
+    static QImage getBordedX(QColor colorBrush, QColor colorPen,
+                             QSize size = QSize(24, 24), unsigned int weigth = 3);
 
-    static QImage getTriangle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
-    static QImage getCircle(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
-    static QImage getSquare(QColor color, QColor fillcolor = QColor(Qt::transparent), QSize size = QSize(24,24), unsigned int weigth = 2, bool pointingCenter = false);
+    static QImage getTriangle(QColor color,
+                              QColor fillcolor = QColor(Qt::transparent),
+                              QSize size = QSize(24, 24),
+                              unsigned int weigth = 2,
+                              bool pointingCenter = false);
+    static QImage getCircle(QColor color,
+                            QColor fillcolor = QColor(Qt::transparent),
+                            QSize size = QSize(24, 24),
+                            unsigned int weigth = 2,
+                            bool pointingCenter = false);
+    static QImage getSquare(QColor color,
+                            QColor fillcolor = QColor(Qt::transparent),
+                            QSize size = QSize(24, 24),
+                            unsigned int weigth = 2,
+                            bool pointingCenter = false);
 
     static QImage getOpenHand();
     static QImage getClosedHand();
     static QImage getPointingHand();
-    static QImage getUpArrow();
-    static QImage getDownArrow();
     static QImage getLeftArrow();
     static QImage getRightArrow();
     static QImage getMagnifyGlass(QString text = "");
     static QImage getText(QString text = "", bool bottom = true);
 };
 
-class Marker : public QImage
-{
-public:
-    explicit Marker(const QImage &image2Mark);
+class Marker : public QImage {
+  public:
+    explicit Marker(const QImage& image2Mark);
     explicit Marker(DefaultMark defaultMarkType);
-
-    QImage toQImage();
 };
 
-class Coord : public QPointF
-{
-public:
+class Coord : public QPointF {
+  public:
     Coord();
     explicit Coord(QPointF location, QString label, Marker* mark = NULL);
     QString label_;
     Marker* marker_;
 };
 
-class Geometry
-{
-    int type_;
-    unsigned int key_;
-    QList<Coord> points_;
-public:
+class Geometry {
+    int type_{0};
+    unsigned int key_{0};
+    QList<Coord> points_{};
+  public:
     Geometry();
-    Geometry(const Geometry &other);
-    static Geometry createPoint(QPointF coord, unsigned int pointKey, QString label = "", Marker* mark = NULL);
-    static Geometry createLine(QList<Coord> coords, unsigned int lineKey);
-    static Geometry createPolygon(QList<Coord> coords, unsigned int polygonKey);
+    Geometry(const Geometry& other);
+    static Geometry createPoint(QPointF coord, unsigned int pointKey,
+                                QString label = "", Marker* mark = NULL);
     int type() const;
     unsigned int key() const;
     QList<Coord> listPoints() const;
 };
 
-class GeometryResource
-{
-    DemFeatures* df;
-    Marker* defaultMark;
-    Marker* selectedMark;
-    int featureProjection;
-    QList<Geometry> geometries_;
-    int linkPointsMode;
-
-    unsigned int nextPointkey_;
-    unsigned int nextLinekey_;
-
-public:
+class GeometryResource {
+  public:
     GeometryResource();
-    void insertPoint(QPointF location, unsigned int pointKey = 0, QString label = "", Marker* mark = NULL);
-    void addPoint(QPointF location, unsigned int pointKey = 0, QString label = "", Marker* mark = NULL);
-    void updatePoint(QPointF location, unsigned int pointKey = 0, QString label = "", Marker* mark = NULL);
+    void insertPoint(QPointF location, unsigned int pointKey = 0,
+                     QString label = "", Marker* mark = NULL);
+    void addPoint(QPointF location, unsigned int pointKey = 0, QString label = "",
+                  Marker* mark = NULL);
+    void updatePoint(QPointF location, unsigned int pointKey = 0,
+                     QString label = "", Marker* mark = NULL);
     void deletePoint(unsigned int pointKey);
-    void addLine(QPointF p0, QPointF p1, unsigned int lineKey = 0);
     void clear();
     QImage draw(QImage dst, QSize targetSize, QPointF viewpoint, double scale);
-    QImage draw(DemFeatures* df, int projection, QImage dst, QSize targetSize, QPointF viewpoint, double scale);
+    QImage draw(DemFeatures* df_, int projection, QImage dst, QSize targetSize,
+                QPointF viewpoint, double scale) const;
 
-    unsigned int generatePointKey();
-    bool hasPoint(unsigned int key);
-    int indexOfPoint(unsigned int key);
+    unsigned int generatePointKey() const;
+    void setFeatures(DemFeatures* features, int projection) {
+        df_ = features;
+        featureProjection_ = projection;
+    }
 
-    void setLinkPointsMode(int mode);
-    void setFeatures(DemFeatures* features, int projection) {df = features; featureProjection = projection;}
+  private:
+    DemFeatures* df_{nullptr};
+    Marker* defaultMark_{nullptr};
+    Marker* selectedMark_{nullptr};
+    int featureProjection_{-1};
+    QList<Geometry> geometries_{};
+    int linkPointsMode_{4};
+
+    unsigned int nextPointkey_{1};
+    unsigned int nextLinekey_{1};
+
 };
 
 } // namespace efoto

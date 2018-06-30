@@ -44,22 +44,22 @@ private:
     class OrthoImage; //Dummy class. To be implemented
     class featuresFile; //Dummy class. To be implemented
 
-    std::string xmlData;
-    std::string xmlState;
+    std::string xmlData_;
+    std::string xmlState_;
 
-    ProjectHeader* theHeader;
-    Terrain* theTerrain;
-    std::deque<Sensor*> sensors;
-    std::deque<Flight*> flights;
-    std::deque<Image*> images;
-    std::deque<Point*> points;
-    std::deque<DEM*> DEMs;
-    std::deque<OrthoImage*> orthos;
-    std::deque<featuresFile*> feats;
-    std::string processStates;
-    std::deque<InteriorOrientation*> IOs;
-    std::deque<ExteriorOrientation*> EOs;
-    PhotoTri* thePhotoTri;
+    ProjectHeader* theHeader_;
+    Terrain* theTerrain_;
+    std::deque<Sensor*> sensors_;
+    std::deque<Flight*> flights_;
+    std::deque<Image*> images_;
+    std::deque<Point*> points_;
+    std::deque<DEM*> DEMs_;
+    std::deque<OrthoImage*> orthos_;
+    std::deque<featuresFile*> feats_;
+    std::string processStates_;
+    std::deque<InteriorOrientation*> IOs_;
+    std::deque<ExteriorOrientation*> EOs_;
+    PhotoTri* thePhotoTri_;
 
 
 
@@ -137,16 +137,9 @@ private:
     PhotoTri* instancePhotoTri();
 
     /**
-    * \brief Método que apaga uma instância da classe ProjectHeader.
-    */
-    void deleteHeader(bool makeReconnections = true);
-
-    /**
     * \brief Método que apaga uma instância da classe Terrain.
     */
     void deleteTerrain(bool makeReconnections = true);
-
-    void deletePhotoTri(bool makeReconnections = true);
 
     void linkAll();
 
@@ -195,7 +188,7 @@ public:
     * \brief Método que retorna todas as instâncias existente da classe Image.
     * \return std::deque<Image*> std::deque com ponteiros para as instâncias da classe Image.
     */
-    std::deque<Image*> allImages() {return images;}
+    std::deque<Image*> allImages() {return images_;}
 
     /**
     * \brief Método que retorna uma instância existente da classe Point.
@@ -208,7 +201,7 @@ public:
     * \brief Método que retorna todas as instâncias existente da classe Point.
     * \return std::deque<Point*> std::deque com ponteiros para as instâncias da classe Point.
     */
-    std::deque<Point*> allPoints() {return points;}
+    std::deque<Point*> allPoints() {return points_;}
 
     /**
     * \brief Método que retorna uma instância existente da classe InteriorOrientation.
@@ -216,7 +209,7 @@ public:
     * \return InteriorOrientation Instância da classe InteriorOrientation.
     */
     InteriorOrientation* IO(int id);
-    std::deque<InteriorOrientation*> allIOs() {return IOs;}
+    std::deque<InteriorOrientation*> allIOs() {return IOs_;}
 
     /**
     * \brief Método que retorna uma instância existente da classe ExteriorOrientation.
@@ -224,7 +217,7 @@ public:
     * \return ExteriorOrientation Instância da classe ExteriorOrientation.
     */
     ExteriorOrientation* EO(int id);
-    std::deque<ExteriorOrientation*> allEOs() {return EOs;}
+    std::deque<ExteriorOrientation*> allEOs() {return EOs_;}
 
     PhotoTri* photoTri();
 
@@ -245,17 +238,11 @@ public:
     std::string getXml(std::string tagname, std::string att, std::string value);
 
     /**
-    * \brief Método para emitir o nome de classe.
-    * \return std::string	Retorna o nome de classe do objeto.
-    */
-    std::string objectType(void);
-
-    /**
     * \brief Método de teste para o nome/tipo de instância.
     * \param s	Texto com o nome da classe que é esperado.
     * \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
     */
-    bool is(std::string s);
+    static bool is(std::string s);
 
     /**
     * \brief Método para setar os valores de atributos de uma instância de Projeto utilizando sua descrição em xml.
@@ -270,18 +257,6 @@ public:
     std::string getXml();
 
     /**
-    * \brief Método que retorna um identificador de sensor que ainda não foi utilizado.
-    * \return int Identificador da sensor.
-    */
-    int getFreeSensorId();
-
-    /**
-    * \brief Método que retorna um identificador de voo que ainda não foi utilizado.
-    * \return int Identificador do voo.
-    */
-    int getFreeFlightId();
-
-    /**
     * \brief Método que retorna um identificador de imagem que ainda não foi utilizada.
     * \return int Identificador da Imagem.
     */
@@ -292,13 +267,6 @@ public:
     * \return int Identificador do Ponto.
     */
     int getFreePointId();
-
-
-    /**
-    * \brief Método que checa se a estrutura foi alterada em relação a sua versão salva.
-    * \return bool Retorno verdadeiro se a estrutura instanciada equivale ao xml de permanencia para essa estrutura.
-    */
-    bool getSaveState();
 
     /**
     * \brief Método que apaga uma instância da classe Sensor.
@@ -336,26 +304,7 @@ public:
     */
     void deleteEO(int id, bool makeReconnections = true);
 
-    void addSensor(std::string data = "", bool makeReconnections = true);
-
-    void addFlight(std::string data = "", bool makeReconnections = true);
-
-    void addImage(std::string data = "", bool makeReconnections = true);
-
     void addPoint(std::string data = "", bool makeReconnections = true);
-
-    void addIO(std::string data, bool makeReconnections = true);
-
-    void addEO(std::string data, bool makeReconnections = true);
-
-    std::string getProcessStates() {return processStates;}
-
-    void setProcessStates(std::string state) {processStates = state;}
-
-    void closeProject();
-
-    // Rever e adicionar aqui os métodos de new, load e save para uso de permanencia de disco
-    // Rever e adicionar aqui os métodos de add, instance e delete dos itens Dem, EOI e Feat.
 };
 
 } // namespace efoto

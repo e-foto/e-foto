@@ -69,7 +69,7 @@ public:
  * \brief Construtor de cópia para matrizes de cálculos.
  * \param anotherMatrix	Matriz a ser copiada.
  */
-	PositionMatrix(const Matrix& anotherMatrix);
+    explicit PositionMatrix(const Matrix& anotherMatrix);
 
 	/**
  * \brief Construtor de cópia para matrizes de posição.
@@ -119,7 +119,7 @@ public:
   * \param filename	Caminho e nome do arquivo a ser salvo.
   * \return int	1 em caso de sucesso e 0 em caso de falha.
   */
-	int save(char* filename);
+    int save(char* filename) const;
 
 	/**
  * \brief Método para retornar o valor da linha e coluna (i,j).
@@ -152,12 +152,12 @@ public:
   * \return PositionMatrix	A sub matriz mxn denotada por m = (LastRow - FirstRow) e n = (LastCol - FirstCol).
   */
 	PositionMatrix sel(const unsigned int FirstRow, const unsigned int LastRow,
-					   const unsigned int FirstCol = 1, const unsigned int LastCol = 1);
+                       const unsigned int FirstCol = 1, const unsigned int LastCol = 1) const;
 
 	/**
  * \brief Método para exibição em terminal dos valores contidos na matriz.
  */
-	void show();
+    void show() const;
 
 	/**
  * \brief Método para alterar o valor da linha e coluna (i,j).
@@ -229,7 +229,7 @@ public:
  * \param Par_Matrix	Matriz para comparação.
  * \return bool	Retorna verdadeiro se não existir qualquer diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
  */
-	bool operator ==(const Matrix& Par_Matrix);
+    bool operator ==(const Matrix& Par_Matrix) const;
 
 	/**
  * \brief Operador para testar a igualdade entre a matriz de posição e outra matriz de posição.
@@ -237,7 +237,7 @@ public:
  * \param Par_Matrix	Matriz para comparação.
  * \return bool	Retorna verdadeiro se não existir qualquer diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
  */
-	bool operator ==(const PositionMatrix& Par_Matrix);
+    bool operator ==(const PositionMatrix& Par_Matrix) const;
 
 	/**
  * \brief Operador para testar a diferença entre a matriz de posição e outra matriz.
@@ -245,7 +245,7 @@ public:
  * \param Par_Matrix	Matriz para comparação.
  * \return bool	Retorna verdadeiro se existir alguma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
  */
-	bool operator !=(const Matrix& Par_Matrix);
+    bool operator !=(const Matrix& Par_Matrix) const;
 
 	/**
  * \brief Operador para testar a diferença entre a matriz de posição e outra matriz de posição.
@@ -253,7 +253,7 @@ public:
  * \param Par_Matrix	Matriz para comparação.
  * \return bool	Retorna verdadeiro se existir alguma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
  */
-	bool operator !=(const PositionMatrix& Par_Matrix);
+    bool operator !=(const PositionMatrix& Par_Matrix) const;
 
 	/**
  * \brief Método para extrair o equivalente em dados xml (gml:pos) da matriz de posição.
@@ -277,7 +277,7 @@ public:
  * \brief Método para retornar o conteúdo da matriz em formato GML (Geography Markup Language).
  * \return std::string	Coordenada em formato GML.
  */
-    std::string toGmlPosFormat();
+    std::string toGmlPosFormat() const;
 
 };
 

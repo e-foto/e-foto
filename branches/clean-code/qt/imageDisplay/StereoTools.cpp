@@ -35,996 +35,760 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-void StereoTool::paintEvent(const QPaintEvent& event)
-{
+void StereoTool::paintEvent(const QPaintEvent& event) {
     event.isAccepted();
-    if (_display->painting())
-    {
+
+    if (display_->painting()) {
 #ifdef WIN32
         QPainter painter(_display);
 #endif
 #ifdef unix
-        QPainter painter(_display->getRealDisplay());
+        QPainter painter(display_->getRealDisplay());
 #endif
         painter.setRenderHint(QPainter::Antialiasing);
 
-        if (_autoPan != QPointF(0,0))
-        {
+        if (autoPan_ != QPointF(0, 0)) {
             // Draw autoMove feedback
-            QPoint endArrow(_lastMousePosition - (_autoPan*5*_display->getCurrentScene()->getScale()).toPoint());
-
+            QPoint endArrow(lastMousePosition_ - (autoPan_ * 5 *
+                                                  display_->getCurrentScene()->getScale()).toPoint());
             painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-            painter.drawPoint(_lastMousePosition);
-
+            painter.drawPoint(lastMousePosition_);
             painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::RoundCap));
-            painter.drawLine(_lastMousePosition, endArrow);
+            painter.drawLine(lastMousePosition_, endArrow);
 
-            if (_autoPan != QPointF(0,0))
-            {
-                double tangent = atan2(_autoPan.y(), _autoPan.x());
-                QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(), 7 * sin (tangent + M_PI / 7) + endArrow.y());
-                QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(), 7 * sin (tangent - M_PI / 7) + endArrow.y());
+            if (autoPan_ != QPointF(0, 0)) {
+                double tangent = atan2(autoPan_.y(), autoPan_.x());
+                QPoint pa(7 * cos (tangent + M_PI / 7) + endArrow.x(),
+                          7 * sin (tangent + M_PI / 7) + endArrow.y());
+                QPoint pb(7 * cos (tangent - M_PI / 7) + endArrow.x(),
+                          7 * sin (tangent - M_PI / 7) + endArrow.y());
                 QVector<QPoint> arrow;
                 arrow.append(pa);
                 arrow.append(endArrow);
                 arrow.append(endArrow);
                 arrow.append(pb);
-
-                painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+                painter.setPen(QPen(QBrush(Qt::yellow), 2, Qt::SolidLine, Qt::SquareCap,
+                                    Qt::MiterJoin));
                 painter.drawLines(arrow);
             }
-        }
-        else if (_scale > 0)
-        {
+        } else if (scale_ > 0) {
             // Draw scaleBar feedback
-            //QPoint endBar(_fixedPoint.x(), _display->getMouseScreenPosition().y());
-            QPoint endBar(_display->screenPosition(_fixedPointOnImageLeft).x(), _display->getMouseScreenPosition().y());
-
+            QPoint endBar(display_->screenPosition(fixedPointOnImageLeft_).x(),
+                          display_->getMouseScreenPosition().y());
             painter.setPen(QPen(QBrush(Qt::yellow), 7, Qt::SolidLine, Qt::RoundCap));
-            //painter.drawPoint(_fixedPoint);
-            painter.drawPoint(_display->screenPosition(_fixedPointOnImageLeft));
-
+            painter.drawPoint(display_->screenPosition(fixedPointOnImageLeft_));
             painter.setPen(QPen(QBrush(Qt::yellow), 2));
-            //painter.drawLine(_fixedPoint, endBar);
-            painter.drawLine(_display->screenPosition(_fixedPointOnImageLeft), endBar);
-            painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3, endBar.y()));
-            painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5), QString::number(_display->getCurrentScene()->getScale()*100,'f', 1).append("%"));
+            painter.drawLine(display_->screenPosition(fixedPointOnImageLeft_), endBar);
+            painter.drawLine(QPoint(endBar.x() - 3, endBar.y()), QPoint(endBar.x() + 3,
+                             endBar.y()));
+            painter.drawText(QPoint(endBar.x() + 5, endBar.y() + 5),
+                             QString::number(display_->getCurrentScene()->getScale() * 100, 'f',
+                                             1).append("%"));
         }
+
         painter.end();
     }
 }
 
-void StereoTool::resizeEvent(const QResizeEvent &event)
-{
-    _display->getLeftDisplay()->resize(event.size());
-    _display->getRightDisplay()->resize(event.size());
-    //actualizeScaleSpin(_display->getCurrentScene()->getScale());
+void StereoTool::resizeEvent(const QResizeEvent& event) {
+    display_->getLeftDisplay()->resize(event.size());
+    display_->getRightDisplay()->resize(event.size());
 }
 
-void StereoTool::enterEvent(const QHoverEvent& event)
-{
+void StereoTool::enterEvent(const QHoverEvent& event) {
     event.isAccepted();
-    _display->setCursor(_currentCursor, _display->isStereoCursor());
+    display_->setCursor(currentCursor_, display_->isStereoCursor());
 }
 
-void StereoTool::leaveEvent(const QHoverEvent& event)
-{
+void StereoTool::leaveEvent(const QHoverEvent& event) {
     event.isAccepted();
-    _display->setCursor(SymbolsResource::getBackGround(QColor(0,0,0,0)), _display->isStereoCursor());
-    _display->updateAll();
+    display_->setCursor(SymbolsResource::getBackGround(QColor(0, 0, 0, 0)),
+                        display_->isStereoCursor());
+    display_->updateAll();
 }
 
-void StereoTool::moveEvent(const QHoverEvent& event)
-{
+void StereoTool::moveEvent(const QHoverEvent& event) {
     // Update mouse position only
-    _display->updateMousePosition();
+    display_->updateMousePosition();
 
-    if (_actualizePosLabel)
+    if (actualizePosLabel_) {
         actualizePosLabel();
-
-    if (_display->isStereoCursor())
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
-    }
-    else
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()));
     }
 
-    if (!_hasButtomPressed)
-        _display->updateAll();
+    if (display_->isStereoCursor()) {
+        display_->getCurrentScene()->getLeftScene()->setDetailedPoint(
+            display_->getPositionLeft(event.pos() +
+                                      display_->getLeftCursorOffset().toPoint()));
+        display_->getCurrentScene()->getRightScene()->setDetailedPoint(
+            display_->getPositionRight(event.pos() +
+                                       display_->getRightCursorOffset().toPoint()));
+    } else {
+        display_->getCurrentScene()->getLeftScene()->setDetailedPoint(
+            display_->getPositionLeft(event.pos()));
+        display_->getCurrentScene()->getRightScene()->setDetailedPoint(
+            display_->getPositionRight(event.pos()));
+    }
 
-    emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    if (!hasButtomPressed_) {
+        display_->updateAll();
+    }
+
+    emit mouseMoved(display_->getPositionLeft(event.pos() +
+                    display_->getLeftCursorOffset().toPoint()),
+                    display_->getPositionRight(event.pos() +
+                            display_->getRightCursorOffset().toPoint()));
 }
 
-void StereoTool::mousePressed(const QMouseEvent &event)
-{
-    _hasButtomPressed = true;
-
-    _lastCursor = _display->getCursor();
+void StereoTool::mousePressed(const QMouseEvent& event) {
+    hasButtomPressed_ = true;
+    lastCursor_ = display_->getCursor();
 
     // Prepair to zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
-    {
-        _fixedPoint = event.pos();
-        _fixedPointOnImageLeft = _display->getPositionLeft(_fixedPoint);
-        _fixedPointOnImageRight = _display->getPositionRight(_fixedPoint);
-        _scale = _display->getCurrentScene()->getScale();
-        _currentCursor = SymbolsResource::getLeftArrow();
-        _display->setCursor(_currentCursor, _display->isStereoCursor());
-        _actualizePosLabel = false;
+    if (event.buttons() & Qt::MidButton) {
+        fixedPoint_ = event.pos();
+        fixedPointOnImageLeft_ = display_->getPositionLeft(fixedPoint_);
+        fixedPointOnImageRight_ = display_->getPositionRight(fixedPoint_);
+        scale_ = display_->getCurrentScene()->getScale();
+        currentCursor_ = SymbolsResource::getLeftArrow();
+        display_->setCursor(currentCursor_, display_->isStereoCursor());
+        actualizePosLabel_ = false;
     }
     // Prepair move reference
-    else if (event.buttons() & Qt::RightButton)
-    {
-        _currentCursor = SymbolsResource::getBackGround(QColor(0,0,0,0));
-        _display->setCursor(_currentCursor, _display->isStereoCursor());
+    else if (event.buttons() & Qt::RightButton) {
+        currentCursor_ = SymbolsResource::getBackGround(QColor(0, 0, 0, 0));
+        display_->setCursor(currentCursor_, display_->isStereoCursor());
     }
-    _lastMousePosition = event.pos();
 
-    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MidButton))
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    lastMousePosition_ = event.pos();
+
+    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MidButton)) {
+        display_->getCurrentScene()->getLeftScene()->setDetailedPoint(
+            display_->getPositionLeft(event.pos() +
+                                      display_->getLeftCursorOffset().toPoint()));
+        display_->getCurrentScene()->getRightScene()->setDetailedPoint(
+            display_->getPositionRight(event.pos() +
+                                       display_->getRightCursorOffset().toPoint()));
     }
 }
 
-void StereoTool::mouseReleased(const QMouseEvent &event)
-{
-    _hasButtomPressed = false;
-
-    //if (_autoPan != QPoint(0,0) || _scale != -1)
-    _currentCursor = _lastCursor;
-    _display->setCursor(_currentCursor, _display->isStereoCursor());
-
+void StereoTool::mouseReleased(const QMouseEvent& event) {
+    hasButtomPressed_ = false;
+    currentCursor_ = lastCursor_;
+    display_->setCursor(currentCursor_, display_->isStereoCursor());
     // Stop move default (autoMove).
-    _autoPan = QPoint(0,0);
-
+    autoPan_ = QPoint(0, 0);
     // Stop zoom default (scaleBar).
-    _scale = -1;
+    scale_ = -1;
 
-    if (!_actualizePosLabel) // OnScaleBar
-    {
-        /*
-        QCursor::setPos(_display->mapToGlobal(_display->screenPosition(_fixedPointOnImage).toPoint()));
-        _actualizePosLabel = true;
-        SingleScene* scene = (SingleScene*)_display->getCurrentScene();
-        scene->setDetailedPoint(_fixedPointOnImage);
-        */
-    }
-    else
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    if (!actualizePosLabel_) { // OnScaleBar
+    } else {
+        display_->getCurrentScene()->getLeftScene()->setDetailedPoint(
+            display_->getPositionLeft(event.pos() +
+                                      display_->getLeftCursorOffset().toPoint()));
+        display_->getCurrentScene()->getRightScene()->setDetailedPoint(
+            display_->getPositionRight(event.pos() +
+                                       display_->getRightCursorOffset().toPoint()));
     }
 
-    _display->updateAll();
+    display_->updateAll();
 }
 
-void StereoTool::mouseMoved(const QMouseEvent &event)
-{
+void StereoTool::mouseMoved(const QMouseEvent& event) {
     // Make zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
-    {
+    if (event.buttons() & Qt::MidButton) {
+        int diff = event.pos().y() - display_->screenPosition(
+                       fixedPointOnImageLeft_).y();
+        double newScale = (scale_ * 100 - diff) / 100;
+        display_->getCurrentScene()->getLeftScene()->scaleTo(newScale,
+                fixedPointOnImageLeft_);
+        display_->getCurrentScene()->getRightScene()->scaleTo(newScale,
+                fixedPointOnImageRight_);
 
-        int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImageLeft).y();
-        double newScale = (_scale*100 - diff)/100;
-        //qDebug("screenPositionY = %f, diff = %d, newScale = %f e fixedPoint = (%f, %f)", _display->screenPosition(_fixedPointOnImage).y(), diff, newScale, _fixedPointOnImage.x(), _fixedPointOnImage.y());
-        _display->getCurrentScene()->getLeftScene()->scaleTo(newScale, _fixedPointOnImageLeft);
-        _display->getCurrentScene()->getRightScene()->scaleTo(newScale, _fixedPointOnImageRight);
-        if (event.pos().x() < _display->screenPosition(_fixedPointOnImageLeft).x())
-        {
-            _currentCursor = SymbolsResource::getRightArrow();
-            _display->setCursor(_currentCursor, _display->isStereoCursor());
-        }
-        else
-        {
-            _currentCursor = SymbolsResource::getLeftArrow();
-            _display->setCursor(_currentCursor, _display->isStereoCursor());
+        if (event.pos().x() < display_->screenPosition(fixedPointOnImageLeft_).x()) {
+            currentCursor_ = SymbolsResource::getRightArrow();
+            display_->setCursor(currentCursor_, display_->isStereoCursor());
+        } else {
+            currentCursor_ = SymbolsResource::getLeftArrow();
+            display_->setCursor(currentCursor_, display_->isStereoCursor());
         }
 
-        //actualizeScaleSpin(_display->getCurrentScene()->getScale());
-        _display->updateAll();
+        display_->updateAll();
     }
 
     // Make move default (autoMove).
-    if (event.buttons() & Qt::RightButton)
-    {
-        double scale = _display->getCurrentScene()->getScale();
-        QPointF diff = event.posF() - _lastMousePosition;
-        _autoPan = -(diff/(5*scale));
-        _currentCursor = SymbolsResource::getText(QString::fromUtf8("Auto"));
-        _display->setCursor(_currentCursor, _display->isStereoCursor());
+    if (event.buttons() & Qt::RightButton) {
+        double scale = display_->getCurrentScene()->getScale();
+        QPointF diff = event.posF() - lastMousePosition_;
+        autoPan_ = -(diff / (5 * scale));
+        currentCursor_ = SymbolsResource::getText(QString::fromUtf8("Auto"));
+        display_->setCursor(currentCursor_, display_->isStereoCursor());
     }
 }
 
-void StereoTool::mouseDblClicked(const QMouseEvent & event)
-{
-    event.isAccepted();
-}
-
-void StereoTool::wheelEvent(const QWheelEvent & event)
-{
+void StereoTool::wheelEvent(const QWheelEvent& event) {
     double numSteps = event.delta() / (15.0 * 8.0);
-    if (event.orientation() == Qt::Vertical)
-    {
-        if (_display->isStereoCursor())
-        {
-            if (event.modifiers() == Qt::ShiftModifier)
-                _display->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
-            else if (event.modifiers() == Qt::ControlModifier)
-                _display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
-            else
-            {
-                _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/fabs(numSteps),0));
-                _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/fabs(numSteps),0));
+
+    if (event.orientation() == Qt::Vertical) {
+        if (display_->isStereoCursor()) {
+            if (event.modifiers() == Qt::ShiftModifier) {
+                display_->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
+            } else if (event.modifiers() == Qt::ControlModifier) {
+                display_->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
+            } else {
+                display_->setLeftCursorOffset(QPointF(display_->getLeftCursorOffset().x() +
+                                                      numSteps / fabs(numSteps), 0));
+                display_->setRightCursorOffset(QPointF(display_->getRightCursorOffset().x() -
+                                                       numSteps / fabs(numSteps), 0));
             }
+
             actualizePosLabel();
-            emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
-
-            _display->updateAll();
+            emit mouseMoved(display_->getPositionLeft(event.pos() +
+                            display_->getLeftCursorOffset().toPoint()),
+                            display_->getPositionRight(event.pos() +
+                                    display_->getRightCursorOffset().toPoint()));
+            display_->updateAll();
         }
     }
 }
 
-void StereoTool::autoMove()
-{
+void StereoTool::autoMove() {
     // Execute move default (autoMove).
-    if (_autoPan != QPointF(0,0))
-    {
-        _display->getCurrentScene()->getLeftScene()->pan(-_autoPan);
-        _display->getCurrentScene()->getRightScene()->pan(-_autoPan);
-
-        //SingleScene* scene = (SingleScene*)_display->getCurrentScene();
-        //scene->setDetailedPoint(_display->getLastMousePosition());
+    if (autoPan_ != QPointF(0, 0)) {
+        display_->getCurrentScene()->getLeftScene()->pan(-autoPan_);
+        display_->getCurrentScene()->getRightScene()->pan(-autoPan_);
         actualizePosLabel();
-
-        //_display->blockShowDetailedArea(true);
-        _display->updateAll();
-        //_display->blockShowDetailedArea(false);
+        display_->updateAll();
     }
 }
 
-void StereoTool::actualizePosLabel()
-{
-    //if (_display->visibleRegion().contains(_display->mapFromGlobal(QCursor::pos())))
+void StereoTool::actualizePosLabel() {
     {
         // Actualize X,Y coordinates
-        int leftImageWidth = _display->getCurrentScene()->getLeftScene()->getWidth();
-        int leftImageHeight = _display->getCurrentScene()->getLeftScene()->getHeight();
-        int rightImageWidth = _display->getCurrentScene()->getRightScene()->getWidth();
-        int rightImageHeight = _display->getCurrentScene()->getRightScene()->getHeight();
-        _display->updateMousePosition();
-
-        QPointF mp = _display->getMouseScreenPosition();
-        QPointF pl = _display->getPositionLeft((mp + _display->getLeftCursorOffset()).toPoint());
-        QPointF pr = _display->getPositionRight((mp + _display->getRightCursorOffset()).toPoint());
-
-        QString leftInfo = QString("Left: ") + QString::number(pl.x(),'f',2) + QString(" x ") + QString::number(pl.y(),'f',2);
-        QString rightInfo = QString("Right: ") + QString::number(pr.x(),'f',2) + QString(" x ") + QString::number(pr.y(),'f',2);
-
-        //double X; double Y;	double Z;
-        //computeIntersection(pl.x(), pl.y(), pr.x(), pr.y(), X, Y, Z);
-        //QString stereoInfo;
+        int leftImageWidth = display_->getCurrentScene()->getLeftScene()->getWidth();
+        int leftImageHeight = display_->getCurrentScene()->getLeftScene()->getHeight();
+        int rightImageWidth = display_->getCurrentScene()->getRightScene()->getWidth();
+        int rightImageHeight =
+            display_->getCurrentScene()->getRightScene()->getHeight();
+        display_->updateMousePosition();
+        QPointF mp = display_->getMouseScreenPosition();
+        QPointF pl = display_->getPositionLeft((mp +
+                                                display_->getLeftCursorOffset()).toPoint());
+        QPointF pr = display_->getPositionRight((mp +
+                                                display_->getRightCursorOffset()).toPoint());
+        QString leftInfo = QString("Left: ") + QString::number(pl.x(), 'f',
+                           2) + QString(" x ") + QString::number(pl.y(), 'f', 2);
+        QString rightInfo = QString("Right: ") + QString::number(pr.x(), 'f',
+                            2) + QString(" x ") + QString::number(pr.y(), 'f', 2);
 
         // Clear if necessary
-        if (pl.x() < 0 || pl.y() < 0 || pl.x() > leftImageWidth || pl.y() > leftImageHeight)
+        if (pl.x() < 0 || pl.y() < 0 || pl.x() > leftImageWidth
+                || pl.y() > leftImageHeight) {
             leftInfo = "   ";
-        if (pr.x() < 0 || pr.y() < 0 || pr.x() > rightImageWidth || pr.y() > rightImageHeight)
-            rightInfo = "   ";
-
-        // Reset label
-        _leftPosLabel->setText(leftInfo);
-        _rightPosLabel->setText(rightInfo);
-    }
-}
-
-void StereoTool::setCursor(QImage cursor, bool stereo)
-{
-    _currentCursor = cursor;
-    _display->setCursor(_currentCursor, stereo);
-}
-/*
-void StereoTool::actualizePosLabel(SingleDisplay* display, bool force)
-{
-
-    if (force || display->visibleRegion().contains(display->mapFromGlobal(QCursor::pos())))
-    {
-        // Actualize X,Y coordinates
-        int imageWidth = display->getCurrentScene()->getWidth();
-        int imageHeight = display->getCurrentScene()->getHeight();
-        display->updateMousePosition();
-        QPointF p = display->getLastMousePosition();
-        QString info = QString::number(_xi + p.x()*_dx,'f',2);
-        if (_invertY)
-            info.append(QString(" x ") + QString::number(_yi+imageHeight*_dy - p.y()*_dy,'f',2));
-        else
-            info.append(QString(" x ") + QString::number(_yi + p.y()*_dy,'f',2));
-
-        // Append Z if necessary
-        unsigned int z = -1;
-        if (_printZ)
-        {
-            z = _display->getCurrentScene()->getGrayColor(p);
-            info.append(QString(" x ") + QString::number(_zi + (z-1)*_dz,'f',2));
         }
 
-        // Clear if necessary
-        if (p.x() < 0 || p.y() < 0 || p.x() > imageWidth || p.y() > imageHeight || z == 0)
-            info = "   ";
+        if (pr.x() < 0 || pr.y() < 0 || pr.x() > rightImageWidth
+                || pr.y() > rightImageHeight) {
+            rightInfo = "   ";
+        }
 
         // Reset label
-        _posLabel->setText(info);
+        leftPosLabel_->setText(leftInfo);
+        rightPosLabel_->setText(rightInfo);
     }
-
 }
-*/
 
+void StereoTool::setCursor(QImage cursor, bool stereo) {
+    currentCursor_ = cursor;
+    display_->setCursor(currentCursor_, stereo);
+}
 
 ZoomStereoTool::ZoomStereoTool(StereoDisplay* display) :
-    StereoTool(display)
-{
-    _onRubberBand = false;
+    StereoTool(display) {
+    onRubberBand_ = false;
 }
 
-ZoomStereoTool::~ZoomStereoTool()
-{
+ZoomStereoTool::~ZoomStereoTool() {
 }
 
-void ZoomStereoTool::paintEvent(const QPaintEvent &event)
-{
-    if (_onRubberBand)
-    {
-        QRect rubber(_fixedPoint, _display->getMouseScreenPosition().toPoint());
-        if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8)
-        {
-            _currentCursor = SymbolsResource::getMagnifyGlass("-");
-            _display->setCursor(_currentCursor, false);
+void ZoomStereoTool::paintEvent(const QPaintEvent& event) {
+    if (onRubberBand_) {
+        QRect rubber(fixedPoint_, display_->getMouseScreenPosition().toPoint());
+
+        if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8) {
+            currentCursor_ = SymbolsResource::getMagnifyGlass("-");
+            display_->setCursor(currentCursor_, false);
             return;
+        } else {
+            currentCursor_ = SymbolsResource::getMagnifyGlass("+");
+            display_->setCursor(currentCursor_, false);
         }
-        else
-        {	_currentCursor = SymbolsResource::getMagnifyGlass("+");
-            _display->setCursor(_currentCursor, false);
-        }
-        _display->getRealDisplay()->updateGL();
-        QPainter painter(_display->getRealDisplay());
+
+        display_->getRealDisplay()->updateGL();
+        QPainter painter(display_->getRealDisplay());
         painter.setPen(QPen(Qt::yellow));
-        painter.drawRect(QRect(_fixedPoint,_display->getMouseScreenPosition().toPoint()));
+        painter.drawRect(QRect(fixedPoint_,
+                               display_->getMouseScreenPosition().toPoint()));
         painter.end();
     }
+
     StereoTool::paintEvent(event);
 }
 
-//void ZoomStereoTool::enterEvent(const QHoverEvent& event)
-//{
-//}
-
-//void ZoomStereoTool::leaveEvent(const QHoverEvent& event)
-//{
-//}
-
-//void ZoomStereoTool::moveEvent(const QHoverEvent& event)
-//{
-//}
-
-void ZoomStereoTool::mousePressed(const QMouseEvent & event)
-{
-    if (event.button() != event.buttons())
-        return;
-
-    // Rubberband zoom
-    if (event.buttons() & Qt::LeftButton)
-    {
-        _fixedPoint = event.pos();
-        _onRubberBand = true;
-        _lastCursor = _display->getCursor();
-        _currentCursor = SymbolsResource::getMagnifyGlass("-");
-        _display->setCursor(_currentCursor, false);
-        //_display->blockShowDetailedArea(true);
-        _display->updateAll();
+void ZoomStereoTool::mousePressed(const QMouseEvent& event) {
+    if (event.button() != event.buttons()) {
         return;
     }
+
+    // Rubberband zoom
+    if (event.buttons() & Qt::LeftButton) {
+        fixedPoint_ = event.pos();
+        onRubberBand_ = true;
+        lastCursor_ = display_->getCursor();
+        currentCursor_ = SymbolsResource::getMagnifyGlass("-");
+        display_->setCursor(currentCursor_, false);
+        display_->updateAll();
+        return;
+    }
+
     StereoTool::mousePressed(event);
 }
 
-void ZoomStereoTool::mouseReleased(const QMouseEvent & event)
-{
+void ZoomStereoTool::mouseReleased(const QMouseEvent& event) {
     // Rubberband zoom
-    if (_onRubberBand)
-    {
-        QRect rubber(_fixedPoint, event.pos());
-        if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8)
-        {
-            _display->getCurrentScene()->getLeftScene()->zoom(0.8, _display->getPositionLeft(_fixedPoint));
-            _display->getCurrentScene()->getRightScene()->zoom(0.8, _display->getPositionRight(_fixedPoint));
-        }
-        else
-        {
-            double wscale = abs(rubber.width()) == 0 ? 1024 : _display->width()/(double)abs(rubber.width());
-            double hscale = abs(rubber.height()) == 0 ? 1024 : _display->height()/(double)abs(rubber.height());
-            _display->getCurrentScene()->getLeftScene()->moveTo(_display->getPositionLeft(rubber.center()));
-            _display->getCurrentScene()->getLeftScene()->zoom(wscale < hscale ? wscale : hscale);
-            _display->getCurrentScene()->getRightScene()->moveTo(_display->getPositionRight(rubber.center()));
-            _display->getCurrentScene()->getRightScene()->zoom(wscale < hscale ? wscale : hscale);
+    if (onRubberBand_) {
+        QRect rubber(fixedPoint_, event.pos());
 
-            //QCursor::setPos(_display->mapToGlobal(_display->screenPosition(_display->getCurrentScene()->getViewpoint()).toPoint()));
-            //e = QMouseEvent(QEvent::MouseButtonRelease, _display->screenPosition(_display->getCurrentScene()->getViewpoint()).toPoint(), event.button(), event.buttons(), event.modifiers());
+        if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8) {
+            display_->getCurrentScene()->getLeftScene()->zoom(0.8,
+                    display_->getPositionLeft(fixedPoint_));
+            display_->getCurrentScene()->getRightScene()->zoom(0.8,
+                    display_->getPositionRight(fixedPoint_));
+        } else {
+            double wscale = abs(rubber.width()) == 0 ? 1024 : display_->width() /
+                            (double)abs(rubber.width());
+            double hscale = abs(rubber.height()) == 0 ? 1024 : display_->height() /
+                            (double)abs(rubber.height());
+            display_->getCurrentScene()->getLeftScene()->moveTo(display_->getPositionLeft(
+                        rubber.center()));
+            display_->getCurrentScene()->getLeftScene()->zoom(wscale < hscale ? wscale :
+                    hscale);
+            display_->getCurrentScene()->getRightScene()->moveTo(display_->getPositionRight(
+                        rubber.center()));
+            display_->getCurrentScene()->getRightScene()->zoom(wscale < hscale ? wscale :
+                    hscale);
         }
-        _onRubberBand = false;
-        //actualizeScaleSpin(_display->getCurrentScene()->getScale());
+
+        onRubberBand_ = false;
     }
+
     StereoTool::mouseReleased(event);
 }
 
-void ZoomStereoTool::mouseMoved(const QMouseEvent & event)
-{
+void ZoomStereoTool::mouseMoved(const QMouseEvent& event) {
     // Rubberband zoom.
-    if (event.buttons() & Qt::LeftButton)
-    {
-        _display->updateAll();
+    if (event.buttons() & Qt::LeftButton) {
+        display_->updateAll();
         return;
     }
+
     StereoTool::mouseMoved(event);
 }
-
-void ZoomStereoTool::mouseDblClicked(const QMouseEvent & event)
-{
-    event.isAccepted();
-    _display->fitView();
-    //actualizeScaleSpin(_display->getCurrentScene()->getScale());
-}
-
-/*
-void ZoomStereoTool::wheelEvent(const QWheelEvent & event)
-{
- int numDegrees = event.delta() / 8.0;
- int numSteps = numDegrees / 15.0;
- if (event.orientation() == Qt::Vertical)
- {
-  double zoomStep;
-  if (numSteps>0)
-   zoomStep = 1.044273782; // 1*2^(1÷(2^4))
-  else if (numSteps<0)
-   zoomStep = 0.957603281; // 1/2^(1÷(2^4))
-  for (int i = 0; i<abs(numSteps);i++)
-  {
-   _display->getCurrentScene()->getLeftScene()->zoom(zoomStep, _display->getPositionLeft(event.pos()));
-   _display->getCurrentScene()->getRightScene()->zoom(zoomStep, _display->getPositionRight(event.pos()));
-  }
-  _display->updateAll();
- }
-}
-*/
-
 
 MoveStereoTool::MoveStereoTool(StereoDisplay* display) :
-    StereoTool(display)
-{
+    StereoTool(display) {
 }
 
-MoveStereoTool::~MoveStereoTool()
-{
+MoveStereoTool::~MoveStereoTool() {
 }
 
-//void MoveStereoTool::enterEvent(const QHoverEvent& event)
-//{
-//}
-
-//void MoveStereoTool::leaveEvent(const QHoverEvent& event)
-//{
-//}
-
-//void MoveStereoTool::moveEvent(const QHoverEvent& event)
-//{
-//	_display->updateMousePosition();
-//}
-
-void MoveStereoTool::mousePressed(const QMouseEvent & event)
-{
-    if (event.button() != event.buttons())
+void MoveStereoTool::mousePressed(const QMouseEvent& event) {
+    if (event.button() != event.buttons()) {
         return;
+    }
+
     StereoTool::mousePressed(event);
-    if (event.buttons() & Qt::LeftButton)
-    {
-        _currentCursor = SymbolsResource::getClosedHand();
-        _display->setCursor(_currentCursor, false);
+
+    if (event.buttons() & Qt::LeftButton) {
+        currentCursor_ = SymbolsResource::getClosedHand();
+        display_->setCursor(currentCursor_, false);
     }
-    _display->updateAll();
+
+    display_->updateAll();
 }
 
-void MoveStereoTool::mouseReleased(const QMouseEvent & event)
-{
+void MoveStereoTool::mouseReleased(const QMouseEvent& event) {
     StereoTool::mouseReleased(event);
-    _currentCursor = SymbolsResource::getOpenHand();
-    _display->setCursor(_currentCursor, false);
+    currentCursor_ = SymbolsResource::getOpenHand();
+    display_->setCursor(currentCursor_, false);
 }
 
-void MoveStereoTool::mouseMoved(const QMouseEvent & event)
-{
+void MoveStereoTool::mouseMoved(const QMouseEvent& event) {
     // Move
-    if (event.buttons() & Qt::LeftButton)
-    {
-        QPointF diff = event.posF() - _lastMousePosition;
-        _lastMousePosition = event.pos();
+    if (event.buttons() & Qt::LeftButton) {
+        QPointF diff = event.posF() - lastMousePosition_;
+        lastMousePosition_ = event.pos();
         double scale;
-        scale = _display->getCurrentScene()->getScale();
-        if (event.modifiers() != Qt::ShiftModifier)
-            _display->getCurrentScene()->getLeftScene()->pan(-(diff/scale));
-        if (event.modifiers() != Qt::ControlModifier)
-            _display->getCurrentScene()->getRightScene()->pan(-(diff/scale));
-        _display->updateAll();
+        scale = display_->getCurrentScene()->getScale();
+
+        if (event.modifiers() != Qt::ShiftModifier) {
+            display_->getCurrentScene()->getLeftScene()->pan(-(diff / scale));
+        }
+
+        if (event.modifiers() != Qt::ControlModifier) {
+            display_->getCurrentScene()->getRightScene()->pan(-(diff / scale));
+        }
+
+        display_->updateAll();
         return;
     }
+
     StereoTool::mouseMoved(event);
 }
 
-//void MoveStereoTool::mouseDblClicked(const QMouseEvent & event)
-//{
-//}
-
-//void MoveStereoTool::wheelEvent(const QWheelEvent & event)
-//{
-//}
-
-
-
 MarkStereoTool::MarkStereoTool(StereoDisplay* display) :
-    StereoTool(display),
-    mark(WhiteMark)
-{
+    StereoTool{display},
+    mark_(WhiteMark) {
 }
 
-MarkStereoTool::~MarkStereoTool()
-{
+MarkStereoTool::~MarkStereoTool() {
 }
 
-void MarkStereoTool::changeMarker(Marker marker)
-{
-    mark = marker;
+void MarkStereoTool::changeMarker(Marker marker) {
+    mark_ = marker;
 }
 
-Marker* MarkStereoTool::getMarker()
-{
-    return &mark;
+Marker* MarkStereoTool::getMarker() {
+    return &mark_;
 }
 
-void MarkStereoTool::addMark(QPointF lPos, QPointF rPos, int key, QString label, Marker *marker)
-{
-    _display->getCurrentScene()->getLeftScene()->geometry()->addPoint(lPos, key, label, marker == NULL ? &mark : marker);
-    _display->getCurrentScene()->getRightScene()->geometry()->addPoint(rPos, key, label, marker == NULL ? &mark : marker);
+void MarkStereoTool::addMark(QPointF lPos, QPointF rPos, int key, QString label,
+                             Marker* marker) {
+    display_->getCurrentScene()->getLeftScene()->geometry()->addPoint(lPos, key,
+            label, marker == NULL ? &mark_ : marker);
+    display_->getCurrentScene()->getRightScene()->geometry()->addPoint(rPos, key,
+            label, marker == NULL ? &mark_ : marker);
 }
 
-void MarkStereoTool::insertMark(QPointF lPos, QPointF rPos, int key, QString label, Marker *marker)
-{
-    _display->getCurrentScene()->getLeftScene()->geometry()->insertPoint(lPos, key, label, marker == NULL ? &mark : marker);
-    _display->getCurrentScene()->getRightScene()->geometry()->insertPoint(rPos, key, label, marker == NULL ? &mark : marker);
+void MarkStereoTool::insertMark(QPointF lPos, QPointF rPos, int key,
+                                QString label, Marker* marker) {
+    display_->getCurrentScene()->getLeftScene()->geometry()->insertPoint(lPos, key,
+            label, marker == NULL ? &mark_ : marker);
+    display_->getCurrentScene()->getRightScene()->geometry()->insertPoint(rPos, key,
+            label, marker == NULL ? &mark_ : marker);
 }
 
-/*
-void MarkStereoTool::editMark(int key, QPointF lPos, QPointF rPos, Marker *marker)
-{
+void MarkStereoTool::deleteMark(int key) {
+    display_->getCurrentScene()->getLeftScene()->geometry()->deletePoint(key);
+    display_->getCurrentScene()->getRightScene()->geometry()->deletePoint(key);
 }
 
-void MarkStereoTool::editMark(int key, QPointF lPos, QPointF rPos, QString label, Marker *marker)
-{
-}
-*/
-
-void MarkStereoTool::deleteMark(int key)
-{
-    _display->getCurrentScene()->getLeftScene()->geometry()->deletePoint(key);
-    _display->getCurrentScene()->getRightScene()->geometry()->deletePoint(key);
+void MarkStereoTool::clear() {
+    display_->getCurrentScene()->getLeftScene()->geometry()->clear();
+    display_->getCurrentScene()->getRightScene()->geometry()->clear();
 }
 
-void MarkStereoTool::clear()
-{
-    _display->getCurrentScene()->getLeftScene()->geometry()->clear();
-    _display->getCurrentScene()->getRightScene()->geometry()->clear();
+void MarkStereoTool::setToOnlyEmitClickedMode() {
+    onlyEmitClickedMode_ = true;
 }
 
-void MarkStereoTool::setToOnlyEmitClickedMode()
-{
-    onlyEmitClickedMode = true;
-}
-
-void MarkStereoTool::setToAutoCreateMarkFrom(unsigned int start)
-{
-    onlyEmitClickedMode = false;
-    nextMarkItem = start;
-}
-
-void MarkStereoTool::putClickOn(QPointF& lPos, QPointF& rPos)
-{
-    if (onlyEmitClickedMode)
-    {
+void MarkStereoTool::putClickOn(QPointF& lPos, QPointF& rPos) {
+    if (onlyEmitClickedMode_) {
         emit clicked(lPos, rPos);
-    }
-    else
-    {
-        _display->getCurrentScene()->getLeftScene()->geometry()->insertPoint(lPos, nextMarkItem, QString::number(nextMarkItem), &mark);
-        _display->getCurrentScene()->getRightScene()->geometry()->insertPoint(rPos, nextMarkItem, QString::number(nextMarkItem), &mark);
-        _display->updateAll();
-        nextMarkItem++;
+    } else {
+        display_->getCurrentScene()->getLeftScene()->geometry()->insertPoint(lPos,
+                nextMarkItem_, QString::number(nextMarkItem_), &mark_);
+        display_->getCurrentScene()->getRightScene()->geometry()->insertPoint(rPos,
+                nextMarkItem_, QString::number(nextMarkItem_), &mark_);
+        display_->updateAll();
+        nextMarkItem_++;
     }
 }
 
-//void MarkStereoTool::enterEvent(const QHoverEvent& event)
-//{
-//}
-
-//void MarkStereoTool::leaveEvent(const QHoverEvent& event)
-//{
-//}
-
-//void MarkStereoTool::moveEvent(const QHoverEvent& event)
-//{
-//}
-
-void MarkStereoTool::mousePressed(const QMouseEvent & event)
-{
+void MarkStereoTool::mousePressed(const QMouseEvent& event) {
     // Add mark
-    if (event.buttons() & Qt::LeftButton)
-    {
-        QPointF lLocal = _display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint());
-        QPointF rLocal = _display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint());
-        if ((lLocal.x() >= 0 && lLocal.y() >= 0 && lLocal.x() <= _display->getCurrentScene()->getLeftScene()->getWidth() && lLocal.y() <= _display->getCurrentScene()->getLeftScene()->getHeight())
-                && (rLocal.x() >= 0 && rLocal.y() >= 0 && rLocal.x() <= _display->getCurrentScene()->getRightScene()->getWidth() && rLocal.y() <= _display->getCurrentScene()->getRightScene()->getHeight()))
-        {
+    if (event.buttons() & Qt::LeftButton) {
+        QPointF lLocal = display_->getPositionLeft(event.pos() +
+                         display_->getLeftCursorOffset().toPoint());
+        QPointF rLocal = display_->getPositionRight(event.pos() +
+                         display_->getRightCursorOffset().toPoint());
+
+        if ((lLocal.x() >= 0 && lLocal.y() >= 0
+                && lLocal.x() <= display_->getCurrentScene()->getLeftScene()->getWidth()
+                && lLocal.y() <= display_->getCurrentScene()->getLeftScene()->getHeight())
+                && (rLocal.x() >= 0 && rLocal.y() >= 0
+                    && rLocal.x() <= display_->getCurrentScene()->getRightScene()->getWidth()
+                    && rLocal.y() <= display_->getCurrentScene()->getRightScene()->getHeight())) {
             putClickOn(lLocal, rLocal);
         }
     }
+
     StereoTool::mousePressed(event);
 }
 
-//void MarkStereoTool::mouseReleased(const QMouseEvent & event)
-//{
-//}
-
-//void MarkStereoTool::mouseMoved(const QMouseEvent & event)
-//{
-//}
-
-//void MarkStereoTool::mouseDblClicked(const QMouseEvent & event)
-//{
-//}
-
-//void MarkStereoTool::wheelEvent(const QWheelEvent & event)
-//{
-//}
-
-
-
 NearStereoTool::NearStereoTool(StereoDisplay* display) :
-    StereoTool(display)
-{
-    _nearDock = new QDockWidget("Detailview");
-    _nearDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
-
-    _leftNear = _display->getLeftNearDisplay();
-    _rightNear = _display->getRightNearDisplay();
-    _leftNear->setActivatedTool(this);
-    _rightNear->setActivatedTool(this);
-    _leftNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
-    _rightNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
-
+    StereoTool(display) {
+    nearDock_ = new QDockWidget("Detailview");
+    nearDock_->setFeatures(QDockWidget::DockWidgetClosable |
+                           QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable |
+                           QDockWidget::DockWidgetMovable);
+    leftNear_ = display_->getLeftNearDisplay();
+    rightNear_ = display_->getRightNearDisplay();
+    leftNear_->setActivatedTool(this);
+    rightNear_->setActivatedTool(this);
+    leftNear_->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(
+            255, 255, 255, 255), QColor(0, 0, 0, 255), QSize(25, 25))));
+    rightNear_->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(
+                              255, 255, 255, 255), QColor(0, 0, 0, 255), QSize(25, 25))));
     QWidget* widget = new QWidget();
     QHBoxLayout* layout = new QHBoxLayout(widget);
-    layout->addWidget(_leftNear);
-    layout->addWidget(_rightNear);
+    layout->addWidget(leftNear_);
+    layout->addWidget(rightNear_);
     widget->setLayout(layout);
-    _nearDock->setWidget(widget);
-
-    //_cursorIsVisible = false;
-    //_marker = NULL;
+    nearDock_->setWidget(widget);
 }
 
-NearStereoTool::~NearStereoTool()
-{
+NearStereoTool::~NearStereoTool() {
 }
 
-QDockWidget* NearStereoTool::getNearDock()
-{
-    return _nearDock;
+QDockWidget* NearStereoTool::getNearDock() {
+    return nearDock_;
 }
 
-SingleDisplay* NearStereoTool::getLeftNear()
-{
-    return _leftNear;
+SingleDisplay* NearStereoTool::getLeftNear() {
+    return leftNear_;
 }
 
-SingleDisplay* NearStereoTool::getRightNear()
-{
-    return _rightNear;
+SingleDisplay* NearStereoTool::getRightNear() {
+    return rightNear_;
 }
 
-bool NearStereoTool::nearIsVisible()
-{
-    return _nearDock->isVisible();
+bool NearStereoTool::nearIsVisible() {
+    return nearDock_->isVisible();
 }
 
-void NearStereoTool::setNearVisible(bool status)
-{
-    if (status && !_nearDock->isVisible())
-        _nearDock->show();
-    _nearDock->setHidden(!status);
+void NearStereoTool::setNearVisible(bool status) {
+    if (status && !nearDock_->isVisible()) {
+        nearDock_->show();
+    }
+
+    nearDock_->setHidden(!status);
 }
 
-/* Methods into disuse:
-void NearStereoTool::setMarker(MarkTool *marker)
-{
-    _marker = marker;
-}
-
-void NearStereoTool::setNearCursor(QCursor cursor)
-{
-    //_leftNear->setCursor(cursor);
-    //_rightNear->setCursor(cursor);
-}
-*/
-
-void NearStereoTool::paintEvent(const QPaintEvent &event)
-{
+void NearStereoTool::paintEvent(const QPaintEvent& event) {
     event.isAccepted();
-
     //* this Code Cause Paint Warnings!
-    QPixmap ico = QPixmap::fromImage(_display->getCursor());
+    QPixmap ico = QPixmap::fromImage(display_->getCursor());
     QRect reg(QPoint(), ico.size());
-    if (_leftNear->painting())
-    {
-        QPainter painter(_leftNear);
+
+    if (leftNear_->painting()) {
+        QPainter painter(leftNear_);
         {
-            reg.moveCenter(QPoint(_leftNear->width()/2, _leftNear->height()/2));
-            painter.drawPixmap(reg,ico);
-            //painter.end();
+            reg.moveCenter(QPoint(leftNear_->width() / 2, leftNear_->height() / 2));
+            painter.drawPixmap(reg, ico);
         }
     }
-    if (_rightNear->painting())
-    {
-        QPainter painter(_rightNear);
+
+    if (rightNear_->painting()) {
+        QPainter painter(rightNear_);
         {
-            reg.moveCenter(QPoint(_rightNear->width()/2, _rightNear->height()/2));
-            painter.drawPixmap(reg,ico);
-            //painter.end();
+            reg.moveCenter(QPoint(rightNear_->width() / 2, rightNear_->height() / 2));
+            painter.drawPixmap(reg, ico);
         }
     }
 }
 
-void NearStereoTool::resizeEvent(const QResizeEvent &event)
-{
+void NearStereoTool::resizeEvent(const QResizeEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::enterEvent(const QHoverEvent& event)
-{
+void NearStereoTool::enterEvent(const QHoverEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::leaveEvent(const QHoverEvent& event)
-{
+void NearStereoTool::leaveEvent(const QHoverEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::moveEvent(const QHoverEvent& event)
-{
+void NearStereoTool::moveEvent(const QHoverEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::mousePressed(const QMouseEvent & event)
-{
+void NearStereoTool::mousePressed(const QMouseEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::mouseReleased(const QMouseEvent & event)
-{
+void NearStereoTool::mouseReleased(const QMouseEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::mouseMoved(const QMouseEvent & event)
-{
+void NearStereoTool::mouseMoved(const QMouseEvent& event) {
     event.isAccepted();
 }
 
-void NearStereoTool::mouseDblClicked(const QMouseEvent & event)
-{
-    event.isAccepted();
-}
-
-void NearStereoTool::wheelEvent(const QWheelEvent & event)
-{
-    if (_display->isStereoCursor())
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+void NearStereoTool::wheelEvent(const QWheelEvent& event) {
+    if (display_->isStereoCursor()) {
+        display_->getCurrentScene()->getLeftScene()->setDetailedPoint(
+            display_->getPositionLeft(event.pos() +
+                                      display_->getLeftCursorOffset().toPoint()));
+        display_->getCurrentScene()->getRightScene()->setDetailedPoint(
+            display_->getPositionRight(event.pos() +
+                                       display_->getRightCursorOffset().toPoint()));
     }
-    _leftNear->update();
-    _rightNear->update();
 
+    leftNear_->update();
+    rightNear_->update();
     event.isAccepted();
 }
 
 
 
 OverStereoTool::OverStereoTool(StereoDisplay* display) :
-    StereoTool(display)
-{
-    _overDock = new QDockWidget("Overview");
-    _overDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
-
-    _leftOver = _display->getLeftOverDisplay();
-    _rightOver = _display->getRightOverDisplay();
-    //_leftOver->setHidden(true);
-    //_rightOver->setHidden(true);
-    //_leftOver->setActivatedTool(this);
-    //_rightOver->setActivatedTool(this);
-
+    StereoTool(display) {
+    overDock_ = new QDockWidget("Overview");
+    overDock_->setFeatures(QDockWidget::DockWidgetClosable |
+                           QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable |
+                           QDockWidget::DockWidgetMovable);
+    leftOver_ = display_->getLeftOverDisplay();
+    rightOver_ = display_->getRightOverDisplay();
     QWidget* widget = new QWidget();
     QHBoxLayout* layout = new QHBoxLayout(widget);
-    layout->addWidget(_leftOver);
-    layout->addWidget(_rightOver);
+    layout->addWidget(leftOver_);
+    layout->addWidget(rightOver_);
     widget->setLayout(layout);
-    _overDock->setWidget(widget);
-
-    _onMove = false;
+    overDock_->setWidget(widget);
 }
 
-OverStereoTool::~OverStereoTool()
-{
+OverStereoTool::~OverStereoTool() {
 }
 
-QDockWidget* OverStereoTool::getOverDock()
-{
-    return _overDock;
+QDockWidget* OverStereoTool::getOverDock() {
+    return overDock_;
 }
 
-SingleDisplay* OverStereoTool::getLeftOver()
-{
-    return _leftOver;
+SingleDisplay* OverStereoTool::getLeftOver() {
+    return leftOver_;
 }
 
-SingleDisplay* OverStereoTool::getRightOver()
-{
-    return _rightOver;
+SingleDisplay* OverStereoTool::getRightOver() {
+    return rightOver_;
 }
 
-bool OverStereoTool::overIsVisible()
-{
-    return _overDock->isVisible();
+bool OverStereoTool::overIsVisible() {
+    return overDock_->isVisible();
 }
 
-void OverStereoTool::setOverVisible(bool status)
-{
-    if (status && !_overDock->isVisible())
-        _overDock->show();
-    _overDock->setHidden(!status);
-}
-
-void OverStereoTool::paintEvent(const QPaintEvent &event)
-{
-    event.isAccepted();
-}
-
-void OverStereoTool::resizeEvent(const QResizeEvent &event)
-{
-    event.isAccepted();
-}
-
-void OverStereoTool::enterEvent(const QHoverEvent& event)
-{
-    event.isAccepted();
-}
-
-void OverStereoTool::leaveEvent(const QHoverEvent& event)
-{
-    event.isAccepted();
-}
-
-void OverStereoTool::moveEvent(const QHoverEvent& event)
-{
-    event.isAccepted();
-    _leftOver->updateMousePosition();
-    _rightOver->updateMousePosition();
-    /*
-    if (_display->positionIsVisible(_over->getLastMousePosition()))
-    {
-        if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getPointingHand()))
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+void OverStereoTool::setOverVisible(bool status) {
+    if (status && !overDock_->isVisible()) {
+        overDock_->show();
     }
-    else
-    {
-        if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getOpenHand()))
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getPointingHand()));
-    }
-    */
-    //actualizePosLabel(_leftOver);
-    //actualizePosLabel(_rightOver);
+
+    overDock_->setHidden(!status);
 }
 
-void OverStereoTool::mousePressed(const QMouseEvent & event)
-{
+void OverStereoTool::paintEvent(const QPaintEvent& event) {
     event.isAccepted();
 }
 
-void OverStereoTool::mouseReleased(const QMouseEvent & event)
-{
+void OverStereoTool::resizeEvent(const QResizeEvent& event) {
     event.isAccepted();
 }
 
-void OverStereoTool::mouseMoved(const QMouseEvent & event)
-{
+void OverStereoTool::enterEvent(const QHoverEvent& event) {
     event.isAccepted();
 }
 
-void OverStereoTool::mouseDblClicked(const QMouseEvent & event)
-{
+void OverStereoTool::leaveEvent(const QHoverEvent& event) {
     event.isAccepted();
 }
 
-void OverStereoTool::wheelEvent(const QWheelEvent & event)
-{
+void OverStereoTool::moveEvent(const QHoverEvent& event) {
+    event.isAccepted();
+    leftOver_->updateMousePosition();
+    rightOver_->updateMousePosition();
+}
+
+void OverStereoTool::mousePressed(const QMouseEvent& event) {
+    event.isAccepted();
+}
+
+void OverStereoTool::mouseReleased(const QMouseEvent& event) {
+    event.isAccepted();
+}
+
+void OverStereoTool::mouseMoved(const QMouseEvent& event) {
+    event.isAccepted();
+}
+
+void OverStereoTool::wheelEvent(const QWheelEvent& event) {
     event.isAccepted();
 }
 
 
 
-StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
+StereoToolsBar::StereoToolsBar(StereoDisplay* display, QWidget* parent) :
     QToolBar(parent),
     _zoom(display),
     _move(display),
     _mark(display),
     _near(display),
-    _over(display)
-{
-    _display = display;
-
+    _over(display) {
+    display_ = display;
     setWindowTitle("Display tools");
-    setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Zoom</span></p></body></html>", this);
-    setMoveTool = new QAction(QIcon(":/icon/moveIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Move</span></p></body></html>", this);
-    setMarkTool = new QAction(QIcon(":/icon/markIcon"),                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Measure</span></p></body></html>", this);
-    showOverview = new QAction(QIcon(":/icon/overIcon"),                 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Overview</span></p></body></html>", this);
-    showNearview = new QAction(QIcon(":/icon/detailIcon"),               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Nearview</span></p></body></html>", this);
-    useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Antialias</span></p></body></html>", this);
-    openLeftImage = new QAction(QIcon(":/icon/fileopen.png"),            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Open Left</span></p></body></html>", this);
-    openRightImage = new QAction(QIcon(":/icon/fileopen.png"),           "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Open Right</span></p></body></html>", this);
-    saveLeftImage = new QAction(QIcon(":/icon/disquette.png"),           "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Save Left</span></p></body></html>", this);
-    saveRightImage = new QAction(QIcon(":/icon/disquette.png"),          "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Save Right</span></p></body></html>", this);
-    setFitView = new QAction(QIcon(":/icon/fit.png"),                    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Fit View</span></p></body></html>", this);
-
-    //scaleSpinBox = new QDoubleSpinBox(this);
-    //scaleSpinBox->setSuffix(" %");
-    //scaleSpinBox->setDecimals(0);
-    //scaleSpinBox->setRange(0,800);
-    //scaleSpinBox->setSingleStep(0);
-    //scaleSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    //connect(scaleSpinBox,SIGNAL(editingFinished()),this,SLOT(rescaleDisplay()));
-
-    //_zoom.setScaleSpin(scaleSpinBox);
-    //_move.setScaleSpin(scaleSpinBox);
-    //_mark.setScaleSpin(scaleSpinBox);
-    //_near.setScaleSpin(scaleSpinBox);
-    //_over.setScaleSpin(scaleSpinBox);
-
-    _leftInfoLabel = new QLabel("   ", 0);
-    _rightInfoLabel = new QLabel("   ", 0);
-    _stereoInfoLabel = new QLabel("   ", 0);
-
-    _zoom.setPosLabel(_leftInfoLabel, _rightInfoLabel, _stereoInfoLabel);
-    _move.setPosLabel(_leftInfoLabel, _rightInfoLabel, _stereoInfoLabel);
-    _mark.setPosLabel(_leftInfoLabel, _rightInfoLabel, _stereoInfoLabel);
-    _near.setPosLabel(_leftInfoLabel, _rightInfoLabel, _stereoInfoLabel);
-    _over.setPosLabel(_leftInfoLabel, _rightInfoLabel, _stereoInfoLabel);
-
-    //detailComboBox = new QComboBox(this);
-    //detailComboBox->addItems(QString("1x 2x 4x 8x").split(" "));
-    //detailComboBox->setCurrentIndex(1);
-    //_display->getCurrentScene()->setDetailZoom(2.0);
-    //connect(detailComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDetailZoom(int)));
-
+    setZoomTool = new QAction(QIcon(":/icon/zoomIcon"),
+                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                              "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Zoom</span></p></body></html>",
+                              this);
+    setMoveTool = new QAction(QIcon(":/icon/moveIcon"),
+                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                              "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Move</span></p></body></html>",
+                              this);
+    setMarkTool = new QAction(QIcon(":/icon/markIcon"),
+                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                              "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Measure</span></p></body></html>",
+                              this);
+    showOverview = new QAction(QIcon(":/icon/overIcon"),
+                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                               "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Overview</span></p></body></html>",
+                               this);
+    showNearview = new QAction(QIcon(":/icon/detailIcon"),
+                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                               "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Nearview</span></p></body></html>",
+                               this);
+    useAntialias = new QAction(QIcon(":/icon/aliasingIcon"),
+                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                               "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Antialias</span></p></body></html>",
+                               this);
+    openLeftImage = new QAction(QIcon(":/icon/fileopen.png"),
+                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                                "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Open Left</span></p></body></html>",
+                                this);
+    openRightImage = new QAction(QIcon(":/icon/fileopen.png"),
+                                 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                                 "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Open Right</span></p></body></html>",
+                                 this);
+    saveLeftImage = new QAction(QIcon(":/icon/disquette.png"),
+                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                                "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Save Left</span></p></body></html>",
+                                this);
+    saveRightImage = new QAction(QIcon(":/icon/disquette.png"),
+                                 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                                 "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Save Right</span></p></body></html>",
+                                 this);
+    setFitView = new QAction(QIcon(":/icon/fit.png"),
+                             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN"
+                             "http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;font-weight:600; color:#000000;\">Fit View</span></p></body></html>",
+                             this);
+    leftInfoLabel_ = new QLabel("   ", 0);
+    rightInfoLabel_ = new QLabel("   ", 0);
+    stereoInfoLabel_ = new QLabel("   ", 0);
+    _zoom.setPosLabel(leftInfoLabel_, rightInfoLabel_, stereoInfoLabel_);
+    _move.setPosLabel(leftInfoLabel_, rightInfoLabel_, stereoInfoLabel_);
+    _mark.setPosLabel(leftInfoLabel_, rightInfoLabel_, stereoInfoLabel_);
+    _near.setPosLabel(leftInfoLabel_, rightInfoLabel_, stereoInfoLabel_);
+    _over.setPosLabel(leftInfoLabel_, rightInfoLabel_, stereoInfoLabel_);
     setMarkTool->setShortcut(Qt::CTRL + Qt::Key_Z);
     setMoveTool->setShortcut(Qt::CTRL + Qt::Key_X);
     setZoomTool->setShortcut(Qt::CTRL + Qt::Key_C);
-
     addAction(openLeftImage);
     addAction(openRightImage);
     addAction(saveLeftImage);
@@ -1037,12 +801,9 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
     addAction(setFitView);
     addSeparator();
     addAction(useAntialias);
-    //addWidget(scaleSpinBox);
     addSeparator();
     addAction(showOverview);
     addAction(showNearview);
-    //addWidget(detailComboBox);
-
     setZoomTool->setCheckable(true);
     setMoveTool->setCheckable(true);
     setMarkTool->setCheckable(true);
@@ -1051,271 +812,153 @@ StereoToolsBar::StereoToolsBar(StereoDisplay *display, QWidget *parent) :
     useAntialias->setCheckable(true);
     showOverview->setChecked(true);
     showNearview->setChecked(true);
-
-    _display->setActivatedTool(&_near);
-
+    display_->setActivatedTool(&_near);
     QActionGroup* navegation = new QActionGroup(this);
     navegation->addAction(setZoomTool);
     navegation->addAction(setMoveTool);
     navegation->addAction(setMarkTool);
     navegation->setExclusive(true);
-
-    connect(this, SIGNAL(actionTriggered(QAction*)), this, SLOT(executeAction(QAction*)));
-    currentTool = &_move;
+    connect(this, SIGNAL(actionTriggered(QAction*)), this,
+            SLOT(executeAction(QAction*)));
+    currentTool_ = &_move;
     setMoveTool->trigger();
 }
 
-SingleDisplay* StereoToolsBar::getLeftNearview()
-{
+SingleDisplay* StereoToolsBar::getLeftNearview() {
     return _near.getLeftNear();
 }
 
-SingleDisplay* StereoToolsBar::getRightNearview()
-{
+SingleDisplay* StereoToolsBar::getRightNearview() {
     return _near.getRightNear();
 }
 
-QDockWidget* StereoToolsBar::getNearviews()
-{
+QDockWidget* StereoToolsBar::getNearviews() {
     return _near.getNearDock();
 }
 
-SingleDisplay* StereoToolsBar::getLeftOverview()
-{
+SingleDisplay* StereoToolsBar::getLeftOverview() {
     return _over.getLeftOver();
 }
 
-SingleDisplay* StereoToolsBar::getRightOverview()
-{
+SingleDisplay* StereoToolsBar::getRightOverview() {
     return _over.getRightOver();
 }
 
-QDockWidget* StereoToolsBar::getOverviews()
-{
+QDockWidget* StereoToolsBar::getOverviews() {
     return _over.getOverDock();
 }
 
-void StereoToolsBar::clearStereoInfoLabel()
-{
-    QString stereoInfo = QString("   ");
-    _stereoInfoLabel->setText(stereoInfo);
+void StereoToolsBar::actualizeStereoInfoLabel(double X, double Y, double Z) {
+    QString stereoInfo = QString("Object: ") + QString::number(X, 'f',
+                         2) + QString(" x ") + QString::number(Y, 'f',
+                                 2) + QString(" x ") + QString::number(Z, 'f', 2);
+    stereoInfoLabel_->setText(stereoInfo);
 }
 
-void StereoToolsBar::actualizeStereoInfoLabel(double X, double Y, double Z)
-{
-    QString stereoInfo = QString("Object: ") + QString::number(X,'f',2) + QString(" x ") + QString::number(Y,'f',2) + QString(" x ") + QString::number(Z,'f',2);
-    _stereoInfoLabel->setText(stereoInfo);
-}
-
-void  StereoToolsBar::setOpenVisible(bool status)
-{
+void  StereoToolsBar::setOpenVisible(bool status) {
     openLeftImage->setVisible(status);
     openRightImage->setVisible(status);
 }
 
-void  StereoToolsBar::setSaveVisible(bool status)
-{
+void  StereoToolsBar::setSaveVisible(bool status) {
     saveLeftImage->setVisible(status);
     saveRightImage->setVisible(status);
 }
 
-void  StereoToolsBar::setMarkVisible(bool status)
-{
+void  StereoToolsBar::setMarkVisible(bool status) {
     setMarkTool->setVisible(status);
 }
 
-void StereoToolsBar::changeMode(int mode)
-{
-    if (mode ==  1)
-    {
+void StereoToolsBar::changeMode(int mode) {
+    if (mode ==  1) {
         setMarkTool->trigger();
     }
-    if (mode ==  2)
-    {
+
+    if (mode ==  2) {
         setMoveTool->trigger();
     }
-    if (mode ==  3)
-    {
+
+    if (mode ==  3) {
         setZoomTool->trigger();
     }
 }
 
-void StereoToolsBar::executeAction(QAction *action)
-{
-    if (action ==  setZoomTool )
-    {
-        _display->setActivatedTool(currentTool, false);
-        _display->setActivatedTool(currentTool = &_zoom);
+void StereoToolsBar::executeAction(QAction* action) {
+    if (action ==  setZoomTool ) {
+        display_->setActivatedTool(currentTool_, false);
+        display_->setActivatedTool(currentTool_ = &_zoom);
         _zoom.setCursor(SymbolsResource::getMagnifyGlass(), false);
-        _leftInfoLabel->setHidden(true);
-        _rightInfoLabel->setHidden(true);
-        _stereoInfoLabel->setHidden(true);
-        //_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getMagnifyGlass())));
+        leftInfoLabel_->setHidden(true);
+        rightInfoLabel_->setHidden(true);
+        stereoInfoLabel_->setHidden(true);
     }
-    if (action ==  setMoveTool )
-    {
-        _display->setActivatedTool(currentTool, false);
-        _display->setActivatedTool(currentTool = &_move);
+
+    if (action ==  setMoveTool ) {
+        display_->setActivatedTool(currentTool_, false);
+        display_->setActivatedTool(currentTool_ = &_move);
         _move.setCursor(SymbolsResource::getOpenHand(), false);
-        _leftInfoLabel->setHidden(true);
-        _rightInfoLabel->setHidden(true);
-        _stereoInfoLabel->setHidden(true);
-        //_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
+        leftInfoLabel_->setHidden(true);
+        rightInfoLabel_->setHidden(true);
+        stereoInfoLabel_->setHidden(true);
     }
-    if (action ==  setMarkTool )
-    {
-        _display->setActivatedTool(currentTool, false);
-        _display->setActivatedTool(currentTool = &_mark);
-        _mark.setCursor(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)),true);
-        _leftInfoLabel->setHidden(false);
-        _rightInfoLabel->setHidden(false);
-        _stereoInfoLabel->setHidden(false);
-        //_display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255), QColor(0,0,0,255), QSize(25, 25)))));
+
+    if (action ==  setMarkTool ) {
+        display_->setActivatedTool(currentTool_, false);
+        display_->setActivatedTool(currentTool_ = &_mark);
+        _mark.setCursor(SymbolsResource::getBordedCross(QColor(255, 255, 255, 255),
+                        QColor(0, 0, 0, 255), QSize(25, 25)), true);
+        leftInfoLabel_->setHidden(false);
+        rightInfoLabel_->setHidden(false);
+        stereoInfoLabel_->setHidden(false);
     }
-    if (action ==  setFitView )
-    {
-        _display->fitView();
-        //currentTool->actualizeScaleSpin(_display->getCurrentScene()->getScale());
+
+    if (action ==  setFitView ) {
+        display_->fitView();
     }
-    if (action ==  showOverview )
-    {
+
+    if (action ==  showOverview ) {
         _over.setOverVisible(!_over.overIsVisible());
     }
-    if (action ==  showNearview )
-    {
+
+    if (action ==  showNearview ) {
         _near.setNearVisible(!_near.nearIsVisible());
-        _display->setActivatedTool(&_near, _near.nearIsVisible());
-        //detailComboBox->setEnabled(_near.nearIsVisible());
+        display_->setActivatedTool(&_near, _near.nearIsVisible());
     }
-    if (action == useAntialias)
-    {
-        //_display->getCurrentScene()->useSmooth(useAntialias->isChecked());
-        _display->updateAll();
+
+    if (action == useAntialias) {
+        display_->updateAll();
     }
-    if (action ==  openLeftImage )
-    {
-        QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".", "*.bmp *.png *.tif *.ppm *.jpg");
-        if (!filename.isEmpty())
-        {
-            SingleScene* scene = (SingleScene*)_display->getCurrentScene()->getLeftScene();
+
+    if (action ==  openLeftImage ) {
+        QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".",
+                           "*.bmp *.png *.tif *.ppm *.jpg");
+
+        if (!filename.isEmpty()) {
+            SingleScene* scene = dynamic_cast<SingleScene*>
+                                 (display_->getCurrentScene()->getLeftScene());
             scene->loadImage(filename);
-            _display->updateAll();
+            display_->updateAll();
         }
     }
-    if (action ==  saveLeftImage )
-    {
+
+    if (action ==  saveLeftImage ) {
     }
-    if (action ==  openRightImage )
-    {
-        QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".", "*.bmp *.png *.tif *.ppm *.jpg");
-        if (!filename.isEmpty())
-        {
-            SingleScene* scene = (SingleScene*)_display->getCurrentScene()->getRightScene();
+
+    if (action ==  openRightImage ) {
+        QString filename = QFileDialog::getOpenFileName(0, "Open Image", ".",
+                           "*.bmp *.png *.tif *.ppm *.jpg");
+
+        if (!filename.isEmpty()) {
+            SingleScene* scene = dynamic_cast<SingleScene*>
+                                 (display_->getCurrentScene()->getRightScene());
             scene->loadImage(filename);
-            _display->updateAll();
+            display_->updateAll();
         }
     }
-    if (action ==  saveRightImage )
-    {
+
+    if (action ==  saveRightImage ) {
     }
 }
-
-/* mousePressed
-if (e->button() == Qt::RightButton)//:MidButton)
-{
- moveLastPos_ = e->posF();
- onMove_ = true;
-}
-else if (e->button() == Qt::LeftButton)
-{
- moveLastPos_ = e->posF();
- if (stereoDisplay_->getCurrentScene())
- {
-  QPointF diffTocenter(moveLastPos_.x() - size().width() / 2, moveLastPos_.y() - size().height() / 2);
-  QPointF* leftDetail = NULL;
-  QPointF* rightDetail = NULL;
-  if (stereoDisplay_->getCurrentScene()->getLeftScene() && stereoDisplay_->getCurrentScene()->getLeftScene()->imageLoaded())
-   leftDetail = new QPointF(stereoDisplay_->getCurrentScene()->getLeftScene()->getViewpoint() + (diffTocenter+stereoDisplay_->getLeftCursorOffset()) / stereoDisplay_->getCurrentScene()->getLeftScene()->getScale());
-  if (stereoDisplay_->getCurrentScene()->getRightScene() && stereoDisplay_->getCurrentScene()->getRightScene()->imageLoaded())
-   rightDetail = new QPointF(stereoDisplay_->getCurrentScene()->getRightScene()->getViewpoint() + (diffTocenter+stereoDisplay_->getRightCursorOffset()) / stereoDisplay_->getCurrentScene()->getRightScene()->getScale());
-  stereoDisplay_->updateDetail(leftDetail, rightDetail, true);
-  if (leftDetail)
-   delete(leftDetail);
-  if (rightDetail)
-   delete(rightDetail);
- }
-}
-QWidget::mousePressEvent(e);
-*/
-
-/* mouseReleased
-onMove_ = false;
-QWidget::mouseReleaseEvent(e);
-*/
-
-/* mouseMoved
-QPointF diff = e->posF() - moveLastPos_;
-moveLastPos_ = e->posF();
-if (stereoDisplay_->getCurrentScene())
-{
- QPointF diffTocenter(moveLastPos_.x() -diff.x() - size().width() / 2, moveLastPos_.y() -diff.y() - size().height() / 2);
- QPointF* leftDetail = NULL;
- QPointF* rightDetail = NULL;*/
-/*
- if (stereoDisplay_->getCurrentScene()->getLeftScene() && stereoDisplay_->getCurrentScene()->getLeftScene()->imageLoaded())
-  leftDetail = new QPointF(stereoDisplay_->getCurrentScene()->getLeftScene()->getViewpoint() + (diffTocenter+stereoDisplay_->getLeftCursorOffset()) / stereoDisplay_->getCurrentScene()->getLeftScene()->getScale());
- if (stereoDisplay_->getCurrentScene()->getRightScene() && stereoDisplay_->getCurrentScene()->getRightScene()->imageLoaded())
-  rightDetail = new QPointF(stereoDisplay_->getCurrentScene()->getRightScene()->getViewpoint() + (diffTocenter+stereoDisplay_->getRightCursorOffset()) / stereoDisplay_->getCurrentScene()->getRightScene()->getScale());
-
- if (onMove_ && (e->buttons() & Qt::RightButton))//Qt::MidButton))
- {
-  if (stereoDisplay_->getCurrentScene()->getLeftScene())
-  {
-   double lscale = stereoDisplay_->getCurrentScene()->getLeftScene()->getScale();
-   stereoDisplay_->getCurrentScene()->getLeftScene()->pan(-(diff/lscale));
-  }
-  if (stereoDisplay_->getCurrentScene()->getRightScene())
-  {
-   double rscale = stereoDisplay_->getCurrentScene()->getRightScene()->getScale();
-   stereoDisplay_->getCurrentScene()->getRightScene()->pan(-(diff/rscale));
-  }
-  stereoDisplay_->updateAll(leftDetail, rightDetail);
- }
- else */ /* if (!onMove_)
- {
-  update();
-  stereoDisplay_->updateDetail(leftDetail, rightDetail);
- }
-
- if (leftDetail)
-  delete(leftDetail);
- if (rightDetail)
-  delete(rightDetail);
-}
-QWidget::mouseMoveEvent(e); */
-
-/* wheelEvent
-int numDegrees = e->delta() / 8.0;
-int numSteps = numDegrees / 15.0;
-if (stereoDisplay_->getCurrentScene() && stereoDisplay_->getCurrentScene()->getLeftScene() && stereoDisplay_->getCurrentScene()->getRightScene())
-{
- if (e->orientation() == Qt::Vertical)
- {
-  double zoomStep;
-  if (numSteps>0)
-   zoomStep = 1.044273782; // 1*2^(1÷(2^4))
-  else if (numSteps<0)
-   zoomStep = 0.957603281; // 1/2^(1÷(2^4))
-  for (int i = 0; i<abs(numSteps);i++)
-  {
-   stereoDisplay_->getCurrentScene()->getLeftScene()->zoom(zoomStep);
-   stereoDisplay_->getCurrentScene()->getRightScene()->zoom(zoomStep);
-  }
-  stereoDisplay_->updateAll();
- }
-}
-QWidget::wheelEvent(e);
-*/
 
 } // namespace efoto
 } // namespace eng

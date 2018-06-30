@@ -86,17 +86,17 @@ void GeoSystem::setSystemName(std::string name)
 	systemName=name;
 }
 
-double GeoSystem::getA()
+double GeoSystem::getA() const
 {
 	return a;
 }
 
-double GeoSystem::getB()
+double GeoSystem::getB() const
 {
 	return b;
 }
 
-double GeoSystem::getF()
+double GeoSystem::getF() const
 {
 	return f;
 }
@@ -112,16 +112,9 @@ double GeoSystem::getSecondEccentricity()
 	return e1*e1/(1-e1*e1);
 }
 
-std::string GeoSystem::getSystemName()
+std::string GeoSystem::getSystemName() const
 {
 	return systemName;
-}
-
-std::string GeoSystem::toString()
-{
-    std::stringstream aux;
-	aux << systemName <<":\ta = " << a << "\tb = "<< b << "\tf = "<< f <<"\n";
-	return aux.str().c_str();
 }
 
 void GeoSystem::setSystem(double a, double f, std::string newName)

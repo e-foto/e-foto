@@ -46,73 +46,47 @@ class Image;
 class InteriorOrientation : public EDom
 {
 
-        //EOBJECT
-
-        // Private attributes
-        //
-        int imageId;
-        Matrix Xa;
-        Matrix La;
-        Matrix A;
-        Matrix P;
-
-        // Composed objects
-        //
-        IOQuality myQuality;
-
-        // Associated objects
-        //
-        Image* myImage;
-
-        // Private method
-        //
-        void generateA();
-
 public:
 
-        // Constructors and destructors
-        //
         InteriorOrientation();
         explicit InteriorOrientation(int myImageId); // Constructor with ids only, needed in project use.
         virtual ~InteriorOrientation();
 
-        // Private attribute accessors
-        //
+        int getImageId() const;
+        Matrix getXa() const;
+        Matrix getLa() const;
+        Matrix getA() const;
+        Matrix getP() const;
 
-        int getImageId();
-        Matrix getXa();
-        Matrix getLa();
-        Matrix getA();
-        Matrix getP();
-
-
-        // Composed objects accessors
-        //
-
-        IOQuality getQuality();
-
-        // Associated objects accessors
-        //
+        IOQuality getQuality() const;
 
         void setImage(Image *myNewImage);
         Image* getImage();
 
         // XML methods
-        //
         void xmlSetData(std::string xml);
         std::string xmlGetData();
-
-        // Other methods
-        //
 
         void calculate();
         DetectorSpaceCoordinate imageToDetector(double col, double lin);
         DetectorSpaceCoordinate imageToDetector(ImageSpaceCoordinate myDigitalCoordinate);
         PositionMatrix imageToDetector(const PositionMatrix& myDigitalPositions);
-        ImageSpaceCoordinate detectorToImage(double x, double y);
-        ImageSpaceCoordinate detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate);
-        PositionMatrix detectorToImage(const PositionMatrix& myAnalogPositions);
+        ImageSpaceCoordinate detectorToImage(double x, double y) const;
+        ImageSpaceCoordinate detectorToImage(DetectorSpaceCoordinate myAnalogCoordinate) const;
+        PositionMatrix detectorToImage(const PositionMatrix& myAnalogPositions) const;
 
+private:
+        int imageId{-1};
+        Matrix Xa{};
+        Matrix La{};
+        Matrix A{};
+        Matrix P{};
+
+        IOQuality myQuality{};
+
+        Image* myImage{nullptr};
+
+        void generateA();
 };
 
 } // namespace efoto

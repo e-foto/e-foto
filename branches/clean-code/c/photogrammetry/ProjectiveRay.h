@@ -46,14 +46,13 @@ class ProjectiveRay
 
 protected:
 
-        Image* myImage;
-        double r11, r12, r13, r21, r22, r23, r31, r32, r33;
-        bool hasRotations;
+        Image* myImage_{nullptr};
+        double r11{0.0}, r12{0.0}, r13{0.0}, r21{0.0}, r22{0.0}, r23{0.0}, r31{0.0}, r32{0.0}, r33{0.0};
+        bool hasRotations_{false};
 
 protected:
 
         PositionMatrix imageZToDetectorZ(const PositionMatrix& myDigitalPositionsWithZ);
-        PositionMatrix detectorZToImageZ(const PositionMatrix& myAnalogPositionsWithZ);
         PositionMatrix applyDistortionsZ(const PositionMatrix& myAnalogPositionsWithZ);
         void calculateRotations();
 
@@ -61,7 +60,7 @@ public:
 
         // Constructors
         //
-        explicit ProjectiveRay(Image* myImage);
+        explicit ProjectiveRay(Image* myImage_);
 
         // Other methods
         //
@@ -88,8 +87,8 @@ public:
         DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
         PositionMatrix applyDistortions(const PositionMatrix& myAnalogPositions);
         // Todo: Solve urgently: The method must return the corrected coordinates
-        DetectorSpaceCoordinate removeDistortions(double xi, double eta);
-        DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
+        static DetectorSpaceCoordinate removeDistortions(double xi, double eta);
+        static DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
         PositionMatrix removeDistortions(const PositionMatrix& myAnalogPositions);
 
         ObjectSpaceCoordinate imageToObject(double col, double lin, double Z, bool useDistortions = true);
@@ -103,7 +102,6 @@ public:
 private:
 
         DetectorSpaceCoordinate getRadialDistortions(double xi, double eta);
-        DetectorSpaceCoordinate getDecenteredDistortions(double xi, double eta);
         DetectorSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
         DetectorSpaceCoordinate getCurvatureDistortions(double xi, double eta);
 };

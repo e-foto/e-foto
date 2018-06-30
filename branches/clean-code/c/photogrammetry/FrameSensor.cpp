@@ -27,29 +27,17 @@ namespace efoto {
 // Subclass methods
 //
 
-double RadialSymmetricDistortionCoefficient::getValue()
+double RadialSymmetricDistortionCoefficient::getValue() const
 {
 	return value;
 }
 
-double RadialSymmetricDistortionCoefficient::getSigma()
+double DecenteredDistortionCoefficient::getValue() const
 {
-	return sigma;
-}
-
-double DecenteredDistortionCoefficient::getValue()
-{
-	return value;
-}
-
-double DecenteredDistortionCoefficient::getSigma()
-{
-	return sigma;
+    return value;
 }
 
 // Constructors and destructors
-//
-
 FrameSensor::FrameSensor():Sensor()
 {
 
@@ -57,7 +45,6 @@ FrameSensor::FrameSensor():Sensor()
 
 FrameSensor::FrameSensor(const Sensor& sensor):Sensor(sensor)
 {
-	//*this = sensor;
 }
 
 FrameSensor::FrameSensor(const FrameSensor& sensor):Sensor(sensor)
@@ -78,23 +65,6 @@ FrameSensor::~FrameSensor()
 
 
 // Private attributes accessor methods
-//
-
-void FrameSensor::setFocalDistance(double newFocalDistance)
-{
-	focalDistance = newFocalDistance;
-}
-
-void FrameSensor::setFocalDistanceSigma(double newFocalDistanceSigma)
-{
-	focalDistanceSigma = newFocalDistanceSigma;
-}
-
-void FrameSensor::setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates)
-{
-	principalPointCoordinates = newCoordinates;
-}
-
 double FrameSensor::getFocalDistance()
 {
 	return focalDistance;
@@ -113,12 +83,12 @@ DetectorSpaceCoordinate FrameSensor::getPrincipalPointCoordinates()
 // Associated object accessor methods
 //
 
-std::deque<RadialSymmetricDistortionCoefficient> FrameSensor::getRadialSymmetricCoefficients()
+std::deque<RadialSymmetricDistortionCoefficient> FrameSensor::getRadialSymmetricCoefficients() const
 {
 	return rsCoefficients;
 }
 
-std::deque<DecenteredDistortionCoefficient> FrameSensor::getDecenteredCoefficients()
+std::deque<DecenteredDistortionCoefficient> FrameSensor::getDecenteredCoefficients() const
 {
 	return dCoefficients;
 }

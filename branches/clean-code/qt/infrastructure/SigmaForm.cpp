@@ -50,19 +50,6 @@ SigmaFormController::SigmaFormController(Matrix myValues)
 	}
 }
 
-// Método do Panda
-void SigmaFormController::setNameLabels(QStringList newNames)
-{
-	int i=0;
-	if (labels.length()==newNames.length())
-	{
-		for (i=0;i<labels.length();i++)
-		{
-			labels.at(i)->setText(newNames.at(i));
-		}
-	}
-}
-
 void SigmaFormController::init()
 {
 	contentWidget = new QWidget();
@@ -70,23 +57,6 @@ void SigmaFormController::init()
 	direction = "vertical";
 	labels.clear();
 	edits.clear();
-}
-
-Matrix SigmaFormController::stDevToMatrix(std::deque<double> stDev)
-{
-	Matrix result(stDev.size(), stDev.size());
-	result.zero();
-	for (unsigned int i = 0; i < stDev.size(); i++)
-		result.set(i,i,stDev.at(i)*stDev.at(i));
-	return result;
-}
-
-std::deque<double> SigmaFormController::matrixToStDev(Matrix mat)
-{
-    std::deque<double> result;
-	for (unsigned int i = 0; i < mat.getRows(); i++)
-		result.push_back(sqrt(mat.get(i,i)));
-	return result;
 }
 
 QWidget* SigmaFormController::getContent()
@@ -107,11 +77,6 @@ void SigmaFormController::setDirection(std::string newDirection)
 		direction = "vertical";
 		myLayout->setDirection(QBoxLayout::TopToBottom);
 	}
-}
-
-std::string SigmaFormController::getDirection()
-{
-	return direction;
 }
 
 void SigmaFormController::setMode(std::string newMode)
@@ -359,51 +324,13 @@ void SigmaFormController::toMatrix()
 	}
 }
 
-void SigmaFormController::setTitles(QStringList newTitles)
-{
-	titles = newTitles;
-	updateTitles();
-}
-
-void SigmaFormController::updateTitles()
-{
-	if (dimension == (unsigned int)edits.size())
-	{
-		QString text;
-		if (mode == "Covariance Matrix")
-		{
-			for (unsigned int i = 0; i < dimension; i++)
-			{
-				//QLabel* newLabel = labels.at(i);
-				//newLabel->setText("Var");
-			}
-		}
-		else
-		{
-			for (unsigned int i = 0; i < dimension; i++)
-			{
-				//QLabel* newLabel = labels.at(i);
-				//text = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head><body style=\" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;\"><table style=\"-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;\"><tr><td style=\"border: none;\"><p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2';\">";
-				//text += titles.at();
-				//newLabel->setText(text);
-			}
-		}
-	}
-}
-
-void SigmaFormController::showMatrixEditor()
-{
-	//QMessageBox msg("e-foto","A classe MatrixEditor ainda n~ao est´a pronta");
-	//msg.show();
-}
-
 void SigmaFormController::setReadOnly(bool b)
 {
-	for (unsigned int i = 0; i < dimension; i++)
-	{
-		edits.at(i)->setReadOnly(b);
-	}
-	emit changeToReadOnly(b);
+    for (unsigned int i = 0; i < dimension; i++)
+    {
+        edits.at(i)->setReadOnly(b);
+    }
+    emit changeToReadOnly(b);
 }
 
 void SigmaFormController::changeValidate(QString)
@@ -421,13 +348,6 @@ void SigmaFormTypeSelector::setSigmaFormController(SigmaFormController *newContr
 	connect(this, SIGNAL(currentIndexChanged(QString)), newController, SLOT(toMode(QString)));
 	connect(newController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
 	connect(newController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
-}
-
-void SigmaFormTypeSelector::disconnectSigmaFormController(SigmaFormController *oldController)
-{
-	connect(this, SIGNAL(currentIndexChanged(QString)), oldController, SLOT(toMode(QString)));
-	connect(oldController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
-	connect(oldController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
 }
 
 void SigmaFormTypeSelector::toMode(QString newMode)
@@ -466,7 +386,8 @@ void SigmaFormContent::setSigmaFormController(SigmaFormController *newController
 	layout()->addWidget(controller->getContent());
 }
 
-SigmaFormDialogButton::SigmaFormDialogButton(QWidget * parent) : QPushButton("Show whole matrix", parent)
+SigmaFormDialogButton::SigmaFormDialogButton(QWidget * parent) :
+    QPushButton("Show whole matrix", parent)
 {
 }
 

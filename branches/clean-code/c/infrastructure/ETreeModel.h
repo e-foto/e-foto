@@ -33,8 +33,8 @@ namespace efoto {
 */
 class ETreeElement
 {
-	unsigned int id;
-    std::string description;
+    int id_;
+    std::string description_;
 public:
 
 	/**
@@ -47,7 +47,7 @@ public:
  * \param id	A chave de identificação do elemento descrito.
  * \param description	A descriçao do elemento.
  */
-    explicit ETreeElement(int id, std::string description);
+    explicit ETreeElement(int id, std::string _description);
 
 	/**
  * \brief Construtor de um elemento a partir de sua representação XML.
@@ -59,13 +59,13 @@ public:
  * \brief Recupera a chave de identificação do elemento.
  * \return unsigned	A chave identificadora do elemento.
  */
-	unsigned int getId();
+    unsigned int getId() const;
 
 	/**
  * \brief Recupera a descrição textual do elemento.
  * \return std::string	A descrição do elemento.
  */
-    std::string getDescription();
+    std::string getDescription() const;
 };
 
 /**
@@ -77,8 +77,8 @@ public:
 */
 class ETreeNode
 {
-    std::string description;
-    std::deque<ETreeElement> children;
+    std::string description_;
+    std::deque<ETreeElement> children_;
 public:
 
 	/**
@@ -91,7 +91,7 @@ public:
  * \param description	A descrição do nó.
  * \param children	A lista de elementos filhos do nó.
  */
-    explicit ETreeNode(std::string description, std::deque<ETreeElement> children);
+    explicit ETreeNode(std::string description, std::deque<ETreeElement> children_);
 
 	/**
  * \brief Construtor de um nó a partir de sua representação XML.
@@ -103,21 +103,15 @@ public:
  * \brief Recupera a descrição textual do nó.
  * \return std::string	A descrição do nó.
  */
-    std::string getDescription();
+    std::string getDescription() const;
 
 	/**
  * \brief Conta a quantidade de elementos folhas associados ao nó.
  * \return unsigned	O número de elementos filhos do nó.
  */
-	unsigned int countChildren();
+    unsigned int countChildren() const;
 
-	/**
- * \brief Recupera a lista de elementos folhas associados ao nó.
- * \return std::deque<ETreeElement> A lista de elementos filhos do nó.
- */
-    std::deque<ETreeElement> getChildren();
-
-	/**
+/**
  * \brief Recupera um elemento folha a partir do seu índice na lista.
  * \param index	O índice do elemento desejado.
  * \return ETreeElement	O elemento desejado.
@@ -154,7 +148,7 @@ public:
 */
 class ETreeModel
 {
-    std::deque<ETreeNode> children;
+    std::deque<ETreeNode> children_;
 public:
 
 	/**
@@ -166,7 +160,7 @@ public:
  * \brief Construtor de uma árvore com estrutua conhecida.
  * \param children	A lista de nós da árvore.
  */
-    explicit ETreeModel(std::deque<ETreeNode> children);
+    explicit ETreeModel(std::deque<ETreeNode> children_);
 
 	/**
  * \brief Construtor de uma árvore a partir da raiz do xml contido em um arquivo .epp.
@@ -178,7 +172,7 @@ public:
  * \brief Conta quantos nós a árvore possui.
  * \return unsigned	A quantidade de nós da árvore.
  */
-	unsigned int countChildren();
+    unsigned int countChildren() const;
 
 	/**
  * \brief Conta quantas folhas um determinado nó árvore possui.
@@ -187,13 +181,7 @@ public:
  */
 	unsigned int countGrandchildren(unsigned int index);
 
-	/**
- * \brief Recupera a lista de nós existentes na árvore.
- * \return std::deque<ETreeNode>	A lista de nós da árvore.
- */
-    std::deque<ETreeNode> getChildren();
-
-	/**
+/**
  * \brief Recupera um nó especifico da árvore.
  * \param index	O índice do nó desejado.
  * \return ETreeNode	O nó desejado.

@@ -28,15 +28,15 @@ namespace efoto {
 
 class PhotoTri : public EDom
 {
-    int totalIterations;
-    bool converged;
-    double metricConvergency;
-    double angularConvergency;
-    double rmse;
-    std::deque<int> imageKey;
-    std::deque<int> pointKey;
-    std::deque<Image*> image;
-    std::deque<Point*> point;
+    int totalIterations{0};
+    bool converged{false};
+    double metricConvergency{0.0};
+    double angularConvergency{0.0};
+    double rmse{0.0};
+    std::deque<int> imageKey{};
+    std::deque<int> pointKey{};
+    std::deque<Image*> image{};
+    std::deque<Point*> point{};
 
 public:
     PhotoTri();
@@ -45,16 +45,16 @@ public:
     std::string xmlGetData();
     void xmlSetData(std::string xml);
 
-    int getTotalIterations() {return totalIterations;}
-    bool getConverged() {return converged;}
-    double getMetricConvergency() {return metricConvergency;}
-    double getAngularConvergency() {return angularConvergency;}
-    double getRmse() {return rmse;}
+    int getTotalIterations() const {return totalIterations;}
+    bool getConverged() const {return converged;}
+    double getMetricConvergency() const {return metricConvergency;}
+    double getAngularConvergency() const {return angularConvergency;}
+    double getRmse() const {return rmse;}
 
-    std::deque<int> getImageKeys() {return imageKey;}
-    std::deque<int> getPointKeys() {return pointKey;}
-    std::deque<Image*> getImages() {return image;}
-    std::deque<Point*> getPoints() {return point;}
+    std::deque<int> getImageKeys() const {return imageKey;}
+    std::deque<int> getPointKeys() const {return pointKey;}
+    std::deque<Image*> getImages() const {return image;}
+    std::deque<Point*> getPoints() const {return point;}
 
     void putImage(Image* img);
     void putPoint(Point* pt);

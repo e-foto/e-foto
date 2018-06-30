@@ -124,11 +124,6 @@ bool FlightDirectionForm::isMarked(int comboIndex)
 	return false;
 }
 
-QList<int> FlightDirectionForm::getMarkedImages()
-{
-	return markedImages;
-}
-
 QStringList FlightDirectionForm::getStringMarkedImages()
 {
 	QStringList list;
@@ -138,26 +133,6 @@ QStringList FlightDirectionForm::getStringMarkedImages()
 	return list;
 
 }
-
-int FlightDirectionForm::getIndexCombo(QString comboText)
-{
-	int numImages=imagesFlightDirectionCombo->count();
-	for (int i=0;i<numImages;i++)
-		if (imagesFlightDirectionCombo->itemText(i)==comboText)
-			return i;
-	return -1;
-}
-
-bool FlightDirectionForm::getPassMode()
-{
-	return autoPassMode;
-}
-
-void FlightDirectionForm::setPassMode(bool status)
-{
-	autoPassMode=status;
-}
-
 
 bool FlightDirectionForm::eventFilter(QObject *obj, QEvent *event)
 {

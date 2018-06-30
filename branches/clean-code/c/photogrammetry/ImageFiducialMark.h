@@ -90,13 +90,13 @@ public:
  * \brief Método de acesso que retorna o valor de id da marca fiducial digital.
  * \return int	Identificador da marca fiducial digital.
  */
-	int getId();
+    int getId() const;
 
 	/**
  * \brief Método de acesso que retorna o valor de id da imagem à qual a marca pertence.
  * \return int	int	Identificador da imagem à qual a marca pertence.
  */
-	int getImageId();
+    int getImageId() const;
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

@@ -29,23 +29,11 @@ namespace eng {
 namespace efoto {
 
 
-class DEMUserInterface //: public EObject
+class DEMUserInterface
 {
 
-protected:
-
-	// Associated Objects
-	//
-	DEMManager* manager;
-
 public:
-
-	// Association Methods
-	//
-	DEMManager* getManager();
-
 	// Other Methods
-	//
 	virtual bool exec() = 0;
 
 };

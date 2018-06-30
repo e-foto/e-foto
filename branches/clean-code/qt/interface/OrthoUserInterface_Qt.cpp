@@ -63,29 +63,6 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
     : QWidget(parent, fl)
 {
     setupUi(this);
-    /*
- actionSet_mark->setCheckable(true);
- actionMove->setCheckable(true);
- actionZoom->setCheckable(true);
- QActionGroup *group = new QActionGroup(this);
- group->addAction(actionSet_mark);
- group->addAction(actionMove);
- group->addAction(actionZoom);
- group->setExclusive(true);
- actionActive_grid->setCheckable(true);
- actionView_report->setEnabled(false);
- actionInterior_orientation->setEnabled(false);
- table1->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
- QObject::connect(actionInterior_orientation, SIGNAL(triggered()), this, SLOT(calculateIO()));
- QObject::connect(actionView_report, SIGNAL(triggered()), this, SLOT(viewReport()));
- QObject::connect(actionSet_mark, SIGNAL(triggered()), this, SLOT(activeSetMode()));
- QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
- QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
- QObject::connect(actionFit_view, SIGNAL(triggered()), this, SLOT(fitView()));
-        if (manager->interiorDone())
-                actionView_report->setEnabled(true);
-*/
     this->manager = manager;
 
 	QObject::connect(doneButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -124,11 +101,6 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
 OrthoUserInterface_Qt::~OrthoUserInterface_Qt()
 {
     // no need to delete child widgets, Qt does it all for us
-}
-
-void OrthoUserInterface_Qt::languageChange()
-{
-    retranslateUi(this);
 }
 
 void OrthoUserInterface_Qt::init()
@@ -551,7 +523,7 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
         double X, Y, col, row;
         col = p.x() + 1.0;
         row = manager->getOrtho()->getHeight() - p.y(); // Convert matrix to image coordinate system
-        row++;
+        row+=1.0;
 
         manager->getOrtho()->getXYAt(col, row, X, Y);
 
@@ -565,7 +537,7 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p)
         viewer->update();
 }
 
-void OrthoQualityUserInterface_Qt::onTableClicked(int row/*, int col*/)
+void OrthoQualityUserInterface_Qt::onTableClicked(int row)
 {
         int num_points = tableWidget->rowCount() - 2;
 
@@ -580,8 +552,8 @@ void OrthoQualityUserInterface_Qt::onTableClicked(int row/*, int col*/)
 
         manager->getOrtho()->getColRowAt(X, Y, cc, rr);
 
-        cc--; // Images coordinates ranges from 0
-        rr--;
+        cc-=1.0; // Images coordinates ranges from 0
+        rr-=1.0;
         rr = manager->getOrtho()->getHeight() - rr; // Convert matrix to image coordinate system
 
         viewer->getDisplay()->getCurrentScene()->moveTo(QPointF(cc,rr));
@@ -590,7 +562,7 @@ void OrthoQualityUserInterface_Qt::onTableClicked(int row/*, int col*/)
 
 void OrthoQualityUserInterface_Qt::updateMarks()
 {
-    double col, row, X, Y;
+    double col, row;
     QPointF p;
     int no_points = tableWidget->rowCount()-2, key=1;
 
@@ -602,11 +574,11 @@ void OrthoQualityUserInterface_Qt::updateMarks()
         // Reference points
 
         // Calculate col and row - ranges from 1-N
-        X = getDoubleTableAt(i,0);
-        Y = getDoubleTableAt(i,1);
+        double X = getDoubleTableAt(i,0);
+        double Y = getDoubleTableAt(i,1);
         manager->getOrtho()->getColRowAt(X, Y, col, row);
-        col--; // Images coordinates ranges from 0
-        row--;
+        col-=1.0; // Images coordinates ranges from 0
+        row-=1.0;
         row = manager->getOrtho()->getHeight() - row; // Convert matrix to image coordinate system
         p.setX(col);
         p.setY(row);
@@ -622,8 +594,8 @@ void OrthoQualityUserInterface_Qt::updateMarks()
         X = getDoubleTableAt(i,2);
         Y = getDoubleTableAt(i,3);
         manager->getOrtho()->getColRowAt(X, Y, col, row);
-        col--; // Images coordinates ranges from 0
-        row--;
+        col-=1.0; // Images coordinates ranges from 0
+        row-=1.0;
         row = manager->getOrtho()->getHeight() - row; // Convert matrix to image coordinate system
         p.setX(col);
         p.setY(row);

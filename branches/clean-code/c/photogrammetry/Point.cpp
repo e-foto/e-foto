@@ -91,7 +91,7 @@ void Point::setType(PointType type)
  * Get the value of id
  * @return the value of id
  */
-int Point::getId()
+int Point::getId() const
 {
 	return id;
 }
@@ -100,7 +100,7 @@ int Point::getId()
  * Get the value of gcpId
  * @return the value of gcpId
  */
-std::string Point::getPointId()
+std::string Point::getPointId() const
 {
 	return pointId;
 }
@@ -109,12 +109,12 @@ std::string Point::getPointId()
  * Get the value of description
  * @return the value of description
  */
-std::string Point::getDescription()
+std::string Point::getDescription() const
 {
 	return description;
 }
 
-Point::PointType Point::getType()
+Point::PointType Point::getType() const
 {
 	return type;
 }
@@ -135,47 +135,19 @@ void Point::setObjectCoordinate(ObjectSpaceCoordinate newObjectCoordinate)
  * Get the value of objectCoordinate
  * @return the value of objectCoordinate
  */
-ObjectSpaceCoordinate Point::getObjectCoordinate()
+ObjectSpaceCoordinate Point::getObjectCoordinate() const
 {
 	return objectCoordinate;
-}
-
-/**
- * Set all the values of imageCoordinates deque at once
- * @param newimageCoordinates the new values
- */
-void Point::setImageCoordinates(std::deque<ImageSpaceCoordinate> newimageCoordinates)
-{
-	imageCoordinates = newimageCoordinates;
-}
-
-/**
- * Set all the values of DetectorCoordinates deque at once
- * @param newDetectorCoordinates the new values
- */
-void Point::setDetectorCoordinates(std::deque<DetectorSpaceCoordinate> newDetectorCoordinates)
-{
-	detectorCoordinates = newDetectorCoordinates;
 }
 
 /**
  * Get the value of imageCoordinates deque
  * @return the values of imageCoordinates deque
  */
-std::deque<ImageSpaceCoordinate> Point::getImageCoordinates()
+std::deque<ImageSpaceCoordinate> Point::getImageCoordinates() const
 {
 	return imageCoordinates;
 }
-
-/**
- * Get the value of DetectorCoordinates deque
- * @return the values of DetectorCoordinates deque
- */
-std::deque<DetectorSpaceCoordinate> Point::getDetectorCoordinates()
-{
-	return detectorCoordinates;
-}
-
 
 /**
  * Put one value in imageCoordinates deque
@@ -267,48 +239,6 @@ ImageSpaceCoordinate Point::getImageCoordinateAt(unsigned int index)
 }
 
 /**
- *
- */
-DetectorSpaceCoordinate Point::getDetectorCoordinateAt(unsigned int index)
-{
-	if (index < detectorCoordinates.size())
-		return detectorCoordinates.at(index);
-	return DetectorSpaceCoordinate();
-}
-
-/**
- *
- */
-unsigned int Point::countImageCoordinates()
-{
-	return imageCoordinates.size();
-}
-
-/**
- *
- */
-unsigned int Point::countDetectorCoordinates()
-{
-	return detectorCoordinates.size();
-}
-
-/**
- * Clear all the values of imageCoordinates deque
- */
-void Point::clearImageCoordinates()
-{
-	imageCoordinates.clear();
-}
-
-/**
- * Clear all the values of DetectorCoordinates deque
- */
-void Point::clearDetectorCoordinates()
-{
-	detectorCoordinates.clear();
-}
-
-/**
  * Delete the value of imageCoordinate with a specific imageId
  * @param imageId the specified imageId
  */
@@ -323,26 +253,7 @@ void Point::deleteImageCoordinate(int imageId)
 		}
 }
 
-/**
- * Delete the value of DetectorCoordinate with a specific imageId
- * @param imageId the specified imageId
- */
-void Point::deleteDetectorCoordinate(int imageId)
-{
-
-	for (unsigned int i = 0; i < detectorCoordinates.size(); i++)
-		if (detectorCoordinates.at(i).getImageId() == imageId)
-		{
-			detectorCoordinates.erase(detectorCoordinates.begin()+i);
-			break;
-		}
-}
-
-
-
 // Associated object accessor methods
-//
-
 /**
  *
  */
@@ -384,7 +295,7 @@ Image* Point::getImage(int imageId)
 /**
  *
  */
-int Point::countImages()
+int Point::countImages() const
 {
 	return myImages.size();
 }
@@ -466,7 +377,7 @@ std::string Point::xmlGetData()
 	return result.str();
 }
 
-Point::PointType Point::readPointType(std::string type)
+Point::PointType Point::readPointType(std::string type) const
 {
 	if (type == "control")
 	{

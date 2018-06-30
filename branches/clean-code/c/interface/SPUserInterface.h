@@ -28,23 +28,10 @@ namespace efoto {
 
 class SPManager;
 
-class SPUserInterface //: public EObject
+class SPUserInterface
 {
 
-protected:
-
-	// Associated Objects
-	//
-	SPManager* manager;
-
 public:
-
-	// Association Methods
-	//
-	SPManager* getManager();
-
-	// Other Methods
-	//
     virtual bool exec() = 0;
     virtual void centerImages(ObjectSpaceCoordinate coord, double zoom) = 0;
 

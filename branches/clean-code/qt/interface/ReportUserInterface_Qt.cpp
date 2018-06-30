@@ -67,11 +67,6 @@ ReportUserInterface_Qt::~ReportUserInterface_Qt()
     // no need to delete child widgets, Qt does it all for us
 }
 
-void ReportUserInterface_Qt::languageChange()
-{
-    retranslateUi(this);
-}
-
 void ReportUserInterface_Qt::init()
 {
     newTree();

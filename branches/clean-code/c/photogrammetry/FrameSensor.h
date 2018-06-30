@@ -38,13 +38,13 @@ class SensorWithKnowParameters;
 
 class RadialSymmetricDistortionCoefficient
 {
-	double value;
-	double sigma;
+    double value{0.0};
+    double sigma{0.0};
 
 public:
+    RadialSymmetricDistortionCoefficient(){};
 
-	double getValue();
-	double getSigma();
+    double getValue() const;
 
 	friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
@@ -54,15 +54,15 @@ public:
 
 class DecenteredDistortionCoefficient
 {
-	double value;
-	double sigma;
+    double value{0.0};
+    double sigma{0.0};
 
 public:
+    DecenteredDistortionCoefficient(){};
 
-	double getValue();
-	double getSigma();
+    double getValue() const;
 
-	friend class FrameSensor;
+    friend class FrameSensor;
 	friend class SensorWithFiducialMarks;
 	friend class SensorWithKnowDimensions;
 	friend class SensorWithKnowParameters;
@@ -89,29 +89,12 @@ class FrameSensor : public Sensor
 protected:
 
 	// Private attributes
-	//
-	//int id;
-    //std::string sensorId;
-	double focalDistance;
-	double focalDistanceSigma;
+    double focalDistance{0.0};
+    double focalDistanceSigma{0.0};
 	DetectorSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
-    //std::string description;
-    //std::string geometry;
-    //std::string detector;
-    //std::string energySource;
-    //std::string calibrationCertificateNumber;
-    //std::string calibrationCertificateDispatch;
-    //std::string calibrationCertificateExpiration;
-    std::string focalDistanceUnit;
-    //std::string spectralRangesUnit;
-	//deque<SpectralRange> spectralRanges;
+    std::string focalDistanceUnit{""};
     std::deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
     std::deque<DecenteredDistortionCoefficient> dCoefficients;
-
-	// Associated Objects
-	//
-	//deque<Image*> myImages;
-	//deque<Flight*> myFlights;
 
 public:
 
@@ -124,19 +107,11 @@ public:
 	virtual ~FrameSensor();
 
 	// Private attributes accessor methods
-	//
-	//void setId(int newId);
-	void setFocalDistance(double newFocalDistance);
-	void setFocalDistanceSigma(double newFocalDistanceSigma);
-	void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates);
-    //void setDescription(std::string newDescription);
-	//int getId();
 	double getFocalDistance();
 	double getFocalDistanceSigma();
 	DetectorSpaceCoordinate getPrincipalPointCoordinates();
-    //std::string getDescription();
-    std::deque<RadialSymmetricDistortionCoefficient> getRadialSymmetricCoefficients();
-    std::deque<DecenteredDistortionCoefficient> getDecenteredCoefficients();
+    std::deque<RadialSymmetricDistortionCoefficient> getRadialSymmetricCoefficients() const;
+    std::deque<DecenteredDistortionCoefficient> getDecenteredCoefficients() const;
 
 };
 

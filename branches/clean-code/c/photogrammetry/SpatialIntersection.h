@@ -53,18 +53,14 @@ class SpatialIntersection : public EDom
 public:
 
 	// Constructors and destructors
-	//
 	SpatialIntersection();
     explicit SpatialIntersection(StereoPair* myStereoPair);
 	~SpatialIntersection();
 
 	// Aggregation modifiers
-	//
 	void setStereoPair(StereoPair* newPair);
-	StereoPair* getStereoPair();
 
 	// Other methods
-	//
 	ObjectSpaceCoordinate calculateIntersection(double xiLeft, double etaLeft, double xiRight, double etaRight);
 	ObjectSpaceCoordinate calculateIntersection(DetectorSpaceCoordinate leftCoord, DetectorSpaceCoordinate rightCoord);
 	ObjectSpaceCoordinate calculateIntersection(int colLeft, int rowLeft, int colRight, int rowRight);
@@ -80,7 +76,6 @@ public:
 protected:
 
 	// Support method
-	//
 	double calculateZ(double xiLeft, double etaLeft, double xiRight, double etaRight);
 };
 

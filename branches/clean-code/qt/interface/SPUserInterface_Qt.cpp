@@ -121,38 +121,8 @@ SPUserInterface_Qt::~SPUserInterface_Qt()
     // no need to delete child widgets, Qt does it all for us
 }
 
-void SPUserInterface_Qt::languageChange()
-{
-    //retranslateUi(this);
-}
-
 void SPUserInterface_Qt::init()
 {
-    /*
- // Insert image into layout
- QWidget* centralwidget = new QWidget(this);
-
- QGridLayout* gridLayout = new QGridLayout(centralwidget);
-
- //myImageView = new ImageView(QString(manager->getImageFile().c_str()), centralwidget);
- //myImageView->setFocusPolicy(Qt::NoFocus);
- myImageView = new ImageView(centralwidget);
-
- gridLayout->addWidget(myImageView, 0, 0, 1, 1);
-
- setCentralWidget(centralwidget);
-
- //resize(1024,800);
-
- // Make some connections
- connect (myImageView, SIGNAL(mousePressed()), this, SLOT(informState()));
- connect (myImageView, SIGNAL(markClicked(QPoint)), this, SLOT(receiveMark(QPoint)));
- connect (myImageView, SIGNAL(changed()), this, SLOT(makeRepaint()));
-
- calculationMode = 0;
-*/
-    //this->showNormal();
-    //myImageView->fitView();
 }
 
 void SPUserInterface_Qt::closeEvent(QCloseEvent *e)
@@ -165,7 +135,6 @@ void SPUserInterface_Qt::closeEvent(QCloseEvent *e)
 
     LoadingScreen::instance().show();
     qApp->processEvents();
-    //delete(myImageView);
     manager->returnProject();
     QWidget::closeEvent(e);
 }
@@ -178,35 +147,11 @@ bool SPUserInterface_Qt::exec()
     viewer->setFeatures(manager->getFeaturesLink());
     viewer->getMarker().setToOnlyEmitClickedMode();
 
-    //viewerSeparated = new SeparatedStereoViewer();
-    //viewerSeparated->blockOpen();
-    //viewerSeparated->blockSave();
-    //viewerSeparated->getLeftMarker().setToOnlyEmitClickedMode();
-    //viewerSeparated->getRightMarker().setToOnlyEmitClickedMode();
-    //viewerSeparated->getLeftDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getLeftScene());
-    //viewerSeparated->getRightDisplay()->setCurrentScene(viewer->getDisplay()->getCurrentScene()->getRightScene());
-
-    //QTabWidget* viewersTab = new QTabWidget();
-    //viewersTab->addTab(viewer,"StereoViewer");
-    //viewersTab->addTab(viewerSeparated,"SeparatedViewers");
-    //setCentralWidget(viewersTab);
     setCentralWidget(viewer);
 
     connect(&viewer->getMarker(),SIGNAL(clicked(QPointF, QPointF)),this,SLOT(stereoClicked(QPointF,QPointF)));
     connect(&viewer->getMarker(),SIGNAL(mouseMoved(QPointF,QPointF)),this,SLOT(stereoMoved(QPointF,QPointF)));
     connect(viewer->getDisplay(),SIGNAL(resized(int,int)),this,SLOT(adjustFit(int,int)));
-
-    /*
-    viewer->addToolBar(Qt::LeftToolBarArea,featuresToolBar);
-    viewer->addToolBar(Qt::LeftToolBarArea,pointsToolBar);
-    viewer->addToolBar(Qt::LeftToolBarArea,filesToolBar);
-    viewer->setCorner(Qt::BottomRightCorner,Qt::RightDockWidgetArea);
-    viewer->addDockWidget(Qt::BottomDockWidgetArea, featureListDockWidget, Qt::Horizontal);
-    viewer->addDockWidget(Qt::RightDockWidgetArea, generalOptionsDockWidget, Qt::Vertical);
-    viewer->addDockWidget(Qt::RightDockWidgetArea, featureEditorDockWidget, Qt::Vertical);
-    viewer->tabifyDockWidget(generalOptionsDockWidget, featureEditorDockWidget);
-    statusBar()->setHidden(true);
-    */
 
     viewer->addToolBar(Qt::RightToolBarArea,featuresToolBar);
     viewer->addToolBar(Qt::RightToolBarArea,pointsToolBar);
@@ -237,7 +182,6 @@ void SPUserInterface_Qt::updateData()
 {
     updateTable();
     viewer->getDisplay()->updateAll();
-    //viewerSeparated->update();
 }
 
 void SPUserInterface_Qt::updateTable()
@@ -365,7 +309,6 @@ void SPUserInterface_Qt::onSaveButton()
         lastDir = filename.left(i);
 
         // Save Features
-        //manager->saveFeatures((char *)filename.toStdString().c_str());
         manager->saveFeatures((char *)filename.toLocal8Bit().constData());
     }
 }
@@ -375,7 +318,6 @@ void SPUserInterface_Qt::onExportButton()
     // File open dialog
     QFileDialog salvar(this, tr("Export features"), lastDir, tr("Text file (*.txt);; Shape file (*.shp)"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    //salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
         QString filename = salvar.selectedFiles()[0];
@@ -392,12 +334,10 @@ void SPUserInterface_Qt::onExportButton()
         // Export features
         if (mode.contains("Text file (*.txt)"))
         {
-            //manager->exportFeatures((char *)filename.toStdString().c_str(), 0);
             manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 0);
         }
         else
         {
-            //manager->exportFeatures((char *)filename.toStdString().c_str(), 1);
             manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 1);
         }
     }
@@ -407,15 +347,11 @@ void SPUserInterface_Qt::onAddButton()
 {
     AddDialog addDialog(manager, this);
     addDialog.setFixedWidth(300);
-    //addDialog.move(featuresToolBar->pos().x()-300,featuresToolBar->pos().y());
     addDialog.move(QCursor::pos().x()-300,QCursor::pos().y());
     addDialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 
     if (addDialog.exec() == QDialog::Accepted)
     {
-        // Now, the feature is added by the addDialog form in accept method.
-        //manager->addFeature(nameEdit->text().toStdString(), comboBox_3->currentIndex()+1, (comboBox_4->currentIndex()+1)%comboBox_4->count());
-
         updateData();
 
         int fid, pid;
@@ -451,7 +387,6 @@ void SPUserInterface_Qt::onRemoveAllButton()
 void SPUserInterface_Qt::onAddPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    //viewerSeparated->getToolBar()->changeMode(1);
     if (actionEdit->isChecked())
         actionEdit->setChecked(false);
 
@@ -464,7 +399,6 @@ void SPUserInterface_Qt::onAddPtButton()
 void SPUserInterface_Qt::onEditPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    //viewerSeparated->getToolBar()->changeMode(1);
     if (actionInsert->isChecked())
         actionInsert->setChecked(false);
 
@@ -477,7 +411,6 @@ void SPUserInterface_Qt::onEditPtButton()
 void SPUserInterface_Qt::onSelPtButton()
 {
     viewer->getToolBar()->changeMode(1);
-    //viewerSeparated->getToolBar()->changeMode(1);
     if (actionInsert->isChecked())
         actionInsert->setChecked(false);
 
@@ -612,7 +545,6 @@ void SPUserInterface_Qt::stereoClicked(QPointF lPos, QPointF rPos)
         if (pid == -1) pid++;
         treeView->setCurrentIndex(tree->index(pid-1, 0, tree->index(fid-1, 0)));
         treeView->setExpanded(tree->index(fid-1, 0),true);
-        //onFeatureSelected();
         treeView->setFocus();
     }
 
@@ -637,14 +569,8 @@ void SPUserInterface_Qt::centerImages(ObjectSpaceCoordinate coord, double zoom)
     viewer->getDisplay()->getCurrentScene()->getLeftScene()->moveTo(atL);
     viewer->getDisplay()->getCurrentScene()->getRightScene()->moveTo(atR);
 
-    //viewer->getMarker().addMark(atL, atR, 1, "center");
-
     viewer->update();
 
-    //QMessageBox* msg = new QMessageBox(this);
-    //msg->setText(QString::number(atL.x())+QString("x")+QString::number(atL.y())+QString(" ")+QString::number(atR.x())+QString("x")+QString::number(atR.y()));
-    //msg->setText(QString::number(coord.getPosition().get(1))+QString("x")+QString::number(coord.getPosition().get(2))+QString("x")+QString::number(coord.getPosition().get(3)));
-    //msg->show();
 }
 
 void SPUserInterface_Qt::changePair(int leftKey, int rightKey)
@@ -807,7 +733,6 @@ void AddDialog::checkAcceptance(QString fname)
 
 void AddDialog::accept()
 {
-    //manager->addFeature(nameEdit->text().toStdString(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
     manager->addFeature(nameEdit->text().toLocal8Bit().constData(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
     done(QDialog::Accepted);
 }

@@ -48,6 +48,13 @@ MatchingPoints::MatchingPoints()
  * Matching Points List *
  ************************/
 
+MatchingPointsList::MatchingPointsList():
+    bad_points{0},
+    stack{nullptr},
+    array{nullptr}
+{
+}
+
 void MatchingPointsList::add(int left_id, int right_id, double lx, double ly, double rx, double ry, double X, double Y, double Z, double acc)
 {
     MatchingPoints mp;
@@ -89,33 +96,6 @@ void MatchingPointsList::add(double X, double Y, double Z)
     list.push_back(mp);
 }
 
-// List ranges from 1 to size
-void MatchingPointsList::modify(int pos, int left_id, int right_id, double lx, double ly, double rx, double ry, double acc)
-{
-    if (pos < 1 || unsigned(pos) > list.size())
-        return;
-
-    MatchingPoints *mp = &list.at(pos-1);
-    mp->left_image_id = left_id;
-    mp->right_image_id = right_id;
-    mp->left_x = lx;
-    mp->left_y = ly;
-    mp->right_x = rx;
-    mp->right_y = ry;
-    mp->matching_accuracy = acc;
-}
-
-void MatchingPointsList::modify(int pos, double X, double Y, double Z)
-{
-    if (pos < 1 || unsigned(pos) > list.size())
-        return;
-
-    MatchingPoints *mp = &list.at(pos-1);
-    mp->X = X;
-    mp->Y = Y;
-    mp->Z = Z;
-}
-
 void MatchingPointsList::remove(int pos)
 {
     if (pos < 1 || unsigned(pos) > list.size())
@@ -134,11 +114,10 @@ MatchingPoints* MatchingPointsList::get(int pos)
 
 void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
 {
-    double avg_x, avg_y, std_x, std_y;
-
     // Calculate average
-    avg_x = avg_y = 0.0;
-    for (unsigned int i=0; i<list.size(); i++)
+    double avg_x = 0.0;
+    double avg_y = 0.0;
+    for (size_t i=0; i<list.size(); i++)
     {
         avg_x += fabs(list.at(i).left_x - list.at(i).right_x);
         avg_y += fabs(list.at(i).left_y - list.at(i).right_y);
@@ -147,8 +126,9 @@ void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
     avg_y = avg_y / double(list.size());
 
     // Calculate standard deviation
-    std_x = std_y = 0.0;
-    for (unsigned int i=0; i<list.size(); i++)
+    double std_x = 0.0;
+    double std_y = 0.0;
+    for (size_t i=0; i<list.size(); i++)
     {
         std_x += pow(fabs(list.at(i).left_x - list.at(i).right_x) - avg_x, 2);
         std_y += pow(fabs(list.at(i).left_y - list.at(i).right_y) - avg_y, 2);
@@ -159,13 +139,13 @@ void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
     // Eliminate bad points (faster with 2 lists)
     std_x = std_x * sigma_x;
     std_y = std_y * sigma_y;
-    double delta_x, delta_y;
+
     bad_points = 0;
     std::vector <MatchingPoints> new_list;
-    for (unsigned int i=0; i < list.size(); i++)
+    for (size_t i=0; i < list.size(); i++)
     {
-        delta_x = fabs(list.at(i).left_x - list.at(i).right_x);
-        delta_y = fabs(list.at(i).left_y - list.at(i).right_y);
+        double delta_x = fabs(list.at(i).left_x - list.at(i).right_x);
+        double delta_y = fabs(list.at(i).left_y - list.at(i).right_y);
 
         if (delta_x < avg_x - std_x || delta_x > avg_x + std_x || delta_y < avg_y - std_y || delta_y > avg_y + std_y)
         {
@@ -180,32 +160,7 @@ void MatchingPointsList::filterBadPoints2D(double sigma_x, double sigma_y)
     list = new_list;
 }
 
-void MatchingPointsList::listMp()
-{
-    std::cout << "Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
-
-    MatchingPoints *mp;
-
-    for (unsigned int i=1; i<=list.size(); i++)
-    {
-        mp = &list.at(i-1);
-        std::cout << i << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x << "\t"
-                << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << std::endl;
-    }
-}
-
-void MatchingPointsList::listMp(int pos)
-{
-    if (pos < 1 || unsigned(pos) > list.size())
-        return;
-
-    std::cout << "Pair\tL_ID\tR_ID\tL_x\t\tL_y\t\tR_x\t\tR_y\t\tX\t\tY\t\tZ\t\tAcc\n";
-    MatchingPoints *mp = &list.at(pos-1);
-    std::cout << pos << "\t" << mp->left_image_id << "\t" << mp->right_image_id << "\t" << mp->left_x << "\t" << mp->left_y << "\t" << mp->right_x
-            << "\t" << mp->right_y << "\t" << mp->X << "\t" << mp->Y << "\t" << mp->Z << "\t" << mp->matching_accuracy << std::endl;
-}
-
-int MatchingPointsList::save(char *filename, int type)
+int MatchingPointsList::save(const char * const filename, int type)
 {
     std::ofstream outfile(filename);
 
@@ -218,13 +173,11 @@ int MatchingPointsList::save(char *filename, int type)
     if (type == 2)
         outfile << "10002\t0.0\t0.0\t0.0\t0.0\n";
 
-    MatchingPoints *mp;
-
     outfile << std::fixed << std::setprecision(5);
 
     for (unsigned int i=1; i<=list.size(); i++)
     {
-        mp = &list.at(i-1);
+        MatchingPoints *mp = &list.at(i-1);
 
         switch (type)
         {
@@ -246,10 +199,8 @@ int MatchingPointsList::save(char *filename, int type)
 
 int MatchingPointsList::strTokensCount(char * array)
 {
-    char * token;
     int tokens=0;
-
-    token = strtok(array," \t");
+    char *  token = strtok(array," \t");
 
     while (token != NULL || tokens > 20)
     {
@@ -300,9 +251,10 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
     if (infile.fail())
         return 0;
 
-    char line[256];
-    if (type == 0 || type == 2)
+    if (type == 0 || type == 2){
+        char line[256];
         infile.getline(line,256);
+    }
 
     // Clear list
     if (!append)
@@ -356,27 +308,6 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
 /*********************
  * List bounding box *
  *********************/
-
-void MatchingPointsList::leftImageBoundingBox(int &xi, int &yi, int &xf, int &yf)
-{
-    double xxi, yyi, xxf, yyf, zi, zf;
-    boundingBox(xxi, yyi, xxf, yyf, zi, zf, 0);
-    xi = int(xxi);
-    yi = int(yyi);
-    xf = int(xxf);
-    yf = int(yyf);
-}
-
-void MatchingPointsList::rightImageBoundingBox(int &xi, int &yi, int &xf, int &yf)
-{
-    double xxi, yyi, xxf, yyf, zi, zf;
-    boundingBox(xxi, yyi, xxf, yyf, zi, zf, 1);
-    xi = int(xxi);
-    yi = int(yyi);
-    xf = int(xxf);
-    yf = int(yyf);
-}
-
 void MatchingPointsList::XYZboundingBox(double &xi, double &yi, double &xf, double &yf, double &zi, double &zf)
 {
     boundingBox(xi, yi, xf, yf, zi, zf, 2);
@@ -426,11 +357,11 @@ void MatchingPointsList::boundingBox(double &xi, double &yi, double &xf, double 
 
 bool MatchingPointsList::pop(int &x, int &y)
 {
-    if(stack != NULL)
+    if(stack != nullptr)
     {
         x = stack->x;
         y = stack->y;
-        aux = stack;
+        auto aux = stack;
         stack = stack->prev;
         delete aux;
         return 1;
@@ -443,7 +374,7 @@ bool MatchingPointsList::pop(int &x, int &y)
 
 bool MatchingPointsList::push(int x, int y)
 {
-    aux = stack;
+    auto aux = stack;
     stack = new stackCellQuick();
     stack->x = x;
     stack->y = y;
@@ -552,7 +483,7 @@ void MatchingPointsList::createAuxiliaryList()
         array[i] = new double[3];
 }
 
-void MatchingPointsList::deleteAuxiliaryList()
+void MatchingPointsList::deleteAuxiliaryList() const
 {
     int n = list.size();
 
@@ -593,11 +524,10 @@ void MatchingPointsList::updateList()
 {
     std::vector <MatchingPoints> listaux;
     MatchingPoints mp;
-    int pos;
 
     for (unsigned int i=0; i<list.size(); i++)
     {
-        pos = array[i][0];
+        int pos = array[i][0];
 
         mp.left_image_id = list.at(pos).left_image_id;
         mp.right_image_id = list.at(pos).right_image_id;
@@ -667,7 +597,7 @@ bool MatchingPointsList::hasEmptyPairs()
 int MatchingPointsList::checkImagePairs(int left, int right, bool add)
 {
     MPImagePairs MPI;
-    for (unsigned int i=0; i< MPImagePairsList.size(); i++)
+    for (size_t i=0; i< MPImagePairsList.size(); i++)
     {
         MPI = MPImagePairsList.at(i);
         if (MPI.img1 == left && MPI.img2 == right)
@@ -680,7 +610,7 @@ int MatchingPointsList::checkImagePairs(int left, int right, bool add)
     // If new, add it
     MPI.img1 = left;
     MPI.img2 = right;
-    MPI.Xf = 0.0; MPI.Xf = 0.0; MPI.Yi = 0.0; MPI.Yf = 0.0;
+    MPI.Xi = 0.0; MPI.Xf = 0.0; MPI.Yi = 0.0; MPI.Yf = 0.0;
     MPImagePairsList.push_back(MPI);
 
     return MPImagePairsList.size()-1;
@@ -690,7 +620,6 @@ void MatchingPointsList::identImagePairs()
 {
     MatchingPoints mp;
     int left, right;
-    double X,Y;//,Z;
 
     MPImagePairsList.clear();
 
@@ -706,20 +635,18 @@ void MatchingPointsList::identImagePairs()
     }
 
     // Calculate bounding box for each pair
-    int p;
-    MPImagePairs * MPI;
     for (unsigned int k=0; k<list.size(); k++)
     {
         mp = list.at(k);
-        X = mp.X;
-        Y = mp.Y;
+        auto X = mp.X;
+        auto Y = mp.Y;
 
         left = mp.left_image_id;
         right = mp.right_image_id;
 
-        p = checkImagePairs(left, right);
+        auto p = checkImagePairs(left, right);
 
-        MPI = &MPImagePairsList.at(p);
+        MPImagePairs *MPI = &MPImagePairsList.at(p);
 
         if (X < MPI->Xi || int(MPI->Xi) == 0) MPI->Xi=X;
         if (X > MPI->Xf || int(MPI->Xf) == 0) MPI->Xf=X;
@@ -754,14 +681,13 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
 
     // Convert DEM to image - (Color 0.0 to 1.0)
     MatchingPoints mp;
-    double X,Y,Z;
     int i,j, left, right;//, p;
     for (unsigned int k=0; k<list.size(); k++)
     {
         mp = list.at(k);
-        X = mp.X;
-        Y = mp.Y;
-        Z = mp.Z;
+        auto X = mp.X;
+        auto Y = mp.Y;
+        auto Z = mp.Z;
 
         if (Z - 0.0 < 0.000000000000001)
             continue;
@@ -781,13 +707,12 @@ Matrix * MatchingPointsList::getDemImage(double res_x, double res_y)
     }
 
     // Add bounding box
-    int xi_bb, xf_bb, yi_bb, yf_bb;
     for (unsigned int k=0; k<MPImagePairsList.size(); k++)
     {
-        xi_bb = 1 + int((MPImagePairsList.at(k).Xi-Xi)*res_x);
-        xf_bb = 1 + int((MPImagePairsList.at(k).Xf-Xi)*res_x);
-        yi_bb = 1 + int((MPImagePairsList.at(k).Yi-Yi)*res_y);
-        yf_bb = 1 + int((MPImagePairsList.at(k).Yf-Yi)*res_y);
+        int xi_bb = 1 + int((MPImagePairsList.at(k).Xi-Xi)*res_x);
+        int xf_bb = 1 + int((MPImagePairsList.at(k).Xf-Xi)*res_x);
+        int yi_bb = 1 + int((MPImagePairsList.at(k).Yi-Yi)*res_y);
+        int yf_bb = 1 + int((MPImagePairsList.at(k).Yf-Yi)*res_y);
 
         for (j=xi_bb; j<=xf_bb; j++)
         {

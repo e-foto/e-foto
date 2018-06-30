@@ -31,23 +31,9 @@ class ReportManager;
 #define TXTTYPE 1
 #define HTMTYPE 2
 
-class ReportUserInterface //: public EObject
+class ReportUserInterface
 {
-
-protected:
-
-	// Associated Objects
-	//
-	ReportManager* manager;
-
 public:
-
-	// AssociatReportn Methods
-	//
-	ReportManager* getManager();
-
-	// Other Methods
-	//
 	virtual bool exec() = 0;
 
 };

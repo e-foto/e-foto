@@ -31,489 +31,393 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
-    QWidget(parent)
-{
-    if (currentScene)
-        _currentScene = currentScene;
-    else
-        _currentScene = new SingleScene(this, "");
-    _displayMode = IntermediatedScreen;
-    //_onMove = false;
-    _cloneScale = true;
-    _showDetailArea = false;
-    _blockShowDetailArea = false;
-    _onPainting = false;
-    _over = NULL;
-    _detail = NULL;
-    setMinimumSize(150,150);
+SingleDisplay::SingleDisplay(QWidget* parent, AbstractScene* currentScene):
+    QWidget(parent) {
+    if (currentScene) {
+        currentScene_ = currentScene;
+    } else {
+        currentScene_ = new SingleScene(this, "");
+    }
 
+    displayMode_ = IntermediatedScreen;
+    //_onMove = false;
+    cloneScale_ = true;
+    showDetailArea_ = false;
+    blockShowDetailArea_ = false;
+    onPainting_ = false;
+    over_ = nullptr;
+    detail_ = nullptr;
+    setMinimumSize(150, 150);
     setAttribute(Qt::WA_Hover, true);
     installEventFilter(this);
-
     //Cursor cursor(BlackAndWhiteCursor);
     //setCursor(cursor.toQCursor());
 }
 
-SingleDisplay::~SingleDisplay()
-{
+SingleDisplay::~SingleDisplay() {
 }
-void SingleDisplay::updateMousePosition()
-{
-    _mouseLastPos = mapFromGlobal(QCursor::pos());
+void SingleDisplay::updateMousePosition() {
+    mouseLastPos_ = mapFromGlobal(QCursor::pos());
 }
 
-bool SingleDisplay::positionIsVisible(QPointF pos)
-{
-    /*
- QPointF screenPos;
- SingleScene* currentScene = (SingleScene*)_currentScene;
- if (_displayMode == TopViewScreen)
-  screenPos = (pos - QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0))*currentScene->getThumbScale() + QPointF(width()/2, height()/2);
- else
-  screenPos = (pos - _currentScene->getViewpoint())*_currentScene->getScale() + QPointF(width()/2, height()/2);
-  */
-
+bool SingleDisplay::positionIsVisible(QPointF pos) {
     QPointF screenPos = screenPosition(pos);
-    if (screenPos.x() >= 0 && screenPos.y() >= 0 && screenPos.x() <= width() && screenPos.y() <= height())
+
+    if (screenPos.x() >= 0 && screenPos.y() >= 0 && screenPos.x() <= width()
+            && screenPos.y() <= height()) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
-QPointF SingleDisplay::screenPosition(QPointF pos)
-{
+QPointF SingleDisplay::screenPosition(QPointF pos) {
     QPointF screenPos;
-    SingleScene* currentScene = (SingleScene*)_currentScene;
-    if (_displayMode == TopViewScreen)
-        screenPos = (pos - QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0))*currentScene->getThumbScale() + QPointF(width()/2, height()/2);
-    else if (_displayMode == MostDetailedScreen)
-        screenPos = (pos - currentScene->getDetailedPoint())*currentScene->getScale()*currentScene->getDetailZoom() + QPointF(width()/2, height()/2);
-    else
-        screenPos = (pos - _currentScene->getViewpoint())*_currentScene->getScale() + QPointF(width()/2, height()/2);
+    SingleScene* currentScene = dynamic_cast<SingleScene*>(currentScene_);
+
+    if (displayMode_ == TopViewScreen) {
+        screenPos = (pos - QPointF(currentScene->getWidth() / 2.0,
+                                   currentScene->getHeight() / 2.0)) * currentScene->getThumbScale() + QPointF(
+                        width() / 2, height() / 2);
+    } else if (displayMode_ == MostDetailedScreen) {
+        screenPos = (pos - currentScene->getDetailedPoint()) * currentScene->getScale()
+                    * currentScene->getDetailZoom() + QPointF(width() / 2, height() / 2);
+    } else {
+        screenPos = (pos - currentScene_->getViewpoint()) * currentScene_->getScale() +
+                    QPointF(width() / 2, height() / 2);
+    }
 
     return screenPos;
 }
 
-QPointF SingleDisplay::getLastMousePosition()
-{
-    QPointF diffTocenter(_mouseLastPos.x() - size().width() / 2, _mouseLastPos.y() - size().height() / 2);
+QPointF SingleDisplay::getLastMousePosition() {
+    QPointF diffTocenter(mouseLastPos_.x() - size().width() / 2,
+                         mouseLastPos_.y() - size().height() / 2);
     double scale;
-    SingleScene* currentScene = (SingleScene*)_currentScene;
+    SingleScene* currentScene = dynamic_cast<SingleScene*>(currentScene_);
     QPointF mousePos;
-    if (_displayMode == TopViewScreen)
-    {
+
+    if (displayMode_ == TopViewScreen) {
         scale = currentScene->getThumbScale();
-        mousePos = QPointF(currentScene->getWidth()/2.0,currentScene->getHeight()/2.0) + diffTocenter / scale;
-    }
-    else if (_displayMode == MostDetailedScreen)
-    {
-        scale = currentScene->getScale()*currentScene->getDetailZoom();
+        mousePos = QPointF(currentScene->getWidth() / 2.0,
+                           currentScene->getHeight() / 2.0) + diffTocenter / scale;
+    } else if (displayMode_ == MostDetailedScreen) {
+        scale = currentScene->getScale() * currentScene->getDetailZoom();
         mousePos = currentScene->getDetailedPoint() + diffTocenter / scale;
+    } else {
+        scale = currentScene_->getScale();
+        mousePos = currentScene_->getViewpoint() + diffTocenter / scale;
     }
-    else
-    {
-        scale = _currentScene->getScale();
-        mousePos = _currentScene->getViewpoint() + diffTocenter / scale;
-    }
+
     return mousePos;
 }
 
-QPointF SingleDisplay::getPosition(QPoint screenPosition)
-{
-    QPointF diffTocenter(screenPosition.x() - size().width() / 2, screenPosition.y() - size().height() / 2);
+QPointF SingleDisplay::getPosition(QPoint screenPosition) {
+    QPointF diffTocenter(screenPosition.x() - size().width() / 2,
+                         screenPosition.y() - size().height() / 2);
     double scale;
-    scale = _currentScene->getScale();
-    return _currentScene->getViewpoint() + diffTocenter / scale;
+    scale = currentScene_->getScale();
+    return currentScene_->getViewpoint() + diffTocenter / scale;
 }
 
-QPointF SingleDisplay::getMouseScreenPosition()
-{
-    return _mouseLastPos;
+QPointF SingleDisplay::getMouseScreenPosition() {
+    return mouseLastPos_;
 }
 
-bool SingleDisplay::painting()
-{
-    return _onPainting;
+bool SingleDisplay::painting() {
+    return onPainting_;
 }
 
-bool SingleDisplay::showDetailedArea()
-{
-    return _showDetailArea;
+bool SingleDisplay::showDetailedArea() {
+    return showDetailArea_;
 }
 
-void SingleDisplay::setShowDetailedArea(bool status)
-{
-    _showDetailArea = status;
+void SingleDisplay::setShowDetailedArea(bool status) {
+    showDetailArea_ = status;
 }
 
-void SingleDisplay::blockShowDetailedArea(bool status)
-{
-    _blockShowDetailArea = status;
+void SingleDisplay::blockShowDetailedArea(bool status) {
+    blockShowDetailArea_ = status;
 }
 
-void SingleDisplay::setCurrentScene(AbstractScene *newScene)
-{
-    _currentScene = newScene;
-    update();
+AbstractScene* SingleDisplay::getCurrentScene() {
+    return currentScene_;
 }
 
-AbstractScene* SingleDisplay::getCurrentScene()
-{
-    return _currentScene;
-}
-
-SingleDisplay* SingleDisplay::getOverDisplay()
-{
-    if (_over == NULL)
-    {
+SingleDisplay* SingleDisplay::getOverDisplay() {
+    if (over_ == nullptr) {
         SingleDisplay* result = new SingleDisplay(0);
         result->setOverviewMode(this);
-        _over = result;
+        over_ = result;
     }
-    return _over;
+
+    return over_;
 }
 
-SingleDisplay* SingleDisplay::getDetailDisplay()
-{
-    if (_detail == NULL)
-    {
+SingleDisplay* SingleDisplay::getDetailDisplay() {
+    if (detail_ == nullptr) {
         SingleDisplay* result = new SingleDisplay(0);
         result->setDetailMode(this);
-        _detail = result;
+        detail_ = result;
     }
-    return _detail;
+
+    return detail_;
 }
 
-void SingleDisplay::fitView()
-{
-    _currentScene->setViewport(size());
-    double wscale = width() / (double)_currentScene->getWidth();
-    double hscale = height() / (double)_currentScene->getHeight();
-    _currentScene->scaleTo(wscale < hscale ? wscale : hscale);
-    _currentScene->centerContent();
+void SingleDisplay::fitView() {
+    currentScene_->setViewport(size());
+    double wscale = width() / (double)currentScene_->getWidth();
+    double hscale = height() / (double)currentScene_->getHeight();
+    currentScene_->scaleTo(wscale < hscale ? wscale : hscale);
+    currentScene_->centerContent();
     update();
 }
 
-//void SingleDisplay::setDetailZoom(double zoomFactor)
-//{
-//if (_detail)
-//_detail->zoom(zoomFactor);
-//updateDetail();
-//}
-
-void SingleDisplay::setCloneScale(bool status)
-{
-    _cloneScale = status;
-    update();
-}
-
-void SingleDisplay::updateAll()
-{
+void SingleDisplay::updateAll() {
     QWidget::update();
-    if(_displayMode == IntermediatedScreen)
-    {
-        if (_detail)
-            _detail->update();
-        if (_over)
-            _over->update();
+
+    if(displayMode_ == IntermediatedScreen) {
+        if (detail_) {
+            detail_->update();
+        }
+
+        if (over_) {
+            over_->update();
+        }
     }
 }
 
-void SingleDisplay::updateDetail()
-{
-    if (_detail)
-        _detail->update();
+void SingleDisplay::updateDetail() {
+    if (detail_) {
+        detail_->update();
+    }
 }
 
-void SingleDisplay::updateDetail(QPointF* mousePosition, bool emitClicked)
-{
-    if (!_currentScene || !mousePosition)
+void SingleDisplay::updateDetail(QPointF* mousePosition, bool emitClicked) {
+    if (!currentScene_ || !mousePosition) {
         return;
+    }
+
     double scale;
-    scale = _currentScene->getScale();
-    _mouseLastPos.setX(((*mousePosition - _currentScene->getViewpoint()) * scale).x() + size().width() / 2);
-    _mouseLastPos.setY(((*mousePosition - _currentScene->getViewpoint()) * scale).y() + size().height() / 2);
-    if (_detail)
-        _detail->update();
-    if (emitClicked)
-    {
+    scale = currentScene_->getScale();
+    mouseLastPos_.setX(((*mousePosition - currentScene_->getViewpoint()) *
+                        scale).x() + size().width() / 2);
+    mouseLastPos_.setY(((*mousePosition - currentScene_->getViewpoint()) *
+                        scale).y() + size().height() / 2);
+
+    if (detail_) {
+        detail_->update();
+    }
+
+    if (emitClicked) {
         QPointF lastPos = getLastMousePosition();
         emit mouseClicked(&lastPos);
     }
 }
 
-void SingleDisplay::setOverviewMode(SingleDisplay *display)
-{
-    _displayMode = TopViewScreen;
-    _detail = display;
-    _currentScene = _detail->getCurrentScene();
+void SingleDisplay::setOverviewMode(SingleDisplay* display) {
+    displayMode_ = TopViewScreen;
+    detail_ = display;
+    currentScene_ = detail_->getCurrentScene();
 }
 
-void SingleDisplay::setDetailMode(SingleDisplay *display)
-{
-    _displayMode = MostDetailedScreen;
-    _over = display;
-    _currentScene = _over->getCurrentScene();
+void SingleDisplay::setDetailMode(SingleDisplay* display) {
+    displayMode_ = MostDetailedScreen;
+    over_ = display;
+    currentScene_ = over_->getCurrentScene();
 }
 
-DisplayMode SingleDisplay::getDisplayMode()
-{
-    return _displayMode;
-}
-
-void SingleDisplay::setActivatedTool(SingleTool *tool, bool active)
-{
-    for (int i = _tool.size() - 1; i >=  0; i--)
-    {
-        if (tool == _tool.at(i))
-        {
-            _tool.removeAt(i);
+void SingleDisplay::setActivatedTool(SingleTool* tool, bool active) {
+    for (int i = tool_.size() - 1; i >=  0; i--) {
+        if (tool == tool_.at(i)) {
+            tool_.removeAt(i);
         }
     }
-    if (active)
-        _tool.prepend(tool);
+
+    if (active) {
+        tool_.prepend(tool);
+    }
 }
 
-void SingleDisplay::setActivatedTool(StereoTool *tool, bool active)
-{
-    for (int i = _stool.size() - 1; i >=  0; i--)
-    {
-        if (tool == _stool.at(i))
-        {
-            _stool.removeAt(i);
+void SingleDisplay::setActivatedTool(StereoTool* tool, bool active) {
+    for (int i = stool_.size() - 1; i >=  0; i--) {
+        if (tool == stool_.at(i)) {
+            stool_.removeAt(i);
         }
     }
-    if (active)
-        _stool.prepend(tool);
+
+    if (active) {
+        stool_.prepend(tool);
+    }
 }
 
-void SingleDisplay::paintEvent(QPaintEvent *e)
-{
-    _onPainting = true;
-    if (_displayMode == IntermediatedScreen)
-    {
+void SingleDisplay::paintEvent(QPaintEvent* e) {
+    onPainting_ = true;
+
+    if (displayMode_ == IntermediatedScreen) {
         QPainter painter(this);
-        painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
-        if (_currentScene->isValid())
-        {
+        painter.fillRect(rect(), QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
+
+        if (currentScene_->isValid()) {
             QRect target = rect();
 
-            if (_showDetailArea && !_blockShowDetailArea && _detail && _detail->isVisible())
-                painter.drawImage(0, 0,_currentScene->getFrame(target.size(), _detail->size()));
-            else
-                painter.drawImage(0, 0,_currentScene->getFrame(target.size()));
-            if (_detail)
-                _detail->update();
-            if (_over)
-                _over->update();
+            if (showDetailArea_ && !blockShowDetailArea_ && detail_
+                    && detail_->isVisible()) {
+                painter.drawImage(0, 0, currentScene_->getFrame(target.size(),
+                                  detail_->size()));
+            } else {
+                painter.drawImage(0, 0, currentScene_->getFrame(target.size()));
+            }
 
-            /*
-   if (_detail && _detail->isVisible())// && _showDetailArea)
-   {
-    SingleScene* currentScene = (SingleScene*)_currentScene;
-    //QRect viewedRect(((viewpoint_-QPointF(rect->width()/(scale_*2.0), rect->height()/(scale_*2.0)))*scale).toPoint(), ((scale*QRectF(*rect).size())/scale_).toSize());
-    QRect detailedRect(((currentScene->getDetailedPoint() -QPointF(_detail->width()/(currentScene->getDetailZoom()*currentScene->getScale()*2.0), _detail->height()/(currentScene->getDetailZoom()*currentScene->getScale()*2.0)))*currentScene->getScale()).toPoint(), ((currentScene->getScale()*QSizeF(_detail->size()))/(currentScene->getScale()*currentScene->getDetailZoom())).toSize());
-    painter.setPen(QPen(QColor(Qt::yellow)));
-    painter.drawRect(detailedRect);
-   }
-   */
+            if (detail_) {
+                detail_->update();
+            }
+
+            if (over_) {
+                over_->update();
+            }
         }
-        //painter.end();
-    }
-    else if (_displayMode == TopViewScreen)
-    {
+    } else if (displayMode_ == TopViewScreen) {
         QPainter painter(this);
-        painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
+        painter.fillRect(rect(), QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
         AbstractScene* currentScene;
-        if (_detail && (currentScene = _detail->getCurrentScene()) && currentScene->isValid())
-        {
+
+        if (detail_ && (currentScene = detail_->getCurrentScene())
+                && currentScene->isValid()) {
             QRect target = rect();
             QSize targetSize = target.size();
-
-            QRect temp=_detail->rect();
-            QImage thumb = currentScene->getThumb(targetSize,&temp);
-            //QImage thumb = currentScene->getThumb(targetSize,&(_detail->rect()));
-            // Aqui vai ser preciso rever o método getThumb para que ele retorne exatamente o _detail_>rect()
-            painter.drawImage((targetSize.width()-thumb.width())/2, (targetSize.height()-thumb.height())/2, thumb);
-            //painter.drawImage(0, 0, thumb);
+            QRect temp = detail_->rect();
+            QImage thumb = currentScene->getThumb(targetSize, &temp);
+            painter.drawImage((targetSize.width() - thumb.width()) / 2,
+                              (targetSize.height() - thumb.height()) / 2, thumb);
         }
+
         painter.end();
-    }
-    else if (_displayMode == MostDetailedScreen)
-    {
+    } else if (displayMode_ == MostDetailedScreen) {
         QPainter painter(this);
-        painter.fillRect(rect(),QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
+        painter.fillRect(rect(), QBrush(SymbolsResource::getBackGround(Qt::darkGray)));
         SingleScene* currentScene;
-        if (_over && (currentScene = (SingleScene*)_over->getCurrentScene()) && currentScene->isValid())
-        {
+
+        if (over_
+                && (currentScene = dynamic_cast<SingleScene*>(over_->getCurrentScene()))
+                && currentScene->isValid()) {
             QRect target = rect();
             QSize targetSize = target.size();
-            //double zoom = ceil(currentScene->getScale()*currentScene->getDetailZoom());
-            double zoom = currentScene->getScale()*currentScene->getDetailZoom();
-
-            //QImage detail = currentScene->getDetail(targetSize, _over->getLastMousePosition(), zoom);
-            QImage detail = currentScene->getDetail(targetSize, currentScene->getDetailedPoint(), zoom);
+            double zoom = currentScene->getScale() * currentScene->getDetailZoom();
+            QImage detail = currentScene->getDetail(targetSize,
+                                                    currentScene->getDetailedPoint(), zoom);
             painter.drawImage(0, 0, detail);
-
-            //if (false)
-            //{
-                //QPixmap ico(_over->cursor().pixmap());
-                //QRect reg(QPoint(),ico.size());
-                //reg.moveCenter(QPoint(width()/2, height()/2));
-                //painter.drawPixmap(reg,ico);
-            //}
         }
+
         painter.end();
     }
-    if (!_currentScene || !_currentScene->isValid())
+
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->paintEvent(*e);
     }
-    for (int i = 0; i < _stool.size(); i++)
-    {
-        _stool.at(i)->paintEvent(*e);
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->paintEvent(*e);
     }
-    _onPainting = false;
+
+    for (int i = 0; i < stool_.size(); i++) {
+        stool_.at(i)->paintEvent(*e);
+    }
+
+    onPainting_ = false;
 }
 
-void SingleDisplay::resizeEvent(QResizeEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::resizeEvent(QResizeEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
+    }
 
-    _currentScene->setViewport(e->size());
+    currentScene_->setViewport(e->size());
     update();
 
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->resizeEvent(*e);
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->resizeEvent(*e);
     }
 }
 
-bool SingleDisplay::eventFilter(QObject *o, QEvent *e)
-{
-    if (o == this)
-    {
-        switch (e->type())
-        {
-        case QEvent::HoverEnter :
-        {
+bool SingleDisplay::eventFilter(QObject* o, QEvent* e) {
+    if (o == this) {
+        switch (e->type()) {
+        case QEvent::HoverEnter : {
             QHoverEvent* enter = static_cast<QHoverEvent*>(e);
             enterEvent(enter);
             return true;
         }
-        case QEvent::HoverLeave :
-        {
+
+        case QEvent::HoverLeave : {
             QHoverEvent* leave = static_cast<QHoverEvent*>(e);
             leaveEvent(leave);
             return true;
         }
-        case QEvent::HoverMove :
-        {
+
+        case QEvent::HoverMove : {
             QHoverEvent* move = static_cast<QHoverEvent*>(e);
             moveEvent(move);
             return true;
         }
+
         default :
             return QWidget::eventFilter(o, e);
         }
     }
+
     return false;
 }
 
-void SingleDisplay::enterEvent(QHoverEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::enterEvent(QHoverEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->enterEvent(*e);
+    }
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->enterEvent(*e);
     }
 }
 
-void SingleDisplay::leaveEvent(QHoverEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::leaveEvent(QHoverEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->leaveEvent(*e);
+    }
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->leaveEvent(*e);
     }
 }
 
-void SingleDisplay::moveEvent(QHoverEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::moveEvent(QHoverEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->moveEvent(*e);
+    }
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->moveEvent(*e);
     }
 }
 
-void SingleDisplay::mousePressEvent(QMouseEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::mousePressEvent(QMouseEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->mousePressed(*e);
+    }
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->mousePressed(*e);
     }
 }
 
-void SingleDisplay::mouseReleaseEvent(QMouseEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
+void SingleDisplay::wheelEvent(QWheelEvent* e) {
+    if (!currentScene_ || !currentScene_->isValid()) {
         return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->mouseReleased(*e);
+    }
+
+    for (int i = 0; i < tool_.size(); i++) {
+        tool_.at(i)->wheelEvent(*e);
     }
 }
-
-void SingleDisplay::mouseMoveEvent(QMouseEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
-        return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->mouseMoved(*e);
-    }
-}
-
-void SingleDisplay::mouseDoubleClickEvent(QMouseEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
-        return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->mouseDblClicked(*e);
-    }
-}
-
-void SingleDisplay::wheelEvent(QWheelEvent *e)
-{
-    if (!_currentScene || !_currentScene->isValid())
-        return;
-    for (int i = 0; i < _tool.size(); i++)
-    {
-        _tool.at(i)->wheelEvent(*e);
-    }
-}
-
-/* Methods into disuse
- *
-void SingleDisplay::pan(int dx, int dy)
-{
-}
-
-void SingleDisplay::zoom(double zoomFactor, QPoint* atPoint)
-{
-}
-*/
 
 } // namespace efoto
 } // namespace eng

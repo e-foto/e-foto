@@ -40,14 +40,9 @@ void Coordinate::setSigmaAvailable(bool value)
 	sigmaAvailable = value;
 }
 
-bool Coordinate::isAvailable()
+bool Coordinate::isAvailable() const
 {
 	return available;
-}
-
-bool Coordinate::isSigmaAvailable()
-{
-	return sigmaAvailable;
 }
 
 std::string Coordinate::getGmlPos()

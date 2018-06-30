@@ -46,15 +46,6 @@ ControlButtons::ControlButtons()
 	this->setLayout(mainLayout);
 }
 
-void ControlButtons::toSimpleMode()
-{
-	newButton->setVisible(false);
-	editButton->setVisible(true);
-	deleteButton->setVisible(true);
-	saveButton->setVisible(false);
-	cancelButton->setVisible(false);
-}
-
 void ControlButtons::toSingleMode()
 {
 	newButton->setVisible(false);
@@ -98,16 +89,6 @@ void ControlButtons::disconnectAll()
 	deleteButton->disconnect();
 	saveButton->disconnect();
 	cancelButton->disconnect();
-}
-
-void ControlButtons::simpleConnect()
-{
-	toSimpleMode();
-	connect(newButton, SIGNAL(clicked()), this, SLOT(toEditMode()));
-	connect(editButton, SIGNAL(clicked()), this, SLOT(toEditMode()));
-	connect(deleteButton, SIGNAL(clicked()), this, SLOT(toInvisibleMode()));
-	connect(saveButton, SIGNAL(clicked()), this, SLOT(toSimpleMode()));
-	connect(cancelButton, SIGNAL(clicked()), this, SLOT(toSimpleMode()));
 }
 
 void ControlButtons::singleConnect()

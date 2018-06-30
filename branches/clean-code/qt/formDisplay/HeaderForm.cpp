@@ -80,11 +80,6 @@ void HeaderForm::setReadOnly(bool state)
 	lineEditContext->setReadOnly(state);
 }
 
-bool HeaderForm::isForm(std::string formName)
-{
-	return !formName.compare("HeaderForm");
-}
-
 void HeaderForm::metadataVisibleChanged(QString newText)
 {
 	if (newText.isEmpty())

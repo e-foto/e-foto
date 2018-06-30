@@ -5,11 +5,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-SRManager* SRUserInterface::getManager()
-{
-    return manager;
-}
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

@@ -15,54 +15,17 @@ namespace efoto {
 
 class StereoDisplay;
 
-class GLDisplay : public QGLWidget
-{
-protected:
-    StereoDisplay* stereoDisplay_;
-    unsigned int ltexture;
-    unsigned int rtexture;
-    unsigned int ctexture;
-    unsigned int btexture;
-    QImage ltext;
-    QImage rtext;
-    QList< StereoTool* > _tool;
-
-    QPointF _mouseScreenPos;
-    QImage _cursor;
-    bool _onPainting;
-    bool stereo_mode;
-
-    // Anagliph filter
-    bool L_Red, L_Green, L_Blue;
-    bool R_Red, R_Green, R_Blue;
-    bool reverseLensGlasses;
-
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-    void paintEvent(QPaintEvent *e);
-    void resizeEvent(QResizeEvent *);
-    bool eventFilter(QObject *o, QEvent *e);
-    void enterEvent(QHoverEvent *e);
-    void leaveEvent(QHoverEvent *e);
-    void moveEvent(QHoverEvent *e);
-    void mousePressEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void mouseDoubleClickEvent(QMouseEvent *e);
-    void wheelEvent(QWheelEvent *e);
-
-public:
-    GLDisplay(StereoDisplay* parent);
+class GLDisplay : public QGLWidget {
+  public:
+    explicit GLDisplay(StereoDisplay* parent);
     ~GLDisplay();
 
-    bool _GLDisplayUpdate;
+    bool _GLDisplayUpdate{false};
 
     void updateMousePosition();
     QPointF getMouseScreenPosition();
     void setGLCursor(QImage cursor);
     QImage getGLCursor();
-    void setGLBackground(QImage bg);
     void setReverseLensGlasses(bool opt);
     void setColorMaskLeft(bool r, bool g, bool b);
     void setColorMaskRight(bool r, bool g, bool b);
@@ -71,27 +34,42 @@ public:
     bool painting();
 
     void setActivatedTool(StereoTool* tool, bool active = true);
+
+  private:
+    StereoDisplay* stereoDisplay_{nullptr};
+    unsigned int ltexture_{0};
+    unsigned int rtexture_{0};
+    unsigned int ctexture_{0};
+    unsigned int btexture_{0};
+    QImage ltext_{};
+    QImage rtext_{};
+    QList< StereoTool* > tool_{};
+
+    QPointF mouseScreenPos_{};
+    QImage cursor_{};
+    bool onPainting_{false};
+    bool stereo_mode{false};
+
+    // Default Anagliph filter
+    bool L_Red_{true}, L_Green_{false}, L_Blue_{false};
+    bool R_Red_{false}, R_Green_{true}, R_Blue_{true};
+    bool reverseLensGlasses{false};
+
+    void paintEvent(QPaintEvent* e);
+    void resizeEvent(QResizeEvent*);
+    bool eventFilter(QObject* o, QEvent* e);
+    void enterEvent(QHoverEvent* e);
+    void leaveEvent(QHoverEvent* e);
+    void moveEvent(QHoverEvent* e);
+    void mousePressEvent(QMouseEvent* e);
+    void wheelEvent(QWheelEvent* e);
 };
 
-class StereoDisplay : public QWidget
-{
+class StereoDisplay : public QWidget {
     Q_OBJECT
-protected:
-    StereoScene* currentScene_;
-    SingleDisplay* leftDisplay_;
-    SingleDisplay* rightDisplay_;
-    GLDisplay* glDisplay_;
-    QPointF leftCursorOffset_;
-    QPointF rightCursorOffset_;
-    double _currentZ;
-    bool _stereoCursor;
 
-    QPointF _centerOnLeft;
-    QPointF _centerOnRight;
-    double _fitScale;
-
-public:
-    explicit StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
+  public:
+    explicit StereoDisplay(QWidget* parent, StereoScene* currentScene = NULL);
     ~StereoDisplay();
 
     StereoScene* getCurrentScene();
@@ -117,10 +95,9 @@ public:
     void setRightCursorOffset(QPointF offset);
     void setCursor(QImage newCursor, bool stereo = true);
     QImage getCursor();
-    bool isStereoCursor() {return _stereoCursor;}
-
-    double getCurrentZ();
-    void setCurrentZ(double z);
+    bool isStereoCursor() {
+        return stereoCursor_;
+    }
 
     void updateMousePosition();
     QPointF screenPosition(QPointF position, bool leftChannel = true);
@@ -128,13 +105,18 @@ public:
     QPointF getPositionLeft(QPoint screenPosition);
     QPointF getPositionRight(QPoint screenPosition);
 
-    void adjustFit(QPointF leftCenter, QPointF rightCenter, double scale) {_centerOnLeft = leftCenter; _centerOnRight = rightCenter; _fitScale = scale; currentScene_->getLeftScene()->setLimitScale(scale, currentScene_->getLeftScene()->getMaxScale()); currentScene_->getRightScene()->setLimitScale(scale, currentScene_->getRightScene()->getMaxScale());}
+    void adjustFit(QPointF leftCenter, QPointF rightCenter, double scale) {
+        centerOnLeft_ = leftCenter;
+        centerOnRight_ = rightCenter;
+        fitScale_ = scale;
+        currentScene_->getLeftScene()->setLimitScale(scale,
+                currentScene_->getLeftScene()->getMaxScale());
+        currentScene_->getRightScene()->setLimitScale(scale,
+                currentScene_->getRightScene()->getMaxScale());
+    }
 
     virtual void fitView();
-    /* Method into disuse:
-    virtual void pan(int dx, int dy);
-    */
-    virtual void zoom(double zoomFactor/*, QPoint* atPoint = NULL*/);
+    virtual void zoom(double zoomFactor);
 
     void updateAll();
     void updateAll(QPointF* left, QPointF* right, bool emitClicked = false);
@@ -143,13 +125,28 @@ public:
     void setActivatedTool(StereoTool* tool, bool active = true);
 
     bool painting();
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent*);
 
     void setReverseLensGlasses(bool opt);
     void setColorMaskLeft(bool r, bool g, bool b);
     void setColorMaskRight(bool r, bool g, bool b);
 
-signals:
+
+  private:
+    StereoScene* currentScene_{nullptr};
+    SingleDisplay* leftDisplay_{nullptr};
+    SingleDisplay* rightDisplay_{nullptr};
+    GLDisplay* glDisplay_{nullptr};
+    QPointF leftCursorOffset_{};
+    QPointF rightCursorOffset_{};
+    double currentZ_{0.0};
+    bool stereoCursor_{false};
+
+    QPointF centerOnLeft_{};
+    QPointF centerOnRight_{};
+    double fitScale_{0.0};
+
+  signals:
     void mousePositionsChanged(QPointF*, QPointF*);
     void mouseClicked(QPointF*, QPointF*);
     void resized(int, int);

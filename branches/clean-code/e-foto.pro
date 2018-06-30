@@ -39,7 +39,6 @@ HEADERS += c/control/DEMManager.h \
 		   c/infrastructure/Coordinate.h \
 		   c/infrastructure/Dms.h \
 		   c/infrastructure/EDom.h \
-		   c/infrastructure/EDomValidator.h \
 		   c/infrastructure/ETreeModel.h \
 		   c/infrastructure/GeoSystem.h \
 		   c/infrastructure/Matrix.h \
@@ -184,7 +183,6 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/infrastructure/Coordinate.cpp \
 		   c/infrastructure/Dms.cpp \
 		   c/infrastructure/EDom.cpp \
-		   c/infrastructure/EDomValidator.cpp \
 		   c/infrastructure/ETreeModel.cpp \
 		   c/infrastructure/GeoSystem.cpp \
 		   c/infrastructure/Matrix.cpp \
@@ -290,8 +288,8 @@ MOC_DIR = build/temp/moc
 UI_DIR = build/temp/ui
 RCC_DIR = build/temp/rcc
 QT += opengl
-QMAKE_CXXFLAGS += -std=c++11 -Wall 
-#QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
+#QMAKE_CXXFLAGS += -std=c++11 -Wall
+QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
 #CONFIG += c++11
 
 # CXX=g++-4.9 is workaround for compiler missing <stdlib.h>

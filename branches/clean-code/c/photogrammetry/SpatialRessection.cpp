@@ -56,13 +56,13 @@ SpatialRessection::SpatialRessection()
 {
     pointForFlightDirectionAvailable = false;
     flightDirectionAvailable = false;
-    totalIterations = 0;
+    totalIterations_ = 0;
     gnssConverged = false;
     insConverged = false;
     useDistortions = true;
 
-    if (myImage != NULL){
-        rt = new RayTester(myImage);
+    if (myImage_ != NULL){
+        rt = new RayTester(myImage_);
     }
     else {
         rt = NULL;
@@ -75,14 +75,14 @@ SpatialRessection::SpatialRessection()
  */
 SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only, needed in project use.
 {
-    imageId = myImageId;
+    imageId_ = myImageId;
     pointForFlightDirectionAvailable = flightDirectionAvailable = false;
-    totalIterations = 0;
+    totalIterations_ = 0;
     gnssConverged = false;
     insConverged = false;
     //  myImage = image(myImageId);
-    if (myImage != NULL){
-        rt = new RayTester(myImage);
+    if (myImage_ != NULL){
+        rt = new RayTester(myImage_);
     }
     else {
         rt = NULL;
@@ -104,83 +104,12 @@ SpatialRessection::~SpatialRessection()
 
 
 // Private attribute accessors
-//
-
-/**
- * Set the value of Xa
- * This method is only used by the Mounter.
- * @param newXa the new value of Xa
- */
-void SpatialRessection::setXa(const Matrix& newXa)
-{
-    Xa = newXa;
-}
-
-/**
- * Set the value of La
- * This method is only used by the Mounter.
- * @param newLa the new value of La
- */
-void SpatialRessection::setLa(const Matrix& newLa)
-{
-    La = newLa;
-}
-
-/**
- * Set the value of A
- * This method is only used by the Mounter.
- * @param newA the new value of A
- */
-void SpatialRessection::setA(const Matrix& newA)
-{
-    A = newA;
-}
-
-/**
- * Set the value of P
- * This method is only used by the Mounter.
- * @param newP the new value of P
- */
-void SpatialRessection::setP(const Matrix& newP)
-{
-    P = newP;
-}
-
-/**
- * Set the value of X0
- * This method is only used by the Mounter.
- * @param newX0 the new value of X0
- */
-void SpatialRessection::setX0(const Matrix& newX0)
-{
-    X0 = newX0;
-}
-
-/**
- * Set the value of L0
- * This method is only used by the Mounter.
- * @param newL0 the new value of L0
- */
-void SpatialRessection::setL0(const Matrix& newL0)
-{
-    L0 = newL0;
-}
-
-/**
- * Set the value of Lb
- * This method is only used by the Mounter.
- * @param newLb the new value of Lb
- */
-void SpatialRessection::setLb(const Matrix& newLb)
-{
-    Lb = newLb;
-}
 
 /**
  * Get the value of La
  * @return the value of La
  */
-Matrix SpatialRessection::getLa()
+Matrix SpatialRessection::getLa() const
 {
     return La;
 }
@@ -189,7 +118,7 @@ Matrix SpatialRessection::getLa()
  * Get the value of A
  * @return the value of A
  */
-Matrix SpatialRessection::getA()
+Matrix SpatialRessection::getA() const
 {
     return A;
 }
@@ -198,34 +127,16 @@ Matrix SpatialRessection::getA()
  * Get the value of P
  * @return the value of P
  */
-Matrix SpatialRessection::getP()
+Matrix SpatialRessection::getP() const
 {
     return P;
-}
-
-/**
- * Get the value of X0
- * @return the value of X0
- */
-Matrix SpatialRessection::getX0()
-{
-    return X0;
-}
-
-/**
- * Get the value of L0
- * @return the value of L0
- */
-Matrix SpatialRessection::getL0()
-{
-    return L0;
 }
 
 /**
  * Get the value of Lb
  * @return the value of Lb
  */
-Matrix SpatialRessection::getLb()
+Matrix SpatialRessection::getLb() const
 {
     return Lb;
 }
@@ -234,7 +145,7 @@ Matrix SpatialRessection::getLb()
  * Get the value of lastL0
  * @return the value of lastL0
  */
-Matrix SpatialRessection::getLastL0()
+Matrix SpatialRessection::getLastL0() const
 {
     return lastL0;
 }
@@ -242,40 +153,17 @@ Matrix SpatialRessection::getLastL0()
 /**
  *
  */
-std::deque<int> SpatialRessection::getSelectedPoints()
+std::deque<int> SpatialRessection::getSelectedPoints() const
 {
     return selectedPoints;
 }
 
-/**
- *
- */
-ImageSpaceCoordinate* SpatialRessection::getPointForFlightDirection()
-{
-    if (pointForFlightDirectionAvailable)
-        return &pointForFlightDirection;
-    else
-        return NULL;
-}
-
-bool SpatialRessection::getConverged()
+bool SpatialRessection::getConverged() const
 {
     return gnssConverged && insConverged;
 }
 
-bool SpatialRessection::getGnssConverged()
-{
-    return gnssConverged;
-}
-
-bool SpatialRessection::getInsConverged()
-{
-    return insConverged;
-}
-
 // Selected points list manipulators
-//
-
 void SpatialRessection::selectPoint(int id)
 {
     bool insert = true;
@@ -293,12 +181,7 @@ void SpatialRessection::unselectPoint(int id)
             selectedPoints.erase(selectedPoints.begin() + i);
 }
 
-void SpatialRessection::unselectAllPoints()
-{
-    selectedPoints.clear();
-}
-
-int SpatialRessection::countSelectedPoints()
+int SpatialRessection::countSelectedPoints() const
 {
     return selectedPoints.size();
 }
@@ -308,7 +191,7 @@ int SpatialRessection::countSelectedPoints()
 
 void SpatialRessection::setFlightDirection(double kappa0)
 {
-    myImage->setFlightDirection(kappa0);
+    myImage_->setFlightDirection(kappa0);
     flightDirectionAvailable = true;
     pointForFlightDirectionAvailable = false;
 }
@@ -323,18 +206,13 @@ void SpatialRessection::setPointForFlightDirection(double col, double lin)
 
 void SpatialRessection::selectFiducialMarkForFlightDirection(int id)
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
-        pointForFlightDirection.setCol(myImage->getDigFidMark(id).getCol());
-        pointForFlightDirection.setLin(myImage->getDigFidMark(id).getLin());
+        pointForFlightDirection.setCol(myImage_->getDigFidMark(id).getCol());
+        pointForFlightDirection.setLin(myImage_->getDigFidMark(id).getLin());
         flightDirectionAvailable = false;
         pointForFlightDirectionAvailable = true;
     }
-}
-
-void SpatialRessection::unsetPointForFlightDirection()
-{
-    flightDirectionAvailable = false;
 }
 
 /**
@@ -354,8 +232,8 @@ bool SpatialRessection::is(std::string s)
 void SpatialRessection::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
-    imageId = Conversion::stringToInt(root.attribute("image_key"));
-    totalIterations = root.elementByTagName("iterations").toInt();
+    imageId_ = Conversion::stringToInt(root.attribute("image_key"));
+    totalIterations_ = root.elementByTagName("iterations").toInt();
     if (root.elementByTagName("converged").toString() == "true")
         gnssConverged = insConverged = true;
     else
@@ -370,14 +248,14 @@ void SpatialRessection::xmlSetData(std::string xml)
 
     Lb.xmlSetData(root.elementByTagName("Lb").elementByTagName("mml:matrix").getContent());
 
-    Xa.resize(6,1);
+    Xa_.resize(6,1);
     EDomElement xmlXa = root.elementByTagName("Xa");
-    Xa.set(1,1, xmlXa.elementByTagName("X0").toDouble());
-    Xa.set(2,1, xmlXa.elementByTagName("Y0").toDouble());
-    Xa.set(3,1, xmlXa.elementByTagName("Z0").toDouble());
-    Xa.set(4,1, xmlXa.elementByTagName("phi").toDouble());
-    Xa.set(5,1, xmlXa.elementByTagName("omega").toDouble());
-    Xa.set(6,1, xmlXa.elementByTagName("kappa").toDouble());
+    Xa_.set(1,1, xmlXa.elementByTagName("X0").toDouble());
+    Xa_.set(2,1, xmlXa.elementByTagName("Y0").toDouble());
+    Xa_.set(3,1, xmlXa.elementByTagName("Z0").toDouble());
+    Xa_.set(4,1, xmlXa.elementByTagName("phi").toDouble());
+    Xa_.set(5,1, xmlXa.elementByTagName("omega").toDouble());
+    Xa_.set(6,1, xmlXa.elementByTagName("kappa").toDouble());
 
     L0.xmlSetData(root.elementByTagName("L0").elementByTagName("mml:matrix").getContent());
 
@@ -396,7 +274,7 @@ void SpatialRessection::xmlSetData(std::string xml)
     X0.set(5,1, xmlX0.elementByTagName("omega0").toDouble());
     X0.set(6,1, xmlX0.elementByTagName("kappa0").toDouble());
 
-    myQuality.xmlSetData(root.elementByTagName("quality").getContent());
+    myQuality_.xmlSetData(root.elementByTagName("quality").getContent());
 }
 
 /**
@@ -405,8 +283,8 @@ void SpatialRessection::xmlSetData(std::string xml)
 std::string SpatialRessection::xmlGetData()
 {
     std::stringstream result;
-    result << "<imageSR image_key=\"" << Conversion::intToString(imageId) << "\">\n";
-    result << "<iterations>" << Conversion::intToString(totalIterations) << "</iterations>\n";
+    result << "<imageSR image_key=\"" << Conversion::intToString(imageId_) << "\">\n";
+    result << "<iterations>" << Conversion::intToString(totalIterations_) << "</iterations>\n";
     if (gnssConverged && insConverged)
         result << "<converged>true</converged>\n";
     else
@@ -435,7 +313,7 @@ std::string SpatialRessection::xmlGetData()
     result << "<kappa0 uom=\"#rad\">" << Conversion::doubleToString(X0.get(6,1)) << "</kappa0>\n";
     result << "</X0>\n";
     result << "</parameters>\n";
-    result << myQuality.xmlGetData();
+    result << myQuality_.xmlGetData();
     result << "</imageSR>\n";
     return result.str();
 }
@@ -443,14 +321,14 @@ std::string SpatialRessection::xmlGetData()
 std::string SpatialRessection::xmlGetDataEO()
 {
     std::stringstream result;
-    result << "<imageEO type=\"spatialResection\" image_key=\"" << Conversion::intToString(imageId) << "\">\n";
+    result << "<imageEO type=\"spatialResection\" image_key=\"" << Conversion::intToString(imageId_) << "\">\n";
     result << "<Xa>\n";
-    result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(1,1)) << "</X0>\n";
-    result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(2,1)) << "</Y0>\n";
-    result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa.get(3,1)) << "</Z0>\n";
-    result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa.get(4,1)) << "</phi>\n";
-    result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa.get(5,1)) << "</omega>\n";
-    result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa.get(6,1)) << "</kappa>\n";
+    result << "<X0 uom=\"#m\">" << Conversion::doubleToString(Xa_.get(1,1)) << "</X0>\n";
+    result << "<Y0 uom=\"#m\">" << Conversion::doubleToString(Xa_.get(2,1)) << "</Y0>\n";
+    result << "<Z0 uom=\"#m\">" << Conversion::doubleToString(Xa_.get(3,1)) << "</Z0>\n";
+    result << "<phi uom=\"#rad\">" << Conversion::doubleToString(Xa_.get(4,1)) << "</phi>\n";
+    result << "<omega uom=\"#rad\">" << Conversion::doubleToString(Xa_.get(5,1)) << "</omega>\n";
+    result << "<kappa uom=\"#rad\">" << Conversion::doubleToString(Xa_.get(6,1)) << "</kappa>\n";
     result << "</Xa>\n";
     result << "</imageEO>\n";
     return result.str();
@@ -486,16 +364,16 @@ std::string SpatialRessection::xmlGetDataEO()
 
 void SpatialRessection::generateInitialA()
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
         A.resize(selectedPoints.size() * 2, 6).zero();
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
             // Essas linhas estão horríveis de ler!!! Mas não consigo melhorar mais que isso...
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i)); // Escolhi aqui o ponto que estou usando.
-            DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
+            Point* myPoint = myImage_->getPoint(selectedPoints.at(i)); // Escolhi aqui o ponto que estou usando.
+            DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage_->getId()); // Tento tirar as coordenadas analógicas dele.
             if (myCoordinate.getUnit() == "") // Se essas coordenadas analógicas não existirem, acusadas pela falta de unidade...
-                myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
+                myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage_->getId()));
             //myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId())); // Crio elas usando digitalToAnalog nas coordenadas digitais.
 
             // Distortions added.
@@ -515,12 +393,12 @@ void SpatialRessection::generateInitialA()
 
 void SpatialRessection::generateInitialL0()
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
         L0.resize(selectedPoints.size() * 2, 1);
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
+            Point* myPoint = myImage_->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
 
             L0.set(j,1,myCoordinate.getX());
@@ -536,14 +414,14 @@ void SpatialRessection::generateInitialP()
 
 void SpatialRessection::generateA()
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
         A.resize(selectedPoints.size() * 2, 6);
-        double c = myImage->getSensor()->getFocalDistance();
+        double c = myImage_->getSensor()->getFocalDistance();
 
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
+            Point* myPoint = myImage_->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
             double X = myCoordinate.getX();
             double Y = myCoordinate.getY();
@@ -572,7 +450,7 @@ void SpatialRessection::generateA()
 
 void SpatialRessection::generateL0()
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
         L0.resize(selectedPoints.size() * 2, 1);
         //double c = myImage->getSensor()->getFocalDistance();
@@ -585,7 +463,7 @@ void SpatialRessection::generateL0()
 
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
+            Point* myPoint = myImage_->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
 
             //double X = myCoordinate.getX();
@@ -615,34 +493,22 @@ void SpatialRessection::generateL0()
     }
 }
 
-void SpatialRessection::generateRMSE()
-{
-    double sum = 0;
-    for (int i = 0; i < (int)L0.getRows(); i++)
-    {
-        sum += pow(L0.get(i+1,1),2);
-        //qDebug("%f",sum);
-    }
-    //qDebug("%f",sqrt(sum/(selectedPoints.size()*2-6)));
-    rmse.push_back(sqrt(sum/(selectedPoints.size()*2-6)));
-}
-
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
   Aqui tem codigo da PR
   ////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 void SpatialRessection::generateLb()
 {
-    if (myImage != NULL)
+    if (myImage_ != NULL)
     {
         Lb.resize(selectedPoints.size() * 2, 1);
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
             // Mesmo código horrível do A inicial.
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
-            DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId());
+            Point* myPoint = myImage_->getPoint(selectedPoints.at(i));
+            DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage_->getId());
             if (myCoordinate.getUnit() == "")
-                myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
+                myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage_->getId()));
             //myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
 
             // Distortions added.
@@ -663,7 +529,7 @@ void SpatialRessection::generateP()
 
 void SpatialRessection::generateX0()
 {
-    X0 = Xa;
+    X0 = Xa_;
     X00 = X0.get(1,1);
     Y00 = X0.get(2,1);
     Z00 = X0.get(3,1);
@@ -678,14 +544,14 @@ void SpatialRessection::generateX0()
 
 void SpatialRessection::initialize()
 {
-    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+    if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getFlight() != NULL && myImage_->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
     {
         if (rt == NULL)
-            rt = new RayTester(myImage);
+            rt = new RayTester(myImage_);
         else
-            rt->setImage(myImage);
+            rt->setImage(myImage_);
 
-        rt->setIOParameters(myImage->getIO()->getXa());
+        rt->setIOParameters(myImage_->getIO()->getXa());
 
         generateInitialA();
         generateInitialL0();
@@ -693,8 +559,8 @@ void SpatialRessection::initialize()
 
         // Calculating X00 and Y00.
 
-        double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-        double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
+        double xi0 = myImage_->getSensor()->getPrincipalPointCoordinates().getXi();
+        double eta0 = myImage_->getSensor()->getPrincipalPointCoordinates().getEta();
 
         // Warning: this Xa is NOT the one containing the EO's parameters.
         // It's just used for determining the initial X00 and Y00 and will be erased at the end of initialization.
@@ -714,8 +580,8 @@ void SpatialRessection::initialize()
   */
 
         //or
-        double meanAltitude = myImage->getFlight()->getTerrain()->getMeanAltitude();
-        Z00 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + meanAltitude;
+        double meanAltitude = myImage_->getFlight()->getTerrain()->getMeanAltitude();
+        Z00 = myImage_->getFlight()->getScaleDen()*myImage_->getSensor()->getFocalDistance()/1000 + meanAltitude;
 
         // If flightHeight is the flight's altitude, this is correct.
         //Z00 = myImage->getFlight()->getHeight();
@@ -725,7 +591,7 @@ void SpatialRessection::initialize()
         phi0 = 0;
 
         if (flightDirectionAvailable)
-            kappa0 = myImage->getFlightDirection();
+            kappa0 = myImage_->getFlightDirection();
         else
         {
             // Calculating kappa0.
@@ -754,7 +620,7 @@ void SpatialRessection::initialize()
         // Setting the values to X0 and reseting Xa.
         X0.resize(6, 1);
 
-        if (!myImage->isGnssAvailable() || (myImage->isGnssAvailable() && myImage->getGnssType() == "Unused"))
+        if (!myImage_->isGnssAvailable() || (myImage_->getGnssType() == "Unused"))
         {
             X0.set(1, 1, X00);
             X0.set(2, 1, Y00);
@@ -762,11 +628,11 @@ void SpatialRessection::initialize()
         }
         else
         {
-            X0.set(1, 1, myImage->getGnssX0());
-            X0.set(2, 1, myImage->getGnssY0());
-            X0.set(3, 1, myImage->getGnssZ0());
+            X0.set(1, 1, myImage_->getGnssX0());
+            X0.set(2, 1, myImage_->getGnssY0());
+            X0.set(3, 1, myImage_->getGnssZ0());
         }
-        if (!myImage->isInsAvailable() || (myImage->isInsAvailable() && myImage->getInsType() == "Unused"))
+        if (!myImage_->isInsAvailable() || (myImage_->getInsType() == "Unused"))
         {
             X0.set(4, 1, phi0);
             X0.set(5, 1, omega0);
@@ -774,9 +640,9 @@ void SpatialRessection::initialize()
         }
         else
         {
-            X0.set(4, 1, myImage->getInsPhi());
-            X0.set(5, 1, myImage->getInsOmega());
-            X0.set(6, 1, myImage->getInsKappa());
+            X0.set(4, 1, myImage_->getInsPhi());
+            X0.set(5, 1, myImage_->getInsOmega());
+            X0.set(6, 1, myImage_->getInsKappa());
         }
 
         generateL0();
@@ -787,7 +653,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 {
     gnssConverged = false;
     insConverged = false;
-    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+    if (myImage_ != NULL && myImage_->getSensor() != NULL && myImage_->getFlight() != NULL && myImage_->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
     {
         int iterations = 0;
 
@@ -795,8 +661,8 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
         X0temp = X0;
         L0temp = L0;
 
-        if (!(myImage->isGnssAvailable() && myImage->getGnssType() == "Fixed" &&
-              myImage->isInsAvailable() && myImage->getInsType() == "Fixed"))
+        if (!(myImage_->isGnssAvailable() && myImage_->getGnssType() == "Fixed" &&
+              myImage_->isInsAvailable() && myImage_->getInsType() == "Fixed"))
         {
             while (!(gnssConverged && insConverged) && (iterations < maxIterations))
             {
@@ -805,60 +671,60 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
                 generateA();
                 generateP();
 
-                Xa = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
+                Xa_ = X0 - ((A.transpose() * P * A).inverse() * A.transpose() * P * (L0 - Lb));
 
                 gnssConverged = true;
-                if (myImage->isGnssAvailable() && myImage->getGnssType() == "Fixed")
+                if (myImage_->isGnssAvailable() && myImage_->getGnssType() == "Fixed")
                 {
-                    Xa.set(1, 1, myImage->getGnssX0());
-                    Xa.set(2, 1, myImage->getGnssY0());
-                    Xa.set(3, 1, myImage->getGnssZ0());
+                    Xa_.set(1, 1, myImage_->getGnssX0());
+                    Xa_.set(2, 1, myImage_->getGnssY0());
+                    Xa_.set(3, 1, myImage_->getGnssZ0());
                 }
                 else
                 {
                     for (int i = 1; i <= 3; i++)
                     {
-                        if (std::isinf(fabs(Xa.get(i,1))))
+                        if (std::isinf(fabs(Xa_.get(i,1))))
                         {
                             qDebug("Get INF on calculate!");
                             gnssConverged=false;
                             return false;
                         }
-                        if (std::isnan(fabs(Xa.get(i,1))))
+                        if (std::isnan(fabs(Xa_.get(i,1))))
                         {
                             qDebug("Get NAN on calculate!");
                             gnssConverged=false;
                             return false;
                         }
-                        if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>gnssPrecision)
+                        if (fabs(Xa_.get(i,1)-X0.get(i,1))/X0.get(i,1)>gnssPrecision)
                             gnssConverged=false;
                     }
                 }
 
                 insConverged = true;
-                if (myImage->isInsAvailable() && myImage->getInsType() == "Fixed")
+                if (myImage_->isInsAvailable() && myImage_->getInsType() == "Fixed")
                 {
-                    Xa.set(4, 1, myImage->getInsPhi());
-                    Xa.set(5, 1, myImage->getInsOmega());
-                    Xa.set(6, 1, myImage->getInsKappa());
+                    Xa_.set(4, 1, myImage_->getInsPhi());
+                    Xa_.set(5, 1, myImage_->getInsOmega());
+                    Xa_.set(6, 1, myImage_->getInsKappa());
                 }
                 else
                 {
                     for (int i = 4; i <= 6; i++)
                     {
-                        if (std::isinf(fabs(Xa.get(i,1))))
+                        if (std::isinf(fabs(Xa_.get(i,1))))
                         {
                             qDebug("Get INF on calculate!");
                             insConverged=false;
                             return false;
                         }
-                        if (std::isnan(fabs(Xa.get(i,1))))
+                        if (std::isnan(fabs(Xa_.get(i,1))))
                         {
                             qDebug("Get NAN on calculate!");
                             insConverged=false;
                             return false;
                         }
-                        if (fabs(Xa.get(i,1)-X0.get(i,1))/X0.get(i,1)>insPrecision)
+                        if (fabs(Xa_.get(i,1)-X0.get(i,1))/X0.get(i,1)>insPrecision)
                             insConverged=false;
                     }
                 }
@@ -873,24 +739,24 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
             generateLb();
             generateA();
             generateP();
-            Xa.resize(6,1);
-            Xa.set(1, 1, myImage->getGnssX0());
-            Xa.set(2, 1, myImage->getGnssY0());
-            Xa.set(3, 1, myImage->getGnssZ0());
-            Xa.set(4, 1, myImage->getInsPhi());
-            Xa.set(5, 1, myImage->getInsOmega());
-            Xa.set(6, 1, myImage->getInsKappa());
+            Xa_.resize(6,1);
+            Xa_.set(1, 1, myImage_->getGnssX0());
+            Xa_.set(2, 1, myImage_->getGnssY0());
+            Xa_.set(3, 1, myImage_->getGnssZ0());
+            Xa_.set(4, 1, myImage_->getInsPhi());
+            Xa_.set(5, 1, myImage_->getInsOmega());
+            Xa_.set(6, 1, myImage_->getInsKappa());
             gnssConverged = insConverged = true;
         }
 
-        totalIterations = iterations;
+        totalIterations_ = iterations;
 
         lastL0 = L0;
 
         X0 = X0temp;
         L0 = L0temp;
 
-        myQuality.calculate(this);
+        myQuality_.calculate(this);
     }
     return gnssConverged && insConverged;
 }
@@ -912,7 +778,7 @@ DetectorSpaceCoordinate SpatialRessection::applyDistortions(double xi, double et
     double xiFinal = xi + radial.getXi() + decentered.getXi() + atmosphere.getXi() + curvature.getXi();
     double etaFinal = eta + radial.getEta() + decentered.getEta() + atmosphere.getEta() + curvature.getEta();
 
-    DetectorSpaceCoordinate result(myImage->getId());
+    DetectorSpaceCoordinate result(myImage_->getId());
     result.setXi(xiFinal);
     result.setEta(etaFinal);
     result.setAvailable(true);
@@ -937,7 +803,7 @@ DetectorSpaceCoordinate SpatialRessection::removeDistortions(double xi, double e
     double xiFinal = xi - (radial.getXi() + decentered.getXi() + atmosphere.getXi() + curvature.getXi());
     double etaFinal = eta - (radial.getEta() + decentered.getEta() + atmosphere.getEta() + curvature.getEta());
 
-    DetectorSpaceCoordinate result(myImage->getId());
+    DetectorSpaceCoordinate result(myImage_->getId());
     result.setXi(xiFinal);
     result.setEta(etaFinal);
     result.setAvailable(true);
@@ -957,7 +823,7 @@ DetectorSpaceCoordinate SpatialRessection::getRadialDistortions(double xi, doubl
     result.setEta(0.0);
     result.setAvailable(true);
 
-    Sensor* sensor = myImage->getSensor();
+    Sensor* sensor = myImage_->getSensor();
     FrameSensor* frame = dynamic_cast<FrameSensor*>(sensor);
     if (frame != NULL)
     {
@@ -987,7 +853,7 @@ DetectorSpaceCoordinate SpatialRessection::getDecenteredDistortions(double xi, d
     result.setEta(0.0);
     result.setAvailable(true);
 
-    Sensor* sensor = myImage->getSensor();
+    Sensor* sensor = myImage_->getSensor();
     FrameSensor* frame = dynamic_cast<FrameSensor*>(sensor);
     if (frame != NULL)
     {
@@ -1013,8 +879,8 @@ DetectorSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, d
     result.setEta(0.0);
     result.setAvailable(true);
 
-    Flight* flight = myImage->getFlight();
-    Sensor* sensor = myImage->getSensor();
+    Flight* flight = myImage_->getFlight();
+    Sensor* sensor = myImage_->getSensor();
     if (flight != NULL && sensor != NULL)
     {
         Terrain* terrain = flight->getTerrain();
@@ -1027,7 +893,7 @@ DetectorSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, d
    }
    else
    {*/
-            Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
+            Z0 = myImage_->getFlight()->getScaleDen()*myImage_->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
             /*}*/
             Zp = terrain->getMeanAltitude();
 
@@ -1062,8 +928,8 @@ DetectorSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, do
     result.setEta(0.0);
     result.setAvailable(true);
 
-    Flight* flight = myImage->getFlight();
-    Sensor* sensor = myImage->getSensor();
+    Flight* flight = myImage_->getFlight();
+    Sensor* sensor = myImage_->getSensor();
     if (flight != NULL && sensor != NULL)
     {
         Terrain* terrain = flight->getTerrain();
@@ -1076,7 +942,7 @@ DetectorSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, do
    }
    else
    {*/
-            Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
+            Z0 = myImage_->getFlight()->getScaleDen()*myImage_->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
             /*}*/
 
             Z0 /= 1000;

@@ -14,7 +14,7 @@ public:
 	static LoadingScreen& instance();
 
 protected:
-	LoadingScreen(QWidget *parent = 0);
+    explicit LoadingScreen(QWidget *parent = 0);
 	~LoadingScreen();
 	void changeEvent(QEvent *e);
 

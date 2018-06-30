@@ -94,23 +94,6 @@ QVariant TreeFeatures::data(const QModelIndex &index, int role) const
     return item->data(index.column());
 }
 
-Qt::ItemFlags TreeFeatures::flags(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return 0;
-
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-}
-
-QVariant TreeFeatures::headerData(int section, Qt::Orientation orientation,
-                               int role) const
-{
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->data(section);
-
-    return QVariant();
-}
-
 QModelIndex TreeFeatures::index(int row, int column, const QModelIndex &parent)
             const
 {

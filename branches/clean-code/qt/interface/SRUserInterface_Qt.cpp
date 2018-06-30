@@ -85,14 +85,6 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
     QObject::connect(actionSpatialRessection, SIGNAL(triggered()), this, SLOT(calculateSR()));
     QObject::connect(actionTable, SIGNAL(triggered()), this, SLOT(viewReport()));
     QObject::connect(actionDone, SIGNAL(triggered()), this, SLOT(EOdone()));
-    //QObject::connect(actionSet, SIGNAL(triggered()), this, SLOT(activeSetMode()));
-    //QObject::connect(actionUnset, SIGNAL(triggered()), this, SLOT(activeUnsetMode()));
-    //QObject::connect(actionMove, SIGNAL(triggered()), this, SLOT(activePanMode()));
-    //QObject::connect(actionZoom, SIGNAL(triggered()), this, SLOT(activeZoomMode()));
-    //QObject::connect(actionFit, SIGNAL(triggered()), this, SLOT(fitView()));
-
-    // FlightDirectionDisabled!
-    //QObject::connect(actionFlight, SIGNAL(triggered()), this, SLOT(setFlight()));
 
     this->manager = manager;
     if (manager->exteriorDone())
@@ -107,12 +99,6 @@ SRUserInterface_Qt::SRUserInterface_Qt(SRManager* manager, QWidget* parent, Qt::
 SRUserInterface_Qt::~SRUserInterface_Qt()
 {
     // no need to delete child widgets, Qt does it all for us
-}
-
-
-void SRUserInterface_Qt::languageChange()
-{
-    retranslateUi(this);
 }
 
 void SRUserInterface_Qt::init()
@@ -135,14 +121,9 @@ void SRUserInterface_Qt::init()
     // FlightDirectionDisabled!
     setFlightDirection("", 0.0);
     actionFlight->setVisible(false);
-    //flightDirectionForm = new FlightDirectionForm();
-    //flightDirectionForm->imagesFlightDirectionCombo->setHidden(true);
-    //flightDirectionForm->imageLabel->setHidden(true);
-    //connect(flightDirectionForm,SIGNAL(valuesFlightDirectionForm(QString,double)),this,SLOT(setFlightDirection(QString,double)));
 
     markOn = new Marker(SymbolsResource::getTriangle(Qt::green, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
     markOff = new Marker(SymbolsResource::getTriangle(Qt::darkRed, Qt::transparent, QSize(24, 24), 2, true)); // Personalizando as marcas. Que no futuro eu quero melhorar para inserir uso de 2 ou 3 marcas de acordo com o tipo de ponto.
-    //imageView->getMarker()->changeMarker(mark);
 
     // Make some connections
     imageView->getMarker()->setToOnlyEmitClickedMode();
@@ -160,10 +141,6 @@ void SRUserInterface_Qt::init()
 
 void SRUserInterface_Qt::informState()
 {
-    //if (oldImageView->getViewMode() != 4)
-    //oldImageView->selectPoint(QString::number(table1->currentIndex().row()).toStdString());
-    //else
-    //oldImageView->selectPoint("-1");
 }
 
 void SRUserInterface_Qt::receivePoint(QPointF p)
@@ -248,29 +225,8 @@ void SRUserInterface_Qt::makeRepaint()
     table1->repaint();
 }
 
-void SRUserInterface_Qt::activeSetMode()
-{
-    //oldImageView->setViewMode(1);
-}
-
-void SRUserInterface_Qt::activeUnsetMode()
-{
-    //oldImageView->setViewMode(4);
-}
-
-void SRUserInterface_Qt::activePanMode()
-{
-    //oldImageView->setViewMode(2);
-}
-
-void SRUserInterface_Qt::activeZoomMode()
-{
-    //oldImageView->setViewMode(3);
-}
-
 void SRUserInterface_Qt::fitView()
 {
-    //oldImageView->fitView();
 }
 
 bool SRUserInterface_Qt::measurePoint(int id, double col, double lin)
@@ -479,9 +435,6 @@ void SRUserInterface_Qt::testActivateSR()
 
 void SRUserInterface_Qt::setFlight()
 {
-    // FlightDirectionDisabled!
-    //flightDirectionForm->setGeometry((this->x()+this->width())/2,(this->y()+this->height())/2,flightDirectionForm->width(),flightDirectionForm->height());
-    //flightDirectionForm->show();
 }
 
 void SRUserInterface_Qt::acceptSR()

@@ -183,45 +183,11 @@ public slots:
 	*/
 	void enableAutoCopy(int enable);
 
-	/**
-	* \brief Atualiza os valores da tabela para a formataçao informada nos parametros
-	* \param mode  : Tipo de exibição com que os valores numéricos aparecerão: 'e' é formato exponencial , 'f' é formato decimal
-	* \param precision: Precisão com a qual os valores numericos serão exibidos
-	* \attention Comportamento impreciso se houver valorer nao-numericos
-	*/
-
-	void updateTableValues(char mode='f', int precision=4);
-
-	/**
-	* \brief Atualiza os valores da tabela para a formataçao informada no parametro
-	* \param mode  : Tipo de exibição com que os valores numéricos aparecerão: 0 é formato exponencial , 1 é formato decimal
-	* \attention Comportamento impreciso se houver valorer nao-numericos
-	*/
-	void updateModoValues(int modo=0);
-
-	/**
-	* \brief Atualiza os valoes da tabela para o numero de casa decimais
-	* \param decimal : Numero de casa decimais para os valores numericos exibidos
-	* \attention Comportamento impreciso se houver valorer nao-numericos
-	*/
-	void updateDecimalsValues(int decimal=4);
-
-	//void selectionBackground();
-	//void avaliateType(QTableWidgetItem *);
-	//void avaliateType(int row, int col);
-	//void validateItem();
 signals:
     void focusReceived();
-/*
-signals:
-	void focusReceived();
-	void validatedItem(int, int, int);
-	void validatedItem(int, int, double);
-*/
 
 protected:
-	// void resizeEvent(QResizeEvent *event);
-	/**
+    /**
 	* \brief Metodo reimplementado do QTableWidget
 	* \param QObject : Objeto que gerou um evento
 	* \param QEvent : Evento gerado pelo objeto
@@ -234,11 +200,11 @@ protected:
 	*/
 	void keyPressEvent(QKeyEvent *event);
 
-	/*
-	void focusInEvent(QFocusEvent *event);
-	void focusOutEvent(QFocusEvent *event);
-	//void dragMoveEvent(QDragMoveEvent *event);
-	*/
+    /*
+    void focusInEvent(QFocusEvent *event);
+    void focusOutEvent(QFocusEvent *event);
+    //void dragMoveEvent(QDragMoveEvent *event);
+    */
 };
 
 } // namespace efoto

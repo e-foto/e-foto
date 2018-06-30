@@ -94,7 +94,7 @@ public:
  * \brief Método de acesso que retorna o valor de id da imagem à qual a coordenada pertence.
  * \return int	int	Identificador da imagem à qual a coordenada pertence.
  */
-	int getImageId();
+    int getImageId() const;
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.

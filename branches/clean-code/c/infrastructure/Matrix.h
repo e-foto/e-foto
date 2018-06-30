@@ -67,7 +67,7 @@ public:
     * \brief Construtor de cópia para matrizes de posição.
     * \param anotherMatrix Matriz de posição a ser copiada.
     */
-    Matrix(const PositionMatrix& anotherMatrix);
+    explicit Matrix(const PositionMatrix& anotherMatrix);
 
     /**
     * \brief Construtor de cópia para matrizes.
@@ -119,7 +119,7 @@ public:
     * \param filename Caminho e nome do arquivo a ser salvo.
     * \return int 1 em caso de sucesso e 0 em caso de falha.
     */
-    int save(char* filename);
+    int save(char* filename) const;
 
     /**
     * \brief Método para retornar o valor da linha e coluna (i,j).
@@ -146,7 +146,7 @@ public:
     * \return PositionMatrix  A sub matriz mxn denotada por m = (LastRow - FirstRow) e n = (LastCol - FirstCol).
     */
     Matrix sel(const unsigned int FirstRow, const unsigned int LastRow,
-               const unsigned int FirstCol, const unsigned int LastCol);
+               const unsigned int FirstCol, const unsigned int LastCol) const;
 
     /**
     * \brief Método para exibição em terminal dos valores contidos na matriz.
@@ -154,19 +154,13 @@ public:
     * \param precision Precisão em quantidade de números significativos (para notação científica) ou em quantidade de casa decimais (para notação decimal).
     * \param name  Nome a ser dado para a matriz durante sua exibição.
     */
-    void show(char mode = 'f', int precision = 3, std::string name = "");
+    void show(char mode = 'f', int precision = 3, std::string name = "") const;
 
     /**
     * \brief Método para informar o maior valor de uma matriz.
     * \return double   Menor valor contido na matriz.
     */
     double highestValue() const;
-
-    /**
-    * \brief Método para informar o menor valor de uma matriz.
-    * \return double   Menor valor contido na matriz.
-    */
-    double lowestValue() const;
 
     /**
     * \brief Método para alterar o valor da linha e coluna (i,j).
@@ -194,19 +188,13 @@ public:
     * \brief Método para verificar se a matriz é a identidade.
     * \return bool Verdadeiro se a matriz é igual a identidade. Retorna falso em caso contrário.
     */
-    bool isIdentity();
-
-    /**
-    * \brief Método para verificar se a matriz é unitriangular superior.
-    * \return bool Verdadeiro se a matriz é unitriangular superior. Retorna falso em caso contrário.
-    */
-    bool isTriang();
+    bool isIdentity() const;
 
     /**
     * \brief Método para verificar se a matriz só possui valores iguais a zero.
     * \return bool Verdadeiro se todos os valores da matriz estiverem muito próximos de zero. Retorna falso em caso contrário.
     */
-    bool isZeroes();
+    bool isZeroes() const;
 
     /**
     * \brief Operador para a concatenação horizontal de duas matrizes.
@@ -291,7 +279,7 @@ public:
     * \param Par_Matrix    Matriz de posição para comparação.
     * \return bool Retorna verdadeiro se não existir nenhuma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
     */
-    bool operator ==(const PositionMatrix& Par_Matrix);
+    bool operator ==(const PositionMatrix& Par_Matrix) const;
 
     /**
     * \brief Operador para testar a igualdade entre duas a matrizes.
@@ -299,7 +287,7 @@ public:
     * \param Par_Matrix    Matriz para comparação.
     * \return bool Retorna verdadeiro se não existir nenhuma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
     */
-    bool operator ==(const Matrix& Par_Matrix);
+    bool operator ==(const Matrix& Par_Matrix) const;
 
     /**
     * \brief Operador para testar a diferença entre a matriz e uma matriz de posição.
@@ -307,7 +295,7 @@ public:
     * \param Par_Matrix    Matriz de posição para comparação.
     * \return bool Retorna verdadeiro se existir alguma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
     */
-    bool operator !=(const PositionMatrix& Par_Matrix);
+    bool operator !=(const PositionMatrix& Par_Matrix) const;
 
     /**
     * \brief Operador para testar a diferença entre duas a matrizes.
@@ -315,27 +303,21 @@ public:
     * \param Par_Matrix    Matriz para comparação.
     * \return bool Retorna verdadeiro se existir alguma diferença numérica ou na dimensão das matrizes. Retora falso em caso contrário.
     */
-    bool operator !=(const Matrix& Par_Matrix);
-
-    /**
-    * \brief Método para emitir o nome de classe.
-    * \return string   Retorna o nome de classe do objeto.
-    */
-    std::string objectType(void);
+    bool operator !=(const Matrix& Par_Matrix) const;
 
     /**
     * \brief Método de teste para o nome/tipo de instância.
     * \param s Texto com o nome da classe que é esperado.
     * \return bool Retorna verdadeiro caso o nome passado seja Matrix. Retorna falso no caso contrário.
     */
-    bool is(std::string s);
+    static bool is(std::string s);
 
     /**
     * \brief Método para extrair o equivalente em dados xml (mml:matrix) da matriz.
     * \return std::string  Retorna o string contendo o xml (mml:matrix) da matriz.
     */
-    std::string xmlGetData();
-    std::string xmlGetData(int prec);
+    std::string xmlGetData() const;
+    std::string xmlGetData(int prec) const;
 
     /**
     * \brief Método para setar os valores de atributos da matriz utilizando sua descrição em xml (mml:matrix).
@@ -371,7 +353,7 @@ public:
     * \brief Método para computar a matriz triangular superior derivada da matriz em escopo.
     * \return Matrix  Matriz triangular superior.
     */
-    Matrix triang();
+    Matrix triang() const;
 
     /**
     * \brief Método para retornar o conteúdo da matriz coluna realocado sobre a diagonal principal de uma matriz quadrada.

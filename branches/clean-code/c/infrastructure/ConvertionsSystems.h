@@ -58,15 +58,6 @@ public :
     static Matrix GeocentricCartesianToGeoelip(double Xi, double Yi, double Zi,GeoSystem system);
 
     /**
-    * \brief Metodo que converte uma coordenada de um sistema para outro pelo metodo dos 3 parametros
-    * \param oldSystem : Sistema de entrada
-    * \param newSystem : Sistema de saida
-    * \param coordinates  : Coordenadas geoElipsoidicas,com os valores, em radiano, na sequencia latitude, longitude, altura em metros
-    * \return Matrix : Matriz[1x3] com os valores, em radiano, na sequencia latitude, longitude, altura em metros
-    */
-    static Matrix convertSystems3Parameters(GeoSystem oldSystem, GeoSystem newSystem, Matrix coordinates);
-
-    /**
     * \brief Metodo que converte uma coordenada de um sistema para outro pelas formulas simplificadas de Molodensky
     * \param oldSystem : Sistema de entrada
     * \param newSystem : Sistema de saida
@@ -137,15 +128,6 @@ public :
 
     static Matrix utmToNunes(double E, double N, double H, int zona, int hemi, double phi0, double lambda0, double h0, GeoSystem system);
     static Matrix nunesToUtm(double X, double Y, double Z, double phi0, double lambda0, double h0, GeoSystem system);
-
-    static Matrix nunesToGeoElips(double X, double Y, double Z, double phi0, double lambda0, double h0,GeoSystem system);
-
-    /* Method into disuse:
-     *
-    //E o Lambda nao serve para nada??
-    static double getNunesRaio(double phi0, double lambda0, GeoSystem sys);
-    }
-    */
 };
 
 

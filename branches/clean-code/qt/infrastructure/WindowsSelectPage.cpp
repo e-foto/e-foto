@@ -119,11 +119,6 @@ void WindowsSelectPage::exchangeAllItems()
 	//	completeList->setText(checkedModel->stringList().join("#"));
 }
 
-void WindowsSelectPage::initializePage()
-{
-
-}
-
 void WindowsSelectPage::setInitialList(QStringList list)
 {
 	uncheckedModel=new QStringListModel(list);

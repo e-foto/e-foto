@@ -126,7 +126,7 @@ Matrix& Matrix::zero()
 }
 
 
-int Matrix::save(char* filename)
+int Matrix::save(char* filename) const
 {
     std::ofstream emfile(filename); // open the emf file
 
@@ -170,7 +170,7 @@ int Matrix::getInt(const unsigned int i, const unsigned int j) const
 }
 
 Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
-                   const unsigned int FirstCol, const unsigned int LastCol)
+                   const unsigned int FirstCol, const unsigned int LastCol) const
 {
     Matrix DraftResult(1, 1);
     Matrix Result;
@@ -199,7 +199,7 @@ Matrix Matrix::sel(const unsigned int FirstRow, const unsigned int LastRow,
     return Result;
 }
 
-void Matrix::show(char mode, int precision, std::string name)
+void Matrix::show(char mode, int precision, std::string name) const
 {
     std::cout << "Matrix " << name << " [" << nrows << 'x' << ncols << "] " <<
               std::endl;
@@ -248,22 +248,6 @@ double Matrix::highestValue() const
     return Result;
 }
 
-double Matrix::lowestValue() const
-{
-    double Result = NAN;
-
-    if (Mat_ != nullptr) {
-        Result = Mat_[0];
-
-        for (unsigned int i = 1; i < (ncols * nrows); i++)
-            if (Mat_[i] < Result) {
-                Result = Mat_[i];
-            }
-    }
-
-    return Result;
-}
-
 void Matrix::set(unsigned int i, unsigned int j, double value) const
 {
     if ((i >= 1) && (i <= nrows) && (j >= 1) && (j <= ncols)) {
@@ -280,7 +264,7 @@ void Matrix::setInt(unsigned int i, unsigned int j, int value) const
     set(i, j, (double) value);
 }
 
-bool Matrix::isIdentity()
+bool Matrix::isIdentity() const
 {
     Matrix I;
 
@@ -297,25 +281,7 @@ bool Matrix::isIdentity()
     return true;
 }
 
-bool Matrix::isTriang()
-{
-    for (unsigned int j = 1; j <= ncols; j++) {
-        if ((1 - get((unsigned int)j, (unsigned int)j) > 0.000001
-                || 1 - get((unsigned int)j, (unsigned int)j) < -0.000001)) {
-            return false;
-        }
-
-        for (unsigned int i = (j + 1); i <= nrows; i++)
-            if (get((unsigned int)i, (unsigned int)j) > 0.000001
-                    || get((unsigned int)i, (unsigned int)j) < -0.000001) {
-                return false;
-            }
-    }
-
-    return true;
-}
-
-bool Matrix::isZeroes()
+bool Matrix::isZeroes() const
 {
     for (unsigned int j = 1; j <= ncols; j++) {
         for (unsigned int i = 1; i <= nrows; i++)
@@ -577,7 +543,7 @@ Matrix& Matrix::operator =(const Matrix& Par_Matrix)
     return *this;
 }
 
-bool Matrix::operator ==(const PositionMatrix& Par_Matrix)
+bool Matrix::operator ==(const PositionMatrix& Par_Matrix) const
 {
     if ((nrows != Par_Matrix.nrows) || (ncols != Par_Matrix.ncols)) {
         return 0;
@@ -591,7 +557,7 @@ bool Matrix::operator ==(const PositionMatrix& Par_Matrix)
     return 1;
 }
 
-bool Matrix::operator ==(const Matrix& Par_Matrix)
+bool Matrix::operator ==(const Matrix& Par_Matrix) const
 {
     if ((nrows != Par_Matrix.nrows) || (ncols != Par_Matrix.ncols)) {
         return 0;
@@ -605,7 +571,7 @@ bool Matrix::operator ==(const Matrix& Par_Matrix)
     return 1;
 }
 
-bool Matrix::operator !=(const PositionMatrix& Par_Matrix)
+bool Matrix::operator !=(const PositionMatrix& Par_Matrix) const
 {
     if ((nrows != Par_Matrix.nrows) || (ncols != Par_Matrix.ncols)) {
         return 1;
@@ -619,7 +585,7 @@ bool Matrix::operator !=(const PositionMatrix& Par_Matrix)
     return 0;
 }
 
-bool Matrix::operator !=(const Matrix& Par_Matrix)
+bool Matrix::operator !=(const Matrix& Par_Matrix) const
 {
     if ((nrows != Par_Matrix.nrows) || (ncols != Par_Matrix.ncols)) {
         return 1;
@@ -631,11 +597,6 @@ bool Matrix::operator !=(const Matrix& Par_Matrix)
             }
 
     return 0;
-}
-
-std::string Matrix::objectType(void)
-{
-    return "Matrix";
 }
 
 bool Matrix::is(std::string s)
@@ -643,7 +604,7 @@ bool Matrix::is(std::string s)
     return (s == "Matrix" ? true : false);
 }
 
-std::string Matrix::xmlGetData()
+std::string Matrix::xmlGetData() const
 {
     std::stringstream result;
     result << "<mml:matrix>\n";
@@ -662,7 +623,7 @@ std::string Matrix::xmlGetData()
     return result.str();
 }
 
-std::string Matrix::xmlGetData(int prec)
+std::string Matrix::xmlGetData(int prec) const
 {
     std::stringstream result;
     result << "<mml:matrix>\n";
@@ -828,7 +789,7 @@ Matrix Matrix::reduction()
     return Result;
 }
 
-Matrix Matrix::triang()
+Matrix Matrix::triang() const
 {
     Matrix Result;
     Matrix LastResult;

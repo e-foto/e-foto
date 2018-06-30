@@ -7,12 +7,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-
-DEMManager* DEMUserInterface::getManager()
-{
-	return manager;
-}
-
 } // namespace efoto
 } // namespace eng
 } // namespace uerj

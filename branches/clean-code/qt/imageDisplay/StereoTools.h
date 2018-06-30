@@ -22,13 +22,16 @@ namespace efoto {
 
 class StereoDisplay;
 
-class StereoTool : public QObject
-{
+class StereoTool : public QObject {
     Q_OBJECT
 
-public:
-    explicit StereoTool(StereoDisplay* display) {_display = display; QTimer *timer = new QTimer(this); _scale = -1; _scaleSpin = NULL; _leftPosLabel = NULL; _rightPosLabel = NULL; _3dPosLabel = NULL;
-                                                 connect(timer,SIGNAL(timeout()),this,SLOT(autoMove())); timer->start(50); _hasButtomPressed = false; _actualizePosLabel = true;}
+  public:
+    explicit StereoTool(StereoDisplay* display):
+        display_{display} {
+        QTimer* timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(autoMove()));
+        timer->start(50);
+    }
     virtual ~StereoTool() {}
 
     virtual void paintEvent(const QPaintEvent& event);
@@ -39,124 +42,96 @@ public:
     virtual void mousePressed(const QMouseEvent& event);
     virtual void mouseReleased(const QMouseEvent& event);
     virtual void mouseMoved(const QMouseEvent& event);
-    virtual void mouseDblClicked(const QMouseEvent& event);
     virtual void wheelEvent(const QWheelEvent& event);
-
-    //void setScaleSpin(QDoubleSpinBox* scaleSpin) {_scaleSpin = scaleSpin;}
-    void setPosLabel(QLabel* leftLabel, QLabel* rightLabel, QLabel* stereoLabel) {_leftPosLabel = leftLabel; _rightPosLabel = rightLabel; _3dPosLabel = stereoLabel;}
-    //void actualizeScaleSpin(double scale);
+    void setPosLabel(QLabel* leftLabel, QLabel* rightLabel, QLabel* stereoLabel) {
+        leftPosLabel_ = leftLabel;
+        rightPosLabel_ = rightLabel;
+        Pos3dLabel_ = stereoLabel;
+    }
     void actualizePosLabel();
-    //void actualizePosLabel(SingleDisplay* display, bool force = false);
-
     void setCursor(QImage cursor, bool stereo);
 
-public slots:
+  public slots:
     void autoMove();
 
-protected:
-    StereoDisplay * _display;
-    QPointF _autoPan;
-    QPoint _lastMousePosition;
-    QPointF _fixedPointOnImageLeft;
-    QPointF _fixedPointOnImageRight;
-    QPoint _fixedPoint;
-    double _scale;
-    bool _hasButtomPressed;
+  protected:
+    StereoDisplay* display_{};
+    QPoint lastMousePosition_{};
+    QPoint fixedPoint_{};
+    QImage currentCursor_{};
+    QImage lastCursor_{};
 
-    QImage _currentCursor;
-    QImage _lastCursor;
-    QDoubleSpinBox* _scaleSpin;
-    QLabel* _leftPosLabel;
-    QLabel* _rightPosLabel;
-    QLabel* _3dPosLabel;
-    bool _actualizePosLabel;
+  private:
+    QPointF autoPan_{};
+    QPointF fixedPointOnImageLeft_{};
+    QPointF fixedPointOnImageRight_{};
+    double scale_{-1.0};
+    bool hasButtomPressed_{false};
+    QLabel* leftPosLabel_{nullptr};
+    QLabel* rightPosLabel_{nullptr};
+    QLabel* Pos3dLabel_{nullptr};
+    bool actualizePosLabel_{true};
 
-signals:
+
+  signals:
     void mouseMoved(QPointF, QPointF);
 };
 
-class ZoomStereoTool : public StereoTool
-{
-    bool _onRubberBand;
-public:
+class ZoomStereoTool : public StereoTool {
+    bool onRubberBand_;
+  public:
     explicit ZoomStereoTool(StereoDisplay* display);
     ~ZoomStereoTool();
     void paintEvent(const QPaintEvent& event);
-    //void enterEvent(const QHoverEvent& event);
-    //void leaveEvent(const QHoverEvent& event);
-    //void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    void mouseReleased(const QMouseEvent & event);
-    void mouseMoved(const QMouseEvent & event);
-    void mouseDblClicked(const QMouseEvent & event);
-    //void wheelEvent(const QWheelEvent& event);
+    void mousePressed(const QMouseEvent& event);
+    void mouseReleased(const QMouseEvent& event);
+    void mouseMoved(const QMouseEvent& event);
 };
 
-class MoveStereoTool : public StereoTool
-{
-public:
+class MoveStereoTool : public StereoTool {
+  public:
     explicit MoveStereoTool(StereoDisplay* display);
     ~MoveStereoTool();
-    //void paintEvent(const QPaintEvent& event);
-    //void enterEvent(const QHoverEvent& event);
-    //void leaveEvent(const QHoverEvent& event);
-    //void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    void mouseReleased(const QMouseEvent & event);
-    void mouseMoved(const QMouseEvent & event);
-    //void mouseDblClicked(const QMouseEvent & event);
-    //void wheelEvent(const QWheelEvent& event);
+    void mousePressed(const QMouseEvent& event);
+    void mouseReleased(const QMouseEvent& event);
+    void mouseMoved(const QMouseEvent& event);
 };
 
-class MarkStereoTool : public StereoTool
-{
+class MarkStereoTool : public StereoTool {
     Q_OBJECT
 
-    Marker mark;
-    int nextMarkItem;
-    bool onlyEmitClickedMode;
+    Marker mark_;
+    int nextMarkItem_{0};
+    bool onlyEmitClickedMode_{false};
 
-public:
+  public:
     explicit MarkStereoTool(StereoDisplay* display);
     ~MarkStereoTool();
 
     void changeMarker(Marker marker);
     Marker* getMarker();
 
-    void addMark(QPointF lPos, QPointF rPos, int key, QString label = "", Marker* marker = NULL);
-    void insertMark(QPointF lPos, QPointF rPos, int key, QString label = "", Marker* marker = NULL);
-    //void editMark(int key, QPointF lPos, QPointF rPos, Marker* marker = NULL);
-    //void editMark(int key, QPointF lPos, QPointF rPos, QString label, Marker* marker = NULL);
+    void addMark(QPointF lPos, QPointF rPos, int key, QString label = "",
+                 Marker* marker = nullptr);
+    void insertMark(QPointF lPos, QPointF rPos, int key, QString label = "",
+                    Marker* marker = nullptr);
     void deleteMark(int key);
     void clear();
 
-    //void paintEvent(const QPaintEvent& event);
-    //void enterEvent(const QHoverEvent& event);
-    //void leaveEvent(const QHoverEvent& event);
-    //void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    //void mouseReleased(const QMouseEvent & event);
-    //void mouseMoved(const QMouseEvent & event);
-    //void mouseDblClicked(const QMouseEvent & event);
-    //void wheelEvent(const QWheelEvent& event);
-
+    void mousePressed(const QMouseEvent& event);
     void setToOnlyEmitClickedMode();
-    void setToAutoCreateMarkFrom(unsigned int start);
     void putClickOn(QPointF& lPos, QPointF& rPos);
 
-signals:
+  signals:
     void clicked(QPointF, QPointF);
 };
 
-class NearStereoTool : public StereoTool
-{
-    QDockWidget* _nearDock;
-    SingleDisplay* _leftNear;
-    SingleDisplay* _rightNear;
-    //MarkTool* _marker;
-    //bool _cursorIsVisible;
+class NearStereoTool : public StereoTool {
+    QDockWidget* nearDock_{nullptr};
+    SingleDisplay* leftNear_{nullptr};
+    SingleDisplay* rightNear_{nullptr};
 
-public:
+  public:
     explicit NearStereoTool(StereoDisplay* display);
     ~NearStereoTool();
 
@@ -166,31 +141,25 @@ public:
     bool nearIsVisible();
     void setNearVisible(bool status);
 
-    // Methods into disuse:
-    //void setMarker(MarkTool* marker);
-    //void setNearCursor(QCursor cursor);
-
     void paintEvent(const QPaintEvent& event);
-    void resizeEvent(const QResizeEvent &event);
+    void resizeEvent(const QResizeEvent& event);
     void enterEvent(const QHoverEvent& event);
     void leaveEvent(const QHoverEvent& event);
     void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    void mouseReleased(const QMouseEvent & event);
-    void mouseMoved(const QMouseEvent & event);
-    void mouseDblClicked(const QMouseEvent & event);
+    void mousePressed(const QMouseEvent& event);
+    void mouseReleased(const QMouseEvent& event);
+    void mouseMoved(const QMouseEvent& event);
     void wheelEvent(const QWheelEvent& event);
 };
 
-class OverStereoTool : public StereoTool
-{
-    QDockWidget* _overDock;
-    SingleDisplay* _leftOver;
-    SingleDisplay* _rightOver;
-    QPointF _lastPos;
-    bool _onMove;
+class OverStereoTool : public StereoTool {
+    QDockWidget* overDock_{nullptr};
+    SingleDisplay* leftOver_{nullptr};
+    SingleDisplay* rightOver_{nullptr};
+    QPointF lastPos_{};
+    bool onMove_{false};
 
-public:
+  public:
     explicit OverStereoTool(StereoDisplay* display);
     ~OverStereoTool();
 
@@ -201,29 +170,27 @@ public:
     void setOverVisible(bool status);
 
     void paintEvent(const QPaintEvent& event);
-    void resizeEvent(const QResizeEvent &event);
+    void resizeEvent(const QResizeEvent& event);
     void enterEvent(const QHoverEvent& event);
     void leaveEvent(const QHoverEvent& event);
     void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    void mouseReleased(const QMouseEvent & event);
-    void mouseMoved(const QMouseEvent & event);
-    void mouseDblClicked(const QMouseEvent & event);
+    void mousePressed(const QMouseEvent& event);
+    void mouseReleased(const QMouseEvent& event);
+    void mouseMoved(const QMouseEvent& event);
     void wheelEvent(const QWheelEvent& event);
 };
 
-class StereoToolsBar : public QToolBar
-{
+class StereoToolsBar : public QToolBar {
     Q_OBJECT
 
-protected:
-    StereoDisplay* _display;
-    QLabel* _leftInfoLabel;
-    QLabel* _rightInfoLabel;
-    QLabel* _stereoInfoLabel;
-    StereoTool* currentTool;
+  protected:
+    StereoDisplay* display_;
+    QLabel* leftInfoLabel_;
+    QLabel* rightInfoLabel_;
+    QLabel* stereoInfoLabel_;
+    StereoTool* currentTool_;
 
-public:
+  public:
     explicit StereoToolsBar(StereoDisplay* display, QWidget* parent);
     QAction* setZoomTool;
     QAction* setMoveTool;
@@ -250,19 +217,24 @@ public:
     SingleDisplay* getRightOverview();
     QDockWidget* getOverviews();
 
-    QLabel* getStereoInfo() {return _stereoInfoLabel;}
-    QLabel* getLeftInfo() {return _leftInfoLabel;}
-    QLabel* getRightInfo() {return _rightInfoLabel;}
+    QLabel* getStereoInfo() {
+        return stereoInfoLabel_;
+    }
+    QLabel* getLeftInfo() {
+        return leftInfoLabel_;
+    }
+    QLabel* getRightInfo() {
+        return rightInfoLabel_;
+    }
 
-    void clearStereoInfoLabel();
     void actualizeStereoInfoLabel(double X, double Y, double Z);
 
     void setOpenVisible(bool status);
     void setSaveVisible(bool status);
     void setMarkVisible(bool status);
 
-public slots:
-    void executeAction(QAction *action);
+  public slots:
+    void executeAction(QAction* action);
     void changeMode(int mode);
 };
 

@@ -1,7 +1,7 @@
 /**************************************************************************
 DEMManager.cpp
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2018 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ DEMManager.cpp
 #endif
 
 #include "DEMManager.h"
+#include <sstream>
 
 #include "Point.h"
 #include "EFotoManager.h"
@@ -38,92 +39,111 @@ DEMManager.cpp
 #include "SpatialIntersection.h"
 #include "FrameSensor.h"
 #include "Image.h"
-
 #include "ProjectiveRay.h"
-
-#include <sstream>
-
-// Constructors and destructors
-//
 
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-DEMManager::DEMManager():
-    started_{false},
-    status_{false}
+DEMManager::DEMManager(): DEMManager(nullptr,
+                                     std::deque<Image*>(),
+                                     std::deque<ExteriorOrientation*>())
 {
 }
 
 DEMManager::DEMManager(EFotoManager* manager,
                        std::deque<Image*>images,
                        std::deque<ExteriorOrientation*> eos):
-    started_{false},
-    status_{false}
+    manager_ {manager},
+    cancel_flag_ {false},
+    listAllImages_ {images},
+    listEOs_ {eos},
+    grid_ {nullptr},
+    image_matching_ {nullptr},
+    dem_feature_ {nullptr},
+    isShowImage_ {false},
+    dem_unsaved_ {false},
+    grid_unsaved_ {false},
+    elim_bad_pts_ {false},
+    bounding_box_empty_ {true},
+    lsm_temp_growth_step_ {2},
+    lsm_temp_max_size_ {50},
+    ncc_temp_growth_step_ {2},
+    ncc_temp_max_size_ {50},
+    bounding_box_Xi_{0.0},
+    bounding_box_Yi_{0.0},
+    bounding_box_Xf_{0.0},
+    bounding_box_Yf_{0.0},
+    rad_cor_{0},
+    match_method_{0},
+    rgx_{0},
+    rgy_{0},
+    lsm_temp_{0},
+    lsm_it_{0},
+    lsm_dist_{0},
+    ncc_temp_{0},
+    ncc_sw_{0},
+    lsm_th_{0.0},
+    lsm_std_{0.0},
+    lsm_shift_{0.0},
+    lsm_shear_{0.0},
+    lsm_scale_{0.0},
+    ncc_th_{0.0},
+    ncc_std_{0.0},
+    downsample_{0.0},
+    perf_RG{false},
+    over_it_{false},
+    over_it_dist_{0.0},
+    myInterface{nullptr},
+    dem_total_elapsed_time{0.0},
+    started_{false}
 {
-    this->manager = manager;
-    cancel_flag = false;
-    listAllImages = images;
-    listEOs = eos;
-    grid = nullptr;
-    im = nullptr;
-    df = nullptr;
-    isShowImage = false;
-    dem_unsaved = false;
-    grid_unsaved = false;
-    elim_bad_pts = false;
-    bb_empty = true;
-    lsm_temp_growth_step = 2;
-    lsm_temp_max_size = 50;
-    ncc_temp_growth_step = 2;
-    ncc_temp_max_size = 50;
     setListPoint();
 }
 
 DEMManager::~DEMManager()
 {
-    if (grid != nullptr) {
-        delete grid;
+    if (grid_) {
+        delete grid_;
     }
 }
 
 bool DEMManager::exec()
 {
-    if (manager != nullptr) {
-        if (manager->getInterfaceType().compare("Qt") == 0) {
+    if (manager_) {
+        if (manager_->getInterfaceType().compare("Qt") == 0) {
             myInterface = DEMUserInterface_Qt::instance(this);
         }
 
         connectImagePoints();
         started_ = true;
 
-        if (myInterface != nullptr) {
+        if (myInterface) {
             myInterface->exec();
 
             if (!getPairs()) {
                 returnProject();
-                return status_;
+                return true;
             }
 
             createInitialSeeds();
         }
     }
 
-    return status_;
+    return true;
 }
 
-void DEMManager::returnProject()
+void DEMManager::returnProject() const
 {
-    manager->reloadProject();
+    manager_->reloadProject();
 }
 
-Image* DEMManager::getImage(int id)
+Image* DEMManager::getImage(const int id) const
 {
-    for (unsigned i = 0; i < listAllImages.size(); i++) {
-        if (listAllImages.at(i)->getId() == id) {
-            return listAllImages.at(i);
+    for (size_t i = 0; i < listAllImages_.size(); i++) {
+        if (listAllImages_.at(i)->getId() == id) {
+            return listAllImages_.at(i);
         }
     }
 
@@ -132,14 +152,14 @@ Image* DEMManager::getImage(int id)
 
 void DEMManager::setListPoint()
 {
-    EDomElement xmlPoints(manager->getXml("points"));
+    EDomElement xmlPoints(manager_->getXml("points"));
     std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
     for (size_t i = 0; i < allPoints.size(); i++) {
-        Point* point = manager->instancePoint(
-                    Conversion::stringToInt(allPoints.at(i).attribute("key")));
+        Point* point = manager_->instancePoint(
+                           Conversion::stringToInt(allPoints.at(i).attribute("key")));
 
-        if (point != nullptr) {
+        if (point) {
             listAllPoints.push_back(point);
         }
     }
@@ -152,26 +172,26 @@ bool DEMManager::connectImagePoints()
     }
 
     qApp->processEvents();
-    EDomElement xmlPoints(manager->getXml("points"));
+    EDomElement xmlPoints(manager_->getXml("points"));
     std::deque<EDomElement>allPoints = xmlPoints.elementsByTagName("point");
 
-    for (size_t j = 0; j < listAllImages.size(); j++) {
-        for (unsigned int i = 0; i < allPoints.size(); i++) {
+    for (size_t j = 0; j < listAllImages_.size(); j++) {
+        for (size_t i = 0; i < allPoints.size(); i++) {
             std::string data = allPoints.at(i).
-                          elementByTagAtt("imageCoordinates",
-                                          "image_key",
-                                          Conversion::intToString(
-                                              listAllImages.at(j)->getId())).
-                                                                 getContent();
+                               elementByTagAtt("imageCoordinates",
+                                               "image_key",
+                                               Conversion::intToString(
+                                                   listAllImages_.at(j)->getId())).
+                               getContent();
 
             if (data != "") {
-                Point* pointToInsert = manager->
-                        instancePoint(Conversion::stringToInt(
-                                           allPoints.at(i).attribute("key")));
+                Point* pointToInsert = manager_->
+                                       instancePoint(Conversion::stringToInt(
+                                               allPoints.at(i).attribute("key")));
 
-                if (pointToInsert != nullptr) {
-                    listAllImages.at(j)->putPoint(pointToInsert);
-                    pointToInsert->putImage(listAllImages.at(j));
+                if (pointToInsert) {
+                    listAllImages_.at(j)->putPoint(pointToInsert);
+                    pointToInsert->putImage(listAllImages_.at(j));
                 }
             }
         }
@@ -182,8 +202,8 @@ bool DEMManager::connectImagePoints()
 
 void DEMManager::updateNoSeeds()
 {
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
-    dui->updateSeedsLabel(seeds.size());
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
+    dui->updateSeedsLabel(seeds_.size());
 }
 
 /*
@@ -192,7 +212,7 @@ void DEMManager::updateNoSeeds()
 int DEMManager::getPairs()
 {
     // This Method was unified in EFotoManager Class
-    manager->getPairs(listPairs);
+    manager_->getPairs(listPairs);
     addPairsToInterface();
     return (listPairs.size() > 0);
 }
@@ -201,131 +221,130 @@ int DEMManager::getPairs()
  *  End of pair automatic identification
  */
 
-void DEMManager::addPairsToInterface()
+void DEMManager::addPairsToInterface() const
 {
     // Add pairs to the interface
-    int left_id, right_id;
     std::stringstream txt;
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
 
-    for (unsigned i = 0; i < listPairs.size(); i++) {
-        getImagesId(i, left_id, right_id);
-        const auto str_left = listAllImages.at(left_id - 1)->getImageId();
-        const auto str_right = listAllImages.at(right_id - 1)->getImageId();
+    for (size_t i = 0; i < listPairs.size(); i++) {
+        int left_id, right_id;
+        std::tie(left_id, right_id) = getImagesId(i);
+        auto str_left = listAllImages_.at(left_id - 1)->getImageId();
+        auto str_right = listAllImages_.at(right_id - 1)->getImageId();
         txt.str("");  // Clear stream
         txt << "Images " << str_left << " and " << str_right;
-        dui->addImagePair((char*)txt.str().c_str());
+        dui->addImagePair(txt.str());
     }
 
-    dui->setStatus((char*)"None");
+    dui->setStatus("None");
 }
 
 // Internal function. Pos from 0 - N-1.
-void DEMManager::getImagesId(int pos, int& left, int& right)
+std::tuple<int, int> DEMManager::getImagesId(const int pos) const
 {
     // Check pos
-    left = -1;
-    right = -1;
-
-    if (pos < 0 || (unsigned)pos > listPairs.size() - 1) {
-        return;
+    if (pos < 0 || (size_t)pos > listPairs.size() - 1) {
+        return std::make_tuple(-1, -1);
     }
 
     // Decode
-    int no_imgs = listAllImages.size();
-    left = 1 + (listPairs.at(pos) % no_imgs);
-    right = 1 + (listPairs.at(pos) / no_imgs);
+    const int no_imgs = listAllImages_.size();
+    return std::make_tuple(1 + (listPairs.at(pos) % no_imgs),
+                           1 + (listPairs.at(pos) / no_imgs));
 }
 
-void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method,
-        int _rgx, double downs)
+void DEMManager::setAutoExtractionSettings(const int rad_cor,
+        const int match_method,
+        const int rgx,
+        const double downs)
 {
-    rad_cor = _rad_cor;
-    match_method = _match_method;
-    // Unifor step for Region Growing
-    rgx = _rgx;
-    rgy = _rgx;
-    downsample = 1.0 / downs;
-    //    ncc_temp, ncc_sw;
-    //    double ncc_th, ncc_std;
+    rad_cor_ = rad_cor;
+    match_method_ = match_method;
+    // Uniform step for Region Growing
+    rgx_ = rgx;
+    rgy_ = rgx;
+    downsample_ = 1.0 / downs;
 }
 
-void DEMManager::setNCCSettings(int _ncc_temp, int _ncc_sw, double _ncc_th,
-                                double _ncc_std)
+void DEMManager::setNCCSettings(const int ncc_temp,
+                                const int ncc_sw,
+                                const double ncc_th,
+                                const double ncc_std)
 {
-    ncc_temp = _ncc_temp;
-    ncc_sw = _ncc_sw;
-    ncc_th = _ncc_th;
-    ncc_std = _ncc_std;
+    ncc_temp_ = ncc_temp;
+    ncc_sw_ = ncc_sw;
+    ncc_th_ = ncc_th;
+    ncc_std_ = ncc_std;
 }
 
-void DEMManager::setLSMSettings(int _lsm_temp,
-                                int _lsm_it,
-                                double _lsm_th,
-                                double _lsm_std,
-                                int _lsm_dist,
-                                double _lsm_shift,
-                                double _lsm_shear,
-                                double _lsm_scale,
-                                int over,
-                                double over_dist)
+void DEMManager::setLSMSettings(const int lsm_temp,
+                                const int lsm_it,
+                                const double lsm_th,
+                                const double lsm_std,
+                                const int lsm_dist,
+                                const double lsm_shift,
+                                const double lsm_shear,
+                                const double lsm_scale,
+                                const int over,
+                                const double over_dist)
 {
-    lsm_temp = _lsm_temp;
-    lsm_it = _lsm_it;
-    lsm_th = _lsm_th;
-    lsm_std = _lsm_std;
-    lsm_dist = _lsm_dist;
-    lsm_shift = _lsm_shift;
-    lsm_shear = _lsm_shear;
-    lsm_scale = _lsm_scale;
-    over_it = over;
-    over_it_dist = over_dist;
+    lsm_temp_ = lsm_temp;
+    lsm_it_ = lsm_it;
+    lsm_th_ = lsm_th;
+    lsm_std_ = lsm_std;
+    lsm_dist_ = lsm_dist;
+    lsm_shift_ = lsm_shift;
+    lsm_shear_ = lsm_shear;
+    lsm_scale_ = lsm_scale;
+    over_it_ = over;
+    over_it_dist_ = over_dist;
 }
 
-void DEMManager::setProgress(int progress)
+void DEMManager::setProgress(const int progress) const
 {
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
     dui->setProgress(progress);
 }
 
 void DEMManager::setCancel()
 {
-    cancel_flag = true;
+    cancel_flag_ = true;
 
-    if (im != nullptr) {
-        im->setCancel();
+    if (image_matching_) {
+        image_matching_->setCancel();
     }
 
-    if (grid != nullptr) {
-        grid->setCancel();
+    if (grid_) {
+        grid_->setCancel();
     }
 }
 
 void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
 {
-    if (bb_empty) {
-        bb_Xi = Xi;
-        bb_Xf = Xf;
-        bb_Yi = Yi;
-        bb_Yf = Yf;
-        bb_empty = false;
+    if (bounding_box_empty_) {
+        bounding_box_Xi_ = Xi;
+        bounding_box_Xf_ = Xf;
+        bounding_box_Yi_ = Yi;
+        bounding_box_Yf_ = Yf;
+        bounding_box_empty_ = false;
         return;
     }
 
-    if (Xi < bb_Xi) {
-        bb_Xi = Xi;
+    if (Xi < bounding_box_Xi_) {
+        bounding_box_Xi_ = Xi;
     }
 
-    if (Xf > bb_Xf) {
-        bb_Xf = Xf;
+    if (Xf > bounding_box_Xf_) {
+        bounding_box_Xf_ = Xf;
     }
 
-    if (Yi < bb_Yi) {
-        bb_Yi = Yi;
+    if (Yi < bounding_box_Yi_) {
+        bounding_box_Yi_ = Yi;
     }
 
-    if (Yf > bb_Yf) {
-        bb_Yf = Yf;
+    if (Yf > bounding_box_Yf_) {
+        bounding_box_Yf_ = Yf;
     }
 }
 
@@ -336,15 +355,15 @@ void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)
 void DEMManager::createInitialSeeds()
 {
     // Clear seeds list before adding measured point as seeds
-    seeds.clear();
+    seeds_.clear();
     Point* p;
-    int no_imgs_pt, left_id, right_id;
+    int left_id, right_id;
     double X, Y, Z;
     ImageSpaceCoordinate left_dic, right_dic;
 
-    for (unsigned i = 0; i < listAllPoints.size(); i++) {
+    for (size_t i = 0; i < listAllPoints.size(); i++) {
         p = listAllPoints.at(i);
-        no_imgs_pt = p->countImages();
+        int no_imgs_pt = p->countImages();
 
         // There is no pair, if points # is less than 2
         if (no_imgs_pt < 2) {
@@ -353,7 +372,7 @@ void DEMManager::createInitialSeeds()
 
         // Read pair list
         for (unsigned k = 0; k < listPairs.size(); k++) {
-            getImagesId(k, left_id, right_id);
+            std::tie(left_id, right_id) = getImagesId(k);
 
             if (!p->hasImageCoordinate(left_id) ||
                     !p->hasImageCoordinate(right_id)) {
@@ -365,47 +384,47 @@ void DEMManager::createInitialSeeds()
             X = p->getObjectCoordinate().getX();
             Y = p->getObjectCoordinate().getY();
             Z = p->getObjectCoordinate().getZ();
-            seeds.add(left_id,
-                      right_id,
-                      static_cast<double>(left_dic.getCol()),
-                      static_cast<double>(left_dic.getLin()),
-                      static_cast<double>(right_dic.getCol()),
-                      static_cast<double>(right_dic.getLin()),
-                      X, Y, Z, 0.0);
+            seeds_.add(left_id,
+                       right_id,
+                       left_dic.getCol(),
+                       left_dic.getLin(),
+                       right_dic.getCol(),
+                       right_dic.getLin(),
+                       X, Y, Z, 0.0);
         }
     }
 
     // Update informations
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
-    dui->setAutoExtInfo(seeds.size(), 0, 0.0, 0.0);
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
+    dui->setAutoExtInfo(seeds_.size(), 0, 0.0, 0.0);
 }
 
 /*
  * DEM I/O operations
  **/
 
-void DEMManager::saveDem(char* filename, int fileType)
+void DEMManager::saveDem(const char* const filename, const int fileType)
 {
     pairs.save(filename, fileType);
     // Expanção do XML
     addPairsToXML(std::string(filename));
-    dem_unsaved = false;
+    dem_unsaved_ = false;
 }
 
-void DEMManager::saveDemGrid(char* filename, Filetype fileType)
+void DEMManager::saveDemGrid(const char* const filename, Filetype fileType)
 {
-    grid->saveDem(filename, fileType);
-    grid_unsaved = false;
-    // Expanção do XML
+    grid_->saveDem(filename, fileType);
+    grid_unsaved_ = false;
+    // Expansão do XML
     addDEMToXML(std::string(filename));
 }
 
-int DEMManager::loadDem(char* filename, int fileType)
+bool DEMManager::loadDem(char* filename, int fileType)
 {
     pairs.clear();
 
     if (pairs.load(filename, fileType) != 1) {
-        return 0;
+        return false;
     }
 
     // If file type is 2D (option 1 or 2), must calculate 3D coords
@@ -414,82 +433,86 @@ int DEMManager::loadDem(char* filename, int fileType)
     }
 
     // Update info
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     updateBoundingBox(Xi, Yi, Xf, Yf);
-    dui->setAutoExtInfo(seeds.size(), pairs.size(), Zi, Zf);
-    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
+    dui->setAutoExtInfo(seeds_.size(), pairs.size(), Zi, Zf);
+    dui->setBoundingBox(bounding_box_Xi_,
+                        bounding_box_Yi_,
+                        bounding_box_Xf_,
+                        bounding_box_Yf_);
 
     // Show image, if selected
-    if (isShowImage) {
+    if (isShowImage_) {
         Matrix* img = pairs.getDemImage(1.0, 1.0);
         dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
         delete img;
     }
 
-    dem_unsaved = false;
-    return 1;
+    dem_unsaved_ = false;
+    return true;
 }
 
-int DEMManager::loadDemGrid(char* filename, Filetype fileType)
+bool DEMManager::loadDemGrid(char* filename, Filetype fileType)
 {
     // Create custom grid. Load will fix these values.
-    if (grid != nullptr) {
-        delete grid;
+    if (grid_) {
+        delete grid_;
     }
 
-    grid = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
-    grid->loadDem(filename, fileType);
+    grid_ = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
+    grid_->loadDem(filename, fileType);
     // Update info
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
     double Xi, Yi, Zi, Xf, Yf, Zf, res_x, res_y;
-    grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
-    int w = grid->getWidth(), h = grid->getHeight();
-    grid->getMinMax(Zi, Zf);
+    grid_->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
+    int w = grid_->getWidth(), h = grid_->getHeight();
+    grid_->getMinMax(Zi, Zf);
     dui->setGridData(Xi, Yi, Xf, Yf, Zi, Zf, res_x, res_y, w, h);
 
     // Show image, if selected
-    if (isShowImage && !cancel_flag) {
-        double res_z = (Zf - Zi) / 255.0;
-        Matrix* img = grid->getDemImage();
+    if (isShowImage_ && !cancel_flag_) {
+        const double res_z = (Zf - Zi) / 255.0;
+        Matrix* img = grid_->getDemImage();
         dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
         delete img;
     }
 
-    return 1;
+    return true;
 }
 
-int DEMManager::loadDemFeature(char* filename)
+bool DEMManager::loadDemFeature(char* filename)
 {
-    if (df != nullptr) {
-        delete df;
+    if (dem_feature_) {
+        delete dem_feature_;
     }
 
-    df = new DemFeatures();
+    dem_feature_ = new DemFeatures();
     // Stereoplotter 1.65, mode = 0
     // Append = false
-    bool dfFlag = df->loadFeatures(filename/*, 0*/, false);
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    const bool dfFlag = dem_feature_->loadFeatures(filename, false);
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
 
     if (!dfFlag) {
         dui->showErrorMessage("Bad file type !");
-        return 0;
+        return false;
     }
 
     // Update info
     MatchingPointsList ptLineList, allList;
-    df->addFeaturesToPairList(&ptLineList, false);
-    df->addFeaturesToPairList(&allList, true);
+    dem_feature_->addFeaturesToPairList(&ptLineList, false);
+    dem_feature_->addFeaturesToPairList(&allList, true);
     double Xi, Yi, Zi, Xf, Yf, Zf;
     allList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     updateBoundingBox(Xi, Yi, Xf, Yf);
     ptLineList.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
-    dui->setStatus((char*)"Done");
+    dui->setStatus("Done");
     dui->progressBar->setValue(0);
     dui->setManualExtInfo(ptLineList.size(), Zi, Zf);
-    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
-    return 1;
+    dui->setBoundingBox(bounding_box_Xi_, bounding_box_Yi_, bounding_box_Xf_,
+                        bounding_box_Yf_);
+    return true;
 }
 
 /*
@@ -511,9 +534,9 @@ void DEMManager::interpolateGrid(InterpolationMethod method,
                                  int gridSource)
 {
     double Zi, Zf;
-    cancel_flag = false;
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
-    dui->setStatus((char*)"Interpolating grid ...");
+    cancel_flag_ = false;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
+    dui->setStatus("Interpolating grid ...");
     dui->disableOptions();
     dui->setAllowClose(false);
     // Grid source:
@@ -528,68 +551,69 @@ void DEMManager::interpolateGrid(InterpolationMethod method,
     }
 
     if (gridSource != 0) {
-        if (df != nullptr) {
-            df->addFeaturesToPairList(&modPairs, false);
+        if (dem_feature_) {
+            dem_feature_->addFeaturesToPairList(&modPairs, false);
         }
     }
 
     if (garea == 0) {
-        Xi = bb_Xi;
-        Xf = bb_Xf;
-        Yi = bb_Yi;
-        Yf = bb_Yf;
+        Xi = bounding_box_Xi_;
+        Xf = bounding_box_Xf_;
+        Yi = bounding_box_Yi_;
+        Yf = bounding_box_Yf_;
     }
 
-    if (grid != nullptr) {
-        delete grid;
+    if (grid_) {
+        delete grid_;
     }
 
-    grid = new DemGrid(Xi, Yi, Xf, Yf, res_x, res_y);
-    grid->linkManager(this);
-    grid->setPointList(&modPairs);
+    grid_ = new DemGrid(Xi, Yi, Xf, Yf, res_x, res_y);
+    grid_->linkManager(this);
+    grid_->setPointList(&modPairs);
 
     switch (method) {
     case InterpolationMethod::MOVING_SURFACE:
-        grid->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface);
+        grid_->interpolateMovingSurface(ma_exp, ma_dist, ma_weight, tsurface);
         break;
 
     case InterpolationMethod::TREND_SURFACE:
-        grid->interpolateTrendSurface(tsurface);
+        grid_->interpolateTrendSurface(tsurface);
         break;
 
     case InterpolationMethod::NEAREST_POINT:
-        grid->interpolateNearestPoint();
+        grid_->interpolateNearestPoint();
         break;
 
     default :
-        grid->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
+        grid_->interpolateMovingAverage(ma_exp, ma_dist, ma_weight);
     }
 
     // Add polygons, if selected
     if (gridSource > 0) {
-        Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
-        grid->overlayMap(&overMap);
+        Matrix overMap = dem_feature_->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
+        grid_->overlayMap(&overMap);
     }
 
     // Update Zi and Zf
-    grid->getMinMax(Zi, Zf);
+    grid_->getMinMax(Zi, Zf);
     // Update info
     double min, max;
-    int w = grid->getWidth(), h = grid->getHeight();
-    dui->setStatus((char*)"Done");
+    const int w = grid_->getWidth();
+    const int h = grid_->getHeight();
+    dui->setStatus("Done");
     dui->progressBar->setValue(0);
-    grid->getMinMax(min, max);
-    dui->setAutoExtInfo(seeds.size(), pairs.size(), Zi, Zf);
+    grid_->getMinMax(min, max);
+    dui->setAutoExtInfo(seeds_.size(), pairs.size(), Zi, Zf);
     dui->setGridData(Xi, Yi, Xf, Yf, min, max, res_x, res_y, w, h);
     dui->setAllowClose(true);
     dui->enableOptions();
-    grid_unsaved = true;
-    dui->setElapsedTime(grid->getElapsedTime(), 1);
+    grid_unsaved_ = true;
+    dui->setElapsedTime(grid_->getElapsedTime(), 1);
 
     // Show image, if selected
-    if (isShowImage && !cancel_flag) {
+    if (isShowImage_ && !cancel_flag_) {
         double res_z = (Zf - Zi) / 255.0;
-        Matrix* img = grid->getDemImage();
+        Matrix* img = grid_->getDemImage();
         dui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
         delete img;
     }
@@ -598,16 +622,14 @@ void DEMManager::interpolateGrid(InterpolationMethod method,
 void DEMManager::calcPointsXYZ()
 {
     // Calculate pair list XYZ coordinates
-    MatchingPoints* mp;
     SpatialIntersection spc_inter;
-    Image* left, *right;
     ObjectSpaceCoordinate object;
 
-    for (unsigned int i = 0; i < pairs.size(); i++) {
-        mp = pairs.get(i + 1);
-        left = listAllImages.at(mp->left_image_id - 1);
+    for (size_t i = 0; i < pairs.size(); i++) {
+        MatchingPoints* mp = pairs.get(i + 1);
+        Image* left = listAllImages_.at(mp->left_image_id - 1);
         sp.setLeftImage(left);
-        right = listAllImages.at(mp->right_image_id - 1);
+        Image* right = listAllImages_.at(mp->right_image_id - 1);
         sp.setRightImage(right);
         spc_inter.setStereoPair(&sp);
         object = spc_inter.calculateIntersectionSubPixel(mp->left_x, mp->left_y,
@@ -622,7 +644,7 @@ void DEMManager::resamplePoints(MatchingPointsList* list, double resample)
 {
     MatchingPoints* mp;
 
-    for (unsigned int i = 1; i <= list->size(); i++) {
+    for (size_t i = 1; i <= list->size(); i++) {
         mp = list->get(i);
         mp->left_x = mp->left_x * resample;
         mp->left_y = mp->left_y * resample;
@@ -633,10 +655,10 @@ void DEMManager::resamplePoints(MatchingPointsList* list, double resample)
 
 int DEMManager::extractDEM(int option, bool clearMList)
 {
-    cancel_flag = false;
+    cancel_flag_ = false;
     // Reset extraction time
     dem_total_elapsed_time = 0.0;
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
     dui->disableOptions();
     dui->setAllowClose(false);
 
@@ -646,15 +668,15 @@ int DEMManager::extractDEM(int option, bool clearMList)
     }
 
     // Downsample seeds and matching points lists
-    resamplePoints(&seeds, downsample);
-    resamplePoints(&pairs, downsample);
+    resamplePoints(&seeds_, downsample_);
+    resamplePoints(&pairs, downsample_);
 
     // Extract all pairs
     if (option == 0) {
         for (unsigned i = 0; i < listPairs.size(); i++) {
             extractDEMPair(i);
 
-            if (cancel_flag) {
+            if (cancel_flag_) {
                 break;
             }
         }
@@ -663,29 +685,28 @@ int DEMManager::extractDEM(int option, bool clearMList)
     }
 
     // Upsample seeds
-    resamplePoints(&seeds, 1.0 / downsample);
-    resamplePoints(&pairs, 1.0 / downsample);
+    resamplePoints(&seeds_, 1.0 / downsample_);
+    resamplePoints(&pairs, 1.0 / downsample_);
     // Convert points to 3D
     calcPointsXYZ();
     // Update info
     double Xi, Yi, Zi, Xf, Yf, Zf;
     pairs.XYZboundingBox(Xi, Yi, Xf, Yf, Zi, Zf);
     updateBoundingBox(Xi, Yi, Xf, Yf);
-    dui->setStatus((char*)"Done");
+    dui->setStatus("Done");
     dui->progressBar->setValue(0);
-    dui->setAutoExtInfo(seeds.size(), pairs.size(), Zi, Zf);
-    dui->setBoundingBox(bb_Xi, bb_Yi, bb_Xf, bb_Yf);
+    dui->setAutoExtInfo(seeds_.size(), pairs.size(), Zi, Zf);
+    dui->setBoundingBox(bounding_box_Xi_, bounding_box_Yi_, bounding_box_Xf_,
+                        bounding_box_Yf_);
     // Create histogram
-    MatchingPoints* mp;
     int hist[6] = {0, 0, 0, 0, 0, 0};
-    int p;
     dui->setAllowClose(true);
     dui->enableOptions();
 
     if (pairs.size() > 0) {
         for (unsigned int i = 1; i <= pairs.size(); i++) {
-            mp = pairs.get(i);
-            p = 10 - int(mp->matching_accuracy * 10);
+            MatchingPoints* mp = pairs.get(i);
+            int p = 10 - int(mp->matching_accuracy * 10);
 
             if (p > 5) {
                 p = 5;
@@ -699,7 +720,7 @@ int DEMManager::extractDEM(int option, bool clearMList)
         }
 
         dui->setMathcingHistogram(hist);
-        dem_unsaved = true;
+        dem_unsaved_ = true;
     } else {
         dui->showErrorMessage("Could not find any pair");
         return 0;
@@ -708,7 +729,7 @@ int DEMManager::extractDEM(int option, bool clearMList)
     dui->setElapsedTime(dem_total_elapsed_time, 0);
 
     // Show image, if selected
-    if (isShowImage && !cancel_flag) {
+    if (isShowImage_ && !cancel_flag_) {
         Matrix* img = pairs.getDemImage(1.0, 1.0);
         dui->showImage2D(img, Xi, 1.0, Yi, 1.0, 0);
         delete img;
@@ -727,68 +748,70 @@ void DEMManager::extractDEMPair(int pair)
     // Get images IDs
     //
     int left_id, right_id;
-    getImagesId(pair, left_id, right_id);
+    std::tie(left_id, right_id) = getImagesId(pair);
     //
     // Load images
     //
     Matrix img1, img2;
-    DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
-    dui->setStatus((char*)"Loading left image ...");
-    std::string filename = getImage(left_id)->getFilepath() + "/" + getImage(
-                               left_id)->getFilename();
-    dui->loadImage(img1, (char*)filename.c_str(), downsample);
-    dui->setStatus((char*)"Loading right image ...");
+    DEMUserInterface_Qt* dui = dynamic_cast<DEMUserInterface_Qt*>(myInterface);
+    dui->setStatus("Loading left image ...");
+    std::string filename = getImage(left_id)->getFilepath() + "/"
+                           + getImage(left_id)->getFilename();
+    dui->loadImage(img1, (char*)filename.c_str(), downsample_);
+    dui->setStatus("Loading right image ...");
     filename = getImage(right_id)->getFilepath() + "/" + getImage(
                    right_id)->getFilename();
-    dui->loadImage(img2, (char*)filename.c_str(), downsample);
+    dui->loadImage(img2, (char*)filename.c_str(), downsample_);
     //
     // Start matching
     //
     std::stringstream txt;
     txt << "Matching pair " << left_id << " and " << right_id;
-    dui->setStatus((char*)txt.str().c_str());
+    dui->setStatus(txt.str());
     dui->setProgress(0);
-    double corr_th = lsm_th, std = lsm_std;
+    double corr_th = lsm_th_, std = lsm_std_;
 
-    if (match_method == 0) { // NCC
-        corr_th = ncc_th;
-        std = ncc_std;
+    if (match_method_ == 0) { // NCC
+        corr_th = ncc_th_;
+        std = ncc_std_;
     }
 
-    im = new ImageMatching(this);
-    im->setPerformRegionGrowing(perf_RG);
-    im->setImagesIds(left_id, right_id);
-    im->setCorrelationThreshold(corr_th);
-    im->setPerformRadiometric(rad_cor > 0);
-    im->setMatchingMethod(match_method);
-    im->setRadiometricMode(rad_cor - 1);
-    im->setMinStd(std);
-    im->setElimanteBadPoints(elim_bad_pts);
-    im->getNCC()->setTemplateGrothStep(ncc_temp_growth_step);
-    im->getNCC()->setTemplateMaximumSize(ncc_temp_max_size);
-    im->getNCC()->setTemplate(ncc_temp);
-    im->getNCC()->setSearchWindow(ncc_sw);
-    im->getLSM()->setTemplateGrothStep(lsm_temp_growth_step);
-    im->getLSM()->setTemplateMaximumSize(lsm_temp_max_size);
-    im->getLSM()->setTemplate(lsm_temp);
-    im->getLSM()->setMaxIterations(lsm_it);
-    im->getLSM()->setConvergenceLimits(lsm_shift, lsm_shear, lsm_scale);
-    im->getLSM()->setMaxDistance(lsm_dist);
-    im->getLSM()->setOverIt(over_it);
-    im->getLSM()->setOverItDist(over_it_dist);
-    im->performImageMatching(&img1, &img2, &seeds, &pairs);
+    image_matching_ = new ImageMatching(this);
+    image_matching_->setPerformRegionGrowing(perf_RG);
+    image_matching_->setImagesIds(left_id, right_id);
+    image_matching_->setCorrelationThreshold(corr_th);
+    image_matching_->setPerformRadiometric(rad_cor_ > 0);
+    image_matching_->setMatchingMethod(match_method_);
+    image_matching_->setRadiometricMode(rad_cor_ - 1);
+    image_matching_->setMinStd(std);
+    image_matching_->setElimanteBadPoints(elim_bad_pts_);
+    image_matching_->getNCC()->setTemplateGrothStep(ncc_temp_growth_step_);
+    image_matching_->getNCC()->setTemplateMaximumSize(ncc_temp_max_size_);
+    image_matching_->getNCC()->setTemplate(ncc_temp_);
+    image_matching_->getNCC()->setSearchWindow(ncc_sw_);
+    image_matching_->getLSM()->setTemplateGrothStep(lsm_temp_growth_step_);
+    image_matching_->getLSM()->setTemplateMaximumSize(lsm_temp_max_size_);
+    image_matching_->getLSM()->setTemplate(lsm_temp_);
+    image_matching_->getLSM()->setMaxIterations(lsm_it_);
+    image_matching_->getLSM()->setConvergenceLimits(lsm_shift_, lsm_shear_,
+            lsm_scale_);
+    image_matching_->getLSM()->setMaxDistance(lsm_dist_);
+    image_matching_->getLSM()->setOverIt(over_it_);
+    image_matching_->getLSM()->setOverItDist(over_it_dist_);
+    image_matching_->performImageMatching(&img1, &img2, &seeds_, &pairs);
     //  dui->saveImage((char *)"Map.bmp",&im->getMap());
-    dem_total_elapsed_time += im->getElapsedTime();
-    delete im;
+    dem_total_elapsed_time += image_matching_->getElapsedTime();
+    delete image_matching_;
 }
 
-void DEMManager::getPointList(MatchingPointsList& sd, MatchingPointsList& pr)
+void DEMManager::getPointList(MatchingPointsList& sd,
+                              MatchingPointsList& pr) const
 {
-    sd = seeds;
+    sd = seeds_;
     pr = pairs;
 }
 
-std::string DEMManager::getDemQuality(char* filename, int option)
+std::string DEMManager::getDemQuality(char* filename, int option) const
 {
     MatchingPointsList mpl;
     DemFeatures df2;
@@ -798,7 +821,7 @@ std::string DEMManager::getDemQuality(char* filename, int option)
             return "";
         }
     } else {
-        if (!df2.loadFeatures(filename/*, 0*/, false)) {
+        if (!df2.loadFeatures(filename, false)) {
             return "";
         }
 
@@ -809,26 +832,27 @@ std::string DEMManager::getDemQuality(char* filename, int option)
         return "";
     }
 
-    return grid->calculateDemQuality(mpl);
+    return grid_->calculateDemQuality(mpl);
 }
 
 double DEMManager::calculateDemRes(double ds)
 {
-    if (listAllImages.size() < 1) {
+    if (listAllImages_.size() < 1) {
         return 0.0;
     }
 
-    Image* img = listAllImages.at(0);
+    Image* img = listAllImages_.at(0);
     // Calculate image approximate resolution scanning
-    int img_width = img->getWidth(), img_height = img->getHeight();
-    double DPI = (2.54 / 23.0) * (img_width + img_height) / 2;
+    const int img_width = img->getWidth();
+    const int img_height = img->getHeight();
+    const double DPI = (2.54 / 23.0) * (img_width + img_height) / 2;
     // Calculate resolution in image space (mm)
-    double resolution_mm = 0.0254 / DPI;
+    const double resolution_mm = 0.0254 / DPI;
     // Calculate scale
-    double focal = img->getSensor()->getFocalDistance() / 1000.0;
-    double Z0 = img->getEO()->getXa().get(3, 1);
-    double scale = Z0 / focal;
-    double resolution = resolution_mm * scale;
+    const double focal = img->getSensor()->getFocalDistance() / 1000.0;
+    const double Z0 = img->getEO()->getXa().get(3, 1);
+    const double scale = Z0 / focal;
+    const double resolution = resolution_mm * scale;
     return resolution * ds;
 }
 
@@ -838,7 +862,7 @@ void DEMManager::addPairsToXML(std::string filename)
     add << "<pairsFilename>";
     add << filename;
     add << "</pairsFilename>";
-    EDomElement newXml(manager->xmlGetData());
+    EDomElement newXml(manager_->xmlGetData());
 
     if (newXml.elementByTagName("DEMs").getContent() == "") {
         newXml.addChildAtTagName("efotoPhotogrammetricProject",
@@ -846,8 +870,8 @@ void DEMManager::addPairsToXML(std::string filename)
     }
 
     newXml.addChildAtTagName("DEMs", add.str());
-    manager->xmlSetData(newXml.getContent());
-    manager->setSavedState(false);
+    manager_->xmlSetData(newXml.getContent());
+    manager_->setSavedState(false);
 }
 
 void DEMManager::addSeedsToXML(std::string filename)
@@ -856,7 +880,7 @@ void DEMManager::addSeedsToXML(std::string filename)
     add << "<seedsFilename>";
     add << filename;
     add << "</seedsFilename>";
-    EDomElement newXml(manager->xmlGetData());
+    EDomElement newXml(manager_->xmlGetData());
 
     if (newXml.elementByTagName("DEMs").getContent() == "") {
         newXml.addChildAtTagName("efotoPhotogrammetricProject",
@@ -864,8 +888,8 @@ void DEMManager::addSeedsToXML(std::string filename)
     }
 
     newXml.addChildAtTagName("DEMs", add.str());
-    manager->xmlSetData(newXml.getContent());
-    manager->setSavedState(false);
+    manager_->xmlSetData(newXml.getContent());
+    manager_->setSavedState(false);
 }
 
 void DEMManager::addDEMToXML(std::string filename)
@@ -874,15 +898,15 @@ void DEMManager::addDEMToXML(std::string filename)
     add << "<dsmFilename>";
     add << filename;
     add << "</dsmFilename>";
-    EDomElement newXml(manager->xmlGetData());
+    EDomElement newXml(manager_->xmlGetData());
 
     if (newXml.elementByTagName("DEMs").getContent() == "") {
         newXml.addChildAtTagName("efotoPhotogrammetricProject", "<DEMs>\n</DEMs>");
     }
 
     newXml.addChildAtTagName("DEMs", add.str());
-    manager->xmlSetData(newXml.getContent());
-    manager->setSavedState(false);
+    manager_->xmlSetData(newXml.getContent());
+    manager_->setSavedState(false);
 }
 
 }  // namespace efoto

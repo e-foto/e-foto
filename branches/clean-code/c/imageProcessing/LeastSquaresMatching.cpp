@@ -28,11 +28,18 @@ namespace efoto {
 LeastSquaresMatching::LeastSquaresMatching():
     template_width {10},
     template_height {10},
+    template_center_x{0},
+    template_center_y{0},
+    matching_window_center_x{0},
+    matching_window_center_y{0},
     limit_shift_values {0.05}, // Distance between matching window centers
     limit_scale_values {0.01}, // a2 and b1
     limit_shear_values {0.01}, // a1 and b2
     acceptance_correlation {0.7},
     acceptance_error_ellipse {5}, // Std for a0 and b0 arrays
+    best_p{0},
+    best_x{0},
+    best_y{0},
     over_it_distance {0.5},
     over_it {true},
     max_iterations {10},
@@ -160,7 +167,7 @@ int LeastSquaresMatching::searchHomologous(Matrix* img1, Matrix* img2,
     NMx = Mx;
     NMy = My;
     // LSM
-    int pos, iterations = 0;
+    int iterations = 0;
 
     for (auto it = 0; it < max_iterations; it++) {
         iterations++;
@@ -207,7 +214,7 @@ int LeastSquaresMatching::searchHomologous(Matrix* img1, Matrix* img2,
         }
 
         // Create design matrix - i for x, j for y, as described in Schenk
-        pos = 1;
+        int pos = 1;
 
         for (auto l = 1; l <= template_height; l++) {
             for (auto k = 1; k <= template_width; k++) {

@@ -25,9 +25,6 @@
 
 #include <QtGui>
 
-//#define MAX(a,b) (a<b) ? b : a
-//#define MIN(a,b) (a<b) ? a : b
-
 namespace br {
 namespace uerj {
 namespace eng {
@@ -35,7 +32,6 @@ namespace efoto {
 
 ETableWidget::ETableWidget(QWidget *parent): QTableWidget(parent)
 {
-		//io= new Matrix(1,1);
 		currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
 		installEventFilter(this);
 		setRowCount(0);
@@ -46,26 +42,11 @@ ETableWidget::ETableWidget(QWidget *parent): QTableWidget(parent)
 		horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 		verticalHeader()->setResizeMode(QHeaderView::Stretch);
 
-		/*
-		horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-		horizontalHeader()->setStretchLastSection(true);
-		horizontalHeader()->setMinimumSectionSize(-1);
-*/
-		/*
-		verticalHeader()->setResizeMode(QHeaderView::Interactive);
-		verticalHeader()->setStretchLastSection(true);
-		verticalHeader()->setMinimumSectionSize(-1);*/
-
 		connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
-		//connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(avaliateType(QTableWidgetItem *)));
-
-		//connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(selectionBackground()));
 		enableAutoCopy(false);
 }
 ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *parent):QTableWidget(parent)
 {
-	//setTableData(values,mode,precision);
-
 	currentSpinBoxRow=currentSpinBoxColumn=currentDoubleSpinBoxColumn=currentDoubleSpinBoxRow=-1;
 	installEventFilter(this);
 	connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
@@ -76,31 +57,6 @@ ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *paren
 
 	horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
 	verticalHeader()->setResizeMode(QHeaderView::Stretch);
-
-		// melhoramento na interface da tabela
-/*
-	QVBoxLayout* verLayout = new QVBoxLayout();
-	QHBoxLayout *horLayout = new QHBoxLayout();
-
-	QCheckBox *caixa=new QCheckBox("Enable AutoCopy");
-	caixa->setChecked(true);
-	QComboBox *modo= new QComboBox();
-	modo->addItem("Cientifico"); //'e'
-	modo->addItem("Decimal");    //'f'
-	QSpinBox *decimals = new QSpinBox();
-	decimals->setMinimum(1);
-	decimals->setMaximum(9);
-
-	horLayout->addWidget(caixa);
-	horLayout->addWidget(modo);
-	horLayout->addWidget(decimals);
-	verLayout->addWidget(caixa);
-	verLayout->addWidget(tabela);
-*/
-
-	//connect(this, SIGNAL())
-	//connect(this, SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
-	//resizeTable();
 }
 
 void ETableWidget::setTableData(Matrix values,char mode,int precision)
@@ -110,6 +66,7 @@ void ETableWidget::setTableData(Matrix values,char mode,int precision)
 
 	setSelectionMode(QAbstractItemView::ContiguousSelection);
 	//falta tratamento para destruir antiga matrix se ela existir antes
+    
 	io= new Matrix(values);
 
 	setMode(mode);
@@ -129,13 +86,14 @@ void ETableWidget::setTableData(Matrix values,char mode,int precision)
 
 				}
 	}
-	//resizeColumnsToContents();
-	//resizeRowsToContents();
 	resizeTable();
 }
 
 void ETableWidget::setTableData(EDomElement xml, char mode, int precision)
 {
+    if (io){
+        delete io;
+    }
 	io= new Matrix();
 	io->xmlSetData(xml.getContent());
 	setTableData(*io, mode, precision);
@@ -143,6 +101,9 @@ void ETableWidget::setTableData(EDomElement xml, char mode, int precision)
 
 void ETableWidget::setTableData(std::string xmlString, char mode, int precision)
 {
+    if (io){
+        delete io;
+    }
 	io= new Matrix();
 	io->xmlSetData(xmlString);
 	setTableData(*io, mode, precision);
@@ -163,27 +124,7 @@ void ETableWidget::resizeTable()
 
 		resizeRowsToContents();   //novo
 		resizeColumnsToContents();//novo
-	/*
-	int widthSection=this->width()/columnCount();
-	qDebug("widthSection: %d",widthSection);
-	this->horizontalHeader()->setMinimumSectionSize(widthSection);*/
 }
-
-/*
-void ETableWidget::setVerticalHeadersLabelsHtml(QStringList list)
-{
-		verticalHeader()->setVisible(false);
-		setColumnCount(columnCount()+1);
-
-		for (int i=0; i<list.size(); i++)
-		{
-				QLabel *lab=new QLabel(list.at(i));
-				lab->setAlignment(Qt::AlignCenter);
-				setCellWidget(i,1,lab);
-
-		}
-		resizeTable();
-}*/
 
 void ETableWidget::autoCopy()
 {
@@ -192,11 +133,7 @@ void ETableWidget::autoCopy()
 	{
 				int rows=selectedRanges().at(0).rowCount();
 				int cols=selectedRanges().at(0).columnCount();
-				/*qDebug("rows: %d cols: %d",rows,cols);
 
-				for (int i=0;i<selectedItems().size();i++)
-						qDebug("%s",selectedItems().at(i)->text().toStdString().c_str());
-*/
 				for (int i=0;i<rows;i++)
 		{
 			for (int j=0;j<cols;j++)
@@ -223,33 +160,16 @@ bool ETableWidget::eventFilter(QObject *obj, QEvent *evento)
 	{
 		QFocusEvent *focusInEvento = static_cast<QFocusEvent *>(evento);
 		focusInEvent(focusInEvento);
-		//emit focusReceived();
         return true;
 	}else if (evento->type()==QEvent::FocusOut)
 	{
 		QFocusEvent *focusOutEvento = static_cast<QFocusEvent *>(evento);
 		focusOutEvent(focusOutEvento);
 		return true;
-	}else /*if (evento->type()==QEvent::Resize)
-	{
-		QResizeEvent *resEvent= static_cast<QResizeEvent*>(evento);
-		resizeTable();
-		//resizeEvent(resEvent);
-		return true;
-	}else*/
+    }else
 	{
 		return QTableWidget::eventFilter(obj,evento);
 	}
-
-	/*
-	if (evento->type()==QEvent::MouseButtonRelease)
-	{
-		QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evento);
-		mouseReleaseEvent(mouseEvent);
-		return true;
-	}*/
-
-
 }
 
 void ETableWidget::keyPressEvent(QKeyEvent *event)
@@ -269,40 +189,9 @@ void ETableWidget::keyPressEvent(QKeyEvent *event)
 		QTableWidget::keyPressEvent(event);
 }
 
-/*
-void ETableWidget::focusInEvent(QFocusEvent *evento)
-{
-		if(evento->reason()==Qt::OtherFocusReason)
-		{
-				//qDebug()<<"app call:: focus in";
-		}
-		else
-		{
-				QTableWidget::focusInEvent(evento);
-				//qDebug()<<"outro motivo:: focus in "<<evento->reason();
-		}
-}
-*/
-/*
-void ETableWidget::focusOutEvent(QFocusEvent *evento)
-{
-		if(evento->reason()==Qt::OtherFocusReason)
-		{
-				evento->gotFocus();
-				//evento->
-				//qDebug()<<"app call:: focus out";
-		}
-		else
-		{
-				//qDebug()<<"outro motivo::focus out "<<evento->reason();
-				QTableWidget::focusOutEvent(evento);
-		}
-}
-*/
-
 void ETableWidget::enableAutoCopy(bool enable)
 {
-	//testado e atÃ© agora sem problemas
+    //testado e até agora sem problemas
 	if(enable)
 	{
 		connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
@@ -324,36 +213,6 @@ void ETableWidget::enableAutoCopy(int enable)
 	{
 		connect(this,SIGNAL(itemSelectionChanged()),this,SLOT(autoCopy()));
 	}
-}
-
-void ETableWidget::updateTableValues(char mode, int precision)
-{
-		for (int i=0;i<rowCount();i++)
-				for(int j=0;j<columnCount();j++)
-						item(i,j)->setText(QString::number(io->get(i+1,j+1),mode,precision));
-		resizeTable();
-}
-
-void ETableWidget::updateDecimalsValues(int decimal)
-{
-	setDecimals(decimal);
-	updateTableValues(getMode(),getDecimals());
-}
-
-void ETableWidget::updateModoValues(int modo)
-{
-	if (modo==0)            // 'e' == Cientifico
-	{
-		setMode('e');
-	}
-	else if (modo==1)       // 'f' == Decimal
-	{
-		setMode('f');
-	}
-	else                    // caso em que um valor invalido Ã© passado
-		setMode('f');
-
-	updateTableValues(getMode(),getDecimals());
 }
 
 void ETableWidget::setMode(char newMode)
@@ -380,8 +239,6 @@ void ETableWidget::putIn(Matrix input, int row, int column, char mode, int preci
 {
 		setMode(mode);
 		setDecimals(precision);
-		//horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
-		//verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
         int newRows=MAX(row-1+input.getRows(),(unsigned int)rowCount());
         int newCols=MAX(column-1+input.getCols(),(unsigned int)columnCount());
 
@@ -396,7 +253,6 @@ void ETableWidget::putIn(Matrix input, int row, int column, char mode, int preci
 						QTableWidgetItem *temp= new QTableWidgetItem(QString::number(input.get(i+1,j+1),getMode(),getDecimals()));
 						temp->setTextAlignment(Qt::AlignCenter);
 						temp->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
-						//qDebug("set[%d,%d] = %.3f in [%d,%d]",i,j,input.get(i,j),i+row-1,j-1+column);
 						this->setItem(i+row,j+column,temp);
 				}
 		}
@@ -412,8 +268,6 @@ void ETableWidget::clearSelection()
 
 void ETableWidget::putInColumn(QStringList list, int column)//, QString type, bool enable, PositionMatrix *limits)
 {
-		//Em breve esse metodo sera melhorado e sera usado o insertColumn
-		//insertColumn(column);
 		if(columnCount()<column)
 				setColumnCount(column+1);
 

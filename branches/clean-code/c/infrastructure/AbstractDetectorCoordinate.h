@@ -66,37 +66,37 @@ public:
  * \brief Método para retornar o valor Xi num sistema de coordenadas (Xi, Eta).
  * \return double	Valor Xi.
  */
-	double getXi();
+    double getXi() const;
 
 	/**
  * \brief Método para retornar o valor Eta num sistema de coordenadas (Xi, Eta).
  * \return double	Valor Eta.
  */
-	double getEta();
+    double getEta() const;
 
 	/**
  * \brief Método para retornar o valor de erro na direção Xi.
  * \return double	Valor do erro na direção Xi.
  */
-	double getSigmaXi();
+    double getSigmaXi() const;
 
 	/**
  * \brief Método para retornar o valor de erro na direção Eta.
  * \return double	Valor do erro na direção Eta.
  */
-	double getSigmaEta();
+    double getSigmaEta() const;
 
 	/**
  * \brief Método para retornar o valor de erro conjunto para as direções Xi e Eta.
  * \return double	Valor de erro conjunto para as direções Xi e Eta.
  */
-	double getSigmaXiEta();
+    double getSigmaXiEta() const;
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
  * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-    std::string getUnit();
+    std::string getUnit() const;
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.
