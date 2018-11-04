@@ -17,6 +17,9 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "CommonDef.h"
+
+#include <cmath>
 #include <string>
 
 namespace br {
