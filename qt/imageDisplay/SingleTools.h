@@ -1,6 +1,8 @@
 #ifndef SINGLETOOLS_H
 #define SINGLETOOLS_H
 
+#include "CommonDef.h"
+
 #include <QEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>

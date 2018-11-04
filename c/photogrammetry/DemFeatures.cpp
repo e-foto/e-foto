@@ -181,6 +181,7 @@ int DemFeatures::exportShpFeatures(char *filename)
     if (features.size() == 0)
         return 1;
 
+#ifdef unix
     std::deque<SHPObject*> shpObjs;
     std::deque<std::string> objNames;
     int nShapeType;
@@ -301,6 +302,7 @@ int DemFeatures::exportShpFeatures(char *filename)
             DBFClose( myDBF );
         }
     }
+#endif
 
     return 0;
 }
