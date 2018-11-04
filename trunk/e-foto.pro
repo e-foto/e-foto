@@ -308,18 +308,8 @@ QMAKE_CXXFLAGS += -std=c++11 -Wall
 #}
 
 # Set libshape usage
-#win32: LIBS += c/shapelib/shapelib.lib
-#win32: LIBS += c/shapelib/contrib/msvc/lib/shapelib.lib
 unix: LIBS += -lGL -lGLU -lshp
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/c/shapelib/contrib/msvc/lib/ -lshapelib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/c/shapelib/contrib/msvc/lib/ -lshapelibd
-else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lshp
-
-win32 {
-    INCLUDEPATH += $$PWD/c/shapelib/contrib/msvc
-    DEPENDPATH += $$PWD/c/shapelib/contrib/msvc
-}
+unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lshp
 unix {
     INCLUDEPATH += /usr/include/
     DEPENDPATH += /usr/include/
@@ -328,13 +318,19 @@ unix {
 
 # Set gdal usage
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/c/gdal/lib/ -lgdal_i
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/c/gdal/lib/ -lgdal_id
+win64:CONFIG(release, debug|release): LIBS += -L/mingw64/lib/ -lgdal
+else:win64:CONFIG(debug, debug|release): LIBS += -L/mingw64/lib/ -lgdal
+else:win32:CONFIG(release, debug|release): LIBS += -L/mingw32/lib/ -lgdal
+else:win32:CONFIG(debug, debug|release): LIBS += -L/mingw32/lib/ -lgdal
 else:unix: LIBS += -L/usr/include/gdal -lgdal
 
 win32 {
-    INCLUDEPATH += $$PWD/c/gdal/include
-    DEPENDPATH += $$PWD/c/gdal/include
+    INCLUDEPATH += /mingw32/include
+    DEPENDPATH += /mingw32/include
+}
+win64 {
+    INCLUDEPATH += /mingw64/include
+    DEPENDPATH += /mingw64/include
 }
 unix {
     INCLUDEPATH += /usr/include/gdal

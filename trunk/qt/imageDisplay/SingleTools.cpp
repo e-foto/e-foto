@@ -1,16 +1,7 @@
-
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "SingleTools.h"
 #include "SingleDisplay.h"
 
-#include "math.h"
+#include <cmath>
 
 #include <QFileDialog>
 #include <QApplication>

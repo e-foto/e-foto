@@ -23,7 +23,10 @@
 #include <string>
 #include <vector>
 #include "Matrix.h"
+
+#ifdef unix
 #include "shapefil.h"
+#endif
 
 /**
 * class DemFeatures

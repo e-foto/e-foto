@@ -1,12 +1,8 @@
-#include "ScienceSpinBox.h"
-
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
+#include "CommonDef.h"
 #include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
+
+
+#include "ScienceSpinBox.h"
 
 #include <limits>
 

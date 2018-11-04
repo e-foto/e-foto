@@ -1,6 +1,8 @@
 #ifndef STEREOTOOLS_H
 #define STEREOTOOLS_H
 
+#include "CommonDef.h"
+
 #include <QEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
