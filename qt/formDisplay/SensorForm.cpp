@@ -17,7 +17,7 @@
 
 #include "SensorForm.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <sstream>
 
 namespace br {

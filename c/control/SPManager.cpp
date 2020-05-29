@@ -175,6 +175,17 @@ void SPManager::saveFeatures(char *filename)
 
 void SPManager::exportFeatures(char *filename, int mode)
 {
+    //Recuperar GRS, fuso e hemisfério
+    Terrain* terrain = manager->instanceTerrain();
+
+    spFeatures.setGRS(terrain->getGRS());
+
+    spFeatures.setUtmFuse(terrain->getUtmFuse());
+
+    std::string lat = terrain->getCentralCoordLat();
+    if (lat.rfind(" ") < lat.size()-1)
+        spFeatures.setHemisphere( lat[lat.rfind(" ")+1] == 'N' );
+
     spFeatures.exportFeatures(filename, mode);
 }
 

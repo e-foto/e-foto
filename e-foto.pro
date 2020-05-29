@@ -5,8 +5,10 @@
 TEMPLATE = app
 TARGET = e-foto
 
+QT += core widgets
+
 INCLUDEPATH += . \
-			   c/control \
+                           c/control \
 			   c/photogrammetry \
 			   c/infrastructure \
 			   c/xml_definitions \
@@ -235,7 +237,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/photogrammetry/SpatialIntersection.cpp \
 		   c/photogrammetry/SpatialRessection.cpp \
 		   c/photogrammetry/StereoPair.cpp \
-           c/photogrammetry/Terrain.cpp \
+                   c/photogrammetry/Terrain.cpp \
 		   c/xml_definitions/XMLAerial.cpp \
 		   c/xml_definitions/XMLFlight.cpp \
 		   c/xml_definitions/XMLProjectHeader.cpp \
@@ -284,70 +286,132 @@ SOURCES += c/control/DEMManager.cpp \
 
 RESOURCES += qt/resource/resource.qrc
 
-# Build Settings
-DESTDIR = build/bin
-OBJECTS_DIR = build/temp/obj
-MOC_DIR = build/temp/moc
-UI_DIR = build/temp/ui
-RCC_DIR = build/temp/rcc
-QT += opengl
-QMAKE_CXXFLAGS += -std=c++11 -Wall 
-#QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
-#CONFIG += c++11
-
-# CXX=g++-4.9 is workaround for compiler missing <stdlib.h>
-#CXX=g++-4.9
-
-#Rod
-# With C++11 support
-#greaterThan(QT_MAJOR_VERSION, 4){
-#    CONFIG += c++11
-#} else {
-#    QMAKE_CXXFLAGS += -std=c++11
-#    #QMAKE_CXXFLAGS += -std=c++0x
-#}
-
-# Set libshape usage
-unix: LIBS += -lGL -lGLU -lshp
-unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lshp
-unix {
-    INCLUDEPATH += /usr/include/
-    DEPENDPATH += /usr/include/
-}
-
-
-# Set gdal usage
-
-win64:CONFIG(release, debug|release): LIBS += -L/mingw64/lib/ -lgdal
-else:win64:CONFIG(debug, debug|release): LIBS += -L/mingw64/lib/ -lgdal
-else:win32:CONFIG(release, debug|release): LIBS += -L/mingw32/lib/ -lgdal
-else:win32:CONFIG(debug, debug|release): LIBS += -L/mingw32/lib/ -lgdal
-else:unix: LIBS += -L/usr/include/gdal -lgdal
-
-win32 {
-    INCLUDEPATH += /mingw32/include
-    DEPENDPATH += /mingw32/include
-}
-win64 {
-    INCLUDEPATH += /mingw64/include
-    DEPENDPATH += /mingw64/include
-}
-unix {
-    INCLUDEPATH += /usr/include/gdal
-    DEPENDPATH += /usr/include/gdal
-}
-
 # e-foto icon
 RC_FILE = efotoIcon.rc
 
-# install settings
-unix{
-        DEFINES += unix
-	target.path = /usr/bin
-	desk.path = /usr/share/applications
-	desk.files += efoto.desktop
-	icon.path = /usr/share/applications/pixmaps
-	icon.files += efoto-icon.png
+# Check the Qt version
+QT_VERSION = $$[QT_VERSION]
+!build_pass:message($$QT_VERSION)
+QT_VERSION = $$split(QT_VERSION, ".")
+QT_VER_MAJ = $$member(QT_VERSION, 0)
+QT_VER_MIN = $$member(QT_VERSION, 1)
+# se quiser impedir de rodar com QT que não seja QT4 pode usar isso
 
-	INSTALLS += target desk icon
+# System unix configuration
+unix {
+# Set OpenGL usage
+    LIBS += -lGL -lGLU
+# Set gdal usage
+    LIBS += -L/usr/include/gdal -lgdal
+    INCLUDEPATH += /usr/include/gdal
+    DEPENDPATH += /usr/include/gdal
+# install settings
+    DEFINES += unix
+    target.path = /usr/bin
+    desk.path = /usr/share/applications
+    desk.files += efoto.desktop
+    icon.path = /usr/share/applications/pixmaps
+    icon.files += efoto-icon.png
+
+    INSTALLS += target desk icon
+    #INCLUDEPATH += /usr/include/  Commented to avoid the fatal error during compilation on Ubuntu 18.04 with g++7, as answered by n.m on stackoverflow:
+    #DEPENDPATH += /usr/include/   https://stackoverflow.com/questions/51350998/7515-fatal-error-stdlib-h-no-such-file-or-directory-include-next-stdlib-h/51351206
+
+    # Build Settings
+    DESTDIR = build/bin
+    OBJECTS_DIR = build/temp/obj
+    MOC_DIR = build/temp/moc
+    UI_DIR = build/temp/ui
+    RCC_DIR = build/temp/rcc
+    QT += opengl
+    QMAKE_CXXFLAGS += -std=c++17 -Wall
 }
+
+#linux-g++:contains(QMAKE_HOST.arch, x86):{
+#       LIB=lib32
+#       message("Compiling for 32bit system")
+#    }
+#linux-g++:contains(QMAKE_HOST.arch, x86):{
+#       LIB=lib64
+#       message("Compiling for 64bit system")
+#}
+
+
+# System Windows Configuration
+win32{
+message("QT_ARCH: $$QT_ARCH")
+message("QMAKE_HOST.arch: $$QMAKE_HOST.arch")
+
+        #desliguei o modo config e release, mas se alguém setar vai para pasta debug
+	#se necessário daria para configurar as 4 opções
+	CONFIG-=debug_and_release
+	CONFIG-=debug_and_release_target
+	#Common parammeters for windows
+	QT += opengl
+    QMAKE_CXXFLAGS += -std=c++11 -Wall	
+#O QT_ARCH não funcionou bem com o mysys2, então mudei para usar o g++ e qmake
+
+win32-g++:contains(QMAKE_HOST.arch, x86):{
+#Windows 32bits install
+	#Config and Release common parammeters
+    INCLUDEPATH += /mingw32/include
+    DEPENDPATH += /mingw32/include
+	#Set gdal
+    LIBS += -L/mingw32/lib/ -lgdal
+#Debug settings	
+    !build_pass:CONFIG(debug, debug|release) {
+    !build_pass:message($$find(CONFIG, "debug"))
+    !build_pass:message("Windows de 32 bits")
+    #Debug install settings
+    debug: DESTDIR = build_debug_32bits/bin
+    debug: OBJECTS_DIR = build_debug_32bits/temp/obj
+    debug: MOC_DIR = build_debug_32bits/temp/moc
+    debug: UI_DIR = build_debug_32bits/temp/ui
+    debug: RCC_DIR = build_debug_32bits/temp/rcc
+}
+#Release settings
+    !build_pass:CONFIG(release, debug|release) {
+    !build_pass:message($$find(CONFIG, "release"))
+    !build_pass:message("Windows de 32 bits")
+    #Release Settings
+    release: DESTDIR = build_release_32bits/bin
+    release: OBJECTS_DIR = build_release_32bits/temp/obj
+    release: MOC_DIR = build_release_32bits/temp/moc
+    release: UI_DIR = build_release_32bits/temp/ui
+    release: RCC_DIR = build_release_32bits/temp/rcc
+}
+}
+
+win32-g++:contains(QMAKE_HOST.arch, x86_64):{
+
+#Windows 64bits install
+	#Config and Release common parammeters
+    INCLUDEPATH += /mingw64/include
+    DEPENDPATH += /mingw64/include
+	#Set gdal
+    LIBS += -L/mingw64/lib/ -lgdal
+#Debug settings
+    !build_pass:CONFIG(debug, debug|release) {
+    !build_pass:message($$find(CONFIG, "debug"))
+    !build_pass:message("Windows de 64 bits")
+    #Build Debug
+    debug: DESTDIR = build_debug_64bits/bin
+    debug: OBJECTS_DIR = build_debug_64bits/temp/obj
+    debug: MOC_DIR = build_debug_64bits/temp/moc
+    debug: UI_DIR = build_debug_64bits/temp/ui
+    debug: RCC_DIR = build_debug_64bits/temp/rcc
+}
+#Release settings
+    !build_pass:CONFIG(release, debug|release) {
+    !build_pass:message($$find(CONFIG, "release"))
+    !build_pass:message("Windows de 64 bits")
+    #Release settings
+    release: DESTDIR = build_release_64bits/bin
+    release: OBJECTS_DIR = build_release_64bits/temp/obj
+    release: MOC_DIR = build_release_64bits/temp/moc
+    release: UI_DIR = build_release_64bits/temp/ui
+    release: RCC_DIR = build_release_64bits/temp/rcc
+}
+}
+}
+

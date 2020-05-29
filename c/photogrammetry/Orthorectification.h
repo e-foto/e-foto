@@ -47,8 +47,8 @@ private:
     int color_depth {8};
     int no_bands {1};
     int coord_system {0};
-    int spheroid {0};
-    int utmFuse  {SAD69};
+    bool spheroid {false};
+    int utmFuse  {0};
     DatumType datum;
     int ortho_width, ortho_height;
     void saveOrthoEfoto(char * filename) const;
@@ -74,6 +74,7 @@ public:
     double getGridResX() { return res_x; }
     double getGridResY() { return res_y; }
     void setUtmFuse(int _uf) { utmFuse = _uf; };
+    void setHemisphere(bool _hs) { spheroid = _hs; };
     void setNumberOfBands(int _nb) { no_bands = _nb; }
     void setCoordinateSystem(int _cs) { coord_system = _cs; }
     void setDatum(DatumType _dt) { datum = _dt; }

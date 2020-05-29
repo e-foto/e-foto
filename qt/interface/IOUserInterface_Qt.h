@@ -32,7 +32,7 @@ class Marker;
 
 class IOUserInterface_Qt : public QMainWindow, public Ui::IOMainWindow, public IOUserInterface
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
@@ -62,7 +62,7 @@ protected:
 	QStandardItemModel *points;
 	int selectedPoint;
 	int calculationMode;
-	IOManager *manager;
+    IOManager *manager;
 	void closeEvent(QCloseEvent *e);
 
 protected slots:

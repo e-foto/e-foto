@@ -27,7 +27,7 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
-#include <QtGui>
+#include <QtWidgets>
 
 namespace br {
 namespace uerj {
@@ -478,7 +478,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 QString outxsl;
                 outxsl = filePath + "/" + "epr_txt.xsl";
                 QString outcmd;
-#ifdef Q_WS_X11 //LINUX
+#ifdef unix //LINUX
                 outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
@@ -506,7 +506,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     QString outxsl;
                     outxsl = filePath + "/" + "epr_html.xsl";
                     QString outcmd;
-#ifdef Q_WS_X11 //LINUX
+#ifdef unix //LINUX
                     outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                     pro->start(outcmd);
                     pro->waitForFinished(1000);

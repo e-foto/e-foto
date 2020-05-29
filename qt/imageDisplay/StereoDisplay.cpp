@@ -211,13 +211,20 @@ void GLDisplay::paintGL()
     if (stereoDisplay_->getCurrentScene() == NULL)
         return;
 
-    // Ainda gambiarra pura, mas em breve não será mais
     QRect target = rect();
 
-    if (stereoDisplay_->getCurrentScene()->getLeftScene() && _GLDisplayUpdate)
-        ltext = QGLWidget::convertToGLFormat(stereoDisplay_->getCurrentScene()->getLeftScene()->getFrame(target.size()));
-    if (stereoDisplay_->getCurrentScene()->getRightScene() && _GLDisplayUpdate)
-        rtext = QGLWidget::convertToGLFormat(stereoDisplay_->getCurrentScene()->getRightScene()->getFrame(target.size()));
+    if (stereoDisplay_->getCurrentScene()->getLeftScene() && _GLDisplayUpdate){
+        QImage img = stereoDisplay_->getCurrentScene()->getLeftScene()->getFrame(target.size());
+        if (img.isNull())
+            return;
+        ltext = QGLWidget::convertToGLFormat(img.convertToFormat(QImage::Format_RGBA8888));
+    }
+    if (stereoDisplay_->getCurrentScene()->getRightScene() && _GLDisplayUpdate){
+        QImage img = stereoDisplay_->getCurrentScene()->getRightScene()->getFrame(target.size());
+        if (img.isNull())
+            return;
+        rtext = QGLWidget::convertToGLFormat(img.convertToFormat(QImage::Format_RGBA8888));
+    }
 
     double ll, lr, lt, lb, rl, rr, rt, rb;
     if (ltext.width() < width())
@@ -277,6 +284,7 @@ void GLDisplay::paintGL()
             (reverseLensGlasses) ? glDrawBuffer(GL_BACK_RIGHT) : glDrawBuffer(GL_BACK_LEFT);
 
 
+    // Isso ainda guarda características de OpenGL 2 (modo imediato) e o recomendado seria atualizarmos para OpenGL moderno!
     glBegin (GL_QUADS);
     {
         glTexCoord2f(0.0, 1.0);

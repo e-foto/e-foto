@@ -1,6 +1,6 @@
 #include "TreeFeatures.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QStringList>
 
 namespace br {

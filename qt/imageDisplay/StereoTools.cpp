@@ -227,7 +227,7 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
     if (event.buttons() & Qt::RightButton)
     {
         double scale = _display->getCurrentScene()->getScale();
-        QPointF diff = event.posF() - _lastMousePosition;
+        QPointF diff = event.pos() - _lastMousePosition;
         _autoPan = -(diff/(5*scale));
         _currentCursor = SymbolsResource::getText(QString::fromUtf8("Auto"));
         _display->setCursor(_currentCursor, _display->isStereoCursor());
@@ -540,7 +540,7 @@ void MoveStereoTool::mouseMoved(const QMouseEvent & event)
     // Move
     if (event.buttons() & Qt::LeftButton)
     {
-        QPointF diff = event.posF() - _lastMousePosition;
+        QPointF diff = event.pos() - _lastMousePosition;
         _lastMousePosition = event.pos();
         double scale;
         scale = _display->getCurrentScene()->getScale();
@@ -1217,12 +1217,12 @@ void StereoToolsBar::executeAction(QAction *action)
 /* mousePressed
 if (e->button() == Qt::RightButton)//:MidButton)
 {
- moveLastPos_ = e->posF();
+ moveLastPos_ = e->pos();
  onMove_ = true;
 }
 else if (e->button() == Qt::LeftButton)
 {
- moveLastPos_ = e->posF();
+ moveLastPos_ = e->pos();
  if (stereoDisplay_->getCurrentScene())
  {
   QPointF diffTocenter(moveLastPos_.x() - size().width() / 2, moveLastPos_.y() - size().height() / 2);
@@ -1248,8 +1248,8 @@ QWidget::mouseReleaseEvent(e);
 */
 
 /* mouseMoved
-QPointF diff = e->posF() - moveLastPos_;
-moveLastPos_ = e->posF();
+QPointF diff = e->pos() - moveLastPos_;
+moveLastPos_ = e->pos();
 if (stereoDisplay_->getCurrentScene())
 {
  QPointF diffTocenter(moveLastPos_.x() -diff.x() - size().width() / 2, moveLastPos_.y() -diff.y() - size().height() / 2);

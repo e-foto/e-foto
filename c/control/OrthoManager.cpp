@@ -409,27 +409,27 @@ int OrthoManager::orthoRectificationGeoTiff(char * filename, int option, double 
         double Xi, Yi, Xf, Yf, res_x, res_y;
         grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
         ortho = new Orthorectification(Xi, Yi, Xf, Yf, user_res_x, user_res_y);
-                ortho->setNumberOfBands(3);
-                //Obter os dados XML do atributo manager e setar os atributos coord_system (CPS) e spheroid ou datum (GRS) de ortho
-                //EDomElement xml(manager->getXml());
-                //xml.elementByTagName();
-            Terrain* terrain = manager->instanceTerrain();
+        ortho->setNumberOfBands(3);
 
-            ortho->setUtmFuse(terrain->getUtmFuse());
+        //Recuperar GRS, fuso e hemisfério
+        Terrain* terrain = manager->instanceTerrain();
 
-            if (terrain->getCPS() == ("UTM"))
-                ortho->setCoordinateSystem(0);
-            else
-                ortho->setCoordinateSystem(0);
+        if (terrain->getGRS() == ("SAD69"))
+            ortho->setDatum(SAD69);
+        else if (terrain->getGRS() == ("WGS84"))
+            ortho->setDatum(WGS84);
+        else if (terrain->getGRS() == ("SIRGAS2000"))
+            ortho->setDatum(SIRGAS2000);
+        else
+            ortho->setDatum(SAD69);
 
-            if (terrain->getGRS() == ("SAD69"))
-                ortho->setDatum(SAD69);
-            else if (terrain->getGRS() == ("WGS84"))
-                ortho->setDatum(WGS84);
-            else if (terrain->getGRS() == ("SIRGAS2000"))
-                ortho->setDatum(SIRGAS2000);
-            else
-                ortho->setDatum(SAD69);
+        ortho->setUtmFuse(terrain->getUtmFuse());
+
+        std::string lat = terrain->getCentralCoordLat();
+        if (lat.rfind(" ") < lat.size()-1)
+            ortho->setHemisphere( lat[lat.rfind(" ")+1] == 'N' );
+
+
 
         flag_cancel = false;
 

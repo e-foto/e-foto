@@ -17,6 +17,7 @@ class StereoDisplay;
 
 class GLDisplay : public QGLWidget
 {
+    Q_OBJECT
 protected:
     StereoDisplay* stereoDisplay_;
     unsigned int ltexture;

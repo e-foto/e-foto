@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>966</width>
-    <height>577</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -349,7 +349,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tab_7">
       <attribute name="title">
@@ -2059,7 +2059,7 @@
               </item>
               <item>
                <property name="text">
-                <string>Nearest point</string>
+                <string>Nearest neighbor</string>
                </property>
               </item>
              </widget>

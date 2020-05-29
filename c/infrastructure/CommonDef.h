@@ -9,7 +9,7 @@
 #include <cmath>
 #endif
 
-typedef enum { CORREGOALEGRE=0, SAD69, SIRGAS2000, WGS84} DatumType;
+typedef enum { CORREGOALEGRE=0, SIRGAS2000, SAD69, WGS84} DatumType;
 
 #define M_PI 3.14159265359
 

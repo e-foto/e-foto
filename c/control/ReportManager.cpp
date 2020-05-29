@@ -39,7 +39,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <QtGui>
+#include <QtWidgets>
 
 // Constructors and destructors
 //
@@ -2205,7 +2205,7 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 
 QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
 {
-	SingleScene ss(0, filename);
+    SingleScene ss(nullptr, filename);
 	return ss.getThumb(QSize(maxW, maxH));
 }
 

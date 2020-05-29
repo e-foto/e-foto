@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>738</width>
-    <height>1904</height>
+    <height>1908</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,7 +67,16 @@ p, li { white-space: pre-wrap; }
          <property name="labelAlignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -713,7 +722,7 @@ p, li { white-space: pre-wrap; }
                      <enum>QAbstractSpinBox::NoButtons</enum>
                     </property>
                     <property name="specialValueText">
-                     <string> </string>
+                     <string/>
                     </property>
                     <property name="accelerated">
                      <bool>true</bool>
@@ -774,7 +783,7 @@ p, li { white-space: pre-wrap; }
                      <enum>QAbstractSpinBox::NoButtons</enum>
                     </property>
                     <property name="specialValueText">
-                     <string> </string>
+                     <string/>
                     </property>
                     <property name="accelerated">
                      <bool>true</bool>
@@ -815,7 +824,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QGroupBox" name="groupBox_4">
            <property name="title">
-            <string>Distorcion Coefficients</string>
+            <string>Distortion Coefficients</string>
            </property>
            <property name="checkable">
             <bool>false</bool>

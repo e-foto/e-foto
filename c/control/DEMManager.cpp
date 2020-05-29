@@ -65,9 +65,9 @@ DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images, std::deq
     cancel_flag = false;
     listAllImages = images;
     listEOs = eos;
-    grid = NULL;
-    im = NULL;
-    df = NULL;
+    grid = nullptr;
+    im = nullptr;
+    df = nullptr;
     isShowImage = false;
     dem_unsaved = false;
     grid_unsaved = false;
@@ -82,7 +82,7 @@ DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images, std::deq
 
 DEMManager::~DEMManager()
 {
-    if (grid != NULL)
+    if (grid != nullptr)
         delete grid;
 }
 
@@ -104,7 +104,7 @@ DEMUserInterface* DEMManager::getInterface()
 
 bool DEMManager::exec()
 {
-    if (manager != NULL)
+    if (manager != nullptr)
     {
         if (manager->getInterfaceType().compare("Qt") == 0)
         {
@@ -112,7 +112,7 @@ bool DEMManager::exec()
         }
         connectImagePoints();
         started = true;
-        if (myInterface != NULL)
+        if (myInterface != nullptr)
         {
             myInterface->exec();
             if (!getPairs())
@@ -139,7 +139,7 @@ Image * DEMManager::getImage(int id)
             return listAllImages.at(i);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void DEMManager::setListPoint()
@@ -149,7 +149,7 @@ void DEMManager::setListPoint()
     for(unsigned i=0;i<allPoints.size();i++)
     {
         Point* point= manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
-        if (point != NULL)
+        if (point != nullptr)
             listAllPoints.push_back(point);
     }
 }
@@ -171,7 +171,7 @@ bool DEMManager::connectImagePoints()
                 if (data != "")
                 {
                     Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
-                    if (pointToInsert != NULL)
+                    if (pointToInsert != nullptr)
                     {
                         //qDebug("connectImagePoints(): colocou um ponto: %s",pointToInsert->getPointId().c_str());
                         listAllImages.at(j)->putPoint(pointToInsert);

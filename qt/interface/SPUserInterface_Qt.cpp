@@ -548,7 +548,7 @@ void SPUserInterface_Qt::refreshFeatureSelectedData()
 
 void SPUserInterface_Qt::addImagePair(char *item)
 {
-    QString text = QString::fromAscii(item);
+    QString text = QString::fromLatin1(item);
     comboBox->addItem(text);
 }
 
