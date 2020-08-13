@@ -118,6 +118,7 @@ private:
 
 public:
     DemFeatures();
+    ~DemFeatures(){features.clear();}
     void createClassesFromSp165();
     int convClassFromSp165(int ft, int fc);
     int getClassIdToSp165(int new_class);

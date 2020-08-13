@@ -17,7 +17,7 @@
    <item>
     <widget class="QWidget" name="introWidget" native="true">
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/icons/images/pattern.png);</string>
+      <string notr="true">background-image: url(:/image/Pattern);</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -36,13 +36,13 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="styleSheet">
-         <string notr="true">background-image: url(:/icons/images/none.png);</string>
+         <string notr="true">background-image: url(:/image/None);</string>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../resource/resource.qrc">:/image/Logo</pixmap>
+         <pixmap resource="../resource/resource.qrc">:/image/logoefoto.png</pixmap>
         </property>
        </widget>
       </item>
@@ -73,7 +73,6 @@
  </widget>
  <resources>
   <include location="../resource/resource.qrc"/>
-  <include location="../project/resource/project_resource.qrc"/>
  </resources>
  <connections/>
 </ui>

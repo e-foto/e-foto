@@ -258,9 +258,14 @@ void StereoViewer::closeEvent(QCloseEvent *)
 	//delete rightDisplay;
 }
 
+void StereoViewer::loadBackground(QImage image)
+{
+    stereoDisplay->loadBackground(image);
+}
+
 void StereoViewer::loadLeftImage(QString filename)
 {
-	stereoDisplay->loadLeftImage(filename);
+    stereoDisplay->loadLeftImage(filename);
 }
 
 void StereoViewer::loadRightImage(QString filename)

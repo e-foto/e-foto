@@ -312,6 +312,8 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
 {
     Image* leftImage = listAllImages.at(leftKey-1);
     Image* rightImage = listAllImages.at(rightKey-1);
+    if (leftImage == NULL || rightImage == NULL)
+        return;
     Sensor* sensor = leftImage->getSensor();
     InteriorOrientation* lio = leftImage->getIO();
     InteriorOrientation* rio = rightImage->getIO();
@@ -319,8 +321,6 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
     SpatialRessection* rsr = (SpatialRessection*)rightImage->getEO();
     leftImage->setSensor(sensor); leftImage->setIO(lio); leftImage->setEO(lsr);
     rightImage->setSensor(sensor); rightImage->setIO(rio); rightImage->setEO(rsr);
-    if (leftImage == NULL || rightImage == NULL)
-        return;
 
     SpatialIntersection si(new StereoPair(leftImage, rightImage));
     ObjectSpaceCoordinate obj = si.calculateIntersectionSubPixel(xl,yl,xr,yr);
