@@ -65,8 +65,9 @@ protected:
     double _scale;
     bool _hasButtomPressed;
 
-    QImage _currentCursor;
+    bool _lastMode;
     QImage _lastCursor;
+    QImage _currentCursor;
     QDoubleSpinBox* _scaleSpin;
     QLabel* _leftPosLabel;
     QLabel* _rightPosLabel;

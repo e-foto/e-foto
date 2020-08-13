@@ -61,11 +61,6 @@ public slots:
 	void setImageMode();
 	void setOrtoImageMode(double xi, double dx, double yi, double dy);
 	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
-//pq é private?
-//Não entendi o que essa parte faz?se quer deixar o slot pra mudança de icone
-//private slots:
-//    void on_EVMainWindow_iconSizeChanged(const QSize &iconSize);
-
 };
 
 class SeparatedStereoViewer : public QMainWindow
@@ -115,6 +110,7 @@ public:
 	StereoToolsBar* getToolBar() {return stereoTool;}
 
 public slots:
+    void loadBackground(QImage image);
 	void loadLeftImage(QString filename);
 	void loadRightImage(QString filename);
 	void loadLeftImage(QImage* image);
