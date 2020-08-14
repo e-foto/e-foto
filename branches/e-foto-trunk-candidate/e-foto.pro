@@ -297,11 +297,10 @@ QT_VERSION = $$[QT_VERSION]
 QT_VERSION = $$split(QT_VERSION, ".")
 QT_VER_MAJ = $$member(QT_VERSION, 0)
 QT_VER_MIN = $$member(QT_VERSION, 1)
-
-message("QT_VERSION: $$QT_VER_MAJ.$$QT_VER_MIN")
 message("QT_ARCH: $$QT_ARCH")
 message("QMAKE_HOST.arch: $$QMAKE_HOST.arch")
 	
+
 # System unix configuration
 unix {
 	# Set gdal usage
