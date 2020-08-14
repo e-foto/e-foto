@@ -1499,12 +1499,13 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		std::ofstream myXsltFile(xsltransformation.c_str());
 		myXsltFile << outxsl.str();
 		myXsltFile.close();
-	} else {
+    } else {
 		xsltransformation += "/epr_html.xsl";
 		outxsl << "<xsl:template match=\"efotoPhotogrammetricReport\">\n";
 		outxsl << "<html>\n";
-		outxsl << "<head>\n";
-		outxsl << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n";
+        outxsl << "<head>\n";
+        outxsl << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n";
+        outxsl << "<link rel=\"stylesheet\" media=\"screen\" href=\"e-style.css\"/>\n";
 		outxsl << "<script type=\"text/javascript\">\n";
 		outxsl << "<xsl:text>\n";
 		outxsl << "function ShowHide(divId)\n";
@@ -1521,9 +1522,18 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:text>\n";
 		outxsl << "</script>\n";
 		outxsl << "</head>\n";
-		outxsl << "<body>\n";
-		outxsl << "<a name=\"top\"><h2>E-Foto Photogrammetric Report</h2></a>\n";
+        outxsl << "<body>\n";
+        // report header
+        outxsl << "<div class=\"page-wrapper\">";
+        outxsl << "<header>";
+        outxsl << "<a name=\"top\">";
+        outxsl << "<div class=\"logo\"></div>";
+        outxsl << "<a name=\"top\"><h1>Photogrammetric Report</h1></a>";
+        outxsl << "</a>";
+        outxsl << "</header>";
+        // project header
 		outxsl << "<xsl:if test=\"projectHeader\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('projectHeader')\" href=\"javascript:;\"><h3>Project Header</h3></a>\n";
 		outxsl << "<div id=\"projectHeader\" style=\"DISPLAY: none\">\n";
 		outxsl << "Name: <xsl:value-of select=\"projectHeader/name\"/><br/>\n";
@@ -1532,8 +1542,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "Modification Date: <xsl:value-of select=\"projectHeader/modification\"/><br/>\n";
 		outxsl << "Owner: <xsl:value-of select=\"projectHeader/owner\"/><br/>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // terrain
 		outxsl << "<xsl:if test=\"terrain\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('terrain')\" href=\"javascript:;\"><h3>Terrain</h3></a>\n";
 		outxsl << "<div id=\"terrain\" style=\"DISPLAY: none\">\n";
 		outxsl << "Mean Altitude: <xsl:value-of select=\"terrain/meanAltitude\"/><br/>\n";
@@ -1554,16 +1567,22 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "<xsl:text> | </xsl:text>\n";
 		outxsl << "<xsl:value-of select=\"terrain/workAreaCenterCoordinates/utmFuse\"/> UTM\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // sensor
 		outxsl << "<xsl:if test=\"sensors\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('sensors')\" href=\"javascript:;\"><h3>Sensors</h3></a>\n";
 		outxsl << "<div id=\"sensors\" style=\"DISPLAY: none\">\n";
 		outxsl << "Sensor Id: <xsl:value-of select=\"sensors/sensorId\"/><br/>\n";
 		outxsl << "Description: <xsl:value-of select=\"sensors/description\"/><br/>\n";
 		outxsl << "Focal Distance: <xsl:value-of select=\"sensors/focalDistance\"/><br/>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // flight
 		outxsl << "<xsl:if test=\"flights\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('flights')\" href=\"javascript:;\"><h3>Flights</h3></a>\n";
 		outxsl << "<div id=\"flights\" style=\"DISPLAY: none\">\n";
 		outxsl << "Flight Id: <xsl:value-of select=\"flights/flightId\"/><br/>\n";
@@ -1573,11 +1592,15 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "Longitudinal Overlap: <xsl:value-of select=\"flights/overlap/longitudinal\"/><br/>\n";
 		outxsl << "Transversal Overlap: <xsl:value-of select=\"flights/overlap/transversal\"/><br/>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // block images
 		outxsl << "<xsl:if test=\"images\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('images')\" href=\"javascript:;\"><h3>Images</h3></a>\n";
 		outxsl << "<div id=\"images\" style=\"DISPLAY: none;\">\n";
 		outxsl << "<xsl:for-each select=\"images/image\">\n";
+        outxsl << "<section class=\"image\">\n";
 		outxsl << "<a href=\"javascript:;\"><xsl:attribute name=\"onclick\">javascript:ShowHide('images_image_<xsl:value-of select=\"imageId\" />')</xsl:attribute>Image Id <xsl:value-of select=\"imageId\"/></a><br/><br/>\n";
 		outxsl << "<div style=\"DISPLAY: none;\"><xsl:attribute name=\"id\">images_image_<xsl:value-of select=\"imageId\" /></xsl:attribute>\n";
 		outxsl << "Dimension: <xsl:value-of select=\"width\"/>x<xsl:value-of select=\"heigth\"/> px<br/>\n";
@@ -1659,11 +1682,15 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</div><br/><br/>\n";
 		outxsl << "</xsl:if>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // block points
 		outxsl << "<xsl:if test=\"blockPoints\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('blockOfPoints')\" href=\"javascript:;\"><h3>Points</h3></a>\n";
 		outxsl << "<div id=\"blockOfPoints\" style=\"DISPLAY: none\">\n";
 		outxsl << "<xsl:for-each select=\"blockPoints/point\">\n";
@@ -1726,8 +1753,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // affine transformation process
 		outxsl << "<xsl:if test=\"affineTransformation\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('affineTransformation')\" href=\"javascript:;\"><h3>Affine Transformation</h3></a>\n";
 		outxsl << "<div id=\"affineTransformation\" style=\"DISPLAY: none\">\n";
 		outxsl << "<xsl:for-each select=\"affineTransformation/IO\">\n";
@@ -1855,8 +1885,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // spatial resection process
 		outxsl << "<xsl:if test=\"spatialResection\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('spatialResection')\" href=\"javascript:;\"><h3>Spatial Ressection</h3></a>\n";
 		outxsl << "<div id=\"spatialResection\" style=\"DISPLAY: none\">\n";
 		outxsl << "<xsl:for-each select=\"spatialResection/SR\">\n";
@@ -1966,8 +1999,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // phototriangulation process
 		outxsl << "<xsl:if test=\"photogrammetricBlock\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('photogrammetricBlock')\" href=\"javascript:;\"><h3>Photogrammetric Block</h3></a>\n";
 		outxsl << "<div id=\"photogrammetricBlock\" style=\"DISPLAY: none\">\n";
 		outxsl << "Total Iterations: <xsl:value-of select=\"photogrammetricBlock/totalIterations\"/><br/>\n";
@@ -2019,8 +2055,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:if>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // interior orientatios
 		outxsl << "<xsl:if test=\"interiorOrientation\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('interiorOrientation')\" href=\"javascript:;\"><h3>Interior Orientations</h3></a>\n";
 		outxsl << "<div id=\"interiorOrientation\" style=\"DISPLAY: none\">\n";
 		outxsl << "<xsl:for-each select=\"interiorOrientation/IO\">\n";
@@ -2093,8 +2132,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // exterior orientatios
 		outxsl << "<xsl:if test=\"exteriorOrientation\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('exteriorOrientation')\" href=\"javascript:;\"><h3>Exterior Orientations</h3></a>\n";
 		outxsl << "<div id=\"exteriorOrientation\" style=\"DISPLAY: none\">\n";
 		outxsl << "<xsl:for-each select=\"exteriorOrientation/EO\">\n";
@@ -2169,8 +2211,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</xsl:for-each>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
+        outxsl << "</section>\n";
 		outxsl << "</xsl:if>\n";
+        // stereopairs
 		outxsl << "<xsl:if test=\"stereoPairs\">\n";
+        outxsl << "<section>\n";
 		outxsl << "<a onclick =\"javascript:ShowHide('stereoPairs')\" href=\"javascript:;\"><h3>Stereo Pairs</h3></a>\n";
 		outxsl << "<div id=\"stereoPairs\" style=\"DISPLAY: none\">\n";
 		outxsl << "<table border=\"1\">\n";
@@ -2189,8 +2234,11 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		outxsl << "</table>\n";
 		outxsl << "<a href=\"#top\">Top</a>\n";
 		outxsl << "</div>\n";
-		outxsl << "</xsl:if>\n";
-		outxsl << "</body>\n";
+        outxsl << "</section>\n";
+        outxsl << "</xsl:if>\n";
+        // document end
+        outxsl << "</div>\n";
+        outxsl << "</body>\n";
 		outxsl << "</html>\n";
 		outxsl << "</xsl:template>\n";
 		outxsl << "</xsl:stylesheet>\n";
@@ -2198,9 +2246,97 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		EDomElement xsl(outxsl.str());
 		myXsltFile << xsl.removeBlankLines(true).indent('\t').getContent() ;
 		myXsltFile.close();
+        makeCss(path);
 	}
 
 	return true;
+}
+
+
+bool ReportManager::makeCss(std::string path)
+{
+    std::string filename;
+    std::stringstream content;
+    filename = path.c_str();
+    filename += "/e-style.css";
+    content << "body {"
+               "    padding:0;"
+               "    margin:1px 0 0;"
+               "    font:normal 12px Courier, monospace;"
+               "    color:#666;"
+               "}"
+               ""
+               "a {"
+               "    color:#777;"
+               "}"
+               ""
+               "a:hover {"
+               "    color:#A77749;"
+               "}"
+               ""
+               ".page-wrapper {"
+               "    text-align: justify;"
+               "    background:#FFF;"
+               "    width:70vw;"
+               "    margin:auto;"
+               "    position:relative;"
+               "    padding:0;"
+               "}"
+               ""
+               "header {"
+               "    border: 1px solid #CCC;"
+               "    border-radius: 4px;"
+               "    width:70vw;"
+               "    height:120px;"
+               "    background-image: linear-gradient(to bottom, rgb(162, 204, 240), rgb(209, 198, 152) 90%, rgb(189, 167, 103));"
+               "    margin:0;"
+               "    padding:15px;"
+               "}"
+               ""
+               "header h1,h2 {"
+               "    padding-top:15px;"
+               "    margin:0;"
+               "    color: #517901;"
+               "    font: italic 25px Georgia, Serif;"
+               "}"
+               ""
+               "section {"
+               "    border-radius: 4px;"
+               "    border: 1px solid #CCC;"
+               "    width:70vw;"
+               "    height:auto;"
+               "    margin-top:3px;"
+               "    padding:15px;"
+               "}"
+               ""
+               "section h3,h4 {"
+               "    padding-top:10px;"
+               "    padding-bottom:10px;"
+               "    margin:0;"
+               "    color: #f2560e;"
+               "    font: italic 18px Helvetica, Sans-serif;"
+               "}"
+               ""
+               ".image {"
+               "    width:auto;"
+               "    padding:10px;"
+               "}"
+               ""
+               ".logo {"
+               "    background-image: url(\"data:image/png;base64,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\");"
+               "    background-repeat: no-repeat;"
+               "    margin:0;"
+               "    padding:0;"
+               "    border:0;"
+               "    width:auto;"
+               "    height:75px;"
+               "}";
+
+    std::ofstream cssFile(filename.c_str());
+    cssFile << content.str();
+    cssFile.close();
+
+    return true;
 }
 
 QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
