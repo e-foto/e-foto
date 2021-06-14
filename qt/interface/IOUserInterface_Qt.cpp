@@ -580,7 +580,7 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 
-	//LoadingScreen::instance().close();
+    //LoadingScreen::instance().close();
 
 	//if (qApp->exec())
 	//return false;

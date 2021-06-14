@@ -357,7 +357,7 @@ std::deque<std::string> SRManager::makeReport()
     std::deque<std::string> result;
     result.push_back(mySR->getXa().xmlGetData());
     result.push_back(mySR->getLa().xmlGetData());
-    result.push_back(Conversion::doubleToString(myIO->getQuality().getsigma0Squared()));
+    result.push_back(Conversion::doubleToString(mySR->getQuality().getsigma0Squared()));
     result.push_back(mySR->getQuality().getV().xmlGetData());
     result.push_back(mySR->getQuality().getSigmaXa().xmlGetData());
     result.push_back(mySR->getQuality().getSigmaLa().xmlGetData());
