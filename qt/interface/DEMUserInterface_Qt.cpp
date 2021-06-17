@@ -286,13 +286,13 @@ void DEMUserInterface_Qt::enableOptions()
 
 void DEMUserInterface_Qt::addImagePair(char *item)
 {
-    QString text = QString::fromAscii(item);
+    QString text = QString::fromLatin1(item);
     comboBox5->addItem(text);
 }
 
 void DEMUserInterface_Qt::setStatus(char *txt)
 {
-    workLabel->setText(QString::fromAscii(txt));
+    workLabel->setText(QString::fromLatin1(txt));
 }
 
 void DEMUserInterface_Qt::setProgress(int progress)
@@ -1134,7 +1134,7 @@ void SeedEditorUserInterface_Qt::addPairs()
         str_right = listAllImages.at(right_id-1)->getImageId();
         txt.str(""); // Clear stream
         txt << "Images " << str_left << " and " << str_right;
-        comboBox1->addItem(QString::fromAscii((char *)txt.str().c_str()));
+        comboBox1->addItem(QString::fromLatin1((char *)txt.str().c_str()));
     }
 }
 

@@ -189,6 +189,7 @@ public:
     * \return bool Retorna se o arquivo XML foi criado com sucesso.
     */
     bool makeFile(std::string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
+
     /**
     * \brief Metodo que cria o arquivo XSL correspondente a escolha do usuario
     * \param idExt Id do tipo de formato escolhido pelo usuario.
@@ -196,6 +197,13 @@ public:
     * \return bool Retorna se o arquivo XSL foi criado com sucesso.
     */
     bool makeXslt(int idExt, std::string path);
+
+    /**
+    * \brief Metodo que cria o arquivo CSS para atribuir estilo ao relatorio.
+    * \param path Caminho para salvar o arquivo.
+    * \return bool Retorna se o arquivo CSS foi criado com sucesso.
+    */
+    bool makeCss(std::string path);
 
     /**
     * \brief Metodo que gera thumbnail de imagens.

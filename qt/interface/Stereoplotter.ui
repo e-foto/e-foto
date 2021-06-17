@@ -448,7 +448,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Magenta (Red + Green)</string>
+         <string>Magenta (Red + Blue)</string>
         </property>
        </item>
       </widget>

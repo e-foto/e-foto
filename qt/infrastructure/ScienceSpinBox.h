@@ -1,9 +1,9 @@
 #ifndef SCIENCESPINBOX
 #define SCIENCESPINBOX
 
-#include <QtGui/QDoubleSpinBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QMouseEvent>
 #include <QtCore/QVariant>
 #include <QtCore/QDebug>

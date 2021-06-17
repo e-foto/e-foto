@@ -298,7 +298,7 @@ public:
     /**
     * \brief Ativar eliminação de pontos ruins.
     */
-    void eliminateBadPoints() { pairs.filterBadPoints2D(); };
+    void eliminateBadPoints() { pairs.filterBadPoints2D();};
 
 
     /* Methods into disuse:

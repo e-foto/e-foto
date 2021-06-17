@@ -38,16 +38,15 @@ class StereoToolsBar;
 class MarkStereoTool;
 class Matrix;
 
-class SingleViewer : public QMainWindow, public Ui::EVMainWindow
+class SingleViewer: public QMainWindow, public Ui::EVMainWindow
 {
-	Q_OBJECT
-
+    Q_OBJECT
 	SingleDisplay* sd;
 	SingleToolsBar* tool;
 	void closeEvent(QCloseEvent *);
 
 public:
-    explicit SingleViewer(QWidget *parent=0);
+    explicit SingleViewer(QWidget *parent=nullptr);
 	SingleDisplay* getDisplay() {return sd;}
     MarkTool* getMarker();
 
@@ -62,12 +61,11 @@ public slots:
 	void setImageMode();
 	void setOrtoImageMode(double xi, double dx, double yi, double dy);
 	void setElevationImageMode(double xi, double dx, double yi, double dy, double zi, double dz);
-
 };
 
 class SeparatedStereoViewer : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 	SingleDisplay* leftDisplay;
 	SingleDisplay* rightDisplay;
@@ -99,7 +97,7 @@ public slots:
 
 class StereoViewer : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 	StereoDisplay* stereoDisplay;
 	StereoToolsBar* stereoTool;
@@ -112,6 +110,7 @@ public:
 	StereoToolsBar* getToolBar() {return stereoTool;}
 
 public slots:
+    void loadBackground(QImage image);
 	void loadLeftImage(QString filename);
 	void loadRightImage(QString filename);
 	void loadLeftImage(QImage* image);

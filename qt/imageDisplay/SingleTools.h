@@ -93,6 +93,7 @@ protected:
 
 class ZoomTool : public SingleTool
 {
+    Q_OBJECT
     bool _onRubberBand;
 public:
     explicit ZoomTool(SingleDisplay* display);
@@ -111,6 +112,7 @@ public:
 
 class MoveTool : public SingleTool
 {
+    Q_OBJECT
 public:
     explicit MoveTool(SingleDisplay* display);
     ~MoveTool();

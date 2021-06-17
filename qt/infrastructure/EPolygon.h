@@ -14,6 +14,7 @@ namespace efoto {
 
 class EPolygon //: public QPolygonF
 {
+
 public:
 	EPolygon();
     explicit EPolygon(QList<QPointF *> points);

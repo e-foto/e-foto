@@ -38,6 +38,7 @@ enum DefaultMark {
 
 class SymbolsResource
 {
+
 public:
     // todo: Method getBackgorund has unused parameters for make a background with dotted pattern.
     static QImage getBackGround(QColor color, QSize size = QSize(24,24)/*, QPoint pointedIn = QPoint(-2, -2), QColor pointColor = QColor(255,255,255,255), unsigned int pointWeigth = 2*/);
@@ -63,6 +64,7 @@ public:
 
 class Marker : public QImage
 {
+
 public:
     explicit Marker(const QImage &image2Mark);
     explicit Marker(DefaultMark defaultMarkType);
@@ -72,6 +74,7 @@ public:
 
 class Coord : public QPointF
 {
+
 public:
     Coord();
     explicit Coord(QPointF location, QString label, Marker* mark = NULL);
@@ -81,6 +84,7 @@ public:
 
 class Geometry
 {
+
     int type_;
     unsigned int key_;
     QList<Coord> points_;
@@ -97,6 +101,7 @@ public:
 
 class GeometryResource
 {
+
     DemFeatures* df;
     Marker* defaultMark;
     Marker* selectedMark;

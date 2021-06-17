@@ -27,7 +27,7 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
-#include <QtGui>
+#include <QtWidgets>
 
 namespace br {
 namespace uerj {
@@ -478,7 +478,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 QString outxsl;
                 outxsl = filePath + "/" + "epr_txt.xsl";
                 QString outcmd;
-#ifdef Q_WS_X11 //LINUX
+#ifdef unix //LINUX
                 outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
@@ -486,7 +486,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->waitForFinished(1000);
                 pro->start("rm " + filename);
 #endif
-#ifdef Q_WS_WIN //WINDOWS
+#ifdef Q_OS_WIN64 //WINDOWS
                 outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
@@ -506,7 +506,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     QString outxsl;
                     outxsl = filePath + "/" + "epr_html.xsl";
                     QString outcmd;
-#ifdef Q_WS_X11 //LINUX
+#ifdef unix //LINUX
                     outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
                     pro->start(outcmd);
                     pro->waitForFinished(1000);
@@ -514,7 +514,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     pro->waitForFinished(1000);
                     pro->start("rm " + filename);
 #endif
-#ifdef Q_WS_WIN //WINDOWS
+#ifdef Q_OS_WIN64 //WINDOWS
                     outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                     pro->start(outcmd);
                     pro->waitForFinished(1000);
@@ -527,12 +527,6 @@ bool ReportUserInterface_Qt::saveEPR()
                 }
             }
             pro->kill();
-            /*
-        // Removed
-        QMessageBox msgBox;
-        msgBox.setText("Foi salvo com sucesso.");
-        msgBox.exec();
-*/
             return true;
         }
         else

@@ -7,6 +7,7 @@
 
 class RasterResource
 {
+
 protected:
 	QImage** _pyramid;
 	QSize _imageDim;

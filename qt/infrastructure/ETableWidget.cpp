@@ -23,7 +23,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include <QtGui>
+#include <QtWidgets>
 
 //#define MAX(a,b) (a<b) ? b : a
 //#define MIN(a,b) (a<b) ? a : b
@@ -43,8 +43,8 @@ ETableWidget::ETableWidget(QWidget *parent): QTableWidget(parent)
 		setMode('f');
 		setDecimals(6);
 
-		horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-		verticalHeader()->setResizeMode(QHeaderView::Stretch);
+        horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 		/*
 		horizontalHeader()->setResizeMode(QHeaderView::Interactive);
@@ -74,8 +74,8 @@ ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *paren
 	setDecimals(precision);
 	setTableData(values,getMode(),getDecimals());
 
-	horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
-	verticalHeader()->setResizeMode(QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 		// melhoramento na interface da tabela
 /*
@@ -105,8 +105,8 @@ ETableWidget::ETableWidget(Matrix values,char mode,int precision, QWidget *paren
 
 void ETableWidget::setTableData(Matrix values,char mode,int precision)
 {
-	horizontalHeader()->setResizeMode(QHeaderView::Stretch);//novo
-	verticalHeader()->setResizeMode(QHeaderView::Stretch);  //novo
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//novo
+    verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);  //novo
 
 	setSelectionMode(QAbstractItemView::ContiguousSelection);
 	//falta tratamento para destruir antiga matrix se ela existir antes
@@ -230,17 +230,16 @@ bool ETableWidget::eventFilter(QObject *obj, QEvent *evento)
 		QFocusEvent *focusOutEvento = static_cast<QFocusEvent *>(evento);
 		focusOutEvent(focusOutEvento);
 		return true;
-	}else /*if (evento->type()==QEvent::Resize)
+    }else /*if (evento->type()==QEvent::Resize)
 	{
 		QResizeEvent *resEvent= static_cast<QResizeEvent*>(evento);
 		resizeTable();
 		//resizeEvent(resEvent);
 		return true;
 	}else*/
-	{
-		return QTableWidget::eventFilter(obj,evento);
-	}
-
+    { //Etable ou Qtable? QTable, pois se caso contrário isso entraria em loop infinito!
+        return QTableWidget::eventFilter(obj,evento);
+    }
 	/*
 	if (evento->type()==QEvent::MouseButtonRelease)
 	{

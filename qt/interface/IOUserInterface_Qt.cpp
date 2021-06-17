@@ -219,7 +219,7 @@ bool IOUserInterface_Qt::viewReport()
 	/**/
 
 	QStringList listaXa;
-	listaXa << "A0" << "A1" << "A2" << "B0" << "B1" << "B2";
+    listaXa << "a0" << "a1" << "a2" << "b0" << "b1" << "b2";
 	myXaView->setRowCount(listaXa.size());
 	myXaView->setVerticalHeaderLabels(listaXa);
 	myXaView->setTableData(myValues.at(0),'f',5);
@@ -580,7 +580,7 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 
-	//LoadingScreen::instance().close();
+    //LoadingScreen::instance().close();
 
 	//if (qApp->exec())
 	//return false;

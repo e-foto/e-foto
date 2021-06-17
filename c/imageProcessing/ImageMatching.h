@@ -63,7 +63,7 @@ public:
 class stackCell
 {
 public:
-        stackCell() { prev = NULL; };
+        stackCell() { prev = nullptr; };
         float ref_x, ref_y, cor_x, cor_y;
         stackCell *prev;
 };
