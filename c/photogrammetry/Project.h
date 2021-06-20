@@ -40,9 +40,6 @@ class Project
 {
 
 private:
-    class DEM; //Dummy class. To be implemented
-    class OrthoImage; //Dummy class. To be implemented
-    class featuresFile; //Dummy class. To be implemented
 
     std::string xmlData;
     std::string xmlState;
@@ -53,9 +50,6 @@ private:
     std::deque<Flight*> flights;
     std::deque<Image*> images;
     std::deque<Point*> points;
-    std::deque<DEM*> DEMs;
-    std::deque<OrthoImage*> orthos;
-    std::deque<featuresFile*> feats;
     std::string processStates;
     std::deque<InteriorOrientation*> IOs;
     std::deque<ExteriorOrientation*> EOs;

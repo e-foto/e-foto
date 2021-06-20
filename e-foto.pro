@@ -64,7 +64,6 @@ HEADERS += c/control/DEMManager.h \
            c/photogrammetry/DemGrid.h \
            c/photogrammetry/DetectorFiducialMark.h \
            c/photogrammetry/DetectorSpaceCoordinate.h \
-           c/photogrammetry/Dummies.h \
            c/photogrammetry/EOQuality.h \
            c/photogrammetry/ExteriorOrientation.h \
            c/photogrammetry/Flight.h \
@@ -210,7 +209,6 @@ SOURCES += c/control/DEMManager.cpp \
            c/photogrammetry/DemGrid.cpp \
            c/photogrammetry/DetectorFiducialMark.cpp \
            c/photogrammetry/DetectorSpaceCoordinate.cpp \
-           c/photogrammetry/Dummies.cpp \
            c/photogrammetry/EOQuality.cpp \
            c/photogrammetry/ExteriorOrientation.cpp \
            c/photogrammetry/Flight.cpp \
