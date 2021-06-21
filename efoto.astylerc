@@ -1,0 +1,9 @@
+--style=stroustrup 
+--break-blocks
+--attach-namespaces
+--pad-oper
+--pad-header
+--delete-empty-lines
+--align-pointer=type
+--add-braces
+--attach-return-type
