@@ -35,28 +35,19 @@ class Image;
 class Flight;
 class DetectorSpaceCoordinate;
 
-// Classes/Structs used in Sensor only.
-//
-
-class SpectralRange
-{
-	int band;
-	double inferiorLimit;
-	double superiorLimit;
+class SpectralRange {
+  int band;
+  double inferiorLimit;
+  double superiorLimit;
 
 public:
-
-	friend class Sensor;
-	friend class FrameSensor;
-	friend class SensorWithFiducialMarks;
-	friend class SensorWithKnowDimensions;
-	friend class SensorWithKnowParameters;
+  friend class Sensor;
+  friend class FrameSensor;
+  friend class SensorWithFiducialMarks;
+  friend class SensorWithKnowDimensions;
+  friend class SensorWithKnowParameters;
 };
 
-
-
-// The Sensor class
-//
 
 /**
   * class Sensor
@@ -69,80 +60,48 @@ public:
   *
   */
 
-class Sensor : public EObject
-{
-	//EOBJECT
+class Sensor : public EObject {
 
 protected:
-
-	// Private attributes
-	//
-	int id;
-    std::string sensorId;
-	//double focalDistance;
-	//double focalDistanceSigma;
-	//DetectorSpaceCoordinate principalPointCoordinates; // Isso tem que virar um tipo próprio.
-    std::string description;
-    std::string geometry;
-    std::string detector;
-    std::string energySource;
-    std::string calculationMode;
-    std::string calibrationCertificateNumber;
-    std::string calibrationCertificateDispatch;
-    std::string calibrationCertificateExpiration;
-    //std::string focalDistanceUnit;
-    std::string spectralRangesUnit;
-    std::deque<SpectralRange> spectralRanges;
-	//deque<RadialSymmetricDistortionCoefficient> rsCoefficients;
-	//deque<DecenteredDistortionCoefficient> dCoefficients;
-
-	// Associated Objects
-	//
-    std::deque<Image*> myImages;
-    std::deque<Flight*> myFlights;
+  int id;
+  std::string sensorId;
+  std::string description;
+  std::string geometry;
+  std::string detector;
+  std::string energySource;
+  std::string calculationMode;
+  std::string calibrationCertificateNumber;
+  std::string calibrationCertificateDispatch;
+  std::string calibrationCertificateExpiration;
+  std::string spectralRangesUnit;
+  std::deque<SpectralRange> spectralRanges;
+  std::deque<Image*> myImages;
+  std::deque<Flight*> myFlights;
 
 public:
+  Sensor();
+  explicit Sensor(const Sensor& sensor);
+  explicit Sensor(int myId);
+  virtual ~Sensor();
 
-	// Constructors and destructors
-	//
-	Sensor();
-    explicit Sensor(const Sensor& sensor);
-    explicit Sensor(int myId);
-	virtual ~Sensor();
-
-	// Private attributes accessor methods
-    //
-        void setId(int newId);
-        void setSensorId(std::string nickname);
-	//void setFocalDistance(double newFocalDistance);
-	//void setFocalDistanceSigma(double newFocalDistanceSigma);
-	//void setPrincipalPointCoordinates(DetectorSpaceCoordinate newCoordinates);
-    void setDescription(std::string newDescription);
-    void setCalculationMode(std::string newCalculationMode);
-	int getId();
-        std::string getSensorId();
-	virtual double getFocalDistance() = 0;
-	virtual double getFocalDistanceSigma() = 0;
-	virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
-    std::string getDescription();
-    std::string getCalculationMode();
-
-	// Associated object accessor methods
-	//
-	void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
-	void putFlight(Flight* newFligthAssociation);
-        void clearImages() {myImages.clear();} // Remove associations.
-        void clearFlights() {myFlights.clear();}
-	Image* getImage(int imageId); // Get associated image or flight at sensor by id.
-	Flight* getFlight(int flightId);
-	int countImages(); // Inform the number of images or flights associated the sensor.
-	int countFlights();
-	Image* getImageAt(unsigned int index); // Get associated image or flight at sensor by index in deque for iterations.
-	Flight* getFlightAt(unsigned int index);
-
-	// EObject methods
-	//
-    virtual std::string objectType(void);
+  int getId();
+  std::string getSensorId();
+  virtual double getFocalDistance() = 0;
+  virtual double getFocalDistanceSigma() = 0;
+  virtual DetectorSpaceCoordinate getPrincipalPointCoordinates() = 0;
+  std::string getDescription();
+  std::string getCalculationMode();
+  void putImage(Image* newImageAssociation); // Set association sensor. Generally from zero to many images and flights.
+  void putFlight(Flight* newFligthAssociation);
+  void clearImages()
+  {
+    myImages.clear();
+  }
+  void clearFlights()
+  {
+    myFlights.clear();
+  }
+  virtual std::string objectType(void);
 
 };
 
