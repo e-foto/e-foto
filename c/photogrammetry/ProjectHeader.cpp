@@ -33,33 +33,32 @@ ProjectHeader::~ProjectHeader()
 
 std::string ProjectHeader::Name()
 {
-	return name;
+    return name;
 }
 
 std::string ProjectHeader::Description()
 {
-	return description;
+    return description;
 }
 
 std::string ProjectHeader::Creation()
 {
-	return creation;
+    return creation;
 }
 
 std::string ProjectHeader::Modification()
 {
-	return modification;
+    return modification;
 }
 
 std::string ProjectHeader::Owner()
 {
-	return owner;
+    return owner;
 }
 
 void ProjectHeader::xmlSetData(std::string xml)
 {
-	EDomElement root(xml);
-
+    EDomElement root(xml);
     name = root.elementByTagName("name").toString();
     description = root.elementByTagName("description").toString();
     filePath = root.elementByTagName("filePath").toString();
@@ -74,18 +73,18 @@ void ProjectHeader::xmlSetData(std::string xml)
 std::string ProjectHeader::xmlGetData()
 {
     std::stringstream result;
-	result << "<projectHeader>\n";
-	result << "<name>" << name << "</name>\n";
-	result << "<description>" << description << "</description>\n";
-	result << "<filePath>" << filePath << "</filePath>\n";
-	result << "<fileName>" << fileName << "</fileName>\n";
-	result << "<creation>" << creation << "</creation>\n";
-	result << "<modification>" << modification << "</modification>\n";
-	result << "<owner>" << owner << "</owner>\n";
-	result << "<aims>" << aims << "</aims>\n";
-	result << "<context>" << context << "</context>\n";
-	result << "</projectHeader>\n";
-	return result.str();
+    result << "<projectHeader>\n";
+    result << "<name>" << name << "</name>\n";
+    result << "<description>" << description << "</description>\n";
+    result << "<filePath>" << filePath << "</filePath>\n";
+    result << "<fileName>" << fileName << "</fileName>\n";
+    result << "<creation>" << creation << "</creation>\n";
+    result << "<modification>" << modification << "</modification>\n";
+    result << "<owner>" << owner << "</owner>\n";
+    result << "<aims>" << aims << "</aims>\n";
+    result << "<context>" << context << "</context>\n";
+    result << "</projectHeader>\n";
+    return result.str();
 }
 
 } // namespace efoto

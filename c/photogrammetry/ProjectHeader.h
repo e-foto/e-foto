@@ -30,8 +30,7 @@ namespace efoto {
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class ProjectHeader
-{
+class ProjectHeader {
 
 private:
     std::string name;
@@ -46,51 +45,51 @@ private:
 
 public:
 
-	/**
- * \brief Destrutor padrão.
- */
-	virtual ~ProjectHeader();
+    /**
+    * \brief Destrutor padrão.
+    */
+    virtual ~ProjectHeader();
 
-	/**
- * \brief Método que retorna o nome do Projeto.
- * \return std::string	Nome do Projeto.
- */
+    /**
+    * \brief Método que retorna o nome do Projeto.
+    * \return std::string   Nome do Projeto.
+    */
     std::string Name();
 
-	/**
- * \brief Método que retorna a descrição do Projeto.
- * \return std::string	Descrição do Projeto.
- */
+    /**
+    * \brief Método que retorna a descrição do Projeto.
+    * \return std::string   Descrição do Projeto.
+    */
     std::string Description();
 
-	/**
- * \brief Método que retorna a data e hora de criação do Projeto.
- * \return std::string	Data e hora de criação.
- */
+    /**
+    * \brief Método que retorna a data e hora de criação do Projeto.
+    * \return std::string   Data e hora de criação.
+    */
     std::string Creation();
 
-	/**
- * \brief Método que retorna a data e hora da modificação do Projeto.
- * \return std::string	Data e hora de modificação.
- */
+    /**
+    * \brief Método que retorna a data e hora da modificação do Projeto.
+    * \return std::string   Data e hora de modificação.
+    */
     std::string Modification();
 
-	/**
- * \brief Método que retorna o dono do Projeto.
- * \return std::string	Dono do projeto.
- */
+    /**
+    * \brief Método que retorna o dono do Projeto.
+    * \return std::string   Dono do projeto.
+    */
     std::string Owner();
 
-	/**
- * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
- * \param xml	std::string contendo o xml com todos os valores de atributos adequados a uma instância da classe ProjectHeader.
- */
+    /**
+    * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
+    * \param xml    std::string contendo o xml com todos os valores de atributos adequados a uma instância da classe ProjectHeader.
+    */
     void xmlSetData(std::string xml);
 
-	/**
- * \brief Método para extrair o equivalente em dados xml de uma instância.
- * \return std::string	Retorna o std::string contendo o xml para uma instância da classeprojectHeader.
- */
+    /**
+    * \brief Método para extrair o equivalente em dados xml de uma instância.
+    * \return std::string   Retorna o std::string contendo o xml para uma instância da classeprojectHeader.
+    */
     std::string xmlGetData();
 
 };

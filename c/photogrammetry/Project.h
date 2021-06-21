@@ -36,11 +36,9 @@ class ExteriorOrientation;
 class PhotoTri;
 
 
-class Project
-{
+class Project {
 
 private:
-
     std::string xmlData;
     std::string xmlState;
 
@@ -54,8 +52,6 @@ private:
     std::deque<InteriorOrientation*> IOs;
     std::deque<ExteriorOrientation*> EOs;
     PhotoTri* thePhotoTri;
-
-
 
     ProjectHeader* instanceHeader();
 
@@ -135,25 +131,11 @@ private:
     */
     void deleteHeader(bool makeReconnections = true);
 
-    /**
-    * \brief Método que apaga uma instância da classe Terrain.
-    */
-    void deleteTerrain(bool makeReconnections = true);
-
-    void deletePhotoTri(bool makeReconnections = true);
-
     void linkAll();
 
 public:
 
-    /**
-    * \brief Construtor padrão.
-    */
     Project();
-
-    /**
-    * \brief Destrutor padrão.
-    */
     ~Project();
 
     ProjectHeader* header();
@@ -189,7 +171,10 @@ public:
     * \brief Método que retorna todas as instâncias existente da classe Image.
     * \return std::deque<Image*> std::deque com ponteiros para as instâncias da classe Image.
     */
-    std::deque<Image*> allImages() {return images;}
+    std::deque<Image*> allImages()
+    {
+        return images;
+    }
 
     /**
     * \brief Método que retorna uma instância existente da classe Point.
@@ -202,7 +187,10 @@ public:
     * \brief Método que retorna todas as instâncias existente da classe Point.
     * \return std::deque<Point*> std::deque com ponteiros para as instâncias da classe Point.
     */
-    std::deque<Point*> allPoints() {return points;}
+    std::deque<Point*> allPoints()
+    {
+        return points;
+    }
 
     /**
     * \brief Método que retorna uma instância existente da classe InteriorOrientation.
@@ -210,7 +198,10 @@ public:
     * \return InteriorOrientation Instância da classe InteriorOrientation.
     */
     InteriorOrientation* IO(int id);
-    std::deque<InteriorOrientation*> allIOs() {return IOs;}
+    std::deque<InteriorOrientation*> allIOs()
+    {
+        return IOs;
+    }
 
     /**
     * \brief Método que retorna uma instância existente da classe ExteriorOrientation.
@@ -218,7 +209,10 @@ public:
     * \return ExteriorOrientation Instância da classe ExteriorOrientation.
     */
     ExteriorOrientation* EO(int id);
-    std::deque<ExteriorOrientation*> allEOs() {return EOs;}
+    std::deque<ExteriorOrientation*> allEOs()
+    {
+        return EOs;
+    }
 
     PhotoTri* photoTri();
 
@@ -239,34 +233,14 @@ public:
     std::string getXml(std::string tagname, std::string att, std::string value);
 
     /**
-    * \brief Método para emitir o nome de classe.
-    * \return std::string	Retorna o nome de classe do objeto.
-    */
-    std::string objectType(void);
-
-    /**
-    * \brief Método para emitir as associações de uma instância.
-    * \return std::string	Retorna vazio para esta classe.
-    * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
-    */
-    std::string objectAssociations(void);
-
-    /**
-    * \brief Método de teste para o nome/tipo de instância.
-    * \param s	Texto com o nome da classe que é esperado.
-    * \return bool	Retorna verdadeiro caso o nome passado seja EFotoManager. Retorna falso no caso contrário.
-    */
-    bool is(std::string s);
-
-    /**
     * \brief Método para setar os valores de atributos de uma instância de Projeto utilizando sua descrição em xml.
-    * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe Project.
+    * \param xml String contendo o xml com todos os valores de atributos adequados a uma instância da classe Project.
     */
     void setXml(std::string xml);
 
     /**
     * \brief Método para extrair o equivalente em xml de uma instância de Projeto.
-    * \return std::string	Retorna o string contendo o xml para uma instância da classe Project.
+    * \return std::string Retorna o string contendo o xml para uma instância da classe Project.
     */
     std::string getXml();
 
@@ -294,49 +268,6 @@ public:
     */
     int getFreePointId();
 
-
-    /**
-    * \brief Método que checa se a estrutura foi alterada em relação a sua versão salva.
-    * \return bool Retorno verdadeiro se a estrutura instanciada equivale ao xml de permanencia para essa estrutura.
-    */
-    bool getSaveState();
-
-    /**
-    * \brief Método que apaga uma instância da classe Sensor.
-    * \param id Identificador do Sensor.
-    */
-    void deleteSensor(int id, bool makeReconnections = true);
-
-    /**
-    * \brief Método que apaga uma instância da classe Flight.
-    * \param id Identificador do Vôo.
-    */
-    void deleteFlight(int id, bool makeReconnections = true);
-
-    /**
-    * \brief Método que apaga uma instância da classe Image.
-    * \param id Identificador da Imagem.
-    */
-    void deleteImage(int id, bool makeReconnections = true);
-
-    /**
-    * \brief Método que apaga uma instância da classe Point.
-    * \param id Identificador do Ponto.
-    */
-    void deletePoint(int id, bool makeReconnections = true);
-
-    /**
-    * \brief Método que apaga uma instância da classe InteriorOrientation.
-    * \param id Identificador da Orientação Interior.
-    */
-    void deleteIO(int id, bool makeReconnections = true);
-
-    /**
-    * \brief Método que apaga uma instância da classe ExteriorOrientation.
-    * \param id Identificador da Orientação Exterior.
-    */
-    void deleteEO(int id, bool makeReconnections = true);
-
     void addSensor(std::string data = "", bool makeReconnections = true);
 
     void addFlight(std::string data = "", bool makeReconnections = true);
@@ -349,14 +280,6 @@ public:
 
     void addEO(std::string data, bool makeReconnections = true);
 
-    std::string getProcessStates() {return processStates;}
-
-    void setProcessStates(std::string state) {processStates = state;}
-
-    void closeProject();
-
-    // Rever e adicionar aqui os métodos de new, load e save para uso de permanencia de disco
-    // Rever e adicionar aqui os métodos de add, instance e delete dos itens Dem, EOI e Feat.
 };
 
 } // namespace efoto
