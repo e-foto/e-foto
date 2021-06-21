@@ -267,6 +267,7 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			// Precisamos manter o aspécto da imagem, o zoom correto e o ponto central do recorte corretamente alinhado
 
 			// Primeiro evitamos problemas com o espaço recortado aumentando ligeiramente a área de recorte
+            //comentar depois
 			rectToCut.setLeft(rectToCut.left()-1);
 			rectToCut.setTop(rectToCut.top()-1);
 			rectToCut.setWidth(rectToCut.width()+2);
@@ -303,6 +304,7 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 			result = img->copy(rectToCut).scaled(targetSize,Qt::KeepAspectRatioByExpanding, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation);
 		}
 	}
+    //Nem toda tela tem 96 dpi, refazer depois
 	result.setDotsPerMeterX(3780);
 	result.setDotsPerMeterY(3780);
 	return result;

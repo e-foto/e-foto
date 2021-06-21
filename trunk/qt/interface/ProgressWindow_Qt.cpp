@@ -15,7 +15,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ProgressWindow_Qt.h"
 
 ProgressWindow::ProgressWindow(QWidget *parent) : QWidget(parent)

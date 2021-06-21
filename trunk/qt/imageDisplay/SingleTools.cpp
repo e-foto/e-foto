@@ -181,7 +181,7 @@ void SingleTool::mouseMoved(const QMouseEvent &event)
     if (event.buttons() & Qt::RightButton)
     {
         double scale = _display->getCurrentScene()->getScale();
-        QPointF diff = event.posF() - _lastMousePosition;
+        QPointF diff = event.pos() - _lastMousePosition;
         _autoPan = -(diff/(5*scale));
         _display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getText(QString::fromUtf8("Auto")))));//,_autoPan.y() < 0))));
     }
@@ -504,7 +504,7 @@ void MoveTool::mouseMoved(const QMouseEvent & event)
     // Move
     if (event.buttons() & Qt::LeftButton)
     {
-        QPointF diff = event.posF() - _lastMousePosition;
+        QPointF diff = event.pos() - _lastMousePosition;
         _lastMousePosition = event.pos();
         double scale;
         scale = _display->getCurrentScene()->getScale();

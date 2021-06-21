@@ -563,6 +563,13 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
 
 void ProjectUserInterface_Qt::executeIO()
 {
+    if (manager->getXml( std::string("sensorId") ).compare("<sensorId></sensorId>") == 0) // Check if an sensor is not defined to avoid runtime errors
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Before proceeding, it is necessary to register the sensor data!");
+        msgBox.exec();
+        return;
+    }
     bool ok;
     QStringList items;
     std::deque<std::string> strItems = manager->listImages();

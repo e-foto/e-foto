@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QString>
-#include <QtGui>
+#include <QtWidgets>
 #include <deque>
 
 class WindowsSelectPage : public QWizardPage

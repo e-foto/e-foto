@@ -122,6 +122,7 @@ int PhotoTriReport::createReport(char *filename)
 	//
 	// Photo-triangulation
 	//
+    if(project->photoTri()) {
 	arq << "Photo-triangulation results:\n";
 	arq << "============================\n\n";
 
@@ -205,6 +206,9 @@ int PhotoTriReport::createReport(char *filename)
 
 	arq << "Average" << std::setw(27) << Conversion::doubleToString(mat_aux.get(1,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(1,2),5) << "\n";
 	arq << "Std.dev." << std::setw(26) << Conversion::doubleToString(mat_aux.get(2,1),5) << std::setw(15) << Conversion::doubleToString(mat_aux.get(2,2),5) << "\n\n";
+    } else {
+        arq << "This project does not have photo-triangulation results available!\n";
+    }
 
 	arq << "End of report.";
 

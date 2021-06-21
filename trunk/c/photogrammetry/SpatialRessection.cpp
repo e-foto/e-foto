@@ -480,31 +480,23 @@ std::string SpatialRessection::xmlGetDataEO()
 // Other methods
 //
 
-/*//////////////////////////////////////////////////////////////////////////////////////////////////
-  Aqui tem codigo da PR
-  ////////////////////////////////////////////////////////////////////////////////////////////////*/
-
-/*void SpatialRessection::generateR()
-{
- r11 = cos(phi0) * cos(kappa0);
- r12 = -cos(phi0) * sin(kappa0);
- r13 = sin(phi0);
- r21 = cos(omega0) * sin(kappa0) + sin(omega0) * sin(phi0) * cos(kappa0);
- r22 = cos(omega0) * cos(kappa0) - sin(omega0) * sin(phi0) * sin(kappa0);
- r23 = -sin(omega0) * cos(phi0);
- r31 = sin(omega0) * sin(kappa0) - cos(omega0) * sin(phi0) * cos(kappa0);
- r32 = sin(omega0) * cos(kappa0) + cos(omega0) * sin(phi0) * sin(kappa0);
- r33 = cos(omega0) * cos(phi0);
-}
-
-110627 - The R matrix is now calculated inside the RayTester class.
-
+/*
+ * This routine generates the design matrix A belonging to the following problem:
+ * write the terrain co-ordinates X,Y as bilinear functions of the image co-ordinates xi,eta.
+ * As follows:
+ *
+ *                                        |  X(1) |
+ *  | X |   ¦ 1.0 xi eta    0  0  0   |   |  X(2) |
+ *  |   | = ¦                         | * |  X(3) | .
+ *  | Y |   ¦  0  0   0    1.0 xi eta |   |  X(4) |
+ *                                        |  X(5) |
+ *                                        |  X(6) |
+ *
+ * Here, X(1) and X(4) will be estimated as the horizontal ground co-ordinates X0,Y0 of
+ * the camera (the ground point imaged onto the principal points xi = eta = 0). The other
+ * parameters represent a general 2x2 mapping matrix between ground and image 
+ * co-ordinates, a simplified model that is exact when phi = omega = 0.
 */
-
-/*//////////////////////////////////////////////////////////////////////////////////////////////////
-  Aqui tem codigo da PR
-  ////////////////////////////////////////////////////////////////////////////////////////////////*/
-
 void SpatialRessection::generateInitialA()
 {
     if (myImage != NULL)
@@ -534,6 +526,11 @@ void SpatialRessection::generateInitialA()
     }
 }
 
+/* 
+ * This routine generates an "observation vector" to be used in the adjustment problem of 
+ * the A matrix generated in generateInitialA(). It contains simply all GCP terrain
+ * co-ordinates for the image in point order: X1,Y1,X2,Y2,...Xn,Yn.
+*/
 void SpatialRessection::generateInitialL0()
 {
     if (myImage != NULL)
@@ -586,10 +583,6 @@ void SpatialRessection::generateA()
         }
     }
 }
-
-/*//////////////////////////////////////////////////////////////////////////////////////////////////
-  Aqui tem codigo da PR
-  ////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 void SpatialRessection::generateL0()
 {
@@ -699,7 +692,7 @@ void SpatialRessection::generateX0()
 
 void SpatialRessection::initialize()
 {
-    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL /*&& (pointForFlightDirectionAvailable || flightDirectionAvailable)*/)
     {
         if (rt == NULL)
             rt = new RayTester(myImage);
@@ -714,63 +707,29 @@ void SpatialRessection::initialize()
 
         // Calculating X00 and Y00.
 
-        double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-        double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-
         // Warning: this Xa is NOT the one containing the EO's parameters.
         // It's just used for determining the initial X00 and Y00 and will be erased at the end of initialization.
+        // See generateInitialA(). It represents a simplified, approximate relationship between image and
+        // terrain co-ordinates good enough to determine initial approximate values.
         Matrix Xa = (A.transpose() * P * A).inverse() * A.transpose() * P * L0;
-        X00 = Xa.get(1,1) + xi0 * Xa.get(2,1) + eta0 * Xa.get(3,1);
-        Y00 = Xa.get(4,1) + xi0 * Xa.get(5,1) + eta0 * Xa.get(6,1);
+        X00 = Xa.get(1,1);
+        Y00 = Xa.get(4,1);
 
-        // Z00 comes from flight height.
 
-        // If flightHeight is the flight's height, this is correct.
-        /*
-  double mediumPointHeight = 0;
-  for (unsigned int i = 0; i < selectedPoints.size(); i++)
-   mediumPointHeight += myImage->getPoint(selectedPoints.at(i))->getObjectCoordinate().getZ();
-  mediumPointHeight /= (selectedPoints.size());
-  Z00 = myImage->getFlight()->getHeight() + mediumPointHeight;
-  */
-
-        //or
         double meanAltitude = myImage->getFlight()->getTerrain()->getMeanAltitude();
-        Z00 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + meanAltitude;
-
-        // If flightHeight is the flight's altitude, this is correct.
-        //Z00 = myImage->getFlight()->getHeight();
+        // Calculate Z00 too (flight height or scale no longer needed)
+        Z00 = meanAltitude + myImage->getSensor()->getFocalDistance() * 0.5 * (sqrt(Xa.get(2,1)*Xa.get(2,1) + Xa.get(3,1)*Xa.get(3,1)) + sqrt(Xa.get(5,1)*Xa.get(5,1) + Xa.get(6,1)*Xa.get(6,1)));
 
         // Omega0 and phi0 are initially set to 0.
         omega0 = 0;
         phi0 = 0;
 
+        // Kappa0
         if (flightDirectionAvailable)
             kappa0 = myImage->getFlightDirection();
         else
-        {
-            // Calculating kappa0.
-            DetectorSpaceCoordinate fiducialCoordinate = rt->imageToDetector(pointForFlightDirection.getCol(),pointForFlightDirection.getLin());
+            kappa0 = atan2((Xa.get(5,1)-Xa.get(3,1)),(Xa.get(2,1)+Xa.get(6,1)));
 
-            double fiducialXi = fiducialCoordinate.getXi();
-            double fiducialEta = fiducialCoordinate.getEta();
-
-            double fiducialX = Xa.get(1,1) + fiducialXi * Xa.get(2,1) + fiducialEta * Xa.get(3,1);
-            double fiducialY = Xa.get(4,1) + fiducialXi * Xa.get(5,1) + fiducialEta * Xa.get(6,1);
-
-            double deltaX = fiducialX - X00;
-            double deltaY = fiducialY - Y00;
-
-            double angle = atan(fabs(deltaY/deltaX));
-            if ((deltaX >= 0.0) && (deltaY >= 0.0))
-                kappa0 = angle;
-            if ((deltaX < 0.0) && (deltaY >= 0.0))
-                kappa0 = M_PI - angle;
-            if ((deltaX < 0.0) && (deltaY < 0.0))
-                kappa0 = M_PI + angle;
-            if ((deltaX >= 0.0) && (deltaY < 0.0))
-                kappa0 = -angle;
-        }
 
         // Setting the values to X0 and reseting Xa.
         X0.resize(6, 1);
@@ -808,7 +767,7 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
 {
     gnssConverged = false;
     insConverged = false;
-    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL && (pointForFlightDirectionAvailable || flightDirectionAvailable))
+    if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL /*&& (pointForFlightDirectionAvailable || flightDirectionAvailable)*/)
     {
         int iterations = 0;
 

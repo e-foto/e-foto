@@ -73,7 +73,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="styleSheet">
-              <string notr="true">background-image:url(:/)</string>
+              <string notr="true">background-image: url(:/image/None);</string>
              </property>
              <property name="text">
               <string/>
@@ -89,7 +89,7 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="styleSheet">
-              <string notr="true">background-image:url(:/); color:#00396e;</string>
+              <string notr="true">background-image:url(:/image/None); color:#00396e;</string>
              </property>
              <property name="locale">
               <locale language="English" country="UnitedStates"/>
@@ -120,7 +120,7 @@
              <item>
               <widget class="QLabel" name="label_4">
                <property name="styleSheet">
-                <string notr="true">background-image: url(:/);</string>
+                <string notr="true">background-image: url(:/image/None);</string>
                </property>
                <property name="text">
                 <string/>
@@ -133,7 +133,7 @@
              <item>
               <widget class="QLabel" name="label_3">
                <property name="styleSheet">
-                <string notr="true">background-image: url(:/);</string>
+                <string notr="true">background-image: url(:/image/None);</string>
                </property>
                <property name="text">
                 <string/>
@@ -199,7 +199,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">

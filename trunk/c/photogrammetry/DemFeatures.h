@@ -23,10 +23,14 @@
 #include <string>
 #include <vector>
 #include "Matrix.h"
+#include "GeoSystem.h"
 
-#ifdef unix
-#include "shapefil.h"
-#endif
+#include <ogrsf_frmts.h>
+#include <ogr_spatialref.h>
+
+//#ifdef unix
+//#include "shapefil.h"
+//#endif
 
 /**
 * class DemFeatures
@@ -85,6 +89,8 @@ private:
     int img_left_width, img_left_height, img_right_width, img_right_height;
     int loadFeatSp165(char *filename, bool append);
     // todo: solve unused parameter append
+    int createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GDALDataset *poDS);
+    bool hasFeatureClass(FeatureClass* fc);
     int exportShpFeatures(char *filename);
     int exportTxtFeatures(char *filename);
     int saveFeatSp165(char *filename/*, bool append*/);
@@ -105,9 +111,13 @@ private:
     std::vector <FeatureClass> feature_classes;
     //std::vector <DemFeatures2D> display_coords;
     Matrix polygonMap;
+    GeoSystem GRS;
+    int utmFuse;
+    bool spheroid;
 
 public:
     DemFeatures();
+    ~DemFeatures(){features.clear();}
     void createClassesFromSp165();
     int convClassFromSp165(int ft, int fc);
     int getClassIdToSp165(int new_class);
@@ -163,6 +173,9 @@ public:
     //void deleteAllFeatures2D() { display_coords.clear(); };
     std::string getFeaturesToDisplay(int mode=0);
     void setImagePairSize(int lw, int lh, int rw, int rh);
+    void setGRS(std::string _gs) { GRS = GeoSystem(_gs); }
+    void setUtmFuse(int _fuse) { utmFuse = _fuse; }
+    void setHemisphere(bool _hs) { spheroid = _hs; }
 
     /* Method into disuse:
      *

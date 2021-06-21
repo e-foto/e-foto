@@ -227,6 +227,9 @@ bool SPUserInterface_Qt::exec()
     changePair(1,2);
     featureEditorDockWidget->setFocus();
     viewer->getToolBar()->executeAction(viewer->getToolBar()->setMoveTool);
+    QImage bg(32, 32, QImage::Format_RGBA8888);
+    bg.fill(QColor(128,128,128));
+    viewer->loadBackground(bg);
     viewer->getDisplay()->updateAll();
 
     LoadingScreen::instance().close();
@@ -548,7 +551,7 @@ void SPUserInterface_Qt::refreshFeatureSelectedData()
 
 void SPUserInterface_Qt::addImagePair(char *item)
 {
-    QString text = QString::fromAscii(item);
+    QString text = QString::fromLatin1(item);
     comboBox->addItem(text);
 }
 

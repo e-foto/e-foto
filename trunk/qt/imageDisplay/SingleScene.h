@@ -16,6 +16,7 @@ class Matrix;
 
 class AbstractScene: public QObject
 {
+    Q_OBJECT
 protected:
     explicit AbstractScene(QObject* parent) : QObject(parent) {}
 

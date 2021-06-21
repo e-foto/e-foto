@@ -242,9 +242,9 @@ bool ProjectManager::saveFile(std::string filename)
 		if (myFile.is_open())
 		{
 			EDomElement xml(manager->xmlGetData());
-			//myFile << xml.indent('\t').getContent(); // O adequado é que em breve a linha a baixo possa ser substituida por esta aqui.
 			myFile << xml.removeBlankLines(true).indent('\t').getContent();
 			myFile.close();
+            saveSettings(filename.c_str());
 			return true;
 		}
         else std::cout << "Unable to open file";

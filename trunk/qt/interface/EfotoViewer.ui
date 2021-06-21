@@ -2,6 +2,12 @@
 <ui version="4.0">
  <class>EVMainWindow</class>
  <widget class="QMainWindow" name="EVMainWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +23,13 @@
    <iconset resource="../resource/resource.qrc">
     <normaloff>:/icon/WindowIcon.png</normaloff>:/icon/WindowIcon.png</iconset>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <layout class="QGridLayout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -27,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>820</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
