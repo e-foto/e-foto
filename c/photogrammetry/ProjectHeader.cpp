@@ -1,7 +1,7 @@
 /*******************************************************************************
    ProjectHeader.cpp
 *******************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -31,109 +31,29 @@ ProjectHeader::~ProjectHeader()
 {
 }
 
-void ProjectHeader::setName(std::string newName)
-{
-	name = newName;
-}
-
-void ProjectHeader::setDescription(std::string newDescription)
-{
-	description = newDescription;
-}
-
-void ProjectHeader::setFilePath(std::string newFilePath)
-{
-	filePath = newFilePath;
-}
-
-void ProjectHeader::setFileName(std::string newFileName)
-{
-	fileName = newFileName;
-}
-
-void ProjectHeader::setCreation(std::string newCreation)
-{
-	creation = newCreation;
-}
-
-void ProjectHeader::setModification(std::string newModification)
-{
-	modification = newModification;
-}
-
-void ProjectHeader::setOwner(std::string newOwner)
-{
-	owner = newOwner;
-}
-
-void ProjectHeader::setAims(std::string newAims)
-{
-	aims = newAims;
-}
-
-void ProjectHeader::setContext(std::string newContext)
-{
-	context = newContext;
-}
-
-std::string ProjectHeader::getName()
+std::string ProjectHeader::Name()
 {
 	return name;
 }
 
-std::string ProjectHeader::getDescription()
+std::string ProjectHeader::Description()
 {
 	return description;
 }
 
-std::string ProjectHeader::getFilePath()
-{
-	return filePath;
-}
-
-std::string ProjectHeader::getFileName()
-{
-	return fileName;
-}
-
-std::string ProjectHeader::getCreation()
+std::string ProjectHeader::Creation()
 {
 	return creation;
 }
 
-std::string ProjectHeader::getModification()
+std::string ProjectHeader::Modification()
 {
 	return modification;
 }
 
-std::string ProjectHeader::getOwner()
+std::string ProjectHeader::Owner()
 {
 	return owner;
-}
-
-std::string ProjectHeader::getAims()
-{
-	return aims;
-}
-
-std::string ProjectHeader::getContext()
-{
-	return context;
-}
-
-std::string ProjectHeader::objectType(void)
-{
-	return "ProjectHeader";
-}
-
-std::string ProjectHeader::objectAssociations(void)
-{
-	return "";
-}
-
-bool ProjectHeader::is(std::string s)
-{
-	return (s == "ProjectHeader" ? true : false);
 }
 
 void ProjectHeader::xmlSetData(std::string xml)

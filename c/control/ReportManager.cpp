@@ -279,11 +279,11 @@ std::string ReportManager::eprHeader()
 	ProjectHeader *cabecalho = project->header();
 	std::string txt;
 	txt = "<projectHeader>\n";
-	txt += "<name>" + cabecalho->getName() + "</name>\n";
-	txt += "<description>" + cabecalho->getDescription() + "</description>\n";
-	txt += "<creation>" + cabecalho->getCreation() + "</creation>\n";
-	txt += "<modification>" + cabecalho->getModification() + "</modification>\n";
-	txt += "<owner>" + cabecalho->getOwner() + "</owner>\n";
+    txt += "<name>" + cabecalho->Name() + "</name>\n";
+    txt += "<description>" + cabecalho->Description() + "</description>\n";
+    txt += "<creation>" + cabecalho->Creation() + "</creation>\n";
+    txt += "<modification>" + cabecalho->Modification() + "</modification>\n";
+    txt += "<owner>" + cabecalho->Owner() + "</owner>\n";
 	txt += "</projectHeader>\n";
 	return txt;
 }

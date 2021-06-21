@@ -30,7 +30,7 @@ namespace efoto {
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class ProjectHeader : public EObject
+class ProjectHeader
 {
 
 private:
@@ -52,132 +52,34 @@ public:
 	virtual ~ProjectHeader();
 
 	/**
- * \brief Método que define o nome do Projeto.
- * \return newName	Novo nome.
- */
-    void setName(std::string newName);
-
-	/**
- * \brief Método que define a descrição do Projeto.
- * \return newDescription	Nova descrição.
- */
-    void setDescription(std::string newDescription);
-
-	/**
- * \brief Método que define o caminho onde o projeto será salvo.
- * \return newFilePath	Novo caminho de arquivo.
- */
-    void setFilePath(std::string newFilePath);
-
-	/**
- * \brief Método que define o nome do arquivo que será salvo.
- * \return newFileName	Novo nome de arquivo.
- */
-    void setFileName(std::string newFileName);
-
-	/**
- * \brief Método que define a data e hora de criação do Projeto.
- * \return newCreation	Nova data de criação.
- */
-    void setCreation(std::string newCreation);
-
-	/**
- * \brief Método que define a data e hora de modificação do Projeto.
- * \return newModification	Nova data de modificação.
- */
-    void setModification(std::string newModification);
-
-	/**
- * \brief Método que define o dono do Projeto.
- * \return newOwner	Novo dono.
- */
-    void setOwner(std::string newOwner);
-
-	/**
- * \brief Método que define o objetivo do Projeto.
- * \return newAims	Novo objetivo.
- */
-    void setAims(std::string newAims);
-
-	/**
- * \brief Método que define o contexto do Projeto.
- * \return newContext	Novo contexto.
- */
-    void setContext(std::string newContext);
-
-	/**
  * \brief Método que retorna o nome do Projeto.
  * \return std::string	Nome do Projeto.
  */
-    std::string getName();
+    std::string Name();
 
 	/**
  * \brief Método que retorna a descrição do Projeto.
  * \return std::string	Descrição do Projeto.
  */
-    std::string getDescription();
-
-	/**
- * \brief Método que retorna o caminho onde o Projeto foi salvo.
- * \return std::string	Caminho onde o projeto foi salvo.
- */
-    std::string getFilePath();
-
-	/**
- * \brief Método que retorna o nome do arquivo que o Projeto foi salvo.
- * \return std::string	Nome do arquivo do projeto.
- */
-    std::string getFileName();
+    std::string Description();
 
 	/**
  * \brief Método que retorna a data e hora de criação do Projeto.
  * \return std::string	Data e hora de criação.
  */
-    std::string getCreation();
+    std::string Creation();
 
 	/**
  * \brief Método que retorna a data e hora da modificação do Projeto.
  * \return std::string	Data e hora de modificação.
  */
-    std::string getModification();
+    std::string Modification();
 
 	/**
  * \brief Método que retorna o dono do Projeto.
  * \return std::string	Dono do projeto.
  */
-    std::string getOwner();
-
-	/**
- * \brief Método que retorna o objetivo do Projeto.
- * \return std::string	Objetivo do projeto.
- */
-    std::string getAims();
-
-	/**
- * \brief Método que retorna o contexto do Projeto.
- * \return std::string	Contexto do projeto.
- */
-    std::string getContext();
-
-	/**
- * \brief Método para emitir o nome de classe.
- * \return std::string	Retorna o nome de classe do objeto.
- */
-    std::string objectType(void);
-
-	/**
- * \brief Método para emitir as associações de uma instância.
- * \return std::string	Retorna vazio para esta classe.
- * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
- */
-    std::string objectAssociations(void);
-
-	/**
- * \brief Método de teste para o nome/tipo de instância.
- * \param s	Texto com o nome da classe que é esperado.
- * \return bool	Retorna verdadeiro caso o nome passado seja ProjectHeader. Retorna falso no caso contrário.
- */
-    bool is(std::string s);
+    std::string Owner();
 
 	/**
  * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
