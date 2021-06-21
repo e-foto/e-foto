@@ -101,6 +101,8 @@ public:
     void addImagePair(char *);
     void showErrorMessage(QString msg);
 
+//private slots:
+//    void on_StereoPlotterForm_iconSizeChanged(const QSize &iconSize);
 };
 
 class AddDialog : public QDialog

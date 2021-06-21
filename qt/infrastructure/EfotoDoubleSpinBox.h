@@ -20,6 +20,7 @@ namespace efoto {
 class EfotoDoubleSpinBox: public QDoubleSpinBox
 {
 
+    Q_OBJECT
 public:
 
 	/**

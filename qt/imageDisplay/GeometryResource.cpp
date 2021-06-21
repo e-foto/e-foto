@@ -568,6 +568,8 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
         if (dfs->selectedFeature() == i+1)
             continue;
         DemFeature* df = dfs->getFeatureLink(i+1);
+        if (df == NULL)
+            return result;
         QVector<QPointF> poly;
         for (unsigned int j = 0; j < df->points.size(); j++)
         {

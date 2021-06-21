@@ -6,6 +6,7 @@
 
 class AboutForm: public QDialog, public Ui::AboutForm
 {
+    Q_OBJECT
 public:
     AboutForm();
 };

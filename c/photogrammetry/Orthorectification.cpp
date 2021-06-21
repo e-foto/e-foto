@@ -40,7 +40,7 @@ Orthorectification::Orthorectification(double _Xi,
     no_bands(1),
     coord_system(0),
     spheroid(0),
-    datum(SAD69)
+    datum(WGS84)
 {
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
@@ -181,7 +181,7 @@ void Orthorectification::saveOrthoEfoto(char * filename) const
 
     fclose(fp);
 
-    delete data;
+    delete[] data;
 }
 
 void Orthorectification::loadOrthoEfoto(char * filename)
@@ -285,7 +285,6 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 
     // O sinal eixo Y precisa ser invertido quando gravamos o Geotiff
     double adfGeoTransform[6] = { Xi, res_x, 0, Yf, 0, -res_y };
-    OGRSpatialReference oSRS;
     char *pszSRS_WKT = nullptr;
     GDALRasterBand **poBand = new GDALRasterBand*[no_bands] ;
 
@@ -295,29 +294,37 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 
     poDstDS->SetGeoTransform( adfGeoTransform );
 
-    //bool sph = (spheroid==1)  ? TRUE : FALSE;
-    oSRS.SetUTM( utmFuse, spheroid);//TRUE: hemisfério norte -- FALSE: hemisfério sul
-
-    //well known name accepted by SetWellKnownGeogCS(), such as NAD27, NAD83, WGS84 or WGS72.
-    //OGRErr OGRSpatialReference::SetFromUserInput 	( 	const char *  	pszDefinition 	 )  -->>Verificar documentação
+    // Definindo o sistema de referência espacial
+    // Caution!
+    // At this time the above order is important in order to create a valid definition, but in the future the object will automatically reorder the internal representation as needed to remain valid.
+    OGRSpatialReference oSRS;
+    char hemisphere = spheroid?'N':'S'; //The OGR convention
+    char proj[50];
     switch (datum) {
-    case SAD69:
-        //oSRS.SetWellKnownGeogCS( "SAD69" );
-        oSRS.importFromEPSG(4618);
-        break;
+
     case WGS84:
+        sprintf( proj, "WGS84 / UTM zone %d%c.", utmFuse, hemisphere);
+        oSRS.SetProjCS( (const char*) proj );
         oSRS.SetWellKnownGeogCS( "WGS84" );
         break;
     case SIRGAS2000:
-        //oSRS.SetWellKnownGeogCS( "SIRGAS2000" );
-        //Scope: Geodetic survey.
-        oSRS.importFromEPSG(4989);
+        sprintf( proj, "SIRGAS 2000 / UTM zone %d%c.", utmFuse, hemisphere);
+        oSRS.SetProjCS( (const char*) proj );
+        oSRS.SetWellKnownGeogCS( "GRS70" );
+        break;
+    case SAD69:
+        sprintf( proj, "SAD69 / UTM zone %d%c.", utmFuse, hemisphere);
+        oSRS.SetProjCS( (const char*) proj );
+        oSRS.SetWellKnownGeogCS( "GRS67" );
         break;
     default:
-        oSRS.SetWellKnownGeogCS( "WGS84" );
+        sprintf( proj, "CORREGO ALEGRE 1961 / UTM zone %d%c.", utmFuse, hemisphere);
+        oSRS.SetProjCS( (const char*) proj );
+        oSRS.SetWellKnownGeogCS( "INTL" );
         break;
     }
 
+    oSRS.SetUTM( utmFuse, spheroid);
 
     oSRS.exportToWkt( &pszSRS_WKT );
     poDstDS->SetProjection( pszSRS_WKT );

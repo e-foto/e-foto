@@ -27,12 +27,6 @@
 
 #include "MatchingPoints.h"
 
-//#include <math.h>
-
-#include "ogrsf_frmts.h"
-#include <gdal_priv.h>
-#include <ogr_spatialref.h>
-
 #include <iomanip>
 #include <sstream>
 #include <fstream>
@@ -175,6 +169,183 @@ int DemFeatures::exportTxtFeatures(char *filename)
     return 1;
 }
 
+void clearShpFeatures(std::deque<OGRFeature*> &shpFeatures)
+{
+    for (unsigned i = 0; i < shpFeatures.size(); i++)
+        OGRFeature::DestroyFeature( shpFeatures.at(i) );
+}
+
+bool DemFeatures::hasFeatureClass(FeatureClass* fc)
+{
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+        if ( getFeatureClass(features.at(i).feature_class)  == fc )
+            return true;
+    }
+    return false;
+}
+
+int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GDALDataset* poDS)
+{
+    // Concatenamos o nome de arquivo proposto com o nome de classe
+    //std::string current_filename = std::string(filename);
+    //current_filename.append("_").append(fc->name);
+
+    // Definimos o tipo de feições OGR para a classe que será gravada
+    OGRwkbGeometryType nShapeType;
+    switch (fc->type)
+    {
+        // It would be preferable to use wkt[TheGeomType]Z (with integer values ​​1001, 1002 and 1003 for pointz, linestringz and polygons respective types),
+        // but in the development version of GDAL/OGR this was not found!
+        case 1: nShapeType = wkbPoint25D; break;
+        case 2: nShapeType = wkbLineString25D; break;
+        case 3: nShapeType = wkbPolygon25D; break;
+        default: nShapeType = wkbMultiPoint25D;
+    }
+
+    // Criamos a shapefile (camada OGR) com o nome da classe
+    OGRLayer* poLayer = poDS->CreateLayer( fc->name.c_str(), oSRS, nShapeType, nullptr );
+    if( poLayer == nullptr )
+    {
+        printf( "Layer creation failed.\n" );
+        return 0;
+    }
+
+    // Adicionamos uma definiçao de campo na camada para o nome das feições
+    OGRFieldDefn oField( "Name", OFTString );
+    oField.SetWidth(254);
+    if( poLayer->CreateField( &oField ) != OGRERR_NONE )
+    {
+        printf( "Creating Name field failed.\n" );
+        return 0;
+    }
+
+    // Para cada uma das feições em memória
+    DemFeature df;
+    for (unsigned int i=0; i<features.size(); i++)
+    {
+        // Se a feição pertence a classe
+        if ( getFeatureClass(features.at(i).feature_class)  == fc )
+        {
+            // Contabilizamos o número de vértices da feição
+            df = features.at(i);
+            unsigned int nVertices = df.points.size();
+            if (fc->type == 3) nVertices++;
+
+            // Recuperamos os vértices da feição
+            double* padfX = (double *) malloc(sizeof(double) * nVertices);
+            double* padfY = (double *) malloc(sizeof(double) * nVertices);
+            double* padfZ = (double *) malloc(sizeof(double) * nVertices);
+            for (unsigned int j=0; j<nVertices; j++)
+            {
+                DemFeaturePoints dfp;
+                if (j != df.points.size())
+                    dfp = df.points.at(j);
+                else
+                    dfp = df.points.at(0);
+                padfX[j] = dfp.X;
+                padfY[j] = dfp.Y;
+                padfZ[j] = dfp.Z;
+            }
+
+            // Criamos geometria OGR relacionada ao tipo de feição
+            OGRGeometry* geom;
+            switch (fc->type) {
+                case 1: {OGRPoint pt;
+                         pt.setX(padfX[0]);
+                         pt.setY(padfY[0]);
+                         pt.setZ(padfZ[0]);
+                         geom = new OGRPoint(pt);
+                         break;
+                        }
+                case 2: {OGRLineString ls;
+                         ls.setNumPoints(nVertices, false);
+                         ls.setPoints(nVertices, padfX, padfY, padfZ);
+                         geom = new OGRLineString(ls);
+                         break;
+                        }
+                case 3: {OGRLinearRing* lr = new OGRLinearRing;
+                         lr->setPoints(nVertices, padfX, padfY, padfZ);
+                         OGRPolygon pg;
+                         pg.addRing(lr);
+                         geom = new OGRPolygon(pg);
+                         break;
+                        }
+                default:{OGRMultiPoint mp;
+                         for (unsigned int j=0; j<nVertices; j++)
+                             mp.addGeometry(new OGRPoint(padfX[j], padfY[j], padfZ[j]));
+                         geom = new OGRMultiPoint(mp);
+                        }
+            };
+
+            // Criamos a feição OGR
+            OGRFeature *poFeature = OGRFeature::CreateFeature( poLayer->GetLayerDefn() );
+            poFeature->SetField( "Name", df.name.c_str() );
+            poFeature->SetGeometryDirectly( geom );                          // Isso transfere a posse da geometria para a feição
+
+            // Adicionamos a feição OGR a camada
+            OGRErr addFeatureError = poLayer->CreateFeature( poFeature );
+
+            //Liberamos a memória
+            OGRFeature::DestroyFeature( poFeature );                        // Isso libera a memória usada pela feição e sua geometria
+            free( padfX );
+            free( padfY );
+            free( padfZ );
+
+            // Se alguma feiçao não puder ser gravada, paramos o processo
+            if (addFeatureError  != OGRERR_NONE)
+            {
+                printf( "Failed to create feature in shapefile.\n" );
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+int DemFeatures::exportShpFeatures(char *filename)
+{
+    // Retornamos se não houverem feições para salvar
+    if (features.size() == 0)
+        return 1;
+
+    // Recuperamos o driver
+    const char *pszDriverName = "ESRI Shapefile";
+    GDALDriver *poDriver;
+    GDALAllRegister();
+    poDriver = GetGDALDriverManager()->GetDriverByName(pszDriverName );
+    if( poDriver == nullptr )
+    {
+        printf( "%s driver not available.\n", pszDriverName );
+        return 0;
+    }
+
+    // Criamos o diretório com o nome base fornecido
+    GDALDataset *poDS = poDriver->Create( filename, 0, 0, 0, GDT_Unknown, nullptr );
+    if( poDS == nullptr )
+    {
+        printf( "Creation of output filepath failed.\n" );
+        return 0;
+    }
+
+    // Recuperamos o sistema de referência
+    OGRSpatialReference oSRS;
+    oSRS.importFromEPSG( GRS.getEPSG(utmFuse, spheroid) );
+
+    // Para cada classe de feição
+    for (unsigned int i = 1; i <= feature_classes.size(); i++)
+    {
+        // Se há ao menos uma feição pertencente a classe
+        if ( hasFeatureClass( getFeatureClass(i) ) )
+        {
+            // Criamos um shapefile para a classe
+            createShapefile(getFeatureClass(i), &oSRS, poDS);
+        }
+    }
+    return 1;
+}
+
+/*
 int DemFeatures::exportShpFeatures(char *filename)
 {
     // Retorna se não houverem feições para salvar
@@ -306,6 +477,7 @@ int DemFeatures::exportShpFeatures(char *filename)
 
     return 0;
 }
+*/
 
 int DemFeatures::saveFeatSp165(char *filename)
 {

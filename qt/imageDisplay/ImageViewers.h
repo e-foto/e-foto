@@ -47,7 +47,7 @@ class SingleViewer : public QMainWindow, public Ui::EVMainWindow
 	void closeEvent(QCloseEvent *);
 
 public:
-    explicit SingleViewer(QWidget *parent=0);
+    explicit SingleViewer(QWidget *parent=nullptr);
 	SingleDisplay* getDisplay() {return sd;}
     MarkTool* getMarker();
 
@@ -112,6 +112,7 @@ public:
 	StereoToolsBar* getToolBar() {return stereoTool;}
 
 public slots:
+    void loadBackground(QImage image);
 	void loadLeftImage(QString filename);
 	void loadRightImage(QString filename);
 	void loadLeftImage(QImage* image);

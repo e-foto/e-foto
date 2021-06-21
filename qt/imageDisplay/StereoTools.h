@@ -65,8 +65,9 @@ protected:
     double _scale;
     bool _hasButtomPressed;
 
-    QImage _currentCursor;
+    bool _lastMode;
     QImage _lastCursor;
+    QImage _currentCursor;
     QDoubleSpinBox* _scaleSpin;
     QLabel* _leftPosLabel;
     QLabel* _rightPosLabel;
@@ -79,6 +80,7 @@ signals:
 
 class ZoomStereoTool : public StereoTool
 {
+    Q_OBJECT
     bool _onRubberBand;
 public:
     explicit ZoomStereoTool(StereoDisplay* display);
@@ -96,6 +98,7 @@ public:
 
 class MoveStereoTool : public StereoTool
 {
+    Q_OBJECT
 public:
     explicit MoveStereoTool(StereoDisplay* display);
     ~MoveStereoTool();
@@ -152,6 +155,7 @@ signals:
 
 class NearStereoTool : public StereoTool
 {
+    Q_OBJECT
     QDockWidget* _nearDock;
     SingleDisplay* _leftNear;
     SingleDisplay* _rightNear;
@@ -186,6 +190,7 @@ public:
 
 class OverStereoTool : public StereoTool
 {
+    Q_OBJECT
     QDockWidget* _overDock;
     SingleDisplay* _leftOver;
     SingleDisplay* _rightOver;

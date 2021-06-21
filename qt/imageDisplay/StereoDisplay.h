@@ -1,6 +1,7 @@
 #ifndef STEREODISPLAY_H
 #define STEREODISPLAY_H
 
+#include <utility>
 #include <QGLWidget>
 #include <QGridLayout>
 
@@ -13,65 +14,7 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-class StereoDisplay;
-
-class GLDisplay : public QGLWidget
-{
-protected:
-    StereoDisplay* stereoDisplay_;
-    unsigned int ltexture;
-    unsigned int rtexture;
-    unsigned int ctexture;
-    unsigned int btexture;
-    QImage ltext;
-    QImage rtext;
-    QList< StereoTool* > _tool;
-
-    QPointF _mouseScreenPos;
-    QImage _cursor;
-    bool _onPainting;
-    bool stereo_mode;
-
-    // Anagliph filter
-    bool L_Red, L_Green, L_Blue;
-    bool R_Red, R_Green, R_Blue;
-    bool reverseLensGlasses;
-
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-    void paintEvent(QPaintEvent *e);
-    void resizeEvent(QResizeEvent *);
-    bool eventFilter(QObject *o, QEvent *e);
-    void enterEvent(QHoverEvent *e);
-    void leaveEvent(QHoverEvent *e);
-    void moveEvent(QHoverEvent *e);
-    void mousePressEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void mouseDoubleClickEvent(QMouseEvent *e);
-    void wheelEvent(QWheelEvent *e);
-
-public:
-    GLDisplay(StereoDisplay* parent);
-    ~GLDisplay();
-
-    bool _GLDisplayUpdate;
-
-    void updateMousePosition();
-    QPointF getMouseScreenPosition();
-    void setGLCursor(QImage cursor);
-    QImage getGLCursor();
-    void setGLBackground(QImage bg);
-    void setReverseLensGlasses(bool opt);
-    void setColorMaskLeft(bool r, bool g, bool b);
-    void setColorMaskRight(bool r, bool g, bool b);
-    int setStereoMode(bool mode);
-
-    bool painting();
-
-    void setActivatedTool(StereoTool* tool, bool active = true);
-};
+class GLDisplay;
 
 class StereoDisplay : public QWidget
 {
@@ -89,6 +32,8 @@ protected:
     QPointF _centerOnLeft;
     QPointF _centerOnRight;
     double _fitScale;
+    //void focusInEvent(QFocusEvent *event) override;
+    //void focusOutEvent(QFocusEvent *event) override;
 
 public:
     explicit StereoDisplay(QWidget * parent, StereoScene* currentScene = NULL);
@@ -103,6 +48,7 @@ public:
     SingleDisplay* getRightNearDisplay();
     GLDisplay* getRealDisplay();
 
+    void loadBackground(QImage image);
     void loadLeftImage(QString filename);
     void loadRightImage(QString filename);
     void loadLeftImage(QImage* image);
@@ -136,7 +82,7 @@ public:
     */
     virtual void zoom(double zoomFactor/*, QPoint* atPoint = NULL*/);
 
-    void updateAll();
+    void updateAll(std::pair<bool, bool> scene = std::pair<bool, bool>(true,true));
     void updateAll(QPointF* left, QPointF* right, bool emitClicked = false);
     void updateDetail(QPointF* left, QPointF* right, bool emitClicked = false);
 

@@ -27,7 +27,7 @@
 #include "FlightDirectionForm.h"
 
 #include <qapplication.h>
-#include <QtGui>
+#include <QtWidgets>
 #include <QMessageBox>
 #include <QCheckBox>
 

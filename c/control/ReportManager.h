@@ -196,6 +196,12 @@ public:
     * \return bool Retorna se o arquivo XSL foi criado com sucesso.
     */
     bool makeXslt(int idExt, std::string path);
+    /**
+    * \brief Metodo que cria o arquivo CSS para atribuir estilo ao relatorio.
+    * \param path Caminho para salvar o arquivo.
+    * \return bool Retorna se o arquivo CSS foi criado com sucesso.
+    */
+    bool makeCss(std::string path);
 
     /**
     * \brief Metodo que gera thumbnail de imagens.

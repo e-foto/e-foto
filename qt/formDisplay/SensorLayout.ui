@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>738</width>
-    <height>1904</height>
+    <height>2463</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,7 +67,16 @@ p, li { white-space: pre-wrap; }
          <property name="labelAlignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -270,6 +279,9 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Energy Source&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -713,7 +725,7 @@ p, li { white-space: pre-wrap; }
                      <enum>QAbstractSpinBox::NoButtons</enum>
                     </property>
                     <property name="specialValueText">
-                     <string> </string>
+                     <string/>
                     </property>
                     <property name="accelerated">
                      <bool>true</bool>
@@ -774,7 +786,7 @@ p, li { white-space: pre-wrap; }
                      <enum>QAbstractSpinBox::NoButtons</enum>
                     </property>
                     <property name="specialValueText">
-                     <string> </string>
+                     <string/>
                     </property>
                     <property name="accelerated">
                      <bool>true</bool>
@@ -815,7 +827,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QGroupBox" name="groupBox_4">
            <property name="title">
-            <string>Distorcion Coefficients</string>
+            <string>Distortion Coefficients</string>
            </property>
            <property name="checkable">
             <bool>false</bool>

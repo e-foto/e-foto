@@ -142,6 +142,11 @@ public:
   */
     std::string getSystemName();
 
+    /**
+     * @brief getEPSG
+     * @return int : Valor tabelado
+     */
+    int getEPSG(int fuse, bool hemisphere);
 
 };
 
