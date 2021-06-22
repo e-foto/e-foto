@@ -36,6 +36,7 @@ HEADERS += c/control/DEMManager.h \
 		   c/imageProcessing/RadiometricTransformation.h \
 		   c/infrastructure/AbstractDetectorCoordinate.h \
 		   c/infrastructure/AbstractImageCoordinate.h \
+		   c/infrastructure/CommonDef.h \
 		   c/infrastructure/ConvertionsSystems.h \
 		   c/infrastructure/Coordinate.h \
 		   c/infrastructure/Dms.h \
