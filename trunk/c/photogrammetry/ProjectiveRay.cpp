@@ -28,8 +28,6 @@
 #include "Terrain.h"
 #include "Flight.h"
 
-//#include <math.h>
-
 #include <string>
 #include <exception>
 

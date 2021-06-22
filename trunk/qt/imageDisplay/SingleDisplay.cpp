@@ -24,8 +24,6 @@
 #include <QTransform>
 #include <QResizeEvent>
 
-//#include <math.h>
-
 namespace br {
 namespace uerj {
 namespace eng {

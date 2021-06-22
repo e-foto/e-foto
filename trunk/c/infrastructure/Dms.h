@@ -19,7 +19,6 @@
 
 #include "CommonDef.h"
 
-#include <cmath>
 #include <string>
 
 namespace br {

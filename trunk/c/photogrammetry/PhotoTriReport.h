@@ -19,7 +19,9 @@ PhotoTriReport
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <Matrix.h>
+
+#include "CommonDef.h"
+#include "Matrix.h"
 
 namespace br {
 namespace uerj {

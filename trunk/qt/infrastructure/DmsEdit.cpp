@@ -1,8 +1,6 @@
 #include "DmsEdit.h"
 
 #include "EDom.h"
-//#include <QDebug>
-//#include <math.h>
 
 namespace br {
 namespace uerj {

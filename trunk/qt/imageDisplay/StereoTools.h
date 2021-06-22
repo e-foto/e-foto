@@ -2,6 +2,7 @@
 #define STEREOTOOLS_H
 
 #include "CommonDef.h"
+#include "SingleTools.h"
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -14,8 +15,6 @@
 #include <QTimer>
 #include <QLabel>
 #include <QObject>
-
-#include "SingleTools.h"
 
 namespace br {
 namespace uerj {

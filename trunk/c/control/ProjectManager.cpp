@@ -33,7 +33,6 @@ ProjectManager.cpp
 #include <sstream>
 #include <fstream>
 #include <iostream>
-//#include <math.h>
 
 // Constructors and Destructor
 //

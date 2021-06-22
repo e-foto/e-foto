@@ -15,20 +15,9 @@
   along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "ConvertionsSystems.h"
 
-#include <cmath>
-
 #include <stdlib.h>
-
 
 namespace br {
 namespace uerj {
