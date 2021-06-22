@@ -582,23 +582,14 @@ void GLDisplay::setReverseLensGlasses(bool opt)
 
 bool GLDisplay::setStereoMode(bool mode)
 {
-    //stereoMode = mode;
-    //
-    //QGLFormat fmt;
-    //fmt.setAlpha(true);
-    //fmt.setStereo(stereoMode);
-    ////fmt.setDoubleBuffer(true);
-    ////fmt.setSampleBuffers(true);
-    //QSurfaceFormat::setDefaultFormat(QGLFormat::toSurfaceFormat(fmt));
-    //
-    //// Test if available
-    //if ((stereoMode) && (!format().stereo()))
-    //{
-    //    return stereoMode = false;
-    //}
-    //
-    //update();
-    return true;
+    /// \todo <This method has been forced to return false until we have the
+    ///        necessary hardware to test the implementation with active stereo
+    ///        mode, that is, its correction and testing requires an active
+    ///        polarizated glasses, a 120 Hz monitor, and a quad-buffered video
+    ///        card. SPUserInterface_Qt::onStereoModeChanged() uses this method
+    ///        and should be updated when a solution is feasible.>
+    Q_UNUSED(mode)
+    return stereoMode = false;
 }
 
 void GLDisplay::setColorMaskLeft(bool r, bool g, bool b)

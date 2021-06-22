@@ -306,11 +306,19 @@ void SPUserInterface_Qt::updateClass(int feat_type)
 
 void SPUserInterface_Qt::onStereoModeChanged(int option)
 {
-    if (!viewer->getDisplay()->setStereoMode((bool)option))
+    auto display = viewer->getDisplay();
+    if (comboBox_2->isEnabled() && !display->setStereoMode((bool)option))
     {
-        QMessageBox::critical(this,"Error","Your system does not support polarized stereo.");
-        comboBox_2->setCurrentIndex(0);
+        // The default message has been preserved as a comment until it is
+        // possible to complete the maintenance of this feature.
+        // QMessageBox::critical(this,tr("Error"),tr("Your system does not "
+        //                                        "support polarized stereo."));
+        QMessageBox::critical(this,tr("Error"),tr("This feature is under "
+                                                  "maintenance, check the "
+                                                  "setStereoMode method of "
+                                                  "GLDisplay.cpp"));
         comboBox_2->setEnabled(false);
+        comboBox_2->setCurrentIndex(0);
     }
 }
 
