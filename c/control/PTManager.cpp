@@ -221,14 +221,8 @@ bool PTManager::calculatePT()
 
 	pt = new BundleAdjustment(listSelectedImages,listSelectedPoints);
 
-	//qDebug("UTM:\n%s",pt->printAll().c_str());
-
-if (localTopocentricMode)
-	convertToNunes(listSelectedPoints,getTerrainDatum(),getTerrainLatHemisphere(),getTerrainZone());
-
-	//qDebug("NUNES:\n%s",pt->printAll().c_str());
-	//convertToUTM(listSelectedPoints,SAD69);
-	//qDebug("UTM:\n%s",pt->printAll().c_str());
+	if (localTopocentricMode)
+	  convertToNunes(listSelectedPoints,getTerrainDatum(),getTerrainLatHemisphere(),getTerrainZone());
 
 	pt->setMaxNumberIterations(maxIterations);
 	pt->setMetricConvergencyValue(metricConvergency);

@@ -153,37 +153,17 @@ void ETableWidget::resizeTable()
 	int widlinhas=lineWidth()*(columnCount()-1);
 	int heilinhas=lineWidth()*(rowCount()-1);
 
-	resizeRowsToContents();   //novo
-	resizeColumnsToContents();//novo
+	resizeRowsToContents();
+	resizeColumnsToContents();
 
 	if (columnCount()==1)
 		setBaseSize(columnWidth(0)+widlinhas+verticalHeader()->width()+15,rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
 	else
 		setBaseSize(columnCount()*columnWidth(0)+widlinhas+verticalHeader()->width(),rowCount()*rowHeight(0)+heilinhas+horizontalHeader()->height());
 
-		resizeRowsToContents();   //novo
-		resizeColumnsToContents();//novo
-	/*
-	int widthSection=this->width()/columnCount();
-	qDebug("widthSection: %d",widthSection);
-	this->horizontalHeader()->setMinimumSectionSize(widthSection);*/
+	resizeRowsToContents();
+	resizeColumnsToContents();
 }
-
-/*
-void ETableWidget::setVerticalHeadersLabelsHtml(QStringList list)
-{
-		verticalHeader()->setVisible(false);
-		setColumnCount(columnCount()+1);
-
-		for (int i=0; i<list.size(); i++)
-		{
-				QLabel *lab=new QLabel(list.at(i));
-				lab->setAlignment(Qt::AlignCenter);
-				setCellWidget(i,1,lab);
-
-		}
-		resizeTable();
-}*/
 
 void ETableWidget::autoCopy()
 {
@@ -192,11 +172,7 @@ void ETableWidget::autoCopy()
 	{
 				int rows=selectedRanges().at(0).rowCount();
 				int cols=selectedRanges().at(0).columnCount();
-				/*qDebug("rows: %d cols: %d",rows,cols);
 
-				for (int i=0;i<selectedItems().size();i++)
-						qDebug("%s",selectedItems().at(i)->text().toStdString().c_str());
-*/
 				for (int i=0;i<rows;i++)
 		{
 			for (int j=0;j<cols;j++)

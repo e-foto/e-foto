@@ -261,13 +261,14 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
         }
 
         // If max iterations achieved, report bad result
-        if (it >= max_iterations - 1 && (t.get(1,1) > over_it_distance || t.get(4,1) > over_it_distance || ~(over_it)))
+        if (it >= max_iterations - 1 && (t.get(1,1) > over_it_distance
+                                         || t.get(4,1) > over_it_distance
+                                         || !over_it))
         {
             template_width = ori_template_width;
             template_height = ori_template_height;
             return -3;
         }
-        //printf("New center: %f, %f\n",NMx,NMy);
     }
 
     //

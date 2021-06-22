@@ -468,8 +468,8 @@ void DEMManager::setCancel()
     if (im != NULL)
         im->setCancel();
 
-        if (grid != NULL)
-                grid->setCancel();
+    if (grid != NULL)
+        grid->setCancel();
 }
 
 void DEMManager::updateBoundingBox(double Xi, double Yi, double Xf, double Yf)

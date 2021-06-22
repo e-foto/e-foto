@@ -60,10 +60,10 @@ FrameSensor::FrameSensor(const Sensor& sensor):Sensor(sensor)
 	//*this = sensor;
 }
 
-FrameSensor::FrameSensor(const FrameSensor& sensor):Sensor(sensor)
-{
-	*this = sensor;
-}
+//FrameSensor::FrameSensor(const FrameSensor& sensor):Sensor(sensor)
+//{
+//	*this = sensor;
+//}
 
 FrameSensor::FrameSensor(int myId):Sensor(myId)
 {
@@ -110,9 +110,6 @@ DetectorSpaceCoordinate FrameSensor::getPrincipalPointCoordinates()
 	return principalPointCoordinates;
 }
 
-// Associated object accessor methods
-//
-
 std::deque<RadialSymmetricDistortionCoefficient> FrameSensor::getRadialSymmetricCoefficients()
 {
 	return rsCoefficients;
@@ -122,9 +119,6 @@ std::deque<DecenteredDistortionCoefficient> FrameSensor::getDecenteredCoefficien
 {
 	return dCoefficients;
 }
-
-// EObject methods
-//
 
 std::string FrameSensor::objectType(void)
 {

@@ -69,7 +69,6 @@ void WindowsSelectPage::addAllItems()
 
 void WindowsSelectPage::addSelectedItem()
 {
-	QModelIndex currentPosition = uncheckedListView->currentIndex();
 	if (uncheckedListView->currentIndex().isValid())
 	{
 		QModelIndex selectedItem = uncheckedListView->currentIndex();
@@ -85,7 +84,6 @@ void WindowsSelectPage::addSelectedItem()
 
 void WindowsSelectPage::removeSelectedItem()
 {
-	QModelIndex currentPosition = checkedListView->currentIndex();
 	if (checkedListView->currentIndex().isValid())
 	{
 		QModelIndex selectedItem = checkedListView->currentIndex();
