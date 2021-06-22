@@ -3,7 +3,7 @@
 /************************************************************************
 	  EOQuality.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -42,47 +42,32 @@ class SpatialRessection;
   *
   */
 
-class EOQuality : public EObject
-{
-	//EOBJECT
+class EOQuality : public EObject {
 
 private:
-
-
-	// Private attributes
-	//
-	Matrix V;
-	double sigma0Squared;
-	Matrix SigmaXa;
-	Matrix SigmaLa;
+    Matrix V;
+    double sigma0Squared;
+    Matrix SigmaXa;
+    Matrix SigmaLa;
 
 public:
+    virtual ~EOQuality();
 
-	// Constructors and Destructor
-	//
-	virtual ~EOQuality();
+    Matrix getV();
+    double getsigma0Squared();
+    Matrix getSigmaXa();
+    Matrix getSigmaLa();
 
-	// Private attribute accessors
-	//
-	Matrix getV();
-	double getsigma0Squared();
-	Matrix getSigmaXa();
-	Matrix getSigmaLa();
-
-	// EObject methods
-	//
     std::string objectType(void);
     std::string objectAssociations(void);
     bool is(std::string s);
 
-	// XML methods
-	//
+    // XML methods
+    //
     void xmlSetData(std::string xml);
     std::string xmlGetData();
 
-	// Other methods
-	//
-	void calculate(SpatialRessection* myEO);
+    void calculate(SpatialRessection* myEO);
 
 };
 
