@@ -17,8 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "LeastSquaresMatching.h"
-#include <math.h>
 
 namespace br {
 namespace uerj {

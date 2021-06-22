@@ -1,8 +1,6 @@
 #include "SingleTools.h"
 #include "SingleDisplay.h"
 
-#include <cmath>
-
 #include <QFileDialog>
 #include <QApplication>
 

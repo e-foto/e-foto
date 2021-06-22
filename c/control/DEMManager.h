@@ -21,6 +21,7 @@ DEMManager.h
 #ifndef DEMMANAGER_H
 #define DEMMANAGER_H
 
+#include "CommonDef.h"
 #include "StereoPair.h"
 #include "MatchingPoints.h"
 

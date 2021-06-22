@@ -25,7 +25,6 @@
 
 #include "SRManager.h"
 #include "ETableWidget.h"
-//#include <math.h>
 
 #include <QPushButton>
 #include <QInputDialog>

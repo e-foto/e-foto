@@ -20,17 +20,15 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-#include <vector>
+#include "CommonDef.h"
 #include "Matrix.h"
 #include "GeoSystem.h"
 
+#include <string>
+#include <vector>
+
 #include <ogrsf_frmts.h>
 #include <ogr_spatialref.h>
-
-//#ifdef unix
-//#include "shapefil.h"
-//#endif
 
 /**
 * class DemFeatures

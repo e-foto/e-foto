@@ -1,6 +1,8 @@
 #ifndef RASTERRESOURCE_H
 #define RASTERRESOURCE_H
 
+#include "CommonDef.h"
+
 #include <QString>
 #include <QImage>
 #include <QColor>

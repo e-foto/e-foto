@@ -17,8 +17,9 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
 #include "CommonDef.h"
+
+#include <string>
 
 namespace br {
 namespace uerj {

@@ -20,8 +20,6 @@
 
 #include "DemFeatures.h"
 
-//#include <math.h>
-
 namespace br {
 namespace uerj {
 namespace eng {

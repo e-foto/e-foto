@@ -15,8 +15,6 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
-
 #include "StereoTools.h"
 #include "GLDisplay.h"
 #include "StereoDisplay.h"

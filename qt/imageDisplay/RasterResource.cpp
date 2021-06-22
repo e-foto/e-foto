@@ -1,8 +1,6 @@
 #include "RasterResource.h"
-#include "math.h"
 
 #include <QMessageBox>
-#include <QDebug>
 
 RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmoothOut)
 {

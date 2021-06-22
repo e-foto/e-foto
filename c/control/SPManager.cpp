@@ -19,14 +19,6 @@
 SPManager.cpp
 **************************************************************************/
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "SPManager.h"
 #include "EFotoManager.h"
 #include "SPUserInterface_Qt.h"

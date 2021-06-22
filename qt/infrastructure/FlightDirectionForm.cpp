@@ -1,7 +1,5 @@
 
 #include "CommonDef.h"
-#include <cmath>
-
 #include "FlightDirectionForm.h"
 
 namespace br {

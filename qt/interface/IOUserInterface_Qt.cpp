@@ -29,7 +29,6 @@
 #include <qaction.h>
 #include <qstring.h>
 #include "IOManager.h"
-//#include <math.h>
 
 #include "ETableWidget.h"
 
