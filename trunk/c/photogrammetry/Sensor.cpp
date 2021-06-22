@@ -34,10 +34,10 @@ Sensor::Sensor()
 
 }
 
-Sensor::Sensor(const Sensor& sensor)
-{
-	*this = sensor;
-}
+//Sensor::Sensor(const Sensor& sensor)
+//{
+//	*this = sensor;
+//}
 
 Sensor::Sensor(int myId)
 {

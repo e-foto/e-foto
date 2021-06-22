@@ -253,6 +253,17 @@ Matrix * Orthorectification::getOrthoImage()
     return img;
 }
 
+/**
+ * Wrapping your function call with ignore_result makes it more clear to
+ * readers, compilers and linters that you are, in fact, ignoring the
+ * function's return value on purpose.
+ * https://stackoverflow.com/a/30099727
+ */
+static inline void ignore_result(long long int unused_result) {
+    (void) unused_result;
+}
+
+
 void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
 {
     GDALAllRegister();
@@ -390,9 +401,9 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     }
 
         //Acertar RasterIO(...)
-    poBand[0]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterBlue.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
-    poBand[1]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterGreen.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
-    poBand[2]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterRed.get(), ortho_width, ortho_height,GDT_Byte, 0, 0);
+    ignore_result(poBand[0]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterBlue.get(), ortho_width, ortho_height,GDT_Byte, 0, 0));
+    ignore_result(poBand[1]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterGreen.get(), ortho_width, ortho_height,GDT_Byte, 0, 0));
+    ignore_result(poBand[2]->RasterIO(GF_Write, 0, 0, ortho_width, ortho_height,abyRasterRed.get(), ortho_width, ortho_height,GDT_Byte, 0, 0));
 
     if(poDstDS!=NULL)
         GDALClose(poDstDS);

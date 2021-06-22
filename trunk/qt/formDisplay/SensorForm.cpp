@@ -144,7 +144,7 @@ void SensorForm::fillvalues(std::string values)
         cameraExpirationDateEdit->setDate(QDate::fromString(QString::fromUtf8(ede.elementByTagName("expiration").toString().c_str()),Qt::ISODate));
     if (ede.elementByTagName("value").getContent() != "")
         calibratedFocalDistanceDoubleSpin->setValue(QString::fromUtf8(ede.elementByTagName("value").toString().c_str()).toDouble(&ok));
-	calibratedSigmaController->fillValues(ede.elementByTagName("sigma").getContent());
+    calibratedSigmaController->fillValues(ede.elementByTagName("sigma").getContent());
 
 	EDomElement k;
 	EDomElement cons;
