@@ -1,7 +1,7 @@
 /**************************************************************************
 	  ExteriorOrientation.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -37,60 +37,51 @@ class Image;
   *
   * @author E-Foto group
   *
-  * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
-class ExteriorOrientation : public EObject
-{
-	//EOBJECT
+class ExteriorOrientation : public EObject {
 
 protected:
+    Matrix Xa;
+    std::string type;
+    int totalIterations;
+    EOQuality myQuality;
 
-	// Protected attributes
-	//
-	Matrix Xa;
-	std::string type;
-	int totalIterations;
-
-	// Composed objects
-	//
-	EOQuality myQuality;
-
-	// Associated objects
-	//
-	int imageId;
-	Image* myImage;
+    int imageId;
+    Image* myImage;
 
 public:
+    ExteriorOrientation();
+    void setImageId(int newImageId);
+    void setImage(Image* newImage);
+    int getImageId()const;
+    Image* getImage() const;
+    Matrix getXa()
+    {
+        return Xa;
+    }
+    void setXa(const Matrix& newXa)
+    {
+        Xa = newXa;
+    }
+    std::string getType()
+    {
+        return type;
+    }
 
-	// Associated objects accessor methods
-	//
-	ExteriorOrientation();
-	void setImageId(int newImageId);
-	void setImage(Image* newImage);
-	int getImageId()const;
-	Image* getImage() const;
-	Matrix getXa() {return Xa;}
-	void setXa(const Matrix& newXa) {Xa = newXa;}
-	std::string getType() {return type;}
-	void setType(std::string newType) {type = newType;}
-	int getTotalIterations() {return totalIterations;}
+    int getTotalIterations()
+    {
+        return totalIterations;
+    }
 
-	// Composed object accessors
-	//
-	void setQuality(EOQuality newQuality);
-	EOQuality getQuality();
+    EOQuality getQuality();
 
-	// EObject methods
-	//
-	std::string objectType(void);
-	std::string objectAssociations(void);
-	bool is(std::string s);
+    std::string objectType(void);
+    std::string objectAssociations(void);
+    bool is(std::string s);
 
-	std::string xmlGetData();
-	void xmlSetData(std::string xml);
+    std::string xmlGetData();
+    void xmlSetData(std::string xml);
 
 };
 

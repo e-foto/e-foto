@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -43,7 +43,6 @@ class InteriorOrientation;
   * \brief Classe responsavel por gerenciar a interface e o calculo da
   * fototriangulação fornecendo metodos basicos a interface, e fazendo a
   * ligação entre o calculo e a interface
-  * \author Paulo André Batista Pupim
 */
 class PTManager {
 protected:
@@ -361,12 +360,6 @@ public:
     std::deque<std::string> getImagesAppearances(int pointKey);
 
     /**
-    * \brief Metodo que checa se foi feita uma fototriangulaÃ§ao anteriormente
-    * \return bool : Informa se uma fototriangulaÃ§ao foi feita anteriormente
-    */
-    bool hasPreviousData();
-
-    /**
     * \brief Metodo que altera o valor do angulo(kappa0) da direÃ§ao de voo na imagem
     * \param imagefile : Nome do arquivo de imagem
     * \param flightDirection : Valor da direÃ§ao de voo em radianos
@@ -380,14 +373,6 @@ public:
     * \param flightDirection : Valor da direÃ§ao de voo em radianos
     */
     void setImageFlightDirection(int imageKey, double flightDirection);
-
-    /**
-    * \brief Metodo que informa se o ponto esta disponivel segundo a classe de ponto
-    * \param imageId : Key da imagem
-    * \param pointKey: Key do ponto
-    * \return bool : Informa se o ponto está disponivel ou não
-    */
-    bool isAvailablePoint(int imageId, int pointKey);
 
     /**
     * \brief Metodo que retorna uma string dos pontos e imagens que foram

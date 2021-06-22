@@ -1,7 +1,7 @@
 /**************************************************************************
 	  ExteriorOrientation.cpp
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -27,16 +27,13 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Associated object accessor methods
-//
-ExteriorOrientation::ExteriorOrientation():imageId(-1), myImage(NULL)
+ExteriorOrientation::ExteriorOrientation(): imageId(-1), myImage(NULL)
 {
-
 }
 
 void ExteriorOrientation::setImageId(int newImageId)
 {
-	imageId = newImageId;
+    imageId = newImageId;
 }
 
 /**
@@ -45,13 +42,13 @@ void ExteriorOrientation::setImageId(int newImageId)
  */
 void ExteriorOrientation::setImage(Image* newImage)
 {
-	myImage = newImage;
+    myImage = newImage;
 }
 
 
 int ExteriorOrientation::getImageId() const
 {
-	return imageId;
+    return imageId;
 }
 
 /**
@@ -60,60 +57,40 @@ int ExteriorOrientation::getImageId() const
  */
 Image* ExteriorOrientation::getImage() const
 {
-	return myImage;
+    return myImage;
 }
 
-// EObject methods
-//
-
-/**
- *
- */
 std::string ExteriorOrientation::objectType(void)
 {
-	std::stringstream result;
-	result << "ExteriorOrientation " << imageId;
-	return result.str();
+    std::stringstream result;
+    result << "ExteriorOrientation " << imageId;
+    return result.str();
 }
 
-/**
- *
- */
 std::string ExteriorOrientation::objectAssociations(void)
 {
-	return myImage->objectType();
+    return myImage->objectType();
 }
 
-/**
- *
- */
 bool ExteriorOrientation::is(std::string s)
 {
-	return (s == "ExteriorOrientation" ? true : false);
+    return (s == "ExteriorOrientation" ? true : false);
 }
 
 std::string ExteriorOrientation::xmlGetData()
 {
-	// extrair codigo da SR para este ponto
     return std::string();
 }
 
 void ExteriorOrientation::xmlSetData(std::string xml)
 {
-	EDomElement root(xml);
-	// extrair codigo da SR para este ponto
+    EDomElement root(xml);
 }
 
-// Composed object accessors
-//
-void ExteriorOrientation::setQuality(EOQuality newQuality)
-{
-	myQuality = newQuality;
-}
 
 EOQuality ExteriorOrientation::getQuality()
 {
-	return myQuality;
+    return myQuality;
 }
 
 } // namespace efoto
