@@ -111,7 +111,7 @@ HEADERS += c/control/DEMManager.h \
 		   qt/formDisplay/SensorForm.h \
 		   qt/formDisplay/TerrainForm.h \
 		   qt/imageDisplay/GeometryResource.h \
-           qt/imageDisplay/GLDisplay.h \
+		   qt/imageDisplay/GLDisplay.h \
 		   qt/imageDisplay/ImageViewers.h \
 		   qt/imageDisplay/RasterResource.h \
 		   qt/imageDisplay/SingleDisplay.h \
@@ -238,7 +238,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   c/photogrammetry/SpatialIntersection.cpp \
 		   c/photogrammetry/SpatialRessection.cpp \
 		   c/photogrammetry/StereoPair.cpp \
-           c/photogrammetry/Terrain.cpp \
+		   c/photogrammetry/Terrain.cpp \
 		   c/xml_definitions/XMLAerial.cpp \
 		   c/xml_definitions/XMLFlight.cpp \
 		   c/xml_definitions/XMLProjectHeader.cpp \
@@ -256,7 +256,7 @@ SOURCES += c/control/DEMManager.cpp \
 		   qt/formDisplay/SensorForm.cpp \
 		   qt/formDisplay/TerrainForm.cpp \
 		   qt/imageDisplay/GeometryResource.cpp \
-           qt/imageDisplay/GLDisplay.cpp \
+		   qt/imageDisplay/GLDisplay.cpp \
 		   qt/imageDisplay/ImageViewers.cpp \
 		   qt/imageDisplay/RasterResource.cpp \
 		   qt/imageDisplay/SingleDisplay.cpp \
