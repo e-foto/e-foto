@@ -19,14 +19,6 @@
 SPManager.cpp
 **************************************************************************/
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "SPManager.h"
 #include "EFotoManager.h"
 #include "SPUserInterface_Qt.h"
@@ -185,7 +177,6 @@ void SPManager::exportFeatures(char *filename, int mode)
     std::string lat = terrain->getCentralCoordLat();
     if (lat.rfind(" ") < lat.size()-1)
         spFeatures.setHemisphere( lat[lat.rfind(" ")+1] == 'N' );
-
     spFeatures.exportFeatures(filename, mode);
 }
 

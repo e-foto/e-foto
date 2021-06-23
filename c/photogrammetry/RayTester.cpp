@@ -24,8 +24,6 @@
 #include "Terrain.h"
 #include "Flight.h"
 
-#include "math.h"
-
 // Constructor
 
 namespace br {

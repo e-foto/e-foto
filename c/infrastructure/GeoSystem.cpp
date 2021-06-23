@@ -15,16 +15,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "GeoSystem.h"
-#include <cmath>
 
 #include <sstream>
 
@@ -44,18 +35,18 @@ GeoSystem::GeoSystem(std::string sysName)
 	{
         setSystem(WGS84);
 	}
-    else if (sysName=="SIRGAS2000")
-    {
+	else if (sysName=="SIRGAS2000")
+	{
         setSystem(SIRGAS2000);
     }
 	else if (sysName=="SAD69")
 	{
         setSystem(SAD69);
-    }
+	}
     else
 	{
         setSystem(CORREGOALEGRE);
-    }
+	}
     systemName=sysName;
 }
 
@@ -141,7 +132,7 @@ void GeoSystem::setSystem(DatumType system)
 		setEixoMaior(6378388.0);
 		setF(1.0/297);
 		setEixoMenor(6378388.0*(1-1.0/297));
-        setSystemName("CORREGO ALEGRE");
+		setSystemName("CORREGO ALEGRE");
 		break;
 
 	case(SAD69):

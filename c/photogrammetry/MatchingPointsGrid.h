@@ -35,6 +35,8 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
+#include "CommonDef.h"
+
 #include <vector>
 
 namespace br {

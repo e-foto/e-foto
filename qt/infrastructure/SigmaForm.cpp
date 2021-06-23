@@ -1,6 +1,5 @@
 #include "SigmaForm.h"
 #include "ScienceSpinBox.h"
-//#include <math.h>
 
 namespace br {
 namespace uerj {

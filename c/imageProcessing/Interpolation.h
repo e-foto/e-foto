@@ -18,9 +18,10 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INTERPOLATION_H
 #define INTERPOLATION_H
+
+#include "CommonDef.h"
 
 /**
 * class ProjectiveRay

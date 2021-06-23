@@ -15,8 +15,6 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
-
 #include "StereoTools.h"
 #include "GLDisplay.h"
 #include "StereoDisplay.h"
@@ -56,7 +54,7 @@ void StereoTool::paintEvent(const QPaintEvent& event)
                 QPoint aux = pa;
                 pa = pb;
                 pb = aux;
-            }
+        }
             int line[8] = {pa.x(), pa.y(), pa.x() + 5, pa.y(), pb.x(), pb.y(), pa.x(), pa.y()};
             _display->getRealDisplay()->drawLine(line);
         }
@@ -422,7 +420,7 @@ void ZoomStereoTool::mouseReleased(const QMouseEvent & event)
             _display->getCurrentScene()->getLeftScene()->zoom(wscale < hscale ? wscale : hscale);
             _display->getCurrentScene()->getRightScene()->moveTo(_display->getPositionRight(rubber.center()));
             _display->getCurrentScene()->getRightScene()->zoom(wscale < hscale ? wscale : hscale);
-        }
+   }
         // Remove rubber band line
         _onRubberBand = false;
         int line[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
@@ -1192,6 +1190,7 @@ void StereoToolsBar::executeAction(QAction *action)
     {
     }
 }
+
 
 } // namespace efoto
 } // namespace eng

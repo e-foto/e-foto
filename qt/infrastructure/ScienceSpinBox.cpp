@@ -1,7 +1,4 @@
 #include "CommonDef.h"
-#include <cmath>
-
-
 #include "ScienceSpinBox.h"
 
 #include <limits>

@@ -21,6 +21,8 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "CommonDef.h"
+
 /**
 * class NormalizedCrossCorrelation
 *

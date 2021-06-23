@@ -29,7 +29,6 @@
 #include <qaction.h>
 #include <qstring.h>
 #include "IOManager.h"
-//#include <math.h>
 
 #include "ETableWidget.h"
 
@@ -580,7 +579,7 @@ bool IOUserInterface_Qt::exec()
 		actionMove->trigger();
 	}
 
-    //LoadingScreen::instance().close();
+	//LoadingScreen::instance().close();
 
 	//if (qApp->exec())
 	//return false;

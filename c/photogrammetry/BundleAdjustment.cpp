@@ -25,7 +25,6 @@
 #include "InteriorOrientation.h"
 #include "Matrix.h"
 #include "ConvertionsSystems.h"
-#include "math.h"
 #include "Image.h"
 #include "Sensor.h"
 #include "Flight.h"

@@ -20,6 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "CommonDef.h"
 #include "ImageSpaceCoordinate.h"
 #include "DetectorSpaceCoordinate.h"
 #include "ObjectSpaceCoordinate.h"

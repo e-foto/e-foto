@@ -2,6 +2,7 @@
 #define SINGLETOOLS_H
 
 #include "CommonDef.h"
+#include "GeometryResource.h"
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -17,8 +18,6 @@
 #include <QDoubleSpinBox>
 #include <QComboBox>
 #include <QObject>
-
-#include "GeometryResource.h"
 
 namespace br {
 namespace uerj {

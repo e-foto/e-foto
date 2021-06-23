@@ -18,14 +18,6 @@ DEMManager.cpp
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "DEMManager.h"
 
 #include "Point.h"
@@ -199,71 +191,6 @@ void DEMManager::updateNoSeeds()
     dui->updateSeedsLabel(seeds.size());
 }
 
-double DEMManager::getTerrainMeanAltitude()
-{
-    double Z = 0.0;
-    int num_points = listAllPoints.size();
-    Point* p;
-
-    for (int i = 0; i < num_points; i++) {
-        p = listAllPoints.at(i);
-        Z += p->getObjectCoordinate().getZ();
-    }
-
-    return Z / double(num_points);
-}
-
-/*
- * Pair detection / Angle functions
- */
-double DEMManager::fixAngle(double angle)
-{
-    bool negative = angle < 0.0;
-    // Positive signal
-    angle = fabs(angle);
-
-    // Bring angle to the first lap
-    if (angle > 2 * M_PI) {
-        int laps = floor(angle / (2 * M_PI));
-        angle = angle - laps * (2 * M_PI);
-    }
-
-    if (negative) {
-        angle = 2 * M_PI - angle;
-    }
-
-    return angle;
-}
-
-double DEMManager::getAngleBetweenImages(double X1, double Y1, double X2, double Y2)
-{
-    double delta_X = X2 - X1;
-    double delta_Y = Y2 - Y1;
-
-    if (fabs(delta_X - 0.0) < 0.0000000000001) {
-        if (delta_Y > 0.0) {
-            return M_PI / 2.0;
-        }
-        else {
-            return 3 * M_PI / 2.0;
-        }
-    }
-
-    return fixAngle(atan(delta_Y / delta_X));
-}
-
-bool DEMManager::checkAnglesAlligned(double angle1, double angle2, double tolerance)
-{
-    angle1 = fixAngle(angle1);
-    angle2 = fixAngle(angle2);
-    double distance = fabs(angle1 - angle2);
-
-    if (distance > M_PI) {
-        distance = 2 * M_PI - distance;
-    }
-
-    return (distance < tolerance || fabs(M_PI - distance) < tolerance);
-}
 
 int DEMManager::getPairs()
 {

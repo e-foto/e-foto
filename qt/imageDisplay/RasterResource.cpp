@@ -1,8 +1,6 @@
 #include "RasterResource.h"
-#include "math.h"
 
 #include <QMessageBox>
-#include <QDebug>
 
 RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmoothOut)
 {
@@ -307,7 +305,6 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
     //Nem toda tela tem 96 dpi, refazer depois
 	result.setDotsPerMeterX(3780);
 	result.setDotsPerMeterY(3780);
-
 	return result;
 }
 

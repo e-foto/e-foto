@@ -17,8 +17,9 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
 #include "CommonDef.h"
+
+#include <string>
 
 namespace br {
 namespace uerj {
@@ -147,7 +148,6 @@ public:
      * @return int : Valor tabelado
      */
     int getEPSG(int fuse, bool hemisphere);
-
 
 };
 

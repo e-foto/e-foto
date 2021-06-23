@@ -18,14 +18,6 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "SpatialRessection.h"
 #include "Image.h"
 #include "Point.h"
@@ -35,8 +27,6 @@
 #include "Terrain.h"
 #include "Flight.h"
 #include "RayTester.h"
-
-#include "math.h"
 
 #include <QDebug>
 #include <sstream>
@@ -715,9 +705,11 @@ void SpatialRessection::initialize()
         X00 = Xa.get(1,1);
         Y00 = Xa.get(4,1);
 
+
         double meanAltitude = myImage->getFlight()->getTerrain()->getMeanAltitude();
         // Calculate Z00 too (flight height or scale no longer needed)
         Z00 = meanAltitude + myImage->getSensor()->getFocalDistance() * 0.5 * (sqrt(Xa.get(2,1)*Xa.get(2,1) + Xa.get(3,1)*Xa.get(3,1)) + sqrt(Xa.get(5,1)*Xa.get(5,1) + Xa.get(6,1)*Xa.get(6,1)));
+
         // Omega0 and phi0 are initially set to 0.
         omega0 = 0;
         phi0 = 0;

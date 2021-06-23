@@ -20,6 +20,8 @@
 #ifndef RADIOMETRIC_TRANSFORMATION
 #define RADIOMETRIC_TRANSFORMATION
 
+#include "CommonDef.h"
+
 /**
 * class RadiometricTransformation
 *

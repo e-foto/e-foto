@@ -15,14 +15,6 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
-
 #include "ProjectUserInterface_Qt.h"
 
 #include "ProjectManager.h"
@@ -570,7 +562,6 @@ void ProjectUserInterface_Qt::executeIO()
         msgBox.exec();
         return;
     }
-
     bool ok;
     QStringList items;
     std::deque<std::string> strItems = manager->listImages();

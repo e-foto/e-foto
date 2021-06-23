@@ -20,6 +20,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "CommonDef.h"
 #include "NormalizedCrossCorrelation.h"
 #include "Matrix.h"
 

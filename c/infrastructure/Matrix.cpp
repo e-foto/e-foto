@@ -15,21 +15,12 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
 
 #include "Matrix.h"
-
 #include "PositionMatrix.h"
 
 #include <iostream>
 #include <fstream>
-
 #include <sstream>
 #include <iomanip>
 

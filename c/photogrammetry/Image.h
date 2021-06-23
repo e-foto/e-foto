@@ -1,6 +1,8 @@
 /*******************************************************************************
 		  Image.h
 *******************************************************************************/
+#ifndef IMAGE_H
+#define IMAGE_H
 /*Copyright 2002-2014 e-foto team (UERJ)
   This file is part of e-foto.
 
@@ -18,8 +20,7 @@
 	along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#include "CommonDef.h"
 
 #include "ImageFiducialMark.h"
 #include "ObjectSpaceCoordinate.h"

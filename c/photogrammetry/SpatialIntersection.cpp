@@ -26,8 +26,6 @@
 #include "StereoPair.h"
 #include "Image.h"
 
-#include "math.h"
-
 #include <sstream>
 
 // Constructors and destructors

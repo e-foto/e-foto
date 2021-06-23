@@ -18,6 +18,7 @@
 #ifndef PTMANAGER_H
 #define PTMANAGER_H
 
+#include "CommonDef.h"
 #include "BundleAdjustment.h"
 
 namespace br {

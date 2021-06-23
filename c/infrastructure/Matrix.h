@@ -18,21 +18,11 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#ifdef WIN64
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <cmath>
-#endif
+#include "CommonDef.h"
+#include "RectSupport.h"
 
 #define MAX(X,Y) (((X)>(Y))?(X):(Y))
 #define MIN(X,Y) (((X)<(Y))?(X):(Y))
-
-#include "CommonDef.h"
-
-#include <cmath>
-#include "RectSupport.h"
 
 namespace br {
 namespace uerj {

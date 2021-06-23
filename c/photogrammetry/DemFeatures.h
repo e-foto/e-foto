@@ -1,3 +1,5 @@
+#ifndef DEMFEATURES_H
+#define DEMFEATURES_H
 /*******************************************************************************
                               DemFeatures.h
 *******************************************************************************/
@@ -18,14 +20,12 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEMFEATURES_H
-#define DEMFEATURES_H
+#include "CommonDef.h"
+#include "Matrix.h"
+#include "GeoSystem.h"
 
 #include <string>
 #include <vector>
-
-#include "Matrix.h"
-#include "GeoSystem.h"
 
 #include <ogrsf_frmts.h>
 #include <ogr_spatialref.h>

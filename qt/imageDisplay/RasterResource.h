@@ -1,13 +1,14 @@
 #ifndef RASTERRESOURCE_H
 #define RASTERRESOURCE_H
 
+#include "CommonDef.h"
+
 #include <QString>
 #include <QImage>
 #include <QColor>
 
 class RasterResource
 {
-
 protected:
 	QImage** _pyramid;
 	QSize _imageDim;

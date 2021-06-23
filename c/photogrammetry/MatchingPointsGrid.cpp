@@ -16,18 +16,9 @@
 */
 
 #include "MatchingPointsGrid.h"
-
-#ifdef WIN32
-#define _USE_MATH_DEFINES // for C++
-#include <cmath>
-#endif
-#ifdef unix
-#include <math.h>
-#endif
+#include "MatchingPoints.h"
 
 #include <iostream>
-#include <MatchingPoints.h>
-#include <cmath>
 
 namespace br {
 namespace uerj {
