@@ -113,18 +113,22 @@ void BundleAdjustment::fillDetectorCoordinates()
         int pnts=listImages.at(i)->countPoints();
         for (int j=0;j<pnts;j++)
         {
-            double col=getPointFrom(i,j)->getImageCoordinate(listImages.at(i)->getId()).getCol();
-            double lin=getPointFrom(i,j)->getImageCoordinate(listImages.at(i)->getId()).getLin();
+            auto imgId = listImages.at(i)->getId();
+            auto col=getPointFrom(i,j)->getImageCoordinate(listImages.at(i)->getId()).getCol();
+            auto lin=getPointFrom(i,j)->getImageCoordinate(listImages.at(i)->getId()).getLin();
 
             //Matrix coord=digitalToAnalog(listImages.at(i)->getIO(),lin,col);
             RayTester ray(listImages.at(i));
             ray.setIOParameters(listImages.at(i)->getIO()->getXa());
             DetectorSpaceCoordinate coordinates = ray.imageToDetector(col,lin);
 
-            DetectorSpaceCoordinate aux(listImages.at(i)->getId());
+            DetectorSpaceCoordinate aux(imgId);
             aux.setXi(coordinates.getXi());
             aux.setEta(coordinates.getEta());
-            getPointFrom(i,j)->putDetectorCoordinate(aux);
+            auto point = getPointFrom(i,j);
+            if (point->hasDetectorCoordinate(imgId))
+                point->deleteDetectorCoordinate(imgId);
+            point->putDetectorCoordinate(aux);
         }
     }
 }
@@ -162,7 +166,7 @@ bool BundleAdjustment::calculate(bool makeReport)
 
     //qDebug("%s",printAll().c_str());
 
-    matAdjust.show('f',5,"matAdjust Inicial Values");
+    //matAdjust.show('f',5,"matAdjust Inicial Values");
 
     //matAdjust=convertToGeocentric(matAdjust,WGS84,-1,23);
     //matAdjust.show('f',5,"matAdjust Inicial Values em Geocentricas");
@@ -182,9 +186,14 @@ bool BundleAdjustment::calculate(bool makeReport)
     QTime ptime;
     if (numFotogrametricPoints!=0)
     {
+        int conv=0;
+
+        createLb();
+        //Lb.show('f',3,"Lb");
+        //int lbtime=ptime.restart();
+
         //while(!resOk && totalIterations<maxIterations)
         //{
-        int conv=0;
         while(totalIterations<maxIterations && conv!=1)
             //while(convIterations<maxIterations && conv!=1)
         {
@@ -200,10 +209,6 @@ bool BundleAdjustment::calculate(bool makeReport)
             createL0();
             //L0.show('f',3,"L0");
             //int l0time=ptime.restart();
-
-            createLb();
-            //Lb.show('f',3,"Lb");
-            //int lbtime=ptime.restart();
 
             Matrix l=Lb-L0;
 
@@ -305,7 +310,7 @@ bool BundleAdjustment::calculate(bool makeReport)
                 listRMSE.push_back(calculateRMSE());
             }
 
-            qDebug("iteration %d/%d",totalIterations,maxIterations);
+            //qDebug("iteration %d/%d",totalIterations,maxIterations);
         }
         //qDebug("numero iterations %d=%d",changePesos,iterations);
 
@@ -332,11 +337,11 @@ bool BundleAdjustment::calculate(bool makeReport)
                 {*/
         totalIterations=0;
         int conv=0;
+        createLb();
         while(totalIterations<maxIterations && conv!=1)
         {
             createA1();
             createL0();
-            createLb();
             Matrix l=Lb-L0;
             Matrix n11=getN11();
             Matrix n1=getn1(l);
@@ -360,7 +365,7 @@ bool BundleAdjustment::calculate(bool makeReport)
                 break;
             }
             totalIterations++;
-            qDebug("iteration %d",totalIterations);
+            //qDebug("iteration %d",totalIterations);
             updateMatAdjust();
             //matAdjust.show('f',5,"MatAdjus depois do update do loop");
         }
@@ -1360,6 +1365,7 @@ void BundleAdjustment::createLb()
                 DetectorSpaceCoordinate aux=getPointFrom(i,j)->getDetectorCoordinate(listImages.at(i)->getId());
                 double xi=aux.getXi();
                 double eta=aux.getEta();
+
                 Matrix temp(2,1);
                 temp.set(1,1,xi);
                 temp.set(2,1,eta);
@@ -1626,12 +1632,12 @@ int BundleAdjustment::testConverged()
     {
         if (std::isinf(fabs(x1.get(i+1,1))))
         {
-            qDebug("numero e INFINITO");
+            //qDebug("numero e INFINITO");
             return -2;
         }
         if (std::isnan(fabs(x1.get(i+1,1))))
         {
-            qDebug("numero e NAN");
+            //qDebug("numero e NAN");
             return -1;
         }
         if (i%6<3)//Os trÃªs primeiros elementos sÃ£o Xo,Yo,Zo
@@ -1654,12 +1660,12 @@ int BundleAdjustment::testConverged()
     {
         if (std::isinf(fabs(x2.get(i,1))))
         {
-            qDebug("numero e INFINITO");
+            //qDebug("numero e INFINITO");
             return -2;
         }
         if (std::isnan(fabs(x2.get(i,1))))
         {
-            qDebug("numero e NAN");
+            //qDebug("numero e NAN");
             return -1;
         }
         if (fabs(double(x2.get(i,1)>metricConvergency)))
@@ -2012,7 +2018,7 @@ void BundleAdjustment::normalize(std::deque<Point *>points,double &range, double
 
     if(minT>minZ)
         minT=minZ;
-    qDebug("maxT %.5f minT %.5f",maxT, minT);
+    //qDebug("maxT %.5f minT %.5f",maxT, minT);
 
     double myRange = maxT-minT;
     double myOffset = -(minT);
