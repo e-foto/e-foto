@@ -542,11 +542,15 @@ void PTUserInterface_Qt::showReportXml()
 
 bool PTUserInterface_Qt::calculatePT()
 {
+    auto selectedImages = selectionImagesView->getSelectedItens();
+    if (selectedImages.size() == 0) {
+        int answer = QMessageBox::information(this,tr("PhotoTriangulation inform"),tr("At least one image must be selected"));
 
-    ptManager->selectImages(selectionImagesView->getSelectedItens());
+        return false;
+    }
+    ptManager->selectImages(selectedImages);
+
     ptManager->selectPoints(selectionPointsView->getSelectedItens());
-
-    //int answer=QMessageBox::Question(this,tr("Calculating PhotoTriangulation"),tr("This may take awhile.\nPlease wait window with results appears"));
 
     int answer = QMessageBox::question(this,tr("Calculating PhotoTriangulation"),tr("Do you want to calculate in Local Topocentric Mode?\nThis mode converts all control points coordinates in local topocentric coordinates then calculate photo triangulation.\n\n\nThis may take awhile.\nPlease wait until window with results appears"),QMessageBox::Yes, QMessageBox::No);
     if (answer== QMessageBox::Yes)
@@ -659,7 +663,7 @@ void PTUserInterface_Qt::showSelectionWindow()
     connect(metricConvergencyBox,SIGNAL(valueChanged(double)),this,SLOT(setMetricConvergencyValue(double)));
     connect(angularConvergencyBox,SIGNAL(valueChanged(double)),this,SLOT(setAngularConvergencyValue(double)));
 
-    QVBoxLayout *layout= new QVBoxLayout(this);
+    QVBoxLayout *layout= new QVBoxLayout();
     layout->addWidget(selectionImagesView);
     layout->addWidget(selectionPointsView);
     layout->addLayout(parametersLayout);
