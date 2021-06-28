@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>178</height>
+    <width>800</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -75,32 +75,17 @@ p, li { white-space: pre-wrap; }
      <attribute name="horizontalHeaderVisible">
       <bool>true</bool>
      </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>127</number>
-     </attribute>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>27</number>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>127</number>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
      </attribute>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="horizontalHeaderVisible">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="horizontalHeaderMinimumSectionSize">
-      <number>27</number>
-     </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>127</number>
      </attribute>
      <row/>
      <column>
@@ -118,7 +103,7 @@ p, li { white-space: pre-wrap; }
        <string>IO</string>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -172,8 +157,6 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../resource/resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>572</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -286,9 +286,6 @@ p, li { white-space: pre-wrap; }
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
            <column>
             <property name="text">
              <string>Key</string>
@@ -299,7 +296,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+             <set>AlignCenter</set>
             </property>
            </column>
            <column>
@@ -329,6 +326,11 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>br::uerj::eng::efoto::EfotoDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>EfotoDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>br::uerj::eng::efoto::SigmaFormTypeSelector</class>
    <extends>QComboBox</extends>
    <header>SigmaForm.h</header>
@@ -338,11 +340,6 @@ p, li { white-space: pre-wrap; }
    <extends>QFrame</extends>
    <header>SigmaForm.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>br::uerj::eng::efoto::EfotoDoubleSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>EfotoDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>br::uerj::eng::efoto::SigmaFormDialogButton</class>
