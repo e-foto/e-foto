@@ -80,4 +80,9 @@
         <file>calculate.png</file>
         <file>report.png</file>
     </qresource>
+    <qresource prefix="/text">
+        <file>AboutMessage.html</file>
+        <file>version</file>
+        <file>revision</file>
+    </qresource>
 </RCC>
