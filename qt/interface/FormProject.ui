@@ -103,6 +103,22 @@
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="version_info">
+             <property name="styleSheet">
+              <string notr="true">background-image:url(:/image/None); color:#00396e;</string>
+             </property>
+             <property name="locale">
+              <locale language="English" country="UnitedStates"/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <spacer name="horizontalSpacer">
@@ -298,8 +314,8 @@
     <number>4</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayoutDebugger">
-     <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
       <widget class="QTextEdit" name="debuggerTextEdit"/>
      </item>
     </layout>
