@@ -114,8 +114,8 @@ void IOUserInterface_Qt::receiveMark(QPointF p)
 		return;
 	imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, QString::number(table1->currentIndex().row()+1), mark);
 
-	points->setData(points->index(table1->currentIndex().row(), 2), QVariant(p.x()));
-	points->setData(points->index(table1->currentIndex().row(), 3), QVariant(p.y()));
+	points->setData(points->index(table1->currentIndex().row(), 2), QString::number(p.x(),'f',2));
+	points->setData(points->index(table1->currentIndex().row(), 3), QString::number(p.y(),'f',2));
 	points->setData(points->index(table1->currentIndex().row(), 4), QVariant(true));
 
 	measureMark(table1->currentIndex().row()+1,p.x(),p.y());
