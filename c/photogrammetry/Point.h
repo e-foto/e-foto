@@ -74,6 +74,7 @@ public:
     DetectorSpaceCoordinate getDetectorCoordinate(int imageId);
     ImageSpaceCoordinate getImageCoordinateAt(unsigned int index);
     void deleteImageCoordinate(int imageId);
+    void deleteDetectorCoordinate(int imageId);
     void putImage(Image* newImageAssociation);
     void clearImages();
     void removeImage(int id);

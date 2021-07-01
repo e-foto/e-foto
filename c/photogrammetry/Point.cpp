@@ -204,6 +204,21 @@ void Point::deleteImageCoordinate(int imageId)
         }
 }
 
+/**
+ * Delete the value of DetectorCoordinate with a specific imageId
+ * @param imageId the specified imageId
+ */
+void Point::deleteDetectorCoordinate(int imageId)
+{
+
+	for (unsigned int i = 0; i < detectorCoordinates.size(); i++)
+		if (detectorCoordinates.at(i).getImageId() == imageId)
+		{
+			detectorCoordinates.erase(detectorCoordinates.begin()+i);
+			break;
+		}
+}
+
 void Point::putImage(Image* newImageAssociation)
 {
     bool insert = true;
