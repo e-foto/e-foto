@@ -28,6 +28,7 @@
 #include <qaction.h>
 #include <qstring.h>
 #include <QtWidgets>
+#include <QDebug>
 
 namespace br {
 namespace uerj {
@@ -485,6 +486,8 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->start("rm " + outxsl);
                 pro->waitForFinished(1000);
                 pro->start("rm " + filename);
+                pro->waitForFinished(1000);
+
 #endif
 #ifdef Q_OS_WIN64 //WINDOWS
                 outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
@@ -495,6 +498,7 @@ bool ReportUserInterface_Qt::saveEPR()
                 pro->start("cmd /C del \""+outxsl+"\"");
                 pro->waitForFinished(1000);
                 pro->start("cmd /C del \""+filename+"\"");
+                pro->waitForFinished(1000);
 #endif
             } else {
                 if(idExt == HTMTYPE){
@@ -513,6 +517,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     pro->start("rm " + outxsl);
                     pro->waitForFinished(1000);
                     pro->start("rm " + filename);
+                    pro->waitForFinished(1000);
 #endif
 #ifdef Q_OS_WIN64 //WINDOWS
                     outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
@@ -523,6 +528,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     pro->start("cmd /C del \""+outxsl+"\"");
                     pro->waitForFinished(1000);
                     pro->start("cmd /C del \""+filename+"\"");
+                    pro->waitForFinished(1000);
 #endif
                 }
             }
