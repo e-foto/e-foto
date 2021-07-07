@@ -110,7 +110,8 @@ public:
     bool availableOrthoImage();
     bool availableLP();
     void updateLabelFileName();
-
+    void updatePath();
+    void saveSettings(const char *setting, const char *value);
 
 public slots:
     virtual void closeEvent(QCloseEvent *event);

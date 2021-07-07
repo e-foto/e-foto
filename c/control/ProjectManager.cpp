@@ -28,7 +28,6 @@ ProjectManager.cpp
 #include "SpatialRessection.h"
 #include "InteriorOrientation.h"
 #include "Flight.h"
-#include <QSettings>
 
 #include <sstream>
 #include <fstream>
@@ -224,7 +223,11 @@ bool ProjectManager::loadFile(const char *filename)
 				delete treeModel;
 
 			treeModel = new ETreeModel(EDomElement(xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
-			saveSettings(filename);
+            if (manager->getInterfaceType().compare("Qt") == 0)
+            {
+                ProjectUserInterface_Qt* theInterface = (ProjectUserInterface_Qt*) myInterface;
+                theInterface->saveSettings("lastProject", filename);
+            }
 			return true;
 		}
 		return false;
@@ -243,7 +246,11 @@ bool ProjectManager::saveFile(std::string filename)
 			EDomElement xml(manager->xmlGetData());
 			myFile << xml.removeBlankLines(true).indent('\t').getContent();
 			myFile.close();
-            saveSettings(filename.c_str());
+            if (manager->getInterfaceType().compare("Qt") == 0)
+            {
+                ProjectUserInterface_Qt* theInterface = (ProjectUserInterface_Qt*) myInterface;
+                theInterface->saveSettings("lastProject", filename.c_str());
+            }
 			return true;
 		}
         else std::cout << "Unable to open file";
@@ -443,6 +450,7 @@ bool ProjectManager::exec(std::string filename)
 		if (manager->getInterfaceType().compare("Qt") == 0)
 		{
 			ProjectUserInterface_Qt* newInterface = new ProjectUserInterface_Qt(this);
+			newInterface->updatePath();
 			if (filename != "")
 				newInterface->loadFile(filename);
 			myInterface = newInterface;
@@ -584,14 +592,6 @@ bool ProjectManager::makeSPFile(std::string filename, int image1, int image2)
 		return false;
 	}
 	return false;
-}
-
-
- 
-void ProjectManager::saveSettings(const char *filename)
-{
-     QSettings efotoSettings("uerj","efoto");
-     efotoSettings.setValue("lastProject",filename);
 }
 
 bool ProjectManager::execAutosave()
