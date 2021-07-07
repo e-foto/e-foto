@@ -221,12 +221,6 @@ public:
     bool makeSPFile(std::string filename, int image1, int image2);
 
     bool execAutosave();
-    
-    // get and save settings JAR
-private:
-
- 
-    void saveSettings(const char *filename);
 };
 
 } // namespace efoto

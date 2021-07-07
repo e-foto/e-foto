@@ -393,7 +393,12 @@ bool ReportUserInterface_Qt::saveEPR()
 
     QFileDialog salvar(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
-    //salvar.setDefaultSuffix("xml");
+
+#ifdef Q_OS_WIN64
+    QSettings binSettings("uerj","efoto");
+    QString binPath = QString::fromLocal8Bit(binSettings.value("binPath").toByteArray().constData());
+#endif
+
     if(salvar.exec())
     {
 
@@ -490,7 +495,7 @@ bool ReportUserInterface_Qt::saveEPR()
 
 #endif
 #ifdef Q_OS_WIN64 //WINDOWS
-                outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
+                outcmd = binPath + "/" + "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                 pro->start(outcmd);
                 pro->waitForFinished(1000);
                 outxsl.replace("/","\\");
@@ -520,7 +525,7 @@ bool ReportUserInterface_Qt::saveEPR()
                     pro->waitForFinished(1000);
 #endif
 #ifdef Q_OS_WIN64 //WINDOWS
-                    outcmd = "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
+                    outcmd = binPath + "/" + "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
                     pro->start(outcmd);
                     pro->waitForFinished(1000);
                     outxsl.replace("/","\\");
