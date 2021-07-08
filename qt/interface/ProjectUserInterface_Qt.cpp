@@ -3135,11 +3135,21 @@ void ProjectUserInterface_Qt::updateLabelFileName()
 void ProjectUserInterface_Qt::loadLastProject()
 {
     QSettings efotoSettings("uerj","efoto");
-    //QString filename = efotoSettings.value("lastProject").toString();
     QString filename = QString::fromLocal8Bit(efotoSettings.value("lastProject").toByteArray().constData());
-
-    //loadFile(filename.toStdString());
     loadFile(filename.toLocal8Bit().constData());
+}
+
+void ProjectUserInterface_Qt::updatePath()
+{
+    QDir dir(".");
+    QString binPath = dir.absolutePath();
+    saveSettings("binPath", binPath.toLocal8Bit().constData());
+}
+
+void ProjectUserInterface_Qt::saveSettings(const char *setting, const char *value)
+{
+     QSettings efotoSettings("uerj","efoto");
+     efotoSettings.setValue(setting,value);
 }
 
 } // namespace efoto
