@@ -3,7 +3,7 @@
 /**************************************************************************
                                                            SPManager.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -36,8 +36,6 @@ class ExteriorOrientation;
 
 class SPManager
 {
-    // Private Attributes
-    //
     int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
     double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
     bool started;
@@ -50,12 +48,8 @@ class SPManager
     void getImagesId(int pos, int &left, int &right);
     void addPairsToInterface();
     int getPairs();
-    bool checkAnglesAlligned(double angle1, double angle2, double tolerance);
-    double getAngleBetweenImages(double X1, double Y1, double X2, double Y2);
-    double fixAngle(double angle);
-    bool existPair(int &id1, int &id2);
     void setListPoint();
-    double getTerrainMeanAltitude();
+
     std::deque<int> listPairs;
 
     SPUserInterface* myInterface;
@@ -69,35 +63,12 @@ class SPManager
     ProjectiveRay prL;
     ProjectiveRay prR;
 
-    /*
-        Image * getImage(int);
-        void setListPoint();
-        bool connectImagePoints();
-        MatchingPointsList seeds, pairs;
-        void getImagesId(int, int&, int&);
-        void resamplePoints(MatchingPointsList *list, double resample);
-        void createInitialSeeds();
-        void extractDEMPair(int);
-        void calcPointsXYZ();
-        DemGrid *grid;
-        StereoPair sp;
-        */
-
 public:
 
-    // Constructors and Destructors
-    //
     SPManager();
     explicit SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
     ~SPManager();
 
-    // Association Methods
-    //
-    void setInterface(SPUserInterface* newInterface);
-    SPUserInterface* getInterface();
-
-    // Other Methods
-    //
     bool exec();
     void returnProject();
     int loadFeatures(char *filename, bool append);
@@ -130,8 +101,6 @@ public:
     * \brief Registra no XML o endereço de um arquivo de geometrias.
     */
     void addGeometryToXML(std::string filename);
-
-
 };
 
 } // namespace efoto
