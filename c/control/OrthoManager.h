@@ -1,7 +1,7 @@
 /**************************************************************************
 OrthoManager.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -45,22 +45,19 @@ class Orthorectification;
 * \copyright E-Foto group
 * \authors Marcelo Teixeira Silveira
 */
-class OrthoManager
-{
-    // Private Attributes
-    //
+class OrthoManager {
     bool started;
     bool status;
     OrthoUserInterface* myInterface;
     EFotoManager* manager;
     std::deque<Image*> listAllImages;
     std::deque<ExteriorOrientation*> listEOs;
-    DemGrid *grid;
+    DemGrid* grid;
     /**
     * \brief Método que inclui os dados das imagens no formulário.
     */
     void addImagesToForm();
-    Orthorectification *ortho;
+    Orthorectification* ortho;
     /**
     * \brief Método que executa a ortoimagem para uma imagem.
     */
@@ -75,8 +72,6 @@ class OrthoManager
 
 public:
 
-    // Constructors and Destructors
-    //
     /**
     * \brief Construtor padrão.
     */
@@ -84,66 +79,66 @@ public:
     /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
+    explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images,
+                          std::deque<ExteriorOrientation*> eos);
     /**
     * \brief Destrutor padrão.
     */
     ~OrthoManager();
 
-    // Association Methods
-    //
-    /**
-    * \brief Método de associação que seta uma interface.
-    */
-    void setInterface(OrthoUserInterface* newInterface);
-    /**
-    * \brief Método que retorna a Interface corrente.
-    */
-    OrthoUserInterface* getInterface();
-
-    // Other Methods
-    //
     /**
     * \brief Método que executa a ortoimagem.
     */
     bool exec();
+
     /**
     * \brief Método que interrompe a ortoimagem.
     */
     void returnProject();
-    /**
-    * \brief Método que altera a barra de progresso na interface.
-    */
-    void setProgress(int);
+
     /**
     * \brief Método que carrega a grade do DEM a partir de um arquivo.
     */
-    int loadDemGrid(char * filename, int fileType);
+    int loadDemGrid(char* filename, int fileType);
+
     /**
     * \brief Método que executa a ortorretificação.
     * \todo solve unused parameter fileType
     */
-    int orthoRectification(char * filename, int option, double user_res_x, double user_res_y);
+    int orthoRectification(char* filename, int option, double user_res_x,
+                           double user_res_y);
+
     /**
     * \brief Mtodo que executa a ortorretificao e salva em formato GeoTiff.
     */
-    int orthoRectificationGeoTiff(char * filename, int option, double user_res_x, double user_res_y);
+    int orthoRectificationGeoTiff(char* filename, int option, double user_res_x,
+                                  double user_res_y);
+
     /**
     * \brief Método que interrompe a ortorretificação.
     */
-    void setFlagCancel() { flag_cancel = true; };
+    void setFlagCancel()
+    {
+        flag_cancel = true;
+    };
     /**
     * \brief Construtor.
     */
-    void setShowImage(bool _shw) { show_image = _shw; };
+    void setShowImage(bool _shw)
+    {
+        show_image = _shw;
+    };
     /**
     * \brief Método que altera o método de interpolação.
     */
-    void setInterMethod(int _mth) { inter_method = _mth; };
+    void setInterMethod(int _mth)
+    {
+        inter_method = _mth;
+    };
     /**
     * \brief Método que carrega a ortorretificação.
     */
-    void loadOrtho(char *filename);
+    void loadOrtho(char* filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */
@@ -156,7 +151,10 @@ public:
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */
-    Orthorectification * getOrtho() { return ortho; };
+    Orthorectification* getOrtho()
+    {
+        return ortho;
+    };
 
 };
 
