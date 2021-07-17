@@ -1,7 +1,7 @@
 /**************************************************************************
 DEMManager.cpp
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -35,9 +35,6 @@ DEMManager.cpp
 
 #include <sstream>
 
-// Constructors and destructors
-//
-
 namespace br {
 namespace uerj {
 namespace eng {
@@ -49,7 +46,8 @@ DEMManager::DEMManager()
     status = false;
 }
 
-DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images, std::deque<ExteriorOrientation*> eos)
+DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images,
+                       std::deque<ExteriorOrientation*> eos)
 {
     this->manager = manager;
     started = false;
@@ -78,22 +76,6 @@ DEMManager::~DEMManager()
         delete grid;
     }
 }
-
-// Association Methods
-//
-
-void DEMManager::setInterface(DEMUserInterface* newInterface)
-{
-    myInterface = newInterface;
-}
-
-DEMUserInterface* DEMManager::getInterface()
-{
-    return myInterface;
-}
-
-// Other Methods
-//
 
 bool DEMManager::exec()
 {
@@ -142,7 +124,8 @@ void DEMManager::setListPoint()
     std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
     for (unsigned i = 0; i < allPoints.size(); i++) {
-        Point* point = manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
+        Point* point = manager->instancePoint(Conversion::stringToInt(allPoints.at(
+                i).attribute("key")));
 
         if (point != nullptr) {
             listAllPoints.push_back(point);
@@ -160,25 +143,23 @@ bool DEMManager::connectImagePoints()
         for (unsigned int j = 0; j < listAllImages.size(); j++) {
             //listAllImages.at(j)->clearPoints();
             for (unsigned int i = 0; i < allPoints.size(); i++) {
-                std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates", "image_key", Conversion::intToString(listAllImages.at(j)->getId())).getContent();
+                std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates",
+                                   "image_key", Conversion::intToString(listAllImages.at(
+                                               j)->getId())).getContent();
 
                 //qDebug("%s\n",data.c_str());
                 if (data != "") {
-                    Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(allPoints.at(i).attribute("key")));
+                    Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(
+                                               allPoints.at(i).attribute("key")));
 
                     if (pointToInsert != nullptr) {
-                        //qDebug("connectImagePoints(): colocou um ponto: %s",pointToInsert->getPointId().c_str());
                         listAllImages.at(j)->putPoint(pointToInsert);
-                        pointToInsert->putImage(listAllImages.at(j));//novo em teste:06/08/2011
+                        pointToInsert->putImage(listAllImages.at(j));
                     }
                 }
             }
-
-            //qDebug("Image %s",listAllImages.at(j)->getFilename().c_str());
-            //listAllImages.at(j)->sortPoints();
         }
 
-        //qDebug("\n\n");
         return true;
     }
 
@@ -194,119 +175,9 @@ void DEMManager::updateNoSeeds()
 
 int DEMManager::getPairs()
 {
-    // This Method was unified in EFotoManager Class
     manager->getPairs(listPairs);
     addPairsToInterface();
     return (listPairs.size() > 0);
-    /* old Method
-        //
-        // List Pairs description (0 - N-1):
-        //
-        // num = left + no_imgs*right // Encoding
-        // left = num % no_imgs // Decoding
-        // right =  num / no_imgs // Decoding
-        //  Image ID ranges from 1-N
-        // Clear list
-        listPairs.clear();
-
-        Image *img;
-        double X1, Y1, X2, Y2, R, dist, overlap, terrain_mean_Z;
-        int p1, p2, img_code, id1, id2;
-        Matrix Xa;
-
-        // Calculate Images Radius, using the first image as reference
-        ObjectSpaceCoordinate osc;
-        img = listAllImages.at(0);
-        ProjectiveRay pr(img);
-        Xa = img->getEO()->getXa();
-        X1 = Xa.get(1,1);
-        Y1 = Xa.get(2,1);
-        p1 = img->getWidth();
-        p2 = img->getHeight()/2;
-        terrain_mean_Z = getTerrainMeanAltitude();
-        osc = pr.imageToObject(p1,p2,terrain_mean_Z,false);
-        X2 = osc.getX();
-        Y2 = osc.getY();
-        R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
-
-        for (unsigned i=0; i<listAllImages.size(); i++)
-        {
-                // Get reference image data
-                img = listAllImages.at(i);
-                Xa = img->getEO()->getXa();
-                X1 = Xa.get(1,1);
-                Y1 = Xa.get(2,1);
-
-                // Calculate the shortest image center
-                for (unsigned j=0; j<listAllImages.size(); j++)
-                {
-                        // Skip same image check
-                        if (i==j)
-                                continue;
-
-                        // Get test image data
-                        img = listAllImages.at(j);
-                        Xa = img->getEO()->getXa();
-                        X2 = Xa.get(1,1);
-                        Y2 = Xa.get(2,1);
-
-                        // Calculate dist
-                        dist = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
-
-                        // Check images overlapping
-                        overlap = 100*(2*R - dist)/(2*R);
-
-                        if (overlap < 55.0 || overlap > 100.0)
-                                continue;
-
-                        // Assign image ids (in this case, the verctor number - image id ranges from 1-N
-                        id1 = i+1;
-                        id2 = j+1;
-
-                        // Check if pair exists
-                        if (!existPair(id1, id2))
-                        {
-                            // Add images to list
-                            img_code = (id1-1) + listAllImages.size()*(id2-1);
-                            listPairs.push_back(img_code);
-                        }
-                }
-        }
-
-        addPairsToInterface();
-
-        qDebug("=========>%d<=========",listPairs.size());
-
-        return (listPairs.size() > 0);
-        */
-}
-
-// Check if pair already exists and sort ids
-bool DEMManager::existPair(int& id1, int& id2)
-{
-    int aux, pair_id1, pair_id2;
-
-    if (listPairs.size() == 0) {
-        return false;
-    }
-
-    // Sort id
-    if (id1 > id2) {
-        aux = id1;
-        id1 = id2;
-        id2 = aux;
-    }
-
-    for (unsigned i = 0; i < listPairs.size(); i++) {
-        // Decode image list
-        getImagesId(i, pair_id1, pair_id2);
-
-        if (pair_id1 == id1 && pair_id2 == id2) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 /*
@@ -325,7 +196,7 @@ void DEMManager::addPairsToInterface()
         getImagesId(i, left_id, right_id);
         str_left = listAllImages.at(left_id - 1)->getImageId();
         str_right = listAllImages.at(right_id - 1)->getImageId();
-        txt.str(""); // Clear stream
+        txt.str("");
         txt << "Images " << str_left << " and " << str_right;
         dui->addImagePair((char*)txt.str().c_str());
     }
@@ -336,7 +207,6 @@ void DEMManager::addPairsToInterface()
 // Internal function. Pos from 0 - N-1.
 void DEMManager::getImagesId(int pos, int& left, int& right)
 {
-    // Check pos
     left = -1;
     right = -1;
 
@@ -350,7 +220,8 @@ void DEMManager::getImagesId(int pos, int& left, int& right)
     right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
-void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int _rgx, double downs)
+void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method,
+        int _rgx, double downs)
 {
     rad_cor = _rad_cor;
     match_method = _match_method;
@@ -358,11 +229,10 @@ void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method, int 
     rgx = _rgx;
     rgy = _rgx;
     downsample = 1.0 / downs;
-    //    ncc_temp, ncc_sw;
-    //    double ncc_th, ncc_std;
 }
 
-void DEMManager::setNCCSettings(int _ncc_temp, int _ncc_sw, double _ncc_th, double _ncc_std)
+void DEMManager::setNCCSettings(int _ncc_temp, int _ncc_sw, double _ncc_th,
+                                double _ncc_std)
 {
     ncc_temp = _ncc_temp;
     ncc_sw = _ncc_sw;
@@ -370,7 +240,9 @@ void DEMManager::setNCCSettings(int _ncc_temp, int _ncc_sw, double _ncc_th, doub
     ncc_std = _ncc_std;
 }
 
-void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th, double _lsm_std, int _lsm_dist, double _lsm_shift, double _lsm_shear, double _lsm_scale, int over, double over_dist)
+void DEMManager::setLSMSettings(int _lsm_temp, int _lsm_it, double _lsm_th,
+                                double _lsm_std, int _lsm_dist, double _lsm_shift, double _lsm_shear,
+                                double _lsm_scale, int over, double over_dist)
 {
     lsm_temp = _lsm_temp;
     lsm_it = _lsm_it;
@@ -466,7 +338,9 @@ void DEMManager::createInitialSeeds()
             X = p->getObjectCoordinate().getX();
             Y = p->getObjectCoordinate().getY();
             Z = p->getObjectCoordinate().getZ();
-            seeds.add(left_id, right_id, double(left_dic.getCol()), double(left_dic.getLin()), double(right_dic.getCol()), double(right_dic.getLin()), X, Y, Z, 0.0);
+            seeds.add(left_id, right_id, double(left_dic.getCol()),
+                      double(left_dic.getLin()), double(right_dic.getCol()),
+                      double(right_dic.getLin()), X, Y, Z, 0.0);
         }
     }
 
@@ -564,9 +438,7 @@ int DEMManager::loadDemFeature(char* filename)
 
     df = new DemFeatures();
     // Stereoplotter 1.65, mode = 0
-    // Append = false
     bool dfFlag = df->loadFeatures(filename/*, 0*/, false);
-//df->saveFeatures("/home/marts/teste.txt",0,false);
     DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
 
     if (!dfFlag) {
@@ -593,7 +465,9 @@ int DEMManager::loadDemFeature(char* filename)
  * DEM extraction
  **/
 
-void DEMManager::interpolateGrid(/*int source, */ int method, int garea, double Xi, double Yi, double Xf, double Yf, double res_x, double res_y, int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
+void DEMManager::interpolateGrid(int method, int garea,
+                                 double Xi, double Yi, double Xf, double Yf, double res_x, double res_y,
+                                 int tsurface, double ma_exp, double ma_dist, int ma_weight, int gridSource)
 {
     double Zi, Zf;
     cancel_flag = false;
@@ -671,13 +545,6 @@ void DEMManager::interpolateGrid(/*int source, */ int method, int garea, double 
     grid_unsaved = true;
     dui->setElapsedTime(grid->getElapsedTime(), 1);
 
-    // Add polygons, if selected
-    //if (gridSource > 0)
-    //{
-    //Matrix overMap = df->createPolygonMap(Xi, Yi, Xf, Yf, res_x, res_y);
-    //grid->overlayMap(&overMap);
-    //}
-
     // Show image, if selected
     if (isShowImage && !cancel_flag) {
         double res_z = (Zf - Zi) / 255.0;
@@ -702,7 +569,8 @@ void DEMManager::calcPointsXYZ()
         right = listAllImages.at(mp->right_image_id - 1);
         sp.setRightImage(right);
         spc_inter.setStereoPair(&sp);
-        object = spc_inter.calculateIntersectionSubPixel(mp->left_x, mp->left_y, mp->right_x, mp->right_y);
+        object = spc_inter.calculateIntersectionSubPixel(mp->left_x, mp->left_y,
+                 mp->right_x, mp->right_y);
         mp->X = object.getX();
         mp->Y = object.getY();
         mp->Z = object.getZ();
@@ -816,25 +684,21 @@ void DEMManager::extractDEMPair(int pair)
         return;
     }
 
-    //
     // Get images IDs
-    //
     int left_id, right_id;
     getImagesId(pair, left_id, right_id);
-    //
     // Load images
-    //
     Matrix img1, img2;
     DEMUserInterface_Qt* dui = (DEMUserInterface_Qt*)myInterface;
     dui->setStatus((char*)"Loading left image ...");
-    std::string filename = getImage(left_id)->getFilepath() + "/" + getImage(left_id)->getFilename();
+    std::string filename = getImage(left_id)->getFilepath() + "/" + getImage(
+                               left_id)->getFilename();
     dui->loadImage(img1, (char*)filename.c_str(), downsample);
     dui->setStatus((char*)"Loading right image ...");
-    filename = getImage(right_id)->getFilepath() + "/" + getImage(right_id)->getFilename();
+    filename = getImage(right_id)->getFilepath() + "/" + getImage(
+                   right_id)->getFilename();
     dui->loadImage(img2, (char*)filename.c_str(), downsample);
-    //
     // Start matching
-    //
     std::stringstream txt;
     txt << "Matching pair " << left_id << " and " << right_id;
     dui->setStatus((char*)txt.str().c_str());
@@ -868,7 +732,6 @@ void DEMManager::extractDEMPair(int pair)
     im->getLSM()->setOverIt(over_it);
     im->getLSM()->setOverItDist(over_it_dist);
     im->performImageMatching(&img1, &img2, &seeds, &pairs);
-    //  dui->saveImage((char *)"Map.bmp",&im->getMap());
     dem_total_elapsed_time += im->getElapsedTime();
     delete im;
 }
@@ -890,7 +753,7 @@ std::string DEMManager::getDemQuality(char* filename, int option)
         }
     }
     else {
-        if (!df2.loadFeatures(filename/*, 0*/, false)) {
+        if (!df2.loadFeatures(filename, false)) {
             return "";
         }
 
@@ -924,7 +787,6 @@ double DEMManager::calculateDemRes(double ds)
     return resolution * ds;
 }
 
-//#include <QDebug>
 void DEMManager::addPairsToXML(std::string filename)
 {
     std::stringstream add;
@@ -975,15 +837,6 @@ void DEMManager::addDEMToXML(std::string filename)
     manager->xmlSetData(newXml.getContent());
     manager->setSavedState(false);
 }
-
-/* Method into disuse:
- *
-void DEMManager::addDEMQualityToXML(std::string filename)
-{
-    //Fazer
-    //qDebug("DEMQuality: %s",filename.c_str());
-}
-*/
 
 } // namespace efoto
 } // namespace eng

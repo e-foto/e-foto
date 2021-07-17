@@ -113,11 +113,6 @@ class DEMManager {
     */
     void calcPointsXYZ();
 
-    /**
-    * \brief Método para identificar se um par em questão já fora identificado
-    */
-    bool existPair(int& id1, int& id2);
-
     ImageMatching* im;
     DemGrid* grid;
     DemFeatures* df;
@@ -127,9 +122,6 @@ class DEMManager {
     double dem_total_elapsed_time;
 
 public:
-
-    // Constructors and Destructors
-    //
     /**
     * \brief Construtor padrão.
     */
@@ -144,31 +136,21 @@ public:
     */
     ~DEMManager();
 
-    // Association Methods
-    //
-    /**
-    * \brief Método de associação que seta uma interface.
-    */
-    void setInterface(DEMUserInterface* newInterface);
-    /**
-    * \brief Método que retorna a Interface corrente.
-    */
-    DEMUserInterface* getInterface();
-
-    // Other Methods
-    //
     /**
     * \brief Método que inicia o Gerenciador do DEM.
     */
     bool exec();
+
     /**
     * \brief Método que interrompe o Gerenciador do DEM.
     */
     void returnProject();
+
     /**
     * \brief Construtor.
     */
     int getPairs();
+
     /**
     * \brief Extração do DEM.
     * Opções: 	0 = todos os pares,
@@ -177,31 +159,38 @@ public:
     * 		etc.
     */
     int extractDEM(int, bool);
+
     /**
     * \brief Método que altera as configurações de extração automática.
     */
     void setAutoExtractionSettings(int, int, int, double);
+
     /**
     * \brief Método que altera as configurações do NCC.
     */
     void setNCCSettings(int, int, double, double);
+
     /**
     * \brief Método que altera as configurações do LSM.
     */
     void setLSMSettings(int, int, double, double, int, double, double, double, int,
                         double);
+
     /**
     * \brief Método que altera a barra de progresso na interface.
     */
     void setProgress(int);
+
     /**
     * \brief Método que salva o DEM.
     */
     void saveDem(char* filename, int fileType);
+
     /**
     * \brief Método que salva a grade.
     */
     void saveDemGrid(char* filename, int fileType);
+
     /**
     * \brief Método que carrega o DEM.
     */
@@ -220,6 +209,7 @@ public:
     * \brief Método que ativa a função de cancelamento. Interrompe a extração do DEM ou a  ação de interpolação da grade.
     */
     void setCancel();
+
     /**
     * \brief Método que altera o flag showImage. Se selecionado, após a extração do DEM ou interpolação da grade, uma janela surge mostrando os resultados.
     */
@@ -227,13 +217,7 @@ public:
     {
         isShowImage = _state;
     };
-    /**
-    * \brief Método que define a eliminação de pontos ruins.
-    */
-    void setEliminateBadPoints(bool _el)
-    {
-        elim_bad_pts = _el;
-    };
+
     /**
     * \brief Método que verifica se alguma operação foi cancelada.
     */
@@ -241,6 +225,7 @@ public:
     {
         return cancel_flag;
     };
+
     /**
     * \brief Método que verifica se a DEM foi salva.
     */
@@ -248,6 +233,7 @@ public:
     {
         return dem_unsaved;
     };
+
     /**
     * \brief Método que verifica se a grade foi salva.
     */
@@ -255,10 +241,12 @@ public:
     {
         return grid_unsaved;
     };
+
     /**
     * \brief Método que adiciona pares às sementes.
     */
     void getPointList(MatchingPointsList& sd, MatchingPointsList& pr);
+
     /**
     * \brief Método que retorna uma lista de instâncias da classe Image.
     */
@@ -266,6 +254,7 @@ public:
     {
         return listAllImages;
     };
+
     /**
     * \brief Método que retorna uma lista de pares de imagens.
     */
@@ -273,6 +262,7 @@ public:
     {
         return listPairs;
     };
+
     /**
     * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
     */
@@ -285,10 +275,12 @@ public:
     * \brief Método que carrega as feições do DEM.
     */
     int loadDemFeature(char* filename);
+
     /**
     * \brief Método que carrega um arquivo com as qualidades do DEM.
     */
     std::string getDemQuality(char* filename, int option);
+
     /**
     * \brief Método que muda os parâmetros do LSM e NCC.
     */
@@ -301,22 +293,27 @@ public:
         ncc_temp_max_size = _ncc_ms;
         perf_RG = _perf_RG;
     };
+
     /**
     * \brief Método que calcula a resolução do DEM.
     */
     double calculateDemRes(double ds);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de matching.
     */
     void addPairsToXML(std::string filename);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de sementes para matching.
     */
     void addSeedsToXML(std::string filename);
+
     /**
     * \brief Registra no XML o endereço de um arquivo de DEM.
     */
     void addDEMToXML(std::string filename);
+
     /**
     * \brief Ativar eliminação de pontos ruins.
     */
@@ -325,13 +322,6 @@ public:
         pairs.filterBadPoints2D();
     };
 
-
-    /* Methods into disuse:
-     *
-    \brief Registra no XML o endereço de um arquivo de DEM Quality.
-    void addDEMQualityToXML(std::string filename);
-
-    */
 
 };
 
