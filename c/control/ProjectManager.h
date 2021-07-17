@@ -39,8 +39,6 @@ class XmlUpdater;
 * \file ProjectManager.h
 * \class ProjectManager
 * \brief Esta classe controla a Project Manager UI.
-* \copyright E-Foto group
-* \authors Rafael Aguiar & Irving Badolato
 */
 class ProjectManager {
 

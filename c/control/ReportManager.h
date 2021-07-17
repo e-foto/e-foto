@@ -3,7 +3,7 @@
 /**************************************************************************
 		  ReportManager.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -34,61 +34,41 @@ namespace efoto {
 class ReportUserInterface;
 class EFotoManager;
 
-//New
 class Project;
 
 
-class ReportManager
-{
-	// Private Attributes
-	//
-	bool started;
-	bool status;
+class ReportManager {
+    bool started;
+    bool status;
     EFotoManager* efotoManager;
     Project* project;
-	ReportUserInterface* myInterface;
+    ReportUserInterface* myInterface;
 
 public:
 
-	// Constructors and Destructors
-	//
-	/**
-	* \brief Construtor vazio.
-	*/
-	ReportManager();
-	/**
-	* \brief Construtor vazio.
-	*/
+    /**
+    * \brief Construtor vazio.
+    */
+    ReportManager();
+    /**
+    * \brief Construtor vazio.
+    */
     explicit ReportManager(EFotoManager* manager);
-	/**
-	* \brief Destrutor padro.
-	*/
-	~ReportManager();
+    /**
+    * \brief Destrutor padro.
+    */
+    ~ReportManager();
 
-	// Association Methods
-	//
-	/**
-    * \brief Metodo de associcao que seta uma interface.
-	* \param newInterface Interface que ser usada.
-	*/
-	void setInterface(ReportUserInterface* newInterface);
-	/**
-    * \brief Metodo que retorna a Interface corrente.
-	* \return IOUserInterface Interface corrente.
-	*/
-	ReportUserInterface* getInterface();
 
-	// Other Methods
-	//
-	/**
+    /**
     * \brief Metodo que inicia o mdulo de Orientao Interior e retorna se foi feito algum clculo neste mesmo mdulo anteriormente para a alertar o usurio, caso o projeto no tenha sido salvo.
-	* \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contrrio.
-	*/
-	bool exec();
-	/**
+    * \return bool Retorna verdadeiro se o projeto foi salvo. Retorna falso, caso contrrio.
+    */
+    bool exec();
+    /**
     * \brief Metodo que carrega a interface do projeto quando o mdulo de Orientao Interior  finalizado.
-	*/
-	void returnProject();
+    */
+    void returnProject();
 
     /**
     * \brief Metodo que bloqueia as opcoes da arvore que ainda nao foram obtidas durante o projeto fotogrametrico.
@@ -188,7 +168,8 @@ public:
     * \param treeItems Arvore de opcoes do relatorio fotogrametrico.
     * \return bool Retorna se o arquivo XML foi criado com sucesso.
     */
-    bool makeFile(std::string filename, int idExt, QList<QTreeWidgetItem*> treeItems);
+    bool makeFile(std::string filename, int idExt,
+                  QList<QTreeWidgetItem*> treeItems);
 
     /**
     * \brief Metodo que cria o arquivo XSL correspondente a escolha do usuario
@@ -205,23 +186,6 @@ public:
     */
     bool makeCss(std::string path);
 
-    /**
-    * \brief Metodo que gera thumbnail de imagens.
-    * \param filename Nome do arquivo imagem.
-    * \param maxW Tamanho maximo da largura.
-    * \param maxH Tamanho maximo da altura.
-    * \return QImage O thumbnail gerado.
-    */
-    QImage makeThumbnail(QString filename, int maxW, int maxH);
-
-    /*
-    #ifdef Q_WS_X11 //LINUX
-    #endif
-    #ifdef Q_WS_WIN //WINDOWS
-    #endif
-    #ifdef Q_WS_MACX //MAC
-    #endif
-    */
 };
 
 } // namespace efoto
