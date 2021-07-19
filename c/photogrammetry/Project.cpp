@@ -19,7 +19,6 @@
 
 #include <QApplication>
 
-#include "ExteriorOrientation.h"
 #include "Flight.h"
 #include "Image.h"
 #include "InteriorOrientation.h"

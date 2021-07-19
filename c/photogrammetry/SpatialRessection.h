@@ -22,7 +22,7 @@
 
 #include "CommonDef.h"
 #include "Matrix.h"
-#include "ExteriorOrientation.h"
+#include "EOQuality.h"
 #include "ImageSpaceCoordinate.h"
 #include "DetectorSpaceCoordinate.h"
 
@@ -34,6 +34,8 @@ namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
+
+class Image;
 
 class RayTester;
 
