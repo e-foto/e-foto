@@ -26,13 +26,6 @@ namespace efoto {
 class EDomValidator
 {
 public:
-	static bool validateProject();
-    static bool validateHeader(std::string xml);
-    static bool validateTerrain(std::string xml);
-    static bool validateFlight(std::string xml);
-    static bool validateSensor(std::string xml);
-    static bool validateImage(std::string xml);
-    static bool validatePoint(std::string xml);
 };
 
 } // namespace efoto

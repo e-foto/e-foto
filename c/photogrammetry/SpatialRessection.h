@@ -3,7 +3,7 @@
 /**************************************************************************
 	  SpatialRessection.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -28,12 +28,6 @@
 
 /**
   * class SpatialRessection
-  *
-  * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
 namespace br {
@@ -43,119 +37,131 @@ namespace efoto {
 
 class RayTester;
 
-class SpatialRessection : public ExteriorOrientation
-{
-	// Private attributes
-	//
-	Matrix La;
-	Matrix A;
-	Matrix P;
-	Matrix X0;
-	Matrix L0;
-	Matrix Lb;
-	Matrix lastL0;
-	std::deque<double> rmse;
+class SpatialRessection {
+    Matrix La;
+    Matrix A;
+    Matrix P;
+    Matrix X0;
+    Matrix L0;
+    Matrix Lb;
+    Matrix lastL0;
+    Matrix Xa;
+    std::deque<double> rmse;
 
-	RayTester* rt;
+    RayTester* rt;
 
-	double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
-	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
-	std::deque<int> selectedPoints;
-	bool flightDirectionAvailable;
-	bool pointForFlightDirectionAvailable;
-	ImageSpaceCoordinate pointForFlightDirection;
+    double X00, Y00, Z00, omega0, phi0,
+           kappa0; // Variables just for speeding up calculations, not really needed.
+    std::deque<int> selectedPoints;
+    bool flightDirectionAvailable{false};
+    bool pointForFlightDirectionAvailable{false};
+    ImageSpaceCoordinate pointForFlightDirection;
 
-	bool gnssConverged, insConverged;
-	bool useDistortions;
+    bool gnssConverged{false};
+    bool insConverged{false};
+    bool useDistortions{true};
+    int imageId;
+    std::string type;
 
-	// Sets probably accessible only by the Mounter class.
-	//
-	void setXa(const Matrix& newXa);
-	void setLa(const Matrix& newLa);
-	void setA(const Matrix& newA);
-	void setP(const Matrix& newP);
-	void setX0(const Matrix& newX0);
-	void setL0(const Matrix& newL0);
-	void setLb(const Matrix& newLb);
+    int totalIterations;
+    EOQuality myQuality;
+
+    Image* myImage;
 
 public:
+    SpatialRessection();
+    // Constructor with ids only, needed in project use.
+    explicit SpatialRessection(int myImageId);
+    virtual ~SpatialRessection();
 
-	// Constructors and destructors
-	//
-	SpatialRessection();
-    explicit SpatialRessection(int myImageId); // Constructor with ids only, needed in project use.
-	virtual ~SpatialRessection();
+    Matrix getLa() const;
+    Matrix getA() const;
+    Matrix getP() const;
+    Matrix getLb() const;
+    Matrix getLastL0() const;
 
-	// Private attribute accessors
-	//
-	Matrix getLa();
-	Matrix getA();
-	Matrix getP();
-	Matrix getX0();
-	Matrix getL0();
-	Matrix getLb();
-	Matrix getLastL0();
+    std::deque<int> getSelectedPoints() const;
 
-	std::deque<int> getSelectedPoints();
-	ImageSpaceCoordinate* getPointForFlightDirection();
-
-	bool getConverged();
-	bool getGnssConverged();
-	bool getInsConverged();
-	std::deque<double> getRMSE() {return rmse;}
+    bool getConverged() const;
+    std::deque<double> getRMSE() const
+    {
+        return rmse;
+    }
 
 
-	// Selected points list manipulators
-	//
-	void selectPoint(int id);
-	void unselectPoint(int id);
-	void unselectAllPoints();
-	int countSelectedPoints();
+    // Selected points list manipulators
+    void selectPoint(int id);
+    void unselectPoint(int id);
+    int countSelectedPoints() const;
 
-	//  Selected fiducial mark or point to indicate the direction of flight manipulators
-	//
-	void setFlightDirection(double kappa0);
-	void setPointForFlightDirection(double col, double row);
-	void selectFiducialMarkForFlightDirection(int id);
-	void unsetPointForFlightDirection();
+    //  Selected fiducial mark or point to indicate the direction of flight manipulators
+    void setFlightDirection(double kappa0);
+    void setPointForFlightDirection(double col, double row);
+    void selectFiducialMarkForFlightDirection(int id);
 
-	// EObject methods
-	//
-	std::string objectType(void);
-	std::string objectAssociations(void);
-	bool is(std::string s);
+    void setImageId(int newImageId);
+    void setImage(Image* newImage);
 
-	// XML methods
-	//
-	void xmlSetData(std::string xml);
-	std::string xmlGetData();
-	std::string xmlGetDataEO();
+    // EObject methods
+    std::string objectType(void);
+    std::string objectAssociations(void);
+    bool is(const std::string& s) const;
 
-	// Other methods
-	//
-	//void generateR();
-	void generateInitialA();
-	void generateInitialL0();
-	void generateInitialP();
-	void generateA();
-	void generateL0();
-	void generateRMSE();
-	void generateLb();
-	void generateP();
-	void generateX0();
-	void initialize();
-	bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
+    // XML methods
+    void xmlSetData(std::string xml);
+    std::string xmlGetData();
+    std::string xmlGetDataEO();
 
-	// Private support methods
-	//
-	DetectorSpaceCoordinate applyDistortions(double xi, double eta);
-	DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
-	DetectorSpaceCoordinate removeDistortions(double xi, double eta);
-	DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
-	DetectorSpaceCoordinate getRadialDistortions(double xi, double eta);
-	DetectorSpaceCoordinate getDecenteredDistortions(double xi, double eta);
-	DetectorSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
-	DetectorSpaceCoordinate getCurvatureDistortions(double xi, double eta);
+    void generateInitialA();
+    void generateInitialL0();
+    void generateInitialP();
+    void generateA();
+    void generateL0();
+    void generateLb();
+    void generateP();
+    void generateX0();
+    void initialize();
+    bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
+
+    // Private support methods
+    DetectorSpaceCoordinate applyDistortions(double xi, double eta);
+    DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate
+            myAnalogCoordinate);
+    DetectorSpaceCoordinate removeDistortions(double xi, double eta);
+    DetectorSpaceCoordinate removeDistortions(DetectorSpaceCoordinate
+            myAnalogCoordinate);
+    DetectorSpaceCoordinate getRadialDistortions(double xi, double eta);
+    DetectorSpaceCoordinate getDecenteredDistortions(double xi, double eta);
+    DetectorSpaceCoordinate getAtmosphereDistortions(double xi, double eta);
+    DetectorSpaceCoordinate getCurvatureDistortions(double xi, double eta);
+
+    int getImageId()const
+    {
+      return imageId;
+    }
+    Image* getImage() const
+    {
+      return myImage;
+    }
+    Matrix getXa()
+    {
+        return Xa;
+    }
+
+    void setXa(const Matrix& newXa);
+
+
+    int getTotalIterations()
+    {
+        return totalIterations;
+    }
+
+    EOQuality getQuality()
+    {
+      return myQuality;
+    }
+
+    std::string getType();
 
 };
 

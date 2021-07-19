@@ -32,7 +32,7 @@ class Terrain;
 class Sensor;
 class Flight;
 class InteriorOrientation;
-class ExteriorOrientation;
+class SpatialRessection;
 class PhotoTri;
 
 
@@ -50,7 +50,7 @@ private:
     std::deque<Point*> points;
     std::string processStates;
     std::deque<InteriorOrientation*> IOs;
-    std::deque<ExteriorOrientation*> EOs;
+    std::deque<SpatialRessection*> EOs;
     PhotoTri* thePhotoTri;
 
     ProjectHeader* instanceHeader();
@@ -122,7 +122,7 @@ private:
     * \param imageId Identificador da imagem a ser utilizada na Orientação Exterior.
     * \return ExteriorOrientation Retorna a instância criada.
     */
-    ExteriorOrientation* instanceEO(int imageId);
+    SpatialRessection* instanceEO(int imageId);
 
     PhotoTri* instancePhotoTri();
 
@@ -208,8 +208,8 @@ public:
     * \param id Identificador da Orientação Exterior.
     * \return ExteriorOrientation Instância da classe ExteriorOrientation.
     */
-    ExteriorOrientation* EO(int id);
-    std::deque<ExteriorOrientation*> allEOs()
+    SpatialRessection* EO(int id);
+    std::deque<SpatialRessection*> allEOs()
     {
         return EOs;
     }

@@ -32,7 +32,7 @@ namespace efoto {
 class SPUserInterface;
 class EFotoManager;
 class Point;
-class ExteriorOrientation;
+class SpatialRessection;
 
 class SPManager
 {
@@ -56,7 +56,7 @@ class SPManager
     EFotoManager* manager;
     std::deque<Image*> listAllImages;
     std::deque<Point*> listAllPoints;
-    std::deque<ExteriorOrientation*> listEOs;
+    std::deque<SpatialRessection*> listEOs;
 
     Image* leftImage;
     Image* rightImage;
@@ -66,7 +66,7 @@ class SPManager
 public:
 
     SPManager();
-    explicit SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<ExteriorOrientation*> eos);
+    explicit SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<SpatialRessection*> eos);
     ~SPManager();
 
     bool exec();

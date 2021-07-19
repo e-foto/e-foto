@@ -47,7 +47,7 @@ DEMManager::DEMManager()
 }
 
 DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images,
-                       std::deque<ExteriorOrientation*> eos)
+                       std::deque<SpatialRessection*> eos)
 {
     this->manager = manager;
     started = false;

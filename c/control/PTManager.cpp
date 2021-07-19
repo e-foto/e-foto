@@ -33,7 +33,7 @@
 #include "ProjectiveRay.h"
 #include "PositionMatrix.h"
 #include "ImageSpaceCoordinate.h"
-#include "ExteriorOrientation.h"
+#include "SpatialRessection.h"
 
 #include <stdlib.h>
 #include <sstream>
@@ -1294,7 +1294,7 @@ void PTManager::runAutoMeasurement()
                 Xa.set(4, 1, img->getInsPhi());
                 Xa.set(5, 1, img->getInsOmega());
                 Xa.set(6, 1, img->getInsKappa());
-                ExteriorOrientation newEO;
+                SpatialRessection newEO;
                 newEO.setXa(Xa);
                 img->setEO(&newEO);
                 ProjectiveRay pr(img);

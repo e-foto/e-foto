@@ -20,7 +20,6 @@
 #include "EFotoManager.h"
 #include "IOManager.h"
 #include "InteriorOrientation.h"
-#include "ExteriorOrientation.h"
 #include "SpatialRessection.h"
 #include "SRManager.h"
 #include "PTManager.h"
@@ -307,7 +306,7 @@ void EFotoManager::instanceAllIOs()
     }
 }
 
-ExteriorOrientation* EFotoManager::instanceEO(int imageId)
+SpatialRessection* EFotoManager::instanceEO(int imageId)
 {
     for (unsigned int i = 0; i < EOs.size(); i++)
         if (EOs.at(i)->getImageId() == imageId) {
@@ -328,7 +327,7 @@ ExteriorOrientation* EFotoManager::instanceEO(int imageId)
     SpatialRessection* newEO = new SpatialRessection();
     newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
     EOs.push_back(newEO);
-    return (ExteriorOrientation*) newEO;
+    return newEO;
 }
 
 void EFotoManager::instanceAllEOs()
@@ -469,7 +468,7 @@ void EFotoManager::deleteIO(int id)
 void EFotoManager::deleteEO(int id)
 {
     unsigned int i;
-    ExteriorOrientation* myEO = NULL;
+    SpatialRessection* myEO = NULL;
 
     for (i = 0; i < EOs.size(); i++)
         if (EOs.at(i)->getImageId() == id) {
@@ -479,7 +478,7 @@ void EFotoManager::deleteEO(int id)
 
     if (myEO != NULL) {
         if (myEO->is("SpatialRessection")) {
-            SpatialRessection* mySR = (SpatialRessection*) myEO;
+            SpatialRessection* mySR = myEO;
             delete (mySR);
         }
 
@@ -700,7 +699,7 @@ bool EFotoManager::execSP()
         Sensor* sensor = instanceSensor(img->getSensorId());
         Flight* flight = instanceFlight(img->getFlightId());
         InteriorOrientation* imgIO = instanceIO(img->getId());
-        ExteriorOrientation* imgEO = instanceEO(img->getId());
+        SpatialRessection* imgEO = instanceEO(img->getId());
         img->setSensor(sensor);
         img->setFlight(flight);
         img->setIO(imgIO);
@@ -783,7 +782,7 @@ bool EFotoManager::execDEM()
         Image* img = images.at(i);
         Sensor* sensor = instanceSensor(img->getSensorId());
         InteriorOrientation* imgIO = instanceIO(img->getId());
-        ExteriorOrientation* imgEO = instanceEO(img->getId());
+        SpatialRessection* imgEO = instanceEO(img->getId());
         img->setSensor(sensor);
         img->setIO(imgIO);
         img->setEO(imgEO);
@@ -829,7 +828,7 @@ bool EFotoManager::execOrtho()
         Image* img = images.at(i);
         Sensor* sensor = instanceSensor(img->getSensorId());
         InteriorOrientation* imgIO = instanceIO(img->getId());
-        ExteriorOrientation* imgEO = instanceEO(img->getId());
+        SpatialRessection* imgEO = instanceEO(img->getId());
         img->setSensor(sensor);
         img->setIO(imgIO);
         img->setEO(imgEO);

@@ -33,7 +33,7 @@ class OrthoUserInterface;
 class EFotoManager;
 
 class DemGrid;
-class ExteriorOrientation;
+class SpatialRessection;
 class Image;
 class Orthorectification;
 
@@ -51,7 +51,7 @@ class OrthoManager {
     OrthoUserInterface* myInterface;
     EFotoManager* manager;
     std::deque<Image*> listAllImages;
-    std::deque<ExteriorOrientation*> listEOs;
+    std::deque<SpatialRessection*> listEOs;
     DemGrid* grid;
     /**
     * \brief Método que inclui os dados das imagens no formulário.
@@ -80,7 +80,7 @@ public:
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
     explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images,
-                          std::deque<ExteriorOrientation*> eos);
+                          std::deque<SpatialRessection*> eos);
     /**
     * \brief Destrutor padrão.
     */

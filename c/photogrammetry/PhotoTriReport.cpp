@@ -75,7 +75,7 @@ int PhotoTriReport::createReport(char *filename)
 	arq << "=============\n\n";
 
 	InteriorOrientation* io;
-	ExteriorOrientation* eo;
+	SpatialRessection* eo;
 	Image *img;
 	Point *pnt;
 	double row, col;

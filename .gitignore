@@ -1,3 +1,7 @@
 Makefile
 .qmake.stash
 build/
+
+e-foto.pro.user
+
+*.orig

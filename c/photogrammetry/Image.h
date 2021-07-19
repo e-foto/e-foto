@@ -34,7 +34,7 @@ class Sensor;
 class Flight;
 class Point;
 class InteriorOrientation;
-class ExteriorOrientation;
+class SpatialRessection;
 
 /**
 * class Image
@@ -82,7 +82,7 @@ class Image : public EObject {
     Sensor* mySensor;
     Flight* myFlight;
     InteriorOrientation* myIO;
-    ExteriorOrientation* myEO;
+    SpatialRessection* myEO;
     std::deque<Point*> myPoints;
 
 public:
@@ -124,8 +124,8 @@ public:
     Flight* getFlight();
     void setIO(InteriorOrientation* newIO);
     InteriorOrientation* getIO();
-    void setEO(ExteriorOrientation* newEO);
-    ExteriorOrientation* getEO();
+    void setEO(SpatialRessection* newEO);
+    SpatialRessection* getEO();
     void putPoint(Point* newPointAssociation);
     void clearPoints();
     void removePoint(int id);

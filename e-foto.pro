@@ -41,7 +41,6 @@ HEADERS += c/control/DEMManager.h \
            c/infrastructure/Coordinate.h \
            c/infrastructure/Dms.h \
            c/infrastructure/EDom.h \
-           c/infrastructure/EDomValidator.h \
            c/infrastructure/EObject.h \
            c/infrastructure/ETreeModel.h \
            c/infrastructure/GeoSystem.h \
@@ -64,9 +63,7 @@ HEADERS += c/control/DEMManager.h \
            c/photogrammetry/DemGrid.h \
            c/photogrammetry/DetectorFiducialMark.h \
            c/photogrammetry/DetectorSpaceCoordinate.h \
-           c/photogrammetry/Dummies.h \
            c/photogrammetry/EOQuality.h \
-           c/photogrammetry/ExteriorOrientation.h \
            c/photogrammetry/Flight.h \
            c/photogrammetry/FrameSensor.h \
            c/photogrammetry/Image.h \
@@ -188,7 +185,6 @@ SOURCES += c/control/DEMManager.cpp \
            c/infrastructure/Coordinate.cpp \
            c/infrastructure/Dms.cpp \
            c/infrastructure/EDom.cpp \
-           c/infrastructure/EDomValidator.cpp \
            c/infrastructure/ETreeModel.cpp \
            c/infrastructure/GeoSystem.cpp \
            c/infrastructure/Matrix.cpp \
@@ -210,9 +206,7 @@ SOURCES += c/control/DEMManager.cpp \
            c/photogrammetry/DemGrid.cpp \
            c/photogrammetry/DetectorFiducialMark.cpp \
            c/photogrammetry/DetectorSpaceCoordinate.cpp \
-           c/photogrammetry/Dummies.cpp \
            c/photogrammetry/EOQuality.cpp \
-           c/photogrammetry/ExteriorOrientation.cpp \
            c/photogrammetry/Flight.cpp \
            c/photogrammetry/FrameSensor.cpp \
            c/photogrammetry/Image.cpp \
@@ -305,7 +299,7 @@ message("QMAKE_HOST.arch: $$QMAKE_HOST.arch")
 unix {
     # update version and revision files
     system("date -u +%Y.%m > qt/resource/version")
-    system("svnversion | sed 's/[^0-9]//g' > qt/resource/revision")
+    system("git log --oneline | wc -l > qt/resource/revision")
 
     # Set gdal usage
     LIBS += -L/usr/include/gdal -lgdal

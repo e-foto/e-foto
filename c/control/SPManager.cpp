@@ -47,7 +47,7 @@ SPManager::SPManager() :
 }
 
 SPManager::SPManager(EFotoManager* manager, std::deque<Image*>images,
-                     std::deque<ExteriorOrientation*> eos) :
+                     std::deque<SpatialRessection*> eos) :
     prL(0), prR(0)
 {
     this->manager = manager;
@@ -248,8 +248,8 @@ void SPManager::updateProjections()
     Sensor* sensor = leftImage->getSensor();
     InteriorOrientation* lio = leftImage->getIO();
     InteriorOrientation* rio = rightImage->getIO();
-    ExteriorOrientation* lsr = leftImage->getEO();
-    ExteriorOrientation* rsr = rightImage->getEO();
+    SpatialRessection* lsr = leftImage->getEO();
+    SpatialRessection* rsr = rightImage->getEO();
     leftImage->setSensor(sensor);
     leftImage->setIO(lio);
     leftImage->setEO(lsr);

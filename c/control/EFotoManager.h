@@ -38,6 +38,7 @@ class DEMManager;
 class OrthoManager;
 class SPManager;
 class ReportManager;
+class SpatialRessection;
 
 /**
 * \file EFotoManager.h
@@ -78,7 +79,7 @@ private:
     std::deque<Image*> images;
     std::deque<Point*> points;
     std::deque<InteriorOrientation*> IOs;
-    std::deque<ExteriorOrientation*> EOs;
+    std::deque<SpatialRessection*> EOs;
 
 public:
 
@@ -158,7 +159,7 @@ public:
     * \param imageId Identificador da imagem a ser utilizada na Orientação Exterior.
     * \return ExteriorOrientation Retorna a instância criada.
     */
-    ExteriorOrientation* instanceEO(int imageId);
+    SpatialRessection* instanceEO(int imageId);
 
     /**
     * \brief Método que apaga uma instância da classe Terrain.

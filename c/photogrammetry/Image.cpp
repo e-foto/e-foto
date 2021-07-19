@@ -318,12 +318,12 @@ InteriorOrientation* Image::getIO()
     return myIO;
 }
 
-void Image::setEO(ExteriorOrientation* newEO)
+void Image::setEO(SpatialRessection* newEO)
 {
     myEO = newEO;
 }
 
-ExteriorOrientation* Image::getEO()
+SpatialRessection* Image::getEO()
 {
     return myEO;
 }

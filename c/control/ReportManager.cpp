@@ -401,7 +401,7 @@ std::string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
             }
 
             if (project->allEOs().size() > 0) {
-                ExteriorOrientation* eo = img->getEO();
+                SpatialRessection* eo = img->getEO();
 
                 if (NULL != eo) {
                     txt += "<exteriorOrientation>\n";
@@ -836,7 +836,7 @@ std::string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*>
 {
     std::string txt;
     Image* img;
-    ExteriorOrientation* eo;
+    SpatialRessection* eo;
     txt = "<exteriorOrientation>\n";
 
     for (unsigned int i = 0; i < project->allImages().size(); i++) {

@@ -7,3 +7,5 @@
 --align-pointer=type
 --add-braces
 --attach-return-type
+--indent=spaces
+--max-code-length=80

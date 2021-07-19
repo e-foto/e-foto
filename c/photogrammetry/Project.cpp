@@ -293,7 +293,7 @@ void Project::instanceAllIOs()
     }
 }
 
-ExteriorOrientation* Project::instanceEO(int imageId)
+SpatialRessection* Project::instanceEO(int imageId)
 {
     for (unsigned int i = 0; i < EOs.size(); i++)
         if (EOs.at(i)->getImageId() == imageId) {
@@ -313,7 +313,7 @@ ExteriorOrientation* Project::instanceEO(int imageId)
         SpatialRessection* newEO = new SpatialRessection();
         newEO->xmlSetData(xmlEO.getContent().append(xmlSR.getContent()));
         EOs.push_back(newEO);
-        return (ExteriorOrientation*) newEO;
+        return newEO;
     }
     return NULL;
 }
@@ -542,7 +542,7 @@ void Project::addEO(std::string data, bool makeReconnections)
 
         SpatialRessection* eo = new SpatialRessection();
         eo->xmlSetData(xmlEO.getContent());
-        EOs.push_back((ExteriorOrientation*)eo);
+        EOs.push_back((SpatialRessection*)eo);
     }
 
     if (makeReconnections) {
@@ -636,7 +636,7 @@ InteriorOrientation* Project::IO(int id)
     return NULL;
 }
 
-ExteriorOrientation* Project::EO(int id)
+SpatialRessection* Project::EO(int id)
 {
     for (unsigned int i = 0; i < EOs.size(); i++)
         if (EOs.at(i)->getImageId() == id) {
@@ -744,12 +744,12 @@ void Project::linkAll()
     }
 
     for (unsigned int i = 0; i < EOs.size(); i++) {
-        ExteriorOrientation* eo = EOs.at(i);
+        SpatialRessection* eo = EOs.at(i);
         Image* img = image(eo->getImageId());
         eo->setImage(img);
 
         if (img) {
-            img->setEO((SpatialRessection*)eo);
+            img->setEO(eo);
         }
     }
 

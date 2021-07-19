@@ -38,7 +38,7 @@ class ImageMatching;
 class DemGrid;
 class DemFeatures;
 class Point;
-class ExteriorOrientation;
+class SpatialRessection;
 
 /**
 * \file DEMManager.h
@@ -70,7 +70,7 @@ class DEMManager {
     std::deque<Image*> listAllImages;
     std::deque<Point*> listAllPoints;
     std::deque<int> listPairs;
-    std::deque<ExteriorOrientation*> listEOs;
+    std::deque<SpatialRessection*> listEOs;
     /**
     * \brief Método privado que atualiza os número de sementes de dados.
     */
@@ -130,7 +130,7 @@ public:
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
     explicit DEMManager(EFotoManager* manager, std::deque<Image*> images,
-                        std::deque<ExteriorOrientation*> eos);
+                        std::deque<SpatialRessection*> eos);
     /**
     * \brief Destrutor padrão.
     */
