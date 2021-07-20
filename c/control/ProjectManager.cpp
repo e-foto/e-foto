@@ -38,20 +38,17 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ProjectManager::ProjectManager()
+ProjectManager::ProjectManager():ProjectManager(nullptr)
 {
-    this->manager = NULL;
-    this->treeModel = NULL;
-    this->updater = NULL;
-    this->savedIn = "";
 }
 
-ProjectManager::ProjectManager(EFotoManager* manager)
+ProjectManager::ProjectManager(EFotoManager* newmanager):
+  manager{newmanager},
+  myInterface{nullptr},
+  treeModel{nullptr},
+  updater{nullptr},
+  savedIn{""}
 {
-    this->manager = manager;
-    this->treeModel = NULL;
-    this->updater = NULL;
-    this->savedIn = "";
 }
 
 ProjectManager::~ProjectManager()
@@ -181,7 +178,7 @@ bool ProjectManager::loadFile(const char* filename)
                                            xmlData).elementByTagName("efotoPhotogrammetricProject").getContent());
 
             if (manager->getInterfaceType().compare("Qt") == 0) {
-                ProjectUserInterface_Qt* theInterface = (ProjectUserInterface_Qt*) myInterface;
+                ProjectUserInterface_Qt* theInterface = static_cast<ProjectUserInterface_Qt*> (myInterface);
                 theInterface->saveSettings("lastProject", filename);
             }
 
@@ -205,7 +202,7 @@ bool ProjectManager::saveFile(std::string filename)
             myFile.close();
 
             if (manager->getInterfaceType().compare("Qt") == 0) {
-                ProjectUserInterface_Qt* theInterface = (ProjectUserInterface_Qt*) myInterface;
+                ProjectUserInterface_Qt* theInterface = static_cast<ProjectUserInterface_Qt*> (myInterface);
                 theInterface->saveSettings("lastProject", filename.c_str());
             }
 
@@ -249,7 +246,7 @@ bool ProjectManager::addComponent(std::string data, std::string parent)
     return false;
 }
 
-bool ProjectManager::removeComponent(std::string type, int id)
+bool ProjectManager::removeComponent(const std::string& type, int id)
 {
     if (manager != NULL) {
         EDomElement newXml(manager->xmlGetData());
@@ -289,7 +286,7 @@ bool ProjectManager::removeComponent(std::string type, int id)
     return false;
 }
 
-bool ProjectManager::editComponent(std::string type, std::string data)
+bool ProjectManager::editComponent(const std::string& type, std::string data)
 {
     if (manager != NULL) {
         EDomElement newXml(manager->xmlGetData());
@@ -315,7 +312,7 @@ bool ProjectManager::editComponent(std::string type, std::string data)
     return false;
 }
 
-bool ProjectManager::editComponent(std::string type, int id, std::string data)
+bool ProjectManager::editComponent(const std::string& type, int id, std::string data)
 {
     if (manager != NULL) {
         EDomElement newXml(manager->xmlGetData());
@@ -384,7 +381,7 @@ std::deque<std::string> ProjectManager::listImages()
     return result;
 }
 
-int ProjectManager::getImageId(std::string imageName)
+int ProjectManager::getImageId(const std::string& imageName)
 {
     for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
         if (treeModel->dataAt(4, i) == imageName) {
@@ -511,10 +508,10 @@ bool ProjectManager::makeSPFile(std::string filename, int image1, int image2)
 
         InteriorOrientation* io1 = manager->instanceIO(image1);
         InteriorOrientation* io2 = manager->instanceIO(image2);
-        SpatialRessection* sr1 = (SpatialRessection*)manager->instanceEO(image1);
-        SpatialRessection* sr2 = (SpatialRessection*)manager->instanceEO(image2);
-        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)
-                                          manager->instanceSensor(manager->instanceImage(image1)->getSensorId());
+        SpatialRessection* sr1 = static_cast<SpatialRessection*>(manager->instanceEO(image1));
+        SpatialRessection* sr2 = static_cast<SpatialRessection*>(manager->instanceEO(image2));
+        SensorWithFiducialMarks* sensor = static_cast<SensorWithFiducialMarks*>
+                                          (manager->instanceSensor(manager->instanceImage(image1)->getSensorId()));
         Flight* flight = manager->instanceFlight(manager->instanceImage(
                              image1)->getFlightId());
         Terrain* terrain = manager->instanceTerrain();

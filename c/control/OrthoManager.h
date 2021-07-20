@@ -46,18 +46,24 @@ class Orthorectification;
 * \authors Marcelo Teixeira Silveira
 */
 class OrthoManager {
-    bool started;
-    bool status;
+
     OrthoUserInterface* myInterface;
     EFotoManager* manager;
     std::deque<Image*> listAllImages;
     std::deque<SpatialRessection*> listEOs;
     DemGrid* grid;
+    Orthorectification* ortho;
+    bool flag_cancel;
+    bool show_image;
+    int inter_method;
+    bool started;
+    bool status;
+
     /**
     * \brief Método que inclui os dados das imagens no formulário.
     */
     void addImagesToForm();
-    Orthorectification* ortho;
+
     /**
     * \brief Método que executa a ortoimagem para uma imagem.
     */
@@ -66,9 +72,6 @@ class OrthoManager {
     * \brief Método que executa a ortoimagem para todas as imagens.
     */
     void runAllOrthoTogether();
-    bool flag_cancel;
-    bool show_image;
-    int inter_method;
 
 public:
 
@@ -79,8 +82,9 @@ public:
     /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    explicit OrthoManager(EFotoManager* manager, std::deque<Image*> images,
-                          std::deque<SpatialRessection*> eos);
+    explicit OrthoManager(EFotoManager* newmanager,
+                          std::deque<br::uerj::eng::efoto::Image*> newimages,
+                          std::deque<SpatialRessection*> neweos);
     /**
     * \brief Destrutor padrão.
     */
@@ -142,7 +146,7 @@ public:
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */
-    void addOrthoToXML(std::string filename);
+    void addOrthoToXML(const std::string& filename);
     /**
     * \brief Registra no XML o endereço de um arquivo de Ortho.
     */

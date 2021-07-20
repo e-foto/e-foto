@@ -26,10 +26,14 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-DetectorFiducialMark::DetectorFiducialMark()
+DetectorFiducialMark::DetectorFiducialMark(): DetectorFiducialMark(0, 0)
 {
-    id = 0;
-    sensorId = 0;
+}
+
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId):
+  id {myId},
+  sensorId{mySensorId}
+{
     unit = "";
     xi = 0;
     eta = 0;
@@ -40,24 +44,12 @@ DetectorFiducialMark::DetectorFiducialMark()
     sigmaAvailable = false;
 }
 
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId,
+        std::string myUnit, double myXi, double myEta, double mySigmaXi,
+        double mySigmaEta, double mySigmaXiEta):
+  id {myId},
+  sensorId{mySensorId}
 {
-    id = myId;
-    sensorId = mySensorId;
-    unit = "";
-    xi = 0;
-    eta = 0;
-    sigmaXi = 0;
-    sigmaEta = 0;
-    sigmaXiEta = 0;
-    available = false;
-    sigmaAvailable = false;
-}
-
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, std::string myUnit, double myXi, double myEta, double mySigmaXi, double mySigmaEta, double mySigmaXiEta)
-{
-    id = myId;
-    sensorId = mySensorId;
     unit = myUnit;
     xi = myXi;
     eta = myEta;
@@ -68,18 +60,20 @@ DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, std::string
     sigmaAvailable = true;
 }
 
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId,
+        const PositionMatrix& myPosition):
+  id {myId},
+  sensorId{mySensorId}
 {
-    id = myId;
-    sensorId = mySensorId;
     setPosition(myPosition);
     sigmaAvailable = false;
 }
 
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId, const PositionMatrix& myPosition, const Matrix& myPositionSigmas)
+DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId,
+        const PositionMatrix& myPosition, const Matrix& myPositionSigmas):
+  id {myId},
+  sensorId{mySensorId}
 {
-    id = myId;
-    sensorId = mySensorId;
     setPosition(myPosition);
     setPositionSigmas(myPositionSigmas);
 }
@@ -130,7 +124,8 @@ void DetectorFiducialMark::xmlSetData(std::string xml)
     EDomElement xmlSigma = root.elementByTagName("sigma");
 
     if (xmlSigma.isAvailable()) {
-        sigmaMatrix.xmlSetData(root.elementByTagName("sigma").elementByTagName("mml:matrix").getContent());
+        sigmaMatrix.xmlSetData(
+            root.elementByTagName("sigma").elementByTagName("mml:matrix").getContent());
         sigmaAvailable = true;
     }
     else {
@@ -147,7 +142,8 @@ std::string DetectorFiducialMark::xmlGetData()
     result << "<FiducialMark key=\"" << Conversion::intToString(id) << "\">\n";
 
     if (available) {
-        result << "<gml:pos>" << Conversion::doubleToString(xi) << " " << Conversion::doubleToString(eta) << "</gml:pos>\n";
+        result << "<gml:pos>" << Conversion::doubleToString(xi) << " " <<
+               Conversion::doubleToString(eta) << "</gml:pos>\n";
     }
     else {
         result << "<gml:pos>Not Available</gml:pos>\n";

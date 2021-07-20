@@ -38,18 +38,14 @@ class Project;
 
 
 class ReportManager {
-    bool started;
-    bool status;
     EFotoManager* efotoManager;
     Project* project;
     ReportUserInterface* myInterface;
+    bool started;
+    bool status;
 
 public:
 
-    /**
-    * \brief Construtor vazio.
-    */
-    ReportManager();
     /**
     * \brief Construtor vazio.
     */

@@ -46,20 +46,13 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ReportManager::ReportManager()
+ReportManager::ReportManager(EFotoManager* manager):
+    efotoManager{manager},
+    project{manager->getProject()},
+    myInterface{nullptr},
+    started{false},
+    status{false}
 {
-    efotoManager = NULL;
-    project = NULL;
-    started = false;
-    status = false;
-}
-
-ReportManager::ReportManager(EFotoManager* manager)
-{
-    efotoManager = manager;
-    project = manager->getProject();
-    started = false;
-    status = false;
 }
 
 ReportManager::~ReportManager()
@@ -217,7 +210,7 @@ void ReportManager::checkTree(QList<QTreeWidgetItem*> treeItems)
     }
 
     for (unsigned int i = 0; i < project->allEOs().size(); i++) {
-        SpatialRessection* sr = (SpatialRessection*) project->allEOs().at(i);
+        SpatialRessection* sr = static_cast<SpatialRessection*>(project->allEOs().at(i));
 
         if (sr->getType() == "spatialResection") {
             spatialResectionCounter++;
@@ -272,7 +265,7 @@ std::string ReportManager::eprHeader()
 std::string ReportManager::eprTerrain()
 {
     Terrain* terreno = project->terrain();
-    std::string txt, direction;
+    std::string txt;
     Dms lat(terreno->getCentralCoordLat());
     Dms lon(terreno->getCentralCoordLong());
     txt = "<terrain>\n";
@@ -464,10 +457,9 @@ std::string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
 
         if (treeItems.at(10)->checkState(0) == 2) {
             txt += "<imagesMeasurements>\n";
-            Image* img;
 
             for (unsigned int j = 0; j < pnt->getImageCoordinates().size(); j++) {
-                img = project->image(pnt->getImageCoordinateAt(j).getImageId());
+                Image* img = project->image(pnt->getImageCoordinateAt(j).getImageId());
 
                 if (img) {
                     txt += "<imageCoordinates>\n";
@@ -516,8 +508,8 @@ std::string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*>
                     if (io->getImage()->getSensor()->getCalculationMode() ==
                             "With Fiducial Marks") {
                         std::deque<ImageFiducialMark> fidMarks = io->getImage()->getDigFidMarks();
-                        SensorWithFiducialMarks* sensor = (SensorWithFiducialMarks*)
-                                                          io->getImage()->getSensor();
+                        SensorWithFiducialMarks* sensor = static_cast<SensorWithFiducialMarks*>
+                                                          (io->getImage()->getSensor());
                         txt += "<fidMarks>\n";
 
                         for (unsigned int j = 0; j < fidMarks.size(); j++) {
@@ -540,8 +532,8 @@ std::string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*>
                     }
                     else if (io->getImage()->getSensor()->getCalculationMode() ==
                              "With Sensor Dimensions") {
-                        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)
-                                                           io->getImage()->getSensor();
+                        SensorWithKnowDimensions* sensor = static_cast<SensorWithKnowDimensions*>
+                                                           (io->getImage()->getSensor());
                         txt += "<sensorCols>" + Conversion::intToString(sensor->getFrameColumns()) +
                                "</sensorCols>\n";
                         txt += "<sensorRows>" + Conversion::intToString(sensor->getFrameRows()) +
@@ -551,8 +543,8 @@ std::string ReportManager::eprAffineTransformation(QList<QTreeWidgetItem*>
                     }
                     else if (io->getImage()->getSensor()->getCalculationMode() ==
                              "Fixed Parameters") {
-                        SensorWithKnowParameters* sensor = (SensorWithKnowParameters*)
-                                                           io->getImage()->getSensor();
+                        SensorWithKnowParameters* sensor = static_cast<SensorWithKnowParameters*>
+                                                           (io->getImage()->getSensor());
                         txt += "<Xa>\n";
                         txt += "<a0>" + Conversion::doubleToString(sensor->getXa().get(1,
                                 1)) + "</a0>\n";
@@ -604,7 +596,7 @@ std::string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*>
     txt = "<spatialResection>\n";
 
     for (unsigned int i = 0; i < project->allEOs().size(); i++) {
-        SpatialRessection* sr = (SpatialRessection*) project->allEOs().at(i);
+        SpatialRessection* sr = static_cast<SpatialRessection*> (project->allEOs().at(i));
 
         if (sr->getType() != "spatialResection") {
             continue;
@@ -739,10 +731,9 @@ std::string ReportManager::eprPhotogrammetricBlock(QList<QTreeWidgetItem*>
                    project->photoTri()->getMetricConvergency()) + "</metricConvergency>\n";
         bundle->calculateInicialsValues();
         Matrix inicialValues = bundle->getMatrixInicialValues();
-        Image* img;
 
         for (unsigned int i = 1; i < inicialValues.getRows() + 1; i++) {
-            img = usedImages.at(i - 1);
+            Image* img = usedImages.at(i - 1);
             txt += "<initialValues>\n";
             txt += "<imageId>" + img->getImageId() + "</imageId>\n";
             txt += "<matrix>\n";
@@ -789,11 +780,10 @@ std::string ReportManager::eprInteriorOrientation(QList<QTreeWidgetItem*>
     std::string txt;
     txt = "<interiorOrientation>\n";
     Image* img;
-    InteriorOrientation* io;
 
     for (unsigned int i = 0; i < project->allImages().size(); i++) {
         img = project->allImages().at(i);
-        io = img->getIO();
+        InteriorOrientation* io = img->getIO();
 
         if (NULL != io) {
             txt += "<IO>\n";
@@ -836,12 +826,11 @@ std::string ReportManager::eprExteriorOrientation(QList<QTreeWidgetItem*>
 {
     std::string txt;
     Image* img;
-    SpatialRessection* eo;
     txt = "<exteriorOrientation>\n";
 
     for (unsigned int i = 0; i < project->allImages().size(); i++) {
         img = project->allImages().at(i);
-        eo = img->getEO();
+        SpatialRessection* eo = img->getEO();
 
         if (NULL != eo) {
             txt += "<EO>\n";
@@ -965,8 +954,7 @@ std::string ReportManager::eprStereoPairs()
     }
 
     Image* img;
-    double X1, Y1, X2, Y2, R, dist, best_dist, bX2 = 0.0, bY2 = 0.0, overlap,
-                                               align_ang, kappa;
+    double X2, Y2, R, dist, bX2 = 0.0, bY2 = 0.0, align_ang;
     int best_img = 0;
     Matrix Xa;
     // Calculate Image Radius
@@ -979,10 +967,10 @@ std::string ReportManager::eprStereoPairs()
         // Get base image center
         img = project->allImages().at(i);
         Xa = img->getEO()->getXa();
-        X1 = Xa.get(1, 1);
-        Y1 = Xa.get(2, 1);
-        kappa = fabs(Xa.get(6, 1));
-        best_dist = 10e100;
+        double X1 = Xa.get(1, 1);
+        double Y1 = Xa.get(2, 1);
+        double kappa = fabs(Xa.get(6, 1));
+        double best_dist = 10e100;
 
         // Calculate the shortest image center
         for (unsigned int j = i + 1; j < project->allImages().size(); j++) {
@@ -1002,7 +990,7 @@ std::string ReportManager::eprStereoPairs()
         }
 
         // Check images overlapping
-        overlap = 100 * (2 * R - best_dist) / (2 * R);
+        double overlap = 100 * (2 * R - best_dist) / (2 * R);
 
         if (overlap < 60.0 || overlap > 100.0) {
             continue;

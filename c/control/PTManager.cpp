@@ -48,23 +48,28 @@ namespace eng {
 namespace efoto {
 
 
-PTManager::PTManager(EFotoManager* newManager, std::deque<Image*>images,
-                     std::deque<InteriorOrientation*> ois, Sensor* sensor, Flight* flight,
+PTManager::PTManager(EFotoManager* newManager,
+                     std::deque<Image*>images,
+                     std::deque<InteriorOrientation*> ois,
+                     Sensor* sensor,
+                     Flight* flight,
                      Terrain* terrain)
-    : efotoManager(newManager),
-      listAllImages(images),
-      listOis(ois),
-      mySensor(sensor),
-      myFlight(flight),
-      myTerrain(terrain),
-      marksSaveState(true),
-      started(false),
-      status(false),
-      localTopocentricMode(false),
-      previousData(false),
-      maxIterations(6),
-      metricConvergency(0.001),
-      angularConvergency(0.001)
+    : efotoManager{newManager},
+      listAllImages{images},
+      listOis{ois},
+      mySensor{sensor},
+      myFlight{flight},
+      myTerrain{terrain},
+      marksSaveState{true},
+      started{false},
+      status{false},
+      localTopocentricMode{false},
+      previousData{false},
+      maxIterations{6},
+      metricConvergency{0.001},
+      angularConvergency{0.001},
+      myInterface{nullptr},
+      pt{nullptr}
 {
     setListPoint();//lista todos os pontos
     setENH();
@@ -219,7 +224,7 @@ bool PTManager::calculatePT()
     }
 }
 
-void PTManager::setMatrixAFP(Matrix afp)
+void PTManager::setMatrixAFP(const Matrix& afp)
 {
     Matrix result(afp.getRows(), afp.getCols());
 
@@ -236,7 +241,7 @@ void PTManager::setMatrixAFP(Matrix afp)
     AFP = result;
 }
 
-Matrix PTManager::getMatrixOE()
+Matrix PTManager::getMatrixOE() const
 {
     if (pt == NULL) {
         return Matrix(0, 0);
@@ -267,7 +272,7 @@ void PTManager::setENH()
     spareENH.putMatrix(pointKeys, 1, ENH.getCols() + 1);
 }
 
-Matrix PTManager::getENH()
+Matrix PTManager::getENH() const
 {
     return ENH;
 }
@@ -332,7 +337,7 @@ std::deque<std::string> PTManager::getStringImages()
     return list;
 }
 
-std::string PTManager::getFilePath(std::string fileName)
+std::string PTManager::getFilePath(const std::string& fileName)
 {
     size_t numImages = listAllImages.size();
 
@@ -360,7 +365,7 @@ std::string PTManager::getFilePath(int imageKey)
 }
 
 
-std::deque<std::string> PTManager::getStringTypePoints(std::string
+std::deque<std::string> PTManager::getStringTypePoints(const std::string&
         imageFileName)
 {
     std::deque<std::string> list;
@@ -473,8 +478,8 @@ std::string PTManager::getPointId(int pointKey)
 
 
 // retorna uma lista com os ids dos pontos
-std::deque<std::string> PTManager::getStringIdPoints(std::string imageFileName,
-        std::string cond)
+std::deque<std::string> PTManager::getStringIdPoints(const std::string& imageFileName,
+        const std::string& cond)
 {
     std::deque<std::string> list;
 
@@ -531,7 +536,7 @@ std::deque<std::string> PTManager::getStringIdPoints(std::string imageFileName,
     return list;
 }
 
-std::deque<std::string> PTManager::getStringKeysPoints(std::string
+std::deque<std::string> PTManager::getStringKeysPoints(const std::string&
         imageFileName)
 {
     std::deque<std::string> list;
@@ -566,7 +571,7 @@ std::deque<std::string> PTManager::getStringKeysPoints(std::string
     throw "Image file error";
 }
 
-Matrix PTManager::getColLin(std::string imageFilename)
+Matrix PTManager::getColLin(const std::string& imageFilename)
 {
     int numImages = listAllImages.size();
 
@@ -626,7 +631,7 @@ void PTManager::updateDigitalCoordinatesPoint(int imageId, int pointKey,
 }
 
 // Procura a key da imagem pelo nome do arquivo senao encontrar retorna -1
-int PTManager::getImageId(std::string imageFilename)
+int PTManager::getImageId(const std::string& imageFilename)
 {
     int numImages = listAllImages.size();
 
@@ -886,12 +891,12 @@ void PTManager::setMarksSavedState(bool marksState)
     efotoManager->setSavedState(marksState);
 }
 
-bool PTManager::getMarksSavedState()
+bool PTManager::getMarksSavedState() const
 {
     return marksSaveState;
 }
 
-void PTManager::setImageFlightDirection(std::string imageFile,
+void PTManager::setImageFlightDirection(const std::string& imageFile,
                                         double flightDirection)
 {
     for (size_t i = 0; i < listAllImages.size(); i++)
@@ -909,7 +914,7 @@ void PTManager::setImageFlightDirection(int imageKey, double flightDirection)
     }
 }
 
-std::string PTManager::exportBlockTokml(std::string fileName, bool fromXML)
+std::string PTManager::exportBlockTokml(const std::string& fileName, bool fromXML)
 {
     int hemiLatitude = getTerrainLatHemisphere();
     int zona = getTerrainZone();
@@ -1132,7 +1137,7 @@ std::string PTManager::exportBlockTokml(std::string fileName, bool fromXML)
 }
 
 std::string PTManager::pointToKml(Point* pnt, int zona, int hemiLatitude,
-                                  GeoSystem sys, std::string pointType)
+                                  GeoSystem sys, const std::string& pointType) const
 {
     std::stringstream pointString;
     double E = pnt->getObjectCoordinate().getX();
@@ -1199,7 +1204,7 @@ void PTManager::setMetricConvergencyValue(double value)
     metricConvergency = value;
 }
 
-double PTManager::getMetricConvergencyValue()
+double PTManager::getMetricConvergencyValue() const
 {
     return metricConvergency;
 }
@@ -1209,7 +1214,7 @@ void PTManager::setAngularConvergencyValue(double value)
     angularConvergency = value;
 }
 
-double PTManager::getAngularConvergencyValue()
+double PTManager::getAngularConvergencyValue() const
 {
     return angularConvergency;
 }
@@ -1219,7 +1224,7 @@ void PTManager::setMaxIteration(int iterations)
     maxIterations = iterations;
 }
 
-int PTManager::getMaxIteration()
+int PTManager::getMaxIteration() const
 {
     return maxIterations;
 }
@@ -1446,8 +1451,6 @@ bool PTManager::hasAllImagesInitialValues()
 double PTManager::getPhiTerrain()
 {
     Dms lat(myTerrain->getCentralCoordLat());
-    EDomElement coordinates(efotoManager->getXml("terrain"));
-    coordinates = coordinates.elementByTagName("Lat");
 
     if (getTerrainLatHemisphere() < 0) {
         lat.setSignal(true);
@@ -1459,8 +1462,6 @@ double PTManager::getPhiTerrain()
 double PTManager::getLambdaTerrain()
 {
     Dms longi(myTerrain->getCentralCoordLong());
-    EDomElement coordinates(efotoManager->getXml("terrain"));
-    coordinates = coordinates.elementByTagName("Long");
 
     if (getTerrainLongHemisphere() < 0) { //coordinates.attribute("direction")=="W")
         longi.setSignal(true);
@@ -1540,8 +1541,6 @@ Matrix PTManager::eoParametersFromXml(bool withIds)
     EDomElement tempXa;
     EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
     std::deque<EDomElement> oesXml = exteriorXml.elementsByTagName("imageEO");
-    int imagekey;
-    double x0, y0, z0, omega, phi, kappa;
     int numEO = oesXml.size();
     Matrix oesMatrix;
 
@@ -1553,16 +1552,16 @@ Matrix PTManager::eoParametersFromXml(bool withIds)
     }
 
     for (int i = 0; i < numEO; i++) {
-        imagekey = Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
+        int imagekey = Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
         tempXa.setContent(oesXml.at(i).elementByTagName("Xa").getContent());
-        x0 = Conversion::stringToDouble(tempXa.elementByTagName("X0").toString());
-        y0 = Conversion::stringToDouble(tempXa.elementByTagName("Y0").toString());
-        z0 = Conversion::stringToDouble(tempXa.elementByTagName("Z0").toString());
-        omega = Conversion::stringToDouble(tempXa.elementByTagName("omega").toString())
+        int x0 = Conversion::stringToDouble(tempXa.elementByTagName("X0").toString());
+        int y0 = Conversion::stringToDouble(tempXa.elementByTagName("Y0").toString());
+        int z0 = Conversion::stringToDouble(tempXa.elementByTagName("Z0").toString());
+        int omega = Conversion::stringToDouble(tempXa.elementByTagName("omega").toString())
                 * 180 / M_PI;
-        phi = Conversion::stringToDouble(tempXa.elementByTagName("phi").toString()) *
+        int phi = Conversion::stringToDouble(tempXa.elementByTagName("phi").toString()) *
               180 / M_PI;
-        kappa = Conversion::stringToDouble(tempXa.elementByTagName("kappa").toString())
+        int kappa = Conversion::stringToDouble(tempXa.elementByTagName("kappa").toString())
                 * 180 / M_PI;
 
         if (withIds) {

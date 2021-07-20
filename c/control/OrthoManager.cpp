@@ -40,25 +40,34 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-OrthoManager::OrthoManager()
+OrthoManager::OrthoManager():
+    myInterface{nullptr},
+    manager{nullptr},
+    grid{nullptr},
+    ortho{nullptr},
+    flag_cancel{false},
+    show_image{false},
+    inter_method{0},
+    started{false},
+    status{false}
 {
-    started = false;
-    status = false;
 }
 
-OrthoManager::OrthoManager(EFotoManager* manager, std::deque<Image*>images,
-                           std::deque<SpatialRessection*> eos)
+OrthoManager::OrthoManager(EFotoManager* newmanager,
+                           std::deque<Image*> newimages,
+                           std::deque<SpatialRessection*> neweos):
+    myInterface{nullptr},
+    manager{newmanager},
+    listAllImages{newimages},
+    listEOs{neweos},
+    grid{nullptr},
+    ortho{nullptr},
+    flag_cancel{false},
+    show_image{false},
+    inter_method{0},
+    started{false},
+    status{false}
 {
-    this->manager = manager;
-    started = false;
-    status = false;
-    listAllImages = images;
-    listEOs = eos;
-    grid = NULL;
-    ortho = NULL;
-    flag_cancel = false;
-    show_image = false;
-    inter_method = 0;
 }
 
 OrthoManager::~OrthoManager()
@@ -88,7 +97,7 @@ bool OrthoManager::exec()
     }
 
     if (listAllImages.size() < 1) {
-        OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+        OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
         oui->showErrorMessage("There is no image to run this application");
         returnProject();
     }
@@ -98,7 +107,7 @@ bool OrthoManager::exec()
 
 void OrthoManager::addImagesToForm()
 {
-    OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+    OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
 
     for (unsigned i = 1; i <= listAllImages.size(); i++) {
         oui->comboBox->addItem("Image " + QString::fromStdString(listAllImages.at(
@@ -116,16 +125,16 @@ int OrthoManager::loadDemGrid(char* filename, int fileType)
     grid = new DemGrid(1.0, 2.0, 1.0, 2.0, 1.0, 1.0);
     grid->loadDem(filename, fileType);
     // Report grid resolution
-    double Xi, Yi, Xf, Yf, res_x, res_y, Zi, Zf, res_z;
+    double Xi, Yi, Xf, Yf, res_x, res_y, Zi, Zf;
     grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
     grid->getMinMax(Zi, Zf);
-    OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+    OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
     oui->doubleSpinBox1->setValue(res_x);
     oui->doubleSpinBox2->setValue(res_y);
 
     // Display results
     if (show_image) {
-        res_z = (Zf - Zi) / 255.0;
+        int res_z = (Zf - Zi) / 255.0;
         Matrix* img = grid->getDemImage();
         oui->showImage3D(img, Xi, res_x, Yi, res_y, Zi, res_z, 1);
         delete img;
@@ -148,7 +157,7 @@ void OrthoManager::loadOrtho(char* filename)
 
     // Display results
     if (show_image) {
-        OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+        OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
         Matrix* img = ortho->getOrthoImage();
         oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
         delete img;
@@ -165,13 +174,12 @@ void OrthoManager::runAllOrthoTogether()
     std::vector <ProjectiveRay> pr;
     // Get image centers in pixels
     Image* img;
-    int w, h;
     double best_dist_inital = 0.0;
 
     for (unsigned i = 0; i < listAllImages.size(); i++) {
         img = listAllImages.at(i);
-        w = img->getWidth();
-        h = img->getHeight();
+        int w = img->getWidth();
+        int h = img->getHeight();
         img_width.push_back(w);
         img_height.push_back(h);
         Cx.push_back(w / 2);
@@ -186,7 +194,7 @@ void OrthoManager::runAllOrthoTogether()
 
     best_dist_inital *= best_dist_inital;
     // Run ortho-image image by image
-    OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+    OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
     std::string filename, strimg;
     Matrix img_m;
 
@@ -283,7 +291,7 @@ void OrthoManager::runOrthoIndividual(int image)
     double meanZ = grid->getMeanZ(), Z;
     double Xi, Yi, Xf, Yf, res_x, res_y;
     double Xi_img, Yi_img, Xf_img, Yf_img;
-    OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+    OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
     double lin, col;
     grid->getDemParameters(Xi, Yi, Xf, Yf, res_x, res_y);
     Xi_img = Xf;
@@ -464,7 +472,7 @@ int OrthoManager::orthoRectificationGeoTiff(char* filename, int option,
 
     // Display results
     if (show_image) {
-        OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+        OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
         Matrix* img = ortho->getOrthoImage();
         oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
         delete img;
@@ -536,7 +544,7 @@ int OrthoManager::orthoRectification(char* filename, int option,
 
     // Display results
     if (show_image) {
-        OrthoUserInterface_Qt* oui = (OrthoUserInterface_Qt*)myInterface;
+        OrthoUserInterface_Qt* oui = static_cast<OrthoUserInterface_Qt*>(myInterface);
         Matrix* img = ortho->getOrthoImage();
         oui->showImage2D(img, Xi, res_x, Yi, res_y, false);
         delete img;
@@ -552,7 +560,7 @@ void OrthoManager::returnProject()
     manager->reloadProject();
 }
 
-void OrthoManager::addOrthoToXML(std::string filename)
+void OrthoManager::addOrthoToXML(const std::string& filename)
 {
     std::stringstream add;
     add << "<eoiFilename>";

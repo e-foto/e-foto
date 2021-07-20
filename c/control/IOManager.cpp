@@ -34,25 +34,22 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-IOManager::IOManager()
+IOManager::IOManager(): IOManager(nullptr, nullptr, nullptr, nullptr)
 {
-    manager = NULL;
-    mySensor = NULL;
-    myImage = NULL;
-    myIO = NULL;
-    started = false;
-    status = false;
 }
 
-IOManager::IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage,
-                     InteriorOrientation* myIO)
+IOManager::IOManager(EFotoManager* newmanager,
+                     Sensor* newmySensor,
+                     Image* newmyImage,
+                     InteriorOrientation* newmyIO):
+    manager{newmanager},
+    mySensor{newmySensor},
+    myImage{newmyImage},
+    myIO{newmyIO},
+    myInterface{nullptr},
+    started{false},
+    status{false}
 {
-    this->manager = manager;
-    this->mySensor = mySensor;
-    this->myImage = myImage;
-    this->myIO = myIO;
-    started = false;
-    status = false;
 }
 
 IOManager::~IOManager()
@@ -63,14 +60,14 @@ PositionMatrix IOManager::getAnalogMarks()
 {
     if (mySensor != NULL) {
         if (mySensor->is("SensorWithFiducialMarks")) {
-            SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*)
-                    mySensor;
+            SensorWithFiducialMarks* mySensorWithFiducialMarks =
+                static_cast<SensorWithFiducialMarks*> (mySensor);
             return PositionMatrix(mySensorWithFiducialMarks->getLb());
         }
 
         if (mySensor->is("SensorWithKnowDimensions")) {
             SensorWithKnowDimensions* mySensorWithKnowDimensions =
-                (SensorWithKnowDimensions*) mySensor;
+                static_cast<SensorWithKnowDimensions*>(mySensor);
             return PositionMatrix(mySensorWithKnowDimensions->forgeLb());
         }
     }
@@ -131,8 +128,8 @@ bool IOManager::calculateIO()
 {
     if (started) {
         if (mySensor->is("SensorWithFiducialMarks")) {
-            SensorWithFiducialMarks* mySensorWithFiducialMarks = (SensorWithFiducialMarks*)
-                    mySensor;
+            SensorWithFiducialMarks* mySensorWithFiducialMarks =
+                static_cast<SensorWithFiducialMarks*>(mySensor);
 
             if ((unsigned int) myImage->countDigFidMarks() == (unsigned int)
                     mySensorWithFiducialMarks->getLb().getRows() / 2) {
@@ -233,7 +230,8 @@ int IOManager::getFrameRows()
     int rows = 0;
 
     if (mySensor->is("SensorWithKnowDimensions")) {
-        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+        SensorWithKnowDimensions* sensor = static_cast<SensorWithKnowDimensions*>
+                                           (mySensor);
         rows = sensor->getFrameRows();
     }
 
@@ -245,7 +243,7 @@ int IOManager::getFrameColumns()
     int cols = 0;
 
     if (mySensor->is("SensorWithKnowDimensions")) {
-        SensorWithKnowDimensions* sensor = (SensorWithKnowDimensions*)mySensor;
+        SensorWithKnowDimensions* sensor = static_cast<SensorWithKnowDimensions*>(mySensor);
         cols = sensor->getFrameColumns();
     }
 

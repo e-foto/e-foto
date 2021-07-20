@@ -1,3 +1,5 @@
+#ifndef IOMANAGER_H
+#define IOMANAGER_H
 /**************************************************************************
 		  IOManager.h
 **************************************************************************/
@@ -17,9 +19,6 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef IOMANAGER_H
-#define IOMANAGER_H
 
 #include "PositionMatrix.h"
 
@@ -41,13 +40,13 @@ class EFotoManager;
 * \copyright E-Foto group
 */
 class IOManager {
-    bool started;
-    bool status;
     EFotoManager* manager;
     Sensor* mySensor;
     Image* myImage;
     InteriorOrientation* myIO;
     IOUserInterface* myInterface;
+    bool started;
+    bool status;
 
 public:
     /**
@@ -61,8 +60,8 @@ public:
     * \param myImage Ponteiro para o objeto imagem utilizado.
     * \param myIO Ponteiro para o objeto de cálculo utilizado.
     */
-    explicit IOManager(EFotoManager* manager, Sensor* mySensor, Image* myImage,
-                       InteriorOrientation* myIO);
+    explicit IOManager(EFotoManager* newmanager, Sensor* newmySensor, Image* newmyImage,
+                       InteriorOrientation* newmyIO);
 
     /**
     * \brief Destrutor padrão.

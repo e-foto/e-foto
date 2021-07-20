@@ -85,12 +85,6 @@ public:
  */
     static int stringToInt(std::string value);
 
-	/**
- * \brief Método para conversão de inteiro longo para string.
- * \param value	Valor a ser convertido.
- * \return string	Texto que descreve o valor inserido.
- */
-    static std::string longToString(long value);
 
 	/**
  * \brief Método para conversão de string para inteiro longo.
@@ -225,17 +219,6 @@ public:
     bool addChildAtTagName(std::string tagname, std::string newChild);
 
 	/**
- * \brief Adiciona um elemento filho aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
- * \param tagname	O tagname a ser buscado.
- * \param att	O nome do atributo a ser verificado.
- * \param value	O valor do atributo a ser verificado.
- * \param newChild	O conteúdo do elemento filho a ser adicionado.
- * \return bool	Verdadeiro se a inserção foi realizada com sucesso, falso caso contrário.
- * \todo Fazer uma versão que receba um EDomElement como quarto parâmetro.
- */
-    bool addChildAtTagAtt(std::string tagname, std::string att, std::string value, std::string newChild);
-
-	/**
  * \brief Substitui os elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
  * \param tagname	O tagname a ser buscado.
  * \param newChild	O novo conteúdo dos elementos a serem substituídos.
@@ -278,17 +261,6 @@ public:
     bool addAttributeByTagName(std::string tagname, std::string newAtt, std::string newAttValue);
 
 	/**
- * \brief Adiciona um atributo aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
- * \param tagname	O tagname a ser buscado.
- * \param att	O nome do atributo a ser verificado.
- * \param value	O valor do atributo a ser verificado.
- * \param newAtt	O nome do novo atributo a ser adicionado.
- * \param newAttValue	O valor a ser atribuído ao novo atributo.
- * \return bool	Verdadeiro se a adição foi realizada com sucesso, falso caso contrário.
- */
-    bool addAttributeByTagAtt(std::string tagname, std::string att, std::string value, std::string newAtt, std::string newAttValue);
-
-	/**
  * \brief Modifica um atributo existente nos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
  * \param tagname	O tagname a ser buscado.
  * \param replaceAtt	O nome do atributo a ser modificado.
@@ -297,7 +269,7 @@ public:
  */
     bool replaceAttributeByTagName(std::string tagname, std::string replaceAtt, std::string newAttValue);
 
-	/**
+        /**
  * \brief Modifica um atributo existente nos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado e um atributo com determinado valor.
  * \param tagname	O tagname a ser buscado.
  * \param att	O nome do atributo a ser verificado.
@@ -327,13 +299,6 @@ public:
  * \attention As regras de conversão utilizadas são as definidas na classe Conversion.
  */
     int toInt();
-
-	/**
- * \brief Retorna o valor textual contido no elemento atual convertido em um inteiro longo.
- * \return long	O valor contido no elemento atual.
- * \attention As regras de conversão utilizadas são as definidas na classe Conversion.
- */
-	long toLong();
 
 	/**
  * \brief Retorna o valor textual contido no elemento atual convertido em um double.
@@ -368,13 +333,6 @@ public:
  * \return EDomElement	O elemento com a indentação aplicada.
  */
 	EDomElement indent(char indentation);
-
-	/**
- * \brief Retorna um elemento de conteúdo idêntico ao atual, mas com uma determinada indentação removida.
- * \param indentation	O caracter a ser usado como indentação. Geralmente ' ' ou '\t'.
- * \return EDomElement	O elemento com a indentação removida.
- */
-	EDomElement trim(char charToTrim);
 
 	/**
  * \brief Retorna um elemento de conteúdo idêntico ao atual, mas com as linhas em branco removidas. Adicionalmente, todo tipo de espaço em branco usado como indentação pode ser removido.

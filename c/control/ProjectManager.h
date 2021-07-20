@@ -1,3 +1,5 @@
+#ifndef PROJECTMANAGER_H
+#define PROJECTMANAGER_H
 /**************************************************************************
 ProjectManager.h
 **************************************************************************/
@@ -17,9 +19,6 @@ ProjectManager.h
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef PROJECTMANAGER_H
-#define PROJECTMANAGER_H
 
 #include <string>
 #include <deque>
@@ -58,7 +57,7 @@ public:
     * \brief Construtor padrão.
     * \param manager : Controlador geral.
     */
-    explicit ProjectManager(EFotoManager* manager);
+    explicit ProjectManager(EFotoManager* newmanager);
     /**
     * \brief Destrutor padrão.
     */
@@ -101,14 +100,14 @@ public:
     * \param  id : Identificacao do componente no XML.
     * \return bool Retorna verdadeiro se a remoção foi realizada corretamente. Retorna falso, caso contrário.
     */
-    bool removeComponent(std::string type, int id);
+    bool removeComponent(const std::string &type, int id);
     /**
     * \brief Método que edita um nó no xml do projeto.
     * \param type : Texto contendo o tipo, a saber: Header, Terrain.
     * \param  data : Dados novos a serem inseridos no lugar dos antigos.
     * \return bool Retorna verdadeiro se a edição foi realizada corretamente. Retorna falso, caso contrário.
     */
-    bool editComponent(std::string type, std::string data);
+    bool editComponent(const std::string &type, std::string data);
     /**
     * \brief Método que edita um nó no xml do projeto.
     * \param type : Texto contendo o tipo, a saber: Sensor, Flight,Image, Point, IO, EO.
@@ -116,7 +115,7 @@ public:
     * \param  data : Dados novos a serem inseridos no lugar dos antigos.
     * \return bool Retorna verdadeiro se a edição foi realizada corretamente. Retorna falso, caso contrário.
     */
-    bool editComponent(std::string type, int id, std::string data);
+    bool editComponent(const std::string &type, int id, std::string data);
 
     /**
     * \brief Método que retorna o atual modelo de dados do projeto..
@@ -138,7 +137,7 @@ public:
     * \param imageName O nome da imagem.
     * \return int Identificador solicitado da imagem.
     */
-    int getImageId(std::string imageName);
+    int getImageId(const std::string &imageName);
     /**
     * \brief Método que retorna um identificador de imagens que ainda não foi utilizado.
     * \return int Identificador da imagem que ainda não foi utilizado.

@@ -1,3 +1,5 @@
+#ifndef PTMANAGER_H
+#define PTMANAGER_H
 /*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
@@ -15,8 +17,7 @@
 	along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PTMANAGER_H
-#define PTMANAGER_H
+
 
 #include "CommonDef.h"
 #include "BundleAdjustment.h"
@@ -124,7 +125,7 @@ public:
     * \brief Metodo que altera a matriz com os resultados das orientações exteriores
     * \param afp : Matriz com os parametros das orientações exteriores das imagens
     */
-    void setMatrixAFP(Matrix afp);
+    void setMatrixAFP(const Matrix &afp);
 
     /**
     * \brief Metodo que retorna a matriz com os parametros das orientaçoes exteriores
@@ -133,7 +134,7 @@ public:
     * \attention Se o calculo da classe BundleAdjusment nao tiver sido disparado, o
     * retorna sera uma matriz 1x1, com o valor zero
     */
-    Matrix getMatrixOE();
+    Matrix getMatrixOE() const;
 
     /**
     * \brief Metodo que altera a matriz que corresponde aos valores ENH de todos os pontos
@@ -145,7 +146,7 @@ public:
     * \brief Metodo que retorna a matriz que corresponde aos valores ENH de todos os
     * pontos cadastrados no projeto, onde cada linha representa um ponto
     */
-    Matrix getENH();
+    Matrix getENH() const;
 
     /**
     * \brief Metodo que retorna a matriz dos residuos dos parametros das orientações
@@ -165,7 +166,7 @@ public:
     * \attention Esse metodo pode falhar se o projeto tiver duas imagens em diretorios
     * diferentes com o mesmo nome de arquivo.
     */
-    Matrix getColLin(std::string imageFilename);
+    Matrix getColLin(const std::string &imageFilename);
 
     /**
     * \overload getColLin
@@ -199,7 +200,7 @@ public:
     * o retorno será uma lista com as key de todos os pontos no projeto
     * \return std::deque<string> : Lista com as keys dos pontos
     */
-    std::deque<std::string> getStringKeysPoints(std::string imageFileName = "");
+    std::deque<std::string> getStringKeysPoints(const std::string& imageFileName = "");
 
     /**
     * \brief Metodo auxiliar que retorna uma lista com os tipos dos pontos contidos na
@@ -208,7 +209,7 @@ public:
     * o retorno será uma lista com os tipos de todos os pontos no projeto
     * \return std::deque<string> : Lista com os tipos dos pontos
     */
-    std::deque<std::string> getStringTypePoints(std::string imageFileName = "");
+    std::deque<std::string> getStringTypePoints(const std::string &imageFileName = "");
 
     /**
     * \brief Metodo auxiliar que retorna uma lista dos ids dos pontos contidos na imagem
@@ -219,8 +220,8 @@ public:
     * condição "noCheckingPoint" que exclui os ids dos pontos de checking
     * \return std::deque<string> : Lista com os ids dos pontos
     */
-    std::deque<std::string> getStringIdPoints(std::string imageFileName = "",
-            std::string cond1 = "");
+    std::deque<std::string> getStringIdPoints(const std::string& imageFileName = "",
+            const std::string& cond = "");
 
     /**
     * \brief Metodo que retorna uma lista contendo todos os nomes dos arquivos das
@@ -259,7 +260,7 @@ public:
     * \param imageFilename : Nome do arquivo de imagem
     * \return int : key da imagem
     */
-    int getImageId(std::string imageFilename);
+    int getImageId(const std::string &imageFilename);
 
     /**
     * \brief Metodo que retorna o Id de um ponto
@@ -304,7 +305,7 @@ public:
     * \return std::string : Caminho do arquivo da imagem SEM o nome do arquivo de imagem
     * \attention Esse metodo pode falhar se o projeto tiver duas imagens em diretorios diferentes com o mesmo nome de arquivo.
     */
-    std::string getFilePath(std::string fileName);
+    std::string getFilePath(const std::string &fileName);
 
     /**
     * \overload getFilePath
@@ -345,7 +346,7 @@ public:
     * \brief Metodo para retornar o estado atual das marcas
     * \return bool: Indica se houve mudanÃ§as
     */
-    bool getMarksSavedState();
+    bool getMarksSavedState() const;
 
     /**
     * \brief Cria um texto em xml contendo tudo que for pertinente a fototriangulaÃ§ao
@@ -365,7 +366,7 @@ public:
     * \param imagefile : Nome do arquivo de imagem
     * \param flightDirection : Valor da direÃ§ao de voo em radianos
     */
-    void setImageFlightDirection(std::string imageFile, double flightDirection);
+    void setImageFlightDirection(const std::string &imageFile, double flightDirection);
 
     /**
     * \overload setImageFlightDirection
@@ -381,7 +382,7 @@ public:
     * \param fileName : Nome do arquivo em que o xml será salvo
     * \return string : xml(*.kml) dos pontos e imagens
     */
-    std::string exportBlockTokml(std::string fileName, bool fromXML = false);
+    std::string exportBlockTokml(const std::string& fileName, bool fromXML = false);
 
     /**
     * \brief Metodo auxiliar que retorna uma string correspondente a um ponto xml interpretavel pelo GoogleEarth
@@ -392,8 +393,11 @@ public:
     * \param   pointType  : Texto que informa que tipo de ponto é, controle fotogramétrico ou de checking
     * \return    std::string   : Texto com o xml correspondente a um lugar(placemark) no GoogleEarth
     */
-    std::string pointToKml(Point* pnt, int zona, int hemiLatitude, GeoSystem sys,
-                           std::string pointType);
+    std::string pointToKml(Point* pnt,
+                           int zona,
+                           int hemiLatitude,
+                           GeoSystem sys,
+                           const std::string &pointType) const;
 
     /**
     * \brief Metodo que altera o valor maximos de iterações de calculo da fototriangulação
@@ -405,7 +409,7 @@ public:
     * \brief Metodo que retorna o valor máximo de iterações para o calculo da fototrianguulação
     * \return int : Número máximo de iterações
     */
-    int getMaxIteration();
+    int getMaxIteration() const;
 
     /**
     * \brief Metodo que altera o valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
@@ -417,7 +421,7 @@ public:
     * \brief Metodo que o valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
     * \return double : Valor da convergencia dos parametros X0 Y0 e Z0 de cada imagem.
     */
-    double getMetricConvergencyValue();
+    double getMetricConvergencyValue() const;
 
     /**
     * \brief Metodo que altera o valor da convergencia dos parametros omega phi e kappa de cada imagem.
@@ -429,7 +433,7 @@ public:
     * \brief Metodo que altera o valor da convergencia dos parametros omega phi e kappa de cada imagem.
     * \return double : Valor da convergencia em radianos
     */
-    double getAngularConvergencyValue();
+    double getAngularConvergencyValue() const;
 
     /**
     * \brief Metodo auxiliar que recarrega/reseta os valores das coordenadas ENH dos objetos Point

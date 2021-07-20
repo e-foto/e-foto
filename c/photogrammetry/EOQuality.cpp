@@ -19,7 +19,6 @@
 */
 
 #include "EOQuality.h"
-#include "ExteriorOrientation.h"
 #include "SpatialRessection.h"
 
 #include <sstream>

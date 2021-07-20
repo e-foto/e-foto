@@ -1,3 +1,5 @@
+#ifndef DEMMANAGER_H
+#define DEMMANAGER_H
 /**************************************************************************
 DEMManager.h
 **************************************************************************/
@@ -17,9 +19,6 @@ DEMManager.h
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef DEMMANAGER_H
-#define DEMMANAGER_H
 
 #include "CommonDef.h"
 #include "StereoPair.h"
@@ -221,7 +220,7 @@ public:
     /**
     * \brief Método que verifica se alguma operação foi cancelada.
     */
-    bool cancelFlag()
+    bool cancelFlag() const
     {
         return cancel_flag;
     };
@@ -229,7 +228,7 @@ public:
     /**
     * \brief Método que verifica se a DEM foi salva.
     */
-    bool isDemUnsaved()
+    bool isDemUnsaved() const
     {
         return dem_unsaved;
     };
@@ -237,7 +236,7 @@ public:
     /**
     * \brief Método que verifica se a grade foi salva.
     */
-    bool isGridUnsaved()
+    bool isGridUnsaved() const
     {
         return grid_unsaved;
     };
@@ -258,7 +257,7 @@ public:
     /**
     * \brief Método que retorna uma lista de pares de imagens.
     */
-    std::deque<int> getImagesPairs()
+    std::deque<int> getImagesPairs() const
     {
         return listPairs;
     };
@@ -266,7 +265,7 @@ public:
     /**
     * \brief Método que força a sobreescrita na lista de sementes. Chamada pelo editor de sementes.
     */
-    void overwriteSeedsList(MatchingPointsList sedlist)
+    void overwriteSeedsList(const MatchingPointsList& sedlist)
     {
         seeds = sedlist;
         updateNoSeeds();
