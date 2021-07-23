@@ -41,18 +41,14 @@ class XmlUpdater;
 */
 class ProjectManager {
 
-    EFotoManager* manager;
-    ProjectUserInterface* myInterface;
-    XmlUpdater* updater;
-    ETreeModel* treeModel;
+    EFotoManager* manager{nullptr};
+    ProjectUserInterface* myInterface{nullptr};
+    XmlUpdater* updater{nullptr};
+    ETreeModel* treeModel{nullptr};
 
 public:
-    std::string savedIn;
+    std::string savedIn{""};
 
-    /**
-    * \brief Construtor vazio.
-    */
-    ProjectManager();
     /**
     * \brief Construtor padrão.
     * \param manager : Controlador geral.

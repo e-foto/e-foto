@@ -28,7 +28,6 @@ OrthoManager.cpp
 #include "DemGrid.h"
 #include "ProjectiveRay.h"
 #include "Orthorectification.h"
-#include "Interpolation.h"
 #include "Terrain.h"
 #include "Image.h"
 #include "CommonDef.h"
@@ -40,33 +39,12 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-OrthoManager::OrthoManager():
-    myInterface{nullptr},
-    manager{nullptr},
-    grid{nullptr},
-    ortho{nullptr},
-    flag_cancel{false},
-    show_image{false},
-    inter_method{0},
-    started{false},
-    status{false}
-{
-}
-
-OrthoManager::OrthoManager(EFotoManager* newmanager,
-                           std::deque<Image*> newimages,
-                           std::deque<SpatialRessection*> neweos):
-    myInterface{nullptr},
-    manager{newmanager},
-    listAllImages{newimages},
-    listEOs{neweos},
-    grid{nullptr},
-    ortho{nullptr},
-    flag_cancel{false},
-    show_image{false},
-    inter_method{0},
-    started{false},
-    status{false}
+OrthoManager::OrthoManager(EFotoManager* newManager,
+                           std::deque<Image*> newImages,
+                           std::deque<SpatialRessection*> newEos):
+    manager{newManager},
+    listAllImages{newImages},
+    listEOs{newEos}
 {
 }
 
@@ -212,7 +190,7 @@ void OrthoManager::runAllOrthoTogether()
         // Run Ortho
         DetectorSpaceCoordinate analog_coord;
         Interpolation interp;
-        interp.setMode(1); // Color
+        interp.setMode(ColorMode::Color);
         double meanZ = grid->getMeanZ(), Z;
         double Xi, Yi, Xf, Yf, res_x, res_y, best_dist, dist, pixel;
         double lin, col, best_lin = 0, best_col = 0;
@@ -354,7 +332,7 @@ void OrthoManager::runOrthoIndividual(int image)
     oui->setCurrentWork("Calculating ortho-rectification for image " + strimg);
     double pixel;
     Interpolation interp;
-    interp.setMode(1); // Color
+    interp.setMode(ColorMode::Color); // Color
 
     for (double Y = Yi_img; Y < Yf_img; Y += res_y) {
         for (double X = Xi_img; X < Xf_img; X += res_x) {
@@ -402,16 +380,16 @@ int OrthoManager::orthoRectificationGeoTiff(char* filename, int option,
     Terrain* terrain = manager->instanceTerrain();
 
     if (terrain->getGRS() == ("SAD69")) {
-        ortho->setDatum(SAD69);
+        ortho->setDatum(Datum::SAD69);
     }
     else if (terrain->getGRS() == ("WGS84")) {
-        ortho->setDatum(WGS84);
+        ortho->setDatum(Datum::WGS84);
     }
     else if (terrain->getGRS() == ("SIRGAS2000")) {
-        ortho->setDatum(SIRGAS2000);
+        ortho->setDatum(Datum::SIRGAS2000);
     }
     else {
-        ortho->setDatum(SAD69);
+        ortho->setDatum(Datum::SAD69);
     }
 
     ortho->setUtmFuse(terrain->getUtmFuse());

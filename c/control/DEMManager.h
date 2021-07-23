@@ -23,6 +23,7 @@ DEMManager.h
 #include "CommonDef.h"
 #include "StereoPair.h"
 #include "MatchingPoints.h"
+#include "ImageMatching.h"
 
 #include <deque>
 
@@ -33,7 +34,6 @@ namespace efoto {
 
 class DEMUserInterface;
 class EFotoManager;
-class ImageMatching;
 class DemGrid;
 class DemFeatures;
 class Point;
@@ -47,22 +47,27 @@ class SpatialRessection;
 * \copyright E-Foto group
 */
 class DEMManager {
-    double bb_Xi, bb_Yi, bb_Xf, bb_Yf;
-    bool bb_empty;
+    double bb_Xi;
+    double bb_Yi;
+    double bb_Xf;
+    double bb_Yf;
+    bool bb_empty{true};
     void updateBoundingBox(double Xi, double Yi, double Xf, double Yf);
-    int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp,
+    ImgRadioCorrection rad_cor;
+    MatchingMet match_method;
+    int rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp,
         ncc_sw;
     double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std,
            downsample;
     bool perf_RG;
-    bool isShowImage;
-    bool started;
-    bool status;
+    bool isShowImage{false};
+    bool started{false};
+    bool status{false};
     bool over_it;
-    bool cancel_flag;
-    bool dem_unsaved;
-    bool grid_unsaved;
-    bool elim_bad_pts;
+    bool cancel_flag{false};
+    bool dem_unsaved{false};
+    bool grid_unsaved{false};
+    bool elim_bad_pts{false};
     double over_it_dist;
     DEMUserInterface* myInterface;
     EFotoManager* manager;
@@ -70,6 +75,15 @@ class DEMManager {
     std::deque<Point*> listAllPoints;
     std::deque<int> listPairs;
     std::deque<SpatialRessection*> listEOs;
+    ImageMatching* im{nullptr};
+    DemGrid* grid{nullptr};
+    DemFeatures* df{nullptr};
+    StereoPair sp;
+    int lsm_temp_growth_step{2};
+    int lsm_temp_max_size{50};
+    int ncc_temp_growth_step{2};
+    int ncc_temp_max_size{50};
+    double dem_total_elapsed_time;
     /**
     * \brief Método privado que atualiza os número de sementes de dados.
     */
@@ -112,14 +126,6 @@ class DEMManager {
     */
     void calcPointsXYZ();
 
-    ImageMatching* im;
-    DemGrid* grid;
-    DemFeatures* df;
-    StereoPair sp;
-    int lsm_temp_growth_step, lsm_temp_max_size, ncc_temp_growth_step,
-        ncc_temp_max_size;
-    double dem_total_elapsed_time;
-
 public:
     /**
     * \brief Construtor padrão.
@@ -128,7 +134,7 @@ public:
     /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    explicit DEMManager(EFotoManager* manager, std::deque<Image*> images,
+    explicit DEMManager(EFotoManager* newManager, std::deque<Image*> images,
                         std::deque<SpatialRessection*> eos);
     /**
     * \brief Destrutor padrão.
@@ -162,7 +168,7 @@ public:
     /**
     * \brief Método que altera as configurações de extração automática.
     */
-    void setAutoExtractionSettings(int, int, int, double);
+    void setAutoExtractionSettings(ImgRadioCorrection, MatchingMet, int, double);
 
     /**
     * \brief Método que altera as configurações do NCC.

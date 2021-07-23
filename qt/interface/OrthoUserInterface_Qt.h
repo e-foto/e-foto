@@ -24,6 +24,7 @@
 #include "LoadingScreen.h"
 #include "Matrix.h"
 #include "GeometryResource.h"
+#include "OrthoManager.h"
 
 #include <QPoint>
 #include <QGridLayout>
@@ -73,6 +74,8 @@ private:
     void close();
     bool allow_close;
     QString lastDir;
+
+    InterpMethode chooseInterpMeth();
 
 public:
     static OrthoUserInterface_Qt* instance(OrthoManager* manager);

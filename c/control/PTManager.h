@@ -48,23 +48,23 @@ class InteriorOrientation;
 */
 class PTManager {
 protected:
-    EFotoManager* efotoManager;
+    EFotoManager* efotoManager{nullptr};
     std::deque<Image*> listAllImages;
     std::deque<InteriorOrientation*> listOis;
-    Sensor* mySensor;
-    Flight* myFlight;
-    Terrain* myTerrain;
+    Sensor* mySensor{nullptr};
+    Flight* myFlight{nullptr};
+    Terrain* myTerrain{nullptr};
 
-    bool marksSaveState;
-    bool started;
-    bool status;
-    bool localTopocentricMode;
-    bool previousData;
-    int maxIterations;
-    double metricConvergency;
-    double angularConvergency;
-    PTUserInterface* myInterface;
-    double flightScale;
+    bool marksSaveState{true};
+    bool started{false};
+    bool status{false};
+    bool localTopocentricMode{false};
+    bool previousData{false};
+    int maxIterations{6};
+    double metricConvergency{0.001};
+    double angularConvergency{0.001};
+    PTUserInterface* myInterface{nullptr};
+    double flightScale{1.0};
 
     std::deque<Point*> listAllPoints;
 
@@ -72,7 +72,7 @@ protected:
     std::deque<Image*> listSelectedImages;
     std::deque<Point*> listSelectedPoints;
 
-    BundleAdjustment* pt;
+    BundleAdjustment* pt{nullptr};
     Matrix ENH, spareENH, AFP, MVC, residuos;
 
 public:

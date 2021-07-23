@@ -69,7 +69,7 @@ private:
   * \brief Altera o objeto para o sistema geodesico do enumerador
   * \param system : Valor do enumerador;
   */
-    void setSystem(DatumType system);
+    void setSystem(Datum system);
 
     /**
   * \brief Altera os atributos dos sistemas, ou seja, altera o sistema
@@ -90,7 +90,7 @@ public:
   * \brief Construtor a partir de um enumerador
   * \param system : Enumerador do sistema geodesico
   */
-    explicit GeoSystem(DatumType system=WGS84);
+    explicit GeoSystem(Datum system=Datum::WGS84);
 
 	/**
   * \brief Construtor com as informaççoes basicas de um sistema

@@ -39,13 +39,9 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ProjectiveRay::ProjectiveRay(Image *myImage)
+ProjectiveRay::ProjectiveRay(Image *newImage): myImage{myImage}
 {
-		this->myImage = myImage;
-		this->hasRotations = false;
 }
-
-// Internal methods
 
 PositionMatrix ProjectiveRay::imageZToDetectorZ(const PositionMatrix& myDigitalPositionsWithZ)
 {

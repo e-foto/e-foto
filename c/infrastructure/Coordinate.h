@@ -54,12 +54,6 @@ public:
 	void setAvailable(bool value);
 
 	/**
- * \brief Método para alterar o valor que diz se o erro (sigma) armazenado pela coordenada é válido.
- * \param value	Valor verdadeiro ou falso para o julgamento sobre a validade do erro armazenado pela classe de coordenada.
- */
-	void setSigmaAvailable(bool value);
-
-	/**
  * \brief Método para informar se a coordenada possui um valor válido.
  * \return PositionMatrix	Retorna verdadeiro se existir um valor válido armazenado para a coordenada e falso em caso contrário.
  */

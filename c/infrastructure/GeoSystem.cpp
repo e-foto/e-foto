@@ -24,7 +24,7 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-GeoSystem::GeoSystem(DatumType system)
+GeoSystem::GeoSystem(Datum system)
 {
     setSystem(system);
 }
@@ -33,31 +33,23 @@ GeoSystem::GeoSystem(std::string sysName)
 {
     if (sysName=="WGS84")
 	{
-        setSystem(WGS84);
+	setSystem(Datum::WGS84);
 	}
 	else if (sysName=="SIRGAS2000")
 	{
-        setSystem(SIRGAS2000);
+	setSystem(Datum::SIRGAS2000);
     }
 	else if (sysName=="SAD69")
 	{
-        setSystem(SAD69);
+	setSystem(Datum::SAD69);
 	}
     else
 	{
-        setSystem(CORREGOALEGRE);
+	setSystem(Datum::CORREGOALEGRE);
 	}
     systemName=sysName;
 }
 
-/*GeoSystem::GeoSystem(double a, double f, std::string newName)
-{
-	setEixoMaior(a);
-	setF(f);
-	setEixoMenor(a*(1-f));
-	setSystemName(newName);
-}
-*/
 void GeoSystem::setEixoMaior(double newA)
 {
 	a=(newA>0.0 ? newA: 0.0);
@@ -124,25 +116,25 @@ void GeoSystem::setSystem(double a, double f, std::string newName)
 	setSystemName(newName);
 }
 
-void GeoSystem::setSystem(DatumType system)
+void GeoSystem::setSystem(Datum system)
 {
 	switch (system)
 	{
-	case(CORREGOALEGRE):
+	case(Datum::CORREGOALEGRE):
 		setEixoMaior(6378388.0);
 		setF(1.0/297);
 		setEixoMenor(6378388.0*(1-1.0/297));
 		setSystemName("CORREGO ALEGRE");
 		break;
 
-	case(SAD69):
+	case(Datum::SAD69):
 		setEixoMaior(6378160.0);
         setF(1/298.247167427);
 		setEixoMenor(6378160.0*(1-1/298.25));
 		setSystemName("SAD69");
 		break;
 
-	case(SIRGAS2000):
+	case(Datum::SIRGAS2000):
 		setEixoMaior(6378137.0);
 		setF(1/298.257222101);
 		setEixoMenor(6378137.0*(1-1/298.257222101));

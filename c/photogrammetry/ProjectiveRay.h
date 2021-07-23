@@ -46,9 +46,9 @@ class ProjectiveRay
 
 protected:
 
-        Image* myImage;
+  Image* myImage{nullptr};
         double r11, r12, r13, r21, r22, r23, r31, r32, r33;
-        bool hasRotations;
+        bool hasRotations{false};
 
 protected:
 
@@ -59,9 +59,7 @@ protected:
 
 public:
 
-        // Constructors
-        //
-        explicit ProjectiveRay(Image* myImage);
+        explicit ProjectiveRay(Image* newImage);
 
         // Other methods
         //

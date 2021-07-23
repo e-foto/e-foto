@@ -20,6 +20,7 @@
 #include "ImageViewers.h"
 #include "SingleTools.h"
 #include "SingleDisplay.h"
+#include "Orthorectification.h"
 
 #include <qdesktopwidget.h>
 #include <qapplication.h>
@@ -28,8 +29,6 @@
 #include <qpixmap.h>
 #include <qaction.h>
 #include <qstring.h>
-#include "Orthorectification.h"
-#include "OrthoManager.h"
 
 #include <QCloseEvent>
 
@@ -253,6 +252,27 @@ void OrthoUserInterface_Qt::onOrthoClicked()
         makeGeotiffOrthoImage();
 }
 
+InterpMethode OrthoUserInterface_Qt::chooseInterpMeth()
+{
+  switch (comboBox4->currentIndex()) {
+    case 0:
+      return InterpMethode::nearestNeighbor;
+      break;
+    case 1:
+      return InterpMethode::bilinear;
+      break;
+    case 2:
+      return InterpMethode::bicubic;
+      break;
+    case 3:
+      return InterpMethode::lagrange;
+      break;
+    default:
+      return InterpMethode::nearestNeighbor;
+      break;
+    }
+}
+
 void OrthoUserInterface_Qt::makeEfotoOrthoImage()
 {
     // Ortho clicked
@@ -282,7 +302,7 @@ void OrthoUserInterface_Qt::makeEfotoOrthoImage()
 
         disableOptions();
         setAllowClose(false);
-        manager->setInterMethod(comboBox4->currentIndex());
+        manager->setInterMethod(chooseInterpMeth());
         manager->orthoRectification((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();
@@ -319,7 +339,7 @@ void OrthoUserInterface_Qt::makeGeotiffOrthoImage()
 
         disableOptions();
         setAllowClose(false);
-        manager->setInterMethod(comboBox4->currentIndex());
+        manager->setInterMethod(chooseInterpMeth());
         manager->orthoRectificationGeoTiff((char *)filename.toLocal8Bit().constData(), comboBox->currentIndex(), doubleSpinBox1->value(), doubleSpinBox2->value());
         setAllowClose(true);
         enableOptions();

@@ -45,21 +45,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-EFotoManager::EFotoManager() : updater("")
-{
-    xmlData = "";
-    savedState = true;
-    project = NULL;
-    interiorOrientation = NULL;
-    spatialRessection = NULL;
-    fotoTri = NULL;
-    dem = NULL;
-    ortho = NULL;
-    sp = NULL;
-    theTerrain = NULL;
-    nextModule = NEXT_PROJECT;
-    report = NULL;
-}
 
 EFotoManager::~EFotoManager()
 {
@@ -506,7 +491,7 @@ Point* EFotoManager::point(int id)
     return NULL;
 }
 
-std::string EFotoManager::getXml(std::string tagname)
+std::string EFotoManager::getXml(const std::string &tagname)
 {
     EDomElement root(xmlData);
     return root.elementByTagName(tagname).getContent();

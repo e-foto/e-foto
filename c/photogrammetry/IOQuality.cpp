@@ -1,7 +1,7 @@
 /**************************************************************************
 	  IOQuality.cpp
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -29,36 +29,24 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors and Destructor
-//
-
-/**
- *
- */
 IOQuality::~IOQuality()
 {
 }
 
 /**
- * @name Private attribute accessors of IOQuality objects.
- */
-
-/** @{ */
-
-/**
  * Get the value of V.
  * @return the value of V
  */
-Matrix IOQuality::getV()
+Matrix IOQuality::getV() const
 {
-	return V;
+        return V;
 }
 
 /**
  * Get the value of sigma0Squared.
  * @return the value of sigma0Squared
  */
-double IOQuality::getsigma0Squared()
+double IOQuality::getsigma0Squared() const
 {
 	return sigma0Squared;
 }
@@ -67,7 +55,7 @@ double IOQuality::getsigma0Squared()
  * Get the value of SigmaXa.
  * @return the value of SigmaXa
  */
-Matrix IOQuality::getSigmaXa()
+Matrix IOQuality::getSigmaXa() const
 {
 	return SigmaXa;
 }
@@ -76,7 +64,7 @@ Matrix IOQuality::getSigmaXa()
  * Get the value of SigmaLa.
  * @return the value of SigmaLa
  */
-Matrix IOQuality::getSigmaLa()
+Matrix IOQuality::getSigmaLa() const
 {
 	return SigmaLa;
 }

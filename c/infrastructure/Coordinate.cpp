@@ -35,11 +35,6 @@ void Coordinate::setAvailable(bool value)
 	available = value;
 }
 
-void Coordinate::setSigmaAvailable(bool value)
-{
-	sigmaAvailable = value;
-}
-
 bool Coordinate::isAvailable() const
 {
 	return available;

@@ -38,11 +38,11 @@ class Project;
 
 
 class ReportManager {
-    EFotoManager* efotoManager;
-    Project* project;
-    ReportUserInterface* myInterface;
-    bool started;
-    bool status;
+    EFotoManager* efotoManager{nullptr};
+    Project* project{nullptr};
+    ReportUserInterface* myInterface{nullptr};
+    bool started{false};
+    bool status{false};
 
 public:
 

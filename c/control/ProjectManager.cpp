@@ -38,16 +38,8 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ProjectManager::ProjectManager():ProjectManager(nullptr)
-{
-}
-
 ProjectManager::ProjectManager(EFotoManager* newmanager):
-  manager{newmanager},
-  myInterface{nullptr},
-  treeModel{nullptr},
-  updater{nullptr},
-  savedIn{""}
+  manager{newmanager}
 {
 }
 

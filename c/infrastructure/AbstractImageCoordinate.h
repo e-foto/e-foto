@@ -1,4 +1,6 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+#ifndef ABSTRACTIMAGECOORDINATE_H
+#define ABSTRACTIMAGECOORDINATE_H
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -14,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ABSTRACTIMAGECOORDINATE_H
-#define ABSTRACTIMAGECOORDINATE_H
 
 #include "Coordinate.h"
 
@@ -64,43 +64,43 @@ public:
  * \brief Método para alterar a unidade em que a coordenada é considerada.
  * \param newUnit	Texto descritor da nova unidade de medidas considerada para a coordenada.
  */
-    void setUnit(std::string newUnit);
+    void setUnit(const std::string &newUnit);
 
 	/**
  * \brief Método para retornar o valor de Linha num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da linha.
  */
-	double getLin();
+        double getLin() const;
 
 	/**
  * \brief Método para retornar o valor de Coluna num sistema de coordenadas (Coluna, Linha).
  * \return double	Valor da coluna.
  */
-	double getCol();
+        double getCol() const;
 
 	/**
  * \brief Método para retornar a unidade em que a coordenada é considerada.
  * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
  */
-    std::string getUnit();
+    std::string getUnit() const;
 
 	/**
  * \brief Método para alterar a posição de uma coordenada.
  * \param newPosition	Matriz coluna com os valores de posicionamento da nova coordenada.
  */
-	void setPosition(const PositionMatrix& newPosition);
+        void setPosition(const PositionMatrix& newPosition) override;
 
 	/**
  * \brief Método para retornar a coordenada em uma matriz coluna.
  * \return PositionMatrix	Matriz coluna com os valores de posicionamento da coordenada.
  */
-	PositionMatrix getPosition();
+        PositionMatrix getPosition() override;
 
 	/**
  * \brief Método para emitir o nome de classe.
  * \return std::string	Retorna o nome de classe do objeto.
  */
-    std::string objectType(void);
+    std::string objectType(void) override;
 
 };
 

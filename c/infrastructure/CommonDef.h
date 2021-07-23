@@ -6,6 +6,7 @@
 #endif
 #include <cmath>
 
-typedef enum { CORREGOALEGRE = 0, SIRGAS2000, SAD69, WGS84} DatumType;
+//typedef enum { CORREGOALEGRE = 0, SIRGAS2000, SAD69, WGS84} DatumType;
+enum class Datum { CORREGOALEGRE = 0, SIRGAS2000, SAD69, WGS84} ;
 
 #endif // COMMONDEF_H

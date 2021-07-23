@@ -42,21 +42,21 @@ public:
     PhotoTri();
     virtual ~PhotoTri(){}
 
-    std::string xmlGetData();
-    void xmlSetData(std::string xml);
+    std::string xmlGetData() override;
+    void xmlSetData(std::string xml) override;
 
-    virtual std::string objectType(void) {return "PhotoTri";}
-    virtual std::string objectAssociations(void) {return "";}
-    virtual bool is(std::string s) {return s.compare("PhotoTri");}
+    virtual std::string objectType(void) override {return "PhotoTri";}
+    virtual std::string objectAssociations(void) override {return "";}
+    virtual bool is(std::string s) override {return s.compare("PhotoTri");}
 
-    int getTotalIterations() {return totalIterations;}
-    bool getConverged() {return converged;}
-    double getMetricConvergency() {return metricConvergency;}
-    double getAngularConvergency() {return angularConvergency;}
-    double getRmse() {return rmse;}
+    int getTotalIterations() const {return totalIterations;}
+    bool getConverged() const {return converged;}
+    double getMetricConvergency() const {return metricConvergency;}
+    double getAngularConvergency() const {return angularConvergency;}
+    double getRmse() const {return rmse;}
 
-    std::deque<int> getImageKeys() {return imageKey;}
-    std::deque<int> getPointKeys() {return pointKey;}
+    std::deque<int> getImageKeys() const {return imageKey;}
+    std::deque<int> getPointKeys() const {return pointKey;}
     std::deque<Image*> getImages() {return image;}
     std::deque<Point*> getPoints() {return point;}
 

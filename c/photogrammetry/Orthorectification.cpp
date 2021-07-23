@@ -37,11 +37,11 @@ Orthorectification::Orthorectification(double _Xi,
                                        double _Yf,
                                        double _res_x,
                                        double _res_y):
-    color_depth(8),
-    no_bands(1),
-    coord_system(0),
-    spheroid(0),
-    datum(WGS84)
+  color_depth{8},
+    no_bands{1},
+    coord_system{0},
+    spheroid{0},
+    datum{Datum::WGS84}
 {
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
@@ -211,7 +211,7 @@ void Orthorectification::loadOrthoEfoto(char * filename)
     no_bands = int(header[9]);
     coord_system = int(header[10]);
     spheroid = int(header[11]);
-    datum = DatumType(int(header[12]));
+    datum = Datum(int(header[12]));
 
     // Read DEM
     orthoimage.resize(ortho_height, ortho_width);
@@ -302,17 +302,17 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     char hemisphere = spheroid?'N':'S'; //The OGR convention
     char proj[50];
     switch (datum) {
-    case WGS84:
+    case Datum::WGS84:
         sprintf( proj, "WGS84 / UTM zone %d%c.", utmFuse, hemisphere);
         oSRS.SetProjCS( (const char*) proj );
         oSRS.SetWellKnownGeogCS( "WGS84" );
         break;
-    case SIRGAS2000:
+    case Datum::SIRGAS2000:
         sprintf( proj, "SIRGAS 2000 / UTM zone %d%c.", utmFuse, hemisphere);
         oSRS.SetProjCS( (const char*) proj );
         oSRS.SetWellKnownGeogCS( "GRS70" );
         break;
-    case SAD69:
+    case Datum::SAD69:
         sprintf( proj, "SAD69 / UTM zone %d%c.", utmFuse, hemisphere);
         oSRS.SetProjCS( (const char*) proj );
         oSRS.SetWellKnownGeogCS( "GRS67" );

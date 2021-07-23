@@ -1,3 +1,5 @@
+#ifndef ORTHOMANAGER_H
+#define ORTHOMANAGER_H
 /**************************************************************************
 OrthoManager.h
 **************************************************************************/
@@ -18,11 +20,9 @@ OrthoManager.h
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ORTHOMANAGER_H
-#define ORTHOMANAGER_H
-
 #include <deque>
 #include <string>
+#include "Interpolation.h"
 
 namespace br {
 namespace uerj {
@@ -42,22 +42,20 @@ class Orthorectification;
 * \class OrthoManager
 * \brief Classe que gerencia a ortoimagem e ortorretificação.
 * \attention Imagens que variam entre 0,0 e 1,0.
-* \copyright E-Foto group
-* \authors Marcelo Teixeira Silveira
 */
 class OrthoManager {
 
-    OrthoUserInterface* myInterface;
-    EFotoManager* manager;
+    OrthoUserInterface* myInterface{nullptr};
+    EFotoManager* manager{nullptr};
     std::deque<Image*> listAllImages;
     std::deque<SpatialRessection*> listEOs;
-    DemGrid* grid;
-    Orthorectification* ortho;
-    bool flag_cancel;
-    bool show_image;
-    int inter_method;
-    bool started;
-    bool status;
+    DemGrid* grid{nullptr};
+    Orthorectification* ortho{nullptr};
+    bool flag_cancel{false};
+    bool show_image{false};
+    InterpMethode inter_method{InterpMethode::nearestNeighbor};
+    bool started{false};
+    bool status{false};
 
     /**
     * \brief Método que inclui os dados das imagens no formulário.
@@ -76,15 +74,11 @@ class OrthoManager {
 public:
 
     /**
-    * \brief Construtor padrão.
-    */
-    OrthoManager();
-    /**
     * \brief Construtor que já identifica o seu gerenciador, as imagens que serão usadas e os dados de uma orientação exterior a ser extraídas.
     */
-    explicit OrthoManager(EFotoManager* newmanager,
-                          std::deque<br::uerj::eng::efoto::Image*> newimages,
-                          std::deque<SpatialRessection*> neweos);
+    explicit OrthoManager(EFotoManager* newManager,
+                          std::deque<br::uerj::eng::efoto::Image*> newImages,
+                          std::deque<SpatialRessection*> newEos);
     /**
     * \brief Destrutor padrão.
     */
@@ -135,7 +129,7 @@ public:
     /**
     * \brief Método que altera o método de interpolação.
     */
-    void setInterMethod(int _mth)
+    void setInterMethod(InterpMethode _mth)
     {
         inter_method = _mth;
     };

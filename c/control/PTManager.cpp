@@ -59,19 +59,9 @@ PTManager::PTManager(EFotoManager* newManager,
       listOis{ois},
       mySensor{sensor},
       myFlight{flight},
-      myTerrain{terrain},
-      marksSaveState{true},
-      started{false},
-      status{false},
-      localTopocentricMode{false},
-      previousData{false},
-      maxIterations{6},
-      metricConvergency{0.001},
-      angularConvergency{0.001},
-      myInterface{nullptr},
-      pt{nullptr}
+      myTerrain{terrain}
 {
-    setListPoint();//lista todos os pontos
+    setListPoint();
     setENH();
     flightScale = myFlight->getScaleDen();
 }
@@ -1046,7 +1036,7 @@ std::string PTManager::exportBlockTokml(const std::string& fileName, bool fromXM
                 double oldLambda1 = temp1.get(1, 2);
                 double oldPhi2 = temp2.get(1, 1);
                 double oldLambda2 = temp2.get(1, 2);
-                GeoSystem newGeoSys(WGS84);
+                GeoSystem newGeoSys(Datum::WGS84);
                 plh1 = ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys, newGeoSys,
                         oldPhi1, oldLambda1, 0);
                 plh2 = ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys, newGeoSys,
@@ -1150,7 +1140,7 @@ std::string PTManager::pointToKml(Point* pnt, int zona, int hemiLatitude,
     if (sys.getSystemName() != "WGS84") {
         double oldPhi = temp.get(1, 1);
         double oldLambda = temp.get(1, 2);
-        GeoSystem newGeoSys(WGS84);
+        GeoSystem newGeoSys(Datum::WGS84);
         plh = ConvertionsSystems::convertSystemsSimplifiedMolodensky(sys, newGeoSys,
                 oldPhi, oldLambda, H);
         lat = plh.get(1, 1) * 180 / M_PI;

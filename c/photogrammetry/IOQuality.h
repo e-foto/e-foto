@@ -3,7 +3,7 @@
 /************************************************************************
 	  IOQuality.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -32,55 +32,32 @@ class InteriorOrientation;
 
 /**
   * class IOQuality
-  *
-  * @Author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
-  *
   */
 
-class IOQuality : public EObject
-{
+class IOQuality : public EObject {
 private:
-
-	//EOBJECT
-
-	// Private attributes
-	//
-	Matrix V;
-	double sigma0Squared;
-	Matrix SigmaXa;
-	Matrix SigmaLa;
+    Matrix V;
+    double sigma0Squared;
+    Matrix SigmaXa;
+    Matrix SigmaLa;
 
 public:
 
-	// Constructors and Destructor
-	//
-	virtual ~IOQuality();
+    virtual ~IOQuality();
 
-	// Private attribute accessors
-	//
-	Matrix getV();
-	double getsigma0Squared();
-	Matrix getSigmaXa();
-	Matrix getSigmaLa();
+    Matrix getV() const;
+    double getsigma0Squared() const;
+    Matrix getSigmaXa() const;
+    Matrix getSigmaLa() const;
 
-	// EObject methods
-	//
-    std::string objectType(void);
-    std::string objectAssociations(void);
-    bool is(std::string s);
+    std::string objectType(void) override;
+    std::string objectAssociations(void) override;
+    bool is(std::string s) override;
 
-	// XML methods
-	//
-    void xmlSetData(std::string xml);
-    std::string xmlGetData();
+    void xmlSetData(std::string xml) override;
+    std::string xmlGetData() override;
 
-	// Other method
-	//
-	void calculate(InteriorOrientation* myIO, Sensor* mySensor);
+    void calculate(InteriorOrientation* myIO, Sensor* mySensor);
 
 };
 

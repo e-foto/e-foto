@@ -48,10 +48,7 @@ namespace efoto {
 
 ReportManager::ReportManager(EFotoManager* manager):
     efotoManager{manager},
-    project{manager->getProject()},
-    myInterface{nullptr},
-    started{false},
-    status{false}
+    project{manager->getProject()}
 {
 }
 

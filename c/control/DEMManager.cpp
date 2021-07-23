@@ -24,7 +24,6 @@ DEMManager.cpp
 #include "EFotoManager.h"
 #include "SpatialRessection.h"
 #include "DEMUserInterface_Qt.h"
-#include "ImageMatching.h"
 #include "DemGrid.h"
 #include "DemFeatures.h"
 #include "SpatialIntersection.h"
@@ -40,33 +39,13 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-DEMManager::DEMManager()
-{
-    started = false;
-    status = false;
-}
 
-DEMManager::DEMManager(EFotoManager* manager, std::deque<Image*>images,
-                       std::deque<SpatialRessection*> eos)
+DEMManager::DEMManager(EFotoManager* newManager, std::deque<Image*>images,
+                       std::deque<SpatialRessection*> eos):
+  manager{newManager},
+  listAllImages{images},
+  listEOs{eos}
 {
-    this->manager = manager;
-    started = false;
-    status = false;
-    cancel_flag = false;
-    listAllImages = images;
-    listEOs = eos;
-    grid = nullptr;
-    im = nullptr;
-    df = nullptr;
-    isShowImage = false;
-    dem_unsaved = false;
-    grid_unsaved = false;
-    elim_bad_pts = false;
-    bb_empty = true;
-    lsm_temp_growth_step = 2;
-    lsm_temp_max_size = 50;
-    ncc_temp_growth_step = 2;
-    ncc_temp_max_size = 50;
     setListPoint();
 }
 
@@ -109,9 +88,9 @@ void DEMManager::returnProject()
 
 Image* DEMManager::getImage(int id)
 {
-    for (unsigned i = 0; i < listAllImages.size(); i++) {
-        if (listAllImages.at(i)->getId() == id) {
-            return listAllImages.at(i);
+    for (const auto & x : listAllImages) {
+        if (x->getId() == id) {
+            return x;
         }
     }
 
@@ -141,13 +120,11 @@ bool DEMManager::connectImagePoints()
         std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
         for (unsigned int j = 0; j < listAllImages.size(); j++) {
-            //listAllImages.at(j)->clearPoints();
             for (unsigned int i = 0; i < allPoints.size(); i++) {
                 std::string data = allPoints.at(i).elementByTagAtt("imageCoordinates",
                                    "image_key", Conversion::intToString(listAllImages.at(
                                                j)->getId())).getContent();
 
-                //qDebug("%s\n",data.c_str());
                 if (data != "") {
                     Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(
                                                allPoints.at(i).attribute("key")));
@@ -220,7 +197,7 @@ void DEMManager::getImagesId(int pos, int& left, int& right)
     right = 1 + (listPairs.at(pos) / no_imgs);
 }
 
-void DEMManager::setAutoExtractionSettings(int _rad_cor, int _match_method,
+void DEMManager::setAutoExtractionSettings(ImgRadioCorrection _rad_cor, MatchingMet _match_method,
         int _rgx, double downs)
 {
     rad_cor = _rad_cor;
@@ -705,7 +682,7 @@ void DEMManager::extractDEMPair(int pair)
     dui->setProgress(0);
     double corr_th = lsm_th, std = lsm_std;
 
-    if (match_method == 0) { // NCC
+    if (match_method == MatchingMet::NCrossCorr) {
         corr_th = ncc_th;
         std = ncc_std;
     }
@@ -714,9 +691,8 @@ void DEMManager::extractDEMPair(int pair)
     im->setPerformRegionGrowing(perf_RG);
     im->setImagesIds(left_id, right_id);
     im->setCorrelationThreshold(corr_th);
-    im->setPerformRadiometric(rad_cor > 0);
     im->setMatchingMethod(match_method);
-    im->setRadiometricMode(rad_cor - 1);
+    im->setRadiometricMode(rad_cor);
     im->setMinStd(std);
     im->setElimanteBadPoints(elim_bad_pts);
     im->getNCC()->setTemplateGrothStep(ncc_temp_growth_step);

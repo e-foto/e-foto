@@ -1,3 +1,5 @@
+#ifndef INTERPOLATION_H
+#define INTERPOLATION_H
 /*******************************************************************************
 		  interpolation.h
 *******************************************************************************/
@@ -18,19 +20,10 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INTERPOLATION_H
-#define INTERPOLATION_H
-
 #include "CommonDef.h"
 
 /**
 * class ProjectiveRay
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 14/12/2011
-* @version 1.0 - Marcelo Teixeira Silveira
 */
 
 namespace br {
@@ -40,12 +33,19 @@ namespace efoto {
 
 class Matrix;
 
+// Grayscale (0-255) in double format (0.0 - 1.0)
+// Color (24-bit RRGGBB) in double format (0.0 - 1.0)
+enum class ColorMode {Grayscale, Color};
+enum class InterpMethode {nearestNeighbor, bilinear, bicubic, lagrange};
+enum class Color {gray, red, green, blue};
+
+
 class Interpolation
 {
 public:
 	Interpolation();
-	double interpolate(Matrix *_img, double col, double lin, int method);
-	void setMode(int _mode) { mode = _mode%2; };
+	double interpolate(Matrix *_img, double col, double lin, InterpMethode method);
+	void setMode(ColorMode _mode) { mode = _mode; };
 
 private:
 	double interpolateNearestNeighbor(double col, double lin);
@@ -55,11 +55,14 @@ private:
 	double a(int n);
 	double interpolateLagrange(double col, double lin);
 	double aa(int n);
-	bool checkLimits(int col, int row);
-	double dx, dy;
-	int i, j, mode, ccolor;
+	bool checkLimits(int col, int row) const;
+	double dx{0.0};
+	double dy{0.0};
+	Color ccolor{Color::gray};
+	int i, j;
+	ColorMode mode{ColorMode::Grayscale};
 	Matrix *img;
-	double I(int i, int j);
+	double I(int i, int j) const;
 
 };
 

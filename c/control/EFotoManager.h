@@ -54,26 +54,26 @@ public:
                   NEXT_SR, NEXT_PT, NEXT_DEM, NEXT_ORTHO, NEXT_SP, NEXT_Report, NEXT_PTReport
                  } nextModule_t;
 private:
-    nextModule_t nextModule;
+  nextModule_t nextModule{NEXT_PROJECT};
     int nextImage;
 
-    bool savedState;
-    std::string xmlData;
-    std::string interfaceType;
+    bool savedState{true};
+    std::string xmlData{""};
+    std::string interfaceType{""};
 
 
-    ProjectManager* project;
-    IOManager* interiorOrientation;
-    SRManager* spatialRessection;
-    PTManager* fotoTri;
-    DEMManager* dem;
-    OrthoManager* ortho;
-    SPManager* sp;
-    ReportManager* report;
-    XmlUpdater updater;
+    ProjectManager* project{nullptr};
+    IOManager* interiorOrientation{nullptr};
+    SRManager* spatialRessection{nullptr};
+    PTManager* fotoTri{nullptr};
+    DEMManager* dem{nullptr};
+    OrthoManager* ortho{nullptr};
+    SPManager* sp{nullptr};
+    ReportManager* report{nullptr};
+    XmlUpdater updater{""};
     Project report_project;
 
-    Terrain* theTerrain;
+    Terrain* theTerrain{nullptr};
     std::deque<Sensor*> sensors;
     std::deque<Flight*> flights;
     std::deque<Image*> images;
@@ -86,7 +86,7 @@ public:
     /**
     * \brief Construtor padrão.
     */
-    EFotoManager();
+    EFotoManager() = default;
 
     /**
     * \brief Destrutor padrão.
@@ -228,7 +228,7 @@ public:
     * \param tagname Nome da tag do XML.
     * \return std::string Valores do Nó do XML que foi requisitado.
     */
-    std::string getXml(std::string tagname);
+    std::string getXml(const std::string& tagname);
 
     /**
     * \brief Método que retorna os valores de um nó do XML.

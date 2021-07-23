@@ -40,19 +40,16 @@ class EFotoManager;
 * \copyright E-Foto group
 */
 class IOManager {
-    EFotoManager* manager;
-    Sensor* mySensor;
-    Image* myImage;
-    InteriorOrientation* myIO;
-    IOUserInterface* myInterface;
-    bool started;
-    bool status;
+    EFotoManager* manager{nullptr};
+    Sensor* mySensor{nullptr};
+    Image* myImage{nullptr};
+    InteriorOrientation* myIO{nullptr};
+    IOUserInterface* myInterface{nullptr};
+    bool started{false};
+    bool status{false};
 
 public:
-    /**
-    * \brief Construtor vazio.
-    */
-    IOManager();
+
     /**
     * \brief Default Constructor.
     * \param manager Ponteiro para o controlador central da aplicação.

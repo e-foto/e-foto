@@ -34,9 +34,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-IOManager::IOManager(): IOManager(nullptr, nullptr, nullptr, nullptr)
-{
-}
 
 IOManager::IOManager(EFotoManager* newmanager,
                      Sensor* newmySensor,
@@ -45,10 +42,7 @@ IOManager::IOManager(EFotoManager* newmanager,
     manager{newmanager},
     mySensor{newmySensor},
     myImage{newmyImage},
-    myIO{newmyIO},
-    myInterface{nullptr},
-    started{false},
-    status{false}
+    myIO{newmyIO}
 {
 }
 

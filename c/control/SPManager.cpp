@@ -39,25 +39,15 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-SPManager::SPManager() :
-    prL(0), prR(0)
-{
-    started = false;
-    status = false;
-}
-
-SPManager::SPManager(EFotoManager* manager, std::deque<Image*>images,
+SPManager::SPManager(EFotoManager* newManager, std::deque<Image*>images,
                      std::deque<SpatialRessection*> eos) :
-    prL(0), prR(0)
+    manager{newManager},
+    listAllImages{images},
+    listEOs{eos},
+    prL(0),
+    prR(0)
 {
-    this->manager = manager;
-    started = false;
-    status = false;
-    listAllImages = images;
-    listEOs = eos;
     spFeatures.createClassesFromSp165();
-    leftKey = 1;
-    rightKey = 2;
     setListPoint();
 }
 

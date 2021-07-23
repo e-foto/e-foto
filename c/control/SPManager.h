@@ -34,18 +34,20 @@ class EFotoManager;
 class Point;
 class SpatialRessection;
 
-class SPManager
-{
-    int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp, ncc_sw;
-    double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std, downsample;
-    bool started;
-    bool status;
+class SPManager {
+    int rad_cor, match_method, rgx, rgy, lsm_temp, lsm_it, lsm_dist, ncc_temp,
+        ncc_sw;
+    double lsm_th, lsm_std, lsm_shift, lsm_shear, lsm_scale, ncc_th, ncc_std,
+           downsample;
+    bool started{false};
+    bool status{false};
     bool over_it;
     double over_it_dist;
     DemFeatures spFeatures;
-    int leftKey, rightKey;
+    int leftKey{1};
+    int rightKey{2};
 
-    void getImagesId(int pos, int &left, int &right);
+    void getImagesId(int pos, int& left, int& right);
     void addPairsToInterface();
     int getPairs();
     void setListPoint();
@@ -64,33 +66,50 @@ class SPManager
     ProjectiveRay prR;
 
 public:
-
-    SPManager();
-    explicit SPManager(EFotoManager* manager, std::deque<Image*> images, std::deque<SpatialRessection*> eos);
+    explicit SPManager(EFotoManager* newManager,
+                       std::deque<Image*> images,
+                       std::deque<SpatialRessection*> eos);
     ~SPManager();
 
     bool exec();
     void returnProject();
-    int loadFeatures(char *filename, bool append);
-    void saveFeatures(char *filename);
-    void exportFeatures(char *filename, int mode = 0);
+    int loadFeatures(char* filename, bool append);
+    void saveFeatures(char* filename);
+    void exportFeatures(char* filename, int mode = 0);
     void addFeature(std::string name, int feattype, int featclass);
     int removeFeature();
     void removeAllFeatures();
     bool removePoint();
     void setSelected(int feat_id, int pt_id);
-    void getSelected(int &fid, int &pid) { fid = spFeatures.selectedFeature(); pid = spFeatures.selectedPoint(); };
-    DemFeatures* getFeaturesLink() { return &spFeatures; }
-    std::string getFeaturesList() { return spFeatures.getFeaturesList(); }
+    void getSelected(int& fid, int& pid)
+    {
+        fid = spFeatures.selectedFeature();
+        pid = spFeatures.selectedPoint();
+    };
+    DemFeatures* getFeaturesLink()
+    {
+        return &spFeatures;
+    }
+    std::string getFeaturesList()
+    {
+        return spFeatures.getFeaturesList();
+    }
     void updateProjections();
-    void computeIntersection(double xl, double yl, double xr, double yr, double& X, double& Y, double& Z);
+    void computeIntersection(double xl, double yl, double xr, double yr, double& X,
+                             double& Y, double& Z);
     std::string getFullImagePath(int imagekey);
-    void getSelectedFeatureData(int &sel_feat, std::string &fname, int &ftype, int &fclass, int &no_points, double &perimeter, double &area);
-    void changePair(int pair, int &lk, int &rk);
-    void addPoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
-    void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry, double X, double Y, double Z);
+    void getSelectedFeatureData(int& sel_feat, std::string& fname, int& ftype,
+                                int& fclass, int& no_points, double& perimeter, double& area);
+    void changePair(int pair, int& lk, int& rk);
+    void addPoint(int fid, int pid, double lx, double ly, double rx, double ry,
+                  double X, double Y, double Z);
+    void updatePoint(int fid, int pid, double lx, double ly, double rx, double ry,
+                     double X, double Y, double Z);
     void setSelectedXYZ(double X, double Y, double Z);
-    int getNumFeatures() { return spFeatures.getNumFeatures(); };
+    int getNumFeatures()
+    {
+        return spFeatures.getNumFeatures();
+    };
     ObjectSpaceCoordinate getBoundingBoxCenter();
     double getBoundingBoxIdealZoom(int width, int height);
     ObjectSpaceCoordinate getCentralPoint();

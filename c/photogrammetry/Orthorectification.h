@@ -49,7 +49,7 @@ private:
     int coord_system {0};
     bool spheroid {false};
     int utmFuse  {0};
-    DatumType datum;
+    Datum datum;
     int ortho_width, ortho_height;
     void saveOrthoEfoto(char * filename) const;
     void loadOrthoEfoto(char * filename);
@@ -77,7 +77,7 @@ public:
     void setHemisphere(bool _hs) { spheroid = _hs; };
     void setNumberOfBands(int _nb) { no_bands = _nb; }
     void setCoordinateSystem(int _cs) { coord_system = _cs; }
-    void setDatum(DatumType _dt) { datum = _dt; }
+    void setDatum(Datum _dt) { datum = _dt; }
     void getOrthoParametersA(double &_Xi,
                              double &_Yi,
                              double &_Xf,
