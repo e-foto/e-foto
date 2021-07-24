@@ -20,6 +20,61 @@
 
 #include "LeastSquaresMatching.h"
 
+namespace {
+/*************
+ *  Filters  *
+ *************/
+
+void gradient(br::uerj::eng::efoto::Matrix *Hx,
+              br::uerj::eng::efoto::Matrix *Hy)
+{
+    // Hx filter
+    Hx->resize(3,3);
+    Hx->set(1,1, 0); Hx->set(1,2,0); Hx->set(1,3,0);
+    Hx->set(2,1,-1); Hx->set(2,2,0); Hx->set(2,3,1);
+    Hx->set(3,1, 0); Hx->set(3,2,0); Hx->set(3,3,0);
+
+    // Hy filter
+    Hy->resize(3,3);
+    Hy->set(1,1,0); Hy->set(1,2,-1); Hy->set(1,3,0);
+    Hy->set(2,1,0); Hy->set(2,2,0);  Hy->set(2,3,0);
+    Hy->set(3,1,0); Hy->set(3,2,1);  Hy->set(3,3,0);
+}
+
+void prewitt(br::uerj::eng::efoto::Matrix *Hx,
+             br::uerj::eng::efoto::Matrix *Hy)
+{
+    // Hx filter
+    Hx->resize(3,3);
+    Hx->set(1,1,-1); Hx->set(1,2,0); Hx->set(1,3,1);
+    Hx->set(2,1,-1); Hx->set(2,2,0); Hx->set(2,3,1);
+    Hx->set(3,1,-1); Hx->set(3,2,0); Hx->set(3,3,1);
+
+    // Hy filter
+    Hy->resize(3,3);
+    Hy->set(1,1,-1); Hy->set(1,2,-1); Hy->set(1,3,-1);
+    Hy->set(2,1,0);  Hy->set(2,2,0);  Hy->set(2,3,0);
+    Hy->set(3,1,1);  Hy->set(3,2,1);  Hy->set(3,3,1);
+}
+
+void sobel(br::uerj::eng::efoto::Matrix *Hx,
+           br::uerj::eng::efoto::Matrix *Hy)
+{
+    // Hx filter
+    Hx->resize(3,3);
+    Hx->set(1,1,-1); Hx->set(1,2,0); Hx->set(1,3,1);
+    Hx->set(2,1,-2); Hx->set(2,2,0); Hx->set(2,3,2);
+    Hx->set(3,1,-1); Hx->set(3,2,0); Hx->set(3,3,1);
+
+    // Hy filter
+    Hy->resize(3,3);
+    Hy->set(1,1,-1); Hy->set(1,2,-2); Hy->set(1,3,-1);
+    Hy->set(2,1,0);  Hy->set(2,2,0);  Hy->set(2,3,0);
+    Hy->set(3,1,1);  Hy->set(3,2,2);  Hy->set(3,3,1);
+}
+
+}// unnamed
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -36,7 +91,7 @@ LeastSquaresMatching::LeastSquaresMatching()
     limit_shear_values = 0.01; // a1 and b2
     acceptance_correlation = 0.7;
     acceptance_error_ellipse = 5; // Std for a0 and b0 arrays
-    gradient_filter = Gradient;
+    gradient_filter = filterType::Gradient;
     over_it = true;
     over_it_distance = 0.5;
         temp_growth_step = 2;
@@ -322,9 +377,9 @@ void LeastSquaresMatching::imgGradient(Matrix *img2)
     Matrix Hx, Hy;
     switch (gradient_filter)
     {
-    case 1: prewitt(&Hx, &Hy); break;
-    case 2: sobel(&Hx, &Hy); break;
-    default: gradient(&Hx, &Hy); break;
+    case filterType::Prewitt: prewitt(&Hx, &Hy); break;
+    case filterType::Sobel: sobel(&Hx, &Hy); break;
+    case filterType::Gradient: gradient(&Hx, &Hy); break;
     }
 
     // Generate gradients
@@ -333,54 +388,6 @@ void LeastSquaresMatching::imgGradient(Matrix *img2)
 }
 
 
-/*************
- *  Filters  *
- *************/
-
-void LeastSquaresMatching::gradient(Matrix *Hx, Matrix *Hy)
-{
-    // Hx filter
-    Hx->resize(3,3);
-    Hx->set(1,1, 0); Hx->set(1,2,0); Hx->set(1,3,0);
-    Hx->set(2,1,-1); Hx->set(2,2,0); Hx->set(2,3,1);
-    Hx->set(3,1, 0); Hx->set(3,2,0); Hx->set(3,3,0);
-
-    // Hy filter
-    Hy->resize(3,3);
-    Hy->set(1,1,0); Hy->set(1,2,-1); Hy->set(1,3,0);
-    Hy->set(2,1,0); Hy->set(2,2,0);  Hy->set(2,3,0);
-    Hy->set(3,1,0); Hy->set(3,2,1);  Hy->set(3,3,0);
-}
-
-void LeastSquaresMatching::prewitt(Matrix *Hx, Matrix *Hy)
-{
-    // Hx filter
-    Hx->resize(3,3);
-    Hx->set(1,1,-1); Hx->set(1,2,0); Hx->set(1,3,1);
-    Hx->set(2,1,-1); Hx->set(2,2,0); Hx->set(2,3,1);
-    Hx->set(3,1,-1); Hx->set(3,2,0); Hx->set(3,3,1);
-
-    // Hy filter
-    Hy->resize(3,3);
-    Hy->set(1,1,-1); Hy->set(1,2,-1); Hy->set(1,3,-1);
-    Hy->set(2,1,0);  Hy->set(2,2,0);  Hy->set(2,3,0);
-    Hy->set(3,1,1);  Hy->set(3,2,1);  Hy->set(3,3,1);
-}
-
-void LeastSquaresMatching::sobel(Matrix *Hx, Matrix *Hy)
-{
-    // Hx filter
-    Hx->resize(3,3);
-    Hx->set(1,1,-1); Hx->set(1,2,0); Hx->set(1,3,1);
-    Hx->set(2,1,-2); Hx->set(2,2,0); Hx->set(2,3,2);
-    Hx->set(3,1,-1); Hx->set(3,2,0); Hx->set(3,3,1);
-
-    // Hy filter
-    Hy->resize(3,3);
-    Hy->set(1,1,-1); Hy->set(1,2,-2); Hy->set(1,3,-1);
-    Hy->set(2,1,0);  Hy->set(2,2,0);  Hy->set(2,3,0);
-    Hy->set(3,1,1);  Hy->set(3,2,2);  Hy->set(3,3,1);
-}
 
 Matrix& LeastSquaresMatching::imfilter(Matrix *img, Matrix *H)
 {

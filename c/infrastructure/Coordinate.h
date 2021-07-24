@@ -1,6 +1,6 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -30,8 +30,6 @@ namespace efoto {
 * \brief Base para as classes de coordenadas
 * \abstract A classe de Coordenadas foi definida como uma classe abstrata, então você não deve usá-la diretamente.
 * \attention Construa apenas objetos das classes derivadas.
-* \copyright E-Foto group
-* \authors Rafael Aguiar & Irving Badolato
 */
 class Coordinate : public EObject
 {

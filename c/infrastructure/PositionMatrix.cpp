@@ -35,7 +35,7 @@ void PositionMatrix::del()
 	unit = "";
 }
 
-void PositionMatrix::nw(const unsigned int rows, const unsigned int cols)
+void PositionMatrix::nw(unsigned int rows, unsigned int cols)
 {
 	_Mat = new double[rows * cols];               // Allocate matrix
 	nrows = rows; ncols = cols;                   // Fill matrix' attributes.

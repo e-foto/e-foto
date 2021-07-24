@@ -62,59 +62,59 @@ public:
     LeastSquaresMatching* getLSM()
     {
         return &lsm;
-    };
+    }
     NormalizedCrossCorrelation* getNCC()
     {
         return &ncc;
-    };
+    }
     void setMatchingMethod(MatchingMet _mode)
     {
         matching_method = _mode;
-    };
+    }
     void setRadiometricMode(ImgRadioCorrection _mode)
     {
         radiometric_mode = _mode;
-    };
+    }
     void setImageDepth(int _depth)
     {
         image_depth = _depth;
-    };
+    }
     void performImageMatching(Matrix*, Matrix*, MatchingPointsList*,
                               MatchingPointsList*);
     void setImagesIds(int _lid, int _rid)
     {
         left_image_id = _lid;
         right_image_id = _rid;
-    };
+    }
     void setCorrelationThreshold(double _th)
     {
         corr_th = _th;
-    };
+    }
     double getCoverage() const
     {
         return 100.0 * coverage;
-    } ;
+    }
     void setMinStd(double);
     void setElimanteBadPoints(bool _el)
     {
         elim_bad_pts = _el;
-    };
+    }
     void setCancel()
     {
         cancel_flag = true;
-    };
+    }
     Matrix& getMap()
     {
         return map;
-    };
+    }
     double getElapsedTime() const
     {
         return elap_time;
-    };
+    }
     void setPerformRegionGrowing(bool _p_rg)
     {
         perform_RG = _p_rg;
-    };
+    }
 
 private:
     int image_depth{256};
