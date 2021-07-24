@@ -115,7 +115,6 @@ public:
     {
         max_iterations = _its;
     }
-    void getNextPosition(double*, double*, int, int);
     void setConvergenceLimits(double _shift, double _scale, double _shear)
     {
         limit_shift_values = _shift;
@@ -152,7 +151,6 @@ public:
     }
 
 private:
-    void imgGradient(Matrix*);
     double average(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
                    int col_f = 0);
     double stddev(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,

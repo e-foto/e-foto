@@ -174,7 +174,7 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
 
     // Create affine matrices
     double n = template_width * template_height;
-    double i, j, x, y, NMx, NMy;
+    double i, j, x, y;
     double delta_x, delta_y;
     Matrix A(n,6), c(n,1);
 
@@ -189,11 +189,9 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
     OMy = Abs_My = My;
     Mx = round(template_width/2);
     My = round(template_height/2);
-    NMx = Mx;
-    NMy = My;
 
     // LSM
-    int pos, iterations=0;
+    int iterations=0;
     for (int it=0; it < max_iterations; it++)
     {
         iterations++;
@@ -243,7 +241,7 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
         }
 
         // Create design matrix - i for x, j for y, as described in Schenk
-        pos = 1;
+        int pos = 1;
         for (int l=1; l <= template_height; l++)
         {
             for (int k=1; k <= template_width; k++)
@@ -282,8 +280,8 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
         X = X + t;
 
         // Calculate new center
-        NMx = X.get(1,1) + X.get(2,1)*Mx + X.get(3,1)*My;
-        NMy = X.get(4,1) + X.get(5,1)*Mx + X.get(6,1)*My;
+        double NMx = X.get(1,1) + X.get(2,1)*Mx + X.get(3,1)*My;
+        double NMy = X.get(4,1) + X.get(5,1)*Mx + X.get(6,1)*My;
 
         // Calculate absolute new center
         Abs_Mx = OMx + (NMx - Mx);
@@ -329,47 +327,9 @@ int LeastSquaresMatching::searchHomologous(Matrix *img1, Matrix *img2, double Tx
     return 1;
 }
 
-/*
- * Calcualte the next position of Region Growing seeds based on the affine parameters
- */
-void LeastSquaresMatching::getNextPosition(double *x, double *y, int step_x, int step_y)
-{
-    double Mx, My, NMx, NMy;
-    Mx = round(template_width/2);
-    My = round(template_height/2);
-
-    NMx = affine_coefficients.get(1,1) + affine_coefficients.get(2,1)*(Mx + step_x) + affine_coefficients.get(3,1)*(My + step_y);
-    NMy = affine_coefficients.get(4,1) + affine_coefficients.get(5,1)*(Mx + step_x) + affine_coefficients.get(6,1)*(My + step_y);
-
-    *x = *x + (NMx - Mx);
-    *y = *y + (NMy - My);
-}
-
-
 /*********************
  *  Basic functions  *
  *********************/
-
-/*
- * Calculate search image gradients
- */
-void LeastSquaresMatching::imgGradient(Matrix *img2)
-{
-    // Select filter
-    Matrix Hx, Hy;
-    switch (gradient_filter)
-    {
-    case filterType::Prewitt: prewitt(&Hx, &Hy); break;
-    case filterType::Sobel: sobel(&Hx, &Hy); break;
-    case filterType::Gradient: gradient(&Hx, &Hy); break;
-    }
-
-    // Generate gradients
-    Gx = imfilter(img2, &Hx);
-    Gy = imfilter(img2, &Hy);
-}
-
-
 
 Matrix& LeastSquaresMatching::imfilter(Matrix *img, Matrix *H)
 {
