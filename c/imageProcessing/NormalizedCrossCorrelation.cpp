@@ -151,12 +151,6 @@ namespace efoto {
 
 NormalizedCrossCorrelation::NormalizedCrossCorrelation()
 {
-    template_width = 7;
-    template_height = 7;
-    search_window_width = 50;
-    search_window_height = 50;
-    //	min_std_acceptance = 0.019607843; // 5.0 in 0-255 range
-    min_std_acceptance = 0.15;
     temp_growth_step = 2;
     temp_max_size = 50;
 }

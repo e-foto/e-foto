@@ -34,11 +34,11 @@ namespace efoto {
 
 class Matrix;
 
-enum class NccFlag { NoErrors=1,
-                     SearchWindowIsSmallerThanTemplate = -1,
-                     TemplateIsTooSmallLessThan3Pixels = -2,
-                     TemplateIsOutOfImage = -3,
-                     TemplateHasLowStd = -4};
+enum class NccFlag { NoErrors,
+                     SearchWindowIsSmallerThanTemplate,
+                     TemplateIsTooSmallLessThan3Pixels,
+                     TemplateIsOutOfImage,
+                     TemplateHasLowStd};
 
 class NormalizedCrossCorrelation {
 
@@ -116,15 +116,26 @@ public:
 private:
     double calculateTemplateStd(Matrix* refmat);
     void calculateTemplateBoundingBox();
-    int template_width, template_height, search_window_width, search_window_height;
-    int template_center_x, template_center_y, search_window_center_x,
-        search_window_center_y;
-    int template_xi, template_xf, template_yi, template_yf; // Template bounding box
-    double frac_tc_x, frac_tc_y; // Store subpixels from template
-    double best_p;
-    double best_x, best_y;
-    double min_std_acceptance;
-    int temp_growth_step, temp_max_size;
+    int template_width{7};
+    int template_height{7};
+    int search_window_width{50};
+    int search_window_height{50};
+    int template_center_x{0};
+    int template_center_y{0};
+    int search_window_center_x{0};
+    int search_window_center_y{0};
+    int template_xi{0}; // Template bounding box
+    int template_xf{0};
+    int template_yi{0};
+    int template_yf{0};
+    double frac_tc_x{0.0}; // Store subpixels from template
+    double frac_tc_y{0.0};
+    double best_p{0.0};
+    double best_x{0.0};
+    double best_y{0.0};
+    double min_std_acceptance{0.15};
+    int temp_growth_step{2};
+    int temp_max_size{50};
 
 };
 

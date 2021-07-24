@@ -15,49 +15,6 @@ namespace eng {
 namespace efoto {
 
 /*
-  Performs radiometric transformation adjusting the histogram to in_min and in_max values
-  Returns 1 if successful
-*/
-int RadiometricTransformation::imadjust(Matrix *m, double in_min, double in_max, double out_min, double out_max)
-{
-    // If both in_min and in_max are signed as 0, calculate the min and max values
-    if ((fabs(in_min - 0.0) < 0.0000000000001) && (fabs(in_max - 0.0) < 0.0000000000001))
-    {
-        in_min = m->lowestValue();
-        in_max = m->highestValue();
-    }
-
-    // Check for inconsistencies
-    if ((in_min >= in_max) || (out_min >= out_max))
-        return 0;
-
-    // Apply transformation
-    double pixel, delta_in = in_max - in_min, delta_out = out_max - out_min;
-    for (unsigned int i=1; i<= m->getRows(); i++)
-    {
-        for (unsigned int j=1; j<= m->getCols(); j++)
-        {
-            // Get pixel
-            pixel = m->get(i,j);
-
-            // Fit pixel to given space
-            if (pixel < in_min)
-                pixel = in_min;
-            if (pixel < in_min)
-                pixel = in_min;
-
-            // Calculate new color
-            pixel = out_min + (delta_out*(pixel - in_min))/delta_in;
-
-            // Change pixel
-            m->set(i,j,pixel);
-        }
-    }
-
-    return 1;
-}
-
-/*
  *  Apply image histogramm equalization
  *  Image must be between 0 and 1
  *  Defaul image level is 256
@@ -122,11 +79,10 @@ int RadiometricTransformation::histmatching(Matrix *m1, Matrix *m2, int levels)
 
     // Create mapping function
     Matrix map(levels,1);
-    double p,q;
     for (int i=1; i<=levels; i++)
     {
-        q = fabs(V.get(i,1) - S.get(1,1));
-        p = 1;
+        double q = fabs(V.get(i,1) - S.get(1,1));
+        double p = 1;
         for (int k=2; k<=levels; k++)
         {
             if (fabs(V.get(i,1) - S.get(k,1)) < q)
@@ -207,11 +163,11 @@ Matrix& RadiometricTransformation::imcdf(Matrix *m, int levels)
     Matrix hist = imhist(m,levels);
 
     // Calculate s = T(r)
-    double p, n = double(m->getRows()*m->getCols());
+    double n = double(m->getRows()*m->getCols());
     for (int k=1; k<=levels; k++)
     {
         // Calculate cumulated probability p
-        p = 0.0;
+        double p = 0.0;
         for (int j=1; j<=k; j++)
             p += hist.get(j,1)/n;
 
