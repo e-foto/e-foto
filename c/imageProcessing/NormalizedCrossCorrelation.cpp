@@ -161,7 +161,7 @@ NormalizedCrossCorrelation::NormalizedCrossCorrelation()
     temp_max_size = 50;
 }
 
-int NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
+NccFlag NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
         Matrix* searchmat)
 {
     double p;
@@ -181,12 +181,12 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
     // Check search window size
     if ((search_window_width < template_width)
             || (search_window_height < template_height)) {
-        return -1;
+        return NccFlag::SearchWindowIsSmallerThanTemplate;
     }
 
     // Check the size of the template
     if ((template_width < 3) || (template_height < 3)) {
-        return -2;
+        return NccFlag::TemplateIsTooSmallLessThan3Pixels;
     }
 
     // Save original template size (template size may increase with the next test)
@@ -209,7 +209,7 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
                 || (template_yf >= ref_h - 1)) {
             template_width = ori_template_width;
             template_height = ori_template_height;
-            return -3;
+            return NccFlag::TemplateIsOutOfImage;
         }
 
         // Check if low variance
@@ -225,7 +225,7 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
         if (template_width > temp_max_size || template_height > temp_max_size) {
             template_width = ori_template_width;
             template_height = ori_template_height;
-            return -4;
+            return NccFlag::TemplateHasLowStd;
         }
     }
 
@@ -269,7 +269,7 @@ int NormalizedCrossCorrelation::searchHomologous(Matrix* refmat,
     best_x += frac_tc_x;
     best_y += frac_tc_y;
     // Matching successful
-    return 1;
+    return NccFlag::NoErrors;
 }
 
 /*

@@ -318,7 +318,7 @@ void ImageMatching::region_growing(Matrix* img1, Matrix* img2,
                                    double x, double y,
                                    double sx, double sy)
 {
-    int ncc_flag;
+    NccFlag ncc_flag;
     LsmFlag lsm_flag;
     double lx, ly, rx, ry;
     double new_x = 0.0, new_y = 0.0, p = 0.0;
@@ -355,7 +355,7 @@ void ImageMatching::region_growing(Matrix* img1, Matrix* img2,
             ncc_flag = ncc.searchHomologous(img1, img2);
             p = ncc.getBestP();
 
-            if (p < corr_th || ncc_flag != 1) {
+            if (p < corr_th || ncc_flag != NccFlag::NoErrors) {
                 continue;
             }
 

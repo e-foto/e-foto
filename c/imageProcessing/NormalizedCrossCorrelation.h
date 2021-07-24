@@ -4,7 +4,7 @@
 /*******************************************************************************
                          NormalizedCrossCorrelation.h
 *******************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -33,6 +33,12 @@ namespace eng {
 namespace efoto {
 
 class Matrix;
+
+enum class NccFlag { NoErrors=1,
+                     SearchWindowIsSmallerThanTemplate = -1,
+                     TemplateIsTooSmallLessThan3Pixels = -2,
+                     TemplateIsOutOfImage = -3,
+                     TemplateHasLowStd = -4};
 
 class NormalizedCrossCorrelation {
 
@@ -70,7 +76,7 @@ public:
         search_window_center_x = int(_x);
         search_window_center_y = int(_y);
     };
-    int searchHomologous(Matrix*, Matrix*);
+    NccFlag searchHomologous(Matrix*, Matrix*);
     double directCorrelation(Matrix* X, Matrix* Y, int template_cx, int template_cy,
                              int matching_cx, int matching_cy);
     double getBestP() const
