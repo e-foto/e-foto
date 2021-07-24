@@ -316,7 +316,8 @@ void ImageMatching::emptyStack()
 void ImageMatching::region_growing(Matrix* img1, Matrix* img2,
                                    MatchingPointsList* mpoints, double x, double y, double sx, double sy)
 {
-    int ncc_flag, lsm_flag;
+    int ncc_flag;
+    LsmFlag lsm_flag;
     double lx, ly, rx, ry;
     double new_x = 0.0, new_y = 0.0, p = 0.0;
     emptyStack();
@@ -371,7 +372,7 @@ void ImageMatching::region_growing(Matrix* img1, Matrix* img2,
             lsm_flag = lsm.searchHomologous(img1, img2, lx, ly, rx, ry);
             p = lsm.getBestP();
 
-            if (p < corr_th || lsm_flag < 1) {
+            if (p < corr_th || lsm_flag != LsmFlag::Ok) {
                 continue;
             }
 

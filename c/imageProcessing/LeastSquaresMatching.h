@@ -1,7 +1,7 @@
 #ifndef LEAST_SQUARES_MATCHING
 #define LEAST_SQUARES_MATCHING
 /*******************************************************************************
-						 LeastSquaresMatching.h
+                                                 LeastSquaresMatching.h
 *******************************************************************************/
 /*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
@@ -33,10 +33,11 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-enum class filterType { Gradient, Prewitt, Sobel };
+enum class FilterType { Gradient, Prewitt, Sobel };
+enum class LsmFlag { Ok = 1, OutOfBonds = 0, LowStd = -1, Diverged = -2, MaxIterationsAchieved = -3};
 
 class LeastSquaresMatching {
-  int template_width{10};
+    int template_width{10};
     int template_height{10};
     int template_center_x;
     int template_center_y;
@@ -54,7 +55,7 @@ class LeastSquaresMatching {
     bool over_it{true};
     int max_iterations{10};
     int max_distance{20};
-    filterType gradient_filter{filterType::Gradient};
+    FilterType gradient_filter{FilterType::Gradient};
     Matrix Gx;
     Matrix Gy;
     Matrix affine_coefficients;
@@ -65,7 +66,7 @@ class LeastSquaresMatching {
 public:
     LeastSquaresMatching() = default;
 
-    int searchHomologous(Matrix* img1,
+    LsmFlag searchHomologous(Matrix* img1,
                          Matrix* img2,
                          double Tx, double Ty,
                          double Mx, double My);
@@ -90,7 +91,6 @@ public:
         matching_window_center_y = _y;
     }
 
-    int searchHomologous(Matrix*, Matrix*);
     double getBestP() const
     {
         return best_p;
@@ -115,6 +115,7 @@ public:
     {
         max_iterations = _its;
     }
+    void getNextPosition(double*, double*, int, int);
     void setConvergenceLimits(double _shift, double _scale, double _shear)
     {
         limit_shift_values = _shift;
@@ -151,11 +152,11 @@ public:
     }
 
 private:
+    void imgGradient(Matrix*);
     double average(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
                    int col_f = 0);
     double stddev(Matrix* m, int row_i = 0, int row_f = 0, int col_i = 0,
                   int col_f = 0);
-    Matrix& imfilter(Matrix*, Matrix*);
 };
 
 } // namespace efoto
