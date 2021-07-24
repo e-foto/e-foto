@@ -314,7 +314,9 @@ void ImageMatching::emptyStack()
 }
 
 void ImageMatching::region_growing(Matrix* img1, Matrix* img2,
-                                   MatchingPointsList* mpoints, double x, double y, double sx, double sy)
+                                   MatchingPointsList* mpoints,
+                                   double x, double y,
+                                   double sx, double sy)
 {
     int ncc_flag;
     LsmFlag lsm_flag;

@@ -36,16 +36,9 @@ class DEMManager;
 
 class stackCell {
 public:
-    stackCell():
-        ref_x{0.0},
-        ref_y{0.0},
-        cor_x{0.0},
-        cor_y{0.0},
-        prev{nullptr}
-    {
-    };
-    float ref_x, ref_y, cor_x, cor_y;
-    stackCell* prev;
+    stackCell() = default;
+    float ref_x{0.0}, ref_y{0.0}, cor_x{0.0}, cor_y{0.0};
+    stackCell* prev{nullptr};
 };
 
 enum class ImgRadioCorrection { NoCorrection, Equalization, HistMatching };

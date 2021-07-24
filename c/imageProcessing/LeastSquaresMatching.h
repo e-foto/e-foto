@@ -67,9 +67,9 @@ public:
     LeastSquaresMatching() = default;
 
     LsmFlag searchHomologous(Matrix* img1,
-                         Matrix* img2,
-                         double Tx, double Ty,
-                         double Mx, double My);
+                             Matrix* img2,
+                             double Tx, double Ty,
+                             double Mx, double My);
     void setTemplate(int _wh)
     {
         template_width = _wh;
