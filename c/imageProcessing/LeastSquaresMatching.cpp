@@ -80,24 +80,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-LeastSquaresMatching::LeastSquaresMatching()
-{
-    template_width = 10;
-    template_height = 10;
-    max_iterations = 10;
-    max_distance = 20;
-    limit_shift_values = 0.05; // Distance between matching window centers
-    limit_scale_values = 0.01; // a2 and b1
-    limit_shear_values = 0.01; // a1 and b2
-    acceptance_correlation = 0.7;
-    acceptance_error_ellipse = 5; // Std for a0 and b0 arrays
-    gradient_filter = filterType::Gradient;
-    over_it = true;
-    over_it_distance = 0.5;
-        temp_growth_step = 2;
-        temp_max_size = 50;
-}
-
 /*
  * Performs LSM, where img1 is the template and img2 the search image
  * Tx, Ty is the center of the template

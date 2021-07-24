@@ -36,34 +36,34 @@ namespace efoto {
 enum class filterType { Gradient, Prewitt, Sobel };
 
 class LeastSquaresMatching {
-    int template_width;
-    int template_height;
+  int template_width{10};
+    int template_height{10};
     int template_center_x;
     int template_center_y;
     int matching_window_center_x;
     int matching_window_center_y;
     double best_p;
-    double limit_shift_values;
-    double limit_scale_values;
-    double limit_shear_values;
-    double acceptance_correlation;
-    double acceptance_error_ellipse;
+    double limit_shift_values{0.05}; // Distance between matching window centers
+    double limit_scale_values{0.01}; // a2 and b1
+    double limit_shear_values{0.01}; // a1 and b2
+    double acceptance_correlation{0.7};
+    double acceptance_error_ellipse{5}; // Std for a0 and b0 arrays
     double best_x;
     double best_y;
-    double over_it_distance;
-    bool over_it;
-    int max_iterations;
-    int max_distance;
-    filterType gradient_filter;
+    double over_it_distance{0.5};
+    bool over_it{true};
+    int max_iterations{10};
+    int max_distance{20};
+    filterType gradient_filter{filterType::Gradient};
     Matrix Gx;
     Matrix Gy;
     Matrix affine_coefficients;
     NormalizedCrossCorrelation ncc; // Used for evaluation
-    int temp_growth_step;
-    int temp_max_size;
+    int temp_growth_step{2};
+    int temp_max_size{50};
 
 public:
-    LeastSquaresMatching();
+    LeastSquaresMatching() = default;
 
     int searchHomologous(Matrix* img1,
                          Matrix* img2,
