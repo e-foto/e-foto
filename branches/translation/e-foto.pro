@@ -288,6 +288,8 @@ SOURCES += c/control/DEMManager.cpp \
 
 RESOURCES += qt/resource/resource.qrc qt/resource/shaders.qrc
 
+TRANSLATIONS += language/e-foto_pt_BR.ts
+
 # e-foto icon
 RC_FILE = efotoIcon.rc
 
@@ -299,6 +301,9 @@ QT_VER_MAJ = $$member(QT_VERSION, 0)
 QT_VER_MIN = $$member(QT_VERSION, 1)
 message("QT_ARCH: $$QT_ARCH")
 message("QMAKE_HOST.arch: $$QMAKE_HOST.arch")
+
+system(lrelease language/e-foto_pt_BR.ts)
+system(mv language/e-foto_pt_BR.qm qt/resource/)
 
 
 # System unix configuration
