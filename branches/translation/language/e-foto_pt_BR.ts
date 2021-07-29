@@ -5205,100 +5205,100 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="343"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="430"/>
         <source>ASCII Full 2D + 3D (*.pix);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="348"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="434"/>
         <source>ASCII 2D Points (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="353"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="438"/>
         <source>ASCII 2D Points (*.dat);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="358"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="442"/>
         <source>Point Cloud (*.xyz);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="363"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="446"/>
         <source>Point Cloud (*.ixyz);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="368"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="669"/>
         <source>Text file (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="371"/>
         <source>Save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar Arquivo</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="399"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="477"/>
         <source>Binary DSM Grid (*.dsm);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="404"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="481"/>
         <source>ASCII DSM Grid (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="407"/>
         <source>Open file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="450"/>
         <source>All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="452"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="653"/>
         <source>Open DSM file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo MDS</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="483"/>
         <source>Open DSM Grid file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo MDS Grid</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="648"/>
         <source>Point cloud (*.xyz);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="650"/>
         <source>Stereoplotter features file(*.spf);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="669"/>
         <source>Save DSM quality report</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar relatório de qualidade MDS</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="791"/>
         <source>Open Stereoplotter file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra o arquivo Stereoplotter</translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="791"/>
         <source>Stereoplotter file (*.spf);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5306,33 +5306,33 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="654"/>
         <source>Save ortho-image quality report</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar relatório de qualidade de orto-imagem</translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="654"/>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="689"/>
         <source>Text file (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="692"/>
         <source>Load ortho-image quality report</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar relatório de qualidade de orto-imagem</translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="713"/>
         <source>Point cloud (*.xyz);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="714"/>
         <source>Stereoplotter features file(*.spf);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="718"/>
         <source>Load points for testing quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Pontos de carga para teste de qualidade</translation>
     </message>
 </context>
 <context>
@@ -5340,43 +5340,43 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="198"/>
         <source>Binary DSM Grid (*.dsm);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="200"/>
         <source>ASCII DSM Grid (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="203"/>
         <source>Open DSM file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo MDS</translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="229"/>
         <source>Open Ortho-image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo de imagem Ortho</translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="229"/>
         <source>E-FOTO Ortho image (*.eoi);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="269"/>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="307"/>
         <source>Save Orthoimage</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar Orthoimage</translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="269"/>
         <source>E-FOTO Orthoimage (*.eoi);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/OrthoUserInterface_Qt.cpp" line="307"/>
         <source>GeoTiff (*.tif)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5385,49 +5385,49 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="132"/>
         <source>Ctrl+Z</source>
         <comment>Undo</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="284"/>
         <source>Warning: exiting with unsaved marks</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso: saindo com marcas não salvas</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="284"/>
         <source>Do you want to save changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você quer salvar as alterações?</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="359"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Aceitar</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="360"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="361"/>
         <source>Export coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenadas de exportação</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="382"/>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="496"/>
         <source>Converged: yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Convergido: sim</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="385"/>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="498"/>
         <source>Converged: no</source>
-        <translation type="unfinished"></translation>
+        <translation>Convergido: não</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="551"/>
         <source>Calculating PhotoTriangulation</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculando Fototriangulação</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="551"/>
@@ -5437,64 +5437,70 @@ This mode converts all control points coordinates in local topocentric coordinat
 
 This may take awhile.
 Please wait until window with results appears</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deseja calcular no modo topocêntrico local?
+Este modo converte todas as coordenadas dos pontos de controle em coordenadas topocêntricas locais e, em seguida, calcula a triangulação de fotos.
+
+
+Isso pode demorar um pouco.
+Aguarde até que apareça uma janela com os resultados</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="567"/>
         <source>Impossible Calculate PhotoTriangulation</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossível Calcular Fototriangulação</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="567"/>
         <source>There&apos;s no sufficient points to calculate Phototriangulation,
 try put more Control Points or Photogrammetric(Tie) Points </source>
-        <translation type="unfinished"></translation>
+        <translation>Não há pontos suficientes para calcular a fototriangulação,
+tente colocar mais pontos de controle ou pontos fotogramétricos</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="595"/>
         <source>Images available</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens disponiveis</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="595"/>
         <source>Images selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens selecionadas</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="596"/>
         <source>Points available</source>
-        <translation type="unfinished"></translation>
+        <translation>Pontos disponíveis</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="596"/>
         <source>Points selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Pontos selecionados</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="617"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodar</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="618"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="1385"/>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="1422"/>
         <source>Warning!</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso!</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="1385"/>
         <source>This process can create measurements for not measured points in images with know parameters (GNSS and INS). Do you accept run this process?</source>
-        <translation type="unfinished"></translation>
+        <translation>Este processo pode criar medições para pontos não medidos em imagens com parâmetros conhecidos (GNSS e INS). Você aceita executar este processo?</translation>
     </message>
     <message>
         <location filename="qt/interface/PTUserInterface_Qt.cpp" line="1422"/>
         <source>Do you want to remove all measurements for this point?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deseja remover todas as medições para este ponto?</translation>
     </message>
 </context>
 <context>
@@ -5504,29 +5510,29 @@ try put more Control Points or Photogrammetric(Tie) Points </source>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="844"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="890"/>
         <source>efoto[Project Manager]</source>
-        <translation type="unfinished"></translation>
+        <translation>efoto [Gerente de Projeto]</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="167"/>
         <source>Ctrl+Shift+D</source>
         <comment>Debug</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="501"/>
         <source>Save A New File</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar um novo arquivo</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="503"/>
         <source>Save File As</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar arquivo como</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="571"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="595"/>
         <source>Select your image!</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione sua imagem!</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="571"/>
@@ -5534,7 +5540,7 @@ try put more Control Points or Photogrammetric(Tie) Points </source>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="785"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="790"/>
         <source>Image name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome da imagem:</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="686"/>
@@ -5542,195 +5548,195 @@ try put more Control Points or Photogrammetric(Tie) Points </source>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2018"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2037"/>
         <source> Warning: leaving form in edit mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso: deixando o formulário no modo de edição</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="785"/>
         <source>Select left image</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione a imagem à esquerda</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="790"/>
         <source>Select right image!</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione a imagem certa!</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="831"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="881"/>
         <source>Open Project: *Unsaved</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="837"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="3111"/>
         <source>Open Project: *</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="839"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="3113"/>
         <source>Open Project: </source>
-        <translation type="unfinished"></translation>
+        <translation>Projeto aberto:</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="842"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="888"/>
         <source> - efoto[Project Manager]</source>
-        <translation type="unfinished"></translation>
+        <translation>- efoto [Gerente de Projeto]</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="853"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="899"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="929"/>
         <source>Project Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Cabeçalho do Projeto</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="855"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="901"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="931"/>
         <source>Terrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Terreno</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="857"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="903"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="933"/>
         <source>Flight</source>
-        <translation type="unfinished"></translation>
+        <translation>Vôo</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="859"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="905"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="935"/>
         <source>Sensor</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensor</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="861"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="907"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="937"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="863"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="909"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="939"/>
         <source>Points</source>
-        <translation type="unfinished"></translation>
+        <translation>Pontos</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2054"/>
         <source> Warning: You have unsaved data</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso: você tem dados não salvos</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2055"/>
         <source>Do you want to save all changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você quer salvar todas as alterações?</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2098"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2334"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2405"/>
         <source>Open Import File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo de importação</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2127"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2692"/>
         <source>Loading Points</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando Pontos</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2134"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2699"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="3050"/>
         <source>%v/%m : %p%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2229"/>
         <source> fileWarning </source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso de arquivo</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2229"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2459"/>
         <source>The point in line %1 from imported file
 has incomplete or corrupted data</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2243"/>
         <source>Export file</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo de exportação</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2274"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2834"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2897"/>
         <source>Exporting Points</source>
-        <translation type="unfinished"></translation>
+        <translation>Pontos de Exportação</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2281"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2840"/>
         <source>Point %v/%m : %p%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2434"/>
         <source>Loading Digitals Coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando Coordenadas Digitais</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2459"/>
         <source> Warning </source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2619"/>
         <source>Open Import ENH file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo de importação ENH</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2637"/>
         <source>Open Import Digital File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo digital de importação</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2807"/>
         <source>Export Digital Coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Coordenadas Digitais</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2916"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2930"/>
         <source>Inform images dpi</source>
-        <translation type="unfinished"></translation>
+        <translation>Informe imagens ppp</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2917"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2933"/>
         <source>Image %v/%m : %p%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="2930"/>
         <source>dpi for all images:</source>
-        <translation type="unfinished"></translation>
+        <translation>ppp para todas as imagens:</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="3014"/>
         <source>Open Import OI Digital File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo digital de importação da OI</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="3042"/>
         <source>Loading OIs</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando OIs</translation>
     </message>
 </context>
 <context>
@@ -5738,12 +5744,12 @@ has incomplete or corrupted data</source>
     <message>
         <location filename="qt/interface/ReportUserInterface_Qt.cpp" line="393"/>
         <source>Save File As</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar arquivo como</translation>
     </message>
     <message>
         <location filename="qt/interface/ReportUserInterface_Qt.cpp" line="393"/>
         <source>*.xml;;*.txt;;*.html</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5751,43 +5757,43 @@ has incomplete or corrupted data</source>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="214"/>
         <source>Ctrl+A</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="215"/>
         <source>Ctrl+D</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="216"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="317"/>
         <source>Open Features file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo de recursos</translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="317"/>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="352"/>
         <source>Stereoplotter features file (*.spf);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="352"/>
         <source>Save features file</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar arquivo de recursos</translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="376"/>
         <source>Export features</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar recursos</translation>
     </message>
     <message>
         <location filename="qt/interface/SPUserInterface_Qt.cpp" line="376"/>
         <source>Text file (*.txt);; Shape file (*.shp)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5800,23 +5806,23 @@ has incomplete or corrupted data</source>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1282"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1285"/>
         <source>%1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1143"/>
         <source>Save seeds</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1143"/>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1167"/>
         <source>Seeds (*.txt);; All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/interface/DEMUserInterface_Qt.cpp" line="1167"/>
         <source>Load seeds</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 </TS>
