@@ -1,4 +1,7 @@
 <RCC>
+    <qresource prefix="/translation">
+        <file alias="pt_BR">e-foto_pt_BR.qm</file>
+    </qresource>
     <qresource prefix="/image">
         <file>logoefoto.png</file>
         <file>logobrazil.png</file>

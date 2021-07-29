@@ -13,6 +13,13 @@ int main( int argc, char ** argv )
     efoto.setStyle("plastique");
     efoto.setStyleSheet("QToolTip { color: #000000; background-color: #ffffdc; border: none; }");
     efoto.quitOnLastWindowClosed();
+
+    QTranslator translator;
+    QString locale = QLocale::system().name();
+    translator.load(QString(":/translation/") + locale);
+    efoto.installTranslator(&translator);
+
+
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
