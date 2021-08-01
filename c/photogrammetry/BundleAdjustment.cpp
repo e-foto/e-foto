@@ -37,6 +37,107 @@
 
 #define ESPARSA
 
+namespace {
+/* metodos de calculo*/
+/**
+* \brief Calcula a matriz M11
+* \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
+* \return Matrix : Matriz M11, seguindo metodo de Boltz
+*/
+br::uerj::eng::efoto::Matrix getM11(br::uerj::eng::efoto::Matrix M1)
+{
+#ifdef ESPARSA
+    return br::uerj::eng::efoto::Matrix(M1.transpose()) * M1;
+#else
+    return br::uerj::eng::efoto::M1.transpose() * M1;
+#endif
+}
+
+/**
+* \brief Calcula a matriz M11
+* \param    M2   : Matriz formada por submatrizes para cada ponto fotogramétrico
+* \return Matrix : Matriz M22, seguindo metodo de Boltz
+*/
+br::uerj::eng::efoto::Matrix getM22(br::uerj::eng::efoto::Matrix M2)
+{
+#ifdef ESPARSA
+    return br::uerj::eng::efoto::Matrix(M2.transpose()) * M2;
+#else
+    return M2.transpose() * M2;
+#endif
+}
+
+/**
+* \brief Calcula a matriz M12
+* \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
+* \param    M2   : Matriz formada por submatrizes para cada ponto fotogramétrico
+* \return Matrix : Matriz M12, seguindo metodo de Boltz
+*/
+br::uerj::eng::efoto::Matrix getM12(br::uerj::eng::efoto::Matrix M1,
+                                    const br::uerj::eng::efoto::Matrix& M2)
+{
+#ifdef ESPARSA
+    return br::uerj::eng::efoto::Matrix(M1.transpose()) * M2;
+#else
+    return M1.transpose() * M2;
+#endif
+}
+
+/**
+* \brief Calcula a matriz m1, necessaria para o calculo inicial dos parametros da orientaÃ§oes exteriores
+* \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
+* \param    L1   : Matriz formada pelas coordenadas X e Y dos pontos de controle
+* \return Matrix : Matriz m1
+*/
+br::uerj::eng::efoto::Matrix getm1(br::uerj::eng::efoto::Matrix M1,
+                                   const br::uerj::eng::efoto::Matrix& L1)
+{
+#ifdef ESPARSA
+    return br::uerj::eng::efoto::Matrix(M1.transpose()) * L1;
+#else
+    return (br::uerj::eng::efoto::M1.transpose()) * L1;
+#endif
+}
+
+/**
+* \brief Calcula a matriz m1, necessaria para o calculo inicial dos parametros da orientaÃ§oe exteriores
+* \param    M2   : Matriz formada por submatrizes para cada ponto fotogramétrico
+* \param    L1   : Matriz formada pelas coordenadas X e Y dos pontos de controle
+* \return Matrix : Matriz m1
+*/
+br::uerj::eng::efoto::Matrix getm2(br::uerj::eng::efoto::Matrix M2,
+                                   const br::uerj::eng::efoto::Matrix& L1)
+{
+#ifdef ESPARSA
+    return br::uerj::eng::efoto::Matrix(M2.transpose()) * L1;
+#else
+    return (br::uerj::eng::efoto::M2.transpose()) * L1;
+#endif
+}
+
+/**
+* \brief Metodo que retorna apenas os coeficientes de uma funçao afim para converter coordenada analogica(xsi,eta) para coordenada de terreno
+* \param   Paf   : Matriz com todos os parametros da orientaÃ§ao exterior de todas as imagens
+* \param imageId : id da imagem no calculo atual
+* \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+* \return Matrix : Matriz com os parametros da orientaÃ§ao exterior de uma imagem
+*/
+//retorna os parametros da imagem numero imageID
+br::uerj::eng::efoto::Matrix getPTA(const br::uerj::eng::efoto::Matrix& PAf,
+                                    int imageId)
+{
+    br::uerj::eng::efoto::Matrix result(6, 1);
+
+    for (int i = 6 * imageId + 1, j = 1 ; i <= 6 * (imageId + 1) ; i++, j++) {
+        result.set(j, 1, PAf.get(i, 1));
+    }
+
+    return result;
+}
+
+
+}
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -44,14 +145,12 @@ namespace efoto {
 
 
 BundleAdjustment::BundleAdjustment(std::deque<Image*>listSelectedImages,
-                                   std::deque<Point*> listSelectedPoints)
+                                   std::deque<Point*> listSelectedPoints):
+    listImages{listSelectedImages},
+    listPoints{listSelectedPoints},
+    numImages{listImages.size()},
+    numPoints{listPoints.size()}
 {
-    listImages = listSelectedImages;
-    listPoints = listSelectedPoints;
-    numImages = listImages.size();
-    numPoints = listPoints.size();
-    numControlPoints = 0;
-    numFotogrametricPoints = 0;
     zeroingCoordinatesPhotogrammetrics();
 
     for (int i = 0; i < numPoints; i++) {
@@ -102,7 +201,6 @@ void BundleAdjustment::fillDetectorCoordinates()
                                     j)->getImageCoordinate(listImages.at(i)->getId()).getCol();
             auto lin = getPointFrom(i,
                                     j)->getImageCoordinate(listImages.at(i)->getId()).getLin();
-            //Matrix coord=digitalToAnalog(listImages.at(i)->getIO(),lin,col);
             RayTester ray(listImages.at(i));
             ray.setIOParameters(listImages.at(i)->getIO()->getXa());
             DetectorSpaceCoordinate coordinates = ray.imageToDetector(col, lin);
@@ -231,48 +329,8 @@ bool BundleAdjustment::calculate(bool makeReport)
     return true;
 }
 
-/* metodos de calculo*/
-Matrix BundleAdjustment::getM11(Matrix M1)
-{
-#ifdef ESPARSA
-    return Matrix(M1.transpose()) * M1;
-#endif
-    return M1.transpose() * M1;
-}
-
-Matrix BundleAdjustment::getM12(Matrix M1, Matrix M2)
-{
-#ifdef ESPARSA
-    return Matrix(M1.transpose()) * M2;
-#endif
-    return M1.transpose() * M2;
-}
-
-Matrix BundleAdjustment::getM22(Matrix M2)
-{
-#ifdef ESPARSA
-    return Matrix(M2.transpose()) * M2;
-#endif
-    return M2.transpose() * M2;
-}
-
-Matrix BundleAdjustment::getm1(Matrix M1, Matrix L1)
-{
-#ifdef ESPARSA
-    return Matrix(M1.transpose()) * L1;
-#endif
-    return (M1.transpose()) * L1;
-}
-
-Matrix BundleAdjustment::getm2(Matrix M2, Matrix L1)
-{
-#ifdef ESPARSA
-    return Matrix(M2.transpose()) * L1;
-#endif
-    return (M2.transpose()) * L1;
-}
-
-Matrix BundleAdjustment::getPAf(Matrix M12, Matrix m1, Matrix xypf)
+Matrix BundleAdjustment::getPAf(const Matrix& M12, const Matrix& m1,
+                                const Matrix& xypf)
 {
 #ifdef ESPARSA
     Matrix temp1 = Matrix(inverseM11);
@@ -281,7 +339,8 @@ Matrix BundleAdjustment::getPAf(Matrix M12, Matrix m1, Matrix xypf)
 }
 
 // Aproximação inicial para as coordenadas planimetricas(XY) dos pontos fotogrametricos
-Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1, Matrix m2)
+Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22,
+                                 Matrix m1, Matrix m2)
 {
 #ifdef ESPARSA
 #ifdef DEBUG
@@ -302,43 +361,49 @@ Matrix BundleAdjustment::getN11()
 {
 #ifdef ESPARSA
     return Matrix(Matrix(A1.transpose()) * P) * A1;
-#endif
+#else
     return A1.transpose() * P * A1;
+#endif
 }
 
 Matrix BundleAdjustment::getN12()
 {
 #ifdef ESPARSA
     return Matrix(Matrix(A1.transpose()) * P) * A2;
-#endif
+#else
     return A1.transpose() * P * A2;
+#endif
 }
 
 Matrix BundleAdjustment::getN22()
 {
 #ifdef ESPARSA
     return Matrix(A2.transpose()) * A2;
-#endif
+#else
     return A2.transpose() * A2;
+#endif
 }
 
-Matrix BundleAdjustment::getn1(Matrix L)
+Matrix BundleAdjustment::getn1(Matrix l)
 {
 #ifdef ESPARSA
-    return Matrix(Matrix(A1.transpose()) * P) * L;
+    return Matrix(Matrix(A1.transpose()) * P) * l;
+#else
+    return A1.transpose() * P * l;
 #endif
-    return A1.transpose() * P * L;
 }
 
-Matrix BundleAdjustment::getn2(Matrix L)
+Matrix BundleAdjustment::getn2(Matrix l)
 {
 #ifdef ESPARSA
-    return Matrix(A2.transpose()) * L;
+    return Matrix(A2.transpose()) * l;
+#else
+    return A2.transpose() * l;
 #endif
-    return A2.transpose() * L;
+
 }
 
-void BundleAdjustment::setx1(Matrix N12, Matrix n1)
+void BundleAdjustment::setx1(const Matrix& N12, const Matrix& n1)
 {
 #ifdef PAULO
     Matrix temp1 = Matrix(inverseN11);
@@ -346,7 +411,8 @@ void BundleAdjustment::setx1(Matrix N12, Matrix n1)
 #endif
 }
 
-void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
+void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2,
+                             const Matrix& n1)
 {
 #ifdef PAULO
     Matrix temp1 = Matrix(Matrix(N12.transpose()) * inverseN11);
@@ -390,8 +456,7 @@ void BundleAdjustment::setRot(double omega, double phi, double kappa)
     r33 = cos(omega) * cos(phi);
 }
 
-Matrix BundleAdjustment::getCoordinatesEqColin(double X, double Y, double Z,
-        int imageId)
+Matrix BundleAdjustment::getCoordinatesEqColin(double X, double Y, double Z, int imageId)
 {
     Matrix coord(1, 2);
     double X0 = getXAdjus(imageId);
@@ -407,245 +472,262 @@ Matrix BundleAdjustment::getCoordinatesEqColin(double X, double Y, double Z,
     return coord;
 }
 
-Matrix BundleAdjustment::getJacobianaControl(double X, double Y, double Z,
-        int imageIndex)
+Matrix BundleAdjustment::getJacobianaControl(double X, double Y, double Z, int imageId)
 {
     Matrix JacCtrl(2, 6);
-    double omega = matAdjust.get(imageIndex, 1);
-    double phi = matAdjust.get(imageIndex, 2);
-    double kappa = matAdjust.get(imageIndex, 3);
-    double X0 = matAdjust.get(imageIndex, 4);
-    double Y0 = matAdjust.get(imageIndex, 5);
-    double Z0 = matAdjust.get(imageIndex, 6);
-    JacCtrl.set(1, 1, c * cos(kappa)*cos(phi) / (sin(phi) * (X - X0) - cos(phi)*sin(
-                    omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) - c * (cos(kappa)*cos(
-                                phi) * (X - X0) + (sin(kappa)*cos(omega) + cos(kappa)*sin(phi)*sin(omega)) *
-                            (Y - Y0) + (sin(kappa)*sin(omega) - cos(kappa)*sin(phi)*cos(omega)) *
-                            (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(
-                                    phi)*cos(omega) * (Z - Z0)), 2)*sin(phi));
-    JacCtrl.set(1, 2, -c * (-sin(kappa)*cos(omega) - cos(kappa)*sin(phi)*sin(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) + c * (cos(kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(
-                                                omega) + cos(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (sin(kappa)*sin(
-                                                        omega) - cos(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2)*cos(phi)*sin(omega));
-    JacCtrl.set(1, 3, -c * (-sin(kappa)*sin(omega) + cos(kappa)*sin(phi)*cos(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) - c * (cos(kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(
-                                                omega) + cos(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (sin(kappa)*sin(
-                                                        omega) - cos(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2)*cos(phi)*cos(omega));
-    JacCtrl.set(1, 4, -c * ((-sin(kappa)*sin(omega) + cos(kappa)*sin(phi)*cos(
-                                 omega)) * (Y - Y0) + (sin(kappa)*cos(omega) + cos(kappa)*sin(phi)*sin(
-                                         omega)) * (Z - Z0)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) *
-                                                 (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) + c * (cos(kappa)*cos(phi) *
-                                                         (X - X0) + (sin(kappa)*cos(omega) + cos(kappa)*sin(phi)*sin(omega)) *
-                                                         (Y - Y0) + (sin(kappa)*sin(omega) - cos(kappa)*sin(phi)*cos(omega)) *
-                                                         (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(
-                                                                 phi)*cos(omega) * (Z - Z0)),
-                                                                 2) * (-cos(phi)*cos(omega) * (Y - Y0) - cos(phi)*sin(omega) * (Z - Z0)));
-    JacCtrl.set(1, 5, -c * (-cos(kappa)*sin(phi) * (X - X0) + cos(kappa)*cos(
-                                phi)*sin(omega) * (Y - Y0) - cos(kappa)*cos(phi)*cos(omega) * (Z - Z0)) / (sin(
-                                            phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) *
-                                        (Z - Z0)) + c * (cos(kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(omega) + cos(
-                                                kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (sin(kappa)*sin(omega) - cos(
-                                                        kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(
-                                                                phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2) * (cos(phi) * (X - X0) + sin(phi)*sin(omega) * (Y - Y0) - sin(phi)*cos(
-                                                                        omega) * (Z - Z0)));
-    JacCtrl.set(1, 6, -c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(
-                                omega) - sin(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(
-                                            omega) + sin(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / (sin(phi) *
-                                                    (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)));
-    JacCtrl.set(2, 1, -c * sin(kappa)*cos(phi) / (sin(phi) * (X - X0) - cos(
-                    phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) - c * (-sin(
-                                kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(omega) - sin(kappa)*sin(phi)*sin(
-                                            omega)) * (Y - Y0) + (cos(kappa)*sin(omega) + sin(kappa)*sin(phi)*cos(
-                                                    omega)) * (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(phi)*sin(omega) *
-                                                            (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)), 2)*sin(phi));
-    JacCtrl.set(2, 2, -c * (-cos(kappa)*cos(omega) + sin(kappa)*sin(phi)*sin(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) + c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(
-                                                omega) - sin(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(
-                                                        omega) + sin(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2)*cos(phi)*sin(omega));
-    JacCtrl.set(2, 3, -c * (-cos(kappa)*sin(omega) - sin(kappa)*sin(phi)*cos(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) - c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(
-                                                omega) - sin(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(
-                                                        omega) + sin(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2)*cos(phi)*cos(omega));
-    JacCtrl.set(2, 4, -c * ((-cos(kappa)*sin(omega) - sin(kappa)*sin(phi)*cos(
-                                 omega)) * (Y - Y0) + (cos(kappa)*cos(omega) - sin(kappa)*sin(phi)*sin(
-                                         omega)) * (Z - Z0)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) *
-                                                 (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) + c * (-sin(kappa)*cos(phi) *
-                                                         (X - X0) + (cos(kappa)*cos(omega) - sin(kappa)*sin(phi)*sin(omega)) *
-                                                         (Y - Y0) + (cos(kappa)*sin(omega) + sin(kappa)*sin(phi)*cos(omega)) *
-                                                         (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(
-                                                                 phi)*cos(omega) * (Z - Z0)),
-                                                                 2) * (-cos(phi)*cos(omega) * (Y - Y0) - cos(phi)*sin(omega) * (Z - Z0)));
-    JacCtrl.set(2, 5, -c * (sin(kappa)*sin(phi) * (X - X0) - sin(kappa)*cos(
-                                phi)*sin(omega) * (Y - Y0) + sin(kappa)*cos(phi)*cos(omega) * (Z - Z0)) / (sin(
-                                            phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) *
-                                        (Z - Z0)) + c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(omega) - sin(
-                                                kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(omega) + sin(
-                                                        kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow((sin(phi) * (X - X0) - cos(
-                                                                phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)),
-                                                                2) * (cos(phi) * (X - X0) + sin(phi)*sin(omega) * (Y - Y0) - sin(phi)*cos(
-                                                                        omega) * (Z - Z0)));
-    JacCtrl.set(2, 6, -c * (-cos(kappa)*cos(phi) * (X - X0) + (-sin(kappa)*cos(
-                                omega) - cos(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (-sin(kappa)*sin(
-                                            omega) + cos(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / (sin(phi) *
-                                                    (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)));
+    double omega = matAdjust.get(imageId, 1);
+    double phi = matAdjust.get(imageId, 2);
+    double kappa = matAdjust.get(imageId, 3);
+    double dX = X - matAdjust.get(imageId, 4);
+    double dY = Y - matAdjust.get(imageId, 5);
+    double dZ = Z - matAdjust.get(imageId, 6);
+    JacCtrl.set( 1, 1,
+                 c * cos(kappa) * cos(phi)
+                 / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                 - c * (cos(kappa) * cos(phi) * dX
+                        + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                        + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ
+                       )
+                 / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                 * sin(phi)
+               );
+    JacCtrl.set(1, 2,
+                -c * (-sin(kappa) * cos(omega) - cos(kappa) * sin(phi) * sin(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                *cos(phi) * sin(omega)
+               );
+    JacCtrl.set(1, 3,
+                -c * (-sin(kappa) * sin(omega) + cos(kappa) * sin(phi) * cos(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                - c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY
+                       + cos(phi) * cos(omega) * dZ), 2) * cos(phi) * cos(omega));
+    JacCtrl.set(1, 4, -c * ((-sin(kappa) * sin(omega)
+                             + cos(kappa) * sin(phi) * cos(omega)) * dY
+                            + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY
+                   + cos(phi) * cos(omega) * dZ) + c * (cos(kappa) * cos(phi) * dX
+                           + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                           + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY
+                       + cos(phi) * cos(omega) * dZ), 2) * (-cos(phi) * cos(omega) * dY
+                               - cos(phi) * sin(omega) * dZ));
+    JacCtrl.set(1, 5, -c * (-cos(kappa) * sin(phi) * dX
+                            + cos(kappa) * cos(phi) * sin(omega) * dY
+                            - cos(kappa) * cos(phi) * cos(omega) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY
+                   + cos(phi) * cos(omega) * dZ)
+                + c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY
+                       + cos(phi) * cos(omega) * dZ), 2)
+                * (cos(phi) * dX + sin(phi) * sin(omega)
+                   * dY - sin(phi) * cos(omega) * dZ));
+    JacCtrl.set(1, 6, -c * (-sin(kappa) * cos(phi) * dX
+                            + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                            + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ));
+    JacCtrl.set(2, 1,
+                -c * sin(kappa) * cos(phi)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                - c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                *sin(phi));
+    JacCtrl.set(2, 2,
+                -c * (-cos(kappa) * cos(omega) + sin(kappa) * sin(phi) * sin(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY
+                   + cos(phi) * cos(omega) * dZ)
+                + c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                *cos(phi) * sin(omega));
+    JacCtrl.set(2, 3,
+                -c * (-cos(kappa) * sin(omega) - sin(kappa) * sin(phi) * cos(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY
+                   + cos(phi) * cos(omega) * dZ)
+                - c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                *cos(phi) * cos(omega));
+    JacCtrl.set(2, 4,
+                -c * ((-cos(kappa) * sin(omega) - sin(kappa) * sin(phi) * cos(omega))
+                      * dY + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ), 2)
+                * (-cos(phi) * cos(omega) * dY - cos(phi) * sin(omega) * dZ));
+    JacCtrl.set(2, 5,
+                -c * (sin(kappa) * sin(phi) * dX
+                      - sin(kappa) * cos(phi) * sin(omega) * dY
+                      + sin(kappa) * cos(phi) * cos(omega) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY
+                   + cos(phi) * cos(omega) * dZ)
+                + c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega))
+                       * dY + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow((sin(phi) * dX - cos(phi) * sin(omega) * dY
+                       + cos(phi) * cos(omega) * dZ), 2)
+                * (cos(phi) * dX + sin(phi) * sin(omega) * dY - sin(phi) * cos(omega) * dZ));
+    JacCtrl.set(2, 6,
+                -c * (-cos(kappa) * cos(phi) * dX
+                      + (-sin(kappa) * cos(omega) - cos(kappa) * sin(phi) * sin(omega)) * dY
+                      + (-sin(kappa) * sin(omega) + cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ));
     return JacCtrl;
 }
 
 Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
-        int imageIndex)
+        int imageId)
 {
     Matrix JacFoto(2, 3);
-    double omega = matAdjust.get(imageIndex, 1);
-    double phi = matAdjust.get(imageIndex, 2);
-    double kappa = matAdjust.get(imageIndex, 3);
-    double X0 = matAdjust.get(imageIndex, 4);
-    double Y0 = matAdjust.get(imageIndex, 5);
-    double Z0 = matAdjust.get(imageIndex, 6);
-    JacFoto.set(1, 1, -c * cos(kappa)*cos(phi) / (sin(phi) * (X - X0) - cos(
-                    phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) + c * (cos(
-                                kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(omega) + cos(kappa)*sin(phi)*sin(
-                                            omega)) * (Y - Y0) + (sin(kappa)*sin(omega) - cos(kappa)*sin(phi)*cos(
-                                                    omega)) * (Z - Z0)) / pow(sin(phi) * (X - X0) - cos(phi)*sin(omega) *
-                                                            (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0), 2)*sin(phi));
-    JacFoto.set(1, 2, -c * (sin(kappa)*cos(omega) + cos(kappa)*sin(phi)*sin(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) - c * (cos(kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(
-                                                omega) + cos(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (sin(kappa)*sin(
-                                                        omega) - cos(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow(sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0),
-                                                                2)*cos(phi)*sin(omega));
-    JacFoto.set(1, 3, -c * (sin(kappa)*sin(omega) - cos(kappa)*sin(phi)*cos(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) + c * (cos(kappa)*cos(phi) * (X - X0) + (sin(kappa)*cos(
-                                                omega) + cos(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (sin(kappa)*sin(
-                                                        omega) - cos(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow(sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0),
-                                                                2)*cos(phi)*cos(omega));
-    JacFoto.set(2, 1, c * sin(kappa)*cos(phi) / (sin(phi) * (X - X0) - cos(phi)*sin(
-                    omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0)) + c * (-sin(kappa)*cos(
-                                phi) * (X - X0) + (cos(kappa)*cos(omega) - sin(kappa)*sin(phi)*sin(omega)) *
-                            (Y - Y0) + (cos(kappa)*sin(omega) + sin(kappa)*sin(phi)*cos(omega)) *
-                            (Z - Z0)) / pow(sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(
-                                    phi)*cos(omega) * (Z - Z0), 2)*sin(phi));
-    JacFoto.set(2, 2, -c * (cos(kappa)*cos(omega) - sin(kappa)*sin(phi)*sin(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) - c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(
-                                                omega) - sin(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(
-                                                        omega) + sin(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow(sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0),
-                                                                2)*cos(phi)*sin(omega));
-    JacFoto.set(2, 3, -c * (cos(kappa)*sin(omega) + sin(kappa)*sin(phi)*cos(
-                                omega)) / (sin(phi) * (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(
-                                        omega) * (Z - Z0)) + c * (-sin(kappa)*cos(phi) * (X - X0) + (cos(kappa)*cos(
-                                                omega) - sin(kappa)*sin(phi)*sin(omega)) * (Y - Y0) + (cos(kappa)*sin(
-                                                        omega) + sin(kappa)*sin(phi)*cos(omega)) * (Z - Z0)) / pow(sin(phi) *
-                                                                (X - X0) - cos(phi)*sin(omega) * (Y - Y0) + cos(phi)*cos(omega) * (Z - Z0),
-                                                                2)*cos(phi)*cos(omega));
+    double omega = matAdjust.get(imageId, 1);
+    double phi = matAdjust.get(imageId, 2);
+    double kappa = matAdjust.get(imageId, 3);
+    double dX = X - matAdjust.get(imageId, 4);
+    double dY = Y - matAdjust.get(imageId, 5);
+    double dZ = Z - matAdjust.get(imageId, 6);
+    JacFoto.set(1, 1,
+                -c * cos(kappa) * cos(phi)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin( omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos( omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * sin(phi));
+    JacFoto.set(1, 2,
+                -c * (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                - c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * cos(phi) * sin(omega));
+    JacFoto.set(1, 3,
+                -c * (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (cos(kappa) * cos(phi) * dX
+                       + (sin(kappa) * cos(omega) + cos(kappa) * sin(phi) * sin(omega)) * dY
+                       + (sin(kappa) * sin(omega) - cos(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * cos(phi) * cos(omega));
+    JacFoto.set(2, 1,
+                c * sin(kappa) * cos(phi)
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * sin(phi));
+    JacFoto.set(2, 2,
+                -c * (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                - c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * cos(phi) * sin(omega));
+    JacFoto.set(2, 3,
+                -c * (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega))
+                / (sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ)
+                + c * (-sin(kappa) * cos(phi) * dX
+                       + (cos(kappa) * cos(omega) - sin(kappa) * sin(phi) * sin(omega)) * dY
+                       + (cos(kappa) * sin(omega) + sin(kappa) * sin(phi) * cos(omega)) * dZ)
+                / pow(sin(phi) * dX - cos(phi) * sin(omega) * dY + cos(phi) * cos(omega) * dZ, 2)
+                * cos(phi) * cos(omega));
     return JacFoto;
 }
 
-//retorna os parametros da imagem numero imageID
-Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
-{
-    Matrix result(6, 1);
-
-    for (int i = 6 * imageId + 1, j = 1 ; i <= 6 * (imageId + 1) ; i++, j++) {
-        result.set(j, 1, PAf.get(i, 1));
-    }
-
-    return result;
-}
-
 /* metodos auxiliares para buscar dados*/
-double BundleAdjustment::getdOmegax1(int imageId)
+double BundleAdjustment::getdOmegax1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 4, 1);
 }
 
-double BundleAdjustment::getdPhix1(int imageId)
+double BundleAdjustment::getdPhix1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 5, 1);
 }
 
-double BundleAdjustment::getdKappax1(int imageId)
+double BundleAdjustment::getdKappax1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 6, 1);
 }
 
-double BundleAdjustment::getdXx1(int imageId)
+double BundleAdjustment::getdXx1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 1, 1);
 }
 
-double BundleAdjustment::getdYx1(int imageId)
+double BundleAdjustment::getdYx1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 2, 1);
 }
 
-double BundleAdjustment::getdZx1(int imageId)
+double BundleAdjustment::getdZx1(int imageId) const
 {
     return x1.get(6 * (imageId - 1) + 3, 1);
 }
 
-double BundleAdjustment::getdXx2(int fotogrPointId)
+double BundleAdjustment::getdXx2(int fotogrPointId) const
 {
     return x2.get(3 * (fotogrPointId - 1) + 1, 1);
 }
 
-double BundleAdjustment::getdYx2(int fotogrPointId)
+double BundleAdjustment::getdYx2(int fotogrPointId) const
 {
     return x2.get(3 * (fotogrPointId - 1) + 2, 1);
 }
 
-double BundleAdjustment::getdZx2(int fotogrPointId)
+double BundleAdjustment::getdZx2(int fotogrPointId) const
 {
     return x2.get(3 * (fotogrPointId - 1) + 3, 1);
 }
 
-double BundleAdjustment::getOmegaAdjus(int imageId)
+double BundleAdjustment::getOmegaAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 1);
 }
 
-double BundleAdjustment::getPhiAdjus(int imageId)
+double BundleAdjustment::getPhiAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 2);
 }
 
-double BundleAdjustment::getKappaAdjus(int imageId)
+double BundleAdjustment::getKappaAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 3);
 }
 
-double BundleAdjustment::getXAdjus(int imageId)
+double BundleAdjustment::getXAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 4);
 }
 
-double BundleAdjustment::getYAdjus(int imageId)
+double BundleAdjustment::getYAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 5);
 }
 
-double BundleAdjustment::getZAdjus(int imageId)
+double BundleAdjustment::getZAdjus(int imageId) const
 {
     return matAdjust.get(imageId, 6);
 }
 
-// Procura onde esta o ponto na lista de todos os pontos(ou seja na lista de pontos selecionados) e retorna o seu indice na lista
+// Procura onde esta o ponto na lista de todos os pontos
+// (ou seja na lista de pontos selecionados) e retorna o seu indice na lista
 int BundleAdjustment::whereInPoints(Point* pnt)
 {
     for (int i = 0; i < numPoints; i++)
@@ -666,7 +748,7 @@ int BundleAdjustment::whereInPhotogrammetricPoints(Point* pnt)
     return -1;
 }
 
-void BundleAdjustment::updateMatAdjust()
+void BundleAdjustment::updateMatAdjust() const
 {
     for (int i = 1; i <= numImages; i++) {
         matAdjust.set(i, 1, getOmegaAdjus(i) + getdOmegax1(i) ); //ajustando omega
@@ -842,7 +924,6 @@ Matrix BundleAdjustment::createM2()
     Matrix B(2, 2);
     B.set(1, 1, -1);
     B.set(2, 2, -1);
-    int posCol = 0;
 
     for (int i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
@@ -850,7 +931,7 @@ Matrix BundleAdjustment::createM2()
 
         for (int j = 0; j < pnts; j++) {
             if (whereInPoints(getPointFrom(i, j)) != -1) {
-                posCol = whereInPhotogrammetricPoints(getPointFrom(i, j));
+                int posCol = whereInPhotogrammetricPoints(getPointFrom(i, j));
                 Matrix auxPoint(2, 2 * numFotogrametricPoints);
 
                 if (posCol != -1) {
@@ -961,7 +1042,7 @@ double BundleAdjustment::getInicialZPhotogrammetricPoints()
     return z /= n;
 }
 // atualiza as coordenadas de todos os pontos
-void BundleAdjustment::updateCoordinatesAllPoints(Matrix xypf,
+void BundleAdjustment::updateCoordinatesAllPoints(const Matrix& xypf,
         double zphotogrammetric)
 {
     for (int i = 0; i < numImages; i++) {
@@ -1029,7 +1110,6 @@ void BundleAdjustment::createA1()
 void BundleAdjustment::createA2()
 {
     Matrix result(0, 3 * numFotogrametricPoints);
-    int posCol = 0;
 
     for (int i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
@@ -1037,7 +1117,7 @@ void BundleAdjustment::createA2()
 
         for (int j = 0; j < pnts; j++) {
             if (whereInPoints(getPointFrom(i, j)) != -1) {
-                posCol = whereInPhotogrammetricPoints(getPointFrom(i, j));
+                int posCol = whereInPhotogrammetricPoints(getPointFrom(i, j));
                 Matrix auxPoint(2, 3 * numFotogrametricPoints);
 
                 if (posCol != -1) {
@@ -1157,53 +1237,17 @@ void BundleAdjustment::updateCoordFotog()
     }
 }
 
-double BundleAdjustment::getRx(Image* img, int pointIndex)
-{
-    int base = 1;
-    int pos = whereInImages(img);
-
-    for (int i = 0; i < pos; i++) {
-        base += 2 * numberControlPoints(listImages.at(i));
-    }
-
-    return matRes.get(base + 2 * (pointIndex), 1);
-}
-
-double BundleAdjustment::getRy(Image* img, int pointIndex)
-{
-    int base = 1;
-    int pos = whereInImages(img);
-
-    for (int i = 0; i < pos; i++) {
-        base += 2 * numberControlPoints(listImages.at(i));
-    }
-
-    return matRes.get(base + 2 * (pointIndex) + 1, 1);
-}
-
-int BundleAdjustment::whereInImages(Image* img)
-{
-    for (int i = 0; i < numImages; i++) {
-        if (listImages.at(i) == img) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-Matrix BundleAdjustment::getMatRes()
+Matrix BundleAdjustment::getMatRes() const
 {
     return matRes;
 }
 
-std::deque<double> BundleAdjustment::getListRMSE()
+std::deque<double> BundleAdjustment::getListRMSE() const
 {
     return listRMSE;
 }
 
-int BundleAdjustment::getTotalIterations()
+int BundleAdjustment::getTotalIterations() const
 {
     return totalIterations;
 }
@@ -1213,7 +1257,7 @@ void BundleAdjustment::setAFP()
     afp = matAdjust;
 }
 
-Matrix BundleAdjustment::getAFP()
+Matrix BundleAdjustment::getAFP() const
 {
     return afp;
 }
@@ -1291,7 +1335,7 @@ bool BundleAdjustment::isConverged()
     }
 }
 
-void BundleAdjustment::setUserInitialValues(Matrix initialValues)
+void BundleAdjustment::setUserInitialValues(const Matrix& initialValues)
 {
     matInitialValues = initialValues;
     userInitialValues = true;
@@ -1313,7 +1357,7 @@ Matrix BundleAdjustment::getMVC()
     return tempX1;
 }
 
-bool BundleAdjustment::isPossibleCalculate()
+bool BundleAdjustment::isPossibleCalculate() const
 {
     if (numEquations < numUnknows) {
         return false;
@@ -1328,7 +1372,7 @@ void BundleAdjustment::setMetricConvergencyValue(double value)
     metricConvergency = value;
 }
 
-double BundleAdjustment::getMetricConvergencyValue()
+double BundleAdjustment::getMetricConvergencyValue() const
 {
     return metricConvergency;
 }
@@ -1338,7 +1382,7 @@ void BundleAdjustment::setAngularConvergencyValue(double value)
     angularConvergency = value;
 }
 
-double BundleAdjustment::getAngularConvergencyValue()
+double BundleAdjustment::getAngularConvergencyValue() const
 {
     return angularConvergency;
 }
@@ -1348,7 +1392,7 @@ void BundleAdjustment::setMaxNumberIterations(int value)
     maxIterations = value;
 }
 
-Matrix BundleAdjustment::getMatrixInicialValues()
+Matrix BundleAdjustment::getMatrixInicialValues() const
 {
     return matInitialValues;
 }

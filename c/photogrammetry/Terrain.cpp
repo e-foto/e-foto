@@ -15,42 +15,42 @@ Terrain::~Terrain()
 {
 }
 
-double Terrain::getMeanAltitude()
+double Terrain::getMeanAltitude() const
 {
   return meanAltitude;
 }
 
-double Terrain::getMinAltitude()
+double Terrain::getMinAltitude() const
 {
   return minAltitude;
 }
 
-double Terrain::getMaxAltitude()
+double Terrain::getMaxAltitude() const
 {
   return maxAltitude;
 }
 
-std::string Terrain::getGRS()
+std::string Terrain::getGRS() const
 {
   return GRS;
 }
 
-std::string Terrain::getCPS()
+std::string Terrain::getCPS() const
 {
   return CPS;
 }
 
-std::string Terrain::getCentralCoordLat()
+std::string Terrain::getCentralCoordLat() const
 {
   return workAreaCentralCoordinateLat;
 }
 
-std::string Terrain::getCentralCoordLong()
+std::string Terrain::getCentralCoordLong() const
 {
   return workAreaCentralCoordinateLong;
 }
 
-int Terrain::getUtmFuse()
+int Terrain::getUtmFuse() const
 {
   return utmFuse;
 }

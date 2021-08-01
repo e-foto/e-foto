@@ -39,20 +39,13 @@ class InteriorOrientation;
 /**
 * \file BundleAdjustment.h
 * \class BundleAdjustment
-* \brief Classe que calcula os parametros das orientaÃ§Ãµes exteriores de todas as imagens de um bloco
-* \author Paulo AndrÃ© Batista Pupim e Rafael Aguiar
+* \brief Classe que calcula os parametros das orientaçoes exteriores de todas as imagens de um bloco
 */
 
 class BundleAdjustment
 {
 
-    /* Matriz de configuraÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂo do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃÂÃÂÃÂ trico, valor 0, ponto nÃÂÃÂÃÂÃÂo
-    contido na imagem. linha = imagem, coluna = ponto.
-    */
-    /*int blc[3][6];
-    Matrix BLC;*/
-
-  protected:
+  private:
 
     double c;     // Distancia focal calibrada
     //Coordenadas do ponto principal das imagens em milimetros
@@ -61,8 +54,8 @@ class BundleAdjustment
     int numUnknows;
     int numImages;
     int numPoints;
-    int numControlPoints;
-    int numFotogrametricPoints;
+    int numControlPoints{0};
+    int numFotogrametricPoints{0};
 
     int maxIterations;
     int totalIterations;
@@ -74,7 +67,6 @@ class BundleAdjustment
     Matrix inverseM11, inverseN11, inverseN22;
     Matrix n11, n12, n22, n1, n2;
     Matrix afp; //Matriz com resultados finais
-    /* Variaveis auxiliares */
 
     Sensor* sensor;
     std::deque<Image*> listImages;
@@ -92,64 +84,26 @@ class BundleAdjustment
   public:
     /**
     * \brief Construtor basico para o calculo
-    * \param listSelectedimages : Lista com todos as imagens que serÃ£o consideradas no calculo
-    * \param listSelectedPoints : Lista com todos os pontos que serÃ£o consideradas no calculo
+    * \param listSelectedimages : Lista com todos as imagens que serão consideradas no calculo
+    * \param listSelectedPoints : Lista com todos os pontos que serão consideradas no calculo
     */
     explicit BundleAdjustment(std::deque<Image*>listSelectedImages,
                               std::deque<Point*> listSelectedPoints);
 
     /**
-    * \brief Retorna o numero de equaÃ§Ãµes que o calculo atual tem que resolver
-    * \return int : Numero de equaÃ§Ãµes
+    * \brief Retorna o numero de equaçoes que o calculo atual tem que resolver
+    * \return int : Numero de equaçoes
     */
     int numberOfEquations();
 
     /**
-    * \brief Calcula a matriz M11
-    * \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
-    * \return Matrix : Matriz M11, seguindo metodo de Boltz
-    */
-    Matrix getM11(Matrix M1);
-
-    /**
-    * \brief Calcula a matriz M11
-    * \param    M2   : Matriz formada por submatrizes para cada ponto fotogramÃ©trico
-    * \return Matrix : Matriz M22, seguindo metodo de Boltz
-    */
-    Matrix getM22(Matrix M2);
-
-    /**
-    * \brief Calcula a matriz M12
-    * \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
-    * \param    M2   : Matriz formada por submatrizes para cada ponto fotogramÃ©trico
-    * \return Matrix : Matriz M12, seguindo metodo de Boltz
-    */
-    Matrix getM12(Matrix M1, Matrix M2);
-
-    /**
-    * \brief Calcula a matriz m1, necessaria para o calculo inicial dos parametros da orientaÃ§oes exteriores
-    * \param    M1   : Matriz formada pelas coordenadas analogicas de todos os pontos
-    * \param    L1   : Matriz formada pelas coordenadas X e Y dos pontos de controle
-    * \return Matrix : Matriz m1
-    */
-    Matrix getm1(Matrix M1, Matrix L1);
-
-    /**
-    * \brief Calcula a matriz m1, necessaria para o calculo inicial dos parametros da orientaÃ§oe exteriores
-    * \param    M2   : Matriz formada por submatrizes para cada ponto fotogramÃ©trico
-    * \param    L1   : Matriz formada pelas coordenadas X e Y dos pontos de controle
-    * \return Matrix : Matriz m1
-    */
-    Matrix getm2(Matrix M2, Matrix L1);
-
-    /**
-    * \brief Metodo que retorna a matriz com as primeiras aproximaÃ§Ãµes dos parametros da orientaçoes exteriores
+    * \brief Metodo que retorna a matriz com as primeiras aproximaçoes dos parametros da orientaçoes exteriores
     * \param    M12  : Matriz M12
     * \param    m1   : Matriz m1
     * \param    xypf : Matriz xypf, matriz com as primeiras aproximaÃ§oes das coordenadas dos pontos fotogrametricos
     * \return Matrix : Matriz paf, matriz com as primeiras aproximaÃ§oes dos parametros da orientaçao exterior
     */
-    Matrix getPAf(Matrix M12, Matrix m1, Matrix xypf);
+    Matrix getPAf(const Matrix &M12, const Matrix &m1, const Matrix &xypf);
 
     /**
     * \brief Metodo que retorna a matriz com as primeiras aproximaçoes das coordernadas dos pontos fotogrametricos
@@ -157,18 +111,10 @@ class BundleAdjustment
     * \param    m2   : Matriz m2
     * \param    M12  : Matriz M12
     * \param    paf  : Matriz paf que contem os valores iniciais dos parametros da orientaÃ§ao exterior
-    * \return Matrix : Matriz xypf, matriz com as primeiras aproximaÃ§oes das coordenadas dos pontos fotogramÃ©tricos
+    * \return Matrix : Matriz xypf, matriz com as primeiras aproximaÃ§oes das coordenadas dos pontos fotogramétricos
     */
-    Matrix getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf);
+    Matrix getXYpf(Matrix M12, Matrix M22, Matrix m1, Matrix m2);
 
-    /**
-    * \brief Metodo que retorna apenas os coeficientes de uma funçao afim para converter coordenada analogica(xsi,eta) para coordenada de terreno
-    * \param   Paf   : Matriz com todos os parametros da orientaÃ§ao exterior de todas as imagens
-    * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
-    * \return Matrix : Matriz com os parametros da orientaÃ§ao exterior de uma imagem
-    */
-    Matrix getPTA(Matrix PAf, int imageId);
 
 //chute dos parametros iniciais
 
@@ -176,43 +122,43 @@ class BundleAdjustment
     // Matrix getPZ(double zpf);
 
     /**
-    * \brief Altera a versÃ£o final(AFP) da matriz de ajustamento(matAdjust) dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Altera a versão final(AFP) da matriz de ajustamento(matAdjust) dos parametros das orientaçoes exteriores
     */
     void setAFP();
 
     /**
-    * \brief Metodo que retorn a versÃ£o final da matriz de ajustamento(matAdjust) dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Metodo que retorn a versão final da matriz de ajustamento(matAdjust) dos parametros das orientaçoes exteriores
     * \return Matrix : Matrix AFP que contem todos os parametros de todas as imagens com omega, phi e kappa em graus
     */
-    Matrix getAFP();
+    Matrix getAFP() const;
 
     /**
-    * \brief Metodo que retorna a matriz dos residuos da ultima iteraÃ§Ã£o
+    * \brief Metodo que retorna a matriz dos residuos da ultima iteraçao
     * \return Matrix : Retorna a matriz dos residuos
     */
-    Matrix getMatRes();
+    Matrix getMatRes() const;
 
 
-    std::deque<double> getListRMSE();
+    std::deque<double> getListRMSE() const;
 
-  protected:
+  private:
     //Seta a matrix baseado nos angulos
     /**
-    * \brief Altera os valores da matriz de rotaÃ§Ã£o
+    * \brief Altera os valores da matriz de rotaçao
     * \param omega : Angulo omega em radianos
     * \param phi   : Angulo phi em radianos
     * \param kappa : Angulo kappa em radianos
-    * \attention os valores da matriz de rotaÃ§ao estÃ£o contidos nos atributos double : r11,r12,r13,r21,r22,r23,r31,r32 e r33
+    * \attention os valores da matriz de rotaÃ§ao estão contidos nos atributos double : r11,r12,r13,r21,r22,r23,r31,r32 e r33
     */
     void setRot(double omega, double phi, double kappa);
 
     /**
-    * \brief Metodo que retorn os valores xi e eta de uma coordenada X Y Z contida numa imagem atraves das equaÃ§Ãµes de colinearidade
+    * \brief Metodo que retorn os valores xi e eta de uma coordenada X Y Z contida numa imagem atraves das equaçoes de colinearidade
     * \param    X    : Valor da coordenada no eixo X
     * \param    Y    : Valor da coordenada no eixo Y
     * \param    Z    : Valor da coordenada no eixo Z
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return Matrix : Matriz com as coordenadas xi e eta
     */
     Matrix getCoordinatesEqColin(double X, double Y, double Z, int imageId);
@@ -223,29 +169,29 @@ class BundleAdjustment
     * \param    Y    : Valor da coordenada no eixo Y
     * \param    Z    : Valor da coordenada no eixo Z
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return Matrix : Matriz Jacobiana da coordenada
     */
     Matrix getJacobianaControl(double X, double Y, double Z, int imageId);
 
     /**
-    * \brief Metodo que retorn a matriz Jacobiana de uma coordenada X Y Z de um ponto de fotogramÃ©trico
+    * \brief Metodo que retorn a matriz Jacobiana de uma coordenada X Y Z de um ponto de fotogramétrico
     * \param    X    : Valor da coordenada no eixo X
     * \param    Y    : Valor da coordenada no eixo Y
     * \param    Z    : Valor da coordenada no eixo Z
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return Matrix : Matriz Jacobiana da coordenada
     */
     Matrix getJacobianaFotogrametric(double X, double Y, double Z, int imageId);
 
     /**
-    * \brief Cria ou altera o atributo Matrix A1 que Ã© a matriz formada pelas matrizes jacobianas de todos os pontos como se de controle fossem
+    * \brief Cria ou altera o atributo Matrix A1 que é a matriz formada pelas matrizes jacobianas de todos os pontos como se de controle fossem
     */
     void createA1();
 
     /**
-    * \brief Cria ou altera o atributo Matrix A2 que Ã© a matriz formada pelas matrizes jacobianas apenas dos pontos fotogramÃ©tricos
+    * \brief Cria ou altera o atributo Matrix A2 que é a matriz formada pelas matrizes jacobianas apenas dos pontos fotogramétricos
     */
     void createA2();
 
@@ -255,7 +201,7 @@ class BundleAdjustment
     void createLb();
 
     /**
-    * \brief Metodo que cria ou altera uma matriz com as coordenadas analogicas dos pontos calculadas pelas equaÃ§Ãµes de colinearidades
+    * \brief Metodo que cria ou altera uma matriz com as coordenadas analogicas dos pontos calculadas pelas equaçoes de colinearidades
     */
     void createL0();
 
@@ -296,7 +242,7 @@ class BundleAdjustment
     * \param    N12  : Matriz N12
     * \param    n1   : Matriz n1
     */
-    void setx1(Matrix N12, Matrix n1);
+    void setx1(const Matrix &N12, const Matrix &n1);
 
     /**
     * \brief Calcula e altera a matrix x2 a qual e a matriz que contem os "deltas" a serem somados nas coordenadas dos pontos fotogrametricos
@@ -305,139 +251,139 @@ class BundleAdjustment
     * \param    n2   : Matriz n2
     * \param    n1   : Matriz n1
     */
-    void setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1);
+    void setx2(Matrix N12, Matrix N22, Matrix n2, const Matrix &n1);
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento do angulo Omega contido na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta do angulo Omega contido na matriz x1 previamente calculada
     */
-    double getdOmegax1(int imageId);
+    double getdOmegax1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento do angulo Phi contido na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta do angulo Phi contido na matriz x1 previamente calculada
     */
-    double getdPhix1(int imageId);
+    double getdPhix1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento do angulo Kappa contido na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta do angulo Kappa contido na matriz x1 previamente calculada
     */
-    double getdKappax1(int imageId);
+    double getdKappax1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada X0 contida na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta da coordenada X0 contida na matriz x1 previamente calculada
     */
-    double getdXx1(int imageId);
+    double getdXx1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Y0 contida na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta da coordenada Y0 contida na matriz x1 previamente calculada
     */
-    double getdYx1(int imageId);
+    double getdYx1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Z0 contida na matriz x1
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor delta da coordenada Z0 contida na matriz x1 previamente calculada
     */
-    double getdZx1(int imageId);
+    double getdZx1(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor de Omega na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor de Omega contido na Matrix matAdjust
     */
-    double getOmegaAdjus(int imageId);
+    double getOmegaAdjus(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor de Phi na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor de Phi contido na Matrix matAdjust
     */
-    double getPhiAdjus(int imageId);
+    double getPhiAdjus(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor de Kappa na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor de Kappa contido na Matrix matAdjust
     */
-    double getKappaAdjus(int imageId);
+    double getKappaAdjus(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor da coordenada X0 na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor da coordenada X0 contida na Matrix matAdjust
     */
-    double getXAdjus(int imageId);
+    double getXAdjus(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor da coordenada Y0 na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor da coordenada Y0 contida na Matrix matAdjust
     */
-    double getYAdjus(int imageId);
+    double getYAdjus(int imageId) const;
 
     /**
     * \brief Metodo auxiliar que retorna o valor da coordenada Z0 na matriz de ajustamento
     * \param imageId : id da imagem no calculo atual
-    * \attention o imageId NÃO Ã© a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
+    * \attention o imageId NÃO é a key da imagem na ProjectManager e sim a linha em que seus parametros se encontram na matriz de ajustamento(matAdjust)
     * \return double : Valor da coordenada Z0 contida na Matrix matAdjust
     */
-    double getZAdjus(int imageId);
+    double getZAdjus(int imageId) const;
 
     /**
-    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada X do ponto fotogramÃ©trico contida na matriz x2
+    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada X do ponto fotogramétrico contida na matriz x2
     * \param fotogrPointId : id da imagem no calculo atual
-    * \attention o fotogrPointId NÃO Ã© a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
+    * \attention o fotogrPointId NÃO é a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
     * \return double : Valor delta da coordenada X do ponto contida na matriz x2 previamente calculada
     */
-    double getdXx2(int fotogrPointId);
+    double getdXx2(int fotogrPointId) const;
 
     /**
-    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Y do ponto fotogramÃ©trico contida na matriz x2
+    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Y do ponto fotogramétrico contida na matriz x2
     * \param fotogrPointId : id da imagem no calculo atual
-    * \attention o fotogrPointId NÃO Ã© a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
+    * \attention o fotogrPointId NÃO é a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
     * \return double : Valor delta da coordenada Y do ponto contida na matriz x2 previamente calculada
     */
-    double getdYx2(int fotogrPointId);
+    double getdYx2(int fotogrPointId) const;
 
     /**
-    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Z do ponto fotogramÃ©trico contida na matriz x2
+    * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da coordenada Z do ponto fotogramétrico contida na matriz x2
     * \param fotogrPointId : id da imagem no calculo atual
-    * \attention o fotogrPointId NÃO Ã© a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
+    * \attention o fotogrPointId NÃO é a key ou pointId do ponto na ProjectManager e sim a posiÃ§ao na lista de pontos em que ele se encontra
     * \return double : Valor delta da coordenada Z do ponto contida na matriz x2 previamente calculada
     */
-    double getdZx2(int fotogrPointId);
+    double getdZx2(int fotogrPointId) const;
 
     /**
-    * \brief Metodo que atualiza os valores dos parametros das orientaÃ§Ãµes exteriores utilizando os valores contidos na matriz x1
+    * \brief Metodo que atualiza os valores dos parametros das orientaçoes exteriores utilizando os valores contidos na matriz x1
     */
-    void updateMatAdjust();
+    void updateMatAdjust() const;
 
     /**
-    * \brief Metodo que retorna um matriz com as coordenadas de terreno pelas equaÃ§Ãµes de interseÃ§Ã£o espacial
+    * \brief Metodo que retorna um matriz com as coordenadas de terreno pelas equaçoes de interseçao espacial
     * \param    xsi  : Coordenada analogica xi em milimetros
     * \param    eta  : Coordenada analogica eta em milimetros
     * \param    z    : Coordenada z  em metros
-    * \return Matrix : Matriz que contÃ©m as coordenadas de terreno X e Y
+    * \return Matrix : Matriz que contém as coordenadas de terreno X e Y
     */
     Matrix getCoordColinearTerrain(double xsi, double eta, double z, int imageId);
 
@@ -453,7 +399,7 @@ class BundleAdjustment
 
     /**
     * \brief Metodo que converte coordenada digital(col,lin) em coordenada analogica(xi,eta)
-    * \param oi  : OrientaÃ§Ã£o interior da imagem em que a coordenada estÃ¡
+    * \param oi  : Orientaçao interior da imagem em que a coordenada está
     * \param linha : Coodernada analogica linha
     * \param coluna : Coodernada analogica coluna
     * \deprecated This method will be replaced by the existent method on class *nome da classe MOTOR DE FOTOGRAMETRIAm*
@@ -466,10 +412,10 @@ class BundleAdjustment
     void calculateInicialsValues();
 
     /**
-    * \brief Altera a matriz dos parametros iniciais das orientaÃ§Ãµes exteriores para aqueles fornecido pelo usuÃ¡rio na interface
+    * \brief Altera a matriz dos parametros iniciais das orientaçoes exteriores para aqueles fornecido pelo usuÃ¡rio na interface
     * \param initialValues : Matriz com os parametros iniciais, com uma imagem por linha na sequencia: Omega, Phi, Kappa, X0, Y0, Z0
     */
-    void setUserInitialValues(Matrix initialValues);
+    void setUserInitialValues(const Matrix &initialValues);
 
     /**
     * \brief Metodo auxiliar que retorna uma matriz correspondente a uma imagem na matriz M1
@@ -487,15 +433,15 @@ class BundleAdjustment
 
     /**
     * \brief Metodo responsavel por todo o calculo do ajustamento por Bundle Adjustment
-    * \return bool: Informa se o calculo foi bem sucedido ou nÃ£o
+    * \return bool: Informa se o calculo foi bem sucedido ou não
     */
     bool calculate(bool makeReport);
 
     /**
-    * \brief Metodo que informa se Ã© possivel calcular o ajustamento ou nÃ£o, baseado no numero de incognitas e equaÃ§Ãµes
-    * \return bool : Informa se Ã© possivel ou nÃ£o calcular
+    * \brief Metodo que informa se é possivel calcular o ajustamento ou não, baseado no numero de incognitas e equaçoes
+    * \return bool : Informa se é possivel ou não calcular
     */
-    bool isPossibleCalculate();
+    bool isPossibleCalculate() const;
 
     /**
     * \brief Metodo que cria ou altera a matriz L
@@ -516,52 +462,52 @@ class BundleAdjustment
     Matrix createM2();
 
     /**
-    * \brief Metodo auxiliar que calcula a coordenada incial Z para cada ponto fotogramÃ©trico
-    * \return double : Valor inicial da coordenada Z dos pontos fotogramÃ©tricos
+    * \brief Metodo auxiliar que calcula a coordenada incial Z para cada ponto fotogramétrico
+    * \return double : Valor inicial da coordenada Z dos pontos fotogramétricos
     */
     double getInicialZPhotogrammetricPoints();
 
     /**
-    * \brief Metodo que atualiza as coordenadas iniciais de todos os pontos fotogramÃ©tricos baseada na matriz xypf
-    * \param xypf : Matriz contendo as coordenadas de pontos fotogramÃ©tricos
-    * \param zphotogrammetric : Valor de Z da coordenada de ponto fotogramÃ©trico
+    * \brief Metodo que atualiza as coordenadas iniciais de todos os pontos fotogramétricos baseada na matriz xypf
+    * \param xypf : Matriz contendo as coordenadas de pontos fotogramétricos
+    * \param zphotogrammetric : Valor de Z da coordenada de ponto fotogramétrico
     */
-    void updateCoordinatesAllPoints(Matrix xypf, double zphotogrammetric);
+    void updateCoordinatesAllPoints(const Matrix &xypf, double zphotogrammetric);
 
     //Esses metodos tem como referencia a ordem deles na LISTA DE PONTOS INDEXADOS DE CADA IMAGEM e nao na lista do xml
     /**
-    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem Ã© fotogramÃ©trico
+    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem é fotogramétrico
     * \param imageIndex : PosiÃ§ao da imagem na lista de imagens
     * \param pointIndex : PosiÃ§ao do ponto na lista de pontos da imagem informada pelo parametro imageIndex
-    * \return bool : informa se o ponto Ã© fotogramÃ©trico ou nÃ£o
+    * \return bool : informa se o ponto é fotogramétrico ou não
     */
     bool isPhotogrammetricPoint(int imageIndex, int pointIndex);
 
     /**
-    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem Ã© de controle
+    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem é de controle
     * \param imageIndex : PosiÃ§ao da imagem na lista de imagens
     * \param pointIndex : PosiÃ§ao do ponto na lista de pontos da imagem informada pelo parametro imageIndex
-    * \return bool : informa se o ponto Ã© controle ou nÃ£o
+    * \return bool : informa se o ponto é controle ou não
     */
     bool isControlPoint(int imageIndex, int pointIndex);
 
     /**
-    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem Ã© de 'checking'
+    * \brief Metodo auxiliar que testa se determinado ponto contido em determinada imagem é de 'checking'
     * \param imageIndex : PosiÃ§ao da imagem na lista de imagens
     * \param pointIndex : PosiÃ§ao do ponto na lista de pontos da imagem informada pelo parametro imageIndex
-    * \return bool : informa se o ponto Ã© de 'checking' ou nÃ£o
+    * \return bool : informa se o ponto é de 'checking' ou não
     */
     bool isCheckingPoint(int imageIndex, int pointIndex);
 
     /**
-    * \brief Metodo que informa se o calculo convergiu ou nÃ£o baseado no numero de iteraÃ§oes e no valor de convergencia estipulado pelo usuÃ¡rio
-    * \return bool : informa se o calculo convergiu ou nÃ£o
+    * \brief Metodo que informa se o calculo convergiu ou não baseado no numero de iteraÃ§oes e no valor de convergencia estipulado pelo usuÃ¡rio
+    * \return bool : informa se o calculo convergiu ou não
     */
     bool isConverged();
 
     /**
     * \brief Metodo que analisa se a matriz x1 e x2 atingiram sua convergencia
-    * \return int : Codigo para a analise da convergencia do calculo, se o calculo convergiu retorna 1, se nao convergiu e nÃ£o houve problemas nas matrizes retorna 0, se houver algum NAN na matriz retorna -1, se houver algum valor INF retorna -2
+    * \return int : Codigo para a analise da convergencia do calculo, se o calculo convergiu retorna 1, se nao convergiu e não houve problemas nas matrizes retorna 0, se houver algum NAN na matriz retorna -1, se houver algum valor INF retorna -2
     */
     int testConverged();
 
@@ -570,7 +516,7 @@ class BundleAdjustment
     * \brief Metodo auxiliar que retorna um ponteiro para o ponto na imagem informada
     * \param imageIndex : PosiÃ§ao da imagem na lista de imagens
     * \param pointIndex : PosiÃ§ao do ponto na lista de pontos da imagem informada pelo parametro imageIndex
-    * \return Point : informa se os residuos convergiram ou nÃ£o
+    * \return Point : informa se os residuos convergiram ou não
     */
     Point* getPointFrom(int imageIndex, int pointIndex);
 
@@ -582,83 +528,67 @@ class BundleAdjustment
     int numberControlPoints(Image* img);
 
     /**
-    * \brief Metodo auxiliar que informa o numero de pontos fotogramÃ©tricos contidos numa imagem
-    * \param img : Objeto imagem a qual se deseja saber o numero de pontos fotogramÃ©tricos
-    * \return int : Numero de pontos fotogramÃ©tricos
+    * \brief Metodo auxiliar que informa o numero de pontos fotogramétricos contidos numa imagem
+    * \param img : Objeto imagem a qual se deseja saber o numero de pontos fotogramétricos
+    * \return int : Numero de pontos fotogramétricos
     */
     int numberPhotogrammetricPoints(Image* img);
 
     /**
     * \brief Metodo auxiliar que informa a posiÃ§ao de determinado ponto na lista de todos os pontos
     * \param pnt : Objeto ponto a qual se deseja saber sua posiÃ§ao na lista
-    * \return int : PosiÃ§ao na lista, se o ponto nÃ£o estiver na lista retorna -1;
+    * \return int : PosiÃ§ao na lista, se o ponto não estiver na lista retorna -1;
     */
     int whereInPoints(Point* pnt);
 
     /**
-    * \brief Metodo auxiliar que informa a posiÃ§ao de determinado ponto na lista de pontos fotogramÃ©tricos
+    * \brief Metodo auxiliar que informa a posiÃ§ao de determinado ponto na lista de pontos fotogramétricos
     * \param pnt : Objeto ponto a qual se deseja saber sua posiÃ§ao na lista
-    * \return int : PosiÃ§ao na lista, se o ponto nÃ£o estiver na lista retorna -1;
+    * \return int : PosiÃ§ao na lista, se o ponto não estiver na lista retorna -1;
     */
     int whereInPhotogrammetricPoints(Point* pnt);
 
     /**
-    * \brief Metodo que zera todas as coordenadas de ponto fotogramÃ©tricos
-    * \deprecated Metodo desnecessÃ¡rio tendo em vista que as coordenadas iniciais dos pontos fotogramÃ©tricos sao irrelevantes para o calculo
+    * \brief Metodo que zera todas as coordenadas de ponto fotogramétricos
+    * \deprecated Metodo desnecessÃ¡rio tendo em vista que as coordenadas iniciais dos pontos fotogramétricos sao irrelevantes para o calculo
     */
     void zeroingCoordinatesPhotogrammetrics();
 
     /**
-    * \brief Metodo auxiliar que retorna o residuo na coordenada X de determinado ponto em determinada imagem
-    * \param img : Objeto imagem em que o ponto estÃ¡ contido
-    * \param pointId : PosiÃ§ao do ponto na lista de pontos pertencentes a essa imagem
-    * \return double : Valor do residuo em X
-    */
-    double getRx(Image* img, int pointId);
-
-    /**
-    * \brief Metodo auxiliar que retorna o residuo na coordenada Y de determinado ponto em determinada imagem
-    * \param img : Objeto imagem em que o ponto estÃ¡ contido
-    * \param pointId : PosiÃ§ao do ponto na lista de pontos pertencentes a essa imagem
-    * \return double : Valor do residuo em Y
-    */
-    double getRy(Image* img, int pointId);
-
-    /**
-    * \brief Metodo que retorna o total de iteraÃ§oes atÃ© o momento
+    * \brief Metodo que retorna o total de iteraÃ§oes até o momento
     * \return int : total de iteraÃ§oes
     */
-    int getTotalIterations();
+    int getTotalIterations() const;
 
     /**
-    * \brief Metodo que altera o numero maximo de iteraÃ§Ãµes
-    * \param value : Numero maximo de iteraÃ§Ãµes
+    * \brief Metodo que altera o numero maximo de iteraçoes
+    * \param value : Numero maximo de iteraçoes
     */
     void setMaxNumberIterations(int value);
 
     /**
-    * \brief Metodo que altera o valor da convergencia das coordenadas dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Metodo que altera o valor da convergencia das coordenadas dos parametros das orientaçoes exteriores
     * \param value : Valor da convergencia das coordenadas
     */
     void setMetricConvergencyValue(double value);
 
     /**
-    * \brief Metodo que altera o valor da convergencia dos angulos dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Metodo que altera o valor da convergencia dos angulos dos parametros das orientaçoes exteriores
     * \param value : Valor da convergencia dos angulos
     */
     void setAngularConvergencyValue(double value);
 
     /**
-    * \brief Metodo que retorna o valor da convergencia das coordenadas dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Metodo que retorna o valor da convergencia das coordenadas dos parametros das orientaçoes exteriores
     * \return double : Valor de convergencia das coordenadas
     */
-    double getMetricConvergencyValue();
+    double getMetricConvergencyValue() const;
 
     /**
-    * \brief Metodo que retorna o valor da convergencia dos angulos dos parametros das orientaÃ§Ãµes exteriores
+    * \brief Metodo que retorna o valor da convergencia dos angulos dos parametros das orientaçoes exteriores
     * \return double : Valor de convergencia dos angulos
     */
-    double getAngularConvergencyValue();
+    double getAngularConvergencyValue() const;
 
 
     /**
@@ -673,7 +603,7 @@ class BundleAdjustment
     void calculateResiduos();
 
     /**
-    *   \brief Metodo que atualiza, isto Ã©, ajusta as coordenadas de pontos fotogramÃ©tricos baseado na matriz x2
+    *   \brief Metodo que atualiza, isto é, ajusta as coordenadas de pontos fotogramétricos baseado na matriz x2
     */
     void updateCoordFotog();
 
@@ -705,20 +635,13 @@ class BundleAdjustment
     * \return Matrix : Matrix com os parametros de orientaÃ§ao exterior
     *
     */
-    Matrix getMatrixInicialValues();
+    Matrix getMatrixInicialValues() const;
 
     /**
     * \brief Metodo que checa se o usuario colocou para todas as imagens todos os parametros da orinentação exterior como valores iniciais
     * \return bool : Informa se todas as imagens tem valores iniciais para o calculo dos parametros de orientaçao exterior
     */
     bool hasAllImagesInitialValues();
-
-    /**
-    * \brief Metodo que retorna o indice na lista de imagens
-    * \param img : Imagem cujo posiçao na lista deseja-se saber
-    * \return int : posição na lista de imagens
-    */
-    int whereInImages(Image* img);
 
     /**
     * \brief Metodo que calcula o RMSE do bloco

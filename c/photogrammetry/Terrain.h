@@ -57,81 +57,81 @@ public:
   * \brief Método que retorna a altura média do Terreno.
   * \return double	Retorna a altura média do Terreno.
   */
-  double getMeanAltitude();
+  double getMeanAltitude() const;
 
   /**
   * \brief Método que retorna a menor altura do Terreno.
   * \return double	Retorna a menor altura do Terreno.
   */
-  double getMinAltitude();
+  double getMinAltitude() const;
 
   /**
   * \brief Método que retorna a maior altura do Terreno.
   * \return double	Retorna a maior altura do Terreno.
   */
-  double getMaxAltitude();
+  double getMaxAltitude() const;
 
   /**
   * \brief Método que retorna a GRS do Terreno.
   * \return std::string	Retorna a GRS do Terreno.
   */
-  std::string getGRS();
+  std::string getGRS() const;
 
   /**
   * \brief Método que retorna a CPS do Terreno.
   * \return std::string	Retorna a CPS do Terreno.
   */
-  std::string getCPS();
+  std::string getCPS() const;
 
   /**
   * \brief Método que retorna a latitude da coodernada central do Terreno.
   * \return std::string	A latitude da coodernada central do Terreno.
   */
-  std::string getCentralCoordLat();
+  std::string getCentralCoordLat() const;
 
   /**
   * \brief Método que retorna a longitude da coodernada central do Terreno.
   * \return std::string	A longitude da coodernada central do Terreno.
   */
-  std::string getCentralCoordLong();
+  std::string getCentralCoordLong() const;
 
   /**
   * \brief Método que retorna a qual fuso UTM o Terreno pertence.
   * \return int	O fuso UTM do terreno.
   */
-  int getUtmFuse();
+  int getUtmFuse() const;
 
   /**
   * \brief Método para emitir o nome de classe.
   * \return std::string	Retorna o nome de classe do objeto.
   */
-  std::string objectType(void);
+  std::string objectType(void) override;
 
   /**
   * \brief Método para emitir as associações de uma instância.
   * \return std::string	Retorna vazio para esta classe.
   * \deprecated Este método não possui uso ou deve ser evitado o seu uso, pois ele será removido em versões futuras.
   */
-  std::string objectAssociations(void);
+  std::string objectAssociations(void) override;
 
   /**
   * \brief Método de teste para o nome/tipo de instância.
   * \param s	Texto com o nome da classe que é esperado.
   * \return bool	Retorna verdadeiro caso o nome passado seja Terrain. Retorna falso no caso contrário.
   */
-  bool is(std::string s);
+  bool is(std::string s) override;
 
   /**
   * \brief Método para setar os valores de atributos de uma instância utilizando sua descrição em xml.
   * \param xml	String contendo o xml com todos os valores de atributos adequados a uma instância da classe Terrain.
   */
-  void xmlSetData(std::string xml);
+  void xmlSetData(std::string xml) override;
 
   /**
   * \brief Método para extrair o equivalente em dados xml de uma instância.
   * \return std::string	Retorna o string contendo o xml para uma instância da classe Terrain.
   */
-  std::string xmlGetData();
+  std::string xmlGetData() override;
 };
 
 } // namespace efoto
