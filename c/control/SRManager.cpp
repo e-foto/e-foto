@@ -184,7 +184,7 @@ std::deque<std::string> SRManager::pointData(int index)
                              myPoint->getObjectCoordinate().getZ(), 3));
 
         if (myPoint->hasImageCoordinate(myImage->getId())
-                && myPoint->getImageCoordinate(myImage->getId()).isAvailable()) {
+                && myPoint->getImageCoordinate(myImage->getId()).available) {
             result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(
                                  myImage->getId()).getCol()));
             result.push_back(Conversion::doubleToString(myPoint->getImageCoordinate(

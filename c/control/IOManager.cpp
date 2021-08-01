@@ -97,7 +97,7 @@ std::deque<std::string> IOManager::markData(int index)
         result.push_back(Conversion::doubleToString(analogMarks.get(2 * index + 2), 3));
         ImageFiducialMark myMark = myImage->getDigFidMark(index + 1);
 
-        if (myMark.isAvailable()) {
+        if (myMark.available) {
             result.push_back(Conversion::doubleToString(myMark.getCol()));
             result.push_back(Conversion::doubleToString(myMark.getLin()));
         }

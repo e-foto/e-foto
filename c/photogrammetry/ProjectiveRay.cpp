@@ -273,7 +273,7 @@ ImageSpaceCoordinate ProjectiveRay::detectorToImage(double xi, double eta)
 				result.setCol(((b2*xi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2)));
 				result.setLin(((a1*eta - a1*b0 - b1*xi + b1*a0) / (a1*b2 - b1*a2)));
 
-				result.setAvailable(true);
+				result.available = true;
 
 				return result;
 		}

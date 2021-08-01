@@ -33,7 +33,7 @@ namespace efoto {
 * \copyright E-Foto group
 * \authors Rafael Aguiar & Irving Badolato
 */
-class AbstractImageCoordinate : public Coordinate
+class AbstractImageCoordinate
 {
 
 protected:
@@ -41,8 +41,10 @@ protected:
 	double col;
     std::string unit;
 
-public:
+    bool sigmaAvailable;
 
+public:
+    bool available{false};
 	/**
  * \brief Destrutor virtual padrão.
  */
@@ -88,19 +90,19 @@ public:
  * \brief Método para alterar a posição de uma coordenada.
  * \param newPosition	Matriz coluna com os valores de posicionamento da nova coordenada.
  */
-        void setPosition(const PositionMatrix& newPosition) override;
+        void setPosition(const PositionMatrix& newPosition);
 
 	/**
  * \brief Método para retornar a coordenada em uma matriz coluna.
  * \return PositionMatrix	Matriz coluna com os valores de posicionamento da coordenada.
  */
-        PositionMatrix getPosition() override;
+        PositionMatrix getPosition();
 
 	/**
  * \brief Método para emitir o nome de classe.
  * \return std::string	Retorna o nome de classe do objeto.
  */
-    std::string objectType(void) override;
+    std::string objectType(void);
 
 };
 
