@@ -384,7 +384,7 @@ ObjectSpaceCoordinate RayTester::detectorToObject(double xi, double eta, double 
                 result.setX(X);
                 result.setY(Y);
                 result.setZ(Z);
-                result.setAvailable(true);
+                result.available = true;
 
                 return result;
         }

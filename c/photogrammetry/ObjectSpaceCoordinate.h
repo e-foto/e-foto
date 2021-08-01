@@ -29,7 +29,7 @@ namespace efoto {
 * \class ObjectSpaceCoordinate
 * \brief Classes de coordenada sobre o espaço objecto (espaço contínuo 3D).
 */
-class ObjectSpaceCoordinate : public Coordinate {
+class ObjectSpaceCoordinate {
 
 private:
     std::string unit{"m"};
@@ -42,11 +42,12 @@ private:
     double sigmaXY{0.0};
     double sigmaXZ{0.0};
     double sigmaYZ{0.0};
-    bool available{false};
-    bool sigmaAvailable{false};
+
 
 public:
 
+    bool available{false};
+    bool sigmaAvailable{false};
     /**
     * \brief Construtor vazio.
     */
@@ -105,25 +106,25 @@ public:
     * \brief Método para retornar o valor X num sistema de coordenadas (X, Y, Z).
     * \return double	Valor X.
     */
-    double getX();
+    double getX() const;
 
     /**
     * \brief Método para retornar o valor Y num sistema de coordenadas (X, Y, Z).
     * \return double	Valor Y.
     */
-    double getY();
+    double getY() const;
 
     /**
     * \brief Método para retornar o valor Z num sistema de coordenadas (X, Y, Z).
     * \return double	Valor Z.
     */
-    double getZ();
+    double getZ() const;
 
     /**
     * \brief Método para retornar a unidade em que a coordenada é considerada.
     * \return std::string	Texto descritor da unidade de medidas considerada para a coordenada.
     */
-    std::string getUnit();
+    std::string getUnit() const;
 
     /**
     * \brief Método para alterar a posição de uma coordenada.

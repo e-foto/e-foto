@@ -39,7 +39,7 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ProjectiveRay::ProjectiveRay(Image *newImage): myImage{myImage}
+ProjectiveRay::ProjectiveRay(Image *newImage): myImage{newImage}
 {
 }
 
@@ -171,8 +171,6 @@ double ProjectiveRay::getKy(double xi, double eta)
 				return 0.0;
 		}
 }
-
-// Other methods
 
 DetectorSpaceCoordinate ProjectiveRay::imageToDetector(double col, double lin)
 {
@@ -339,7 +337,7 @@ ObjectSpaceCoordinate ProjectiveRay::detectorToObject(double xi, double eta, dou
 				result.setX(X);
 				result.setY(Y);
 				result.setZ(Z);
-				result.setAvailable(true);
+				result.available = true;
 
 				return result;
 		}

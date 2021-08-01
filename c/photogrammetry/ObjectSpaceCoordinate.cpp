@@ -67,22 +67,22 @@ void ObjectSpaceCoordinate::setZ(double newZ)
     z = newZ;
 }
 
-double ObjectSpaceCoordinate::getX()
+double ObjectSpaceCoordinate::getX() const
 {
     return x;
 }
 
-double ObjectSpaceCoordinate::getY()
+double ObjectSpaceCoordinate::getY() const
 {
     return y;
 }
 
-double ObjectSpaceCoordinate::getZ()
+double ObjectSpaceCoordinate::getZ() const
 {
     return z;
 }
 
-std::string ObjectSpaceCoordinate::getUnit()
+std::string ObjectSpaceCoordinate::getUnit() const
 {
     return unit;
 }
