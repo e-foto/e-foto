@@ -33,13 +33,29 @@ double Interpolation::interpolate(Matrix* _img,
     img = _img;
     ccolor = Color::gray;
 
-    if (method == InterpMethode::nearestNeighbor) {
+    double (Interpolation::*interpolateFunc)(double, double) =
+        &Interpolation::interpolateNearestNeighbor;
+
+    switch (method) {
+    case InterpMethode::nearestNeighbor:
         return interpolateNearestNeighbor(col, lin);
+        break;
+
+    case InterpMethode::bilinear :
+        interpolateFunc = &Interpolation::interpolateBilinear;
+        break;
+
+    case InterpMethode::bicubic :
+        interpolateFunc = &Interpolation::interpolateBicubic;
+        break;
+
+    case InterpMethode::lagrange :
+        interpolateFunc = &Interpolation::interpolateLagrange;
+        break;
     }
 
-    double pixel[3], fpixel;
-    int rounds;
-    (mode == ColorMode::Color) ? rounds = 3 : rounds = 1;
+    double pixel[3];
+    int rounds = (mode == ColorMode::Color) ? 3 : 1;
 
     for (int f = 0; f < rounds; f++) {
         if (mode == ColorMode::Color) {
@@ -65,26 +81,15 @@ double Interpolation::interpolate(Matrix* _img,
             ccolor = Color::gray;
         }
 
-        switch (method) {
-        case InterpMethode::bilinear :
-            pixel[f] = interpolateBilinear(col, lin);
-            break;
-
-        case InterpMethode::bicubic :
-            pixel[f] = interpolateBicubic(col, lin);
-            break;
-
-        case InterpMethode::lagrange :
-            pixel[f] = interpolateLagrange(col, lin);
-            break;
-        }
+        pixel[f] = (this->*interpolateFunc)(col, lin);
     }
 
-    (mode == ColorMode::Color) ? fpixel = double((int(pixel[0] * 255.0) << 16) +
-                                          (int(pixel[1] * 255.0) << 8) +
-                                          int(pixel[2] * 255.0)) / 0xFFFFFF
-                                          : fpixel = pixel[0];
-    return fpixel;
+    if (mode == ColorMode::Color)
+        return double((int(pixel[0] * 255.0) << 16) +
+                      (int(pixel[1] * 255.0) << 8) +
+                      int(pixel[2] * 255.0)) / 0xFFFFFF;
+
+    return pixel[0];
 }
 
 /*
@@ -181,13 +186,13 @@ double Interpolation::df(double x)
 double Interpolation::a(int n)
 {
     return df(dx + 1.0)
-        * I(i - 1, j + n - 2)
-        + I(i, j + n - 2)
-        * df(dx)
-        + I(i + 1, j + n - 2)
-        * df(dx - 1.0)
-        + I(i + 2, j + n - 2)
-        * df(dx - 2.0);
+           * I(i - 1, j + n - 2)
+           + I(i, j + n - 2)
+           * df(dx)
+           + I(i + 1, j + n - 2)
+           * df(dx - 1.0)
+           + I(i + 2, j + n - 2)
+           * df(dx - 2.0);
 }
 
 
@@ -207,21 +212,21 @@ double Interpolation::interpolateLagrange(double col, double lin)
     }
 
     double pixel = aa(1)
-        * (dy - 1.0)
-        * (dy - 2.0)
-        * (-dy / 6.0)
-        + aa(2)
-        * (dy + 1.0)
-        * (dy - 1.0)
-        * ((dy - 2.0) / 2.0)
-        + aa(3)
-        * (dy + 1.0)
-        * (dy - 2.0)
-        * (-dy / 2.0)
-        + aa(4)
-        * (dy + 1.0)
-        * (dy - 1.0)
-        * (dy / 6.0);
+                   * (dy - 1.0)
+                   * (dy - 2.0)
+                   * (-dy / 6.0)
+                   + aa(2)
+                   * (dy + 1.0)
+                   * (dy - 1.0)
+                   * ((dy - 2.0) / 2.0)
+                   + aa(3)
+                   * (dy + 1.0)
+                   * (dy - 2.0)
+                   * (-dy / 2.0)
+                   + aa(4)
+                   * (dy + 1.0)
+                   * (dy - 1.0)
+                   * (dy / 6.0);
 
     if (pixel > 1.0) {
         pixel = 1.0;
@@ -237,21 +242,21 @@ double Interpolation::interpolateLagrange(double col, double lin)
 double Interpolation::aa(int n)
 {
     return I(i - 1, j + n - 2)
-        * (dx - 1.0)
-        * (dx - 2.0)
-        * (-dx / 6.0)
-        + I(i, j + n - 2)
-        * (dx + 1.0)
-        * (dx - 1.0)
-        * ((dx - 2.0) / 2.0)
-        + I(i + 1, j + n - 2)
-        * (dx + 1.0)
-        * (dx - 2.0)
-        * (-dx / 2.0)
-        + I(i + 2, j + n - 2)
-        * (dx + 1.0)
-        * (dx - 1.0)
-        * (dx / 6.0);
+           * (dx - 1.0)
+           * (dx - 2.0)
+           * (-dx / 6.0)
+           + I(i, j + n - 2)
+           * (dx + 1.0)
+           * (dx - 1.0)
+           * ((dx - 2.0) / 2.0)
+           + I(i + 1, j + n - 2)
+           * (dx + 1.0)
+           * (dx - 2.0)
+           * (-dx / 2.0)
+           + I(i + 2, j + n - 2)
+           * (dx + 1.0)
+           * (dx - 1.0)
+           * (dx / 6.0);
 }
 
 
