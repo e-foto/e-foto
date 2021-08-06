@@ -59,31 +59,25 @@ public:
  * \brief Recupera o índice da linha onde o elemento se encontra.
  * \return int	A linha na qual elemento se encontra.
  */
-    size_t getRow();
+    size_t getRow() const;
 
 	/**
  * \brief Recupera o índice da coluna onde o elemento se encontra.
  * \return int	A coluna na qual o elemento se encontra.
  */
-    size_t getCol();
+    size_t getCol() const;
 
 	/**
  * \brief Recupera o valor do elemento.
  * \return double	O valor do elemento.
  */
-	double getValue();
+        double getValue() const;
 
 	/**
  * \brief Recupera um ponteiro para o próximo elemento não-nulo (diferente de 0.0) localizado na mesma linha que o elemento atual.
  * \return SparseMatrixElement*	O próximo elemento não-nulo.
  */
 	SparseMatrixElement* getNext();
-
-	/**
- * \brief Modifica o índice da linha onde o elemento se encontra.
- * \param newRow	A nova linha onde o elemento se encontra.
- */
-    void setRow(size_t newRow);
 
 	/**
  * \brief Modifica o índice da coluna onde o elemento se encontra.
@@ -125,7 +119,7 @@ public:
  * \param source	A matriz padrão a ser utilizada como base na construção da matriz esparsa.
  * \param precision	A precisão a ser considerada para decidir se um elemento é nulo ou não.
  */
-    explicit SparseMatrix(Matrix source, double precision = 1e-20);
+    explicit SparseMatrix(const Matrix &source, double precision = 1e-20);
 
 	/**
  * \brief Destrutor vazio padrão.
@@ -143,7 +137,7 @@ public:
  * \param target	O matriz pela qual a atual deve ser multiplicada.
  * \return Matrix	O resultado da operação de multiplicação.
  */
-	Matrix operator*(Matrix target);
+        Matrix operator*(const Matrix& target);
 };
 
 } // namespace efoto
