@@ -21,6 +21,7 @@
 */
 
 #include "PositionMatrix.h"
+#include <deque>
 
 namespace br {
 namespace uerj {

@@ -18,6 +18,7 @@
 */
 
 #include "PositionMatrix.h"
+#include "EObject.h"
 
 namespace br {
 namespace uerj {

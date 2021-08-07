@@ -16,7 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "RectSupport.h"
 #include "Matrix.h"
 
 namespace br {
@@ -31,11 +30,13 @@ class Matrix;
 * \class PositionMatrix
 * \brief Classe para descrição de coordenadas em forma matricial (matriz coluna).
 */
-class PositionMatrix : public RectSupport {
+class PositionMatrix {
 
 private:
-    double* _Mat;
-    std::string unit;
+  size_t nrows{0};
+  size_t ncols{0};
+  double* _Mat{nullptr};
+  std::string unit{""};
 
 protected:
 
@@ -77,12 +78,23 @@ public:
     /**
     * \brief Construtor vazio padrão.
     */
-    PositionMatrix();
+    PositionMatrix() = default;
 
     /**
     * \brief Destrutor padrão.
     */
     ~PositionMatrix();
+
+    /**
+    * \brief Método para retornar o número de colunas da matriz.
+    * \return unsigned	Número de colunas.
+    */
+    size_t getCols() const;
+    /*
+        * \brief Método para retornar o número de linhas da matriz.
+        * \return size_t	Número de linhas.
+                  */
+    size_t getRows() const;
 
     /**
     * \brief Método para alterar as dimensões da matriz.
@@ -91,12 +103,6 @@ public:
     * \return PositionMatrix	Referência para a matriz redimensionada.
     */
     PositionMatrix& resize(unsigned int rows, unsigned int cols = 1);
-
-    /**
-    * \brief Método para zerar todo o conteúdo da matriz.
-    * \return PositionMatrix	Referência para a matriz como as células zeradas.
-    */
-    PositionMatrix& zero();
 
     /**
     * \brief Método para carregar a matrix de um formato ascii.
@@ -127,29 +133,10 @@ public:
     double get(const unsigned int i, const unsigned int j = 1) const;
 
     /**
-    * \brief Método para retornar o valor (convertido em inteir) da linha e coluna (i,j).
-    * \param i	Identificador da linha consultada.
-    * \param j	Identificador da coluna consultada.
-    * \param value	Valor da célula (i,j).
-    */
-    int getInt(const unsigned int i, const unsigned int j = 1) const;
-
-    /**
     * \brief Método para retornar a unidade considerada para a matriz.
     * \return std::string	Texto descritor da unidade de medidas considerada para a matriz.
     */
     std::string getUnit() const;
-
-    /**
-    * \brief Método para retornar uma selecão do conteúdo da matriz.
-    * \param FirstRow	Primeira linha da seleção.
-    * \param LastRow	Última linha da seleção.
-    * \param FirstCol	Primeira coluna da seleção.
-    * \param LastCol	Ultima coluna da seleção.
-    * \return PositionMatrix	A sub matriz mxn denotada por m = (LastRow - FirstRow) e n = (LastCol - FirstCol).
-    */
-    PositionMatrix sel(const unsigned int FirstRow, const unsigned int LastRow,
-                       const unsigned int FirstCol = 1, const unsigned int LastCol = 1);
 
     /**
     * \brief Método para exibição em terminal dos valores contidos na matriz.
@@ -170,27 +157,6 @@ public:
     * \param value	Novo valor para (i,1).
     */
     void set(unsigned int i, double value) const;
-
-    /**
-    * \brief Método para alterar (com um inteiro) o valor da linha e coluna (i,j).
-    * \param i	Identificador da linha alterada.
-    * \param j	Identificador da coluna alterada.
-    * \param value	Novo valor para (i,j).
-    */
-    void setInt(unsigned int i, unsigned int j, int value) const;
-
-    /**
-    * \brief Método para alterar (com um inteiro) o primeiro valor da linha i (i,1).
-    * \param i	Identificador da linha alterada.
-    * \param value	Novo valor para (i,1).
-    */
-    void setInt(unsigned int i, int value) const;
-
-    /**
-    * \brief Método para alterar a unidade considerada para a matriz.
-    * \param newUnit	Texto descritor da nova unidade de medidas considerada para a matriz.
-    */
-    void setUnit(std::string newUnit);
 
     /**
     * \brief Operador para a concatenação horizontal de duas matrizes de posição.

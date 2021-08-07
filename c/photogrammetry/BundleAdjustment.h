@@ -20,6 +20,7 @@
 #include "CommonDef.h"
 #include "GeoSystem.h"
 #include "Matrix.h"
+#include <deque>
 
 namespace br {
 namespace uerj {
