@@ -48,7 +48,6 @@ HEADERS += c/control/DEMManager.h \
            c/infrastructure/PositionMatrix.h \
            c/infrastructure/ProgressPublisher.h \
            c/infrastructure/RectSupport.h \
-           c/infrastructure/SparseMatrix.h \
            c/infrastructure/TreeFeatures.h \
            c/interface/DEMUserInterface.h \
            c/interface/IOUserInterface.h \
@@ -191,7 +190,6 @@ SOURCES += c/control/DEMManager.cpp \
            c/infrastructure/PositionMatrix.cpp \
            c/infrastructure/ProgressPublisher.cpp \
            c/infrastructure/RectSupport.cpp \
-           c/infrastructure/SparseMatrix.cpp \
            c/infrastructure/TreeFeatures.cpp \
            c/interface/DEMUserInterface.cpp \
            c/interface/IOUserInterface.cpp \
