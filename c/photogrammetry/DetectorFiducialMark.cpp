@@ -34,30 +34,11 @@ DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId):
   id {myId},
   sensorId{mySensorId}
 {
-    unit = "";
     xi = 0;
     eta = 0;
     sigmaXi = 0;
     sigmaEta = 0;
     sigmaXiEta = 0;
-    available = false;
-    sigmaAvailable = false;
-}
-
-DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId,
-        std::string myUnit, double myXi, double myEta, double mySigmaXi,
-        double mySigmaEta, double mySigmaXiEta):
-  id {myId},
-  sensorId{mySensorId}
-{
-    unit = myUnit;
-    xi = myXi;
-    eta = myEta;
-    sigmaXi = mySigmaXi;
-    sigmaEta = mySigmaEta;
-    sigmaXiEta = mySigmaXiEta;
-    available = true;
-    sigmaAvailable = true;
 }
 
 DetectorFiducialMark::DetectorFiducialMark(int myId, int mySensorId,

@@ -17,7 +17,7 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Coordinate.h"
+#include "PositionMatrix.h"
 
 namespace br {
 namespace uerj {
@@ -37,11 +37,11 @@ class AbstractImageCoordinate
 {
 
 protected:
-	double lin;
-	double col;
-    std::string unit;
+  double lin{0};
+  double col{0};
+  std::string unit{""};
 
-    bool sigmaAvailable;
+    bool sigmaAvailable{false};
 
 public:
     bool available{false};

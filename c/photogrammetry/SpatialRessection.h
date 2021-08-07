@@ -98,7 +98,6 @@ public:
 
     //  Selected fiducial mark or point to indicate the direction of flight manipulators
     void setFlightDirection(double kappa0);
-    void setPointForFlightDirection(double col, double row);
     void selectFiducialMarkForFlightDirection(int id);
 
     void setImageId(int newImageId);

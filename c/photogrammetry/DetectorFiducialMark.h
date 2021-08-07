@@ -34,8 +34,8 @@ namespace efoto {
 class DetectorFiducialMark : public AbstractDetectorCoordinate {
 
 private:
-    int id;
-    int sensorId;
+  int id{0};
+  int sensorId{0};
 
 
 public:
@@ -51,19 +51,6 @@ public:
     * \param mySensorId	Identificador do sensor ao qual a marca pertence.
     */
     explicit DetectorFiducialMark(int myId, int mySensorId);
-
-    /**
-    * \brief Construtor que cria uma marca fiducial analógica com todos os seus valores.
-    * \param myId	Identificador da marca fiducial analógica.
-    * \param mySensorId	Identificador do sensor ao qual a marca pertence.
-    * \param myUnit	Texto descritor da unidade de medidas considerada para a marca.
-    * \param myXi	Valor Xi.
-    * \param myEta	Valor Eta.
-    * \param mySigmaXi	Valor do erro na direção Xi.
-    * \param mySigmaEta	Valor do erro na direção Eta.
-    * \param mySigmaXiEta	Valor de erro conjunto para as direções Xi e Eta.
-    */
-    DetectorFiducialMark(int myId, int mySensorId, std::string myUnit, double myXi, double myEta, double mySigmaXi = 1, double mySigmaEta = 1, double mySigmaXiEta = 0);
 
     /**
     * \brief Construtor que cria uma marca fiducial analógica sem erro conhecido usando matrizes.

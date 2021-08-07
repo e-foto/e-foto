@@ -71,13 +71,12 @@ Matrix ConvertionsSystems::GeocentricCartesianToGeoelip(double Xi, double Yi, do
 
     double L2=atan( (Zi+e2*e2*b*pow(senu,3)) / (Si-e1*e1*a*pow(cosu,3)) );
     int cont=0;
-    double Ni=0.0;
     double L1=0.0;
 
     while (fabs(L2-L1)>convergency && cont<50)
     {
         L1=L2;
-        Ni=a/(sqrt(1-e1*e1*sin(L1)*sin(L1)));
+        double Ni=a/(sqrt(1-e1*e1*sin(L1)*sin(L1)));
         L2=atan((Zi+Ni*e1*e1*sin(L1))/Si);
         cont++;
     }

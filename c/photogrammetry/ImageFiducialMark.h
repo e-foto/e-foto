@@ -35,15 +35,15 @@ class ImageFiducialMark : public AbstractImageCoordinate
 {
 
 private:
-	int id;
-	int imageId;
+  int id{0};
+  int imageId{0};
 
 public:
 
-	/**
+        /**
  * \brief Construtor vazio.
  */
-	ImageFiducialMark();
+        ImageFiducialMark();
 
 	/**
  * \brief Construtor que cria uma marca fiducial digital com seus identificadores.
@@ -74,29 +74,12 @@ public:
  */
 	~ImageFiducialMark();
 
-	/**
- * \brief Método de acesso que seta o valor de id da marca fiducial digital.
- * \param newId	Novo identificador da marca fiducial digital.
- */
-	void setId(int newId);
-
-	/**
- * \brief Método de acesso que seta o valor de id da imagem à qual a marca pertence.
- * \param newSensorId	Novo identificador da imagem à qual a marca pertence.
- */
-	void setImageId(int newImageId);
 
 	/**
  * \brief Método de acesso que retorna o valor de id da marca fiducial digital.
  * \return int	Identificador da marca fiducial digital.
  */
 	int getId();
-
-	/**
- * \brief Método de acesso que retorna o valor de id da imagem à qual a marca pertence.
- * \return int	int	Identificador da imagem à qual a marca pertence.
- */
-	int getImageId();
 
 	/**
  * \brief Método para emitir o nome de classe.

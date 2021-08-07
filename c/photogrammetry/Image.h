@@ -57,15 +57,15 @@ class Image : public EObject {
     std::string filename;
     std::string filepath;
     double flightDirection;
-    bool flightDirectionAvailable;
+    bool flightDirectionAvailable{false};
 
     std::string imageId;
     ObjectSpaceCoordinate spatialCoordinates;
 
-    bool gnssAvailable;
-    bool gnssSigmaAvailable;
-    bool insAvailable;
-    bool insSigmaAvailable;
+    bool gnssAvailable{false};
+    bool gnssSigmaAvailable{false};
+    bool insAvailable{false};
+    bool insSigmaAvailable{false};
     std::string gnssType;
     std::string insType;
     double gnssX0;
@@ -90,9 +90,9 @@ public:
     explicit Image(int myId, int mySensorId);
     virtual ~Image();
 
-    int getId();
-    int getSensorId();
-    int getFlightId();
+    int getId() const;
+    int getSensorId() const;
+    int getFlightId() const;
     unsigned int getResolution();
     unsigned int getWidth();
     unsigned int getHeight();

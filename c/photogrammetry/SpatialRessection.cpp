@@ -172,14 +172,6 @@ void SpatialRessection::setFlightDirection(double kappa0)
     pointForFlightDirectionAvailable = false;
 }
 
-void SpatialRessection::setPointForFlightDirection(double col, double row)
-{
-    pointForFlightDirection.setCol(col);
-    pointForFlightDirection.setLin(row);
-    flightDirectionAvailable = false;
-    pointForFlightDirectionAvailable = true;
-}
-
 void SpatialRessection::selectFiducialMarkForFlightDirection(int id)
 {
     if (myImage != NULL) {

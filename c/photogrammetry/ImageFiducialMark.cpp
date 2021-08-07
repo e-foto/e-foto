@@ -26,9 +26,9 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-ImageFiducialMark::ImageFiducialMark()
+ImageFiducialMark::ImageFiducialMark():
+id(0)
 {
-	id = 0;
 	imageId = 0;
 	col = 0;
 	lin = 0;
@@ -37,9 +37,9 @@ ImageFiducialMark::ImageFiducialMark()
 	sigmaAvailable = false;
 }
 
-ImageFiducialMark::ImageFiducialMark(int myId, int myImageId)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId):
+  id(myId)
 {
-	id = myId;
 	imageId = myImageId;
 	col = 0;
 	lin = 0;
@@ -48,9 +48,9 @@ ImageFiducialMark::ImageFiducialMark(int myId, int myImageId)
 	sigmaAvailable = false;
 }
 
-ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, double myCol, double myLin)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, double myCol, double myLin):
+  id(myId)
 {
-	id = myId;
 	imageId = myImageId;
 	col = myCol;
 	lin = myLin;
@@ -59,9 +59,9 @@ ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, double myCol, doub
 	sigmaAvailable = false;
 }
 
-ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition)
+ImageFiducialMark::ImageFiducialMark(int myId, int myImageId, const PositionMatrix& myPosition):
+  id(myId)
 {
-	id = myId;
 	imageId = myImageId;
 	setPosition(myPosition);
 	sigmaAvailable = false;
@@ -72,24 +72,9 @@ ImageFiducialMark::~ImageFiducialMark()
 
 }
 
-void ImageFiducialMark::setId(int newId)
-{
-	id = newId;
-}
-
-void ImageFiducialMark::setImageId(int newImageId)
-{
-	imageId = newImageId;
-}
-
 int ImageFiducialMark::getId()
 {
 	return id;
-}
-
-int ImageFiducialMark::getImageId()
-{
-	return imageId;
 }
 
 std::string ImageFiducialMark::objectType(void)

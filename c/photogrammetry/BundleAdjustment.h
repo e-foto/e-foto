@@ -21,14 +21,10 @@
 #include "GeoSystem.h"
 #include "Matrix.h"
 
-namespace br
-{
-namespace uerj
-{
-namespace eng
-{
-namespace efoto
-{
+namespace br {
+namespace uerj {
+namespace eng {
+namespace efoto {
 
 class Point;
 class Sensor;
@@ -42,18 +38,20 @@ class InteriorOrientation;
 * \brief Classe que calcula os parametros das orientaçoes exteriores de todas as imagens de um bloco
 */
 
-class BundleAdjustment
-{
+class BundleAdjustment {
 
-  private:
+private:
+    Sensor* sensor;
+    std::deque<Image*> listImages;
+    std::deque<Point*> listPoints;
 
     double c;     // Distancia focal calibrada
     //Coordenadas do ponto principal das imagens em milimetros
     double xsi0, eta0;
     int numEquations;
     int numUnknows;
-    int numImages;
-    int numPoints;
+    size_t numImages;
+    size_t numPoints;
     int numControlPoints{0};
     int numFotogrametricPoints{0};
 
@@ -68,10 +66,6 @@ class BundleAdjustment
     Matrix n11, n12, n22, n1, n2;
     Matrix afp; //Matriz com resultados finais
 
-    Sensor* sensor;
-    std::deque<Image*> listImages;
-    std::deque<Point*> listPoints;
-
     std::deque<Point*> listControlPoints;
     std::deque<Point*> listPhotogrammetricPoints;
 
@@ -81,7 +75,7 @@ class BundleAdjustment
     bool converged;
     bool userInitialValues;
 
-  public:
+public:
     /**
     * \brief Construtor basico para o calculo
     * \param listSelectedimages : Lista com todos as imagens que serão consideradas no calculo
@@ -103,7 +97,7 @@ class BundleAdjustment
     * \param    xypf : Matriz xypf, matriz com as primeiras aproximaÃ§oes das coordenadas dos pontos fotogrametricos
     * \return Matrix : Matriz paf, matriz com as primeiras aproximaÃ§oes dos parametros da orientaçao exterior
     */
-    Matrix getPAf(const Matrix &M12, const Matrix &m1, const Matrix &xypf);
+    Matrix getPAf(const Matrix& M12, const Matrix& m1, const Matrix& xypf);
 
     /**
     * \brief Metodo que retorna a matriz com as primeiras aproximaçoes das coordernadas dos pontos fotogrametricos
@@ -141,7 +135,7 @@ class BundleAdjustment
 
     std::deque<double> getListRMSE() const;
 
-  private:
+private:
     //Seta a matrix baseado nos angulos
     /**
     * \brief Altera os valores da matriz de rotaçao
@@ -242,7 +236,7 @@ class BundleAdjustment
     * \param    N12  : Matriz N12
     * \param    n1   : Matriz n1
     */
-    void setx1(const Matrix &N12, const Matrix &n1);
+    void setx1(const Matrix& N12, const Matrix& n1);
 
     /**
     * \brief Calcula e altera a matrix x2 a qual e a matriz que contem os "deltas" a serem somados nas coordenadas dos pontos fotogrametricos
@@ -251,7 +245,7 @@ class BundleAdjustment
     * \param    n2   : Matriz n2
     * \param    n1   : Matriz n1
     */
-    void setx2(Matrix N12, Matrix N22, Matrix n2, const Matrix &n1);
+    void setx2(Matrix N12, Matrix N22, Matrix n2, const Matrix& n1);
 
     /**
     * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento do angulo Omega contido na matriz x1
@@ -389,7 +383,7 @@ class BundleAdjustment
 
 
     /* Em Teste; Bundle com objetos*/
-  public:
+public:
 
     /**
     * \brief Metodo que preenche os objetos Point com as coordenadas analogicas baseado na orientaÃ§ao interior
@@ -415,7 +409,7 @@ class BundleAdjustment
     * \brief Altera a matriz dos parametros iniciais das orientaçoes exteriores para aqueles fornecido pelo usuÃ¡rio na interface
     * \param initialValues : Matriz com os parametros iniciais, com uma imagem por linha na sequencia: Omega, Phi, Kappa, X0, Y0, Z0
     */
-    void setUserInitialValues(const Matrix &initialValues);
+    void setUserInitialValues(const Matrix& initialValues);
 
     /**
     * \brief Metodo auxiliar que retorna uma matriz correspondente a uma imagem na matriz M1
@@ -472,7 +466,7 @@ class BundleAdjustment
     * \param xypf : Matriz contendo as coordenadas de pontos fotogramétricos
     * \param zphotogrammetric : Valor de Z da coordenada de ponto fotogramétrico
     */
-    void updateCoordinatesAllPoints(const Matrix &xypf, double zphotogrammetric);
+    void updateCoordinatesAllPoints(const Matrix& xypf, double zphotogrammetric);
 
     //Esses metodos tem como referencia a ordem deles na LISTA DE PONTOS INDEXADOS DE CADA IMAGEM e nao na lista do xml
     /**

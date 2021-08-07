@@ -150,7 +150,7 @@ BundleAdjustment::BundleAdjustment(std::deque<Image*>listSelectedImages,
 {
     zeroingCoordinatesPhotogrammetrics();
 
-    for (int i = 0; i < numPoints; i++) {
+    for (size_t i = 0; i < numPoints; i++) {
         if (listPoints.at(i)->getType() == Point::CONTROL) {
             listControlPoints.push_back(listPoints.at(i));
             numControlPoints++;
@@ -174,7 +174,7 @@ int BundleAdjustment::numberOfEquations()
 {
     int n = 0;
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         n += numberControlPoints(listImages.at(i)) + numberPhotogrammetricPoints(
                  listImages.at(i));
     }
@@ -189,7 +189,7 @@ Point* BundleAdjustment::getPointFrom(int imageIndex, int pointIndex)
 
 void BundleAdjustment::fillDetectorCoordinates()
 {
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < pnts; j++) {
@@ -721,7 +721,7 @@ double BundleAdjustment::getZAdjus(int imageId) const
 // (ou seja na lista de pontos selecionados) e retorna o seu indice na lista
 int BundleAdjustment::whereInPoints(Point* pnt)
 {
-    for (int i = 0; i < numPoints; i++)
+    for (size_t i = 0; i < numPoints; i++)
         if (pnt == listPoints.at(i)) {
             return i;
         }
@@ -741,7 +741,7 @@ int BundleAdjustment::whereInPhotogrammetricPoints(Point* pnt)
 
 void BundleAdjustment::updateMatAdjust() const
 {
-    for (int i = 1; i <= numImages; i++) {
+    for (size_t i = 1; i <= numImages; i++) {
         matAdjust.set(i, 1, getOmegaAdjus(i) + getdOmegax1(i) ); //ajustando omega
         matAdjust.set(i, 2, getPhiAdjus(i)   + getdPhix1(i)   ); //ajustando phi
         matAdjust.set(i, 3, getKappaAdjus(i) + getdKappax1(i) ); //ajustando kappa
@@ -817,7 +817,7 @@ void BundleAdjustment::calculateInicialsValues()
         Matrix temp(numImages, 6);
         matInitialValues = temp;
 
-        for (int i = 0; i < numImages; i++) {
+        for (size_t i = 0; i < numImages; i++) {
             xsi0 = listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
             eta0 = listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
             c = listImages.at(i)->getSensor()->getFocalDistance();
@@ -852,7 +852,7 @@ void BundleAdjustment::calculateInicialsValues()
         Matrix temp(numImages, 6);
         matInitialValues = temp;
 
-        for (int i = 0; i < numImages; i++) {
+        for (size_t i = 0; i < numImages; i++) {
             xsi0 = listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getXi();
             eta0 = listImages.at(i)->getSensor()->getPrincipalPointCoordinates().getEta();
             c = listImages.at(i)->getSensor()->getFocalDistance();
@@ -877,7 +877,7 @@ Matrix BundleAdjustment::createL()
 {
     Matrix L(0, 1);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int numpnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < numpnts; j++) {
@@ -901,7 +901,7 @@ Matrix BundleAdjustment::createM1()
 {
     Matrix result(0, 0);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         Matrix temp = imageToMatrixDetectorCoordenates(listImages.at(i));
         result.putMatrix(temp, result.getRows() + 1, 6 * i + 1);
     }
@@ -916,7 +916,7 @@ Matrix BundleAdjustment::createM2()
     B.set(1, 1, -1);
     B.set(2, 2, -1);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
         Matrix oneImage(0, 2 * numFotogrametricPoints);
 
@@ -1020,7 +1020,7 @@ double BundleAdjustment::getInicialZPhotogrammetricPoints()
     double z = 0;
     int n = 0;
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < pnts; j++)
@@ -1036,7 +1036,7 @@ double BundleAdjustment::getInicialZPhotogrammetricPoints()
 void BundleAdjustment::updateCoordinatesAllPoints(const Matrix& xypf,
         double zphotogrammetric)
 {
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
         int n = 1;
 
@@ -1089,7 +1089,7 @@ void BundleAdjustment::createA1()
     Matrix result;
     int currentRows = 0;
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         Matrix partial = imageToMatrixJacobiana(i);
         result.putMatrix(partial, currentRows + 1, 6 * i + 1);
         currentRows += partial.getRows();
@@ -1102,7 +1102,7 @@ void BundleAdjustment::createA2()
 {
     Matrix result(0, 3 * numFotogrametricPoints);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
         Matrix oneImage(0, 3 * numFotogrametricPoints);
 
@@ -1135,7 +1135,7 @@ void BundleAdjustment::createL0()
 {
     Matrix result(0, 1);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < pnts; j++) {
@@ -1157,7 +1157,7 @@ void BundleAdjustment::createLb()
 {
     Matrix result(0, 1);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < pnts; j++) {
@@ -1181,7 +1181,7 @@ void BundleAdjustment::calculateResiduos()
 {
     Matrix result(0, 1);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         int pnts = listImages.at(i)->countPoints();
 
         for (int j = 0; j < pnts; j++) {
@@ -1211,7 +1211,7 @@ void BundleAdjustment::updateCoordFotog()
 {
     int n = 1;
 
-    for (int i = 0; i < numPoints; i++) {
+    for (size_t i = 0; i < numPoints; i++) {
         Point* pnt = listPoints.at(i);
 
         if (pnt->getType() == Point::PHOTOGRAMMETRIC  && whereInPoints(pnt) != -1) {
@@ -1336,7 +1336,7 @@ Matrix BundleAdjustment::getMVC()
 {
     Matrix tempX1(numImages, 6);
 
-    for (int i = 0; i < numImages; i++) {
+    for (size_t i = 0; i < numImages; i++) {
         tempX1.set(i + 1, 1, Dms::radianoToDegreeDecimal(x1.get(6 * i + 4, 1)));
         tempX1.set(i + 1, 2, Dms::radianoToDegreeDecimal(x1.get(6 * i + 5, 1)));
         tempX1.set(i + 1, 3, Dms::radianoToDegreeDecimal(x1.get(6 * i + 6, 1)));

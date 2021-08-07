@@ -69,7 +69,6 @@ void WindowsSelectPage::addAllItems()
 
 void WindowsSelectPage::addSelectedItem()
 {
-	QModelIndex currentPosition = uncheckedListView->currentIndex();
 	if (uncheckedListView->currentIndex().isValid())
 	{
 		QModelIndex selectedItem = uncheckedListView->currentIndex();
@@ -80,12 +79,10 @@ void WindowsSelectPage::addSelectedItem()
 		checkedModel->setStringList(checkedList);
 		uncheckedModel->setStringList(uncheckedList);
 	}
-	//	completeList->setText(checkedModel->stringList().join("#"));
 }
 
 void WindowsSelectPage::removeSelectedItem()
 {
-	QModelIndex currentPosition = checkedListView->currentIndex();
 	if (checkedListView->currentIndex().isValid())
 	{
 		QModelIndex selectedItem = checkedListView->currentIndex();
@@ -97,7 +94,6 @@ void WindowsSelectPage::removeSelectedItem()
 		checkedModel->setStringList(checkedList);
 
 	}
-	//	completeList->setText(checkedModel->stringList().join("#"));
 }
 
 void WindowsSelectPage::removeAllItems()

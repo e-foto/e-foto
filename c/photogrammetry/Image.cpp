@@ -34,10 +34,10 @@ Image::Image()
 {
 }
 
-Image::Image(int myId, int mySensorId)
+Image::Image(int myId, int mySensorId):
+  id{myId},
+  sensorId{mySensorId}
 {
-    id = myId;
-    sensorId = mySensorId;
     flightDirection = 3 * M_PI;
     flightDirectionAvailable = false;
     mySensor = NULL;
@@ -61,7 +61,7 @@ void Image::setFlightDirection(double radianAngle)
  * Get the value of id
  * @return the value of id
  */
-int Image::getId()
+int Image::getId() const
 {
     return id;
 }
@@ -70,7 +70,7 @@ int Image::getId()
  * Get the value of sensorId
  * @return the value of sensorId
  */
-int Image::getSensorId()
+int Image::getSensorId() const
 {
     return sensorId;
 }
@@ -79,7 +79,7 @@ int Image::getSensorId()
  * Get the value of flightId
  * @return the value of flightId
  */
-int Image::getFlightId()
+int Image::getFlightId() const
 {
     return flightId;
 }
