@@ -429,13 +429,13 @@ std::string ReportManager::eprBlockPoints(QList<QTreeWidgetItem*> treeItems)
         txt += "<point>\n";
         txt += "<pointId>" + pnt->getPointId() + "</pointId>\n";
 
-        if (pnt->getType() == Point::CONTROL) {
+        if (pnt->getType() == PointType::CONTROL) {
             txt += "<pointType>control</pointType>\n";
         }
-        else if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        else if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             txt += "<pointType>photogrammetric</pointType>\n";
         }
-        else if (pnt->getType() == Point::CHECKING) {
+        else if (pnt->getType() == PointType::CHECKING) {
             txt += "<pointType>checking</pointType>\n";
         }
 

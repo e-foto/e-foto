@@ -151,11 +151,11 @@ BundleAdjustment::BundleAdjustment(std::deque<Image*>listSelectedImages,
     zeroingCoordinatesPhotogrammetrics();
 
     for (size_t i = 0; i < numPoints; i++) {
-        if (listPoints.at(i)->getType() == Point::CONTROL) {
+        if (listPoints.at(i)->getType() == PointType::CONTROL) {
             listControlPoints.push_back(listPoints.at(i));
             numControlPoints++;
         }
-        else if (listPoints.at(i)->getType() == Point::PHOTOGRAMMETRIC) {
+        else if (listPoints.at(i)->getType() == PointType::PHOTOGRAMMETRIC) {
             listPhotogrammetricPoints.push_back(listPoints.at(i));
             numFotogrametricPoints++;
         }
@@ -951,7 +951,7 @@ Matrix BundleAdjustment::imageToMatrixDetectorCoordenates(Image* img)
         //                   |1	eta xi	0	 0		0 |
         //                   |0	 0	0	1	eta 	xi|
         if (whereInPoints(img->getPointAt(i)) != -1
-                && img->getPointAt(i)->getType() != Point::CHECKING) {
+                && img->getPointAt(i)->getType() != PointType::CHECKING) {
             Matrix temp(2, 6);
             double lin = img->getPointAt(i)->getImageCoordinate(img->getId()).getLin();
             double col = img->getPointAt(i)->getImageCoordinate(img->getId()).getCol();
@@ -993,7 +993,7 @@ int BundleAdjustment::numberControlPoints(Image* img)
     int points = img->countPoints();
 
     for (int i = 0; i < points; i++)
-        if (img->getPointAt(i)->getType() == Point::CONTROL
+        if (img->getPointAt(i)->getType() == PointType::CONTROL
                 && whereInPoints(img->getPointAt(i)) != -1) {
             cont++;
         }
@@ -1007,7 +1007,7 @@ int BundleAdjustment::numberPhotogrammetricPoints(Image* img)
     int points = img->countPoints();
 
     for (int i = 0; i < points; i++)
-        if (img->getPointAt(i)->getType() == Point::PHOTOGRAMMETRIC
+        if (img->getPointAt(i)->getType() == PointType::PHOTOGRAMMETRIC
                 && whereInPoints(img->getPointAt(i)) != -1) {
             cont++;
         }
@@ -1214,7 +1214,7 @@ void BundleAdjustment::updateCoordFotog()
     for (size_t i = 0; i < numPoints; i++) {
         Point* pnt = listPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC  && whereInPoints(pnt) != -1) {
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC  && whereInPoints(pnt) != -1) {
             ObjectSpaceCoordinate coord = pnt->getObjectCoordinate();
             double x = coord.getX();
             double y = coord.getY();
@@ -1257,19 +1257,19 @@ Matrix BundleAdjustment::getAFP() const
 bool BundleAdjustment::isControlPoint(int imageIndex, int pointIndex)
 {
     return listImages.at(imageIndex)->getPointAt(pointIndex)->getType() ==
-           Point::CONTROL;
+           PointType::CONTROL;
 }
 
 bool BundleAdjustment::isPhotogrammetricPoint(int imageIndex, int pointIndex)
 {
     return listImages.at(imageIndex)->getPointAt(pointIndex)->getType() ==
-           Point::PHOTOGRAMMETRIC;
+           PointType::PHOTOGRAMMETRIC;
 }
 
 bool BundleAdjustment::isCheckingPoint(int imageIndex, int pointIndex)
 {
     return listImages.at(imageIndex)->getPointAt(pointIndex)->getType() ==
-           Point::CHECKING;
+           PointType::CHECKING;
 }
 
 // Se der infinito retorna -2, se der NAN retorna -1, se nao convergir retorna 0 e se convergir retorna 1

@@ -228,7 +228,7 @@ Matrix PhotoTriReport::calculateXYZerror()
 	{
 		pnt = project->allPoints().at(i);
 
-		if (pnt->getType() != Point::CONTROL)
+		if (pnt->getType() != PointType::CONTROL)
 			continue;
 
 		// Only if point is stereo
@@ -301,7 +301,7 @@ Matrix PhotoTriReport::calculatePixelerror()
 	{
 		pnt = project->allPoints().at(i);
 
-		if (pnt->getType() != Point::CONTROL)
+		if (pnt->getType() != PointType::CONTROL)
 			continue;
 
 		// Get GCP reference points

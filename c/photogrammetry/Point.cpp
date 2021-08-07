@@ -27,23 +27,13 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-Point::Point()
+Point::Point(int myId):
+  id{myId}
 {
-    setId(0);
-}
-
-Point::Point(int myId)
-{
-    setId(myId);
 }
 
 Point::~Point()
 {
-}
-
-void Point::setId(int newId)
-{
-    id = newId;
 }
 
 /**
@@ -73,7 +63,7 @@ std::string Point::getDescription()
     return description;
 }
 
-Point::PointType Point::getType()
+PointType Point::getType()
 {
     return type;
 }
@@ -353,31 +343,31 @@ std::string Point::xmlGetData()
     return result.str();
 }
 
-Point::PointType Point::readPointType(std::string type)
+PointType Point::readPointType(std::string type)
 {
     if (type == "control") {
-        return CONTROL;
+        return PointType::CONTROL;
     }
     else if (type == "checking") {
-        return CHECKING;
+        return PointType::CHECKING;
     }
     else if (type == "photogrammetric") {
-        return PHOTOGRAMMETRIC;
+        return PointType::PHOTOGRAMMETRIC;
     }
     else {
-        return UNKNOWN;
+        return PointType::UNKNOWN;
     }
 }
 
 std::string Point::writePointType(PointType type)
 {
-    if (type == CONTROL) {
+    if (type == PointType::CONTROL) {
         return "control";
     }
-    else if (type == CHECKING) {
+    else if (type == PointType::CHECKING) {
         return "checking";
     }
-    else if (type == PHOTOGRAMMETRIC) {
+    else if (type == PointType::PHOTOGRAMMETRIC) {
         return "photogrammetric";
     }
     else {

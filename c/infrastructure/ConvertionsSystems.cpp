@@ -167,8 +167,8 @@ Matrix ConvertionsSystems::geoToUtm(double phi, double lambda, GeoSystem system)
 
     xyh.set(1,1,E);
     xyh.set(1,2,N);
-    xyh.setInt(1,3,zona);
-    xyh.setInt(1,4,hemisferio);
+    xyh.set(1,3,double(zona));
+    xyh.set(1,4,double(hemisferio));
 
     //qDebug("phi: %.9f\tlambda: %.9f\thaltura: %f",phi,lambda,haltura);
     //qDebug("phi: %s\tlambda: %s\thaltura: %f",oneSecond.radianoToDms(phi)->toString().toStdString().c_str(),oneSecond.radianoToDms(lambda)->toString().toStdString().c_str(),haltura);

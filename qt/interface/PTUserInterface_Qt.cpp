@@ -513,7 +513,7 @@ void PTUserInterface_Qt::showReportXml()
     for (size_t i=0; i<oesXml.getRows();i++)
     {
         //qDebug("imageID: %d\n",oesXml.getInt(i+1,1));
-        imagesSelected << QString::fromLocal8Bit(ptManager->getImagefile(oesXml.getInt(i+1,1)).c_str());
+        imagesSelected << QString::fromLocal8Bit(ptManager->getImagefile(int(oesXml.get(i+1,1))).c_str());
     }
     oesXml=oesXml.sel(1,oesXml.getRows(),2,7);
     ETableWidget *table= new ETableWidget();

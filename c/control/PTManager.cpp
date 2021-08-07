@@ -364,20 +364,20 @@ std::deque<std::string> PTManager::getStringTypePoints(const std::string&
         size_t numPnts = listAllPoints.size();
 
         for (size_t i = 0; i < numPnts; i++) {
-            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == Point::CONTROL) {
+            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == PointType::CONTROL) {
                 list.push_back("Control");
             }
 
             if (listAllPoints.at(i)
-                    && listAllPoints.at(i)->getType() == Point::PHOTOGRAMMETRIC) {
+                    && listAllPoints.at(i)->getType() == PointType::PHOTOGRAMMETRIC) {
                 list.push_back("Photogrammetric");
             }
 
-            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == Point::CHECKING) {
+            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == PointType::CHECKING) {
                 list.push_back("Checking");
             }
 
-            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == Point::UNKNOWN) {
+            if (listAllPoints.at(i) && listAllPoints.at(i)->getType() == PointType::UNKNOWN) {
                 list.push_back("Unknown");
             }
         }
@@ -394,22 +394,22 @@ std::deque<std::string> PTManager::getStringTypePoints(const std::string&
 
                 for (size_t j = 0; j < numpnts; j++) {
                     if (temp && temp->getPointAt(j)
-                            && temp->getPointAt(j)->getType() == Point::CONTROL) {
+                            && temp->getPointAt(j)->getType() == PointType::CONTROL) {
                         list.push_back("Control");
                     }
 
                     if (temp && temp->getPointAt(j)
-                            && temp->getPointAt(j)->getType() == Point::PHOTOGRAMMETRIC) {
+                            && temp->getPointAt(j)->getType() == PointType::PHOTOGRAMMETRIC) {
                         list.push_back("Photogrammetric");
                     }
 
                     if (temp && temp->getPointAt(j)
-                            && temp->getPointAt(j)->getType() == Point::CHECKING) {
+                            && temp->getPointAt(j)->getType() == PointType::CHECKING) {
                         list.push_back("Checking");
                     }
 
                     if (temp && temp->getPointAt(j)
-                            && temp->getPointAt(j)->getType() == Point::UNKNOWN) {
+                            && temp->getPointAt(j)->getType() == PointType::UNKNOWN) {
                         list.push_back("Unknown");
                     }
                 }
@@ -451,7 +451,7 @@ void PTManager::selectPoints(std::deque<std::string> selectedPointsList)
     for (size_t i = 0; i < numSelectedPnts; i++)
         for (size_t j = 0; j < numPnts; j++)
             if (listAllPoints.at(j)->getPointId() == selectedPointsList.at(i)
-                    && listAllPoints.at(j)->getType() != Point::CHECKING) {
+                    && listAllPoints.at(j)->getType() != PointType::CHECKING) {
                 listSelectedPoints.push_back(listAllPoints.at(j));
             }
 }
@@ -480,11 +480,11 @@ std::deque<std::string> PTManager::getStringIdPoints(const std::string& imageFil
             Point* pnt = listAllPoints.at(i);
             int appearances = getImagesAppearances(pnt->getId()).size();
 
-            if (pnt->getType() == Point::PHOTOGRAMMETRIC && appearances < 2) {
+            if (pnt->getType() == PointType::PHOTOGRAMMETRIC && appearances < 2) {
                 continue;
             }
 
-            if (pnt->getType() != Point::CHECKING || (pnt->getType() == Point::CHECKING
+            if (pnt->getType() != PointType::CHECKING || (pnt->getType() == PointType::CHECKING
                     && cond != "noCheckingPoint")) {
                 list.push_back(pnt->getPointId());
             }
@@ -498,7 +498,7 @@ std::deque<std::string> PTManager::getStringIdPoints(const std::string& imageFil
         for (int i = 0; i < numPnts; i++) {
             Point* pnt = listAllPoints.at(i);
 
-            if (pnt->getType() != Point::CHECKING || (pnt->getType() == Point::CHECKING
+            if (pnt->getType() != PointType::CHECKING || (pnt->getType() == PointType::CHECKING
                     && cond != "noCheckingPoint")) {
                 list.push_back(pnt->getPointId());
             }
@@ -641,10 +641,10 @@ void PTManager::sortPointsSelected()
     for (size_t i = 0; i < numSelectedPoints ; i++) {
         Point* pnt = listSelectedPoints.at(i);
 
-        if (pnt->getType() == Point::CONTROL) {
+        if (pnt->getType() == PointType::CONTROL) {
             listCtrl.push_front(pnt);
         }
-        else if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        else if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             listCtrl.push_back(pnt);
         }
     }
@@ -661,7 +661,7 @@ Matrix PTManager::getPhotogrammetricENH()
     for (size_t i = 0; i < points; i++) {
         Point* pnt = listSelectedPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             ObjectSpaceCoordinate coor = pnt->getObjectCoordinate();
             Matrix temp(1, 3);
             temp.set(1, 1, coor.getX());
@@ -682,7 +682,7 @@ Matrix PTManager::getResiduoPhotogrammetric()
     for (size_t i = 0; i < points; i++) {
         Point* pnt = listSelectedPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             Matrix temp = pt->getResiduo(pnt);
             residuos = residuos | temp;
         }
@@ -699,7 +699,7 @@ std::deque<std::string> PTManager::getSelectedPointIdPhotogrammetric()
     for (size_t i = 0; i < points; i++) {
         Point* pnt = listSelectedPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             selected.push_back(pnt->getPointId());
         }
     }
@@ -1092,14 +1092,14 @@ std::string PTManager::exportBlockTokml(const std::string& fileName, bool fromXM
     for (size_t i = 0; i < listAllPoints.size(); i++) {
         Point* pnt = listAllPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC) {
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC) {
             photogrammetricPoint += pointToKml(pnt, zona, hemiLatitude, sys,
                                                "photogrammetricPoint");
         }
-        else if (pnt->getType() == Point::CONTROL) {
+        else if (pnt->getType() == PointType::CONTROL) {
             controlPoint += pointToKml(pnt, zona, hemiLatitude, sys, "controlPoint");
         }
-        else if (pnt->getType() == Point::CHECKING) {
+        else if (pnt->getType() == PointType::CHECKING) {
             checkingPoint += pointToKml(pnt, zona, hemiLatitude, sys, "checkingPoint");
         }
     }
@@ -1224,7 +1224,7 @@ void PTManager::reloadPointsCoordinates()
     int numPoints = listAllPoints.size();
 
     for (int i = 0; i < numPoints; i++) {
-        Point* pnt = efotoManager->instancePoint(spareENH.getInt(i + 1, 4));
+        Point* pnt = efotoManager->instancePoint(int(spareENH.get(i + 1, 4)));
         double x = spareENH.get(i + 1, 1);
         double y = spareENH.get(i + 1, 2);
         double z = spareENH.get(i + 1, 3);
@@ -1243,7 +1243,7 @@ std::deque<std::string> PTManager::getPointsWithLesserThanOverlap(
     for (size_t i = 0; i < numPoints; i++) {
         Point* pnt = listAllPoints.at(i);
 
-        if (pnt->getType() == Point::PHOTOGRAMMETRIC)
+        if (pnt->getType() == PointType::PHOTOGRAMMETRIC)
             if (getImagesAppearances(pnt->getId()).size() < overlap) {
                 ids.push_back(pnt->getPointId());
             }
@@ -1532,16 +1532,9 @@ Matrix PTManager::eoParametersFromXml(bool withIds)
     EDomElement exteriorXml(efotoManager->getXml("exteriorOrientation"));
     std::deque<EDomElement> oesXml = exteriorXml.elementsByTagName("imageEO");
     int numEO = oesXml.size();
-    Matrix oesMatrix;
+    Matrix oesMatrix(numEO, (withIds)? 7: 6);
 
-    if (withIds) {
-        oesMatrix.resize(numEO, 7);
-    }
-    else {
-        oesMatrix.resize(numEO, 6);
-    }
-
-    for (int i = 0; i < numEO; i++) {
+        for (int i = 0; i < numEO; i++) {
         int imagekey = Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
         tempXa.setContent(oesXml.at(i).elementByTagName("Xa").getContent());
         int x0 = Conversion::stringToDouble(tempXa.elementByTagName("X0").toString());

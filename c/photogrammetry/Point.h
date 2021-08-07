@@ -28,6 +28,8 @@ namespace efoto {
 
 class Image;
 
+enum class PointType { PHOTOGRAMMETRIC, CHECKING, CONTROL, UNKNOWN};
+
 /**
 * \file Point.h
 * \class Point
@@ -41,10 +43,9 @@ class Image;
 class Point : public EObject {
 public:
 
-    enum PointType { PHOTOGRAMMETRIC, CHECKING, CONTROL, UNKNOWN};
 
 protected:
-    int id;
+    int id{0};
     std::string pointId;
     std::string description;
     PointType type;
@@ -56,11 +57,10 @@ protected:
     std::string writePointType(PointType type);
 
 public:
-    Point();
+    Point() = default;
     explicit Point(int myId);
     virtual ~Point();
 
-    void setId(int newId);
     int getId();
     std::string getPointId();
     std::string getDescription();

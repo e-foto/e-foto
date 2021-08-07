@@ -173,7 +173,7 @@ std::deque<std::string> SRManager::pointData(int index)
     if (started) {
         Point* myPoint = myPoints.at(index);
         result.push_back(Conversion::intToString(myPoint->getId()));
-        result.push_back(myPoint->getType() == Point::CONTROL ? "true" : "false");
+        result.push_back(myPoint->getType() == PointType::CONTROL ? "true" : "false");
         result.push_back(myPoint->getPointId());
         result.push_back(myPoint->getDescription());
         result.push_back(Conversion::doubleToString(

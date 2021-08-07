@@ -529,7 +529,7 @@ void Image::sortPoints()
     std::deque<Point*> listCtrl;
 
     for (unsigned int i = 0; i < myPoints.size() ; i++) {
-        if (myPoints.at(i)->getType() == Point::CONTROL) {
+        if (myPoints.at(i)->getType() == PointType::CONTROL) {
             listCtrl.push_front(myPoints.at(i));
         }
         else {

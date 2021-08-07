@@ -1296,12 +1296,11 @@ void DemFeatures::addFeaturesToPairList(MatchingPointsList* mpl, bool usePolygon
  */
 Matrix DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y)
 {
-    Matrix polyMap;
     // Calculate DEM size
-    int dem_width, dem_height;
-    dem_width = int(1.0 + floor((Xf - Xi) / res_x));
-    dem_height = int(1.0 + floor((Yf - Yi) / res_y));
-    polyMap.resize(dem_height, dem_width);
+    int dem_width = int(1.0 + floor((Xf - Xi) / res_x));
+    int dem_height = int(1.0 + floor((Yf - Yi) / res_y));
+
+    Matrix polyMap(dem_height, dem_width);
 
     for (unsigned int i = 1; i <= features.size(); i++) {
         addPolygonToMap(i, &polyMap, Xi, Yi, res_x, res_y);
