@@ -403,13 +403,11 @@ void SPUserInterface_Qt::onExportButton()
         // Export features
         if (mode.contains("Text file (*.txt)"))
         {
-            //manager->exportFeatures((char *)filename.toStdString().c_str(), 0);
-            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 0);
+            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), ExportType::TEXT);
         }
         else
         {
-            //manager->exportFeatures((char *)filename.toStdString().c_str(), 1);
-            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), 1);
+            manager->exportFeatures((char *)filename.toLocal8Bit().constData(), ExportType::SHAPE);
         }
     }
 }

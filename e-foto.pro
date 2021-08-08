@@ -320,7 +320,7 @@ unix {
     MOC_DIR = build/temp/moc
     UI_DIR = build/temp/ui
     RCC_DIR = build/temp/rcc
-    QMAKE_CXXFLAGS += -std=c++17 -Wall
+    QMAKE_CXXFLAGS += -std=c++2a -Wall
 }
 
 # System Windows Configuration
@@ -335,7 +335,7 @@ win32{
     CONFIG-=debug_and_release_target
 
     # Common parammeters for windows
-    QMAKE_CXXFLAGS += -std=c++11 -Wall
+    QMAKE_CXXFLAGS += -std=c++2a -Wall
 
     # Windows 64 bits version only
     win32-g++:contains(QT_ARCH, x86_64):{

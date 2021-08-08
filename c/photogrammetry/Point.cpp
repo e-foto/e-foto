@@ -328,7 +328,10 @@ void Point::xmlSetData(std::string xml)
 std::string Point::xmlGetData()
 {
     std::stringstream result;
-    result << "<point key=\"" << Conversion::intToString(id) << "\" type=\"" << writePointType(type) << "\">\n";
+    result << "<point key=\""
+           << Conversion::intToString(id)
+           << "\" type=\"" << writePointType(type)
+           << "\">\n";
     result << "<pointId>" << pointId << "</pointId>\n";
     result << "<description>" << description << "</description>\n";
     result << objectCoordinate.xmlGetData();

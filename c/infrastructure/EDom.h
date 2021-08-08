@@ -1,6 +1,6 @@
 #ifndef EDOM_H
 #define EDOM_H
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -36,8 +36,6 @@ class EDomElement;
 * \brief Básico de operações para conversão entre valores numéricos e textos.
 * \attention Todos os métodos desta classe são estáticos.
 * \attention Não contrua objetos desta classe.
-* \copyright E-Foto group
-* \authors Rafael Aguiar & Irving Badolato
 */
 class Conversion {
 public:
@@ -84,13 +82,6 @@ public:
     */
     static int stringToInt(const std::string& value);
 
-
-    /**
-    * \brief Método para conversão de string para inteiro longo.
-    * \param value	Valor descrito em texto.
-    * \return long	Valor convertido.
-    */
-    static long stringToLong(const std::string& value);
 };
 
 /**
@@ -99,14 +90,12 @@ public:
 * \brief Básico de operações de xml. Uma interface para acesso a elementos xml ao estilo DOM implementada internamente como um SAX.
 * \attention Este componente não foi desenvolvido para ser um DOM completo, mas para atender as necessidades do projeto E-Foto ao lidar com permanencia de seus objetos com formato xml.
 * \attention Não assuma que todas as considerações de uma interface DOM são atendidas por esta classe.
-* \copyright E-Foto group
-* \author Rafael Aguiar
 */
 class EDomElement {
 
     enum { INVALID_TAG = 0, OPEN_TAG = 1, CLOSE_TAG = 2, SIMPLE_TAG = 3 };
 
-    std::string content;
+    std::string content{""};
 
     /**
     * \brief Verifica o tipo de uma tag xml passada como parâmetro.
@@ -114,14 +103,14 @@ class EDomElement {
     * \param myTag	Tag a ser verificada.
     * \return int	0 se INVALID_TAG, 1 se OPEN_TAG, 2 se CLOSE_TAG e 3 se SIMPLE_TAG.
     */
-    int tagType(const std::string& myTag);
+    int tagType(const std::string& tag);
 
     /**
     * \brief Retorna o tagname de uma tag xml passada como parâmetro.
     * \param myTag	Tag com o nome a ser retornado.
     * \return string	O nome da tag passada.
     */
-    std::string tagName(const std::string& myTag);
+    std::string tagName(const std::string& tag);
 
     /**
     * \brief Muda o valor de um dos atributos do elemento atual.
@@ -145,7 +134,7 @@ public:
     /**
     * \brief Construtor vazio padrão.
     */
-    EDomElement();
+    EDomElement() = default;
 
     /**
     * \brief Construtor de um elemento cujo conteúdo é conhecido.
@@ -168,7 +157,7 @@ public:
     * \brief Recupera o conteúdo xml do elemento atual em formato string.
     * \return string	O conteúdo xml do elemento.
     */
-    std::string getContent();
+    std::string getContent() const;
 
     /**
     * \brief Lista os elementos filhos contidos no elemento atual.
@@ -207,8 +196,9 @@ public:
     * \param value	O valor do atributo a ser verificado.
     * \return EDomElement	O primeiro elemento que corresponde aos critérios de pesquisa.
     */
-    EDomElement elementByTagAtt(std::string tagname, std::string att,
-                                std::string value);
+    EDomElement elementByTagAtt(const std::string &tagname,
+                                const std::string &att,
+                                const std::string &value);
 
     /**
     * \brief Adiciona um elemento filho aos elementos contidos no elemento atual (incluindo o próprio) que possuem o tagname especificado.
@@ -271,7 +261,8 @@ public:
     * \param newAttValue	O novo valor a ser atribuído ao atributo.
     * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
     */
-    bool replaceAttributeByTagName(std::string tagname, std::string replaceAtt,
+    bool replaceAttributeByTagName(const std::string &tagname,
+                                   std::string replaceAtt,
                                    std::string newAttValue);
 
     /**
@@ -283,8 +274,11 @@ public:
     * \param newAttValue	O valor a ser atribuído ao novo atributo.
     * \return bool	Verdadeiro se a substituição foi realizada com sucesso, falso caso contrário.
     */
-    bool replaceAttributeByTagAtt(std::string tagname, std::string att,
-                                  std::string value, std::string replaceAtt, std::string newAttValue);
+    bool replaceAttributeByTagAtt(const std::string& tagname,
+                                  const std::string& att,
+                                  const std::string& value,
+                                  std::string replaceAtt,
+                                  std::string newAttValue);
 
     /**
     * \brief Retorna o valor textual contido no elemento atual como uma string.
@@ -354,8 +348,6 @@ public:
 * \brief Interface básica para todos os componentes que possuam representação em xml (o formato interno do arquivo .epp).
 * \attention A classe EDom foi definida como uma classe abstrata, então você não deve usá-la diretamente.
 * \attention Contrua apenas objetos das classes derivadas.
-* \copyright E-Foto group
-* \authors Rafael Aguiar
 */
 class EDom {
 

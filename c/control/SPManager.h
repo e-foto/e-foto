@@ -75,7 +75,7 @@ public:
     void returnProject();
     int loadFeatures(char* filename, bool append);
     void saveFeatures(char* filename);
-    void exportFeatures(char* filename, int mode = 0);
+    void exportFeatures(char* filename, ExportType mode = ExportType::TEXT);
     void addFeature(std::string name, FeatureType feattype, int featclass);
     int removeFeature();
     void removeAllFeatures();

@@ -121,7 +121,7 @@ void SPManager::saveFeatures(char* filename)
     addGeometryToXML(std::string(filename));
 }
 
-void SPManager::exportFeatures(char* filename, int mode)
+void SPManager::exportFeatures(char* filename, ExportType mode)
 {
     //Recuperar GRS, fuso e hemisfério
     Terrain* terrain = manager->instanceTerrain();

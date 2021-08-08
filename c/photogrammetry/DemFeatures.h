@@ -46,6 +46,7 @@ namespace efoto {
 class  MatchingPointsList;
 
 enum class FeatureType { UNKNOWN, POINT, LINE, POLYGON};
+enum class ExportType { TEXT, SHAPE};
 
 class FeatureClass {
 public:
@@ -118,7 +119,7 @@ public:
     std::string getFeatureTypeName(FeatureType);
     int loadFeatures(char* filename, bool append);
     int saveFeatures(char* filename);
-    int exportFeatures(char* filename, int mode = 0);
+    int exportFeatures(char* filename, ExportType mode = ExportType::TEXT);
     DemFeature getFeature(int feat);
     DemFeature* getFeatureLink(int feat);
 

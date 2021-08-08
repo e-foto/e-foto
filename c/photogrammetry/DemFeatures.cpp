@@ -52,12 +52,6 @@ FeatureClass* DemFeatures::getFeatureClass(int classid)
     return &feature_classes.at(classid - 1);
 }
 
-/*
- * Feature type:
- * 1- Point
- * 2- Line
- * 3- Polygon
- */
 std::string DemFeatures::getFeatureTypeName(FeatureType ftype)
 {
     switch (ftype) {
@@ -75,7 +69,10 @@ std::string DemFeatures::getFeatureTypeName(FeatureType ftype)
 
     case FeatureType::UNKNOWN:
         return "Unkown";
+        break;
     }
+
+    return "Unkown";
 }
 
 int DemFeatures::loadFeatures(char* filename, bool append = false)
@@ -88,11 +85,8 @@ int DemFeatures::saveFeatures(char* filename)
     return saveFeatSp165(filename);
 }
 
-// Export features
-int DemFeatures::exportFeatures(char* filename, int mode)
+int DemFeatures::exportFeatures(char* filename, ExportType mode)
 {
-    // 0- Txt file
-    // 1- Shape file
     std::string basename;
     std::string name = std::string(filename);
     size_t pos = name.find_last_of(".");
@@ -105,14 +99,14 @@ int DemFeatures::exportFeatures(char* filename, int mode)
         basename = name.substr(0, pos);
 
         if (ext == std::string("shp")) {
-            mode = 1;
+            mode = ExportType::SHAPE;
         }
         else if (ext ==  std::string("txt")) {
-            mode = 0;
+            mode = ExportType::TEXT;
         }
     }
 
-    if (mode == 1) {
+    if (mode == ExportType::SHAPE) {
         return exportShpFeatures((char*)basename.c_str());
     }
 
@@ -190,7 +184,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS,
     //std::string current_filename = std::string(filename);
     //current_filename.append("_").append(fc->name);
     // Definimos o tipo de feições OGR para a classe que será gravada
-    OGRwkbGeometryType nShapeType;
+    OGRwkbGeometryType nShapeType = wkbMultiPoint25D;
 
     switch (fc->type) {
     // It would be preferable to use wkt[TheGeomType]Z (with integer values ​​1001, 1002 and 1003 for pointz, linestringz and polygons respective types),
@@ -264,7 +258,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS,
             }
 
             // Criamos geometria OGR relacionada ao tipo de feição
-            OGRGeometry* geom;
+            OGRGeometry* geom = nullptr;
 
             switch (fc->type) {
             case FeatureType::POINT: {
@@ -309,9 +303,9 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS,
 
             poFeature->SetField( "Name", df.name.c_str() );
 
-            poFeature->SetGeometryDirectly(
-                geom );                          // Isso transfere a posse da geometria para a feição
+            poFeature->SetGeometryDirectly( geom );
 
+            // Isso transfere a posse da geometria para a feição
             // Adicionamos a feição OGR a camada
             OGRErr addFeatureError = poLayer->CreateFeature( poFeature );
 
@@ -818,15 +812,15 @@ int DemFeatures::getNearestPoint(int fid, double X, double Y, double Z)
     }
 
     int best_pt = 1;
-    double best_dist = sqrt(pow(X - features.at(fid - 1).points.at(0).X,
-                                2) + pow(Y - features.at(fid - 1).points.at(0).Y,
-                                         2) + pow(Z - features.at(fid - 1).points.at(0).Z, 2));
+    double best_dist = sqrt(pow(X - features.at(fid - 1).points.at(0).X, 2)
+                            + pow(Y - features.at(fid - 1).points.at(0).Y, 2)
+                            + pow(Z - features.at(fid - 1).points.at(0).Z, 2));
     double dist;
 
     for (unsigned int i = 1; i < features.at(fid - 1).points.size(); i++) {
-        dist = sqrt(pow(X - features.at(fid - 1).points.at(i).X,
-                        2) + pow(Y - features.at(fid - 1).points.at(i).Y,
-                                 2) + pow(Z - features.at(fid - 1).points.at(i).Z, 2));
+        dist = sqrt(pow(X - features.at(fid - 1).points.at(i).X, 2)
+                    + pow(Y - features.at(fid - 1).points.at(i).Y, 2)
+                    + pow(Z - features.at(fid - 1).points.at(i).Z, 2));
 
         if (dist < best_dist) {
             best_pt = i + 1;
@@ -837,8 +831,7 @@ int DemFeatures::getNearestPoint(int fid, double X, double Y, double Z)
     return best_pt;
 }
 
-void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid,
-                                  int& pid)
+void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& pid)
 {
     if (features.size() < 1) {
         return;
@@ -850,9 +843,9 @@ void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid,
 
     for (fid = 1; unsigned(fid) <= features.size(); fid++) {
         for (pid = 1; unsigned(pid) <= features.at(fid - 1).points.size(); pid++) {
-            dist = sqrt(pow(X - features.at(fid - 1).points.at(pid - 1).X,
-                            2) + pow(Y - features.at(fid - 1).points.at(pid - 1).Y,
-                                     2) + pow(Z - features.at(fid - 1).points.at(pid - 1).Z, 2));
+            dist = sqrt(pow(X - features.at(fid - 1).points.at(pid - 1).X, 2)
+                        + pow(Y - features.at(fid - 1).points.at(pid - 1).Y, 2)
+                        + pow(Z - features.at(fid - 1).points.at(pid - 1).Z, 2));
 
             if (dist < best_dist) {
                 best_pid = pid;
