@@ -76,7 +76,7 @@ public:
     int loadFeatures(char* filename, bool append);
     void saveFeatures(char* filename);
     void exportFeatures(char* filename, int mode = 0);
-    void addFeature(std::string name, int feattype, int featclass);
+    void addFeature(std::string name, FeatureType feattype, int featclass);
     int removeFeature();
     void removeAllFeatures();
     bool removePoint();
@@ -98,7 +98,7 @@ public:
     void computeIntersection(double xl, double yl, double xr, double yr, double& X,
                              double& Y, double& Z);
     std::string getFullImagePath(int imagekey);
-    void getSelectedFeatureData(int& sel_feat, std::string& fname, int& ftype,
+    void getSelectedFeatureData(int& sel_feat, std::string& fname, FeatureType &ftype,
                                 int& fclass, int& no_points, double& perimeter, double& area);
     void changePair(int pair, int& lk, int& rk);
     void addPoint(int fid, int pid, double lx, double ly, double rx, double ry,

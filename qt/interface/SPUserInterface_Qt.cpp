@@ -532,7 +532,8 @@ void SPUserInterface_Qt::refreshFeatureSelectedData()
 {
     // Get Feature data
     std::string fname;
-    int sel_feat, fclass, ftype, no_points;
+    int sel_feat, fclass, no_points;
+    FeatureType ftype;
     double perimeter, area;
 
     manager->getSelectedFeatureData(sel_feat, fname, ftype, fclass, no_points, perimeter, area);
@@ -550,7 +551,21 @@ void SPUserInterface_Qt::refreshFeatureSelectedData()
     // If has feature selected
     featureIdLabel->setText(QString::number(sel_feat));
     nameEdit->setText(QString::fromLocal8Bit(fname.c_str()));
-    comboBox_3->setCurrentIndex(ftype-1);
+    switch (ftype) {
+      case FeatureType::POINT:
+           comboBox_3->setCurrentIndex(0);
+        break;
+      case FeatureType::LINE:
+           comboBox_3->setCurrentIndex(1);
+        break;
+      case FeatureType::POLYGON:
+           comboBox_3->setCurrentIndex(2);
+        break;
+      case FeatureType::UNKNOWN:
+           comboBox_3->setCurrentIndex(-1);
+        break;
+      }
+
     comboBox_4->setCurrentIndex(fclass-1>=0? fclass-1 : comboBox_4->count()-1);
     noPointsLabel->setText(QString::number(no_points));
     perimeterLabel->setText(QString::number(perimeter,'f',2) + " meters");
@@ -818,8 +833,25 @@ void AddDialog::checkAcceptance(QString fname)
 
 void AddDialog::accept()
 {
-    //manager->addFeature(nameEdit->text().toStdString(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
-    manager->addFeature(nameEdit->text().toLocal8Bit().constData(), typeCombo->currentIndex()+1, (classCombo->currentIndex()+1)%classCombo->count());
+    FeatureType ftype;
+    switch (typeCombo->currentIndex()) {
+      case 1:
+        ftype = FeatureType::POINT;
+        break;
+      case 2:
+        ftype = FeatureType::LINE;
+        break;
+      case 3:
+        ftype = FeatureType::POLYGON;
+        break;
+      default:
+        ftype = FeatureType::UNKNOWN;
+        break;
+      }
+    manager->addFeature(
+          nameEdit->text().toLocal8Bit().constData(),
+          ftype,
+          (classCombo->currentIndex()+1)%classCombo->count());
     done(QDialog::Accepted);
 }
 

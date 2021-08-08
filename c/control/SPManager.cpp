@@ -136,7 +136,7 @@ void SPManager::exportFeatures(char* filename, int mode)
     spFeatures.exportFeatures(filename, mode);
 }
 
-void SPManager::addFeature(std::string name, int feattype, int featclass)
+void SPManager::addFeature(std::string name, FeatureType feattype, int featclass)
 {
     int fclass = spFeatures.convClassFromSp165(feattype, featclass);
     spFeatures.addNewFeature(name, "", fclass, feattype, 1);
@@ -211,9 +211,9 @@ void SPManager::setSelected(int feat_id, int pt_id)
 }
 
 void SPManager::getSelectedFeatureData(int& sel_feat, std::string& fname,
-                                       int& ftype, int& fclass, int& no_points, double& perimeter, double& area)
+                                       FeatureType& ftype, int& fclass, int& no_points, double& perimeter, double& area)
 {
-    ftype = -1;
+    ftype = FeatureType::UNKNOWN;
     fclass = -1;
     fname = "";
     sel_feat = spFeatures.selectedFeature();

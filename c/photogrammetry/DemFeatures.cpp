@@ -58,22 +58,22 @@ FeatureClass* DemFeatures::getFeatureClass(int classid)
  * 2- Line
  * 3- Polygon
  */
-std::string DemFeatures::getFeatureTypeName(int ftype)
+std::string DemFeatures::getFeatureTypeName(FeatureType ftype)
 {
     switch (ftype) {
-    case 1:
+    case FeatureType::POINT:
         return "Point";
         break;
 
-    case 2:
+    case FeatureType::LINE:
         return "Line";
         break;
 
-    case 3:
+    case FeatureType::POLYGON:
         return "Polygon";
         break;
 
-    default:
+    case FeatureType::UNKNOWN:
         return "Unkown";
     }
 }
@@ -147,13 +147,15 @@ int DemFeatures::exportTxtFeatures(char* filename)
         arq << " Name: " << df.name.c_str() << "\n";
         arq << " Description: " << df.description.c_str() << "\n";
         arq << " Number of points: " << df.points.size() << "\n";
-        arq << " Centroid coordinates: " << df.centroid.X << ", " << df.centroid.Y << "," << df.centroid.Z << "\n";
+        arq << " Centroid coordinates: " << df.centroid.X << ", " << df.centroid.Y <<
+            "," << df.centroid.Z << "\n";
         arq << " Perimeter: " << df.perimeter << "\n";
         arq << " Area: " << df.area << "\n";
         arq << " Points: number, X, Y, Z\n";
 
         for (unsigned int k = 0; k < df.points.size(); k++) {
-            arq << "  " << k + 1 << ", " << df.points.at(k).X << ", " << df.points.at(k).Y << ", " << df.points.at(k).Z << "\n";
+            arq << "  " << k + 1 << ", " << df.points.at(k).X << ", " << df.points.at(
+                    k).Y << ", " << df.points.at(k).Z << "\n";
         }
 
         arq << "\n";
@@ -181,7 +183,8 @@ bool DemFeatures::hasFeatureClass(FeatureClass* fc)
     return false;
 }
 
-int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GDALDataset* poDS)
+int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS,
+                                 GDALDataset* poDS)
 {
     // Concatenamos o nome de arquivo proposto com o nome de classe
     //std::string current_filename = std::string(filename);
@@ -192,24 +195,25 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
     switch (fc->type) {
     // It would be preferable to use wkt[TheGeomType]Z (with integer values ​​1001, 1002 and 1003 for pointz, linestringz and polygons respective types),
     // but in the development version of GDAL/OGR this was not found!
-    case 1:
+    case FeatureType::POINT:
         nShapeType = wkbPoint25D;
         break;
 
-    case 2:
+    case FeatureType::LINE:
         nShapeType = wkbLineString25D;
         break;
 
-    case 3:
+    case FeatureType::POLYGON:
         nShapeType = wkbPolygon25D;
         break;
 
-    default:
+    case FeatureType::UNKNOWN:
         nShapeType = wkbMultiPoint25D;
     }
 
     // Criamos a shapefile (camada OGR) com o nome da classe
-    OGRLayer* poLayer = poDS->CreateLayer( fc->name.c_str(), oSRS, nShapeType, nullptr );
+    OGRLayer* poLayer = poDS->CreateLayer( fc->name.c_str(), oSRS, nShapeType,
+                                           nullptr );
 
     if ( poLayer == nullptr ) {
         printf( "Layer creation failed.\n" );
@@ -235,7 +239,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
             df = features.at(i);
             unsigned int nVertices = df.points.size();
 
-            if (fc->type == 3) {
+            if (fc->type == FeatureType::POLYGON) {
                 nVertices++;
             }
 
@@ -263,7 +267,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
             OGRGeometry* geom;
 
             switch (fc->type) {
-            case 1: {
+            case FeatureType::POINT: {
                 OGRPoint pt;
                 pt.setX(padfX[0]);
                 pt.setY(padfY[0]);
@@ -272,7 +276,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                 break;
             }
 
-            case 2: {
+            case FeatureType::LINE: {
                 OGRLineString ls;
                 ls.setNumPoints(nVertices, false);
                 ls.setPoints(nVertices, padfX, padfY, padfZ);
@@ -280,7 +284,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                 break;
             }
 
-            case 3: {
+            case FeatureType::POLYGON: {
                 OGRLinearRing* lr = new OGRLinearRing;
                 lr->setPoints(nVertices, padfX, padfY, padfZ);
                 OGRPolygon pg;
@@ -289,7 +293,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                 break;
             }
 
-            default: {
+            case FeatureType::UNKNOWN: {
                 OGRMultiPoint mp;
 
                 for (unsigned int j = 0; j < nVertices; j++) {
@@ -305,13 +309,15 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
 
             poFeature->SetField( "Name", df.name.c_str() );
 
-            poFeature->SetGeometryDirectly( geom );                          // Isso transfere a posse da geometria para a feição
+            poFeature->SetGeometryDirectly(
+                geom );                          // Isso transfere a posse da geometria para a feição
 
             // Adicionamos a feição OGR a camada
             OGRErr addFeatureError = poLayer->CreateFeature( poFeature );
 
             //Liberamos a memória
-            OGRFeature::DestroyFeature( poFeature );                        // Isso libera a memória usada pela feição e sua geometria
+            OGRFeature::DestroyFeature(
+                poFeature );                        // Isso libera a memória usada pela feição e sua geometria
 
             free( padfX );
 
@@ -424,7 +430,7 @@ int DemFeatures::saveFeatSp165(char* filename)
         }
 
         // If feature is a polygon, close it with a C1 marker
-        if (df.feature_type > 2) {
+        if (df.feature_type == FeatureType::POLYGON) {
             dfp = df.points.at(0);
             arq << i + 1 << "\n"; // Feature ID
             arq << "C1" << "\n"; // Point ID
@@ -469,7 +475,8 @@ DemFeature* DemFeatures::getFeatureLink(int feat)
 }
 
 // Returns feature id
-int DemFeatures::addNewFeature(std::string name, std::string fdesc, int fclass, int ftype, int layer)
+int DemFeatures::addNewFeature(std::string name, std::string fdesc, int fclass,
+                               FeatureType ftype, int layer)
 {
     DemFeature df;
     df.name = name;
@@ -494,7 +501,8 @@ int DemFeatures::deleteFeature(int featid)
 
 
 // Returns point id - 0, if feature_id is invalid
-void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, double Z)
+void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y,
+                              double Z)
 {
     // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size()) {
@@ -502,7 +510,8 @@ void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, doubl
     }
 
     // If feature is point, no more than 1 point is allowed
-    if (features.at(featid - 1).points.size() > 0 && features.at(featid - 1).feature_type == 1) {
+    if (features.at(featid - 1).points.size() > 0
+            && features.at(featid - 1).feature_type == FeatureType::POINT) {
         return;
     }
 
@@ -521,13 +530,15 @@ void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, doubl
         features.at(featid - 1).points.push_back(dfp);
     }
     else {
-        features.at(featid - 1).points.insert(features.at(featid - 1).points.begin() + pointid - 1, dfp);
+        features.at(featid - 1).points.insert(features.at(featid - 1).points.begin() +
+                                              pointid - 1, dfp);
     }
 
     calculateFeatureAttributes(featid);
 }
 
-void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, double Z)
+void DemFeatures::updatePoint(int featid, int pointid, double X, double Y,
+                              double Z)
 {
     // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size()) {
@@ -545,7 +556,8 @@ void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, doubl
     calculateFeatureAttributes(featid);
 }
 
-void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry)
+void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly,
+                                double rx, double ry)
 {
     // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size()) {
@@ -576,7 +588,8 @@ int DemFeatures::deletePoint(int featid, int pointid)
         return 0;
     }
 
-    features.at(featid - 1).points.erase(features.at(featid - 1).points.begin() + pointid - 1);
+    features.at(featid - 1).points.erase(features.at(featid - 1).points.begin() +
+                                         pointid - 1);
     calculateFeatureAttributes(featid);
     return 1;
 }
@@ -592,7 +605,8 @@ int DemFeatures::getNumPoints(int featid)
 }
 
 // Return class id
-int DemFeatures::addFeatureClass(std::string name, std::string description, int ccolor, int fcolor)
+int DemFeatures::addFeatureClass(std::string name, std::string description,
+                                 int ccolor, int fcolor)
 {
     FeatureClass fc;
     fc.name = name;
@@ -677,7 +691,7 @@ void DemFeatures::calculatePerimeter(int featid)
     double RX, RY, RZ, perimeter = 0.0;
 
     // If point, no perimeter
-    if (df->feature_type == 1 || df->points.size() < 2) {
+    if (df->feature_type == FeatureType::POINT || df->points.size() < 2) {
         df->perimeter = 0.0;
         return;
     }
@@ -692,7 +706,7 @@ void DemFeatures::calculatePerimeter(int featid)
     // Add the closing line to the polygon
     int last_pt = df->points.size() - 1;
 
-    if (df->feature_type == 3 && df->points.size() > 2) {
+    if (df->feature_type == FeatureType::POLYGON && df->points.size() > 2) {
         RX = df->points.at(0).X - df->points.at(last_pt).X;
         RY = df->points.at(0).Y - df->points.at(last_pt).Y;
         RZ = df->points.at(0).Z - df->points.at(last_pt).Z;
@@ -711,7 +725,7 @@ void DemFeatures::calculateArea(int featid)
     DemFeature* df = &features.at(featid - 1);
 
     // Calculate area only for polygons
-    if (df->feature_type < 3) {
+    if (df->feature_type != FeatureType::POLYGON) {
         df->area = 0.0;
         return;
     }
@@ -771,7 +785,8 @@ void DemFeatures::checkIsOnScreen(int featid)
     DemFeature* df = &features.at(featid - 1);
     df->is_on_screen = 0;
 
-    if (img_left_width == -1 || img_left_height == -1 || img_right_width == -1 || img_right_height == -1) {
+    if (img_left_width == -1 || img_left_height == -1 || img_right_width == -1
+            || img_right_height == -1) {
         return;
     }
 
@@ -780,11 +795,17 @@ void DemFeatures::checkIsOnScreen(int featid)
     // 2 - Feature is on right image
     // 3 - Feature is on both images
     for (unsigned int i = 0; i < df->points.size(); i++) {
-        if (int(df->points.at(i).left_x) >= 0 && int(df->points.at(i).left_x) < img_left_width && int(df->points.at(i).left_y) >= 0 && int(df->points.at(i).left_y) < img_left_height) {
+        if (int(df->points.at(i).left_x) >= 0
+                && int(df->points.at(i).left_x) < img_left_width
+                && int(df->points.at(i).left_y) >= 0
+                && int(df->points.at(i).left_y) < img_left_height) {
             df->is_on_screen = df->is_on_screen | 1;
         }
 
-        if (int(df->points.at(i).right_x) >= 0 && int(df->points.at(i).right_x) < img_right_width && int(df->points.at(i).right_y) >= 0 && int(df->points.at(i).right_y) < img_right_height) {
+        if (int(df->points.at(i).right_x) >= 0
+                && int(df->points.at(i).right_x) < img_right_width
+                && int(df->points.at(i).right_y) >= 0
+                && int(df->points.at(i).right_y) < img_right_height) {
             df->is_on_screen = df->is_on_screen | 2;
         }
     }
@@ -797,11 +818,15 @@ int DemFeatures::getNearestPoint(int fid, double X, double Y, double Z)
     }
 
     int best_pt = 1;
-    double best_dist = sqrt(pow(X - features.at(fid - 1).points.at(0).X, 2) + pow(Y - features.at(fid - 1).points.at(0).Y, 2) + pow(Z - features.at(fid - 1).points.at(0).Z, 2));
+    double best_dist = sqrt(pow(X - features.at(fid - 1).points.at(0).X,
+                                2) + pow(Y - features.at(fid - 1).points.at(0).Y,
+                                         2) + pow(Z - features.at(fid - 1).points.at(0).Z, 2));
     double dist;
 
     for (unsigned int i = 1; i < features.at(fid - 1).points.size(); i++) {
-        dist = sqrt(pow(X - features.at(fid - 1).points.at(i).X, 2) + pow(Y - features.at(fid - 1).points.at(i).Y, 2) + pow(Z - features.at(fid - 1).points.at(i).Z, 2));
+        dist = sqrt(pow(X - features.at(fid - 1).points.at(i).X,
+                        2) + pow(Y - features.at(fid - 1).points.at(i).Y,
+                                 2) + pow(Z - features.at(fid - 1).points.at(i).Z, 2));
 
         if (dist < best_dist) {
             best_pt = i + 1;
@@ -812,7 +837,8 @@ int DemFeatures::getNearestPoint(int fid, double X, double Y, double Z)
     return best_pt;
 }
 
-void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& pid)
+void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid,
+                                  int& pid)
 {
     if (features.size() < 1) {
         return;
@@ -824,7 +850,9 @@ void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& p
 
     for (fid = 1; unsigned(fid) <= features.size(); fid++) {
         for (pid = 1; unsigned(pid) <= features.at(fid - 1).points.size(); pid++) {
-            dist = sqrt(pow(X - features.at(fid - 1).points.at(pid - 1).X, 2) + pow(Y - features.at(fid - 1).points.at(pid - 1).Y, 2) + pow(Z - features.at(fid - 1).points.at(pid - 1).Z, 2));
+            dist = sqrt(pow(X - features.at(fid - 1).points.at(pid - 1).X,
+                            2) + pow(Y - features.at(fid - 1).points.at(pid - 1).Y,
+                                     2) + pow(Z - features.at(fid - 1).points.at(pid - 1).Z, 2));
 
             if (dist < best_dist) {
                 best_pid = pid;
@@ -843,7 +871,8 @@ void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& p
 //
 void DemFeatures::convertClassesIdsFromSp165()
 {
-    int fc, ft;
+    int fc;
+    FeatureType ft;
 
     for (unsigned int i = 0; i < features.size(); i++) {
         ft = features.at(i).feature_type;
@@ -852,11 +881,11 @@ void DemFeatures::convertClassesIdsFromSp165()
     }
 }
 
-int DemFeatures::convClassFromSp165(int ft, int fc)
+int DemFeatures::convClassFromSp165(FeatureType ft, int fc)
 {
     int new_fc = 1;
 
-    if (ft == 1) {
+    if (ft == FeatureType::POINT) {
         return 2;
     }
 
@@ -864,7 +893,7 @@ int DemFeatures::convClassFromSp165(int ft, int fc)
         return 1;
     }
 
-    if (ft == 2) {
+    if (ft == FeatureType::LINE) {
         switch (fc) {
         case 1 :
             new_fc = 3;
@@ -895,7 +924,7 @@ int DemFeatures::convClassFromSp165(int ft, int fc)
         }
     }
 
-    if (ft == 3) {
+    if (ft == FeatureType::POLYGON) {
         switch (fc) {
         case 1 :
             new_fc = 9;
@@ -1038,7 +1067,7 @@ void DemFeatures::createClassesFromSp165()
 {
     FeatureClass fc;
     // Undefined
-    fc.type = 0;
+    fc.type = FeatureType::UNKNOWN;
     fc.description = "";
     fc.fill_transparency = 0xFFFFFF;
     fc.line_type = 1;
@@ -1047,12 +1076,12 @@ void DemFeatures::createClassesFromSp165()
     fc.name = "Undefined";
     feature_classes.push_back(fc);
     // Point
-    fc.type = 1;
+    fc.type = FeatureType::POINT;
     fc.outline_color = 0xFF0000;
     fc.name = "Point";
     feature_classes.push_back(fc);
     // Line
-    fc.type = 2;
+    fc.type = FeatureType::LINE;
     fc.outline_color = 0xFF0000;
     fc.fill_color = 0;
     fc.name = "Paved street";
@@ -1073,7 +1102,7 @@ void DemFeatures::createClassesFromSp165()
     fc.name = "Bridge";
     feature_classes.push_back(fc);
     // Polygon
-    fc.type = 3;
+    fc.type = FeatureType::POLYGON;
     fc.outline_color = 0xFFFF8080;
     fc.fill_color = 0xFFFF8000;
     fc.name = "House";
@@ -1172,15 +1201,15 @@ int DemFeatures::loadFeatSp165(char* filename, bool append = false)
         getline(arq, tag); // 3rd line type of feature
 
         if (tag.substr(0, 5).compare("Point") == 0) {
-            df.feature_type = 1;
+            df.feature_type = FeatureType::POINT;
         }
 
         if (tag.substr(0, 4).compare("Line") == 0) {
-            df.feature_type = 2;
+            df.feature_type = FeatureType::LINE;
         }
 
         if (tag.substr(0, 7).compare("Polygon") == 0) {
-            df.feature_type = 3;
+            df.feature_type = FeatureType::POLYGON;
         }
 
         getline(arq, tag); // 4th line description
@@ -1274,13 +1303,14 @@ int DemFeatures::loadFeatSp165(char* filename, bool append = false)
  * usePolygons enable using polygons too
  * The pair list is not cleared !
  */
-void DemFeatures::addFeaturesToPairList(MatchingPointsList* mpl, bool usePolygons = false)
+void DemFeatures::addFeaturesToPairList(MatchingPointsList* mpl,
+                                        bool usePolygons = false)
 {
     // Search for features
     for (unsigned int f = 0; f < features.size(); f++) {
         DemFeature* df =  &features.at(f);
 
-        if (!usePolygons && df->feature_type == 3) {
+        if (!usePolygons && df->feature_type == FeatureType::POLYGON) {
             continue;
         }
 
@@ -1294,12 +1324,12 @@ void DemFeatures::addFeaturesToPairList(MatchingPointsList* mpl, bool usePolygon
 /*
  * This function creates a polygon map
  */
-Matrix DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf, double res_x, double res_y)
+Matrix DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf,
+                                     double res_x, double res_y)
 {
     // Calculate DEM size
     int dem_width = int(1.0 + floor((Xf - Xi) / res_x));
     int dem_height = int(1.0 + floor((Yf - Yi) / res_y));
-
     Matrix polyMap(dem_height, dem_width);
 
     for (unsigned int i = 1; i <= features.size(); i++) {
@@ -1309,7 +1339,8 @@ Matrix DemFeatures::createPolygonMap(double Xi, double Yi, double Xf, double Yf,
     return polyMap;
 }
 
-void DemFeatures::addPolygonToMap(int feat_id, Matrix* map, double Xi, double Yi, double res_x, double res_y)
+void DemFeatures::addPolygonToMap(int feat_id, Matrix* map, double Xi,
+                                  double Yi, double res_x, double res_y)
 {
     Matrix polMap = mapPolygon(feat_id, res_x, res_y);
     double fXi, fXf, fYi, fYf;
@@ -1330,7 +1361,8 @@ void DemFeatures::addPolygonToMap(int feat_id, Matrix* map, double Xi, double Yi
             col = 1 + floor((X - Xi) / res_x);
             row = 1 + floor((Y - Yi) / res_y);
 
-            if (col < 1 || row < 1 || unsigned(col) > map->getCols() || unsigned(row) > map->getRows()) {
+            if (col < 1 || row < 1 || unsigned(col) > map->getCols()
+                    || unsigned(row) > map->getRows()) {
                 continue;
             }
 
@@ -1350,7 +1382,7 @@ Matrix DemFeatures::mapPolygon(int feat_id, double res_x, double res_y)
     }
 
     // Only polygons
-    if (features.at(feat_id - 1).feature_type != 3) {
+    if (features.at(feat_id - 1).feature_type != FeatureType::POLYGON) {
         return pmap;
     }
 
@@ -1382,7 +1414,8 @@ Matrix DemFeatures::mapPolygon(int feat_id, double res_x, double res_y)
 }
 
 // Moving average
-double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double D0 = -1.0)
+double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y,
+        double D0 = -1.0)
 {
     if (feat_id < 1 || unsigned(feat_id) > features.size()) {
         return 0.0;
@@ -1423,7 +1456,8 @@ double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double
     return 0.0;
 }
 
-void DemFeatures::calculateBoundingBox(int feat_id, double& Xi, double& Yi, double& Xf, double& Yf)
+void DemFeatures::calculateBoundingBox(int feat_id, double& Xi, double& Yi,
+                                       double& Xf, double& Yf)
 {
     if (feat_id < 1 || unsigned(feat_id) > features.size()) {
         return;
@@ -1491,7 +1525,8 @@ bool DemFeatures::isInside(int feat_id, double X, double Y)
 
     // Calculate
     for (unsigned int i = 0; i < n; i++) {
-        angle += angle2D(df.points.at(i).X - X, df.points.at(i).Y - Y, df.points.at((i + 1) % n).X - X, df.points.at((i + 1) % n).Y - Y);
+        angle += angle2D(df.points.at(i).X - X, df.points.at(i).Y - Y,
+                         df.points.at((i + 1) % n).X - X, df.points.at((i + 1) % n).Y - Y);
     }
 
     if (fabs(angle) < M_PI) {
@@ -1509,10 +1544,13 @@ std::string DemFeatures::getFeaturesList()
 
     for (unsigned int i = 0; i < features.size(); i++) {
         df = features.at(i);
-        txt << "Feature #" << i + 1 << "\t" << getFeatureTypeName(df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " << df.name << "\n";
+        txt << "Feature #" << i + 1 << "\t" << getFeatureTypeName(
+                df.feature_type) << ", " << getFeatureClass(df.feature_class)->name << ", " <<
+            df.name << "\n";
 
         for (unsigned int k = 0; k < df.points.size(); k++) {
-            txt << "\tPoint #" << k + 1 << "\tX=" << df.points.at(k).X << ", Y=" << df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
+            txt << "\tPoint #" << k + 1 << "\tX=" << df.points.at(k).X << ", Y=" <<
+                df.points.at(k).Y << ", Z=" << df.points.at(k).Z << "\n";
         }
     }
 

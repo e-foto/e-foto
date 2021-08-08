@@ -589,11 +589,11 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
         }
         painter.setPen(QPen(QColor(Qt::darkGreen)));
         painter.setBrush(QBrush(QColor(128,128,0,128)));
-        if (df->feature_type == 3) // preenchimento e fechamento
+        if (df->feature_type == FeatureType::POLYGON) // preenchimento e fechamento
         {
             painter.drawPolygon(poly);
         }
-        if (df->feature_type == 2) // linhas
+        if (df->feature_type == FeatureType::LINE) // linhas
         {
             painter.drawPolyline(poly);
         }
@@ -639,11 +639,11 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
         }
         painter.setPen(QPen(QBrush(QColor(Qt::darkGreen)),3));
         painter.setBrush(QBrush(QColor(Qt::darkYellow), Qt::Dense7Pattern));
-        if (df->feature_type == 3) // preenchimento e fechamento
+        if (df->feature_type == FeatureType::POLYGON) // preenchimento e fechamento
         {
             painter.drawPolygon(poly);
         }
-        if (df->feature_type == 2) // linhas
+        if (df->feature_type == FeatureType::LINE) // linhas
         {
             painter.drawPolyline(poly);
         }
