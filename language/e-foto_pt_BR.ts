@@ -871,13 +871,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Flight&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Voo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/FlightLayout.ui" line="43"/>
         <source>Flight Information</source>
-        <translatorcomment>Informação de Voo</translatorcomment>
-        <translation>Informação de Voo</translation>
+        <translation>Informação sobre o Voo</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/FlightLayout.ui" line="53"/>
@@ -913,13 +912,12 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/FlightLayout.ui" line="129"/>
         <source>Flight Parameters</source>
         <translatorcomment>Parâmetros de voo</translatorcomment>
-        <translation>Parâmetros de voo</translation>
+        <translation>Parâmetros do Voo</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/FlightLayout.ui" line="139"/>
         <source>Nominal Flight Altitude Above Sea Level (m)</source>
-        <translatorcomment>Altitude de voo nominal acima do nível do mar (m)</translatorcomment>
-        <translation>Altitude de voo nominal acima do nível do mar (m)</translation>
+        <translation>Altitude nominal do voo acima do nível do mar (m)</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/FlightLayout.ui" line="169"/>
@@ -1039,16 +1037,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Project Header&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Project Header&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Project Header&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Cabeçalho de Projeto&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -1086,7 +1079,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/FeatEditor.ui" line="59"/>
         <source>Type:</source>
-        <translatorcomment>Modelo:</translatorcomment>
         <translation>Modelo:</translation>
     </message>
     <message>
@@ -1198,7 +1190,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/FeatsEditor.ui" line="37"/>
         <source>Type</source>
-        <translatorcomment>Modelo</translatorcomment>
         <translation>Modelo</translation>
     </message>
     <message>
@@ -1710,7 +1701,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Image&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Imagem&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/ImageLayout.ui" line="51"/>
@@ -1758,7 +1749,6 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/ImageLayout.ui" line="160"/>
         <location filename="qt/formDisplay/ImageLayout.ui" line="367"/>
         <source>Type</source>
-        <translatorcomment>Modelo</translatorcomment>
         <translation>Modelo</translation>
     </message>
     <message>
@@ -1779,8 +1769,7 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/ImageLayout.ui" line="178"/>
         <location filename="qt/formDisplay/ImageLayout.ui" line="385"/>
         <source>Not Considered</source>
-        <translatorcomment>Não considerado</translatorcomment>
-        <translation>Não considerado</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/ImageLayout.ui" line="192"/>
@@ -1867,8 +1856,8 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/ImageLayout.ui" line="308"/>
         <location filename="qt/formDisplay/ImageLayout.ui" line="443"/>
         <source>Standard Deviations</source>
-        <translatorcomment>Desvio padrão</translatorcomment>
-        <translation>Desvio padrão</translation>
+        <translatorcomment>Desvio-padrão</translatorcomment>
+        <translation>Desvio-padrão</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/ImageLayout.ui" line="318"/>
@@ -2031,16 +2020,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Images&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Images&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Images&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Imagens&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/ImagesLayout.ui" line="108"/>
@@ -2578,7 +2562,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;All Points&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;All Points&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/interface/FotoTriForm.ui" line="186"/>
@@ -2994,16 +2982,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Points&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Points&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Points&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pontos&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/PointsLayout.ui" line="90"/>
@@ -3014,13 +2997,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/PointsLayout.ui" line="95"/>
         <source>Point Id</source>
-        <translatorcomment>Id do ponto</translatorcomment>
         <translation>Id do ponto</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/PointsLayout.ui" line="100"/>
         <source>Type</source>
-        <translatorcomment>Modelo</translatorcomment>
         <translation>Modelo</translation>
     </message>
     <message>
@@ -3083,13 +3064,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/PointLayout.ui" line="47"/>
         <source>Point Id</source>
-        <translatorcomment>Id do ponto</translatorcomment>
         <translation>Id do ponto</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/PointLayout.ui" line="61"/>
         <source>Type</source>
-        <translatorcomment>Modelo</translatorcomment>
         <translation>Modelo</translation>
     </message>
     <message>
@@ -3132,7 +3111,7 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/PointLayout.ui" line="140"/>
         <source>Standard Deviations</source>
         <translatorcomment>Desvio padrão</translatorcomment>
-        <translation>Desvio padrão</translation>
+        <translation>Desvio-padrão</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/PointLayout.ui" line="158"/>
@@ -3208,7 +3187,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/FormProject.ui" line="98"/>
         <source>A Free GNU/GPL Educational Photogrammetric Workstation</source>
-        <translation>Uma estação de trabalho fotogramétrica educacional GNU / GPL gratuita</translation>
+        <translation>Uma estação de trabalho fotogramétrica educacional GNU / GPL Livre</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="210"/>
@@ -3411,12 +3390,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/FormProject.ui" line="486"/>
         <source>Export a file to be used on Stereoplotter or DSM File</source>
-        <translation>Exportar um arquivo para ser usado no Stereoplotter ou arquivo DSM</translation>
+        <translation>Exportar um arquivo para ser usado no Stereoplotter ou arquivo MDS</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="491"/>
         <source>Photo &amp;Triangulation</source>
-        <translation>Foto &amp;Triangulação</translation>
+        <translation>Fototriangulação</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="494"/>
@@ -3426,7 +3405,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/FormProject.ui" line="499"/>
         <source>&amp;DSM-Extraction</source>
-        <translation>&amp; DSM-Extração</translation>
+        <translation>Extração-MDS</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="502"/>
@@ -3451,7 +3430,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/FormProject.ui" line="518"/>
         <source>Stereo &amp;Plotter</source>
-        <translation>Estéreo &amp;Plotter</translation>
+        <translation>Restituição 3D</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="521"/>
@@ -3471,7 +3450,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/interface/FormProject.ui" line="534"/>
         <source>Photo-triangulation &amp;Full Report</source>
-        <translation>Foto-triangulação e relatório completo</translation>
+        <translation>Relatório completo da Fototriangulação</translation>
     </message>
     <message>
         <location filename="qt/interface/FormProject.ui" line="537"/>
@@ -4082,7 +4061,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Detector&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Detector&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="170"/>
@@ -4104,12 +4090,19 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Platform&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Plataforma&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="216"/>
         <source>aerial</source>
-        <translation>aéreo</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="236"/>
@@ -4121,7 +4114,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Geometry&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Geometria&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="257"/>
@@ -4138,7 +4138,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Energy Source&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Fonte de energia&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/ht</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="289"/>
@@ -4152,27 +4159,31 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Calculation Model&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Modelo de Cálculo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="309"/>
         <source>With Fiducial Marks</source>
-        <translation>Com marcas fiduciais</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="314"/>
         <source>With Sensor Dimensions</source>
-        <translation>Com Dimensões do Sensor</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="319"/>
         <source>Fixed Parameters</source>
-        <translation>Parâmetros Fixos</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="330"/>
         <source>Camera Calibration Certificate:</source>
-        <translation>Certificado de calibração da câmera:</translation>
+        <translation>Certificado de calibração da câmara:</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="348"/>
@@ -4184,7 +4195,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Number&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Número&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="390"/>
@@ -4196,7 +4214,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Dispatch&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Expedição&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="423"/>
@@ -4214,7 +4239,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Expiration&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Expiração&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="488"/>
@@ -4224,7 +4256,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="509"/>
         <source>Standard Deviation</source>
-        <translation>Desvio padrão</translation>
+        <translation>Desvio-padrão</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="537"/>
@@ -4236,7 +4268,14 @@ p, li { white-space: pre-wrap; }
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Calibrated Focal Length (mm)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Distância Focal Calibrado (mm)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="621"/>
@@ -4249,7 +4288,7 @@ p, li { white-space: pre-wrap; }
         <location filename="qt/formDisplay/SensorLayout.ui" line="1147"/>
         <location filename="qt/formDisplay/SensorLayout.ui" line="1316"/>
         <source>Standard Deviations</source>
-        <translation>Desvio padrão</translation>
+        <translation>Desvio-padrão</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="684"/>
@@ -4283,19 +4322,19 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="827"/>
         <source>Radial Symmetric</source>
-        <translation>Simétrico Radial</translation>
+        <translation>Distorção Radial Simétrica</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="839"/>
         <location filename="qt/formDisplay/SensorLayout.ui" line="1121"/>
         <source>Considered</source>
-        <translation>Considerado</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="844"/>
         <location filename="qt/formDisplay/SensorLayout.ui" line="1126"/>
         <source>Not Considered</source>
-        <translation>Não considerado</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="895"/>
@@ -4348,7 +4387,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="1109"/>
         <source>Decentered</source>
-        <translation>Descentrado</translation>
+        <translation>Descentrada</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/SensorLayout.ui" line="1177"/>
@@ -5105,7 +5144,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qt/formDisplay/TerrainLayout.ui" line="260"/>
         <source>Approximate geographic coordinates of center project area</source>
-        <translation>Coordenadas geográficas aproximadas da área central do projeto</translation>
+        <translation>Coordenadas geográficas aproximadas do centro da área do projeto</translation>
     </message>
     <message>
         <location filename="qt/formDisplay/TerrainLayout.ui" line="272"/>
@@ -5510,7 +5549,7 @@ tente colocar mais pontos de controle ou pontos fotogramétricos</translation>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="844"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="890"/>
         <source>efoto[Project Manager]</source>
-        <translation>efoto [Gerente de Projeto]</translation>
+        <translation>efoto [Gestão de Projeto Fotogramétrico]</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="167"/>
@@ -5582,13 +5621,15 @@ tente colocar mais pontos de controle ou pontos fotogramétricos</translation>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="842"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="888"/>
         <source> - efoto[Project Manager]</source>
-        <translation>- efoto [Gerente de Projeto]</translation>
+        <translatorcomment>- efoto [Gestão de Projeto Fotogramétrico]</translatorcomment>
+        <translation>- efoto [Gestão de Projeto Fotogramétrico]</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="853"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="899"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="929"/>
         <source>Project Header</source>
+        <translatorcomment>Cabeçalho do Projeto</translatorcomment>
         <translation>Cabeçalho do Projeto</translation>
     </message>
     <message>
@@ -5603,7 +5644,7 @@ tente colocar mais pontos de controle ou pontos fotogramétricos</translation>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="903"/>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="933"/>
         <source>Flight</source>
-        <translation>Vôo</translation>
+        <translation>Voo</translation>
     </message>
     <message>
         <location filename="qt/interface/ProjectUserInterface_Qt.cpp" line="859"/>
