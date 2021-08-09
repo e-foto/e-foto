@@ -88,7 +88,7 @@ bool DetectorFiducialMark::is(std::string s)
 void DetectorFiducialMark::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
-    id = Conversion::stringToInt(root.attribute("key"));
+    id = std::stoi(root.attribute("key"));
     EDomElement xmlPos = root.elementByTagName("gml:pos");
 
     if (xmlPos.isAvailable()) {

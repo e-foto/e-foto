@@ -156,10 +156,10 @@ Dms* Dms::stringToDms(std::string dms)
 {
     std::string aux = dms;
     int pos = aux.find_first_of(" ");
-    int degree = Conversion::stringToInt(aux.substr(0, pos));
+    int degree = std::stoi(aux.substr(0, pos));
     aux = aux.substr(pos + 1); // dms without Degrees
     pos = aux.find_first_of(" ");
-    int minute = Conversion::stringToInt(aux.substr(0, pos));
+    int minute = std::stoi(aux.substr(0, pos));
     aux = aux.substr(pos + 1); // dms without Degrees and Minutes
     pos = aux.find_first_of(" ");
     double second = Conversion::stringToDouble(aux.substr(0, pos));

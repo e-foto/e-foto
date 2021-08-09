@@ -75,13 +75,13 @@ int XmlUpdater::compareBuilds(std::string buildOne, std::string buildTwo)
     {
         return -3; //buildTwo (thisXmlBuild) is invalid
     }
-    int iniOne=Conversion::stringToInt(buildOne.substr(0,buildOne.find_first_of('.')).c_str());
-    int meioOne=Conversion::stringToInt(buildOne.substr(buildOne.find_first_of('.')+1,(buildOne.find_last_of('.')-buildOne.find_first_of('.')-1)).c_str());
-    int ultOne=Conversion::stringToInt(buildOne.substr(buildOne.find_last_of('.')).c_str()+1);
+    int iniOne=std::stoi(buildOne.substr(0,buildOne.find_first_of('.')).c_str());
+    int meioOne=std::stoi(buildOne.substr(buildOne.find_first_of('.')+1,(buildOne.find_last_of('.')-buildOne.find_first_of('.')-1)).c_str());
+    int ultOne=std::stoi(buildOne.substr(buildOne.find_last_of('.')).c_str()+1);
 
-    int iniTwo=Conversion::stringToInt(buildTwo.substr(0,buildTwo.find_first_of('.')).c_str());
-    int meioTwo=Conversion::stringToInt(buildTwo.substr(buildTwo.find_first_of('.')+1,buildTwo.find_last_of('.')-2).c_str());
-    int ultTwo=Conversion::stringToInt(buildTwo.substr(buildTwo.find_last_of('.')).c_str()+1);
+    int iniTwo=std::stoi(buildTwo.substr(0,buildTwo.find_first_of('.')).c_str());
+    int meioTwo=std::stoi(buildTwo.substr(buildTwo.find_first_of('.')+1,buildTwo.find_last_of('.')-2).c_str());
+    int ultTwo=std::stoi(buildTwo.substr(buildTwo.find_last_of('.')).c_str()+1);
 
     if(iniOne>iniTwo)
     {

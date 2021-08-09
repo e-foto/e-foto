@@ -100,8 +100,7 @@ void SPManager::setListPoint()
     std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
     for (size_t i = 0; i < allPoints.size(); i++) {
-        Point* point = manager->instancePoint(Conversion::stringToInt(allPoints.at(
-                i).attribute("key")));
+        Point* point = manager->instancePoint(std::stoi(allPoints.at(i).attribute("key")));
 
         if (point != NULL) {
             listAllPoints.push_back(point);

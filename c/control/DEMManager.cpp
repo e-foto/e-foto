@@ -103,8 +103,8 @@ void DEMManager::setListPoint()
     std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
     for (unsigned i = 0; i < allPoints.size(); i++) {
-        Point* point = manager->instancePoint(Conversion::stringToInt(allPoints.at(
-                i).attribute("key")));
+        Point* point = manager->instancePoint(
+              std::stoi(allPoints.at(i).attribute("key")));
 
         if (point != nullptr) {
             listAllPoints.push_back(point);
@@ -126,8 +126,8 @@ bool DEMManager::connectImagePoints()
                                                j)->getId())).getContent();
 
                 if (data != "") {
-                    Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(
-                                               allPoints.at(i).attribute("key")));
+                    Point* pointToInsert = manager->instancePoint(
+                          std::stoi(allPoints.at(i).attribute("key")));
 
                     if (pointToInsert != nullptr) {
                         listAllImages.at(j)->putPoint(pointToInsert);

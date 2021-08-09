@@ -344,8 +344,8 @@ bool Flight::is(std::string s)
 void Flight::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	id = Conversion::stringToInt(root.attribute("key"));
-	sensorId = Conversion::stringToInt(root.attribute("sensor_key"));
+	id = std::stoi(root.attribute("key"));
+	sensorId = std::stoi(root.attribute("sensor_key"));
 	flightId = root.elementByTagName("flightId").toString();
 	description = root.elementByTagName("description").toString();
 	execution = root.elementByTagName("execution").toString();

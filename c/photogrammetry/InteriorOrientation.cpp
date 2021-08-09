@@ -177,7 +177,7 @@ bool InteriorOrientation::is(std::string s)
 void InteriorOrientation::xmlSetData(std::string xml)
 {
 		EDomElement root(xml);
-		imageId = Conversion::stringToInt(root.attribute("image_key"));
+		imageId = std::stoi(root.attribute("image_key"));
 		Xa.resize(6,1);
 		EDomElement xmlXa = root.elementByTagName("Xa");
 		Xa.set(1,1, xmlXa.elementByTagName("a0").toDouble());

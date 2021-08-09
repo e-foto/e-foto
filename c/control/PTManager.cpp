@@ -281,7 +281,7 @@ bool PTManager::connectImagePoints()
                                                j)->getId())).getContent();
 
                 if (data != "") {
-                    Point* pointToInsert = efotoManager->instancePoint(Conversion::stringToInt(
+                    Point* pointToInsert = efotoManager->instancePoint(std::stoi(
                                                allPoints.at(i).attribute("key")));
 
                     if (pointToInsert != NULL) {
@@ -306,8 +306,7 @@ void PTManager::setListPoint()
     std::deque<EDomElement> allPoints = xmlPoints.elementsByTagName("point");
 
     for (size_t i = 0; i < allPoints.size(); i++) {
-        Point* point = efotoManager->instancePoint(Conversion::stringToInt(allPoints.at(
-                           i).attribute("key")));
+        Point* point = efotoManager->instancePoint(std::stoi(allPoints.at(i).attribute("key")));
 
         if (point != NULL) {
             listAllPoints.push_back(point);
@@ -1535,7 +1534,7 @@ Matrix PTManager::eoParametersFromXml(bool withIds)
     Matrix oesMatrix(numEO, (withIds)? 7: 6);
 
         for (int i = 0; i < numEO; i++) {
-        int imagekey = Conversion::stringToInt(oesXml.at(i).attribute("image_key"));
+        int imagekey = std::stoi(oesXml.at(i).attribute("image_key"));
         tempXa.setContent(oesXml.at(i).elementByTagName("Xa").getContent());
         int x0 = Conversion::stringToDouble(tempXa.elementByTagName("X0").toString());
         int y0 = Conversion::stringToDouble(tempXa.elementByTagName("Y0").toString());
@@ -1577,8 +1576,7 @@ double PTManager::getRMSE()
 int PTManager::getPreviousTotalIterationsXml()
 {
     EDomElement exteriorXml(efotoManager->getXml("phototriangulation"));
-    return Conversion::stringToInt(
-               exteriorXml.elementByTagName("iterations").toString());
+    return std::stoi(exteriorXml.elementByTagName("iterations").toString());
 }
 
 bool PTManager::getPreviousConvergedXML()

@@ -223,14 +223,14 @@ private:
     * \param    l    : Matriz diferenÃ§a entre Lb e L0
     * \return Matrix : Matriz n1
     */
-    Matrix getn1(Matrix l);
+    Matrix getn1(const Matrix &l);
 
     /**
     * \brief Calcula a matriz n2, necessaria para o calculo do ajustamento dos parametros da orientaÃ§ao exterior
     * \param    l    : Matriz diferenÃ§a entre Lb e L0
     * \return Matrix : Matriz n2
     */
-    Matrix getn2(Matrix l);
+    Matrix getn2(const Matrix &l);
 
     /**
     * \brief Calcula e altera a matrix x1 a qual e a matriz que contem os "deltas" a serem somados nos parametros da orientaçao exterior

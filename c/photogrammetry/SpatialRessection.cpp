@@ -202,7 +202,7 @@ bool SpatialRessection::is(const std::string& s) const
 void SpatialRessection::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
-    imageId = Conversion::stringToInt(root.attribute("image_key"));
+    imageId = std::stoi(root.attribute("image_key"));
     totalIterations = root.elementByTagName("iterations").toInt();
 
     if (root.elementByTagName("converged").toString() == "true") {

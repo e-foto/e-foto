@@ -180,7 +180,7 @@ void Project::instanceAllImages()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < images.size() && notAvailable; j++)
-            if (images.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(i).attribute("key"))) {
+            if (images.at(j)->getId() == std::stoi(xmlAllImages.at(i).attribute("key"))) {
                 notAvailable = false;
             }
 
@@ -208,7 +208,7 @@ void Project::instanceAllPoints()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < points.size() && notAvailable; j++)
-            if (points.at(j)->getId() == Conversion::stringToInt(xmlAllPoint.at(i).attribute("key"))) {
+            if (points.at(j)->getId() == std::stoi(xmlAllPoint.at(i).attribute("key"))) {
                 notAvailable = false;
             }
 
@@ -278,13 +278,13 @@ void Project::instanceAllIOs()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
-            if (IOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key"))) {
+            if (IOs.at(j)->getImageId() == std::stoi(xmlAllIOs.at(i).attribute("image_key"))) {
                 notAvailable = false;
             }
 
         if (notAvailable) {
             InteriorOrientation* newIO = new InteriorOrientation();
-            newIO->setImage(image(Conversion::stringToInt(xmlAllIOs.at(i).attribute("image_key"))));
+            newIO->setImage(image(std::stoi(xmlAllIOs.at(i).attribute("image_key"))));
             newIO->xmlSetData(xmlAllIOs.at(i).getContent());
             newIO->setImage(NULL);
             IOs.push_back(newIO);
@@ -333,13 +333,13 @@ void Project::instanceAllEOs()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < EOs.size() && notAvailable; j++)
-            if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key"))) {
+            if (EOs.at(j)->getImageId() == std::stoi(xmlAllEOs.at(i).attribute("image_key"))) {
                 notAvailable = false;
             }
 
         if (notAvailable) {
             SpatialRessection* newEO = new SpatialRessection();
-            newEO->setImage(image(Conversion::stringToInt(xmlAllEOs.at(i).attribute("image_key"))));
+            newEO->setImage(image(std::stoi(xmlAllEOs.at(i).attribute("image_key"))));
             bool hasSR = false;
 
             for (unsigned int k = 0; k < xmlAllSRs.size() && !hasSR; k++)
@@ -393,7 +393,7 @@ void Project::addSensor(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlSensor(data);
-        int id = Conversion::stringToInt(xmlSensor.elementByTagName("sensor").attribute("key"));
+        int id = std::stoi(xmlSensor.elementByTagName("sensor").attribute("key"));
 
         for (int i = sensors.size() - 1; i >= 0; i--)
             if (sensors.at(i)->getId() == id) {
@@ -433,7 +433,7 @@ void Project::addFlight(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlFlight(data);
-        int id = Conversion::stringToInt(xmlFlight.elementByTagName("flight").attribute("key"));
+        int id = std::stoi(xmlFlight.elementByTagName("flight").attribute("key"));
 
         for (int i = flights.size() - 1; i >= 0; i--)
             if (flights.at(i)->getId() == id) {
@@ -458,7 +458,7 @@ void Project::addImage(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlImage(data);
-        int id = Conversion::stringToInt(xmlImage.elementByTagName("image").attribute("key"));
+        int id = std::stoi(xmlImage.elementByTagName("image").attribute("key"));
 
         for (int i = images.size() - 1; i >= 0; i--)
             if (images.at(i)->getId() == id) {
@@ -483,7 +483,7 @@ void Project::addPoint(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlPoint(data);
-        int id = Conversion::stringToInt(xmlPoint.elementByTagName("point").attribute("key"));
+        int id = std::stoi(xmlPoint.elementByTagName("point").attribute("key"));
 
         for (int i = points.size() - 1; i >= 0; i--)
             if (points.at(i)->getId() == id) {
@@ -508,7 +508,7 @@ void Project::addIO(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlIO(data);
-        int id = Conversion::stringToInt(xmlIO.elementByTagName("imageIO").attribute("key"));
+        int id = std::stoi(xmlIO.elementByTagName("imageIO").attribute("key"));
 
         for (int i = IOs.size() - 1; i >= 0; i--)
             if (IOs.at(i)->getImageId() == id) {
@@ -530,7 +530,7 @@ void Project::addEO(std::string data, bool makeReconnections)
 {
     if (data != "") {
         EDomElement xmlEO(data);
-        int id = Conversion::stringToInt(xmlEO.elementByTagName("imageEO").attribute("key"));
+        int id = std::stoi(xmlEO.elementByTagName("imageEO").attribute("key"));
 
         for (int i = EOs.size() - 1; i >= 0; i--)
             if (EOs.at(i)->getImageId() == id) {

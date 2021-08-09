@@ -401,9 +401,9 @@ bool Image::is(std::string s)
 void Image::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
-    id = Conversion::stringToInt(root.attribute("key"));
-    sensorId = Conversion::stringToInt(root.attribute("sensor_key"));
-    flightId = Conversion::stringToInt(root.attribute("flight_key"));
+    id = std::stoi(root.attribute("key"));
+    sensorId = std::stoi(root.attribute("sensor_key"));
+    flightId = std::stoi(root.attribute("flight_key"));
     imageId = root.elementByTagName("imageId").toString();
     width = root.elementByTagName("width").toInt();
     height = root.elementByTagName("height").toInt();

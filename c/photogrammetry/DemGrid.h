@@ -22,10 +22,6 @@
 
 /**
 * class DemGrid
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
 */
 
 #include <string>
@@ -39,6 +35,7 @@ namespace efoto {
 
 class DEMManager;
 class MatchingPointsGrid;
+enum class InterpolationMethod { NORMAL, FAST};
 
 class DemGrid {
 
@@ -57,29 +54,34 @@ public:
     void interpolateMovingAverage(double, double, int);
     void interpolateTrendSurface(int);
     void interpolateMovingSurface(double, double, int, int);
-    double getElapsedTime()
+    double getElapsedTime() const
     {
         return elap_time;
     };
 
 
-    void getMinMax(double&, double&);   // Return Min Z and Max Z
-    double getMeanZ();
+    void getMinMax(double&, double&) const;   // Return Min Z and Max Z
+    double getMeanZ() const;
 
     double getHeightXY(double X, double Y);
-    double getHeight(double row, double col);
+    double getHeight(double row, double col) const;
     Matrix* getDemImage(double min = 0.0, double max = 0.0);
 
-    int getWidth()
+    int getWidth() const
     {
         return dem_width;
     };
-    int getHeight()
+    int getHeight() const
     {
         return dem_height;
     };
 
-    void getDemParameters(double& _Xi, double& _Yi, double& _Xf, double& _Yf, double& _res_x, double& _res_y)
+    void getDemParameters(double& _Xi,
+                          double& _Yi,
+                          double& _Xf,
+                          double& _Yf,
+                          double& _res_x,
+                          double& _res_y) const
     {
         _Xi = Xi;
         _Yi = Yi;
@@ -89,7 +91,7 @@ public:
         _res_y = res_y;
     };
     std::string calculateDemQuality(MatchingPointsList mpl);
-    void overlayMap(Matrix* map);
+    void overlayMap(Matrix* map) const;
     void setCancel()
     {
         cancel_flag = true;
@@ -97,15 +99,15 @@ public:
 
 private:
     Matrix DEM;
-    bool cancel_flag;
+    bool cancel_flag{false};
     double Xi, Yi, Xf, Yf, res_x, res_y;
-    double elap_time;
+    double elap_time{0.0};
     unsigned int dem_width, dem_height;
     MatchingPointsList* point_list;
     MatchingPointsGrid* mpg;
-    void saveDemEfoto(char*);
+    void saveDemEfoto(char*) const;
     void loadDemEfoto(char*);
-    void saveDemAscii(char*);
+    void saveDemAscii(char*) const;
     double getAsciiParameter(std::ifstream*, std::string);
     void loadDemAscii(char*);
     DEMManager* manager;
@@ -121,7 +123,7 @@ private:
     void interpolateMovingAverageNormal(double, double, int);
     void interpolateMovingSurfaceNormal(double, double, int, int);
 
-    int chooseBestInterpolationMethod(double nf);
+    InterpolationMethod chooseBestInterpolationMethod(double nf);
 
     void createNewGrid(double, double, double, double, double, double);
     void cutGrid(double min, double max, bool fromList);

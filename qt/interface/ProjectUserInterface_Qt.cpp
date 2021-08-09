@@ -2502,7 +2502,7 @@ bool ProjectUserInterface_Qt::insertDigitalCoordinates(QString coordinates)
         aux << "<gml:pos>" << colValue << " " << linValue << "</gml:pos>";
         aux << "</imageCoordinates>\n";
         point.addChildAtTagName("imagesMeasurements",aux.str());
-        manager->editComponent("Point",Conversion::stringToInt(pointkey),point.getContent());
+        manager->editComponent("Point",std::stoi(pointkey),point.getContent());
         return true;
     }
 }
@@ -2544,7 +2544,7 @@ bool ProjectUserInterface_Qt::availableStereoPlotter()
     for (unsigned int i = 0;i < images.size(); i++)
     {
         EDomElement img(images.at(i));
-        int key = Conversion::stringToInt(img.attribute("key"));
+        int key = std::stoi(img.attribute("key"));
         EDomElement EOXml = oes.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
 
         std::string type = EOXml.attribute("type");
@@ -2814,7 +2814,7 @@ void ProjectUserInterface_Qt::deleteEmptyPoints()
             //	allPoints << pnts.at(i).getContent();
             //qDebug("%s",pnts.at(i).getContent().c_str()) ;
             //	cont++;
-            manager->editComponent("point",Conversion::stringToInt(pnts.at(i).attribute("key")),"");
+            manager->editComponent("point",std::stoi(pnts.at(i).attribute("key")),"");
         }
     }
     //qDebug("%d",cont);

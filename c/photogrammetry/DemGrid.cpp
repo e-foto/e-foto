@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2021 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -26,9 +26,6 @@
 
 /**
 * class DemGrid
-*
-* @author E-Foto group
-*
 */
 
 namespace br {
@@ -37,9 +34,9 @@ namespace eng {
 namespace efoto {
 
 DemGrid::DemGrid(double _Xi, double _Yi, double _Xf, double _Yf, double _res_x, double _res_y):
-    point_list(NULL),
-    mpg(NULL),
-    manager(NULL)
+  point_list{NULL},
+    mpg{NULL},
+    manager{NULL}
 {
     createNewGrid(_Xi, _Yi, _Xf, _Yf, _res_x, _res_y);
 }
@@ -62,7 +59,7 @@ void DemGrid::setPointList(MatchingPointsList* mpl)
     point_list = mpl;
 }
 
-void DemGrid::getMinMax(double& min, double& max)
+void DemGrid::getMinMax(double& min, double& max) const
 {
     min = 1e100;
     max = -1e100;
@@ -87,7 +84,7 @@ void DemGrid::getMinMax(double& min, double& max)
     }
 }
 
-double DemGrid::getMeanZ()
+double DemGrid::getMeanZ() const
 {
     double meanZ = 0.0, Z;
     unsigned int count = 0;
@@ -140,7 +137,7 @@ double DemGrid::getHeightXY(double X, double Y)
     return getHeight(row, col);
 }
 
-double DemGrid::getHeight(double row, double col)
+double DemGrid::getHeight(double row, double col) const
 {
     // Check limits
     if (col < 1.0) {
@@ -219,7 +216,14 @@ Matrix* DemGrid::getDemImage(double min, double max)
 void DemGrid::interpolateNearestPoint()
 {
     // nf set to 1.0 is the size of the matrix grid cell (not terrain)
-    (chooseBestInterpolationMethod(1.0) == 0) ? interpolateNearestPointNormal() : interpolateNearestPointFast();
+  switch (chooseBestInterpolationMethod(1.0)) {
+    case InterpolationMethod::NORMAL:
+      interpolateNearestPointNormal();
+      break;
+    case InterpolationMethod::FAST:
+      interpolateNearestPointFast();
+      break;
+    }
 }
 
 void DemGrid::interpolateTrendSurface(int mode)
@@ -231,29 +235,39 @@ void DemGrid::interpolateTrendSurface(int mode)
 void DemGrid::interpolateMovingAverage(double n, double D0, int mode)
 {
     double nf = (n / res_x) * (n / res_y);
-    (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingAverageNormal(n, D0, mode) : interpolateMovingAverageFast(n, D0, mode);
+    switch (chooseBestInterpolationMethod(nf)) {
+      case InterpolationMethod::NORMAL:
+        interpolateMovingAverageNormal(n, D0, mode);
+        break;
+      case InterpolationMethod::FAST:
+        interpolateMovingAverageFast(n, D0, mode);
+        break;
+      }
 }
 
 void DemGrid::interpolateMovingSurface(double n, double D0, int mode, int mode2)
 {
     double nf = (n / res_x) * (n / res_y);
-    (chooseBestInterpolationMethod(nf) == 0) ? interpolateMovingSurfaceNormal(n, D0, mode, mode2) : interpolateMovingSurfaceFast(n, D0, mode, mode2);
+    switch (chooseBestInterpolationMethod(nf)) {
+      case InterpolationMethod::NORMAL:
+        interpolateMovingSurfaceNormal(n, D0, mode, mode2);
+        break;
+      case InterpolationMethod::FAST:
+        interpolateMovingSurfaceFast(n, D0, mode, mode2);
+        break;
+      }
 }
 
 /*
  * Input:
  * nf- Structure matrix area in cells (new subdivision of the grid)
- *
- * Output:
- * 0- Use normal interpolation
- * 1- Use fast interpolation
  */
-int DemGrid::chooseBestInterpolationMethod(double nf)
+InterpolationMethod DemGrid::chooseBestInterpolationMethod(double nf)
 {
     int no_points = point_list->size();
 
     if (no_points < 1000) {
-        return 0;
+        return InterpolationMethod::NORMAL;
     }
 
     // May have very large numbers - double prefered !!
@@ -269,7 +283,7 @@ int DemGrid::chooseBestInterpolationMethod(double nf)
     // For not overfloating values, we consider the sqtr for both equations
     double no_its_normal = no_points;           // no_points^2
     double no_its_fast = sqrt(area * grid_density * nf); // area*density*nf
-    return (no_its_normal > no_its_fast);
+    return (no_its_normal > no_its_fast)?InterpolationMethod::FAST: InterpolationMethod::NORMAL;
 }
 
 
@@ -808,7 +822,7 @@ void DemGrid::loadDem(char* filename, int mode)
     }
 }
 
-void DemGrid::saveDemEfoto(char* filename)
+void DemGrid::saveDemEfoto(char* filename) const
 {
     FILE* fp;
     fp = fopen(filename, "wb");
@@ -878,7 +892,7 @@ void DemGrid::loadDemEfoto(char* filename)
     delete []data;
 }
 
-void DemGrid::saveDemAscii(char* filename)
+void DemGrid::saveDemAscii(char* filename) const
 {
     std::ofstream outfile(filename);
     // Write header
@@ -1384,7 +1398,7 @@ std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
     return txt.str();
 }
 
-void DemGrid::overlayMap(Matrix* map)
+void DemGrid::overlayMap(Matrix* map) const
 {
     if (map->getCols() != DEM.getCols() || map->getRows() != DEM.getRows()) {
         return;

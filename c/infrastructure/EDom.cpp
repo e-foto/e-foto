@@ -72,15 +72,6 @@ bool Conversion::stringToBool(const std::string& value)
     return result;
 }
 
-int Conversion::stringToInt(const std::string& value)
-{
-    int result;
-    std::stringstream converter;
-    converter << value;
-    converter >> result;
-    return result;
-}
-
 int EDomElement::tagType(const std::string& tag)
 {
     if (!tag.starts_with("<")) {
@@ -704,7 +695,7 @@ int EDomElement::toInt()
         if (content.find("/") != (content.find(">") - 1)) { //Melhorar isso.
             std::string value = content.substr(content.find(">") + 1, content.find("<",
                                                1) - content.find(">") - 1);
-            result = Conversion::stringToInt(value);
+            result = std::stoi(value);
         }
 
         return result;

@@ -173,8 +173,8 @@ void EFotoManager::instanceAllImages()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < images.size() && notAvailable; j++)
-            if (images.at(j)->getId() == Conversion::stringToInt(xmlAllImages.at(
-                        i).attribute("key"))) {
+            if (images.at(j)->getId() == std::stoi(xmlAllImages.at(
+                    i).attribute("key"))) {
                 notAvailable = false;
             }
 
@@ -202,8 +202,7 @@ void EFotoManager::instanceAllPoints()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < points.size() && notAvailable; j++)
-            if (points.at(j)->getId() == Conversion::stringToInt(xmlAllPoint.at(
-                        i).attribute("key"))) {
+            if (points.at(j)->getId() == std::stoi(xmlAllPoint.at(i).attribute("key"))) {
                 notAvailable = false;
             }
 
@@ -275,15 +274,13 @@ void EFotoManager::instanceAllIOs()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < IOs.size() && notAvailable; j++)
-            if (IOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllIOs.at(
-                        i).attribute("image_key"))) {
+            if (IOs.at(j)->getImageId() == std::stoi(xmlAllIOs.at(i).attribute("image_key"))) {
                 notAvailable = false;
             }
 
         if (notAvailable) {
             InteriorOrientation* newIO = new InteriorOrientation();
-            newIO->setImage(image(Conversion::stringToInt(xmlAllIOs.at(
-                                      i).attribute("image_key"))));
+            newIO->setImage(image(std::stoi(xmlAllIOs.at(i).attribute("image_key"))));
             newIO->xmlSetData(xmlAllIOs.at(i).getContent());
             newIO->setImage(NULL);
             IOs.push_back(newIO);
@@ -330,7 +327,7 @@ void EFotoManager::instanceAllEOs()
         bool notAvailable = true;
 
         for (unsigned int j = 0; j < EOs.size() && notAvailable; j++)
-            if (EOs.at(j)->getImageId() == Conversion::stringToInt(xmlAllEOs.at(
+            if (EOs.at(j)->getImageId() == std::stoi(xmlAllEOs.at(
                         i).attribute("image_key"))) {
                 notAvailable = false;
             }
@@ -338,8 +335,7 @@ void EFotoManager::instanceAllEOs()
         if (notAvailable) {
             SpatialRessection* newEO = new
             SpatialRessection(); // SpatialRessection vai virar ExteriorOrientation em breve.
-            newEO->setImage(image(Conversion::stringToInt(xmlAllEOs.at(
-                                      i).attribute("image_key"))));
+            newEO->setImage(image(std::stoi(xmlAllEOs.at(i).attribute("image_key"))));
             newEO->xmlSetData(xmlAllEOs.at(i).getContent());
             newEO->setImage(NULL);
             EOs.push_back(newEO);
@@ -491,7 +487,7 @@ Point* EFotoManager::point(int id)
     return NULL;
 }
 
-std::string EFotoManager::getXml(const std::string &tagname)
+std::string EFotoManager::getXml(const std::string& tagname)
 {
     EDomElement root(xmlData);
     return root.elementByTagName(tagname).getContent();
@@ -727,8 +723,7 @@ bool EFotoManager::execPT()
     instanceAllPoints();
     instanceAllIOs();
     EDomElement sensor(getXml("sensor"));
-    Sensor* ptSensor = instanceSensor(Conversion::stringToInt(
-                                          sensor.attribute("key")));
+    Sensor* ptSensor = instanceSensor(std::stoi(sensor.attribute("key")));
     Flight* ptFlight = instanceFlight(1);
     Terrain* ptTerrain = instanceTerrain();
     fotoTri = new PTManager(this, images, IOs, ptSensor, ptFlight, ptTerrain);
@@ -924,8 +919,8 @@ int EFotoManager::getFreeImageId()
     result = 1;
 
     for (int i = images.size() - 1; i >= 0; i--) {
-        if (Conversion::stringToInt(images.at(i).attribute("key")) >= result) {
-            result = Conversion::stringToInt(images.at(i).attribute("key")) + 1;
+        if (std::stoi(images.at(i).attribute("key")) >= result) {
+            result = std::stoi(images.at(i).attribute("key")) + 1;
         }
     }
 
@@ -939,8 +934,8 @@ int EFotoManager::getFreePointId()
     result = 1;
 
     for (int i = points.size() - 1; i >= 0; i--) {
-        if (Conversion::stringToInt(points.at(i).attribute("key")) >= result) {
-            result = Conversion::stringToInt(points.at(i).attribute("key")) + 1;
+        if (std::stoi(points.at(i).attribute("key")) >= result) {
+            result = std::stoi(points.at(i).attribute("key")) + 1;
         }
     }
 

@@ -75,13 +75,6 @@ public:
     */
     static bool stringToBool(const std::string& value);
 
-    /**
-    * \brief Método para conversão de string para inteiro.
-    * \param value	Valor descrito em texto.
-    * \return int	Valor convertido.
-    */
-    static int stringToInt(const std::string& value);
-
 };
 
 /**

@@ -33,8 +33,8 @@ void XMLFlight::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
 
-	setId(Conversion::stringToInt(root.attribute("key")));
-	setSensorId(Conversion::stringToInt(root.attribute("sensor_key")));
+	setId(std::stoi(root.attribute("key")));
+	setSensorId(std::stoi(root.attribute("sensor_key")));
 
 	//questionar sobre esse metodo
 	//flightId = root.elementByTagName("flightId").toString();

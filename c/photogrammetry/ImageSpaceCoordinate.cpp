@@ -96,7 +96,7 @@ bool ImageSpaceCoordinate::is(std::string s)
 void ImageSpaceCoordinate::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	imageId = Conversion::stringToInt(root.attribute("image_key"));
+	imageId = std::stoi(root.attribute("image_key"));
 	unit = root.attribute("uom");
 	EDomElement xmlPos = root.elementByTagName("gml:pos");
 	if (xmlPos.isAvailable())

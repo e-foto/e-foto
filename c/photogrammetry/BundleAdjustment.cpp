@@ -379,7 +379,7 @@ Matrix BundleAdjustment::getN22()
 #endif
 }
 
-Matrix BundleAdjustment::getn1(Matrix l)
+Matrix BundleAdjustment::getn1(const Matrix& l)
 {
 #ifdef ESPARSA
     return Matrix(Matrix(A1.transpose()) * P) * l;
@@ -388,7 +388,7 @@ Matrix BundleAdjustment::getn1(Matrix l)
 #endif
 }
 
-Matrix BundleAdjustment::getn2(Matrix l)
+Matrix BundleAdjustment::getn2(const Matrix& l)
 {
 #ifdef ESPARSA
     return Matrix(A2.transpose()) * l;

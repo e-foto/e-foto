@@ -310,7 +310,7 @@ bool Point::is(std::string s)
 void Point::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
-    id = Conversion::stringToInt(root.attribute("key"));
+    id = std::stoi(root.attribute("key"));
     type = readPointType(root.attribute("type"));
     pointId = root.elementByTagName("pointId").toString();
     description = root.elementByTagName("description").toString();

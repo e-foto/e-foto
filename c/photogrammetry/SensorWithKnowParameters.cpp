@@ -132,7 +132,7 @@ bool SensorWithKnowParameters::is(std::string s)
 void SensorWithKnowParameters::xmlSetData(std::string xml)
 {
 	EDomElement root(xml);
-	id = Conversion::stringToInt(root.attribute("key"));
+	id = std::stoi(root.attribute("key"));
 	sensorId = root.elementByTagName("sensorId").toString();
 	geometry = root.elementByTagName("geometry").toString();
 	detector = root.elementByTagName("detector").toString();
@@ -145,7 +145,7 @@ void SensorWithKnowParameters::xmlSetData(std::string xml)
 	for (unsigned int i = 0; i < xmlSpectralRanges.size(); i++)
 	{
 		SpectralRange* spec = new SpectralRange;
-		spec->band = Conversion::stringToInt(xmlSpectralRanges.at(i).attribute("band"));
+		spec->band = std::stoi(xmlSpectralRanges.at(i).attribute("band"));
 		spec->inferiorLimit = xmlSpectralRanges.at(i).elementByTagName("inferiorLimit").toDouble();
 		spec->superiorLimit = xmlSpectralRanges.at(i).elementByTagName("superiorLimit").toDouble();
 		spectralRanges.push_back(*spec);

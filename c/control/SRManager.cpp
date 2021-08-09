@@ -215,7 +215,7 @@ bool SRManager::connectImagePoints()
                                "image_key", Conversion::intToString(myImage->getId())).getContent();
 
             if (data != "") {
-                Point* pointToInsert = manager->instancePoint(Conversion::stringToInt(
+                Point* pointToInsert = manager->instancePoint(std::stoi(
                                            allPoints.at(i).attribute("key")));
 
                 if (pointToInsert != NULL) {
