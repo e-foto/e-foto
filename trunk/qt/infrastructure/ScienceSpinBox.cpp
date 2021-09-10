@@ -19,7 +19,7 @@ ScienceSpinBox::ScienceSpinBox(QWidget * parent): QDoubleSpinBox(parent)
 	setFullRange();
 	v = new QDoubleValidator(this);
 	v->setDecimals(1000);
-	v->setNotation(QDoubleValidator::ScientificNotation);
+    //v->setNotation(QDoubleValidator::ScientificNotation); Excluído em Setembro de 2021
 	lineEdit()->setValidator(v);
 	lineEdit()->installEventFilter(this);
 	installEventFilter(this);

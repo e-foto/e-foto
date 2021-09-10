@@ -87,7 +87,7 @@ public:
     int save(char *, int);
     int load(char *, int, bool append=false, int left_id=-1, int right_id=-1);
     unsigned int size() { return list.size(); }
-    unsigned int getNumBadPoints() { return bad_points; }
+    //unsigned int getNumBadPoints() { return bad_points; } Excluído o código em Setembro de 2021
     void sortList(sortCriteria criteria);
     void leftImageBoundingBox(int &, int &, int &, int &);
     void rightImageBoundingBox(int &, int &, int &, int &);
