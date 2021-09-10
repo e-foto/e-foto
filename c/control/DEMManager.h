@@ -239,7 +239,7 @@ public:
     /**
     * \brief Método que define a eliminação de pontos ruins.
     */
-    void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; };
+    //void setEliminateBadPoints(bool _el) { elim_bad_pts = _el; }; Excluído o código em Setembro de 2021
     /**
     * \brief Método que verifica se alguma operação foi cancelada.
     */

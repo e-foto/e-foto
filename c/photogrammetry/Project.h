@@ -355,9 +355,9 @@ public:
 
     void addEO(std::string data, bool makeReconnections = true);
 
-    std::string getProcessStates() {return processStates;}
+    //std::string getProcessStates() {return processStates;} Excluído o código em Setembro de 2021
 
-    void setProcessStates(std::string state) {processStates = state;}
+    //void setProcessStates(std::string state) {processStates = state;} Excluído o código em Setembro de 2021
 
     void closeProject();
 

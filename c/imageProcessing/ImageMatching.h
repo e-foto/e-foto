@@ -82,17 +82,17 @@ public:
 	void setPerformRadiometric(bool _pr) { perform_readiometric = _pr; };
 	void setMatchingMethod(int _mode) { matching_method = _mode % 2; };
 	void setRadiometricMode(int _mode) { radiometric_mode = _mode % 2; };
-	void setImageDepth(int _depth) { image_depth = _depth; };
+    //void setImageDepth(int _depth) { image_depth = _depth; }; Excluído o código em Setembro de 2021
 	void performImageMatching(Matrix *, Matrix *, MatchingPointsList *, MatchingPointsList *);
 	void setMatchingLimits(int, int, int, int);
 	void setImagesIds(int _lid, int _rid) { left_image_id = _lid; right_image_id = _rid; };
 	void setStep(int, int);
 	void setCorrelationThreshold(double _th) { corr_th = _th; };
-	double getCoverage() { return 100.0*coverage; };
+    //double getCoverage() { return 100.0*coverage; }; Excluído o código em Setembro de 2021
 	void setMinStd(double);
 	void setElimanteBadPoints(bool _el) { elim_bad_pts = _el; };
 	void setCancel() { cancel_flag = true; };
-	Matrix & getMap() { return map; };
+    //Matrix & getMap() { return map; }; Excluído o código em Setembro de 2021
         double getElapsedTime() { return elap_time; };
         void setPerformRegionGrowing(bool _p_rg) { perform_RG = _p_rg; };
 
