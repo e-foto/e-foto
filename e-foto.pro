@@ -341,7 +341,8 @@ win32{
     system("FOR /F \"tokens=1,2,3,4,5* delims= \" %a IN (\'subwcrev .\') DO @echo %e > qt/resource/%d")
 
     # config&release mode off
-    CONFIG-=debug_and_release
+    # CONFIG-=debug_and_release
+    system("qt/resource/version")
     CONFIG-=debug_and_release_target
 
     # Common parammeters for windows
