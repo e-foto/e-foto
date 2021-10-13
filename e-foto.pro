@@ -332,7 +332,7 @@ unix {
     RCC_DIR = build/temp/rcc
     QMAKE_CXXFLAGS += -std=c++17 -Wall
 }
-
+#
 # System Windows Configuration
 win32{
     # update version and revision files
