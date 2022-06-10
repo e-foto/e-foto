@@ -332,9 +332,8 @@ unix {
     RCC_DIR = build/temp/rcc
     QMAKE_CXXFLAGS += -std=c++17 -Wall
 }
-#
 # System Windows Configuration
-win32{
+win32-msvc*{
     # update version and revision files
     # todo Review this windows command to improve it
     system("FOR /F \"usebackq tokens=1,2,3,4* delims=/\" %a IN (\'%date%\') DO echo %c.%b > qt/resource/version")
@@ -349,7 +348,59 @@ win32{
     QMAKE_CXXFLAGS += -std=c++11 -Wall
 
     # Windows 64 bits version only
-    win32-g++:contains(QT_ARCH, x86_64):{
+    #win32-g++:contains(QT_ARCH, x86_64):{
+
+    # Set gdal from msys64 default path
+    INCLUDEPATH += "C:/gdal/release_gdal/include"
+    DEPENDPATH += "C:/gdal/release_gdal/include"
+    LIBS += -L"C:/gdal/release_gdal/lib" -lgdal_i
+
+    #Debug settings
+    #!build_pass:CONFIG(debug, debug|release) {
+     #   !build_pass:message($$find(CONFIG, "debug"))
+      #  !build_pass:message("Windows de 64 bits")
+        #Build Debug
+        debug: DESTDIR = build_debug_64bits/bin
+        debug: OBJECTS_DIR = build_debug_64bits/temp/obj
+        debug: MOC_DIR = build_debug_64bits/temp/moc
+        debug: UI_DIR = build_debug_64bits/temp/ui
+        debug: RCC_DIR = build_debug_64bits/temp/rcc
+    #}
+
+    #Release settings
+    #!build_pass:CONFIG(release, debug|release) {
+     #   !build_pass:message($$find(CONFIG, "release"))
+      #  !build_pass:message("Windows de 64 bits")
+        #Release settings
+        release: DESTDIR = build_release_64bits/bin
+        release: OBJECTS_DIR = build_release_64bits/temp/obj
+        release: MOC_DIR = build_release_64bits/temp/moc
+        release: UI_DIR = build_release_64bits/temp/ui
+        release: RCC_DIR = build_release_64bits/temp/rcc
+    #}
+
+    # Grant deployment of Qt libraries
+    QMAKE_POST_LINK = $$[QT_HOST_BINS]/windeployqt $${DESTDIR}/e-foto.exe
+    #}
+}
+#
+# System Windows Configuration
+win32-g++{
+    # update version and revision files
+    # todo Review this windows command to improve it
+    system("FOR /F \"usebackq tokens=1,2,3,4* delims=/\" %a IN (\'%date%\') DO echo %c.%b > qt/resource/version")
+    system("FOR /F \"tokens=1,2,3,4,5* delims= \" %a IN (\'subwcrev .\') DO @echo %e > qt/resource/%d")
+
+    # config&release mode off
+    # CONFIG-=debug_and_release
+    system("qt/resource/version")
+    CONFIG-=debug_and_release_target
+
+    # Common parammeters for windows
+    QMAKE_CXXFLAGS += -std=c++11 -Wall
+
+    # Windows 64 bits version only
+    #win32-g++:contains(QT_ARCH, x86_64):{
 
     # Set gdal from msys64 default path
     INCLUDEPATH += "C:/msys64/mingw64/include"
@@ -357,31 +408,30 @@ win32{
     LIBS += -L"C:/msys64/mingw64/lib" -lgdal
 
     #Debug settings
-    !build_pass:CONFIG(debug, debug|release) {
-        !build_pass:message($$find(CONFIG, "debug"))
-        !build_pass:message("Windows de 64 bits")
+    #!build_pass:CONFIG(debug, debug|release) {
+     #   !build_pass:message($$find(CONFIG, "debug"))
+      #  !build_pass:message("Windows de 64 bits")
         #Build Debug
         debug: DESTDIR = "C:/msys64/mingw64/bin"
         debug: OBJECTS_DIR = build_debug_64bits/temp/obj
         debug: MOC_DIR = build_debug_64bits/temp/moc
         debug: UI_DIR = build_debug_64bits/temp/ui
         debug: RCC_DIR = build_debug_64bits/temp/rcc
-    }
+    #}
 
     #Release settings
-    !build_pass:CONFIG(release, debug|release) {
-        !build_pass:message($$find(CONFIG, "release"))
-        !build_pass:message("Windows de 64 bits")
+    #!build_pass:CONFIG(release, debug|release) {
+     #   !build_pass:message($$find(CONFIG, "release"))
+      #  !build_pass:message("Windows de 64 bits")
         #Release settings
         release: DESTDIR = "C:/msys64/mingw64/bin"
         release: OBJECTS_DIR = build_release_64bits/temp/obj
         release: MOC_DIR = build_release_64bits/temp/moc
         release: UI_DIR = build_release_64bits/temp/ui
         release: RCC_DIR = build_release_64bits/temp/rcc
-    }
+    #}
 
     # Grant deployment of Qt libraries
-    QMAKE_POST_LINK = windeployqt $${DESTDIR}/e-foto.exe
-    }
+    QMAKE_POST_LINK = $$[QT_HOST_BINS]/windeployqt $${DESTDIR}/e-foto.exe
+    #}
 }
-
