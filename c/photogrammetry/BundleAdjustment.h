@@ -167,7 +167,7 @@ public:
     /**
     * \deprecated O chute inicial dos valores de Z, atualmente, sÃ£o calculados baseado no formulario de Flight
     */
-    //double getZpf(); Excluído o código em Setembro de 2021
+    double getZpf();
 
     /**
     * \brief Metodo que retorna apenas os coeficientes de uma funçao afim para converter coordenada analogica(xsi,eta) para coordenada de terreno
@@ -316,13 +316,13 @@ protected:
     * \param p : Matriz de pesos
     * \attention Atualmente a matriz de pesos Ã SEMPRE a matriz identidade no calculo dos parametros da orientaÃ§ao exterior
     */
-    //void setPeso(Matrix p); Excluído o código em Setembro de 2021
+    void setPeso(Matrix p);
 
     /**
     * \brief Retorna a matriz de pesos atual
     * \attention Atualmente a matriz de pesos Ã SEMPRE a matriz identidade no calculo dos parametros da orientaÃ§ao exterior
     */
-    //Matrix getPeso(); Excluído o código em Setembro de 2021
+    Matrix getPeso();
 
     //Matrix invertN11(Matrix N11);
     //Matrix invertN22(Matrix N22);
@@ -854,13 +854,13 @@ public:
         * \brief Metodo que retorna a matrix x1
         * \return Matrix
         */
-        //Matrix getx1() { return x1; }; Excluído o código em Setembro de 2021
+        Matrix getx1() { return x1; };
 
         /**
         * \brief Metodo que retorna a matrix x2
         * \return Matrix
         */
-        //Matrix getx2() { return x2; }; Excluído o código em Setembro de 2021
+        Matrix getx2() { return x2; };
 
 // teste
 

@@ -399,7 +399,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
                 QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
                 dirImage.setCurrent(imagesName);
                 imagesName.append(imagesEdom.at(i).elementByTagName("fileName").toString().c_str());
-                //imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName)); Excluído o código em Setembro de 2021
+                imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
                 if (!imageFileInfo.exists())
                 {
                     imagesMissing.append(contMissings%4==3 ? imageFileInfo.fileName().append("  \n") : imageFileInfo.fileName().append(" , "));
@@ -2919,9 +2919,9 @@ void ProjectUserInterface_Qt::importImagesBatch()
 
     QMessageBox msgBox;
     msgBox.setText("Loading images");
-    //msgBox.setInformativeText("All images has the same dimensions? (Yes to fast import)"); Excluído o código em Setembro de 2021
-    //msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No); Excluído o código em Setembro de 2021
-    //msgBox.setDefaultButton(QMessageBox::Yes); Excluído o código em Setembro de 2021
+    msgBox.setInformativeText("All images has the same dimensions? (Yes to fast import)");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
 
     int resp=msgBox.exec();
 

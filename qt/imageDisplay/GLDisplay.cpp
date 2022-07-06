@@ -120,7 +120,7 @@ void GLDisplay::paintGL()
         program.setUniformValue("u_filter", 1, 1, 1);
         program.setUniformValue("u_projection", projection);
         texture[0]->bind();
-        //texture[0]->setWrapMode(QOpenGLTexture::Repeat); Excluído o código em Setembro de 2021
+        texture[0]->setWrapMode(QOpenGLTexture::Repeat);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
@@ -152,7 +152,7 @@ void GLDisplay::paintGL()
         // Redirect draw to frame buffer object
         if (!fbo) {
             QOpenGLFramebufferObjectFormat format;
-            //format.setAttachment(QOpenGLFramebufferObject::NoAttachment); Excluído o código em Setembro de 2021
+            format.setAttachment(QOpenGLFramebufferObject::NoAttachment);
             fbo = new QOpenGLFramebufferObject(width(), height(), format);
         }
         fbo->bind();
@@ -226,7 +226,7 @@ void GLDisplay::resizeGL(int w, int h)
     glViewport(0, 0, w * retinaScale, h * retinaScale);
 
     // Update projection
-    //projection.setToIdentity(); Excluído o código em Setembro de 2021
+    projection.setToIdentity();
     projection.ortho(QRect(0, 0, w * retinaScale, h * retinaScale));
 
     // Update model
@@ -279,7 +279,7 @@ void GLDisplay::exit(QString msg)
 {
     QMessageBox msgBox;
     msgBox.setText(msg);
-    //msgBox.setIcon(QMessageBox::Critical); Excluído o código em Setembro de 2021
+    msgBox.setIcon(QMessageBox::Critical);
     msgBox.exec();
 
     // Todo: review this
@@ -339,7 +339,7 @@ void GLDisplay::changeModel(int w, int h)
     if (!vbo.isCreated()) {
         vbo.create();
         vbo.bind();
-        //vbo.setUsagePattern(QOpenGLBuffer::DynamicDraw); Excluído o código em Setembro de 2021
+        vbo.setUsagePattern(QOpenGLBuffer::DynamicDraw);
         vbo.allocate(map.count() * sizeof(GLfloat));
         vbo.release();
     }

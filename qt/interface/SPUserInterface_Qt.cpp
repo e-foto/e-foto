@@ -417,7 +417,7 @@ void SPUserInterface_Qt::onExportButton()
 void SPUserInterface_Qt::onAddButton()
 {
     AddDialog addDialog(manager, this);
-    //addDialog.setFixedWidth(300); Excluído o código em Setembro de 2021
+    addDialog.setFixedWidth(300);
     //addDialog.move(featuresToolBar->pos().x()-300,featuresToolBar->pos().y());
     addDialog.move(QCursor::pos().x()-300,QCursor::pos().y());
     addDialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
@@ -734,7 +734,7 @@ AddDialog::AddDialog(SPManager* spmanager, QWidget *parent) : QDialog(parent)
     classCombo->addItem("Point");
     typeCombo->setMinimumWidth(150);
     classCombo->setMinimumWidth(150);
-    //okButton->setDefault(true); Excluído o código em Setembro de 2021
+    okButton->setDefault(true);
     okButton->setDisabled(true);
 
     QHBoxLayout *nameLayout = new QHBoxLayout;

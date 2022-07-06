@@ -250,7 +250,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                          break;
                         }
                 case 2: {OGRLineString ls;
-                         //ls.setNumPoints(nVertices, false); Excluído o código em Setembro de 2021
+                         ls.setNumPoints(nVertices, false);
                          ls.setPoints(nVertices, padfX, padfY, padfZ);
                          geom = new OGRLineString(ls);
                          break;
