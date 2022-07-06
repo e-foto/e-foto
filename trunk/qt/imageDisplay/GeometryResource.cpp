@@ -528,7 +528,7 @@ QImage GeometryResource::draw(QImage dst, QSize targetSize, QPointF viewpoint, d
                 double y = (points.at(j).y() -(viewpoint.y()-targetSize.height()/(2.0*scale)))*scale;
                 painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
                 painter.setPen(QPen(Qt::yellow));
-                painter.setFont(QFont("Arial",3));
+                painter.setFont(QFont("Arial",10));
                 painter.drawText(x+mark->width()/2, y+mark->height()/2, label);
             }
         }
@@ -607,7 +607,7 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
                 double y = poly.at(j).y();
                 painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
                 painter.setPen(QPen(Qt::yellow));
-                painter.setFont(QFont("Arial",3));
+                painter.setFont(QFont("Arial",10));
                 painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
             }
         }
@@ -660,7 +660,7 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
                     double y = poly.at(j).y();
                     painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
                     painter.setPen(QPen(Qt::yellow));
-                    painter.setFont(QFont("Arial",3));
+                    painter.setFont(QFont("Arial",10));
                     painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
                 }
                 else
@@ -670,7 +670,7 @@ QImage GeometryResource::draw(DemFeatures* dfs, int projection, QImage dst, QSiz
                     double y = poly.at(j).y();
                     painter.drawImage(x-mark->width()/2, y-mark->height()/2, *mark);
                     painter.setPen(QPen(Qt::yellow));
-                    painter.setFont(QFont("Arial",3));
+                    painter.setFont(QFont("Arial",10));
                     painter.drawText(x+mark->width()/2 + 2, y+mark->height()/2, label);
                 }
             }

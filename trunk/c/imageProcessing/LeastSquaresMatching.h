@@ -49,13 +49,13 @@ public:
 	void setTemplate(int _wh) { template_width = _wh; template_height = _wh; };
 	void setTemplate(int _w, int _h) { template_width = _w; template_height = _h; };
 	void setTemplateCenter(int _x, int _y) { template_center_x = _x; template_center_y = _y; };
-    //void setMatchingWindowCenter(int _x, int _y) { matching_window_center_x = _x; matching_window_center_y = _y; }; Excluído o código em Setembro de 2021
-    //void setGradientFilter(filterType _ft) { gradient_filter = _ft; }; Excluído o código em Setembro de 2021
+    void setMatchingWindowCenter(int _x, int _y) { matching_window_center_x = _x; matching_window_center_y = _y; };
+    void setGradientFilter(filterType _ft) { gradient_filter = _ft; };
 	int searchHomologous(Matrix *, Matrix *);
 	double getBestP() { return best_p; };
 	double getBestX() { return best_x; };
 	double getBestY() { return best_y; };
-    //Matrix& getAffineParameters() { return affine_coefficients; }; Excluído em Setembro de 2021
+    Matrix& getAffineParameters() { return affine_coefficients; };
 	void setMinStd(double _mstd) { ncc.setMinStd(_mstd); };
 	void setMaxIterations(int _its) { max_iterations = _its; };
 	void getNextPosition(double *, double *, int, int);

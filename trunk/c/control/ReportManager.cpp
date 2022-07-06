@@ -2343,11 +2343,11 @@ QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
 	return ss.getThumb(QSize(maxW, maxH));
 }
 
-/*string ReportManager::getImageIds(int ) Excluído o código em Setembro de 2021
+/*string ReportManager::getImageIds(int )
 {
 
-}*/
-
+}
+*/
 
 } // namespace efoto
 } // namespace eng

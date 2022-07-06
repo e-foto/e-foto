@@ -352,7 +352,7 @@ bool PTUserInterface_Qt::exec()
 void PTUserInterface_Qt::viewReport()
 {
     QWidget *resultView = new QWidget();
-    //resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400); Excluído o código em Setembro de 2021
+    resultView->setGeometry(resultView->x()+50,resultView->y()+50,1200,400);
     QHBoxLayout *horizontalLayout= new QHBoxLayout();
 
     QHBoxLayout *buttonsLayout= new QHBoxLayout();
@@ -535,7 +535,7 @@ void PTUserInterface_Qt::showReportXml()
     // int tableHeight = table->rowHeight(0)*table->rowCount()+100 > 600 ? 600 : table->rowHeight(0)*table->rowCount()+100 ;
     //resultView->setMinimumSize(resultView->width()+50,tableHeight);
 
-    //dockResultView->setFloating(true); Excluído o código em Setembro de 2021
+    dockResultView->setFloating(true);
     dockResultView->show();
     resultView->show();
 }
