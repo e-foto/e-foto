@@ -61,7 +61,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 	QString revision_name = tr("Revision ");
 	QString msg = date_ver_name + ver + size_ver_name + revision_name + rev;
 
-    //version_info->setText(msg); Excluído o códido devido um erro
+	version_info->setText(msg);
 
     //  Inicia variaveis
     this->manager = manager;

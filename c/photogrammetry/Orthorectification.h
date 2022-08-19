@@ -76,7 +76,7 @@ public:
     void setUtmFuse(int _uf) { utmFuse = _uf; };
     void setHemisphere(bool _hs) { spheroid = _hs; };
     void setNumberOfBands(int _nb) { no_bands = _nb; }
-    //void setCoordinateSystem(int _cs) { coord_system = _cs; } Excluído em Setembro de 2021
+    void setCoordinateSystem(int _cs) { coord_system = _cs; }
     void setDatum(DatumType _dt) { datum = _dt; }
     void getOrthoParametersA(double &_Xi,
                              double &_Yi,

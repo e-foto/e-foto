@@ -204,7 +204,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
 
     // Adicionamos uma definiçao de campo na camada para o nome das feições
     OGRFieldDefn oField( "Name", OFTString );
-    //oField.SetWidth(254); Excluído do código em Setembro de 2021
+    oField.SetWidth(254);
     if( poLayer->CreateField( &oField ) != OGRERR_NONE )
     {
         printf( "Creating Name field failed.\n" );
@@ -271,8 +271,8 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
 
             // Criamos a feição OGR
             OGRFeature *poFeature = OGRFeature::CreateFeature( poLayer->GetLayerDefn() );
-            //poFeature->SetField( "Name", df.name.c_str() ); excluido do código Setembro de 2021
-            //poFeature->SetGeometryDirectly( geom );     Excluído do código Setembro de 2021                     // Isso transfere a posse da geometria para a feição
+            poFeature->SetField( "Name", df.name.c_str() );
+            poFeature->SetGeometryDirectly( geom );                          // Isso transfere a posse da geometria para a feição
 
             // Adicionamos a feição OGR a camada
             OGRErr addFeatureError = poLayer->CreateFeature( poFeature );

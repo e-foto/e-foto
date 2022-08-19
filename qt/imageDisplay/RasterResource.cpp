@@ -303,8 +303,8 @@ QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
 		}
 	}
     //Nem toda tela tem 96 dpi, refazer depois
-    result.setDotsPerMeterX(3780);
-    result.setDotsPerMeterY(3780);
+	result.setDotsPerMeterX(3780);
+	result.setDotsPerMeterY(3780);
 	return result;
 }
 

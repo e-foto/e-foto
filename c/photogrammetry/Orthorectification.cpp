@@ -303,7 +303,7 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
     std::unique_ptr<GByte[]> abyRasterGreen (new GByte[ortho_width*ortho_height]);
     std::unique_ptr<GByte[]> abyRasterBlue (new GByte[ortho_width*ortho_height]);
 
-    //poDstDS->SetGeoTransform( adfGeoTransform ); Excluido do código Setembro de 2021
+    poDstDS->SetGeoTransform( adfGeoTransform );
 
     // Definindo o sistema de referência espacial
     // Caution!
@@ -335,10 +335,10 @@ void Orthorectification::saveOrthoGeoTiffEfoto(char * filename) const
         break;
     }
 
-    //oSRS.SetUTM( utmFuse, spheroid); Excluído do código Setembro de 2021
+    oSRS.SetUTM( utmFuse, spheroid);
 
     oSRS.exportToWkt( &pszSRS_WKT );
-   //poDstDS->SetProjection( pszSRS_WKT ); Excluído do código Setembro de 2021
+    poDstDS->SetProjection( pszSRS_WKT );
     CPLFree( pszSRS_WKT );
     double tmp =0.0;
     int tmpint =0;
