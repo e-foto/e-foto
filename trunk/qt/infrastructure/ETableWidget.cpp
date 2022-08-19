@@ -108,7 +108,7 @@ void ETableWidget::setTableData(Matrix values,char mode,int precision)
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//novo
     verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);  //novo
 
-    setSelectionMode(QAbstractItemView::ContiguousSelection);
+	setSelectionMode(QAbstractItemView::ContiguousSelection);
 	//falta tratamento para destruir antiga matrix se ela existir antes
 	io= new Matrix(values);
 

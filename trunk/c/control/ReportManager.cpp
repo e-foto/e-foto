@@ -2346,8 +2346,8 @@ QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
 /*string ReportManager::getImageIds(int )
 {
 
-}
-*/
+}*/
+
 
 } // namespace efoto
 } // namespace eng
