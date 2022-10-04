@@ -863,7 +863,7 @@ NearTool::NearTool(SingleDisplay* display) :
     _near = _display->getDetailDisplay();
     _near->setHidden(true);
     _near->setActivatedTool(this);
-    _nearDock = new QDockWidget("Detailview");
+    _nearDock = new QDockWidget(tr("Detailview"));
     _nearDock->setWidget(_near);
     _nearDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
     _cursorIsVisible = false;
