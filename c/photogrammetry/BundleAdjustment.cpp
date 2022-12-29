@@ -289,17 +289,7 @@ Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
 Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
 {
 #ifdef ESPARSA
-#ifdef DEBUG
-    M12.transpose().show('f',3,"M12 Transposed");
-    inverseM11.show('f',3,"M11 inverted");
-    (Matrix(M12.transpose())*inverseM11).show('f',3,"Temp1");
-#endif
     Matrix temp1=Matrix(Matrix(M12.transpose())*inverseM11);
-
-#ifdef DEBUG
-    (temp1*m1).show('f',3,"Temp1*m1");
-    (temp1*M12).show('f',3,"Temp1*M12");
-#endif
 
     return Matrix((M22-temp1*M12).inverse())*(m2-temp1*m1);
 #endif
@@ -619,61 +609,18 @@ void BundleAdjustment::calculateInicialsValues()
         QTime init;
         init.start();
         Matrix L=createL();
-#ifdef DEBUG
-        L.show('f',3,"L");
-#endif
-
         Matrix M1=createM1();
-
-#ifdef DEBUG
-        M1.show('f',3,"M1");
-#endif
-
         Matrix M2=createM2();
-
-#ifdef DEBUG
-        M2.show('f',3,"M2");
-#endif
-
         Matrix m11=getM11(M1);
-
-#ifdef DEBUG
-        m11.show('f',3,"M11");
-#endif
-
         setInverseM11(m11);
 
         Matrix m12=getM12(M1,M2);
-
-#ifdef DEBUG
-        m12.show('f',3,"M12");
-#endif
-
         Matrix m22=getM22(M2);
-
-#ifdef DEBUG
-        m22.show('f',3,"M22");
-#endif
-
         Matrix m1=getm1(M1,L);
-
-#ifdef DEBUG
-        m1.show('f',3,"m1");
-#endif
-
         Matrix m2=getm2(M2,L);
-
-#ifdef DEBUG
-        m2.show('f',3,"m2");
-#endif
-
         Matrix xypf=getXYpf(m12,m22,m1,m2);
 
         Matrix paf=getPAf(m12,m1,xypf);
-#ifdef DEBUG
-        paf.show('f',4,"parameters OE");
-        xypf.show('f',4,"xypointFoto");
-#endif
         updateCoordinatesAllPoints(xypf,getInicialZPhotogrammetricPoints());
 
         Matrix temp(numImages,6);
@@ -688,24 +635,14 @@ void BundleAdjustment::calculateInicialsValues()
 
             matInitialValues.set(i+1,1,0);
             matInitialValues.set(i+1,2,0);
-#ifdef DEBUG
-            qDebug("Kappa0");
-#endif
             matInitialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
             matInitialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
             matInitialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-#ifdef DEBUG
-            qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
-#endif
             matInitialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
         }
     }
     else
     {
-#ifdef DEBUG
-        qDebug("initial Values: Sem pontos Fotogrametricos");
-#endif
-
         Matrix L=createL();
         Matrix M1=createM1();
         Matrix m11=getM11(M1);
@@ -726,9 +663,6 @@ void BundleAdjustment::calculateInicialsValues()
             matInitialValues.set(i+1,3,listImages.at(i)->getFlightDirection());
             matInitialValues.set(i+1,4,pta.get(1,1) + pta.get(2,1)*xsi0 + pta.get(3,1)*eta0);
             matInitialValues.set(i+1,5,pta.get(4,1) + pta.get(5,1)*xsi0 + pta.get(6,1)*eta0);
-#ifdef DEBUG
-            qDebug("Z0 %i: %.4f",i,listImages.at(i)->getFlight()->getScaleDen()/1000);
-#endif
             matInitialValues.set(i+1,6,c*listImages.at(i)->getFlight()->getScaleDen()/1000);
         }
     }
