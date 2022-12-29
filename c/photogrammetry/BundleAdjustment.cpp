@@ -30,8 +30,6 @@
 
 #include <QTime>
 
-
-//#define FRANC
 #define PAULO
 
 #define MAXRESIDUO 0.0001
@@ -174,19 +172,6 @@ bool BundleAdjustment::calculate(bool makeReport)
             setx1(n12,n1);
 #endif
 
-#ifdef FRANC
-
-            setInverseN22(n22);
-            int invN22time=ptime.restart();
-            setx1(n12,n1);
-            int x1time=ptime.restart();
-
-            setx2(n12,n22,n2,n1);
-            int x2time=ptime.restart();
-            //x2.show();
-
-#endif
-
 #ifdef TIMES
             qDebug("Tempo para executar a %d iteracao",totalIterations);
             qDebug("Para criar A1: %.3f",A1time/1000.0);
@@ -200,9 +185,6 @@ bool BundleAdjustment::calculate(bool makeReport)
             qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
 #endif
 
-#ifdef FRANC
-            qDebug("Para calcular inversaN11: %.3f",invN22time/1000.0);
-#endif
             qDebug("Para calcular n1: %.3f",n1time/1000.0);
             qDebug("Para calcular n2: %.3f",n2time/1000.0);
             qDebug("Para calcular x1: %.3f",x1time/1000.0);
@@ -395,13 +377,6 @@ void BundleAdjustment::setx1(Matrix N12,Matrix n1)
     Matrix temp1=Matrix(inverseN11);
     x1=temp1*n1-Matrix(temp1*N12)*x2;
 #endif
-
-#ifdef FRANC
-    Matrix temp1=Matrix(Matrix(n12)*inverseN22);
-    //x1=Matrix((n11-temp1*n12.transpose()).inverse())*(n1-temp1*n2);
-    x1=Matrix((n11-temp1*n12.transpose()).osuInverse())*(n1-temp1*n2);
-#endif
-
 }
 
 void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
@@ -409,11 +384,6 @@ void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 #ifdef PAULO
     Matrix temp1=Matrix(Matrix(N12.transpose())*inverseN11);
     x2=Matrix((N22-temp1*N12).osuInverse())*(n2-temp1*n1);
-#endif
-
-#ifdef FRANC
-    Matrix temp1=Matrix(inverseN22);
-    x2=temp1*n2-Matrix(temp1*n12.transpose())*x1;
 #endif
 }
 
