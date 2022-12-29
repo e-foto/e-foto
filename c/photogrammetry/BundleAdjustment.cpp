@@ -32,8 +32,6 @@
 
 #define MAXRESIDUO 0.0001
 
-#define ESPARSA
-
 namespace br {
 namespace uerj {
 namespace eng {
@@ -203,9 +201,7 @@ bool BundleAdjustment::calculate(bool makeReport)
             Matrix n11=getN11();
             Matrix n1=getn1(l);
             setInverseN11(n11);
-#ifdef ESPARSA
             x1=Matrix(inverseN11)*n1;
-#endif
             conv=testConverged();
             if (conv ==-2)
             {
@@ -230,110 +226,65 @@ bool BundleAdjustment::calculate(bool makeReport)
 /* metodos de calculo*/
 Matrix BundleAdjustment::getM11(Matrix M1)
 {
-#ifdef ESPARSA
     return Matrix(M1.transpose())*M1;
-#endif
-    return M1.transpose()*M1;
 }
 
 Matrix BundleAdjustment::getM12(Matrix M1, Matrix M2)
 {
-#ifdef ESPARSA
     return Matrix(M1.transpose())*M2;
-#endif
-    return M1.transpose()*M2;
 }
 
 Matrix BundleAdjustment::getM22(Matrix M2)
 {
-
-#ifdef ESPARSA
     return Matrix(M2.transpose())*M2;
-#endif
-    return M2.transpose()*M2;
-
 }
 
 Matrix BundleAdjustment::getm1(Matrix M1, Matrix L1)
 {
-
-#ifdef ESPARSA
     return Matrix(M1.transpose())*L1;
-#endif
-    return (M1.transpose())*L1;
 }
 
 Matrix BundleAdjustment::getm2(Matrix M2, Matrix L1)
 {
-
-#ifdef ESPARSA
     return Matrix(M2.transpose())*L1;
-#endif
-    return (M2.transpose())*L1;
 }
 
 Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
 {
-
-#ifdef ESPARSA
     Matrix temp1=Matrix(inverseM11);
     return temp1*m1-Matrix(temp1*M12)*xypf;
-#endif
 }
 
 // AproximaÃÂ§ao inicial para as coordenadas planimetricas(XY) dos pontos fotogrametricos
 Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
 {
-#ifdef ESPARSA
     Matrix temp1=Matrix(Matrix(M12.transpose())*inverseM11);
-
     return Matrix((M22-temp1*M12).inverse())*(m2-temp1*m1);
-#endif
 }
 
 Matrix BundleAdjustment::getN11()
 {
-#ifdef ESPARSA
     return Matrix(Matrix(A1.transpose())*P)*A1;
-#endif
-    return A1.transpose()*P*A1;
 }
 
 Matrix BundleAdjustment::getN12()
 {
-#ifdef ESPARSA
     return Matrix(Matrix(A1.transpose())*P)*A2;
-#endif
-    return A1.transpose()*P*A2;
 }
 
 Matrix BundleAdjustment::getN22()
 {
-
-#ifdef ESPARSA
     return Matrix(A2.transpose())*A2;
-#endif
-
-    return A2.transpose()*A2;
 }
 
 Matrix BundleAdjustment::getn1(Matrix L)
 {
-
-#ifdef ESPARSA
     return Matrix(Matrix(A1.transpose())*P)*L;
-#endif
-    return A1.transpose()*P*L;
-
 }
 
 Matrix BundleAdjustment::getn2(Matrix L)
 {
-#ifdef ESPARSA
     return Matrix(A2.transpose())*L;
-#endif
-    return A2.transpose()*L;
-
 }
 
 void BundleAdjustment::setx1(Matrix N12,Matrix n1)
