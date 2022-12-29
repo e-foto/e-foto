@@ -35,7 +35,6 @@
 #define MAXRESIDUO 0.0001
 
 #define ESPARSA
-//#define TIMES
 
 namespace br {
 namespace uerj {
@@ -170,25 +169,6 @@ bool BundleAdjustment::calculate(bool makeReport)
             setInverseN11(n11);
             setx2(n12,n22,n2,n1);
             setx1(n12,n1);
-#endif
-
-#ifdef TIMES
-            qDebug("Tempo para executar a %d iteracao",totalIterations);
-            qDebug("Para criar A1: %.3f",A1time/1000.0);
-            qDebug("Para criar A2: %.3f",A2time/1000.0);
-            qDebug("Para criar L0: %.3f",l0time/1000.0);
-            qDebug("Para criar Lb: %.3f",lbtime/1000.0);
-            qDebug("Para calcular N11: %.3f",n11time/1000.0);
-            qDebug("Para calcular N12: %.3f",n12time/1000.0);
-            qDebug("Para calcular N22: %.3f",n22time/1000.0);
-#ifdef PAULO
-            qDebug("Para calcular inversaN11: %.3f",invN11time/1000.0);
-#endif
-
-            qDebug("Para calcular n1: %.3f",n1time/1000.0);
-            qDebug("Para calcular n2: %.3f",n2time/1000.0);
-            qDebug("Para calcular x1: %.3f",x1time/1000.0);
-            qDebug("Para calcular x2: %.3f",x2time/1000.0);
 #endif
             conv=testConverged();
             if (conv ==-2)
@@ -639,100 +619,57 @@ void BundleAdjustment::calculateInicialsValues()
         QTime init;
         init.start();
         Matrix L=createL();
-#ifdef TIMES
-        int ltime = init.restart();
-#endif
 #ifdef DEBUG
         L.show('f',3,"L");
 #endif
 
         Matrix M1=createM1();
-#ifdef TIMES
-        int M1time = init.restart();
-#endif
+
 #ifdef DEBUG
         M1.show('f',3,"M1");
 #endif
 
         Matrix M2=createM2();
-#ifdef TIMES
-        int M2time = init.restart();
-#endif
+
 #ifdef DEBUG
         M2.show('f',3,"M2");
 #endif
 
         Matrix m11=getM11(M1);
-#ifdef TIMES
-        int m11time = init.restart();
-#endif
+
 #ifdef DEBUG
         m11.show('f',3,"M11");
 #endif
 
         setInverseM11(m11);
-#ifdef TIMES
-        int inverseM11time = init.restart();
-#endif
 
         Matrix m12=getM12(M1,M2);
-#ifdef TIMES
-        int m12time = init.restart();
-#endif
+
 #ifdef DEBUG
         m12.show('f',3,"M12");
 #endif
 
         Matrix m22=getM22(M2);
-#ifdef TIMES
-        int m22time = init.restart();
-#endif
+
 #ifdef DEBUG
         m22.show('f',3,"M22");
 #endif
 
         Matrix m1=getm1(M1,L);
-#ifdef TIMES
-        int m1time = init.restart();
-#endif
+
 #ifdef DEBUG
         m1.show('f',3,"m1");
 #endif
 
         Matrix m2=getm2(M2,L);
-#ifdef TIMES
-        int m2time = init.restart();
-#endif
+
 #ifdef DEBUG
         m2.show('f',3,"m2");
 #endif
 
         Matrix xypf=getXYpf(m12,m22,m1,m2);
-#ifdef TIMES
-        int xypftime = init.restart();
-#endif
 
         Matrix paf=getPAf(m12,m1,xypf);
-#ifdef TIMES
-        int paftime = init.restart();
-#endif
-
-
-#ifdef TIMES
-        qDebug("Tempo para executar:");
-        qDebug("Para criar L: %.6e",ltime/1000.0);
-        qDebug("Para criar M1: %.6e",M1time/1000.0);
-        qDebug("Para criar M2: %.6e",M2time/1000.0);
-        qDebug("Para calcular M11: %.6e",m11time/1000.0);
-        qDebug("Para calcular inverseM11: %.6e",inverseM11time/1000.0);
-        qDebug("Para calcular M12: %.6e",m12time/1000.0);
-        qDebug("Para calcular M22: %.6e",m22time/1000.0);
-        qDebug("Para calcular m1: %.6e",m1time/1000.0);
-        qDebug("Para calcular m2: %.6e",m2time/1000.0);
-        qDebug("Para calcular paf: %.6e",paftime/1000.0);
-        qDebug("Para calcular xypf: %.6e",xypftime/1000.0);
-        qDebug("");
-#endif
 #ifdef DEBUG
         paf.show('f',4,"parameters OE");
         xypf.show('f',4,"xypointFoto");
