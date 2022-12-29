@@ -30,8 +30,6 @@
 
 #include <QTime>
 
-#define PAULO
-
 #define MAXRESIDUO 0.0001
 
 #define ESPARSA
@@ -165,11 +163,9 @@ bool BundleAdjustment::calculate(bool makeReport)
             n1=getn1(l);
             n2=getn2(l);
 
-#ifdef PAULO
             setInverseN11(n11);
             setx2(n12,n22,n2,n1);
             setx1(n12,n1);
-#endif
             conv=testConverged();
             if (conv ==-2)
             {
@@ -342,19 +338,14 @@ Matrix BundleAdjustment::getn2(Matrix L)
 
 void BundleAdjustment::setx1(Matrix N12,Matrix n1)
 {
-
-#ifdef PAULO
     Matrix temp1=Matrix(inverseN11);
     x1=temp1*n1-Matrix(temp1*N12)*x2;
-#endif
 }
 
 void BundleAdjustment::setx2(Matrix N12, Matrix N22, Matrix n2, Matrix n1)
 {
-#ifdef PAULO
     Matrix temp1=Matrix(Matrix(N12.transpose())*inverseN11);
     x2=Matrix((N22-temp1*N12).osuInverse())*(n2-temp1*n1);
-#endif
 }
 
 void BundleAdjustment::setInverseN11(Matrix n11)
