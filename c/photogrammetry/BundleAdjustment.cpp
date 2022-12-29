@@ -25,9 +25,7 @@
 #include "Image.h"
 #include "Sensor.h"
 #include "Flight.h"
-
 #include <iostream>
-
 #include <QTime>
 
 #define MAXRESIDUO 0.0001
@@ -66,8 +64,6 @@ BundleAdjustment::BundleAdjustment(std::deque<Image*>listSelectedImages, std::de
     fillDetectorCoordinates();
     numEquations=numberOfEquations();
     numUnknows=6*numImages+3*numFotogrametricPoints;
-
-    /** serÃÂ´a eliminiado em breve*/
     c= listImages.at(0)->getSensor()->getFocalDistance();
     xsi0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getXi();
     eta0=listImages.at(0)->getSensor()->getPrincipalPointCoordinates().getEta();
@@ -167,12 +163,12 @@ bool BundleAdjustment::calculate(bool makeReport)
             conv=testConverged();
             if (conv ==-2)
             {
-                std::cout << "Apareceu valor infinito" << std::endl;
+                std::cout << "Infinite value appeared" << std::endl;
                 break;
             }
             if (conv ==-1)
             {
-                std::cout << "Apareceu valor NAN" << std::endl;
+                std::cout << "NAN value appeared" << std::endl;
                 break;
             }
             updateMatAdjust();
@@ -205,12 +201,12 @@ bool BundleAdjustment::calculate(bool makeReport)
             conv=testConverged();
             if (conv ==-2)
             {
-                std::cout << "Apareceu valor infinito" << std::endl;
+                std::cout << "Infinite value appeared" << std::endl;
                 break;
             }
             if (conv ==-1)
             {
-                std::cout << "Apareceu valor NAN" << std::endl;
+                std::cout << "NAN value appeared" << std::endl;
                 break;
             }
             totalIterations++;
@@ -223,7 +219,7 @@ bool BundleAdjustment::calculate(bool makeReport)
     return true;
 }
 
-/* metodos de calculo*/
+/* calculation methods*/
 Matrix BundleAdjustment::getM11(Matrix M1)
 {
     return Matrix(M1.transpose())*M1;
@@ -255,7 +251,7 @@ Matrix BundleAdjustment::getPAf(Matrix M12,Matrix m1, Matrix xypf)
     return temp1*m1-Matrix(temp1*M12)*xypf;
 }
 
-// AproximaÃÂ§ao inicial para as coordenadas planimetricas(XY) dos pontos fotogrametricos
+// Initial approximation to the planimetric coordinates (XY) of the photogrammetric points
 Matrix BundleAdjustment::getXYpf(Matrix M12, Matrix M22, Matrix m1,Matrix m2)
 {
     Matrix temp1=Matrix(Matrix(M12.transpose())*inverseM11);
@@ -414,7 +410,7 @@ Matrix BundleAdjustment::getJacobianaFotogrametric(double X, double Y, double Z,
     return JacFoto;
 }
 
-//retorna os parametros da imagem numero imageID
+//returns image parameters
 Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
 {
     Matrix result(6,1);
@@ -423,7 +419,7 @@ Matrix BundleAdjustment::getPTA(Matrix PAf, int imageId)
     return result;
 }
 
-/* metodos auxialiares para buscar dados*/
+// auxiliary methods for fetching data
 double BundleAdjustment::getdOmegax1(int imageId)
 {
     return x1.get(6*(imageId-1)+4,1);
@@ -499,7 +495,8 @@ double BundleAdjustment::getZAdjus(int imageId)
     return matAdjust.get(imageId,6);
 }
 
-// Procura onde esta o ponto na lista de todos os pontos(ou seja na lista de pontos selecionados) e retorna o seu indice na lista
+// Finds where the point is in the list of all points
+// (ie in the list of selected points) and returns its index in the list
 int BundleAdjustment::whereInPoints(Point *pnt)
 {
     for (int i=0;i<numPoints;i++)
@@ -513,19 +510,19 @@ int BundleAdjustment::whereInPhotogrammetricPoints(Point *pnt)
     for (int i=0;i<numFotogrametricPoints;i++)
         if (pnt==listPhotogrammetricPoints.at(i))
             return i;
-    return -1;//se nao achar retorna -1
+    return -1; // if not found returns -1
 }
 
 void BundleAdjustment::updateMatAdjust()
 {
     for (int i=1;i<=numImages;i++)
     {
-        matAdjust.set(i,1, getOmegaAdjus(i) + getdOmegax1(i) );//ajustando omega
-        matAdjust.set(i,2, getPhiAdjus(i)   + getdPhix1(i)   );//ajustando phi
-        matAdjust.set(i,3, getKappaAdjus(i) + getdKappax1(i) );//ajustando kappa
-        matAdjust.set(i,4, getXAdjus(i)     + getdXx1(i)     );//ajustando X
-        matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );//ajustando Y
-        matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );//ajustando Z
+        matAdjust.set(i,1, getOmegaAdjus(i) + getdOmegax1(i) );// adjusting omega
+        matAdjust.set(i,2, getPhiAdjus(i)   + getdPhix1(i)   );// adjusting phi
+        matAdjust.set(i,3, getKappaAdjus(i) + getdKappax1(i) );// adjusting kappa
+        matAdjust.set(i,4, getXAdjus(i)     + getdXx1(i)     );// adjusting X
+        matAdjust.set(i,5, getYAdjus(i)     + getdYx1(i)     );// adjusting Y
+        matAdjust.set(i,6, getZAdjus(i)     + getdZx1(i)     );// adjusting Z
     }
 }
 
@@ -675,7 +672,7 @@ Matrix BundleAdjustment::createM2()
     return result;
 }
 
-// Retorna uma matriz correspondente a uma imagem na matriz M
+// Returns an Matrix corresponding to an image in Matrix M
 Matrix BundleAdjustment::imageToMatrixDetectorCoordenates(Image *img)
 {
     int numpnts=img->countPoints();
@@ -683,7 +680,7 @@ Matrix BundleAdjustment::imageToMatrixDetectorCoordenates(Image *img)
     Matrix result(0,6);
     for (int i=0;i<numpnts;i++)
     {
-        // configuraÃÂ§ao de cada matriz temp
+        // configuration of each temp matrix
         //                   |1	eta xi	0	 0		0 |
         //                   |0	 0	0	1	eta 	xi|
 
@@ -736,7 +733,7 @@ Matrix BundleAdjustment::analogToDigital(InteriorOrientation *oi,double xsi, dou
     b0 = oi->getXa().get(4,1);
     b1 = oi->getXa().get(5,1);
     b2 = oi->getXa().get(6,1);
-    //Ideia do Rafael Aguiar para contornar erro de cast (somar 0.1)
+    // Hack to work around a cast error (add 0.1)
     Matrix result(1,2);
     result.set(1,1, ((b2*xsi - b2*a0 - a2*eta + b0*a2) / (a1*b2 - b1*a2) + 0.1 ) );
     result.set(1,2, ((a1*eta - a1*b0 - b1*xsi + b1*a0) / (a1*b2 - b1*a2) + 0.1 ) );
@@ -779,7 +776,7 @@ double BundleAdjustment::getInicialZPhotogrammetricPoints()
     }
     return z/=n;
 }
-// atualiza as coordenadas de todos os pontos
+// updates the coordinates of all points
 void BundleAdjustment::updateCoordinatesAllPoints(Matrix xypf, double zphotogrammetric)
 {
     for (int i=0;i<numImages;i++)
@@ -809,7 +806,7 @@ void BundleAdjustment::zeroingCoordinatesPhotogrammetrics()
     }
 }
 
-// Retorna uma matriz correspondente a uma imagem na Matriz A
+// Returns an matrix corresponding to an image in Matrix A
 Matrix BundleAdjustment::imageToMatrixJacobiana(int indexImage)
 {
     Image *img=listImages.at(indexImage);
@@ -829,7 +826,7 @@ Matrix BundleAdjustment::imageToMatrixJacobiana(int indexImage)
     return result;
 }
 
-/* Retorna toda a matriz A1*/
+// Returns the entire matrix A1
 void BundleAdjustment::createA1()
 {
     Matrix result;
@@ -946,7 +943,7 @@ void BundleAdjustment::calculateResiduos()
                 Matrix coord=getCoordColinearTerrain(xi,eta,z,i+1);
                 double resx=x-coord.get(1,1);
                 double resy=y-coord.get(1,2);
-                // reaproveitando a matrix que nÃÂ£o serÃÂ¡ mais utilizada nesse loop;
+                // reusing the matrix that will no longer be used in this loop;
                 coord=coord.transpose();
                 coord.set(1,1,resx);
                 coord.set(2,1,resy);
@@ -1034,8 +1031,7 @@ int BundleAdjustment::whereInImages(Image *img)
     return -1;
 }
 
-/*Metodos para aumento de performance do calculo*/
-/* setters and getters*/
+// Methods to increase calculation performance
 Matrix BundleAdjustment::getMatRes()
 {
     return matRes;
@@ -1066,7 +1062,7 @@ Matrix BundleAdjustment::getAFP()
     return afp;
 }
 
-/* metodos auxiliares para teste*/
+// auxiliary methods for testing
 bool BundleAdjustment::isControlPoint(int imageIndex ,int pointIndex)
 {
     return listImages.at(imageIndex)->getPointAt(pointIndex)->getType() == Point::CONTROL;
@@ -1095,7 +1091,10 @@ bool BundleAdjustment::testResiduo()
     return true;
 }
 
-// Se der infinito retorna -2, se der NAN retorna -1, se nao convergir retorna 0 e se convergir retorna 1
+// If it gives infinity it returns -2,
+// if it gives NAN it returns -1,
+// if it does not converge it returns 0
+// and if it converges it returns 1
 int BundleAdjustment::testConverged()
 {
     int rowsX1=x1.getRows();
@@ -1111,12 +1110,12 @@ int BundleAdjustment::testConverged()
         {
             return -1;
         }
-        if (i%6<3)//Os trÃªs primeiros elementos sÃ£o Xo,Yo,Zo
+        if (i%6<3)// The first three elements areXo,Yo,Zo
         {
             if (fabs(double(x1.get(i+1,1)>metricConvergency)))
                 return 0;
         }
-        else // Os trÃªs ultimos elementos sÃ£o omega, phi, kappa
+        else // The last three elements are omega, phi, kappa
         {
             if (fabs(double(x1.get(i+1,1)>angularConvergency)))
             {
@@ -1199,8 +1198,7 @@ std::string BundleAdjustment::printAll()
 
 Matrix BundleAdjustment::getMVC()
 {
-    //Isso ÃÂ© feito apenas para:
-    //ExibiÃÂ§ao dos angulos em Graus.
+    // This is done only for Display of angles in Degrees
     Matrix tempX1(numImages,6);
     for (int i=0;i<numImages;i++)
     {
@@ -1416,7 +1414,7 @@ void BundleAdjustment::normalize(std::deque<Point *>points,double &range, double
             maxZ=Z;
     }
 
-    // Calculo do minimo e do maximo
+    // Minimum and maximum calculation
 
     if(maxX>=maxY)
         maxT=maxX;
