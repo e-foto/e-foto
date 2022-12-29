@@ -1,6 +1,6 @@
 #ifndef BUNDLEADJUSTMENT_H
 #define BUNDLEADJUSTMENT_H
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -41,12 +41,6 @@ class InteriorOrientation;
 
 class BundleAdjustment
 {
-
-/* Matriz de configuraÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂo do bloco. Valor 1 - ponto de controle, valor -1, ponto fotogramÃÂÃÂÃÂ trico, valor 0, ponto nÃÂÃÂÃÂÃÂo
-contido na imagem. linha = imagem, coluna = ponto.
-*/
-/*int blc[3][6];
-Matrix BLC;*/
 
 protected:
 
@@ -324,8 +318,6 @@ protected:
     */
     Matrix getPeso();
 
-    //Matrix invertN11(Matrix N11);
-    //Matrix invertN22(Matrix N22);
     /**
     * \brief Calcula e altera a matrix x1 a qual e a matriz que contem os "deltas" a serem somados nos parametros da orientaçao exterior
     * \param    N12  : Matriz N12
@@ -478,7 +470,6 @@ protected:
     Matrix getCoordColinearTerrain(double xsi, double eta, double z, int imageId);
 
 
-   /* Em Teste; Bundle com objetos*/
 public:
 
     /**
@@ -764,15 +755,7 @@ public:
     */
     void setInverseN22(Matrix n22);
     //imprime todas as imagens com seus pontos
-
-
     std::string printAll();
-
-    /** Metodos Eigen*/
-//	Matrix convertEigenToMatrix(Eigen::MatrixXd eigen);
-//	Matrix convertVectorEigenToMatrix(Eigen::VectorXd eigen);
-//	Eigen::MatrixXd convertMatrixToEigen(Matrix mat);
-
 
     /**
     * \brief Metodo auxiliar que retorna os residuos de um ponto fotogrametrico, se o ponto nao for fotogrametrico retorna uma matriz com os elementos zerados
@@ -862,8 +845,6 @@ public:
         */
         Matrix getx2() { return x2; };
 
-// teste
-
 /**
     * \brief Metodo que normaliza as coordenadas
     * \param points : lista de pontos
@@ -879,19 +860,6 @@ public:
     * \param offset : valor do offset
     */
     void desnormalize(std::deque<Point *>points,double range, double offset);
-
-    /* Method into disuse:
-     *
-    * \deprecated O chute inicial dos valores de kappa, atualmente, sÃ£o feitos pelo usuario na interface antes do calculo ser disparado
-    double getKappaZero(Matrix pta,int imageId);
-    *
-    * \brief Metodo que calcula a escala de cada imagem
-    * \deprecated Metodo em desuso, atualmente esse valor Ã© pego do formulario de Flight
-    * \param imageIndex : indice da imagem na matriz de ajustamento
-    * \return double : denominador da escala da imagem
-    double getMediaScale(int imageIndex);
-    */
-
 };
 
 } // namespace efoto
