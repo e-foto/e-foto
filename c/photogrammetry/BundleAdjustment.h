@@ -517,7 +517,6 @@ protected:
   */
  Matrix getCoordColinearTerrain(double xsi, double eta, double z, int imageId);
 
-
 public:
  /**
   * \brief Method that fills Point objects with analog coordinates based on
