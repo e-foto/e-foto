@@ -3,7 +3,7 @@
 /**************************************************************************
 	  SpatialRessection.h
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -28,12 +28,7 @@
 
 /**
   * class SpatialRessection
-  *
   * @author E-Foto group
-  *
-  * * * * * * * * * * * *
-  * @date 06/05/2009
-  * @version 1.2 - Rafael Alves de Aguiar & Irving da Silva Badolato
   */
 
 namespace br {
@@ -45,8 +40,6 @@ class RayTester;
 
 class SpatialRessection : public ExteriorOrientation
 {
-	// Private attributes
-	//
 	Matrix La;
 	Matrix A;
 	Matrix P;
@@ -58,8 +51,8 @@ class SpatialRessection : public ExteriorOrientation
 
 	RayTester* rt;
 
-	double X00, Y00, Z00, omega0, phi0, kappa0; // Variables just for speeding up calculations, not really needed.
-	//double r11, r12, r13, r21, r22, r23, r31, r32, r33; // To make code reading and maintenance easier.
+    // Variables just for speeding up calculations, not really needed.
+    double X00, Y00, Z00, omega0, phi0, kappa0;
 	std::deque<int> selectedPoints;
 	bool flightDirectionAvailable;
 	bool pointForFlightDirectionAvailable;
@@ -69,7 +62,6 @@ class SpatialRessection : public ExteriorOrientation
 	bool useDistortions;
 
 	// Sets probably accessible only by the Mounter class.
-	//
 	void setXa(const Matrix& newXa);
 	void setLa(const Matrix& newLa);
 	void setA(const Matrix& newA);
@@ -80,14 +72,10 @@ class SpatialRessection : public ExteriorOrientation
 
 public:
 
-	// Constructors and destructors
-	//
 	SpatialRessection();
-    explicit SpatialRessection(int myImageId); // Constructor with ids only, needed in project use.
+    explicit SpatialRessection(int myImageId);
 	virtual ~SpatialRessection();
 
-	// Private attribute accessors
-	//
 	Matrix getLa();
 	Matrix getA();
 	Matrix getP();
@@ -104,36 +92,26 @@ public:
 	bool getInsConverged();
 	std::deque<double> getRMSE() {return rmse;}
 
-
-	// Selected points list manipulators
-	//
 	void selectPoint(int id);
 	void unselectPoint(int id);
 	void unselectAllPoints();
 	int countSelectedPoints();
 
-	//  Selected fiducial mark or point to indicate the direction of flight manipulators
-	//
 	void setFlightDirection(double kappa0);
 	void setPointForFlightDirection(double col, double row);
 	void selectFiducialMarkForFlightDirection(int id);
 	void unsetPointForFlightDirection();
 
 	// EObject methods
-	//
 	std::string objectType(void);
 	std::string objectAssociations(void);
 	bool is(std::string s);
 
 	// XML methods
-	//
 	void xmlSetData(std::string xml);
 	std::string xmlGetData();
 	std::string xmlGetDataEO();
 
-	// Other methods
-	//
-	//void generateR();
 	void generateInitialA();
 	void generateInitialL0();
 	void generateInitialP();
@@ -147,7 +125,6 @@ public:
 	bool calculate(int maxIterations, double gnssPrecision, double insPrecision);
 
 	// Private support methods
-	//
 	DetectorSpaceCoordinate applyDistortions(double xi, double eta);
 	DetectorSpaceCoordinate applyDistortions(DetectorSpaceCoordinate myAnalogCoordinate);
 	DetectorSpaceCoordinate removeDistortions(double xi, double eta);

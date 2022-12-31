@@ -1,7 +1,7 @@
 /**************************************************************************
       SpatialRessection.cpp
 **************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -36,12 +36,6 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-// Constructors and destructors
-//
-
-/**
- *
- */
 SpatialRessection::SpatialRessection()
 {
     pointForFlightDirectionAvailable = false;
@@ -60,17 +54,13 @@ SpatialRessection::SpatialRessection()
 
 }
 
-/**
- *
- */
-SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only, needed in project use.
+SpatialRessection::SpatialRessection(int myImageId)
 {
     imageId = myImageId;
     pointForFlightDirectionAvailable = flightDirectionAvailable = false;
     totalIterations = 0;
     gnssConverged = false;
     insConverged = false;
-    //  myImage = image(myImageId);
     if (myImage != NULL){
         rt = new RayTester(myImage);
     }
@@ -80,9 +70,6 @@ SpatialRessection::SpatialRessection(int myImageId) // Constructor with ids only
     useDistortions = true;
 }
 
-/**
- *
- */
 SpatialRessection::~SpatialRessection()
 {
     if (rt != NULL)
@@ -91,10 +78,6 @@ SpatialRessection::~SpatialRessection()
         rt = NULL;
     }
 }
-
-
-// Private attribute accessors
-//
 
 /**
  * Set the value of Xa
@@ -229,17 +212,11 @@ Matrix SpatialRessection::getLastL0()
     return lastL0;
 }
 
-/**
- *
- */
 std::deque<int> SpatialRessection::getSelectedPoints()
 {
     return selectedPoints;
 }
 
-/**
- *
- */
 ImageSpaceCoordinate* SpatialRessection::getPointForFlightDirection()
 {
     if (pointForFlightDirectionAvailable)
@@ -262,9 +239,6 @@ bool SpatialRessection::getInsConverged()
 {
     return insConverged;
 }
-
-// Selected points list manipulators
-//
 
 void SpatialRessection::selectPoint(int id)
 {
@@ -294,8 +268,6 @@ int SpatialRessection::countSelectedPoints()
 }
 
 // Selected fiducial mark or point to indicate the direction of flight manipulators
-//
-
 void SpatialRessection::setFlightDirection(double kappa0)
 {
     myImage->setFlightDirection(kappa0);
@@ -328,11 +300,6 @@ void SpatialRessection::unsetPointForFlightDirection()
 }
 
 // EObject methods
-//
-
-/**
- *
- */
 std::string SpatialRessection::objectType(void)
 {
     std::stringstream result;
@@ -340,28 +307,17 @@ std::string SpatialRessection::objectType(void)
     return result.str();
 }
 
-/**
- *
- */
 std::string SpatialRessection::objectAssociations(void)
 {
     return myImage->objectType();
 }
 
-/**
- *
- */
 bool SpatialRessection::is(std::string s)
 {
     return (s == "SpatialResection" ? true : false);
 }
 
 // XML methods
-//
-
-/**
- *
- */
 void SpatialRessection::xmlSetData(std::string xml)
 {
     EDomElement root(xml);
@@ -393,8 +349,10 @@ void SpatialRessection::xmlSetData(std::string xml)
     L0.xmlSetData(root.elementByTagName("L0").elementByTagName("mml:matrix").getContent());
 
     X0.resize(6,1);
-    // Aqui vem a maldição do nome igual. Tem um elemento X0 dentro do Xa, e um X0 fora. Quero achar o fora.
-    // Eu poderia fazer o acesso diretamente pelo nome dos elementos internos, mas seria dar muitas voltas no XML.
+    // Here comes the curse of the same name.
+    // It has an X0 element inside Xa, and an X0 outside. I want to find the outside.
+    // I could do the access directly by the name of the internal elements,
+    // but it would take a lot of turns in the XML.
     EDomElement xmlX0;
     std::deque<EDomElement> xmlX0s = root.elementsByTagName("X0");
     for (unsigned int i = 0; i < xmlX0s.size(); i++)
@@ -410,9 +368,6 @@ void SpatialRessection::xmlSetData(std::string xml)
     myQuality.xmlSetData(root.elementByTagName("quality").getContent());
 }
 
-/**
- *
- */
 std::string SpatialRessection::xmlGetData()
 {
     std::stringstream result;
@@ -494,18 +449,13 @@ void SpatialRessection::generateInitialA()
         A.resize(selectedPoints.size() * 2, 6).zero();
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
-            // Essas linhas estão horríveis de ler!!! Mas não consigo melhorar mais que isso...
-            Point* myPoint = myImage->getPoint(selectedPoints.at(i)); // Escolhi aqui o ponto que estou usando.
+            // These lines are horrible to read!!! But I can't get any better than that...
+            // I chose here the point I'm using.
+            Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
-            if (myCoordinate.getUnit() == "") // Se essas coordenadas analógicas não existirem, acusadas pela falta de unidade...
+            // If these analog coordinates do not exist, blamed for the lack of unity...
+            if (myCoordinate.getUnit() == "")
                 myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
-            //myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId())); // Crio elas usando digitalToAnalog nas coordenadas digitais.
-
-            // Distortions added.
-            //if (useDistortions)
-            //myCoordinate = applyDistortions(myCoordinate);
-            //myCoordinate = removeDistortions(myCoordinate);
-
             A.set(j,1,1.0);
             A.set(j,2,myCoordinate.getXi());
             A.set(j,3,myCoordinate.getEta());
@@ -579,38 +529,12 @@ void SpatialRessection::generateL0()
     if (myImage != NULL)
     {
         L0.resize(selectedPoints.size() * 2, 1);
-        //double c = myImage->getSensor()->getFocalDistance();
-        //double xi0 = myImage->getSensor()->getPrincipalPointCoordinates().getXi();
-        //double eta0 = myImage->getSensor()->getPrincipalPointCoordinates().getEta();
-
-        //generateR();
-
         rt->setEOParameters(X0);
 
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
-
-            //double X = myCoordinate.getX();
-            //double Y = myCoordinate.getY();
-            //double Z = myCoordinate.getZ();
-
-            //double L0xi = xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
-            //double L0eta = eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00));
-
-            //DetectorSpaceCoordinate newXiEta = applyDistortions(L0xi, L0eta);
-            //DetectorSpaceCoordinate newXiEta = removeDistortions(L0xi, L0eta);
-
-            //double newXi = newXiEta.getXi();
-            //double newEta = newXiEta.getEta();
-
-            //L0.set(j,1,newXi);
-            //L0.set(j+1,1,newEta);
-
-            //L0.set(j,1,xi0-c*(r11*(X-X00)+r21*(Y-Y00)+r31*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
-            //L0.set(j+1,1,eta0-c*(r12*(X-X00)+r22*(Y-Y00)+r32*(Z-Z00))/(r13*(X-X00)+r23*(Y-Y00)+r33*(Z-Z00)));
-
             DetectorSpaceCoordinate analog = rt->objectToDetector(myCoordinate);
 
             L0.set(j, 1, analog.getXi());
@@ -625,16 +549,11 @@ void SpatialRessection::generateRMSE()
     for (int i = 0; i < (int)L0.getRows(); i++)
     {
         sum += pow(L0.get(i+1,1),2);
-        //qDebug("%f",sum);
     }
-    //qDebug("%f",sqrt(sum/(selectedPoints.size()*2-6)));
     rmse.push_back(sqrt(sum/(selectedPoints.size()*2-6)));
 }
 
-/*//////////////////////////////////////////////////////////////////////////////////////////////////
-  Aqui tem codigo da PR
-  ////////////////////////////////////////////////////////////////////////////////////////////////*/
-
+// Here there is PR code
 void SpatialRessection::generateLb()
 {
     if (myImage != NULL)
@@ -642,18 +561,11 @@ void SpatialRessection::generateLb()
         Lb.resize(selectedPoints.size() * 2, 1);
         for (unsigned int i = 0, j = 1; i < selectedPoints.size(); i++, j+=2)
         {
-            // Mesmo código horrível do A inicial.
+            // Same horrible code as the initial A.
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId());
             if (myCoordinate.getUnit() == "")
                 myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
-            //myCoordinate = myImage->getIO()->digitalToAnalog(myPoint->getDigitalCoordinate(myImage->getId()));
-
-            // Distortions added.
-            //if (useDistortions)
-            //myCoordinate = applyDistortions(myCoordinate);
-            //myCoordinate = removeDistortions(myCoordinate);
-
             Lb.set(j,1,myCoordinate.getXi());
             Lb.set(j+1,1,myCoordinate.getEta());
         }
@@ -676,10 +588,7 @@ void SpatialRessection::generateX0()
     kappa0 = X0.get(6,1);
 }
 
-/*//////////////////////////////////////////////////////////////////////////////////////////////////
-  Aqui tem codigo da PR
-  ////////////////////////////////////////////////////////////////////////////////////////////////*/
-
+// Here there is PR code
 void SpatialRessection::initialize()
 {
     if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL /*&& (pointForFlightDirectionAvailable || flightDirectionAvailable)*/)
@@ -696,11 +605,11 @@ void SpatialRessection::initialize()
         generateInitialP();
 
         // Calculating X00 and Y00.
-
         // Warning: this Xa is NOT the one containing the EO's parameters.
-        // It's just used for determining the initial X00 and Y00 and will be erased at the end of initialization.
-        // See generateInitialA(). It represents a simplified, approximate relationship between image and
-        // terrain co-ordinates good enough to determine initial approximate values.
+        // It's just used for determining the initial X00 and Y00 and will be
+        // erased at the end of initialization. See generateInitialA().
+        // It represents a simplified, approximate relationship between image and terrain
+        // co-ordinates good enough to determine initial approximate values.
         Matrix Xa = (A.transpose() * P * A).inverse() * A.transpose() * P * L0;
         X00 = Xa.get(1,1);
         Y00 = Xa.get(4,1);
@@ -865,13 +774,8 @@ bool SpatialRessection::calculate(int maxIterations, double gnssPrecision, doubl
     return gnssConverged && insConverged;
 }
 
-// Private support methods
-//
-
 DetectorSpaceCoordinate SpatialRessection::applyDistortions(double xi, double eta)
 {
-    // Por enquanto estou aplicando todas. Crio a flag depois.
-
     DetectorSpaceCoordinate radial = getRadialDistortions(xi, eta);
     DetectorSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
     DetectorSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
@@ -897,8 +801,6 @@ DetectorSpaceCoordinate SpatialRessection::applyDistortions(DetectorSpaceCoordin
 
 DetectorSpaceCoordinate SpatialRessection::removeDistortions(double xi, double eta)
 {
-    // Por enquanto estou aplicando todas. Crio a flag depois.
-
     DetectorSpaceCoordinate radial = getRadialDistortions(xi, eta);
     DetectorSpaceCoordinate decentered = getDecenteredDistortions(xi, eta);
     DetectorSpaceCoordinate atmosphere = getAtmosphereDistortions(xi, eta);
@@ -991,12 +893,6 @@ DetectorSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, d
         if (terrain != NULL)
         {
             double Z0, Zp;
-            /*if (myImage->getEO() != NULL)
-   {
-    Z0 = myImage->getEO()->getXa().get(3,1);
-   }
-   else
-   {*/
             Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
             /*}*/
             Zp = terrain->getMeanAltitude();
@@ -1040,18 +936,12 @@ DetectorSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, do
         if (terrain != NULL)
         {
             double Z0;
-            /*if (myImage->getEO() != NULL)
-   {
-    Z0 = myImage->getEO()->getXa().get(3,1);
-   }
-   else
-   {*/
             Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
             /*}*/
 
             Z0 /= 1000;
 
-            double R = 6371004.0; // De onde eu tiro isso? Deixo essa constante?
+            double R = 6371004.0; // Where do I get this? Do I leave this constant?
             double r = sqrt(xi*xi+eta*eta);
             double f = sensor->getFocalDistance();
 
