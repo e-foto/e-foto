@@ -219,10 +219,10 @@ std::deque<int> SpatialRessection::getSelectedPoints()
 
 ImageSpaceCoordinate* SpatialRessection::getPointForFlightDirection()
 {
-    if (pointForFlightDirectionAvailable)
+    if (pointForFlightDirectionAvailable){
         return &pointForFlightDirection;
-    else
-        return NULL;
+    }
+    else { return NULL;}
 }
 
 bool SpatialRessection::getConverged()
@@ -243,18 +243,19 @@ bool SpatialRessection::getInsConverged()
 void SpatialRessection::selectPoint(int id)
 {
     bool insert = true;
-    for (unsigned int i = 0; i < selectedPoints.size(); i++)
-        if (selectedPoints.at(i) == id)
-            insert = false;
-    if (insert)
-        selectedPoints.push_back(id);
+    for (unsigned int i = 0; i < selectedPoints.size(); i++){
+        if (selectedPoints.at(i) == id) insert = false;
+    }
+    if (insert) selectedPoints.push_back(id);
 }
 
 void SpatialRessection::unselectPoint(int id)
 {
-    for (unsigned int i = 0; i < selectedPoints.size(); i++)
-        if (selectedPoints.at(i) == id)
+    for (unsigned int i = 0; i < selectedPoints.size(); i++){
+        if (selectedPoints.at(i) == id){
             selectedPoints.erase(selectedPoints.begin() + i);
+        }
+    }
 }
 
 void SpatialRessection::unselectAllPoints()
@@ -323,10 +324,12 @@ void SpatialRessection::xmlSetData(std::string xml)
     EDomElement root(xml);
     imageId = Conversion::stringToInt(root.attribute("image_key"));
     totalIterations = root.elementByTagName("iterations").toInt();
-    if (root.elementByTagName("converged").toString() == "true")
+    if (root.elementByTagName("converged").toString() == "true"){
         gnssConverged = insConverged = true;
-    else
+    }
+    else {
         gnssConverged = insConverged = false;
+    }
 
     std::deque<EDomElement> pts = root.elementByTagName("usedPoints").children();
     selectedPoints.clear();
@@ -355,9 +358,10 @@ void SpatialRessection::xmlSetData(std::string xml)
     // but it would take a lot of turns in the XML.
     EDomElement xmlX0;
     std::deque<EDomElement> xmlX0s = root.elementsByTagName("X0");
-    for (unsigned int i = 0; i < xmlX0s.size(); i++)
+    for (unsigned int i = 0; i < xmlX0s.size(); i++){
         if (xmlX0s.at(i).children().size() == 6)
             xmlX0 = xmlX0s.at(i);
+    }
     X0.set(1,1, xmlX0.elementByTagName("X00").toDouble());
     X0.set(2,1, xmlX0.elementByTagName("Y00").toDouble());
     X0.set(3,1, xmlX0.elementByTagName("Z00").toDouble());
@@ -373,10 +377,12 @@ std::string SpatialRessection::xmlGetData()
     std::stringstream result;
     result << "<imageSR image_key=\"" << Conversion::intToString(imageId) << "\">\n";
     result << "<iterations>" << Conversion::intToString(totalIterations) << "</iterations>\n";
-    if (gnssConverged && insConverged)
+    if (gnssConverged && insConverged) {
         result << "<converged>true</converged>\n";
-    else
+    }
+    else {
         result << "<converged>false</converged>\n";
+    }
     result << "<parameters>\n";
 
     result << "<usedPoints>\n";
@@ -454,8 +460,9 @@ void SpatialRessection::generateInitialA()
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId()); // Tento tirar as coordenadas analógicas dele.
             // If these analog coordinates do not exist, blamed for the lack of unity...
-            if (myCoordinate.getUnit() == "")
+            if (myCoordinate.getUnit() == ""){
                 myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
+            }
             A.set(j,1,1.0);
             A.set(j,2,myCoordinate.getXi());
             A.set(j,3,myCoordinate.getEta());
@@ -536,7 +543,6 @@ void SpatialRessection::generateL0()
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             ObjectSpaceCoordinate myCoordinate = myPoint->getObjectCoordinate();
             DetectorSpaceCoordinate analog = rt->objectToDetector(myCoordinate);
-
             L0.set(j, 1, analog.getXi());
             L0.set(j+1, 1, analog.getEta());
         }
@@ -564,8 +570,9 @@ void SpatialRessection::generateLb()
             // Same horrible code as the initial A.
             Point* myPoint = myImage->getPoint(selectedPoints.at(i));
             DetectorSpaceCoordinate myCoordinate = myPoint->getDetectorCoordinate(myImage->getId());
-            if (myCoordinate.getUnit() == "")
+            if (myCoordinate.getUnit() == ""){
                 myCoordinate = rt->imageToDetector(myPoint->getImageCoordinate(myImage->getId()));
+            }
             Lb.set(j,1,myCoordinate.getXi());
             Lb.set(j+1,1,myCoordinate.getEta());
         }
@@ -593,10 +600,8 @@ void SpatialRessection::initialize()
 {
     if (myImage != NULL && myImage->getSensor() != NULL && myImage->getFlight() != NULL && myImage->getIO() != NULL /*&& (pointForFlightDirectionAvailable || flightDirectionAvailable)*/)
     {
-        if (rt == NULL)
-            rt = new RayTester(myImage);
-        else
-            rt->setImage(myImage);
+        if (rt == NULL) rt = new RayTester(myImage);
+        else rt->setImage(myImage);
 
         rt->setIOParameters(myImage->getIO()->getXa());
 
@@ -624,10 +629,12 @@ void SpatialRessection::initialize()
         phi0 = 0;
 
         // Kappa0
-        if (flightDirectionAvailable)
+        if (flightDirectionAvailable){
             kappa0 = myImage->getFlightDirection();
-        else
+        }
+        else {
             kappa0 = atan2((Xa.get(5,1)-Xa.get(3,1)),(Xa.get(2,1)+Xa.get(6,1)));
+        }
 
 
         // Setting the values to X0 and reseting Xa.
@@ -894,9 +901,7 @@ DetectorSpaceCoordinate SpatialRessection::getAtmosphereDistortions(double xi, d
         {
             double Z0, Zp;
             Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
-            /*}*/
             Zp = terrain->getMeanAltitude();
-
             Z0 /= 1000;
             Zp /= 1000;
 
@@ -937,8 +942,6 @@ DetectorSpaceCoordinate SpatialRessection::getCurvatureDistortions(double xi, do
         {
             double Z0;
             Z0 = myImage->getFlight()->getScaleDen()*myImage->getSensor()->getFocalDistance()/1000 + terrain->getMeanAltitude();
-            /*}*/
-
             Z0 /= 1000;
 
             double R = 6371004.0; // Where do I get this? Do I leave this constant?
