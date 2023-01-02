@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ namespace efoto {
 /*
  * Dem features
  **/
-
 DemFeatures::DemFeatures()
 {
     // No feature and point selected
@@ -41,11 +40,6 @@ DemFeatures::DemFeatures()
     selected_pt = -1;
     img_left_width = img_left_height = img_right_width = img_right_height = -1;
 }
-
-
-//
-// Common functions
-//
 
 FeatureClass * DemFeatures::getFeatureClass(int classid)
 {
@@ -118,7 +112,6 @@ int DemFeatures::exportTxtFeatures(char *filename)
     std::string name = std::string(filename);
     name.append(".txt");
 
-    // Open file to save
     std::ofstream arq(name);
     if (arq.fail())
     {
@@ -130,7 +123,6 @@ int DemFeatures::exportTxtFeatures(char *filename)
     arq << "=====================\n\n";
     arq << "Total features: " << features.size() << "\n\n";
 
-    // Change number precision
     arq.precision(20);
 
     DemFeature df;
@@ -178,15 +170,12 @@ bool DemFeatures::hasFeatureClass(FeatureClass* fc)
 
 int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GDALDataset* poDS)
 {
-    // Concatenamos o nome de arquivo proposto com o nome de classe
-    //std::string current_filename = std::string(filename);
-    //current_filename.append("_").append(fc->name);
-
-    // Definimos o tipo de feições OGR para a classe que será gravada
+    // We set the type of OGR features to the class that will be recorded
     OGRwkbGeometryType nShapeType;
     switch (fc->type)
     {
-        // It would be preferable to use wkt[TheGeomType]Z (with integer values ​​1001, 1002 and 1003 for pointz, linestringz and polygons respective types),
+        // It would be preferable to use wkt[TheGeomType]Z (with integer values ​​1001, 1
+        // 002 and 1003 for pointz, linestringz and polygons respective types),
         // but in the development version of GDAL/OGR this was not found!
         case 1: nShapeType = wkbPoint25D; break;
         case 2: nShapeType = wkbLineString25D; break;
@@ -194,7 +183,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
         default: nShapeType = wkbMultiPoint25D;
     }
 
-    // Criamos a shapefile (camada OGR) com o nome da classe
+    // We create the shapefile (OGR layer) with the class name.
     OGRLayer* poLayer = poDS->CreateLayer( fc->name.c_str(), oSRS, nShapeType, nullptr );
     if( poLayer == nullptr )
     {
@@ -202,7 +191,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
         return 0;
     }
 
-    // Adicionamos uma definiçao de campo na camada para o nome das feições
+    // We added a field definition in the layer for the name of the features.
     OGRFieldDefn oField( "Name", OFTString );
     oField.SetWidth(254);
     if( poLayer->CreateField( &oField ) != OGRERR_NONE )
@@ -211,19 +200,19 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
         return 0;
     }
 
-    // Para cada uma das feições em memória
+    // For each of the features in memory
     DemFeature df;
     for (unsigned int i=0; i<features.size(); i++)
     {
-        // Se a feição pertence a classe
+        // If the feature belongs to the class
         if ( getFeatureClass(features.at(i).feature_class)  == fc )
         {
-            // Contabilizamos o número de vértices da feição
+            // We count the number of feature vertices
             df = features.at(i);
             unsigned int nVertices = df.points.size();
             if (fc->type == 3) nVertices++;
 
-            // Recuperamos os vértices da feição
+            // We retrieve the vertices of the feature
             double* padfX = (double *) malloc(sizeof(double) * nVertices);
             double* padfY = (double *) malloc(sizeof(double) * nVertices);
             double* padfZ = (double *) malloc(sizeof(double) * nVertices);
@@ -239,7 +228,7 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                 padfZ[j] = dfp.Z;
             }
 
-            // Criamos geometria OGR relacionada ao tipo de feição
+            // We create OGR geometry related to the feature type
             OGRGeometry* geom;
             switch (fc->type) {
                 case 1: {OGRPoint pt;
@@ -269,21 +258,21 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
                         }
             };
 
-            // Criamos a feição OGR
+            // We create the OGR feature
             OGRFeature *poFeature = OGRFeature::CreateFeature( poLayer->GetLayerDefn() );
             poFeature->SetField( "Name", df.name.c_str() );
-            poFeature->SetGeometryDirectly( geom );                          // Isso transfere a posse da geometria para a feição
+            // This transfers ownership of the geometry to the feature.
+            poFeature->SetGeometryDirectly( geom );
 
-            // Adicionamos a feição OGR a camada
+            // We added the OGR feature to the layer
             OGRErr addFeatureError = poLayer->CreateFeature( poFeature );
 
-            //Liberamos a memória
-            OGRFeature::DestroyFeature( poFeature );                        // Isso libera a memória usada pela feição e sua geometria
+            OGRFeature::DestroyFeature( poFeature );
             free( padfX );
             free( padfY );
             free( padfZ );
 
-            // Se alguma feiçao não puder ser gravada, paramos o processo
+            // If any feature cannot be recorded, we stop the process.
             if (addFeatureError  != OGRERR_NONE)
             {
                 printf( "Failed to create feature in shapefile.\n" );
@@ -296,11 +285,10 @@ int DemFeatures::createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GD
 
 int DemFeatures::exportShpFeatures(char *filename)
 {
-    // Retornamos se não houverem feições para salvar
     if (features.size() == 0)
         return 1;
 
-    // Recuperamos o driver
+    // We recover the driver
     const char *pszDriverName = "ESRI Shapefile";
     GDALDriver *poDriver;
     GDALAllRegister();
@@ -311,7 +299,7 @@ int DemFeatures::exportShpFeatures(char *filename)
         return 0;
     }
 
-    // Criamos o diretório com o nome base fornecido
+    // We create the directory with the given base name
     GDALDataset *poDS = poDriver->Create( filename, 0, 0, 0, GDT_Unknown, nullptr );
     if( poDS == nullptr )
     {
@@ -319,17 +307,17 @@ int DemFeatures::exportShpFeatures(char *filename)
         return 0;
     }
 
-    // Recuperamos o sistema de referência
+    // We recover the reference system
     OGRSpatialReference oSRS;
     oSRS.importFromEPSG( GRS.getEPSG(utmFuse, spheroid) );
 
-    // Para cada classe de feição
+    // For each feature class
     for (unsigned int i = 1; i <= feature_classes.size(); i++)
     {
-        // Se há ao menos uma feição pertencente a classe
+        // If there is at least one feature belonging to the class
         if ( hasFeatureClass( getFeatureClass(i) ) )
         {
-            // Criamos um shapefile para a classe
+            // We create a shapefile for the class
             createShapefile(getFeatureClass(i), &oSRS, poDS);
         }
     }
@@ -338,14 +326,11 @@ int DemFeatures::exportShpFeatures(char *filename)
 
 int DemFeatures::saveFeatSp165(char *filename)
 {
-    // If list is empty, return
     if (features.size() == 0)
         return 0;
 
     std::string name = std::string(filename);
-    //name.append(".txt");
 
-    // Open file to save
     std::ofstream arq(name);
     if (arq.fail())
     {
@@ -361,21 +346,19 @@ int DemFeatures::saveFeatSp165(char *filename)
     {
         df = features.at(i);
         arq << i+1 << "\n"; // Feature ID
-        arq << getClassIdToSp165(df.feature_class) <<"\n"; // Class type
-        arq << getFeatureTypeName(df.feature_type) << "\n"; // Name of feature
-        arq << df.name << "\n"; // Description (changed to name in this version)
+        arq << getClassIdToSp165(df.feature_class) <<"\n";
+        arq << getFeatureTypeName(df.feature_type) << "\n";
+        arq << df.name << "\n";
     }
     arq << "</EFOTO_FEATURES>\n";
 
     // Now, save the points
     arq << "<EFOTO_POINTS>\n";
     arq.precision(20);
-    //double lc,lr,rc,rr,X,Y,Z;
     DemFeaturePoints dfp;
     for (unsigned int i=0; i<features.size(); i++)
     {
         df = features.at(i);
-        //pos = findFeature2D(i+1);
 
         for (unsigned int j=0; j<df.points.size(); j++)
         {
@@ -452,7 +435,6 @@ int DemFeatures::addNewFeature(std::string name, std::string fdesc, int fclass, 
 
 int DemFeatures::deleteFeature(int featid)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return 0;
 
@@ -463,7 +445,6 @@ int DemFeatures::deleteFeature(int featid)
 
 int DemFeatures::copyFeature(int featid, double shift=0.0)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return 0;
 
@@ -485,7 +466,6 @@ int DemFeatures::copyFeature(int featid, double shift=0.0)
 // Returns point id - 0, if feature_id is invalid
 void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, double Z)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return;
 
@@ -493,7 +473,6 @@ void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, doubl
     if (features.at(featid-1).points.size() > 0 && features.at(featid-1).feature_type == 1)
         return;
 
-    // If point id is invalid, return
     if (pointid < 1)
         return;
 
@@ -513,7 +492,6 @@ void DemFeatures::addNewPoint(int featid, int pointid, double X, double Y, doubl
 
 void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, double Z)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return;
 
@@ -530,7 +508,6 @@ void DemFeatures::updatePoint(int featid, int pointid, double X, double Y, doubl
 
 void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return;
 
@@ -548,7 +525,6 @@ void DemFeatures::update2DPoint(int featid, int pointid, double lx, double ly, d
 
 int DemFeatures::deletePoint(int featid, int pointid)
 {
-    // Check if feature is valid
     if (featid < 1 || unsigned(featid) > features.size())
         return 0;
 
@@ -682,10 +658,7 @@ int DemFeatures::addFeatureClass(FeatureClass fc)
     return feature_classes.size();
 }
 
-//
 // Arithmetic functions
-//
-
 void DemFeatures::calculateFeaturesAttributes()
 {
     for (unsigned int i=0; i<features.size(); i++)
@@ -953,9 +926,7 @@ void DemFeatures::getNearestPoint(double X, double Y, double Z, int& fid, int& p
     pid = best_pid;
 }
 
-//
 // Stereoplotter 1.65 and DEM 2.5 compatibility
-//
 void DemFeatures::convertClassesIdsFromSp165()
 {
     int fc, ft;
@@ -1165,7 +1136,6 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
 
     // Start to read the features
     // Create empty features
-    //	arq.seekg (0, ios::beg);
     DemFeature df;
     df.layer = 1;
     df.description = "";
@@ -1218,7 +1188,6 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
     // Start to read the points
     int feature_id, point_id;
     DemFeaturePoints dfp;
-    //double lx, ly, rx, ry;
     while (!arq.fail())
     {
         // Points EOF
@@ -1245,9 +1214,6 @@ int DemFeatures::loadFeatSp165(char *filename, bool append=false)
             getline(arq,tag); // 6th line right_row
             dfp.right_y = Conversion::stringToDouble(tag);
 
-            //insertFeature2D(feature_id, lx, ly, rx, ry);
-
-            // X, Y, Z
             getline(arq,tag); // 7th line X
             dfp.X = Conversion::stringToDouble(tag);
             getline(arq,tag); // 8th line Y
@@ -1374,9 +1340,6 @@ void DemFeatures::addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi
     double fXi, fXf, fYi, fYf;
     calculateBoundingBox(feat_id, fXi, fYi, fXf, fYf);
 
-    //double offset_X = fXi - Xi;
-    //double offset_Y = fYi - Yi;
-
     double X, Y;
     int row, col;
     for (unsigned int i=1; i<=polMap.getRows(); i++)
@@ -1473,7 +1436,7 @@ double DemFeatures::interpolateXYPolygon(int feat_id, double X, double Y, double
         {
             d = D/D0;
             weight = (1/pow(d,n))-1;
-            //            weight = 1 - pow(d,n);
+            // weight = 1 - pow(d,n);
             sum1 += weight*df->points.at(i).Z;
             sum2 += weight;
         }
@@ -1569,7 +1532,6 @@ std::string DemFeatures::getFeaturesToDisplay(int mode)
 {
     // Mode 0 = Digital coordinates
     // Mode 1 = Terrain coordinartes
-
     std::stringstream txt;
     DemFeature df;
 
@@ -1578,8 +1540,6 @@ std::string DemFeatures::getFeaturesToDisplay(int mode)
     // Number of features
     txt << features.size() << "\n";
 
-    //int pos;
-    //double lx, ly, rx, ry;
     for (unsigned int i=0; i<features.size(); i++)
     {
         df = features.at(i);
@@ -1605,15 +1565,6 @@ void DemFeatures::setImagePairSize(int lw, int lh, int rw, int rh)
     img_right_width = rw;
     img_right_height = rh;
 }
-
-/* Method into disuse:
- *
-void DemFeatures::setFeatureClass(int classid, FeatureClass fc)
-{
-    if (classid < 1 || classid > feature_classes.size())
-        return;
-}
-*/
 
 } // namespace efoto
 } // namespace eng

@@ -3,7 +3,7 @@
 /*******************************************************************************
                               DemFeatures.h
 *******************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -30,16 +30,6 @@
 #include <ogrsf_frmts.h>
 #include <ogr_spatialref.h>
 
-/**
-* class DemFeatures
-*
-* @author E-Foto group
-*
-* * * * * * * * * * * *
-* @date 21/11/2011
-* @version 1.0 - Marcelo Teixeira Silveira
-*/
-
 namespace br {
 namespace uerj {
 namespace eng {
@@ -47,7 +37,6 @@ namespace efoto {
 
 class  MatchingPointsList;
 
-// Feature Class
 class FeatureClass
 {
 public:
@@ -58,7 +47,6 @@ public:
     int line_type;
 };
 
-// One point
 class DemFeaturePoints
 {
 public:
@@ -67,7 +55,6 @@ public:
     double left_x, left_y, right_x, right_y;
 };
 
-// One feature
 class DemFeature
 {
 public:
@@ -80,18 +67,16 @@ public:
     std::vector <DemFeaturePoints> points;
 };
 
-// All features
 class DemFeatures
 {
 private:
     int img_left_width, img_left_height, img_right_width, img_right_height;
     int loadFeatSp165(char *filename, bool append);
-    // todo: solve unused parameter append
     int createShapefile(FeatureClass* fc, OGRSpatialReference* oSRS, GDALDataset *poDS);
     bool hasFeatureClass(FeatureClass* fc);
     int exportShpFeatures(char *filename);
     int exportTxtFeatures(char *filename);
-    int saveFeatSp165(char *filename/*, bool append*/);
+    int saveFeatSp165(char *filename);
     void convertClassesIdsFromSp165();
     void calculateFeaturesAttributes();
     void calculateFeatureAttributes(int featid);
@@ -103,11 +88,9 @@ private:
     void addPolygonToMap(int feat_id, Matrix *map, double Xi, double Yi, double res_x, double res_y);
     Matrix mapPolygon(int feat_id, double res_x, double res_y);
     double angle2D(double X1, double Y1, double X2, double Y2);
-    //int findFeature2D(int id);
     int selected_feat, selected_pt;
     std::vector <DemFeature> features;
     std::vector <FeatureClass> feature_classes;
-    //std::vector <DemFeatures2D> display_coords;
     Matrix polygonMap;
     GeoSystem GRS;
     int utmFuse;
@@ -121,11 +104,10 @@ public:
     int getClassIdToSp165(int new_class);
     FeatureClass * getFeatureClass(int);
     std::string getFeatureTypeName(int);
-    //todo: solve unused parameters mode and append
     int loadFeatures(char *filename, bool append);
     int saveFeatures(char *filename);
     int exportFeatures(char *filename, int mode = 0);
-    DemFeature getFeature(int feat); // Read only
+    DemFeature getFeature(int feat);
     DemFeature* getFeatureLink(int feat);
     void showFeatures(bool full);
     void showClasses();
@@ -133,11 +115,11 @@ public:
     void setSelectedFeature(int _ft) { selected_feat = _ft; }
     int selectedPoint() { return selected_pt; }
     void setSelectedPoint(int _pt) { selected_pt = _pt; }
-    int addNewFeature(std::string name, std::string fdesc, int fclass, int ftype, int layer); // Returns feature id
+    int addNewFeature(std::string name, std::string fdesc, int fclass, int ftype, int layer);
     void deleteAllFeatures() { features.clear(); }
     int deleteFeature(int featid);
     int copyFeature(int featid, double shift);
-    void addNewPoint(int featid, int pointid, double X, double Y, double Z); // Returns point id
+    void addNewPoint(int featid, int pointid, double X, double Y, double Z);
     void updatePoint(int featid, int pointid, double X, double Y, double Z);
     void update2DPoint(int featid, int pointid, double lx, double ly, double rx, double ry);
     int deletePoint(int featid, int pointid);
@@ -164,21 +146,11 @@ public:
     void calculateBoundingBox(int feat_id, double &Xi, double &Yi, double &Xf, double &Yf);
     double interpolateXYPolygon(int feat_id, double X, double Y, double D0);
     std::string getFeaturesList();
-    //std::string getFeaturesToDisplayText(int mode=0);
-    //std::vector<DemFeatures2D> * getFeaturesToDisplay() { return &display_coords; };
-    //void insertFeature2D(int id, double lx, double ly, double rx, double ry);
-    //void deleteFeature2D(int id);
-    //void deleteAllFeatures2D() { display_coords.clear(); };
     std::string getFeaturesToDisplay(int mode=0);
     void setImagePairSize(int lw, int lh, int rw, int rh);
     void setGRS(std::string _gs) { GRS = GeoSystem(_gs); }
     void setUtmFuse(int _fuse) { utmFuse = _fuse; }
     void setHemisphere(bool _hs) { spheroid = _hs; }
-
-    /* Method into disuse:
-     *
-    void setFeatureClass(int classid, FeatureClass fc);
-    */
 };
 
 } // namespace efoto
