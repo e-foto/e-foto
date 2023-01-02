@@ -80,9 +80,8 @@ protected:
 public:
  /**
   * \brief Basic constructor for the calculation
-  * \param listSelectedimages : List of all images that will be considered in
-  * the calculation \param listSelectedPoints : List of all points that will be
-  * considered in the calculation
+  * \param listSelectedimages : List of all images that will be considered in the calculation
+  * \param listSelectedPoints : List of all points that will be considered in the calculation
   */
  explicit BundleAdjustment(std::deque<Image *> listSelectedImages,
                            std::deque<Point *> listSelectedPoints);
@@ -95,8 +94,9 @@ public:
 
  /**
   * \brief Method for debug prints in terminal matrix with a label
-  * \deprecated The Matrix Class already has a similar method, namely,
-  * Matrix::show() \param mat : Matrix to display in terminal \param id  : label
+  * \deprecated The Matrix Class already has a similar method, namely, Matrix::show()
+  * \param mat : Matrix to display in terminal
+  * \param id  : label
   * text
   */
  void imprime(Matrix mat, char *id);
@@ -125,36 +125,44 @@ public:
 
  /**
   * \brief Calculates the m1 matrix, necessary for the initial calculation of
-  * the exterior orientation parameters \param    M1   : Matrix formed by the
-  * analog coordinates of all points \param    L1   : Matrix formed by the X and
-  * Y coordinates of the control points \return Matrix : Matrix m1
+  * the exterior orientation parameters
+  * \param    M1   : Matrix formed by the analog coordinates of all points
+  * \param    L1   : Matrix formed by the X and Y coordinates of the control points
+  * \return Matrix : Matrix m1
   */
  Matrix getm1(Matrix M1, Matrix L1);
 
  /**
   * \brief Calculates the m1 matrix, necessary for the initial calculation of
-  * the exterior orientation parameters \param    M2   : Matrix formed by
-  * submatrices for each photogrammetric point \param    L1   : Matrix formed by
-  * the X and Y coordinates of the control points \return Matrix : Matrix m1
+  * the exterior orientation parameters
+  * \param    M2   : Matrix formed by submatrices for each photogrammetric point
+  * \param    L1   : Matrix formed by the X and Y coordinates of the control points
+  * \return Matrix : Matrix m1
   */
  Matrix getm2(Matrix M2, Matrix L1);
 
  /**
   * \brief Method that returns the matrix with the first approximations of the
-  * exterior orientation parameters \param    M12  : Matrix M12 \param    m1   :
-  * Matrix m1 \param    xypf : Matrix xypf, matrix with the first approximations
-  * of the coordinates of the photogrammetric points \return Matrix : Matrix
-  * paf, matrix with the first approximations of the exterior orientation
-  * parameters
+  * exterior orientation parameters
+  * \param    M12  : Matrix M12
+  * \param    m1   : Matrix m1
+  * \param    xypf : Matrix xypf, matrix with the first approximations
+  * of the coordinates of the photogrammetric points
+  * \return Matrix : Matrix paf, matrix with the first approximations of
+  * the exterior orientation parameters
   */
  Matrix getPAf(Matrix M12, Matrix m1, Matrix xypf);
 
  /**
   * \brief Method that returns the matrix with the first approximations of the
-  * coordinates of the photogrammetric points \param    M22  : Matrix M22 \param
-  * m2   : Matrix m2 \param    M12  : Matrix M12 \param    paf  : Matrix paf
-  * which contains the initial values ​​of the exterior orientation
-  * parameters \return Matrix : Matrix xypf, matrix with the first
+  * coordinates of the photogrammetric points
+  * \param    M22  : Matrix M22
+  * \param
+  * m2   : Matrix m2
+  * \param    M12  : Matrix M12
+  * \param    paf  : Matrix paf
+  * which contains the initial values ​​of the exterior orientation parameters
+  * \return Matrix : Matrix xypf, matrix with the first
   * approximations of the coordinates of the photogrammetric points
   */
  Matrix getXYpf(Matrix M22, Matrix m2, Matrix M12, Matrix paf);
@@ -170,10 +178,12 @@ public:
   *        to convert analog coordinate(xsi,eta) to terrain coordinate
   *
   * \param   Paf   : Matrix with all the parameters of the exterior orientation
-  * of all the images \param imageId : image id in current calculation
+  * of all the images
+  * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
   * but the line in which its parameters are found in the adjustment
-  * matrix(matAdjust) \return Matrix : Matrix with the parameters of the
+  * matrix(matAdjust)
+  * \return Matrix : Matrix with the parameters of the
   * exterior orientation of an image
   */
  Matrix getPTA(Matrix PAf, int imageId);
@@ -195,14 +205,16 @@ public:
 
  /**
   * \brief Method that returns a matrix with the analog coordinates of the
-  * points calculated by the collinearity equations \return Matrix : Returns the
+  * points calculated by the collinearity equations
+  * \return Matrix : Returns the
   * L0 matrix
   */
  Matrix getL0();
 
  /**
   * \brief Method that returns a matrix with the analog coordinates of the
-  * points calculated by interior orientation \return Matrix : Returns the Lb
+  * points calculated by interior orientation
+  * \return Matrix : Returns the Lb
   * matrix
   */
  Matrix getLb();
@@ -229,35 +241,41 @@ protected:
 
  /**
   * \brief Method that returns the x and straight values of an X Y Z coordinate
-  * contained in an image through collinearity equations \param    X    :
-  * Coordinate value on axis X \param    Y    : Coordinate value on axis Y
+  * contained in an image through collinearity equations
+  * \param    X    :
+  * Coordinate value on axis X
+  * \param    Y    : Coordinate value on axis Y
   * \param    Z    : Coordinate value on axis Z
   * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return Matrix : Matrix with xi and eta coordinates
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return Matrix : Matrix with xi and eta coordinates
   */
  Matrix getCoordinatesEqColin(double X, double Y, double Z, int imageId);
 
  /**
   * \brief Method that returns a Jacobian matrix of an X Y Z coordinate of a
-  * Control point \param    X    : Coordinate value on axis X \param    Y    :
-  * Coordinate value on axis Y \param    Z    : Coordinate value on axis Z
+  * Control point
+  * \param    X    : Coordinate value on axis X
+  * \param    Y    : Coordinate value on axis Y
+  * \param    Z    : Coordinate value on axis Z
   * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return Matrix : Jacobian Matrix of the coordinate
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return Matrix : Jacobian Matrix of the coordinate
   */
  Matrix getJacobianaControl(double X, double Y, double Z, int imageId);
 
  /**
   * \brief Method that returns the Jacobian matrix of an X Y Z coordinate of a
-  * photogrammetric point \param    X    : Coordinate value on axis X \param Y
-  * : Coordinate value on axis Y \param    Z    : Coordinate value on axis Z
+  * photogrammetric point
+  * \param    X    : Coordinate value on axis X
+  * \param    Y    : Coordinate value on axis Y
+  * \param    Z    : Coordinate value on axis Z
   * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return Matrix : Jacobian Matrix of the coordinate
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return Matrix : Jacobian Matrix of the coordinate
   */
  Matrix getJacobianaFotogrametric(double X, double Y, double Z, int imageId);
 
@@ -305,15 +323,17 @@ protected:
 
  /**
   * \brief Calculates matrix n1, necessary for calculating the adjustment of the
-  * exterior orientation parameters \param    l    : Difference matrix between
-  * Lb and L0 \return Matrix : Matrix n1
+  * exterior orientation parameters
+  * \param    l    : Difference matrix between Lb and L0
+  * \return Matrix : Matrix n1
   */
  Matrix getn1(Matrix l);
 
  /**
   * \brief Calculates matrix n2, necessary for calculating the adjustment of the
-  * exterior orientation parameters \param    l    : Difference matrix between
-  * Lb and L0 \return Matrix : Matrix n2
+  * exterior orientation parameters
+  * \param    l    : Difference matrix between Lb and L0
+  * \return Matrix : Matrix n2
   */
  Matrix getn2(Matrix l);
 
@@ -356,59 +376,70 @@ protected:
   *
   * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  *            but the line in which its parameters are found in the adjustment
-  * matrix (matAdjust) \return double : Delta value of the Omega angle contained
-  * in the previously calculated matrix x1
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Delta value of the Omega angle contained in the previously
+  * calculated matrix x1
   */
  double getdOmegax1(int imageId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the Phi
-  * angle contained in the matrix x1 \param imageId : image id in current
-  * calculation \attention the imageId is NOT the key of the image in the
+  * angle contained in the matrix x1
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the
   * ProjectManager, but the line in which its parameters are found in the
-  * adjustment matrix (matAdjust) \return double : Delta value of the Phi angle
-  * contained in the previously calculated matrix x1
+  * adjustment matrix (matAdjust)
+  * \return double : Delta value of the Phi angle contained in the previously
+  * calculated matrix x1
   */
  double getdPhix1(int imageId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the
-  * Kappa angle contained in the matrix x1 \param imageId : image id in current
-  * calculation \attention the imageId is NOT the key of the image in the
+  * Kappa angle contained in the matrix x1
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the
   * ProjectManager, but the line in which its parameters are found in the
-  * adjustment matrix (matAdjust) \return double : Delta value of the Kappa
-  * angle contained in the previously calculated matrix x1
+  * adjustment matrix (matAdjust)
+  * \return double : Delta value of the Kappa angle contained in the previously
+  * calculated matrix x1
   */
  double getdKappax1(int imageId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of
-  * coordinate X0 contained in matrix x1 \param imageId : image id in current
-  * calculation \attention the imageId is NOT the key of the image in the
+  * coordinate X0 contained in matrix x1
+  * \param imageId : image id in current
+  * calculation
+  * \attention the imageId is NOT the key of the image in the
   * ProjectManager, but the line in which its parameters are found in the
-  * adjustment matrix (matAdjust) \return double : Delta value of the X0
-  * coordinate contained in the previously calculated x1 matrix
+  * adjustment matrix (matAdjust)
+  * \return double : Delta value of the X0 coordinate contained in the
+  * previously calculated x1 matrix
   */
  double getdXx1(int imageId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the Y0
-  * coordinate contained in the x1 matrix \param imageId : image id in current
-  * calculation \attention the imageId is NOT the key of the image in the
+  * coordinate contained in the x1 matrix
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the
   * ProjectManager, but the line in which its parameters are found in the
-  * adjustment matrix (matAdjust) \return double : Delta value of the Y0
+  * adjustment matrix (matAdjust)
+  * \return double : Delta value of the Y0
   * coordinate contained in the previously calculated x1 matrix
   */
  double getdYx1(int imageId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the Z0
-  * coordinate contained in the x1 matrix \param imageId : image id in current
-  * calculation \attention the imageId is NOT the key of the image in the
+  * coordinate contained in the x1 matrix
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the
   * ProjectManager, but the line in which its parameters are found in the
-  * adjustment matrix (matAdjust) \return double : Delta value of the Z0
-  * coordinate contained in the previously calculated x1 matrix
+  * adjustment matrix (matAdjust)
+  * \return double : Delta value of the Z0 coordinate contained in the
+  * previously calculated x1 matrix
   */
  double getdZx1(int imageId);
 
@@ -417,88 +448,90 @@ protected:
   * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
   * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return double : Omega value contained in matAdjust Matrix
+  * (matAdjust)
+  * \return double : Omega value contained in matAdjust Matrix
   */
  double getOmegaAdjus(int imageId);
 
  /**
-  * \brief Auxiliary method that returns the value of Phi in the adjustment
-  * matrix \param imageId : image id in current calculation \attention the
-  * imageId is NOT the key of the image in the ProjectManager, but the line in
-  * which its parameters are found in the adjustment matrix (matAdjust) \return
-  * double : Phi value contained in the matAdjust Matrix
+  * \brief Auxiliary method that returns the value of Phi in the adjustment matrix
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the ProjectManager,
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Phi value contained in the matAdjust Matrix
   */
  double getPhiAdjus(int imageId);
 
  /**
-  * \brief Auxiliary method that returns the Kappa value in the adjustment
-  * matrix \param imageId : image id in current calculation \attention the
-  * imageId is NOT the key of the image in the ProjectManager, but the line in
-  * which its parameters are found in the adjustment matrix (matAdjust) \return
-  * double : Kappa value contained in the matAdjust Matrix
+  * \brief Auxiliary method that returns the Kappa value in the adjustment matrix
+  * \param imageId : image id in current calculation
+  * \attention the imageId is NOT the key of the image in the ProjectManager, but the line in
+  * which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Kappa value contained in the matAdjust Matrix
   */
  double getKappaAdjus(int imageId);
 
  /**
-  * \brief Auxiliary method that returns the X0 coordinate value in the
-  * adjustment matrix \param imageId : image id in current calculation
+  * \brief Auxiliary method that returns the X0 coordinate value in the adjustment matrix
+  * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return double : Value of the X0 coordinate contained in the
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Value of the X0 coordinate contained in the
   * matAdjust Matrix
   */
  double getXAdjus(int imageId);
 
  /**
   * \brief Auxiliary method that returns the value of the Y0 coordinate in the
-  * adjustment matrix \param imageId : image id in current calculation
+  * adjustment matrix
+  * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return double : Value of the Y0 coordinate contained in the
-  * matAdjust Matrix
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Value of the Y0 coordinate contained in the matAdjust Matrix
   */
  double getYAdjus(int imageId);
 
  /**
   * \brief Auxiliary method that returns the Z0 coordinate value in the
-  * adjustment matrix \param imageId : image id in current calculation
+  * adjustment matrix
+  * \param imageId : image id in current calculation
   * \attention the imageId is NOT the key of the image in the ProjectManager,
-  * but the line in which its parameters are found in the adjustment matrix
-  * (matAdjust) \return double : Value of the Z0 coordinate contained in the
-  * matAdjus Matrixt
+  * but the line in which its parameters are found in the adjustment matrix (matAdjust)
+  * \return double : Value of the Z0 coordinate contained in the matAdjus Matrixt
   */
  double getZAdjus(int imageId);
 
  /**
   * \brief Metodo auxiliar que retorna o valor(delta) de ajustamento da
-  * coordenada X do ponto fotogramétrico contida na matriz x2 \param
-  * fotogrPointId : id in current calculation \attention the fotogrPointId is
-  * NOT the key or pointId of the point in the ProjectManager, but the position
-  * in the list of points where it is located \return double : Delta value of
-  * the X coordinate of the point contained in the previously calculated x2
-  * matrix
+  * coordenada X do ponto fotogramétrico contida na matriz x2
+  * \param fotogrPointId : id in current calculation
+  * \attention the fotogrPointId is NOT the key or pointId of the point in the
+  * ProjectManager, but the position
+  * in the list of points where it is located
+  * \return double : Delta value of the X coordinate of the point contained
+  * in the previously calculated x2 matrix
   */
  double getdXx2(int fotogrPointId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the Y
-  * coordinate of the photogrammetric point contained in the matrix x2 \param
-  * fotogrPointId : id in current calculation \attention the fotogrPointId is
-  * NOT the key or pointId of the point in the ProjectManager, but the position
-  * in the list of points where it is located \return double : Delta value of
-  * the Y coordinate of the point contained in the previously calculated x2
-  * matrix
+  * coordinate of the photogrammetric point contained in the matrix x2
+  * \param fotogrPointId : id in current calculation
+  * \attention the fotogrPointId is NOT the key or pointId of the point in the
+  * ProjectManager, but the position in the list of points where it is located
+  * \return double : Delta value of the Y coordinate of the point contained in
+  * the previously calculated x2 matrix
   */
  double getdYx2(int fotogrPointId);
 
  /**
   * \brief Auxiliary method that returns the adjustment value (delta) of the Z
-  * coordinate of the photogrammetric point contained in the x2 matrix \param
-  * fotogrPointId : id in current calculation \attention the fotogrPointId is
-  * NOT the key or pointId of the point in the ProjectManager, but the position
-  * in the list of points where it is located \return double : Delta value of
-  * the Z coordinate of the point contained in the previously calculated x2
-  * matrix
+  * coordinate of the photogrammetric point contained in the x2 matrix
+  * \param fotogrPointId : id in current calculation
+  * \attention the fotogrPointId is NOT the key or pointId of the point in the
+  * ProjectManager, but the position in the list of points where it is located
+  * \return double : Delta value of the Z coordinate of the point contained in
+  * the previously calculated x2 matrix
   */
  double getdZx2(int fotogrPointId);
 
@@ -510,7 +543,8 @@ protected:
 
  /**
   * \brief Method that returns a matrix with terrain coordinates by spatial
-  * intersection equations \param    xsi  : Analog coordinate xi in millimeters
+  * intersection equations
+  * \param    xsi  : Analog coordinate xi in millimeters
   * \param    eta  : Analog coordinate eta in millimeters
   * \param    z    : z coordinate in meters
   * \return Matrix : Matrix containing X and Y terrain coordinates
@@ -525,20 +559,22 @@ public:
  void fillDetectorCoordinates();
 
  /**
-  * \brief Method that converts analog coordinates (xi,eta) to digital
-  * coordinates (col,lin) \param oi  : Interior orientation of the image the
-  * coordinate is in \param xsi : analog coordinate xi \param eta : analog
-  * coordinate eta \deprecated This method will be replaced by the existent
-  * method on class *nome da classe MOTOR DE FOTOGRAMETRIAm*
+  * \brief Method that converts analog coordinates (xi,eta) to digital coordinates (col,lin)
+  * \param oi  : Interior orientation of the image the coordinate is in
+  * \param xsi : analog coordinate xi
+  * \param eta : analog coordinate eta
+  * \deprecated This method will be replaced by the existent method on
+  * class *nome da classe MOTOR DE FOTOGRAMETRIAm*
   */
  Matrix analogToDigital(InteriorOrientation *oi, double xsi, double eta);
 
  /**
   * \brief Metodo que converte coordenada digital(col,lin) em coordenada
-  * analogica(xi,eta) \param oi  : Orientação interior da imagem em que a
-  * coordenada está \param linha : Coodernada analogica linha \param coluna :
-  * Coodernada analogica coluna \deprecated This method will be replaced by the
-  * existent method on another class
+  * analogica(xi,eta)
+  * \param oi  : Orientação interior da imagem em que a coordenada está
+  * \param linha : Coodernada analogica linha
+  * \param coluna : Coodernada analogica coluna
+  * \deprecated This method will be replaced by the existent method on another class
   */
  Matrix digitalToAnalog(InteriorOrientation *oi, double linha, double coluna);
 
@@ -550,44 +586,43 @@ public:
 
  /**
   * \brief Changes the matrix of the initial parameters of the exterior
-  * orientations to those provided by the user in the interface \param
-  * initialValues : Matrix with the initial parameters, with one image per line
+  * orientations to those provided by the user in the interface
+  * \param initialValues : Matrix with the initial parameters, with one image per line
   * in the sequence: Omega, Phi, Kappa, X0, Y0, Z0
   */
  void setUserInitialValues(Matrix initialValues);
 
  /**
-  * \brief Auxiliary method that returns an matrix corresponding to an image in
-  * matrix M1 \param img    : Image object containing the points belonging to it
+  * \brief Auxiliary method that returns an matrix corresponding to an image in matrix M1
+  * \param img    : Image object containing the points belonging to it
   * \param Matrix : Matrix corresponding to an image
   */
  Matrix imageToMatrixDetectorCoordenates(Image *img);
 
  /**
-  * \brief Auxiliary method that returns an matrix corresponding to an image in
-  * matrix A1 \param img    : Image object containing the points belonging to it
+  * \brief Auxiliary method that returns an matrix corresponding to an image in matrix A1
+  * \param img    : Image object containing the points belonging to it
   * \param Matrix : Matrix corresponding to an image
   */
  Matrix imageToMatrixJacobiana(int indexImage);
 
  /**
-  * \brief Method responsible for all the calculation of the adjustment by
-  * Bundle Adjustment \return bool: Informs whether the calculation was
+  * \brief Method responsible for all the calculation of the adjustment by Bundle Adjustment
+  * \return bool: Informs whether the calculation was
   * successful or not
   */
  bool calculate(bool makeReport);
 
  /**
   * \brief Method that informs whether it is possible to calculate the
-  * adjustment or not, based on the number of unknowns and equations \return
-  * bool : Informs whether or not it is possible to calculate
+  * adjustment or not, based on the number of unknowns and equations
+  * \return bool : Informs whether or not it is possible to calculate
   */
  bool isPossibleCalculate();
 
  /**
   * \brief Method that creates or alters the matrix L
-  * \return Matrix : returns the matrix formed by the X and Y coordinates of the
-  * control points
+  * \return Matrix : returns the matrix formed by the X and Y coordinates of the control points
   */
  Matrix createL();
 
@@ -607,16 +642,17 @@ public:
 
  /**
   * \brief Auxiliary method that calculates the initial Z coordinate for each
-  * photogrammetric point \return double : Initial value of the Z coordinate of
+  * photogrammetric point
+  * \return double : Initial value of the Z coordinate of
   * the photogrammetric points
   */
  double getInicialZPhotogrammetricPoints();
 
  /**
   * \brief Method that updates the initial coordinates of all photogrammetric
-  * points based on the xypf matrix \param xypf : Matrix containing coordinates
-  * of photogrammetric points \param zphotogrammetric : Z value of the
-  * photogrammetric point coordinate
+  * points based on the xypf matrix
+  * \param xypf : Matrix containing coordinates of photogrammetric points
+  * \param zphotogrammetric : Z value of the photogrammetric point coordinate
   */
  void updateCoordinatesAllPoints(Matrix xypf, double zphotogrammetric);
 
@@ -624,28 +660,31 @@ public:
  // and not in the xml list
  /**
   * \brief Auxiliary method that tests whether a given point contained in a
-  * given image is photogrammetric \param imageIndex : Image position in the
-  * image list \param pointIndex : Position of the point in the list of points
-  * in the image informed by the parameter imageIndex \return bool : informs if
-  * the point is photogrammetric or not
+  * given image is photogrammetric
+  * \param imageIndex : Image position in the image list
+  * \param pointIndex : Position of the point in the list of points
+  * in the image informed by the parameter imageIndex
+  * \return bool : informs if the point is photogrammetric or not
   */
  bool isPhotogrammetricPoint(int imageIndex, int pointIndex);
 
  /**
   * \brief Auxiliary method that tests whether a given point contained in a
-  * given image is a control one \param imageIndex : Image position in the image
-  * list \param pointIndex : Position of the point in the list of points in the
-  * image informed by the parameter imageIndex \return bool : informs if the
-  * point is control or not
+  * given image is a control one
+  * \param imageIndex : Image position in the image list
+  * \param pointIndex : Position of the point in the list of points in the
+  * image informed by the parameter imageIndex
+  * \return bool : informs if the point is control or not
   */
  bool isControlPoint(int imageIndex, int pointIndex);
 
  /**
   * \brief Auxiliary method that tests whether a given point contained in a
-  * given image is a 'checking' \param imageIndex : Image position in the image
-  * list \param pointIndex : Position of the point in the list of points in the
-  * image informed by the parameter imageIndex \return bool : informs whether
-  * the point is a 'checking' point or not
+  * given image is a 'checking'
+  * \param imageIndex : Image position in the image list
+  * \param pointIndex : Position of the point in the list of points in the
+  * image informed by the parameter imageIndex
+  * \return bool : informs whether the point is a 'checking' point or not
   */
  bool isCheckingPoint(int imageIndex, int pointIndex);
 
@@ -657,8 +696,8 @@ public:
  bool isConverged();
 
  /**
-  * \brief Method that analyzes whether the matrix x1 and x2 have reached their
-  * convergence \return int : Code for the calculation convergence analysis, if
+  * \brief Method that analyzes whether the matrix x1 and x2 have reached their convergence
+  * \return int : Code for the calculation convergence analysis, if
   * the calculation converged it returns 1, if it did not converge and there
   * were no problems in the matrices it returns 0, if there is any NAN in the
   * matrix it returns -1, if there is any INF value it returns -2
@@ -666,50 +705,51 @@ public:
  int testConverged();
 
  /**
-  * \brief Method that analyzes whether the residual matrix has reached its
-  * convergence \return bool : reports whether the residuals converged or not
+  * \brief Method that analyzes whether the residual matrix has reached its convergence
+  * \return bool : reports whether the residuals converged or not
   * \deprecated Currently this test is not done because there is no iteration
   * over the weight matrix P
   */
  bool testResiduo();
 
  /**
-  * \brief Auxiliary method that returns a pointer to the point in the given
-  * image \param imageIndex : Image position in the image list \param pointIndex
-  * : Position of the point in the list of points in the image informed by the
-  * parameter imageIndex \return Point : reports whether the residuals converged
-  * or not
+  * \brief Auxiliary method that returns a pointer to the point in the given image
+  * \param imageIndex : Image position in the image list
+  * \param pointIndex : Position of the point in the list of points in the image
+  * informed by the parameter imageIndex
+  * \return Point : reports whether the residuals converged or not
   */
  Point *getPointFrom(int imageIndex, int pointIndex);
 
  /**
-  * \brief Auxiliary method that informs the number of control points contained
-  * in an image \param img : Objeto imagem a qual se deseja saber o numero de
-  * pontos de controle \return int : Number of control points
+  * \brief Auxiliary method that informs the number of control points contained in an image
+  * \param img : Image object for which you want to know the number of control points
+  * \return int : Number of control points
   */
  int numberControlPoints(Image *img);
 
  /**
   * \brief Auxiliary method that informs the number of photogrammetric points
-  * contained in an image \param img : Image object for which you want to know
-  * the number of photogrammetric points \return int : Number of photogrammetric
-  * points
+  * contained in an image
+  * \param img : Image object for which you want to know the number of photogrammetric points
+  * \return int : Number of photogrammetric points
   */
  int numberPhotogrammetricPoints(Image *img);
 
  /**
   * \brief Auxiliary method that informs the position of a certain point in the
-  * list of all points \param pnt : Point object which you want to know its
-  * position in the list \return int : Position in the list, if the point is not
-  * in the list returns -1;
+  * list of all points
+  * \param pnt : Point object which you want to know its
+  * position in the list
+  * \return int : Position in the list, if the point is not in the list returns -1;
   */
  int whereInPoints(Point *pnt);
 
  /**
   * \brief Auxiliary method that informs the position of a certain point in the
-  * list of photogrammetric points \param pnt : Point object which you want to
-  * know its position in the list \return int : Position in the list, if the
-  * point is not in the list returns -1;
+  * list of photogrammetric points
+  * \param pnt : Point object which you want to know its position in the list
+  * \return int : Position in the list, if the point is not in the list returns -1;
   */
  int whereInPhotogrammetricPoints(Point *pnt);
 
@@ -722,23 +762,25 @@ public:
 
  /**
   * \brief Auxiliary method that returns the residual at the X coordinate of a
-  * given point in a given image \param img : Image object in which the point is
-  * contained \param pointId : Position of the point in the list of points
-  * belonging to this image \return double : Residue value in X
+  * given point in a given image
+  * \param img : Image object in which the point is contained
+  * \param pointId : Position of the point in the list of points belonging to this image
+  * \return double : Residue value in X
   */
  double getRx(Image *img, int pointId);
 
  /**
   * \brief Auxiliary method that returns the residual at the Y coordinate of a
-  * given point in a given image \param img : Image object in which the point is
-  * contained \param pointId : Position of the point in the list of points
-  * belonging to this image \return double : Residue value in Y
+  * given point in a given image
+  * \param img : Image object in which the point is contained
+  * \param pointId : Position of the point in the list of points belonging to this image
+  * \return double : Residue value in Y
   */
  double getRy(Image *img, int pointId);
 
  /**
-  * \brief Method that returns the current state of convergence of the
-  * calculation \return bool : Current state of convergence
+  * \brief Method that returns the current state of convergence of the calculation
+  * \return bool : Current state of convergence
   */
  bool getConvergencyStatus();
 
@@ -762,36 +804,36 @@ public:
 
  /**
   * \brief Method that changes the value of the convergence of the coordinates
-  * of the parameters of the exterior orientations \param value : Value of the
-  * convergence of coordinates
+  * of the parameters of the exterior orientations
+  * \param value : Value of the convergence of coordinates
   */
  void setMetricConvergencyValue(double value);
 
  /**
   * \brief Method that changes the value of the convergence of the angles of the
-  * parameters of the exterior orientations \param value : Value of convergence
-  * of angles
+  * parameters of the exterior orientations
+  * \param value : Value of convergence of angles
   */
  void setAngularConvergencyValue(double value);
 
  /**
   * \brief Method that returns the value of the convergence of the coordinates
-  * of the parameters of the exterior orientations \return double : Coordinate
-  * convergence value
+  * of the parameters of the exterior orientations
+  * \return double : Coordinate convergence value
   */
  double getMetricConvergencyValue();
 
  /**
   * \brief Method that returns the value of the convergence of the angles of the
-  * parameters of the exterior orientations \return double : Convergence value
-  * of angles
+  * parameters of the exterior orientations
+  * \return double : Convergence value of angles
   */
  double getAngularConvergencyValue();
 
  /**
   * \brief Method that returns the x1 matrix formatted to display angles in
-  * degrees and each exterior orientation on a line \return Matrix : formatted
-  * matrix
+  * degrees and each exterior orientation on a line
+  * \return Matrix : formatted matrix
   */
  Matrix getMVC();
 
@@ -815,22 +857,22 @@ public:
 
  /**
   * \brief Method that inverts only the main diagonal matrices of the m11
-  * matrix, thus avoiding unnecessary calculations \param m11 : Matrix M11 to be
-  * inverted
+  * matrix, thus avoiding unnecessary calculations
+  * \param m11 : Matrix M11 to be inverted
   */
  void setInverseM11(Matrix m11);
 
  /**
   * \brief Method that inverts only the main diagonal matrices of matrix n11,
-  * thus avoiding unnecessary calculations \param n11 : Matrix N11 to be
-  * inverted
+  * thus avoiding unnecessary calculations
+  * \param n11 : Matrix N11 to be inverted
   */
  void setInverseN11(Matrix n11);
 
  /**
   * \brief Method that inverts only the main diagonal matrices of matrix n22,
-  * thus avoiding unnecessary calculations \param n22 : Matrix M22 to be
-  * inverted
+  * thus avoiding unnecessary calculations
+  * \param n22 : Matrix M22 to be inverted
   */
  void setInverseN22(Matrix n22);
 
@@ -839,33 +881,32 @@ public:
 
  /**
   * \brief Auxiliary method that returns the residuals of a photogrammetric
-  * point, if the point is not photogrammetric it returns a matrix with zeroed
-  * elements \param photogrammetricPoint : photogrammetric point object \return
-  * Matrix : Matrix[1x3] with the residuals of the points in the sequence X, Y,
-  * Z
+  * point, if the point is not photogrammetric it returns a matrix with zeroed elements
+  * \param photogrammetricPoint : photogrammetric point object
+  * \return Matrix : Matrix[1x3] with the residuals of the points in the sequence X, Y, Z
   */
  Matrix getResiduo(Point *photogrammetricPoint);
 
  /**
   * \brief Method that returns the matrix with the initial approximations of the
-  * exterior orientation parameters of all images \return Matrix : Matrix with
-  * external orientation parameters
+  * exterior orientation parameters of all images
+  * \return Matrix : Matrix with external orientation parameters
   *
   */
  Matrix getMatrixInicialValues();
 
  /**
   * \brief Method that returns the list of photogrammetric points used in the
-  * adjustment calculation \return std::deque<Point*> : List with Point objects
-  * of photogrammetric points
+  * adjustment calculation
+  * \return std::deque<Point*> : List with Point objects of photogrammetric points
   */
  std::deque<Point *> getPhotogrammetricList();
 
  /**
   * \brief Method that checks if the user has set all parameters of the exterior
-  * orientation as initial values for all images \return bool : Informs whether
-  * all images have initial values for the calculation of exterior orientation
-  * parameters
+  * orientation as initial values for all images
+  * \return bool : Informs whether all images have initial values for the calculation
+  * of exterior orientation parameters
   */
  bool hasAllImagesInitialValues();
 
@@ -881,8 +922,9 @@ public:
   * \param coordinates : Matrix containing the coordinates (adjustment matrix)
   * \param sys : Geodetic system in which the coordinates are
   * \param hemi : integer informed in which hemisphere are the coordinates; in.
-  * -1=South +1=North \param zona : Zone in which the coordinates are \return
-  * Matrix: Matrix with coordinates converted to geocentric
+  * -1=South +1=North
+  * \param zona : Zone in which the coordinates are
+  * \return Matrix: Matrix with coordinates converted to geocentric
   */
  Matrix convertToGeocentric(Matrix coordinates, GeoSystem sys, int hemi,
                             int zona);
@@ -900,8 +942,9 @@ public:
   * \param points : list of points containing coordinates
   * \param sys : Geodetic system in which the coordinates are
   * \param hemi : integer informed in which hemisphere are the coordinates; in.
-  * -1=South +1=North \param zona : Zone in which the coordinates are \return
-  * Matrix: Matrix with coordinates converted to geocentric
+  * -1=South +1=North
+  * \param zona : Zone in which the coordinates are
+  * \return Matrix: Matrix with coordinates converted to geocentric
   */
  void convertToGeocentric(std::deque<Point *> points, GeoSystem sys, int hemi,
                           int zona);
