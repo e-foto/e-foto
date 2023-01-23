@@ -1,7 +1,8 @@
 #include "ImageMatching.h"
+
+#include <chrono>
+
 #include "DEMManager.h"
-//#include <sys/time.h>
-#include <time.h>
 
 namespace br {
 namespace uerj {
@@ -66,11 +67,7 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
         //
         // Calculate operation time
         //
-        //struct timeval begin;
-        //struct timeval end;
-        //int MICRO_PER_SECOND = 1000000;
-
-        //gettimeofday(&begin,NULL);
+        auto start = std::chrono::steady_clock::now();
 
         //
         // Step 1 - Radiometric Tranformation
@@ -170,11 +167,9 @@ void ImageMatching::performImageMatching(Matrix *img1, Matrix *img2, MatchingPoi
         //
         // Finish time calculation
         //
-
-        //gettimeofday(&end,NULL);
-        //float etime = (float)(end.tv_sec - begin.tv_sec);
-        //etime += (end.tv_usec - begin.tv_usec)/(float)MICRO_PER_SECOND;
-        elap_time = 0.0;//double(etime);
+        auto end = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
+        elap_time = elapsed_seconds.count();
 }
 
 /*
