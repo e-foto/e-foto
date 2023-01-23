@@ -422,7 +422,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                         ncc_flag = ncc.searchHomologous(img1,img2);
                         p = ncc.getBestP();
 
-                        if (p < corr_th || ncc_flag != 1)
+                        if (std::isnan(p) || p < corr_th || ncc_flag != 1)
                                 continue;
 
                         new_x = ncc.getBestX();
@@ -442,7 +442,7 @@ void ImageMatching::region_growing(Matrix *img1, Matrix *img2, MatchingPointsLis
                         lsm_flag = lsm.searchHomologous(img1, img2, lx, ly, rx, ry);
                         p = lsm.getBestP();
 
-                        if (p < corr_th || lsm_flag < 1)
+                        if (std::isnan(p) || p < corr_th || lsm_flag < 1)
                                 continue;
 
                         new_x = lsm.getBestX();
