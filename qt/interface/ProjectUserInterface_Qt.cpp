@@ -43,23 +43,18 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 {
     setupUi(this);
 
-	// Ler versão e revisão
-	QString ver = "YYYY.MM", rev = "DDD";
-	QFile version(":/text/version"), revision(":/text/revision");
+	// Ler versão
+	QString ver = "YYYY.MM";
+	QFile version(":/text/version");
 	if(version.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream date(&version);
         ver = date.readLine();
-    }
-	if(revision.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream num(&revision);
-        rev = num.readLine();
     }
 
 	// Montar mensagem
 	QString date_ver_name = tr("Version ");
 	QString size_ver_name = tr("(64 bits, beta);");
-	QString revision_name = tr("Revision ");
-	QString msg = date_ver_name + ver + size_ver_name + revision_name + rev;
+	QString msg = date_ver_name + ver + size_ver_name;
 
 	version_info->setText(msg);
 
