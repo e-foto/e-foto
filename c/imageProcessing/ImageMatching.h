@@ -4,7 +4,7 @@
                               ImageMatching.h
 *******************************************************************************/
 
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -24,10 +24,8 @@
 #include "LeastSquaresMatching.h"
 #include "RadiometricTransformation.h"
 
-
 /**
 * class ImageMatching
-*
 * @author E-Foto group
 *
 * * * * * * * * * * * *
@@ -44,22 +42,7 @@ namespace efoto {
 class MatchingPointsList;
 
 class DEMManager;
-/*
-// INTEGER STACK
-// For integer stack usage, please check float stack and uncheck this class
-// It takes 8 x sizeof(stackCell*) bytes for each object
-class stackCell
-{
-public:
-	stackCell() { prev = NULL; };
-	int coord, scoord;
-	stackCell *prev;
-};
-*/
 
-// FLOAT STACK
-// For float stack usage, please check integer stack and uncheck this class
-// It takes 16 x sizeof(stackCell*) bytes for each object
 class stackCell
 {
 public:
@@ -119,11 +102,6 @@ private:
 	bool elim_bad_pts;
         bool perform_RG;
         double elap_time;
-        // INTEGER STACK
-/*	bool pop(int&, int&, int&, int&);
-        bool push(int,int,int,int);
-        void region_growing(Matrix *, Matrix *, MatchingPointsList *, int x, int y, int sx, int sy); */
-        // DOUBLE STACK
         bool pop(double&, double&, double&, double&);
         bool push(double,double,double,double);
         void region_growing(Matrix *, Matrix *, MatchingPointsList *, double x, double y, double sx, double sy);
