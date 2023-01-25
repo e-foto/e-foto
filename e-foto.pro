@@ -303,9 +303,8 @@ message("QMAKE_HOST.arch: $$QMAKE_HOST.arch")
 
 # System unix configuration
 unix {
-    # update version and revision files
+    # update version date file
     system("date -u +%Y.%m > qt/resource/version")
-    system("svnversion | sed 's/[^0-9]//g' > qt/resource/revision")
 
     # Set gdal usage
     LIBS += -L/usr/include/gdal -lgdal
@@ -334,10 +333,8 @@ unix {
 }
 # System Windows Configuration
 win32-msvc*{
-    # update version and revision files
-    # todo Review this windows command to improve it
+    # update version date file
     system("FOR /F \"usebackq tokens=1,2,3,4* delims=/\" %a IN (\'%date%\') DO echo %c.%b > qt/resource/version")
-    system("FOR /F \"tokens=1,2,3,4,5* delims= \" %a IN (\'subwcrev .\') DO @echo %e > qt/resource/%d")
 
     # config&release mode off
     # CONFIG-=debug_and_release
@@ -386,10 +383,8 @@ win32-msvc*{
 #
 # System Windows Configuration
 win32-g++{
-    # update version and revision files
-    # todo Review this windows command to improve it
+    # update version date file
     system("FOR /F \"usebackq tokens=1,2,3,4* delims=/\" %a IN (\'%date%\') DO echo %c.%b > qt/resource/version")
-    system("FOR /F \"tokens=1,2,3,4,5* delims= \" %a IN (\'subwcrev .\') DO @echo %e > qt/resource/%d")
 
     # config&release mode off
     # CONFIG-=debug_and_release
