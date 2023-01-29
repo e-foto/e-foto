@@ -17,19 +17,19 @@
 */
 #include "ReportUserInterface_Qt.h"
 
+#include <QAction>
+#include <QApplication>
+#include <QDebug>
+#include <QImage>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QString>
+#include <QtWidgets>
+#include <QVariant>
+
 #include "ReportManager.h"
 #include "ETableWidget.h"
 #include "LoadingScreen.h"
-
-#include <qapplication.h>
-#include <qvariant.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qaction.h>
-#include <qstring.h>
-#include <QtWidgets>
-#include <QMessageBox>
-#include <QDebug>
 
 namespace br {
 namespace uerj {

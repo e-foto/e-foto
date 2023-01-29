@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
 	e-foto is free software: you can redistribute it and/or modify
@@ -377,7 +377,6 @@ std::string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
 			txt += "<heigth>" + Conversion::intToString(img->getHeight()) + "</heigth>\n";
 			txt += "<fileName>" + img->getFilename() + "</fileName>\n";
 			txt += "<filePath>" + img->getFilepath() + "</filePath>\n";
-			// Pensar! adicionar o caminho absoluto
 			txt += "<resolution>" + Conversion::intToString(img->getResolution()) + "</resolution>\n";
 		}
 		if(treeItems.at(7)->checkState(0)==2)
@@ -418,11 +417,6 @@ std::string ReportManager::eprImages(QList<QTreeWidgetItem*> treeItems)
 					txt += "</exteriorOrientation>\n";
 				}
 			}
-		/*    string reportPath = "";
-			txt += "<img src=\"" + reportPath + "thumb_" + img->getFilename() + "\">";
-			QImage thumb = makeThumbnail(QString(img->getFilepath().c_str()).append("/").append(img->getFilename().c_str()),200,200);
-			thumb.save(QString::fromStdString(reportPath + "thumb_" + img->getFilename()));
-		*/
 		}
 
 		txt += "</image>\n";
@@ -659,7 +653,6 @@ std::string ReportManager::eprSpatialRessection(QList<QTreeWidgetItem*> treeItem
 			txt += "<rmseOfEachIteration>\n";
 			for (size_t a = 0; a < rmse.size(); a++)
 			{
-				//qDebug("%f",rmse.at(a));
 				txt += "<rmse>\n";
 				txt += "<iteration>" + Conversion::intToString(a) + "</iteration>\n";
 				txt += "<value>" + Conversion::doubleToString(rmse.at(a)) + "</value>\n";
@@ -907,19 +900,9 @@ std::string ReportManager::eprStereoPairs()
 	Matrix Xa;
 
 	// Calculate Image Radius
-   // ObjectSpaceCoordinate osc;
-	img = project->allImages().at(0);
-   // ProjectiveRay pr(img);
-   // Xa = img->getEO()->getXa();
-   // X1 = Xa.get(1,1);
-   // Y1 = Xa.get(2,1);
-   // p1 = img->getWidth();
-   // p2 = img->getHeight()/2;
-   // osc = pr.imageToObject(p1,p2,img->getHeight(),false);
-   // X2 = osc.getX();
-   // Y2 = osc.getY();
-   // R = sqrt(pow(X1-X2,2) + pow(Y1-Y2,2));
-	// Calculate Images Radius, using the first image as reference
+   img = project->allImages().at(0);
+
+   // Calculate Images Radius, using the first image as reference
 
 		// New R calcul width*scale*(1 pol in meters)/resolution
 		R = img->getWidth() * img->getFlight()->getScaleDen() * 0.0254 / img->getResolution();
@@ -2342,12 +2325,6 @@ QImage ReportManager::makeThumbnail(QString filename, int maxW, int maxH)
     SingleScene ss(nullptr, filename);
 	return ss.getThumb(QSize(maxW, maxH));
 }
-
-/*string ReportManager::getImageIds(int )
-{
-
-}*/
-
 
 } // namespace efoto
 } // namespace eng

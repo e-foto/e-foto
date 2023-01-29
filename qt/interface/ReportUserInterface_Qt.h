@@ -1,6 +1,6 @@
 #ifndef REPORTUSERINTERFACE_QT_H
 #define REPORTUSERINTERFACE_QT_H
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
