@@ -17,8 +17,8 @@
     along with e-foto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ui_ReportForm.h"
 #include "ReportUserInterface.h"
+#include "ui_ReportForm.h"
 
 class QProcess;
 class QTreeWidgetItem;
@@ -28,45 +28,46 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
-class ReportUserInterface_Qt : public QMainWindow, public Ui::ReportMainWindow, public ReportUserInterface
-{
-	Q_OBJECT
+class ReportUserInterface_Qt : public QMainWindow,
+                               public Ui::ReportMainWindow,
+                               public ReportUserInterface {
+  Q_OBJECT
 
-public:
+ public:
+ public slots:
 
-public slots:
+  void selectAllChildren(QTreeWidgetItem* father);
+  void unselectFatherByKid(QTreeWidgetItem* kid);
+  bool saveEPR();
 
-	void selectAllChildren(QTreeWidgetItem* father);
-	void unselectFatherByKid(QTreeWidgetItem* kid);
-    bool saveEPR();
+ protected:
+  static ReportUserInterface_Qt* ReportInst;
+  explicit ReportUserInterface_Qt(ReportManager* manager, QWidget* parent = 0,
+                                  Qt::WindowFlags fl = Qt::Window);
+  ~ReportUserInterface_Qt();
+  ReportManager* manager;
+  void closeEvent(QCloseEvent* e);
+  void newTree();
+  QList<QTreeWidgetItem*> treeItems;
 
-protected:
-	static ReportUserInterface_Qt* ReportInst;
-    explicit ReportUserInterface_Qt(ReportManager* manager, QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
-	~ReportUserInterface_Qt();
-	ReportManager *manager;        
-	void closeEvent(QCloseEvent *e);
-	void newTree();        
-        QList<QTreeWidgetItem*> treeItems;
+ protected slots:
+  virtual void languageChange();
 
-protected slots:
-	virtual void languageChange();
+ private:
+  void init();
+  bool wait(QProcess& p, QString msg);
 
-private:
-        void init();
-        bool wait(QProcess &p, QString msg);
+ public:
+  static ReportUserInterface_Qt* instance(ReportManager* manager);
 
-public:
-	static ReportUserInterface_Qt* instance(ReportManager* manager);
-
-        // Other Methods
-	//
-        bool exec();
+  // Other Methods
+  //
+  bool exec();
 };
 
-} // namespace efoto
-} // namespace eng
-} // namespace uerj
-} // namespace br
+}  // namespace efoto
+}  // namespace eng
+}  // namespace uerj
+}  // namespace br
 
-#endif // REPORTUSERINTERFACE_QT_H
+#endif  // REPORTUSERINTERFACE_QT_H
