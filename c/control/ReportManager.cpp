@@ -1095,7 +1095,7 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 
 	if(idExt == TXTTYPE)
 	{
-		xsltransformation += "/epr_txt.xsl";
+		xsltransformation += "/epr.xsl";
 		outxsl << "<xsl:output method=\"xml\" indent=\"yes\" encoding=\"UTF-8\" omit-xml-declaration=\"yes\"/>\n";
 		outxsl << "<xsl:template match=\"efotoPhotogrammetricReport\">\n";
 		outxsl << "    Begin of E-Foto Photogrammetric Report\n";
@@ -1500,7 +1500,7 @@ bool ReportManager::makeXslt(int idExt, std::string path)
 		myXsltFile << outxsl.str();
 		myXsltFile.close();
 	} else {
-		xsltransformation += "/epr_html.xsl";
+		xsltransformation += "/epr.xsl";
 		outxsl << "<xsl:template match=\"efotoPhotogrammetricReport\">\n";
 		outxsl << "<html>\n";
 		outxsl << "<head>\n";

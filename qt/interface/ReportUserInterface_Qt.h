@@ -20,6 +20,7 @@
 #include "ui_ReportForm.h"
 #include "ReportUserInterface.h"
 
+class QProcess;
 class QTreeWidgetItem;
 
 namespace br {
@@ -53,6 +54,7 @@ protected slots:
 
 private:
         void init();
+        bool wait(QProcess &p, QString msg);
 
 public:
 	static ReportUserInterface_Qt* instance(ReportManager* manager);

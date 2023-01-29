@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2023 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 #include <qaction.h>
 #include <qstring.h>
 #include <QtWidgets>
+#include <QMessageBox>
 #include <QDebug>
 
 namespace br {
@@ -58,7 +59,6 @@ ReportUserInterface_Qt::ReportUserInterface_Qt(ReportManager* manager, QWidget* 
 
     this->manager = manager;
 
-    //setWindowState(this->windowState() | Qt::WindowMaximized);
     qApp->processEvents();
     init();
 }
@@ -265,22 +265,6 @@ void ReportUserInterface_Qt::newTree()
     item = new QTreeWidgetItem(fatherTree);
     item->setCheckState(0,Qt::Checked);
     item->setText(0, "Stereo Pairs");
-    treeItems.push_back(item);
-
-    /*  item = new QTreeWidgetItem(fatherTree);
-        item->setCheckState(0,Qt::Checked);
-        item->setText(0, "Stereo Plotting");
-        treeItems.push_back(item);
-
-        item = new QTreeWidgetItem(fatherTree);
-        item->setCheckState(0,Qt::Checked);
-        item->setText(0, "DSM");
-        treeItems.push_back(item);
-
-        item = new QTreeWidgetItem(fatherTree);
-        item->setCheckState(0,Qt::Checked);
-        item->setText(0, "Orthorectification");
-        treeItems.push_back(item);*/
 
     manager->checkTree(treeItems);
 
@@ -289,7 +273,6 @@ void ReportUserInterface_Qt::newTree()
 
     treeArea->setLayout(new QVBoxLayout());
     treeArea->layout()->addWidget(treeWidget);
-    //processTreeClick(treeWidget->currentIndex());
 }
 
 bool ReportUserInterface_Qt::exec()
@@ -388,160 +371,115 @@ void ReportUserInterface_Qt::unselectFatherByKid(QTreeWidgetItem* kid)
 
 }
 
-bool ReportUserInterface_Qt::saveEPR()
-{
+bool ReportUserInterface_Qt::wait(QProcess &p, QString msg = tr("Error")) {
+    p.waitForFinished();
+    if (p.exitStatus()) {
+        QMessageBox::critical(this, msg, p.errorString());
+        return false;
+    }
+    QString status = p.readAllStandardError();
+    if (!status.isEmpty()) {
+        QMessageBox::critical(this, msg, status);
+        return false;
+    }
+    return true;
+}
 
+bool ReportUserInterface_Qt::saveEPR() {
     QFileDialog salvar(this, tr("Save File As"), ".",tr("*.xml;;*.txt;;*.html"));
     salvar.setAcceptMode(QFileDialog::AcceptSave);
 
 #ifdef Q_OS_WIN64
     QSettings binSettings("uerj","efoto");
-    QString binPath = QString::fromLocal8Bit(binSettings.value("binPath").toByteArray().constData());
+    QString binPath = QString::fromLocal8Bit(binSettings.value("binPath").toByteArray().constData()).replace("/","\\");
 #endif
 
     if(salvar.exec())
     {
-
-        QString filename = salvar.selectedFiles()[0];
-
-        //QString chosenExtension = new QString();
-        QString chosenExtension = salvar.selectedNameFilter();
-
-        QString filenameOriginal,filenameOriginalMask,filePathMask;
-        int idExt = 0;
-        if (filename.isEmpty())
+        QString chosenName = salvar.selectedFiles()[0];
+        QString chosenExtension = salvar.selectedNameFilter().remove('*');
+        QString tmp, path, filename, xml;
+        int idExt = XMLTYPE;
+        if (chosenName.isEmpty())
         {
             return false;
         }
         else
         {
-            int j=filename.lastIndexOf("/");
-
-            filenameOriginal = filename.right(filename.length()-j-1);
-
-            if(!filename.endsWith(".xml"))
-                filename.append(".xml");
-
-            //chosenExtension->remove('*');
-            chosenExtension.remove('*');
-            //if (chosenExtension->toStdString() == ".xml"){
-            if (chosenExtension.toStdString() == ".xml"){
-                idExt = XMLTYPE;
-            } else {
-                //if (chosenExtension->toStdString() == ".txt"){
-                if (chosenExtension.toStdString() == ".txt"){
-                    idExt = TXTTYPE;
-                    filenameOriginalMask = filenameOriginal;
-                    filenameOriginalMask.prepend("~");
-                    filePathMask = filename.left(j);
-                    filename = filePathMask + "/" + filenameOriginalMask;
-                } else {
-                    //if (chosenExtension->toStdString() == ".html"){
-                    if (chosenExtension.toStdString() == ".html"){
-                        idExt = HTMTYPE;
-                        filenameOriginalMask = filenameOriginal;
-                        filenameOriginalMask.prepend("~");
-                        filePathMask = filename.left(j);
-                        filename = filePathMask + "/" + filenameOriginalMask;
-                    }
-                }
+            QFileInfo output(chosenName);
+            path = output.path();
+            filename = output.fileName();
+            if(!filename.toLower().endsWith(chosenExtension)) {
+                filename.append(chosenExtension);
             }
-        }
+            tmp = "tmp_" + filename;
 
-        int i=filename.lastIndexOf("/");
-        QString filePath = filename.left(i);
-
-        //bool done = manager->makeFile(filename.toStdString(),idExt,treeItems);
-        bool done = manager->makeFile(filename.toLocal8Bit().constData(),idExt,treeItems);
-        bool doneXslt = false;
-
-        if(idExt == TXTTYPE)
-        {
-           //doneXslt = manager->makeXslt(TXTTYPE,filePath.toStdString());
-            doneXslt = manager->makeXslt(TXTTYPE,filePath.toLocal8Bit().constData());
-        } else {
-            if(idExt == HTMTYPE)
-            {
-                //doneXslt = manager->makeXslt(HTMTYPE,filePath.toStdString());
-                doneXslt = manager->makeXslt(HTMTYPE,filePath.toLocal8Bit().constData());
-            }
+            if (chosenExtension.toStdString() == ".txt")
+                idExt = TXTTYPE;
             else
-            {
-                doneXslt = true;
-            }
+                if (chosenExtension.toStdString() == ".html")
+                    idExt = HTMTYPE;
+                else
+                    tmp = filename;
+            xml = path + "/" + tmp;
         }
 
-        if(done == true && doneXslt == true)
-        {
-            QProcess *pro = new QProcess();
-            if(idExt == TXTTYPE)
-            {
-                QString output;
-                if(filenameOriginal.endsWith(".txt"))
-                    output = filePath + "/" + filenameOriginal;
-                else
-                    output = filePath + "/" + filenameOriginal + ".txt";
-                QString outxsl;
-                outxsl = filePath + "/" + "epr_txt.xsl";
-                QString outcmd;
-#ifdef unix //LINUX
-                outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
-                pro->start(outcmd);
-                pro->waitForFinished(1000);
-                pro->start("rm " + outxsl);
-                pro->waitForFinished(1000);
-                pro->start("rm " + filename);
-                pro->waitForFinished(1000);
+        if (!manager->makeFile(xml.toLocal8Bit().constData(),idExt,treeItems)) {
+            QMessageBox::critical(this, tr("Error"),
+                                 tr("Unable to write report!"));
+            return false;
+        }
 
-#endif
-#ifdef Q_OS_WIN64 //WINDOWS
-                outcmd = binPath + "/" + "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
-                pro->start(outcmd);
-                pro->waitForFinished(1000);
-                outxsl.replace("/","\\");
-                filename.replace("/","\\");
-                pro->start("cmd /C del \""+outxsl+"\"");
-                pro->waitForFinished(1000);
-                pro->start("cmd /C del \""+filename+"\"");
-                pro->waitForFinished(1000);
-#endif
-            } else {
-                if(idExt == HTMTYPE){
-                    QString output;
-                    if(filenameOriginal.endsWith(".html"))
-                        output = filePath + "/" + filenameOriginal;
-                    else
-                        output = filePath + "/" + filenameOriginal + ".html";
-                    QString outxsl;
-                    outxsl = filePath + "/" + "epr_html.xsl";
-                    QString outcmd;
+        bool doneXslt = false;
+        if(idExt == XMLTYPE)
+        {
+            QMessageBox::information(this, tr("Process done"),
+                                     tr("Successfully saved report!"));
+            return true;
+        } else {
+            doneXslt = manager->makeXslt(idExt,path.toLocal8Bit().constData());
+        }
+
+        if(doneXslt)
+        {
+            QProcess pro;
+            pro.setWorkingDirectory(path);
+            QStringList test_args, main_args, remove_args;
+            main_args << "-o" << filename << "epr.xsl" << tmp;
 #ifdef unix //LINUX
-                    outcmd = "xsltproc -o " + output + " " + filename + " " + outxsl;
-                    pro->start(outcmd);
-                    pro->waitForFinished(1000);
-                    pro->start("rm " + outxsl);
-                    pro->waitForFinished(1000);
-                    pro->start("rm " + filename);
-                    pro->waitForFinished(1000);
+            QString test_cmd = "sh", main_cmd = "xsltproc", remove_cmd = "rm";
+            test_args << "-c" << main_cmd;
 #endif
 #ifdef Q_OS_WIN64 //WINDOWS
-                    outcmd = binPath + "/" + "xsltproc -o \"" + output + "\" \"" + filename + "\" \"" + outxsl + "\"";
-                    pro->start(outcmd);
-                    pro->waitForFinished(1000);
-                    outxsl.replace("/","\\");
-                    filename.replace("/","\\");
-                    pro->start("cmd /C del \""+outxsl+"\"");
-                    pro->waitForFinished(1000);
-                    pro->start("cmd /C del \""+filename+"\"");
-                    pro->waitForFinished(1000);
+            QString test_cmd = "cmd", main_cmd = binPath + "\\" + "xsltproc.exe", remove_cmd = "cmd";
+            test_args << "/C" << main_cmd;
+            remove_args << "/C" << "del";
 #endif
-                }
-            }
-            pro->kill();
+            remove_args << "epr.xsl" << tmp;
+
+            pro.start(test_cmd, test_args);
+            if (!wait(pro, tr("Checking xslt processor health")))
+                return false;
+
+            pro.start(main_cmd, main_args);
+            if (!wait(pro, tr("Processing the report transformation")))
+                return false;
+
+            pro.start(remove_cmd, remove_args);
+            if (!wait(pro, tr("Removing temporary files")))
+                return false;
+
+            pro.kill();
+
+            QMessageBox::information(this, tr("Process done"),
+                             tr("Successfully saved report!"));
+
             return true;
         }
         else
         {
+            QMessageBox::critical(this, tr("Error"),
+                                 tr("A configuration file for the report could not created!"));
             return false;
         }
     }
