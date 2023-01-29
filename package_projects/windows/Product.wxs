@@ -1,0 +1,564 @@
+<?xml version='1.0' encoding='Windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+	<Product Name='E-foto 2023.01'
+	 Id='FBE7D0EE-6CF2-4A6C-94D1-25920C563DDF'
+	 UpgradeCode='1E0794AD-3467-4FCE-9424-26085B7EEF27'
+	 Language='1033'
+	 Codepage='1252'
+	 Version='23.1.0'
+	 Manufacturer='E-foto team - UERJ'>
+		<Package Id='*'
+		 Keywords='Installer'
+		 Description="E-foto 2023.01 Installer"
+		 Platform="x64"
+		 Comments='Free Educational Photogrammetric Workstation' Manufacturer='E-foto team - UERJ'
+		 InstallerVersion='200'
+		 Languages='1033'
+		 Compressed='yes'
+		 SummaryCodepage='1252' />
+
+		<Condition Message="You need a 64 bits Windows Operating System to install this version of E-foto.">
+			VersionNT64
+		</Condition>
+
+		<CustomAction Id="LaunchApplication"
+		 BinaryKey="WixCA"
+		 DllEntry="WixShellExec"
+		 Impersonate="yes" />
+
+		<Directory Id='TARGETDIR' Name='SourceDir'>
+			<Directory Id='ProgramFiles64Folder' Name='PFiles'>
+				<Directory Id='INSTALLDIR' Name='E-foto'>
+					<Component Id='MainExecutable'
+					 Guid='5A008125-2012-485B-97B4-3FA051DE16AA'
+					 Win64='yes'>
+						<File
+						 Id='EfotoEXE'
+						 Name='e-foto.exe'
+						 DiskId='1'
+						 Source='e-foto.exe'
+						 KeyPath='yes'
+						 ProcessorArchitecture='x64'>
+							<Shortcut Id="startmenuEfoto2023"
+							 Directory="ProgramMenuDir"
+							 Name="E-foto 2023.01(64bits)"
+							 WorkingDirectory='INSTALLDIR'
+							 Icon="efoto.ico"
+							 IconIndex="0"
+							 Advertise="yes"/>
+							<Shortcut Id="desktopEFoto"
+							 Directory="DesktopFolder"
+							 Name="Efoto 2023.01 (64bits)"
+							 WorkingDirectory='INSTALLDIR'
+							 Icon="efotoicon.ico"
+							 IconIndex="0"
+							 Advertise="yes"/>
+						</File>
+						<ProgId Id='efoto.eppfile' Description='E-foto Photogrammetric Project File' Icon='EfotoEXE' >
+							<Extension Id='epp' ContentType='application/epp'>
+								<Verb Id='open' Command='Open' TargetFile='EfotoEXE' Argument='"%1"' />
+							</Extension>
+						</ProgId>
+					</Component>
+					<Component Id='XSLTProc'
+					 Guid='C830079C-2E00-46F1-B55C-7F0FFE764013'
+					 Win64='yes'>
+						<File Id='xsltproc'
+						 Name='xsltproc.exe'
+						 DiskId='1'
+						 Source='xsltproc.exe'
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBEXSLT_0.DLL"
+					 Guid="5EB95BDC-FD89-4FD8-A98C-E7BD57BFC6A5"
+					 Win64='yes'>
+						<File Id="LIBEXSLT_0.DLL" Name="libexslt-0.dll" Source="libexslt-0.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBXSLT_1.DLL"
+					 Guid="08AB1C49-2727-426D-A931-83B683A1330C"
+					 Win64='yes'>
+						<File Id="LIBXSLT_1.DLL" Name="libxslt-1.dll" Source="libxslt-1.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBXML2_2.DLL"
+					 Guid="AB81B884-2891-43A9-B598-BD48693AF974"
+					 Win64='yes'>
+						<File Id="LIBXML2_2.DLL" Name="libxml2-2.dll" Source="libxml2-2.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBICONV_2.DLL"
+					 Guid="48A6B348-0FE5-45CD-9B3B-8EAD737CB06D"
+					 Win64='yes'>
+						<File Id="LIBICONV_2.DLL" Name="libiconv-2.dll" Source="libiconv-2.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBWINPTHREAD_1.DLL"
+					 Guid="16814D12-E8E7-4901-900A-D60E0869D35C"
+					 Win64='yes'>
+						<File Id="LIBWINPTHREAD_1.DLL" Name="libwinpthread-1.dll" Source="libwinpthread-1.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="ZLIB1.DLL"
+					 Guid="2AB618E1-BC75-4245-B072-607DE02A5161"
+					 Win64='yes'>
+						<File Id="ZLIB1.DLL" Name="zlib1.dll" Source="zlib1.dll"
+					     DiskId="1"
+		    			 KeyPath='no'
+			    		 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="GDAL"
+					 Guid="EDAEBAB0-684C-4569-9B05-1429B5AFDB5C"
+					 Win64='yes'>
+						<File Id="GDAL305.DLL"
+						 Name="gdal305.dll"
+						 DiskId="1"
+						 Source="gdal305.dll"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="FREEXL.DLL"
+					 Guid="3A956328-D347-4F4C-9AEA-FA91F52FA17D"
+					 Win64='yes'>
+						<File Id="FREEXL.DLL" Name="freexl.dll" Source="freexl.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="GEOS.DLL"
+					 Guid="2E755BAF-7F7A-42B3-A7AF-97AAC8461A91"
+					 Win64='yes'>
+						<File Id="GEOS.DLL" Name="geos.dll" Source="geos.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="GEOS_C.DLL"
+					 Guid="6FE95E46-B5CA-4F64-9F05-FB128A2DE309"
+					 Win64='yes'>
+						<File Id="GEOS_C.DLL" Name="geos_c.dll" Source="geos_c.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="GPLV3.RTF"
+					 Guid="2DDD6D96-B67A-47AF-92FE-204DE45C6C86"
+					 Win64='yes'>
+						<File Id="GPLV3.RTF" Name="GPLv3.rtf" Source="GPLv3.rtf"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="ICONV_2.DLL"
+					 Guid="8656EB6F-ADFE-4D9D-9558-23E7D3A60540"
+					 Win64='yes'>
+						<File Id="ICONV_2.DLL" Name="iconv-2.dll" Source="iconv-2.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBCRYPTO_1_1_X64.DLL"
+					 Guid="1A2BCBB2-B229-46BA-88B0-F9D1EA22DD0F"
+					 Win64='yes'>
+						<File Id="LIBCRYPTO_1_1_X64.DLL" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBCURL.DLL"
+					 Guid="A5EDD555-904E-480A-AE5E-8DBC4D6D7F96"
+					 Win64='yes'>
+						<File Id="LIBCURL.DLL" Name="libcurl.dll" Source="libcurl.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBEXPAT.DLL"
+					 Guid="7D25C985-3D4C-424F-AFFE-FD9AD7753D73"
+					 Win64='yes'>
+						<File Id="LIBEXPAT.DLL" Name="libexpat.dll" Source="libexpat.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBMYSQL.DLL"
+					 Guid="3E1A9017-09BA-404B-A8E0-98838CA5BC43"
+					 Win64='yes'>
+						<File Id="LIBMYSQL.DLL" Name="libmysql.dll" Source="libmysql.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBPQ.DLL"
+					 Guid="D33FC20C-C705-4317-8CDC-0C75620602E4"
+					 Win64='yes'>
+						<File Id="LIBPQ.DLL" Name="libpq.dll" Source="libpq.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBSSL_1_1_X64.DLL"
+					 Guid="A332FDBB-7387-419D-BB4B-FF4B33E5E71C"
+					 Win64='yes'>
+						<File Id="LIBSSL_1_1_X64.DLL" Name="libssl-1_1-x64.dll" Source="libssl-1_1-x64.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="LIBXML2.DLL"
+					 Guid="5C7AACD1-DC9F-41B6-B1F9-F3A8DA693352"
+					 Win64='yes'>
+						<File Id="LIBXML2.DLL" Name="libxml2.dll" Source="libxml2.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="MSVCP140.DLL"
+					 Guid="7F797B27-13A6-4C1B-B229-9408479D1357"
+					 Win64='yes'>
+						<File Id="MSVCP140.DLL" Name="msvcp140.dll" Source="msvcp140.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="MSVCP140_1.DLL"
+					 Guid="CDACB4D6-B018-407C-81FD-C5A09259B0C0"
+					 Win64='yes'>
+						<File Id="MSVCP140_1.DLL" Name="msvcp140_1.dll" Source="msvcp140_1.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64' />
+					</Component>
+					<Component Id="OGDI.DLL"
+					 Guid="2F4E1FC0-A5B2-430E-98F2-EC8AA11141DC"
+					 Win64='yes'>
+						<File Id="OGDI.DLL" Name="ogdi.dll" Source="ogdi.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="OPENJP2.DLL"
+					 Guid="C8B8A775-0340-479F-80F2-D8B975E47D7A"
+					 Win64='yes'>
+						<File Id="OPENJP2.DLL" Name="openjp2.dll" Source="openjp2.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="PROJ_7_2.DLL"
+					 Guid="30EA9210-3BB6-4CB2-ACE5-1FBF23D04BC4"
+					 Win64='yes'>
+						<File Id="PROJ_7_2.DLL" Name="proj_7_2.dll" Source="proj_7_2.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="QT5CORE.DLL"
+					 Guid="010C5AF2-04F6-4487-9C05-DC97B7ACCC77"
+					 Win64='yes'>
+						<File Id="QT5CORE.DLL" Name="Qt5Core.dll" Source="Qt5Core.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="QT5GUI.DLL"
+					 Guid="DF729CE0-19BA-4D20-BF50-8A2368F71ACB"
+					 Win64='yes'>
+						<File Id="QT5GUI.DLL" Name="Qt5Gui.dll" Source="Qt5Gui.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="QT5WIDGETS.DLL"
+					 Guid="826B8BB4-4E24-41E5-AB65-EBA647B2D73F"
+					 Win64='yes'>
+						<File Id="QT5WIDGETS.DLL" Name="Qt5Widgets.dll" Source="Qt5Widgets.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="SPATIALITE.DLL"
+					 Guid="B6AE13A8-7BF1-47F1-A78A-5741087C96C9"
+					 Win64='yes'>
+						<File Id="SPATIALITE.DLL" Name="spatialite.dll" Source="spatialite.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="SQLITE3.DLL"
+					 Guid="7D6A3540-6C34-40E0-B611-3909D1FFA034"
+					 Win64='yes'>
+						<File Id="SQLITE3.DLL" Name="sqlite3.dll" Source="sqlite3.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="TIFF.DLL"
+					 Guid="F4618AAA-C44B-4628-A39F-81E0A011BC2A"
+					 Win64='yes'>
+						<File Id="TIFF.DLL" Name="tiff.dll" Source="tiff.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="VCRUNTIME140.DLL"
+					 Guid="BEEAF368-640C-445F-BE03-9C878A248157"
+					 Win64='yes'>
+						<File Id="VCRUNTIME140.DLL" Name="vcruntime140.dll" Source="vcruntime140.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="VCRUNTIME140_1.DLL"
+					 Guid="C6286E4A-1276-4F46-AF2A-B104F3EBC20C"
+					 Win64='yes'>
+						<File Id="VCRUNTIME140_1.DLL" Name="vcruntime140_1.dll" Source="vcruntime140_1.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="XERCES_C_3_2.DLL"
+					 Guid="F70C2C72-E32B-475D-8DBB-7886F5075FAB"
+					 Win64='yes'>
+						<File Id="XERCES_C_3_2.DLL" Name="xerces-c_3_2.dll" Source="xerces-c_3_2.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Component Id="ZLIB.DLL"
+					 Guid="DF6E39A4-DE2B-4BA9-9354-6067537D9CC8"
+					 Win64='yes'>
+						<File Id="ZLIB.DLL" Name="zlib.dll" Source="zlib.dll"
+						 DiskId="1"
+						 KeyPath='no'
+						 ProcessorArchitecture='x64'/>
+					</Component>
+					<Directory Id="ICONENGINES" Name="iconengines">
+						<Component Id="QSVGICON.DLL"
+					     Guid="6C76DB23-0FA1-46B1-87B6-259C6000B14B"
+					     Win64='yes'>
+							<File Id="QSVGICON.DLL" Name="qsvgicon.dll" Source="iconengines\qsvgicon.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+					</Directory>
+					<Directory Id="IMAGEFORMATS" Name="imageformats">
+						<Component Id="QGIF.DLL"
+						 Guid="82600901-62B0-4CB8-B98B-ADE8EA83BEF8"
+					     Win64='yes'>
+							<File Id="QGIF.DLL" Name="qgif.dll" Source="imageformats\qgif.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QICNS.DLL"
+						 Guid="C9D8EF16-4F4E-4DA9-AC1C-C80C2531B65B"
+					     Win64='yes'>
+							<File Id="QICNS.DLL" Name="qicns.dll" Source="imageformats\qicns.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QICO.DLL"
+						 Guid="775BC5C5-9E73-4F04-A464-F9E4003F6C61"
+					     Win64='yes'>
+							<File Id="QICO.DLL" Name="qico.dll" Source="imageformats\qico.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QJPEG.DLL"
+						 Guid="A94C2AA7-66A8-41A8-AA16-98E37744458B"
+					     Win64='yes'>
+							<File Id="QJPEG.DLL" Name="qjpeg.dll" Source="imageformats\qjpeg.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QSVG.DLL"
+						 Guid="A8C860CE-51DA-4F0D-9327-92822769A614"
+					     Win64='yes'>
+							<File Id="QSVG.DLL" Name="qsvg.dll" Source="imageformats\qsvg.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QTGA.DLL"
+						 Guid="48A9FF25-46F4-4B8D-9461-F9BA8525237C"
+					     Win64='yes'>
+							<File Id="QTGA.DLL" Name="qtga.dll" Source="imageformats\qtga.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QTIFF.DLL"
+						 Guid="3473676E-453F-4232-9DFE-E39FB6FC8E20"
+					     Win64='yes'>
+							<File Id="QTIFF.DLL" Name="qtiff.dll" Source="imageformats\qtiff.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QWBMP.DLL"
+						 Guid="BE11087D-87A5-4384-A642-F5F47B45C5FE"
+					     Win64='yes'>
+							<File Id="QWBMP.DLL" Name="qwbmp.dll" Source="imageformats\qwbmp.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+						<Component Id="QWEBP.DLL"
+						 Guid="FD23AE59-AC15-470B-8A6B-9F5C916367F3"
+					     Win64='yes'>
+							<File Id="QWEBP.DLL" Name="qwebp.dll" Source="imageformats\qwebp.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+					</Directory>
+					<Directory Id="PLATFORMS" Name="platforms">
+						<Component Id="QWINDOWS.DLL"
+						 Guid="AE7373B2-6668-4DFC-A75C-A1EB19E469D6"
+    					 Win64='yes'>
+							<File Id="QWINDOWS.DLL" Name="qwindows.dll" Source="platforms\qwindows.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+					</Directory>
+					<Directory Id="STYLES" Name="styles">
+						<Component Id="QWINDOWSVISTASTYLE.DLL"
+						 Guid="6C24AF17-034A-436D-90CD-31B2FFF25C13"
+					     Win64='yes'>
+							<File Id="QWINDOWSVISTASTYLE.DLL" Name="qwindowsvistastyle.dll" Source="styles\qwindowsvistastyle.dll"
+					    	 DiskId="1"
+		    				 KeyPath='no'
+			    			 ProcessorArchitecture='x64'/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+
+			<Directory Id="ProgramMenuFolder" Name="Programs">
+				<Directory Id="ProgramMenuDir" Name="E-foto 2023.01 (64bits)">
+					<Component Id="ProgramMenuDir" Guid="E765DC99-29D5-4936-BCC3-A7AF0B443A57">
+						<RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+						<RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+					</Component>
+				</Directory>
+			</Directory>
+
+			<Directory Id="DesktopFolder" Name="Desktop"/>
+
+			<Directory Id="System64Folder" Name="System64"/>
+
+			<Directory Id="SystemFolder" Name="System32"/>
+
+		</Directory>
+
+		<Feature Id='Complete' Title="E-foto 2023.01.0"
+		 Description='A Free GNU-GPL Educational Photogrammetric Workstation.'
+		 Display='expand' Level='1' ConfigurableDirectory='INSTALLDIR'>
+			<Feature Id='MainProgram' Title='E-foto' Description='The main executable.' Level='1'>
+				<ComponentRef Id='MainExecutable' />
+				<ComponentRef Id='XSLTProc' />
+				<ComponentRef Id="LIBEXSLT_0.DLL" />
+				<ComponentRef Id="LIBXSLT_1.DLL" />
+				<ComponentRef Id="LIBXML2_2.DLL" />
+				<ComponentRef Id="LIBICONV_2.DLL" />
+				<ComponentRef Id="LIBWINPTHREAD_1.DLL" />
+				<ComponentRef Id="ZLIB1.DLL" />	
+				<ComponentRef Id='GDAL' />
+				<ComponentRef Id="FREEXL.DLL" />
+				<ComponentRef Id="GEOS.DLL" />
+				<ComponentRef Id="GEOS_C.DLL" />
+				<ComponentRef Id="GPLV3.RTF" />
+				<ComponentRef Id="ICONV_2.DLL" />
+				<ComponentRef Id="LIBCRYPTO_1_1_X64.DLL" />
+				<ComponentRef Id="LIBCURL.DLL" />
+				<ComponentRef Id="LIBEXPAT.DLL" />
+				<ComponentRef Id="LIBMYSQL.DLL" />
+				<ComponentRef Id="LIBPQ.DLL" />
+				<ComponentRef Id="LIBSSL_1_1_X64.DLL" />
+				<ComponentRef Id="LIBXML2.DLL" />
+				<ComponentRef Id="MSVCP140.DLL" />
+				<ComponentRef Id="MSVCP140_1.DLL" />
+				<ComponentRef Id="OGDI.DLL" />
+				<ComponentRef Id="OPENJP2.DLL" />
+				<ComponentRef Id="PROJ_7_2.DLL" />
+				<ComponentRef Id="QT5CORE.DLL" />
+				<ComponentRef Id="QT5GUI.DLL" />
+				<ComponentRef Id="QT5WIDGETS.DLL" />
+				<ComponentRef Id="SPATIALITE.DLL" />
+				<ComponentRef Id="SQLITE3.DLL" />
+				<ComponentRef Id="TIFF.DLL" />
+				<ComponentRef Id="VCRUNTIME140.DLL" />
+				<ComponentRef Id="VCRUNTIME140_1.DLL" />
+				<ComponentRef Id="XERCES_C_3_2.DLL" />
+				<ComponentRef Id="ZLIB.DLL" />
+				<ComponentRef Id="QSVGICON.DLL" />
+				<ComponentRef Id="QGIF.DLL" />
+				<ComponentRef Id="QICNS.DLL" />
+				<ComponentRef Id="QICO.DLL" />
+				<ComponentRef Id="QJPEG.DLL" />
+				<ComponentRef Id="QSVG.DLL" />
+				<ComponentRef Id="QTGA.DLL" />
+				<ComponentRef Id="QTIFF.DLL" />
+				<ComponentRef Id="QWBMP.DLL" />
+				<ComponentRef Id="QWEBP.DLL" />
+				<ComponentRef Id="QWINDOWS.DLL" />
+				<ComponentRef Id="QWINDOWSVISTASTYLE.DLL" />
+				<ComponentRef Id='ProgramMenuDir' />
+			</Feature>
+		</Feature>
+
+		<Icon Id="efoto.ico" SourceFile="efoto.ico" />
+		<Icon Id="efotoicon.ico" SourceFile="efotoicon.ico" />
+
+		<Media Id='1' Cabinet='efoto.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
+
+		<Property Id='DiskPrompt' Value="E-foto Installation [1]" />
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch E-foto" />
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
+		<Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Thank you for installing e-foto. If you like this software, give us a feedback at http://www.efoto.eng.uerj.br" />
+		<Property Id="WixShellExecTarget" Value="[#EfotoEXE]" />
+
+		<UI>
+			<UIRef Id="WixUI_InstallDir" />
+			<Publish Dialog="ExitDialog"
+			 Control="Finish"
+			 Event="DoAction"
+			 Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+		</UI>
+
+		<UIRef Id="WixUI_ErrorProgressText" />
+
+		<Upgrade Id='0B90BAC6-A841-4EFD-AAC9-8BA6B6812383'>
+			<UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
+			 Minimum='0.0.0' IncludeMinimum='yes'
+			 Maximum='23.1.0' IncludeMaximum='no' />
+		</Upgrade>
+
+		<WixVariable Id="WixUILicenseRtf" Value="GPLv3.rtf" />
+		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+
+		<InstallExecuteSequence>
+			<RemoveExistingProducts After="InstallInitialize" />
+		</InstallExecuteSequence>
+
+	</Product>
+</Wix>
