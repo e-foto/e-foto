@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=e-foto
+Comment=Educational Digital Photogrammetry Workstation
+Exec=e-foto
+Icon=efoto-icon.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Education;

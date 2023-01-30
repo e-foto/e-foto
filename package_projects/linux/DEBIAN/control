@@ -1,0 +1,11 @@
+Package: e-foto
+Version: 2023.01
+Section: science
+Priority: optional
+Architecture: amd64
+Depends: libqt5gui5, libqt5core5a, libqt5widgets5, libgdal-dev, libqt5opengl5, xsltproc
+Replaces: efoto (<= 2016.06.425)
+Installed-Size: 3562
+Maintainer: Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>
+Uploaders: E-foto Project Developers <e-foto@googlegroups.com> 
+Description: Educational Digital Photogrammetry Workstation Alpha version of E-foto. Contains some bugs that may affect your work.
