@@ -179,7 +179,7 @@ void SRUserInterface_Qt::receivePoint(QPointF p)
     imageView->getMarker()->insertMark(p, table1->currentIndex().row()+1, points->data(points->index(table1->currentIndex().row(), 2)).toString(), markOn);
 
     points->setData(points->index(table1->currentIndex().row(), 7), QString::number(p.x(),'f',2));
-    points->setData(points->index(table1->currentIndex().row(), 8), QString::number(p.x(),'f',2));
+    points->setData(points->index(table1->currentIndex().row(), 8), QString::number(p.y(),'f',2));
     points->setData(points->index(table1->currentIndex().row(), 9), QString::number(manager->pointToDetector(p.x(), p.y()).at(0),'f',2));
     points->setData(points->index(table1->currentIndex().row(), 10), QString::number(manager->pointToDetector(p.x(), p.y()).at(1),'f',2));
     points->setData(points->index(table1->currentIndex().row(), 11), QVariant(true));
