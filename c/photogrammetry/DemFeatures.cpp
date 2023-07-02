@@ -321,6 +321,7 @@ int DemFeatures::exportShpFeatures(char *filename) {
       createShapefile(getFeatureClass(i), &oSRS, poDS);
     }
   }
+  GDALClose(poDS);
   return 1;
 }
 
