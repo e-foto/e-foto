@@ -4,15 +4,16 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/e-foto/e-foto?style=plastic)
 ![GitHub top language](https://img.shields.io/github/languages/top/e-foto/e-foto?style=plastic)
 ### A free GNU/GPL educational digital photogrammetric workstation
-The goal of Project E-foto is to provide the full implementation of a 
-digital photogrammetric workstation as free software under a GNU GPL license.
+The e-foto Project aims to deliver a comprehensive and accessible digital photogrammetric workstation 
+by offering a complete implementation of the software as free and open-source under the GNU General Public License (GPL).
 
 ## Digital Photogrammetry
-E-foto Software possess photogrammetric functionalities that allow the development of professional topographic tridimentional mapping projects, 
-by using as data sources aerial photogrammetric images obtained by both analog cameras and digital sensors.
+E-foto Software is equipped with photogrammetric functionalities that empower the creation of topographic tridimensional mapping projects. 
+It supports the utilization of aerial photogrammetric images captured by both analog cameras and digital sensors, 
+enabling professionals to harness diverse data sources for their mapping endeavors.
 
 ## How to use
-You can find tutorials with a step by step aproach to teach how to use the program on our website http://www.efoto.eng.uerj.br/
+You can access our website at http://www.efoto.eng.uerj.br/ where you will find comprehensive tutorials, thus ensuring a smooth and efficient learning experience.
 
 ## How to install and run from sources (on Linux)
 1. Clone this repository
