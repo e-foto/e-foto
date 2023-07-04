@@ -8,7 +8,7 @@ The e-foto Project aims to deliver a comprehensive and accessible digital photog
 by offering a complete implementation of the software as free and open-source under the GNU General Public License (GPL).
 
 ## Digital Photogrammetry
-E-foto Software is equipped with photogrammetric functionalities that empower the creation of topographic tridimensional mapping projects. 
+e-foto is equipped with photogrammetric functionalities that empower the creation of topographic tridimensional mapping projects. 
 It supports the utilization of aerial photogrammetric images captured by both analog cameras and digital sensors, 
 enabling professionals to harness diverse data sources for their mapping endeavors.
 
