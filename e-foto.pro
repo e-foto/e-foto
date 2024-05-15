@@ -315,9 +315,9 @@ unix {
     DEFINES += unix
     target.path = /usr/bin
     desk.path = /usr/share/applications
-    desk.files += efoto.desktop
-    icon.path = /usr/share/applications/pixmaps
-    icon.files += efoto-icon.png
+    desk.files += data/br.uerj.eng.efoto.desktop
+    icon.path = /usr/share/pixmaps
+    icon.files += data/e-foto.png
 
     INSTALLS += target desk icon
     #INCLUDEPATH += /usr/include/  Commented to avoid the fatal error during compilation on Ubuntu 18.04 with g++7, as answered by n.m on stackoverflow:
