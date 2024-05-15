@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+   <mime-type type="application/vnd.e-foto">
+     <sub-class-of type="application/xml"/>
+     <comment>e-foto project file</comment>
+     <glob pattern="*.epp"/>
+     <magic priority="90">
+       <match value="efotoPhotogrammetricProject" type="string" offset="80:220"/>
+     </magic>
+   </mime-type>
+</mime-info>
