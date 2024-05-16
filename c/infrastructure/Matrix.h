@@ -21,8 +21,12 @@
 #include "CommonDef.h"
 #include "RectSupport.h"
 
+#ifndef MAX
 #define MAX(X,Y) (((X)>(Y))?(X):(Y))
+#endif /* MAX */
+#ifndef MIN
 #define MIN(X,Y) (((X)<(Y))?(X):(Y))
+#endif /* MIN */
 
 namespace br {
 namespace uerj {
