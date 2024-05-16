@@ -874,7 +874,7 @@ void DemGrid::saveDemEfoto(char * filename)
 
     fclose(fp);
 
-    delete data;
+    delete[] data;
 }
 
 void DemGrid::loadDemEfoto(char * filename)
@@ -1356,7 +1356,7 @@ std::string DemGrid::calculateDemQuality(MatchingPointsList mpl)
 
     bool flag=true;
     int pts_used = mpl.size();
-    double Zmean, Zstd;
+    double Zmean = 0.0, Zstd = 0.0;
 
     while (flag && pts_used > 2)
     {
