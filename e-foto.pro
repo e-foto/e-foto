@@ -315,9 +315,9 @@ unix {
     DEFINES += unix
     target.path = /usr/bin
     desk.path = /usr/share/applications
-    desk.files += efoto.desktop
-    icon.path = /usr/share/applications/pixmaps
-    icon.files += efoto-icon.png
+    desk.files += data/br.uerj.eng.efoto.desktop
+    icon.path = /usr/share/pixmaps
+    icon.files += data/e-foto.png
     mime.path = /usr/share/mime/packages
     mime.files += data/e-foto-mimeinfo.xml
     meta.path = /usr/share/metainfo
