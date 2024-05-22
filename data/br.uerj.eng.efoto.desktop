@@ -8,3 +8,4 @@ Terminal=false
 Type=Application
 StartupNotify=true
 Categories=Education;
+MimeType=application/vnd.e-foto;
