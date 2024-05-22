@@ -318,8 +318,12 @@ unix {
     desk.files += data/br.uerj.eng.efoto.desktop
     icon.path = /usr/share/pixmaps
     icon.files += data/e-foto.png
+    mime.path = /usr/share/mime/packages
+    mime.files += data/e-foto-mimeinfo.xml
+    meta.path = /usr/share/metainfo
+    meta.files += data/br.uerj.eng.efoto.metainfo.xml
 
-    INSTALLS += target desk icon
+    INSTALLS += target desk icon mime meta
     #INCLUDEPATH += /usr/include/  Commented to avoid the fatal error during compilation on Ubuntu 18.04 with g++7, as answered by n.m on stackoverflow:
     #DEPENDPATH += /usr/include/   https://stackoverflow.com/questions/51350998/7515-fatal-error-stdlib-h-no-such-file-or-directory-include-next-stdlib-h/51351206
 

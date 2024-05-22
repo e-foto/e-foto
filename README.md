@@ -18,23 +18,23 @@ You can access our website at http://www.efoto.eng.uerj.br/ where you will find 
 ## How to install and run from sources (on Linux)
 1. Clone this repository
 1. Install packages:
-    1. libgdal.dev
+    1. libgdal-dev
     2. build-essential
     3. libfontconfig1
     4. mesa-common-dev
     5. libx11-xcb-dev
     6. libglu1-mesa-dev
-    > sudo apt installlibgdal−dev build−essential libfontconfig1 mesa−common−dev libx11−xcb−dev libglu1−mesa−dev
+    > sudo apt install libgdal-dev build-essential libfontconfig1 mesa-common-dev libx11-xcb-dev libglu1-mesa-dev
 1. Install qt5 packages:
     1. qt5-default
     2. qt5-qmake
-    > sudo apt install qt5−default
-    > sudo apt install −y qt5−qmake
+    > sudo apt install qt5-default
+    > sudo apt install -y qt5-qmake
 1. Compile the source
-    > qmake e−foto.pro
+    > qmake e-foto.pro
     > make
 1. Run e-foto
-    > ./build/bin/e−foto
+    > ./build/bin/e-foto
     
 ## Contribution Guidelines
 * Fork this repository
