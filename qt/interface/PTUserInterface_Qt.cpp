@@ -544,7 +544,7 @@ bool PTUserInterface_Qt::calculatePT()
 {
     auto selectedImages = selectionImagesView->getSelectedItens();
     if (selectedImages.size() == 0) {
-        int answer = QMessageBox::information(this,tr("PhotoTriangulation inform"),tr("At least one image must be selected"));
+        (void)QMessageBox::information(this,tr("PhotoTriangulation inform"),tr("At least one image must be selected"));
 
         return false;
     }
