@@ -53,7 +53,7 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidge
 
 	// Montar mensagem
 	QString date_ver_name = tr("Version ");
-	QString size_ver_name = tr("(64 bits, beta);");
+	QString size_ver_name = tr(" (64 bits, beta);");
 	QString msg = date_ver_name + ver + size_ver_name;
 
 	version_info->setText(msg);
