@@ -33,7 +33,7 @@ AboutForm::AboutForm()
 	QString software_name = "e-foto";
 	QString descript_name = tr("A free GNU/GPL educational<br /> digital photogrammetric workstation<br />");
 	QString date_ver_name = tr("Version ");
-	QString size_ver_name = tr("(64 bits, beta)");
+	QString size_ver_name = tr(" (64 bits, beta)");
 	date_ver_name += ver + size_ver_name;
 
 	tag = message.elementByTagAtt("span", "id", "software_name");
