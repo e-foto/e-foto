@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = e-foto
 
-QT += core widgets opengl
+QT += core widgets openglwidgets
 INCLUDEPATH += . \
                c/control \
                c/photogrammetry \
@@ -308,6 +308,7 @@ unix {
 
     # Set gdal usage
     LIBS += -L/usr/include/gdal -lgdal
+    LIBS += -lQt6OpenGLWidgets -lGL
     INCLUDEPATH += /usr/include/gdal
     DEPENDPATH += /usr/include/gdal
 
@@ -355,7 +356,7 @@ win32-msvc*{
     INCLUDEPATH += "C:/gdal/release_gdal/include"
     DEPENDPATH += "C:/gdal/release_gdal/include"
     LIBS += -L"C:/gdal/release_gdal/lib" -lgdal_i
-
+    LIBS += -lQt6OpenGLWidgets opengl32.lib
     #Debug settings
     #!build_pass:CONFIG(debug, debug|release) {
      #   !build_pass:message($$find(CONFIG, "debug"))
@@ -405,7 +406,7 @@ win32-g++{
     INCLUDEPATH += "C:/msys64/mingw64/include"
     DEPENDPATH += "C:/msys64/mingw64/include"
     LIBS += -L"C:/msys64/mingw64/lib" -lgdal
-
+    LIBS += -lQt6OpenGLWidgets -lopengl32
     #Debug settings
     #!build_pass:CONFIG(debug, debug|release) {
      #   !build_pass:message($$find(CONFIG, "debug"))
