@@ -23,8 +23,9 @@
 #include "LoadingScreen.h"
 #include "ImageViewers.h"
 
-#include <qdesktopwidget.h>
-#include <qapplication.h>
+#include <QScreen>
+#include <QGuiApplication>
+
 #include <qvariant.h>
 #include <qimage.h>
 #include <qpixmap.h>

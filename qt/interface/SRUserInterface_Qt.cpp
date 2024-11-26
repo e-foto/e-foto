@@ -25,7 +25,7 @@
 
 #include "SRManager.h"
 #include "ETableWidget.h"
-
+#include "QActionGroup"
 #include <QPushButton>
 #include <QInputDialog>
 #include <QStandardItemModel>

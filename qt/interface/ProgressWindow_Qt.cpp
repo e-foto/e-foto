@@ -16,6 +16,8 @@
 */
 
 #include <QtWidgets>
+#include <QScreen>
+#include <QGuiApplication>
 #include "ProgressWindow_Qt.h"
 
 ProgressWindow::ProgressWindow(QWidget *parent) : QWidget(parent)

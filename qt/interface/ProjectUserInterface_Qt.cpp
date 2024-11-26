@@ -29,6 +29,7 @@
 #include <QShortcut>
 #include <QScrollArea>
 #include <QSettings>
+#include <QRegularExpression>
 #include <iostream>
 #include <sstream>
 #include <ConvertionsSystems.h>

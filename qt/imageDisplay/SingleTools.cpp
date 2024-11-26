@@ -1,8 +1,10 @@
 #include "SingleTools.h"
 #include "SingleDisplay.h"
-
+#include <QHoverEvent>
+#include <QMouseEvent>
 #include <QFileDialog>
 #include <QApplication>
+#include <QActionGroup>
 
 #define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
 
