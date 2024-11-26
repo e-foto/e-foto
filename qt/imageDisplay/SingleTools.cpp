@@ -489,14 +489,14 @@ void MoveTool::mousePressed(const QMouseEvent & event)
         return;
     SingleTool::mousePressed(event);
     if (event.buttons() & Qt::LeftButton)
-        _display->setCursor(QPixmap::fromImage(SymbolsResource::getClosedHand()));
+        _display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getClosedHand())));
     _display->update();
 }
 
 void MoveTool::mouseReleased(const QMouseEvent & event)
 {
     SingleTool::mouseReleased(event);
-    _display->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+    _display->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
 }
 
 void MoveTool::mouseMoved(const QMouseEvent & event)
@@ -775,12 +775,12 @@ void OverTool::moveEvent(const QHoverEvent& event)
     if (_display->positionIsVisible(_over->getLastMousePosition()))
     {
         if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getPointingHand()))
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+            _over->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
     }
     else
     {
         if (!_onMove)//_over->cursor().pixmap() != QPixmap::fromImage(SymbolsResource::getOpenHand()))
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getPointingHand()));
+            _over->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getPointingHand())));
     }
 
     actualizePosLabel(_over);
@@ -795,12 +795,12 @@ void OverTool::mousePressed(const QMouseEvent & event)
         {
             _onMove = true;
             _lastPos = _over->getLastMousePosition();
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getClosedHand()));
+            _over->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getClosedHand())));
         }
         else
         {
             _display->getCurrentScene()->moveTo(_over->getLastMousePosition());
-            _over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+            _over->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
             _display->update();
         }
     }
@@ -810,7 +810,7 @@ void OverTool::mouseReleased(const QMouseEvent & event)
 {
     event.isAccepted();
     _onMove = false;
-    _over->setCursor(QPixmap::fromImage(SymbolsResource::getOpenHand()));
+    _over->setCursor(QCursor(QPixmap::fromImage(SymbolsResource::getOpenHand())));
 }
 
 void OverTool::mouseMoved(const QMouseEvent & event)
@@ -870,7 +870,11 @@ NearTool::NearTool(SingleDisplay* display) :
     _nearDock->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
     _cursorIsVisible = false;
     _marker = NULL;
-    _near->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
+    _near->setCursor(
+        QCursor(
+            QPixmap::fromImage(
+                SymbolsResource::getBordedCross(
+                    QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25)))));
 }
 
 NearTool::~NearTool()
