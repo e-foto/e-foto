@@ -103,12 +103,13 @@ OrthoUserInterface_Qt::OrthoUserInterface_Qt(OrthoManager* manager, QWidget* par
     dem_load_flag = 0;
 
     // Center window
-    QDesktopWidget *desktop = QApplication::desktop();
-    int Cx,Cy;
-    QRect rect = geometry();
-    Cx = (desktop->width() - rect.width())/2;
-    Cy = (desktop->height() - rect.height())/2;
-    move(Cx,Cy);
+    QScreen *screen = QGuiApplication::primaryScreen();
+    if (screen) {
+      QRect screenGeometry = screen->geometry();
+      int Cx = (screenGeometry.width() - width()) / 2;
+      int Cy = (screenGeometry.height() - height()) / 2;
+      move(Cx, Cy);
+    }
 
     allow_close = true;
     onShowImageChanged(checkBox->isChecked());

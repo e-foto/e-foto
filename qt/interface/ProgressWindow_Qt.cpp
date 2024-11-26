@@ -25,12 +25,13 @@ ProgressWindow::ProgressWindow(QWidget *parent) : QWidget(parent)
 	ui.setupUi(this);
 
 	// Center window
-	QDesktopWidget *desktop = QApplication::desktop();
-	int Cx,Cy;
-	QRect rect = geometry();
-	Cx = (desktop->width() - rect.width())/2;
-	Cy = (desktop->height() - rect.height())/2;
-	move(Cx,Cy);
+        QScreen *screen = QGuiApplication::primaryScreen();
+        if (screen) {
+          QRect screenGeometry = screen->geometry();
+          int Cx = (screenGeometry.width() - width()) / 2;
+          int Cy = (screenGeometry.height() - height()) / 2;
+          move(Cx, Cy);
+        }
 
 	allow_close = true;
 }

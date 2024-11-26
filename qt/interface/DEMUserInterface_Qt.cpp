@@ -22,7 +22,8 @@
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
 
-#include <QDesktopWidget>
+#include <QScreen>
+#include <QGuiApplication>
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -84,12 +85,13 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager* manager, QWidget* parent, Q
     sed = NULL;
 
     // Center window
-    QDesktopWidget *desktop = QApplication::desktop();
-    int Cx,Cy;
-    QRect rect = geometry();
-    Cx = (desktop->width() - rect.width())/2;
-    Cy = (desktop->height() - rect.height())/2;
-    move(Cx,Cy);
+    QScreen *screen = QGuiApplication::primaryScreen();
+    if (screen) {
+      QRect screenGeometry = screen->geometry();
+      int Cx = (screenGeometry.width() - width()) / 2;
+      int Cy = (screenGeometry.height() - height()) / 2;
+      move(Cx, Cy);
+    }
 
     // Set tab 0 as initial page
     tabWidget->setCurrentIndex(0);
