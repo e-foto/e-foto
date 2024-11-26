@@ -1,5 +1,6 @@
 #include "DmsEdit.h"
-
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include "EDom.h"
 
 namespace br {
@@ -75,7 +76,7 @@ void DmsEdit::validate()
         radVal.append("}");
 
         // qDebug()<<radVal;
-        QRegExpValidator *radValidator1=new QRegExpValidator(QRegExp(radVal),this);
+        QRegularExpressionValidator *radValidator1=new QRegularExpressionValidator(QRegularExpression(radVal),this);
         radValidator1->setLocale(QLocale::system());
         //radValidator1->locale().setNumberOptions(QLocale::O);
         //qDebug()<<radValidator1->locale().name()<<"simbolo decimal: "<<radValidator1->locale().decimalPoint();
@@ -94,7 +95,7 @@ void DmsEdit::validate()
         degVal.append("}");
 
         //qDebug()<<degVal;
-        QRegExpValidator *degValidator1=new QRegExpValidator(QRegExp(degVal),this);
+        QRegularExpressionValidator *degValidator1=new QRegularExpressionValidator(QRegularExpression(degVal),this);
         this->setValidator(degValidator1);
     //	setValidator(new QDoubleValidator(-2*M_PI,2*M_PI,5,this));
         //em teste //Novo 11.3.08
