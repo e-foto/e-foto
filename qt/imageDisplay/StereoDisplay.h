@@ -2,7 +2,7 @@
 #define STEREODISPLAY_H
 
 #include <utility>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QGridLayout>
 
 #include "SingleDisplay.h"
