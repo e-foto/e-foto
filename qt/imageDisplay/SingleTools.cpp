@@ -102,7 +102,7 @@ void SingleTool::mousePressed(const QMouseEvent &event)
     _currentCursor = _display->cursor();
 
     // Prepair to zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
+    if (event.buttons() & Qt::MiddleButton)
     {
         _fixedPoint = event.pos();
         _fixedPointOnImage = _display->getPosition(_fixedPoint);
@@ -155,7 +155,7 @@ void SingleTool::mouseReleased(const QMouseEvent &event)
 void SingleTool::mouseMoved(const QMouseEvent &event)
 {
     // Make zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
+    if (event.buttons() & Qt::MiddleButton)
     {
         //int diff = event.pos().y() - _fixedPoint.y();
         int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImage).y();
