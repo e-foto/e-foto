@@ -491,7 +491,7 @@ void GLDisplay::resizeEvent(QResizeEvent *e)
 void GLDisplay::hoverEntered(QHoverEvent *event)
 {
     // We refresh cursor and paint this object first   <= Todo: review this
-    refreshCursor(true, event->pos());
+    refreshCursor(true, event->position().toPoint());
 
     // Events are not handled if there is no valid scene
     if (!stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())
@@ -507,7 +507,7 @@ void GLDisplay::hoverEntered(QHoverEvent *event)
 void GLDisplay::hoverLeaved(QHoverEvent *event)
 {
     // We refresh cursor and paint this object first   <= Todo: review this
-    refreshCursor(false, event->pos());
+    refreshCursor(false, event->position().toPoint());
 
     // Events are not handled if there is no valid scene
     if (!stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())
@@ -523,7 +523,7 @@ void GLDisplay::hoverLeaved(QHoverEvent *event)
 void GLDisplay::hoverMoved(QHoverEvent *event)
 {
     // We refresh cursor and paint this object first   <= Todo: review this
-    refreshCursor(true, event->pos());
+    refreshCursor(true, event->position().toPoint());
 
     // Events are not handled if there is no valid scene
     if (!stereoDisplay_->getCurrentScene() || !stereoDisplay_->getCurrentScene()->isValid())

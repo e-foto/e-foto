@@ -90,19 +90,25 @@ void StereoTool::moveEvent(const QHoverEvent& event)
 
     if (_display->isStereoCursor())
     {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(
+          _display->getPositionLeft((event.position().toPoint() + _display->getLeftCursorOffset().toPoint())));
+
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(
+            _display->getPositionRight((event.position().toPoint() + _display->getRightCursorOffset().toPoint())));
     }
     else
     {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()));
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(
+          _display->getPositionLeft(event.position().toPoint()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(
+            _display->getPositionRight(event.position().toPoint()));
     }
 
     if (!_hasButtomPressed)
         _display->updateAll();
 
-    emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+    emit mouseMoved(_display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint()),
+                    _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint()));
 }
 
 void StereoTool::mousePressed(const QMouseEvent &event)
@@ -113,9 +119,9 @@ void StereoTool::mousePressed(const QMouseEvent &event)
     _lastMode = _display->isStereoCursor();
 
     // Prepair to zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
+    if (event.buttons() & Qt::MiddleButton)
     {
-        _fixedPoint = event.pos();
+        _fixedPoint = event.position().toPoint();
         _fixedPointOnImageLeft = _display->getPositionLeft(_fixedPoint);
         _fixedPointOnImageRight = _display->getPositionRight(_fixedPoint);
         _scale = _display->getCurrentScene()->getScale();
@@ -129,12 +135,14 @@ void StereoTool::mousePressed(const QMouseEvent &event)
         _currentCursor = SymbolsResource::getBackGround(QColor(0,0,0,0));
         _display->setCursor(_currentCursor, false);
     }
-    _lastMousePosition = event.pos();
+    _lastMousePosition = event.position().toPoint();
 
-    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MidButton))
+    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MiddleButton))
     {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(
+          _display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(
+            _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint()));
     }
 }
 
@@ -163,8 +171,10 @@ void StereoTool::mouseReleased(const QMouseEvent &event)
     }
     else
     {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(
+          _display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint()));
+        _display->getCurrentScene()->getRightScene()->setDetailedPoint(
+            _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint()));
     }
 
     // Hide overview line
@@ -176,15 +186,15 @@ void StereoTool::mouseReleased(const QMouseEvent &event)
 void StereoTool::mouseMoved(const QMouseEvent &event)
 {
     // Make zoom default (scaleBar).
-    if (event.buttons() & Qt::MidButton)
+    if (event.buttons() & Qt::MiddleButton)
     {
 
-        int diff = event.pos().y() - _display->screenPosition(_fixedPointOnImageLeft).y();
+        int diff = event.position().y() - _display->screenPosition(_fixedPointOnImageLeft).y();
         double newScale = (_scale*100 - diff)/100;
         //qDebug("screenPositionY = %f, diff = %d, newScale = %f e fixedPoint = (%f, %f)", _display->screenPosition(_fixedPointOnImage).y(), diff, newScale, _fixedPointOnImage.x(), _fixedPointOnImage.y());
         _display->getCurrentScene()->getLeftScene()->scaleTo(newScale, _fixedPointOnImageLeft);
         _display->getCurrentScene()->getRightScene()->scaleTo(newScale, _fixedPointOnImageRight);
-        if (event.pos().x() < _display->screenPosition(_fixedPointOnImageLeft).x())
+        if (event.position().x() < _display->screenPosition(_fixedPointOnImageLeft).x())
         {
             _currentCursor = SymbolsResource::getRightArrow();
             _display->setCursor(_currentCursor, _display->isStereoCursor());
@@ -203,7 +213,7 @@ void StereoTool::mouseMoved(const QMouseEvent &event)
     if (event.buttons() & Qt::RightButton)
     {
         double scale = _display->getCurrentScene()->getScale();
-        QPointF diff = event.pos() - _lastMousePosition;
+        QPointF diff = event.position() - _lastMousePosition;
         _autoPan = -(diff/(5*scale));
         _currentCursor = SymbolsResource::getText(QString::fromUtf8("Auto"));
         _display->setCursor(_currentCursor, _display->isStereoCursor());
@@ -387,7 +397,7 @@ void ZoomStereoTool::mousePressed(const QMouseEvent & event)
     // Rubberband zoom
     if (event.buttons() & Qt::LeftButton)
     {
-        _fixedPoint = event.pos();
+        _fixedPoint = event.position().toPoint();
         _onRubberBand = true;
         _lastCursor = _display->getCursor();
         _currentCursor = SymbolsResource::getMagnifyGlass("-");
@@ -404,7 +414,7 @@ void ZoomStereoTool::mouseReleased(const QMouseEvent & event)
     // Rubberband zoom
     if (_onRubberBand)
     {
-        QRect rubber(_fixedPoint, event.pos());
+        QRect rubber(_fixedPoint, event.position().toPoint());
         if (abs(rubber.width()) < 8 && abs(rubber.height()) < 8)
         {
             // Apply zoom out
@@ -516,8 +526,8 @@ void MoveStereoTool::mouseMoved(const QMouseEvent & event)
     // Move
     if (event.buttons() & Qt::LeftButton)
     {
-        QPointF diff = event.pos() - _lastMousePosition;
-        _lastMousePosition = event.pos();
+        QPointF diff = event.position().toPoint() - _lastMousePosition;
+        _lastMousePosition = event.position().toPoint();
         std::pair<bool, bool> change (false, false);
         double scale;
         scale = _display->getCurrentScene()->getScale();
@@ -642,8 +652,8 @@ void MarkStereoTool::mousePressed(const QMouseEvent & event)
     // Add mark
     if (event.buttons() & Qt::LeftButton)
     {
-        QPointF lLocal = _display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint());
-        QPointF rLocal = _display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint());
+        QPointF lLocal = _display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint());
+        QPointF rLocal = _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint());
         if ((lLocal.x() >= 0 && lLocal.y() >= 0 && lLocal.x() <= _display->getCurrentScene()->getLeftScene()->getWidth() && lLocal.y() <= _display->getCurrentScene()->getLeftScene()->getHeight())
                 && (rLocal.x() >= 0 && rLocal.y() >= 0 && rLocal.x() <= _display->getCurrentScene()->getRightScene()->getWidth() && rLocal.y() <= _display->getCurrentScene()->getRightScene()->getHeight()))
         {
@@ -810,16 +820,19 @@ void NearStereoTool::mouseDblClicked(const QMouseEvent & event)
 
 void NearStereoTool::wheelEvent(const QWheelEvent & event)
 {
-    if (_display->isStereoCursor())
-    {
-        _display->getCurrentScene()->getLeftScene()->setDetailedPoint(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()));
-        _display->getCurrentScene()->getRightScene()->setDetailedPoint(_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
-    }
-    _leftNear->update();
-    _rightNear->update();
+  if (_display->isStereoCursor())
+  {
+    _display->getCurrentScene()->getLeftScene()->setDetailedPoint(
+        _display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint()));
+    _display->getCurrentScene()->getRightScene()->setDetailedPoint(
+        _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint()));
+  }
+  _leftNear->update();
+  _rightNear->update();
 
-    event.isAccepted();
+  event.isAccepted();
 }
+
 
 
 

@@ -92,7 +92,7 @@ void SingleTool::moveEvent(const QHoverEvent& event)
     if (!_display->showDetailedArea())
     {
         SingleScene* scene = (SingleScene*)_display->getCurrentScene();
-        scene->setDetailedPoint(_display->getPosition(event.pos()));
+        scene->setDetailedPoint(_display->getPosition(event.position().toPoint()));
         _display->updateDetail();
     }
 }
