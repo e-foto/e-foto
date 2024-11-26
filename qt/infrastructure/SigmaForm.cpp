@@ -256,7 +256,7 @@ void SigmaFormController::toNotAvailable()
 			newEdit->setSpecialValueText("Not Available");
 			newEdit->setTextValue("Not Available");
 			newEdit->setRange(-10,10); // No futuro a classe SigmaForm terá um método para setar o Range admissível de todos os seus campos.
-			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
+                        connect(newEdit, &QDoubleSpinBox::valueChanged, this, static_cast<void (SigmaFormController::*)(double)>(&SigmaFormController::changeValidate));
 			newEdit->setEnabled(false);
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
@@ -408,6 +408,11 @@ void SigmaFormController::setReadOnly(bool b)
 void SigmaFormController::changeValidate(QString)
 {
 	emit validateChanged();
+}
+
+void SigmaFormController::changeValidate(double value)
+{
+        emit validateChanged();
 }
 
 SigmaFormTypeSelector::SigmaFormTypeSelector(QWidget * parent) : QComboBox(parent)

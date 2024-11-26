@@ -67,6 +67,7 @@ public slots:
 	virtual void showMatrixEditor();
 	virtual void setReadOnly(bool);
 	virtual void changeValidate(QString);
+        virtual void changeValidate(double);
 	virtual void setTitles(QStringList);
 
 signals:
