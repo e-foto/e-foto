@@ -1,15 +1,16 @@
 #include "LoadingScreen.h"
 #include "ui_LoadingScreen.h"
-#include <QDesktopWidget>
+#include <QScreen>
+#include <QGuiApplication>
 #include <QTimer>
 #include <QWaitCondition>
 
 
-LoadingScreen* LoadingScreen::loadingScreenInstance = NULL;
+LoadingScreen* LoadingScreen::loadingScreenInstance = nullptr;
 
 LoadingScreen& LoadingScreen::instance()
 {
-	if (loadingScreenInstance == NULL)
+        if (loadingScreenInstance == nullptr)
 	{
 		loadingScreenInstance = new LoadingScreen;
 	}
@@ -26,10 +27,12 @@ LoadingScreen::LoadingScreen(QWidget *parent) :
 	setWindowTitle("Loading...");
 	ui->progressBar->setMaximum(0);
 	ui->progressBar->setMinimum(0);
-	QDesktopWidget desktopWidget;
-	QRect desktopRect(desktopWidget.availableGeometry(desktopWidget.primaryScreen()));
-	QRect widgetRect(rect());
-	move(desktopRect.center() - widgetRect.center());
+        QScreen *screen = QGuiApplication::primaryScreen();
+        if (screen) {
+          QRect desktopRect = screen->availableGeometry();
+          QRect widgetRect = rect();
+          move(desktopRect.center() - widgetRect.center());
+        }
 }
 
 LoadingScreen::~LoadingScreen()
