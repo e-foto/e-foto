@@ -691,8 +691,15 @@ NearStereoTool::NearStereoTool(StereoDisplay* display) :
     _rightNear = _display->getRightNearDisplay();
     _leftNear->setActivatedTool(this);
     _rightNear->setActivatedTool(this);
-    _leftNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
-    _rightNear->setCursor(QPixmap::fromImage(SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25))));
+    _leftNear->setCursor(
+        QCursor(
+            QPixmap::fromImage(
+                SymbolsResource::getBordedCross(
+                    QColor(255,255,255,255), QColor(0,0,0,255), QSize(25,25)))));
+    _rightNear->setCursor(
+        QCursor(
+            QPixmap::fromImage(
+                SymbolsResource::getBordedCross(QColor(255,255,255,255),QColor(0,0,0,255),QSize(25,25)))));
 
     QWidget* widget = new QWidget();
     QHBoxLayout* layout = new QHBoxLayout(widget);
