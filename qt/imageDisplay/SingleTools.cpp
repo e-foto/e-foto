@@ -117,7 +117,7 @@ void SingleTool::mousePressed(const QMouseEvent &event)
     }
     _lastMousePosition = event.pos();
 
-    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MidButton))
+    if ((event.button() & Qt::LeftButton) || (event.button() & Qt::MiddleButton))
     {
         SingleScene* scene = (SingleScene*)_display->getCurrentScene();
         scene->setDetailedPoint(_display->getPosition(event.pos()));
