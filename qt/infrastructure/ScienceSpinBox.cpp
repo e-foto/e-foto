@@ -314,7 +314,7 @@ void ScienceSpinBox::mousePressEvent(QMouseEvent *event)
 	{
 		selectAll();
 	}
-	else if (event->button() == Qt::MidButton)
+        else if (event->button() == Qt::MiddleButton)
 	{
 		//selectAll();
 		lineEdit()->setCursorPosition(lineEdit()->cursorPositionAt(event->pos()));
