@@ -346,7 +346,7 @@ win32-msvc*{
     CONFIG-=debug_and_release_target
 
     # Common parammeters for windows
-    QMAKE_CXXFLAGS += -std=c++11 -Wall
+    QMAKE_CXXFLAGS += -std=c++17 -Wall
 
     # Windows 64 bits version only
     #win32-g++:contains(QT_ARCH, x86_64):{
@@ -396,7 +396,7 @@ win32-g++{
     CONFIG-=debug_and_release_target
 
     # Common parammeters for windows
-    QMAKE_CXXFLAGS += -std=c++11 -Wall
+    QMAKE_CXXFLAGS += -std=c++17 -Wall
 
     # Windows 64 bits version only
     #win32-g++:contains(QT_ARCH, x86_64):{
