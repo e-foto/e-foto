@@ -391,9 +391,9 @@ void ZoomTool::mousePressed(const QMouseEvent & event)
     SingleTool::mousePressed(event);
 }
 
-void ZoomTool::mouseReleased(const QMouseEvent & event)
+void ZoomTool::mouseReleased(const QMouseEvent& event)
 {
-    QMouseEvent e = event;
+    const QMouseEvent& e = event;
 
     // Rubberband zoom
     if (_onRubberBand)
@@ -413,7 +413,13 @@ void ZoomTool::mouseReleased(const QMouseEvent & event)
             _display->getCurrentScene()->zoom(wscale < hscale ? wscale : hscale);
 
             QCursor::setPos(_display->mapToGlobal(_display->screenPosition(_display->getCurrentScene()->getViewpoint()).toPoint()));
-            e = QMouseEvent(QEvent::MouseButtonRelease, _display->screenPosition(_display->getCurrentScene()->getViewpoint()).toPoint(), event.button(), event.buttons(), event.modifiers());
+            QMouseEvent event(
+                QEvent::MouseButtonRelease,
+                _display->screenPosition(_display->getCurrentScene()->getViewpoint()),
+                event.button(),
+                event.buttons(),
+                event.modifiers()
+                );
             //_actualizePosLabel = true;
 
             if (_propagateScaleTo != NULL)
@@ -832,31 +838,40 @@ void OverTool::mouseDblClicked(const QMouseEvent & event)
     event.isAccepted();
 }
 
-void OverTool::wheelEvent(const QWheelEvent & event)
+void OverTool::wheelEvent(const QWheelEvent &event)
 {
-    _over->updateMousePosition();
-    if (!(_onMove) && (_display->positionIsVisible(_over->getLastMousePosition())))
+  _over->updateMousePosition();
+  if (!_onMove && _display->positionIsVisible(_over->getLastMousePosition()))
+  {
+    int numDegrees = event.angleDelta().y() / 8.0;
+    int numSteps = numDegrees / 15.0;
+
+    if (numSteps != 0) // Verifica se houve rotação no scroll
     {
-        int numDegrees = event.delta() / 8.0;
-        int numSteps = numDegrees / 15.0;
-        if (event.orientation() == Qt::Vertical)
-        {
-            double zoomStep;
-            if (numSteps>0)
-                zoomStep = 1.044273782; // 1*2^(1÷(2^4))
-            else if (numSteps<0)
-                zoomStep = 0.957603281; // 1/2^(1÷(2^4))
-            for (int i = 0; i<abs(numSteps);i++)
-                _display->getCurrentScene()->zoom(zoomStep, _over->getLastMousePosition());
-            _display->update();
-            actualizeScaleSpin(_display->getCurrentScene()->getScale());
+      double zoomStep;
+      if (numSteps > 0)
+        zoomStep = 1.044273782; // 1 * 2^(1 / (2^4))
+      else
+        zoomStep = 0.957603281; // 1 / 2^(1 / (2^4))
 
-            if (_propagateScaleTo != NULL)
-                _propagateScaleTo->propagateScale(_display->getCurrentScene()->getScale(), _display->screenPosition(_over->getLastMousePosition()).toPoint());
-        }
+      for (int i = 0; i < abs(numSteps); i++)
+      {
+        _display->getCurrentScene()->zoom(zoomStep, _over->getLastMousePosition());
+      }
+
+      _display->update();
+      actualizeScaleSpin(_display->getCurrentScene()->getScale());
+
+      if (_propagateScaleTo != nullptr)
+      {
+        _propagateScaleTo->propagateScale(
+            _display->getCurrentScene()->getScale(),
+            _display->screenPosition(_over->getLastMousePosition()).toPoint()
+            );
+      }
     }
+  }
 }
-
 
 
 NearTool::NearTool(SingleDisplay* display) :

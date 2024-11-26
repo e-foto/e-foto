@@ -120,7 +120,7 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 	rightDisplay = new SingleDisplay(this);
 	tool = new SeparatedStereoToolsBar(leftDisplay, rightDisplay, this);
 
-    addToolBar(Qt::LeftToolBarArea, tool);
+        addToolBar(Qt::LeftToolBarArea, tool);
 
 	leftPart->setCentralWidget(leftDisplay);
 	leftPart->statusBar()->addWidget(tool->getLeftInfo());

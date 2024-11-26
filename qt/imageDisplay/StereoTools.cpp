@@ -225,30 +225,35 @@ void StereoTool::mouseDblClicked(const QMouseEvent & event)
     event.isAccepted();
 }
 
-void StereoTool::wheelEvent(const QWheelEvent & event)
+void StereoTool::wheelEvent(const QWheelEvent &event)
 {
-    double numSteps = event.delta() / (15.0 * 8.0);
-    if (numSteps == 0)
-        return;
-    if (event.orientation() == Qt::Vertical)
-    {
-        if (_display->isStereoCursor())
-        {
-            if (event.modifiers() == Qt::ShiftModifier)
-                _display->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
-            else if (event.modifiers() == Qt::ControlModifier)
-                _display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
-            else
-            {
-                _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x()+numSteps/fabs(numSteps),0));
-                _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x()-numSteps/fabs(numSteps),0));
-            }
-            actualizePosLabel();
-            emit mouseMoved(_display->getPositionLeft(event.pos()+_display->getLeftCursorOffset().toPoint()),_display->getPositionRight(event.pos()+_display->getRightCursorOffset().toPoint()));
+  double numSteps = event.angleDelta().y() / (15.0 * 8.0);
+  if (numSteps == 0)
+    return;
 
-            _display->updateAll();
-        }
+  if (_display->isStereoCursor())
+  {
+    if (event.modifiers() == Qt::ShiftModifier)
+    {
+      _display->getCurrentScene()->getRightScene()->pan(QPointF(numSteps, 0));
     }
+    else if (event.modifiers() == Qt::ControlModifier)
+    {
+      _display->getCurrentScene()->getRightScene()->pan(QPointF(0, numSteps));
+    }
+    else
+    {
+      _display->setLeftCursorOffset(QPointF(_display->getLeftCursorOffset().x() + numSteps / fabs(numSteps), 0));
+      _display->setRightCursorOffset(QPointF(_display->getRightCursorOffset().x() - numSteps / fabs(numSteps), 0));
+    }
+    actualizePosLabel();
+    emit mouseMoved(
+        _display->getPositionLeft(event.position().toPoint() + _display->getLeftCursorOffset().toPoint()),
+        _display->getPositionRight(event.position().toPoint() + _display->getRightCursorOffset().toPoint())
+        );
+
+    _display->updateAll();
+  }
 }
 
 void StereoTool::autoMove()
