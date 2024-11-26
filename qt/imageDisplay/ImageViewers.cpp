@@ -38,7 +38,7 @@ SingleViewer::SingleViewer(QWidget* parent) : QMainWindow(parent)
 	addDockWidget(Qt::RightDockWidgetArea, tool->getNearview());
 	addDockWidget(Qt::RightDockWidgetArea, tool->getOverview());
 
-	QRect desktop = QDesktopWidget().screenGeometry();
+        QRect desktop = QGuiApplication::primaryScreen()->geometry();
 	move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
 }
 
