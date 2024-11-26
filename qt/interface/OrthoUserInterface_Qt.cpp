@@ -21,7 +21,8 @@
 #include "SingleTools.h"
 #include "SingleDisplay.h"
 
-#include <qdesktopwidget.h>
+#include <QGuiApplication>
+#include <QScreen>
 #include <qapplication.h>
 #include <qvariant.h>
 #include <qimage.h>

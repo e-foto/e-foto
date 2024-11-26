@@ -21,7 +21,7 @@
 #include "ImageViewers.h"
 
 #include <QPushButton>
-
+#include <QActionGroup>
 #include <qapplication.h>
 #include <qvariant.h>
 #include <qimage.h>
