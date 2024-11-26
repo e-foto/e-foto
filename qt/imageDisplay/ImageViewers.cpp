@@ -16,7 +16,8 @@
 */
 
 #include "ImageViewers.h"
-#include <QDesktopWidget>
+#include <QScreen>
+#include <QGuiApplication>
 #include "StereoDisplay.h"
 #include "SingleTools.h"
 #include "DemFeatures.h"
@@ -137,7 +138,10 @@ SeparatedStereoViewer::SeparatedStereoViewer(QWidget* parent) : QMainWindow(pare
 	centerWidget->setLayout(layout);
 	setCentralWidget(centerWidget);
 
-	QRect desktop = QDesktopWidget().screenGeometry();
+
+        QScreen *screen = QGuiApplication::primaryScreen();
+        QRect desktop = screen ? screen->geometry() : QRect();
+
 	move(-pos().x() - width()/2 + desktop.width()/2, -pos().y() - height()/2 + desktop.height()/2);
 }
 
