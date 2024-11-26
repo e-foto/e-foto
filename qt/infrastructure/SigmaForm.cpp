@@ -260,14 +260,14 @@ void SigmaFormController::toNotAvailable()
 			newEdit->setEnabled(false);
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
-			subLayout->setMargin(0);
+                        subLayout->setContentsMargins(0, 0, 0, 0);
 			subLayout->setStretch(0,0);
 			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);
 		}
-		myLayout->setMargin(0);
+                myLayout->setContentsMargins(0, 0, 0, 0);
 		contentWidget->setLayout(myLayout);
 	}
 	emit changeMatrixButtonVisibility(false);
@@ -301,14 +301,14 @@ void SigmaFormController::toStDev()
 			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
-			subLayout->setMargin(0);
+                        subLayout->setContentsMargins(0, 0, 0, 0);
 			subLayout->setStretch(0,0);
 			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);
 		}
-		myLayout->setMargin(0);
+                myLayout->setContentsMargins(0, 0, 0, 0);
 		contentWidget->setLayout(myLayout);
 	}
 	emit changeMatrixButtonVisibility(false);
@@ -342,14 +342,14 @@ void SigmaFormController::toMatrix()
 			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
 			subLayout->addWidget(newLabel);
 			subLayout->addWidget(newEdit);
-			subLayout->setMargin(0);
+                        subLayout->setContentsMargins(0, 0, 0, 0);
 			subLayout->setStretch(0,0);
 			subLayout->setStretch(1,1);
 			myLayout->addLayout(subLayout);
 			labels.push_back(newLabel);
 			edits.push_back(newEdit);
 		}
-		myLayout->setMargin(0);
+                myLayout->setContentsMargins(0, 0, 0, 0);
 		contentWidget->setLayout(myLayout);
 	}
 	if (dimension != 1)
@@ -456,7 +456,7 @@ SigmaFormContent::SigmaFormContent(QWidget * parent) : QFrame(parent)
 	setContentsMargins(0,0,0,0);
 	if (layout() == 0)
 		this->setLayout(new QVBoxLayout());
-	layout()->setMargin(0);
+        layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void SigmaFormContent::setSigmaFormController(SigmaFormController *newController)
