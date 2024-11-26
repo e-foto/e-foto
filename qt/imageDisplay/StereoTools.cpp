@@ -21,7 +21,7 @@
 
 #include <QFileDialog>
 #include <QOpenGLWidget>
-
+#include <QActionGroup>
 #define NOCURSOR QPixmap::fromImage(SymbolsResource::getBackGround(QColor(0,0,0,0)))
 
 namespace br {
