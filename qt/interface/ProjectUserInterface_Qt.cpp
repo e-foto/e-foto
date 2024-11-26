@@ -2168,7 +2168,7 @@ std::string ProjectUserInterface_Qt::pointTxtToXml(QString point, int key, int l
 {
     std::stringstream aux;
     std::string gcpIdField, typeField, eField, nField, hField, dEField, dNField, dHField;
-    QStringList fields= point.split(QRegExp("\\s+")); // split by any sequences of whitespace
+    QStringList fields= point.split(QRegularExpression("\\s+")); // split by any sequences of whitespace
     // check	control	 tie
     if (fields.length() == 7)
     {
