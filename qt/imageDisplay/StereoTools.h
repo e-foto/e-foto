@@ -180,10 +180,10 @@ public:
     void enterEvent(const QHoverEvent& event);
     void leaveEvent(const QHoverEvent& event);
     void moveEvent(const QHoverEvent& event);
-    void mousePressed(const QMouseEvent & event);
-    void mouseReleased(const QMouseEvent & event);
-    void mouseMoved(const QMouseEvent & event);
-    void mouseDblClicked(const QMouseEvent & event);
+    void mousePressed(const QMouseEvent& event);
+    void mouseReleased(const QMouseEvent& event);
+    void mouseMoved(const QMouseEvent& event);
+    void mouseDblClicked(const QMouseEvent& event);
     void wheelEvent(const QWheelEvent& event);
 };
 
