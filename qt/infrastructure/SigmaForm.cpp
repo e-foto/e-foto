@@ -422,9 +422,9 @@ SigmaFormTypeSelector::SigmaFormTypeSelector(QWidget * parent) : QComboBox(paren
 
 void SigmaFormTypeSelector::setSigmaFormController(SigmaFormController *newController)
 {
-	connect(this, SIGNAL(currentIndexChanged(QString)), newController, SLOT(toMode(QString)));
-	connect(newController, SIGNAL(changeToReadOnly(bool)), this, SLOT(setDisabled(bool)));
-	connect(newController, SIGNAL(changeToMode(QString)), this, SLOT(toMode(QString)));
+        connect(this, &QComboBox::currentTextChanged, newController, &SigmaFormController::toMode);
+        connect(newController, &SigmaFormController::changeToReadOnly, this, &QWidget::setDisabled);
+        connect(newController, &SigmaFormController::changeToMode, this, &SigmaFormTypeSelector::toMode);
 }
 
 void SigmaFormTypeSelector::disconnectSigmaFormController(SigmaFormController *oldController)
