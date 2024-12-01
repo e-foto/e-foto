@@ -25,7 +25,7 @@ inline bool isDarkMode() {
 
 int main(int argc, char **argv)
 {
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
   QApplication efoto(argc, argv);
 
   efoto.setStyle(QStyleFactory::create("Fusion"));

@@ -325,36 +325,46 @@ void SPUserInterface_Qt::onStereoModeChanged(int option)
 
 void SPUserInterface_Qt::onLoadButton()
 {
-    // File open dialog
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Stereoplotter features file (*.spf);; All files (*.*)")) ;
+  // File open dialog
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Features file"), lastDir, tr("Stereoplotter features file (*.spf);; All files (*.*)")) ;
 
-    // if no file name written, return
-    if (filename=="")
-        return;
+          // if no file name written, return
+  if (filename=="")
+    return;
 
-    // Save last dir
-    int i=filename.lastIndexOf("/");
-    lastDir = filename.left(i);
+          // Save last dir
+  int i=filename.lastIndexOf("/");
+  lastDir = filename.left(i);
 
-    // Ask if create new or append
-    bool append = false;
+          // Ask if create new or append
+  bool append = false;
 
-    if (manager->getNumFeatures() > 0)
-        append = QMessageBox::question(this, "Open features", "Clear or append featues ?","Clear","Append");
-
-    // Load DEM
-    bool sp_load_flag = manager->loadFeatures((char *)filename.toLocal8Bit().constData(), append);
-
-    // Report error
-    if (!sp_load_flag)
-    {
-        QMessageBox::critical(this,"Error","Invalid features file format.");
-        return;
+  if (manager->getNumFeatures() > 0)
+  {
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Open features");
+    msgBox.setText("Clear or append features?");
+    QAbstractButton* clearButton = msgBox.addButton("Clear", QMessageBox::YesRole);
+    QAbstractButton* appendButton = msgBox.addButton("Append", QMessageBox::NoRole);
+    msgBox.exec();
+    if (msgBox.clickedButton() == clearButton) {
+      append = false;
+    } else if (msgBox.clickedButton() == appendButton) {
+      append = true;
     }
+  }
 
-    manager->updateProjections();
-    updateData();
-    refreshFeatureSelectedData();
+  bool sp_load_flag = manager->loadFeatures((char *)filename.toLocal8Bit().constData(), append);
+
+  if (!sp_load_flag)
+  {
+    QMessageBox::critical(this,"Error","Invalid features file format.");
+    return;
+  }
+
+  manager->updateProjections();
+  updateData();
+  refreshFeatureSelectedData();
 }
 
 void SPUserInterface_Qt::onSaveButton()
