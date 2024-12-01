@@ -1125,7 +1125,7 @@ void EFotoManager::execPTReport()
     salvar.setDefaultSuffix("txt");
     if(salvar.exec())
     {
-        QString fileExport = salvar.selectedFiles()[0];
+        QString fileExport = salvar.selectedFiles.at(0);
 
         if (fileExport.isEmpty())
         {
