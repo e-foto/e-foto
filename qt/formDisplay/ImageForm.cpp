@@ -19,7 +19,7 @@
 #include "HeaderForm.h"
 #include "ProjectUserInterface_Qt.h"
 #include "ImageViewers.h"
-
+#include <filesystem>
 #include <sstream>
 
 namespace br {
@@ -243,51 +243,60 @@ QString ImageForm::loadImageFile()
 {
     QString fileImage = QFileDialog::getOpenFileName(this, "Open File", lastPath, "*.tif *.png *.bmp *.jpg");
 
-    QDir absolutePath (proj->getSavedIn());
-    //qDebug()<<proj->getSavedIn();
-    if (fileImage !="")
+    if (!fileImage.isEmpty())
     {
-        //***************************************************************************************************
-        // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-        int i=fileImage.lastIndexOf("/");
-        int j=absolutePath.relativeFilePath(fileImage).lastIndexOf(('/'));
-        fileImageName = fileImage.right(fileImage.length()-i-1);
-        fileImagePath = fileImage.left(i);
+      std::filesystem::path filePath = fileImage.toStdString();
+      std::filesystem::path projectPath = proj->getSavedIn().toStdString();
 
-        QString sugestionID=fileImageName;
-        sugestionID.chop(4);
-        imageIDLine->setText(sugestionID);
+      QString fileImageName = QString::fromStdString(filePath.filename().string());
 
-        fileNameLine->setText(fileImageName);
-        if (j<0)
-            filePathLine->setText(".");
-        else
-            filePathLine->setText(absolutePath.relativeFilePath(fileImage).left(j));
-        lastPath = filePathLine->text();
-        //***************************************************************************************************
-        int w, h;
-        bool success = false;
-        for (int i = 0; i < 100 && !success; i++)
+      QString sugestionID = QString::fromStdString(filePath.stem().string());
+
+      QString relativeFilePath;
+      if (projectPath.empty())
+      {
+        relativeFilePath = QString::fromStdString(filePath.parent_path().string());
+      }
+      else
+      {
+        std::filesystem::path relativePath = std::filesystem::relative(filePath.parent_path(), projectPath);
+        relativeFilePath = QString::fromStdString(relativePath.string());
+      }
+
+      imageIDLine->setText(sugestionID);
+      fileNameLine->setText(fileImageName);
+      filePathLine->setText(relativeFilePath.isEmpty() ? "." : relativeFilePath);
+      lastPath = filePathLine->text();
+
+      int w = 0, h = 0;
+      bool success = false;
+      for (int i = 0; i < 100 && !success; i++)
+      {
+        QImage img(fileImage);
+        w = img.width();
+        h = img.height();
+        if (w != 0 && h != 0)
         {
-            QImage img(fileImage);
-            w = img.width(); h = img.height();
-            if (w != 0 && h != 0)
-            {
-                success = true;
-            }
+          success = true;
         }
-        if (!success)
-        {
-            QMessageBox* msgBox = new QMessageBox();
-            msgBox->setText("Error: The image loading process.");
-            msgBox->exec();
-        }
-        heightLine->setText(QString::number(h)+" px");
-        widthLine->setText(QString::number(w)+" px");
-        return fileImage;
+      }
 
-    }else
-        return fileNameLine->text();
+              // Handle image loading failure
+      if (!success)
+      {
+        QMessageBox msgBox;
+        msgBox.setText("Error: The image loading process.");
+        msgBox.exec();
+      }
+
+              // Update dimension lines
+      heightLine->setText(QString::number(h) + " px");
+      widthLine->setText(QString::number(w) + " px");
+
+      return fileImage;
+    }
+
+    return fileNameLine->text();
 }
 
 void ImageForm::startSingleViewer()
@@ -328,14 +337,16 @@ void ImageForm::metadataVisibleChanged(QString newText)
         metadataGroup->setVisible(true);
 }
 
-std::string ImageForm :: getFileImageName()
+std::string ImageForm::getFileImageName()
 {
-    return fileImageName.toLocal8Bit().constData();
+  std::filesystem::path filePath = fileImageName.toStdString();
+  return filePath.filename().string();
 }
 
-std::string ImageForm :: getFileImagePath()
+std::string ImageForm::getFileImagePath()
 {
-    return fileImagePath.toLocal8Bit().constData();
+  std::filesystem::path filePath = fileImagePath.toStdString();
+  return filePath.string();
 }
 
 bool ImageForm::isForm(std::string formName)
