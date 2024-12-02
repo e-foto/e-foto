@@ -5,3 +5,5 @@ e-foto.pro.user
 
 qt/resource/version
 env/*
+
+CMakeLists.txt.user
