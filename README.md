@@ -17,6 +17,7 @@ You can access our website at http://www.efoto.eng.uerj.br/ where you will find 
 
 ## How to install and run from sources (on Linux)
 1. Clone this repository
+1. > sudo apt update
 1. Install packages:
     1. libgdal-dev
     2. build-essential
@@ -24,15 +25,22 @@ You can access our website at http://www.efoto.eng.uerj.br/ where you will find 
     4. mesa-common-dev
     5. libx11-xcb-dev
     6. libglu1-mesa-dev
-    > sudo apt install libgdal-dev build-essential libfontconfig1 mesa-common-dev libx11-xcb-dev libglu1-mesa-dev
-1. Install qt5 packages:
-    1. qt5-default
-    2. qt5-qmake
-    > sudo apt install qt5-default
-    > sudo apt install -y qt5-qmake
+    > sudo apt install libgdal-dev build-essential libfontconfig1 mesa-common-dev libx11-xcb-dev libglu1-mesa-dev qt6-base-dev
+1. Install qt6 packages:
+    1. qt6-base-dev
+    2. qt6-base-dev-tools 
+    3. cmake
+    4. ninja-build  
+    > sudo apt install qt6-base-dev qt6-base-dev-tools
+    > sudo apt install cmake
+    > sudo apt install ninja-build  
 1. Compile the source
-    > qmake e-foto.pro
-    > make
+```bash
+mkdir build
+cd build
+cmake -G Ninja ..
+ninja
+```
 1. Run e-foto
     > ./build/bin/e-foto
     
