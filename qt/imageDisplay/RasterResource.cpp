@@ -1,6 +1,7 @@
 #include "RasterResource.h"
 
 #include <QMessageBox>
+#include <QFileInfo>
 
 RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmoothOut)
 {
@@ -13,7 +14,7 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 	if (!_isValid || srcImage->width() == 0 || srcImage->height() == 0)
 	{
 		if (filepath != "")
-			emitLoadError();
+                        emitLoadError(filepath);
 		return;
 	}
 
@@ -32,7 +33,7 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 		_isValid = false;
 		delete(_pyramid[0]);
 		free(_pyramid);
-		emitLoadError();
+                emitLoadError(filepath);
 		return;
 	}
 
@@ -50,7 +51,7 @@ RasterResource::RasterResource(QString filepath, bool withSmoothIn, bool withSmo
 			for (int k = l; l >= 0; l--)
 				delete(_pyramid[k]);
 			free(_pyramid);
-			emitLoadError();
+                        emitLoadError(filepath);
 			return;
 		}
 	}
@@ -65,13 +66,17 @@ RasterResource::~RasterResource()
 	free(_pyramid);
 }
 
-void RasterResource::emitLoadError()
+void RasterResource::emitLoadError(const QString& filepath)
 {
-	QMessageBox* msgBox = new QMessageBox();
-	msgBox->setText("Error: The image loading process.");
-	msgBox->exec();
-}
+  QString message = "Error: The image loading process failed.";
+  if (!filepath.isEmpty()) {
+    QFileInfo fileInfo(filepath);
+    QString absolutePath = fileInfo.absoluteFilePath();
+    message += "\nFile: " + absolutePath;
+  }
 
+  QMessageBox::critical(nullptr, "Load Error", message);
+}
 void RasterResource::useSmoothIn(bool useSmooth)
 {
 	_useSmoothIn = useSmooth;
@@ -93,7 +98,7 @@ bool RasterResource::load(QImage image)
 	// Impede carga de imagem nula
 	if (image.isNull())
 	{
-		emitLoadError();
+                emitLoadError("");
 		return false;
 	}
 
@@ -121,7 +126,7 @@ bool RasterResource::load(QImage image)
 		_isValid = false;
 		delete(_pyramid[0]);
 		free(_pyramid);
-		emitLoadError();
+                emitLoadError("");
 		return false;
 	}
 
@@ -139,7 +144,7 @@ bool RasterResource::load(QImage image)
 			for (int k = l; l >= 0; l--)
 				delete(_pyramid[k]);
 			free(_pyramid);
-			emitLoadError();
+                        emitLoadError("");
 			return false;
 		}
 	}
@@ -177,7 +182,7 @@ bool RasterResource::load(QString filepath)
 		_isValid = false;
 		delete(_pyramid[0]);
 		free(_pyramid);
-		emitLoadError();
+                emitLoadError(filepath);
 		return false;
 	}
 
@@ -195,7 +200,7 @@ bool RasterResource::load(QString filepath)
 			for (int k = l; l >= 0; l--)
 				delete(_pyramid[k]);
 			free(_pyramid);
-			emitLoadError();
+                        emitLoadError(filepath);
 			return false;
 		}
 	}

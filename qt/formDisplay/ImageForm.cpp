@@ -90,9 +90,9 @@ void ImageForm::fillvalues(std::string values)
         auxString = "";
     }
 
-
-    filePathLine->setText( QString::fromUtf8(auxString.c_str() )
-                          );
+    QFileInfo fileInfo(QString::fromUtf8(auxString.c_str()));
+    QString absolutePath = fileInfo.absoluteFilePath();
+    filePathLine->setText(absolutePath);
 
     //flightIDSpin->setValue( (QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str())).toInt(&ok)
     //);

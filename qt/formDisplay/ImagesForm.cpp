@@ -19,7 +19,7 @@
 #include "EDom.h"
 #include <QPicture>
 #include <sstream>
-
+#include <QFileInfo>
 namespace br {
 namespace uerj {
 namespace eng {
@@ -53,9 +53,12 @@ void ImagesForm::fillvalues(std::string values)
 
         tableParameter = auxStream.str();
 
+        QFileInfo fileInfo(QString::fromStdString(tableParameter));
+        QString absolutePath = fileInfo.absoluteFilePath();
+
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (imaChildren.at(i).attribute("key").c_str()) );
         QTableWidgetItem *idItem = new QTableWidgetItem(imaChildren.at(i).elementByTagName("imageId").toString().c_str()) ;
-        QTableWidgetItem *fileItem = new QTableWidgetItem(tableParameter.c_str());
+        QTableWidgetItem *fileItem = new QTableWidgetItem(absolutePath);
         keyItem->setTextAlignment(Qt::AlignCenter);
         idItem->setTextAlignment(Qt::AlignCenter);
 
