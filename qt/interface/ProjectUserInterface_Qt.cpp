@@ -23,6 +23,8 @@
 #include "LoadingScreen.h"
 #include "ETreeModel.h"
 #include "EDomValidator.h"
+#include "RasterResource.h"
+#include "revision_info.h"
 
 #include <QFileDialog>
 #include <QInputDialog>
@@ -42,22 +44,24 @@ namespace efoto {
 ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager* manager, QWidget* parent, Qt::WindowFlags fl)
     : QMainWindow(parent, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-	// Ler versão
-	QString ver = "YYYY.MM";
-	QFile version(":/text/version");
-	if(version.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream date(&version);
-        ver = date.readLine();
-    }
+  // Ler versão
+  QString ver = BUILD_DATE;
+  QString rev = BUILD_COMMIT_HASH;
+  QDate date = QDate::fromString(ver, "MMM dd yyyy");
+  if (date.isValid()) {
+    int year = date.year();
+    int month = date.month();
+    ver = QString::number(year) + "." + QString::number(month);
+  }
 
-	// Montar mensagem
-	QString date_ver_name = tr("Version ");
-	QString size_ver_name = tr("(64 bits, beta);");
-	QString msg = date_ver_name + ver + size_ver_name;
+  // Montar mensagem
+  QString date_ver_name = tr("Version ");
+  QString size_ver_name = tr(" (64 bits);");
+  QString msg = date_ver_name + ver + "." + rev + size_ver_name;
 
-	version_info->setText(msg);
+  version_info->setText(msg);
 
     //  Inicia variaveis
     this->manager = manager;
@@ -2888,7 +2892,6 @@ std::string ProjectUserInterface_Qt::edomDigitalCoordinatesPointToTxt(EDomElemen
     return result.c_str();
 }
 
-
 void ProjectUserInterface_Qt::importImagesBatch()
 {
     //primeiro arquivo
@@ -2964,18 +2967,16 @@ void ProjectUserInterface_Qt::importImagesBatch()
 
 std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int dpi)
 {
-
     std::stringstream imageXml;
-    QImage image(fileName);
-    QDir absolutePath(QString::fromLocal8Bit(manager->savedIn.c_str()));
-    int i=fileName.lastIndexOf("/");
+    RasterResource image(fileName);
+    QFileInfo fi(QString::fromLocal8Bit(manager->savedIn.c_str()));
+    QDir absolutePath(fi.absolutePath());
     int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
-
     QString fileImagePath(".");
     if (j>0)
         fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
-
-    QString sugestionID=fileName.right(fileName.length()-i-1);
+    fileName=fileName.right(fileName.length()-fileName.lastIndexOf('/')-1);
+    QString sugestionID=fileName;
     sugestionID.chop(4);//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
 
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
@@ -2984,7 +2985,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(image.width())<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(image.height())<<"</height>\n";
     //imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toStdString()<<"</fileName>\n";
-    imageXml << "\t\t<fileName>"<< fileName.right(fileName.length()-i-1).toLocal8Bit().constData()<<"</fileName>\n";
+    imageXml << "\t\t<fileName>"<< fileName.toLocal8Bit().constData()<<"</fileName>\n";
     //imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
     imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
@@ -2996,18 +2997,17 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 
 std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi)
 {
+  std::stringstream imageXml;
+  QFileInfo fi(QString::fromLocal8Bit(manager->savedIn.c_str()));
+  QDir absolutePath(fi.absolutePath());
+  int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
+  QString fileImagePath(".");
+  if (j>0)
+    fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
+  fileName=fileName.right(fileName.length()-fileName.lastIndexOf('/')-1);
+  QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
+  sugestionID.chop(4);
 
-    std::stringstream imageXml;
-    QDir absolutePath (QString::fromLocal8Bit(manager->savedIn.c_str()));
-
-    int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
-    QString fileImagePath(".");
-    if (j>0)
-        fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
-    fileName=fileName.right(fileName.length()-fileName.lastIndexOf('/')-1);
-
-    QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
-    sugestionID.chop(4);
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
     //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
     imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
@@ -3152,4 +3152,3 @@ void ProjectUserInterface_Qt::saveSettings(const char *setting, const char *valu
 } // namespace eng
 } // namespace uerj
 } // namespace br
-
