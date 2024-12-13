@@ -1,13 +1,67 @@
 cmake_minimum_required(VERSION 3.16)
 project(e-foto VERSION 1.0 LANGUAGES C CXX)
 
+# Config build with commit hash number and date of compilation
+execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+set(CURRENT_DATE "$<DATE:yyyy-MM-dd>")
+set(HEADER_FILE "${CMAKE_BINARY_DIR}/revision_info.h")
+configure_file(
+    "${CMAKE_SOURCE_DIR}/c/infrastructure/revision_info_template.h.in"
+    "${HEADER_FILE}"
+)
+include_directories("${CMAKE_BINARY_DIR}")
+
+# Check system and compiler and set differences
+if(WIN32)
+    message(STATUS "Sistema Operacional: Windows")
+
+	# The gdal_dir may need to be changed depending on user settings.
+    set(GDAL_DIR "C:/OSGeo4W/apps/gdal/lib/cmake/gdal")
+
+    if(MSVC)
+        message(STATUS "Compilador: MSVC (Microsoft Visual Studio)")
+    endif()
+
+    if(MINGW)
+        message(STATUS "Compilador: MinGW (GCC no Windows)")
+    endif()
+    
+    target_compile_definitions(e-foto PRIVATE
+        win
+    )
+	
+endif()
+if(UNIX)
+    message(STATUS "Sistema Operacional: UNIX-based")
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        message(STATUS "Compilador: GCC (GNU Compiler Collection)")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        message(STATUS "Compilador: Clang (Clang Compiler)")
+    else()
+        message(STATUS "Compilador desconhecido: ${CMAKE_CXX_COMPILER_ID}")
+    endif()
+
+    target_compile_definitions(e-foto PRIVATE
+        unix
+    )
+
+endif()
+
+# Configuration based on qmake2cmake app by qt6 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC "YES")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS qt/interface qt/imageDisplay)
 
+find_package(GDAL CONFIG REQUIRED)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui OpenGLWidgets Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui OpenGLWidgets OpenGL Widgets)
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x060300)
 qt_standard_project_setup()
 
@@ -39,7 +93,6 @@ qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     c/infrastructure/GeoSystem.cpp c/infrastructure/GeoSystem.h
     c/infrastructure/Matrix.cpp c/infrastructure/Matrix.h
     c/infrastructure/PositionMatrix.cpp c/infrastructure/PositionMatrix.h
-
     c/infrastructure/RectSupport.cpp c/infrastructure/RectSupport.h
     c/infrastructure/SparseMatrix.cpp c/infrastructure/SparseMatrix.h
     c/infrastructure/TreeFeatures.cpp c/infrastructure/TreeFeatures.h
@@ -173,12 +226,17 @@ target_include_directories(e-foto PRIVATE
     qt/infrastructure
     qt/interface
 )
-
 target_link_libraries(e-foto PRIVATE
     Qt::Core
     Qt::Gui
-    Qt::OpenGLWidgets
+    Qt::OpenGL
     Qt::Widgets
+    Qt::OpenGLWidgets
+    GDAL::GDAL
+)
+target_compile_options(e-foto PRIVATE
+    -Wall
+    -std=c++17
 )
 
 # Resources:
@@ -358,7 +416,6 @@ qt_add_resources(e-foto "resource2"
 )
 set(resource3_resource_files
     "qt/resource/AboutMessage.html"
-    "qt/resource/version"
 )
 
 qt_add_resources(e-foto "resource3"
@@ -382,62 +439,6 @@ qt_add_resources(e-foto "shaders"
     FILES
         ${shaders_resource_files}
 )
-
-if(UNIX)
-    target_include_directories(e-foto PRIVATE
-        /usr/include/gdal
-    )
-
-    target_compile_definitions(e-foto PRIVATE
-        unix
-    )
-
-    target_link_libraries(e-foto PRIVATE
-        GL
-        Qt6OpenGLWidgets
-        gdal
-    )
-
-    # Corrected target_compile_options with PRIVATE
-    target_compile_options(e-foto PRIVATE
-        -Wall
-        -std=c++17
-    )
-endif()
-
-if(win32-msvc_x_)
-    target_include_directories(e-foto PRIVATE
-        C:/gdal/release_gdal/include
-    )
-
-    target_link_libraries(e-foto PRIVATE
-        Qt6OpenGLWidgets
-        gdal_i
-        opengl32.lib
-    )
-
-    target_compile_options(e-foto PRIVATE
-        -Wall
-        -std=c++17
-    )
-endif()
-
-if(win32-g++)
-    target_include_directories(e-foto PRIVATE
-        C:/msys64/mingw64/include
-    )
-
-    target_link_libraries(e-foto PRIVATE
-        Qt6OpenGLWidgets
-        gdal
-        opengl32
-    )
-
-    target_compile_options(e-foto PRIVATE
-        -Wall
-        -std=c++17
-    )
-endif()
 
 install(TARGETS e-foto
     BUNDLE DESTINATION .
