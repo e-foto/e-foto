@@ -1,0 +1,4 @@
+#pragma once
+
+#define BUILD_DATE __DATE__
+#define BUILD_COMMIT_HASH "@COMMIT_HASH@"
