@@ -1,6 +1,7 @@
 
 build/*
 out/build/*
+.vs/*
 e-foto.pro.user
 
 qt/resource/version
