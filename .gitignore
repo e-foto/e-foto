@@ -6,5 +6,5 @@ e-foto.pro.user
 
 qt/resource/version
 env/*
-
+.clang-format
 CMakeLists.txt.user
