@@ -1,0 +1,1 @@
+set(MY_GDAL_ROOT "D:/OSGeo4W")
