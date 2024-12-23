@@ -8,3 +8,5 @@ qt/resource/version
 env/*
 .clang-format
 CMakeLists.txt.user
+CMakePresets.json
+CMakeUserPresets.json
