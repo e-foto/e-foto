@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.16)
 project(e-foto VERSION 1.0 LANGUAGES C CXX)
 
 # Config build with commit hash number and date of compilation
+
+############# Your CONFIGS ####################
+##set your configs here
+
+# Include the config file
+include(${CMAKE_SOURCE_DIR}/config.cmake)
+
+###############################################
 execute_process(
     COMMAND git rev-parse --short HEAD
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -17,24 +25,77 @@ configure_file(
 include_directories("${CMAKE_BINARY_DIR}")
 
 # Check system and compiler and set differences
+set(PLATFORM_DEFINITIONS "")
 if(WIN32)
     message(STATUS "Sistema Operacional: Windows")
+    set(THREADS_PREFER_PTHREAD_FLAG OFF)
+    find_package(Threads REQUIRED)
+        # The gdal_dir may need to be changed depending on user settings.
+        set(GDAL_ROOT ${MY_GDAL_ROOT})
 
-	# The gdal_dir may need to be changed depending on user settings.
-    set(GDAL_DIR "C:/OSGeo4W/apps/gdal/lib/cmake/gdal")
+        file(MAKE_DIRECTORY "${GDAL_ROOT}/efoto")
 
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/apps/gdal/lib/cmake/gdal"
+                "${GDAL_ROOT}/efoto/apps/gdal/lib/cmake/gdal"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/apps"
+                "${GDAL_ROOT}/efoto/apps/gdal/apps"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/bin"
+                "${GDAL_ROOT}/efoto/apps/gdal/bin"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/etc"
+                "${GDAL_ROOT}/efoto/apps/gdal/etc"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/include"
+                "${GDAL_ROOT}/efoto/apps/gdal/include"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/lib"
+                "${GDAL_ROOT}/efoto/apps/gdal/lib"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/share"
+                "${GDAL_ROOT}/efoto/apps/gdal/share"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/usr"
+                "${GDAL_ROOT}/efoto/apps/gdal/usr"
+        )
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${GDAL_ROOT}/var"
+                "${GDAL_ROOT}/efoto/apps/gdal/var"
+        )
+        set(GDAL_DIR "${GDAL_ROOT}/efoto/apps/gdal/lib/cmake/gdal")
     if(MSVC)
         message(STATUS "Compilador: MSVC (Microsoft Visual Studio)")
+        add_compile_definitions(HAVE_STDATOMIC=0)
     endif()
 
     if(MINGW)
         message(STATUS "Compilador: MinGW (GCC no Windows)")
     endif()
-    
-    target_compile_definitions(e-foto PRIVATE
-        win
-    )
-	
+
+    set(GDAL_INCLUDE_DIRS "${GDAL_ROOT}/efoto/apps/gdal/include")
+    set(GDAL_LIBRARIES "${GDAL_ROOT}/efoto/apps/gdal/lib/gdal.lib")
+    include_directories(${GDAL_INCLUDE_DIRS})
+    link_directories("${GDAL_ROOT}/efoto/apps/gdal/lib")
+    list(APPEND PLATFORM_DEFINITIONS win)
+
 endif()
 if(UNIX)
     message(STATUS "Sistema Operacional: UNIX-based")
@@ -47,9 +108,7 @@ if(UNIX)
         message(STATUS "Compilador desconhecido: ${CMAKE_CXX_COMPILER_ID}")
     endif()
 
-    target_compile_definitions(e-foto PRIVATE
-        unix
-    )
+    list(APPEND PLATFORM_DEFINITIONS unix)
 
 endif()
 
@@ -60,9 +119,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS qt/interface qt/imageDisplay)
 
 find_package(GDAL CONFIG REQUIRED)
+message(STATUS "GDAL_INCLUDE_DIRS: ${GDAL_INCLUDE_DIRS}")
+message(STATUS "GDAL_LIBRARIES: ${GDAL_LIBRARIES}")
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui OpenGLWidgets OpenGL Widgets)
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x060300)
+add_compile_definitions(USE_GDAL)
 qt_standard_project_setup()
 
 qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
@@ -226,13 +288,27 @@ target_include_directories(e-foto PRIVATE
     qt/infrastructure
     qt/interface
 )
+
+find_package(GDAL REQUIRED)
+if(GDAL_FOUND)
+    message(STATUS "GDAL found!")
+    include_directories(${GDAL_INCLUDE_DIRS})
+    set(GDAL_LIBRARIES GDAL::GDAL)
+else()
+    message(WARNING "GDAL not found! Using manual configuration.")
+    set(GDAL_INCLUDE_DIRS "${GDAL_ROOT}/efoto/apps/gdal/include")
+    set(GDAL_LIBRARIES "${GDAL_ROOT}/efoto/apps/gdal/lib/gdal.lib")
+    include_directories(${GDAL_INCLUDE_DIRS})
+    link_directories("${GDAL_ROOT}/efoto/apps/gdal/lib")
+endif()
+
 target_link_libraries(e-foto PRIVATE
+    ${GDAL_LIBRARY}
     Qt::Core
     Qt::Gui
     Qt::OpenGL
     Qt::Widgets
     Qt::OpenGLWidgets
-    GDAL::GDAL
 )
 target_compile_options(e-foto PRIVATE
     -Wall
@@ -439,6 +515,8 @@ qt_add_resources(e-foto "shaders"
     FILES
         ${shaders_resource_files}
 )
+
+target_compile_definitions(e-foto PRIVATE ${PLATFORM_DEFINITIONS})
 
 install(TARGETS e-foto
     BUNDLE DESTINATION .
