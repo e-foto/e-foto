@@ -35,6 +35,7 @@
 #include <iostream>
 #include <sstream>
 #include <ConvertionsSystems.h>
+#include <filesystem>
 
 namespace br {
 namespace uerj {
@@ -369,110 +370,114 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 
     QString filename;
 
-    if (filenameAtStart == "")
+    if (filenameAtStart.empty())
     {
         filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
     }
     else
     {
-        //filename = QString(filenameAtStart.c_str());
-        //const char* name = filenameAtStart.c_str();
         filename = QString::fromLocal8Bit(filenameAtStart.c_str());
     }
 
-    if (filename == "")
+    if (filename.isEmpty())
         return;
+
+    if (manager->loadFile(filename.toLocal8Bit().constData()))
+    {
+        EDomElement imagesXml(manager->getXml("images").c_str());
+        std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
+
+
+        std::filesystem::path filepath(filename.toStdString());
+        std::filesystem::path parantPath = filepath.parent_path();
+        QDir dirImage(QString::fromStdString(parantPath.string()));
+        QFileInfo imageFileInfo;
+
+        QString imagesMissing="";
+        int contMissings=0;
+        for (int i=0 ;i < (int)imagesEdom.size() ;i++)
+        {
+            QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
+            dirImage.setCurrent(imagesName);
+            imagesName.append(imagesEdom.at(i).elementByTagName("fileName").toString().c_str());
+            imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
+            if (!imageFileInfo.exists())
+            {
+                imagesMissing.append(contMissings%4==3 ? imageFileInfo.fileName().append("  \n") : imageFileInfo.fileName().append(" , "));
+                contMissings++;
+            }
+        }
+        imagesMissing.chop(3);
+        if(imagesMissing.compare("")!=0)
+        {
+            QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n").append("."));
+            alertImages->show();
+        }
+
+        addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
+        addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
+        setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
+        setCorner(Qt::TopRightCorner,Qt::RightDockWidgetArea);
+        projectDockWidget->setVisible(true);
+        introWidget->setVisible(false);
+        centerArea.setVisible(true);
+        controlButtons.setVisible(true);
+        offset.setVisible(true);
+
+
+        manager->savedIn = filename.toLocal8Bit().constData();
+        //manager->savedIn = filename.toStdString();
+        //qDebug("load savedIn: %s",savedIn.c_str());
+
+        actionSave_file->setEnabled(false);
+        actionSave_file_as->setEnabled(true);
+
+        //***************************************************************************************************
+        // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
+  
+        QString fileName =
+            "<fileName>" +
+            QString::fromStdString(filepath.filename().string()) +
+            "</fileName>";
+        QString filePath = "<filePath>"+
+            QString::fromStdString(filepath.parent_path().string()) +
+            "</filePath>";
+
+        EDomElement node(manager->getXml("projectHeader"));
+
+        node.replaceChildByTagName("fileName",fileName.toLocal8Bit().constData());
+        node.replaceChildByTagName("filePath",filePath.toLocal8Bit().constData());
+
+        manager->editComponent("Header", node.getContent());
+        //***************************************************************************************************
+
+        QDir dir(QString::fromStdString(filepath.parent_path().string()));
+        dir.setCurrent(dir.absolutePath());
+
+
+        newTree();
+    }
     else
     {
-        if (manager->loadFile(filename.toLocal8Bit().constData()))
+        QMessageBox* alert = NULL;
+        switch (manager->informFileVersionError())
         {
-            EDomElement imagesXml(manager->getXml("images").c_str());
-            std::deque<EDomElement> imagesEdom=imagesXml.elementsByTagName("image");
-
-            QDir dirImage(filename.left(filename.lastIndexOf('/')));
-            QFileInfo imageFileInfo;
-
-            QString imagesMissing="";
-            int contMissings=0;
-            for (int i=0 ;i < (int)imagesEdom.size() ;i++)
-            {
-                QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
-                dirImage.setCurrent(imagesName);
-                imagesName.append(imagesEdom.at(i).elementByTagName("fileName").toString().c_str());
-                imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
-                if (!imageFileInfo.exists())
-                {
-                    imagesMissing.append(contMissings%4==3 ? imageFileInfo.fileName().append("  \n") : imageFileInfo.fileName().append(" , "));
-                    contMissings++;
-                }
-            }
-            imagesMissing.chop(3);
-            if(imagesMissing.compare("")!=0)
-            {
-                QMessageBox* alertImages= new QMessageBox(QMessageBox::Warning,"Images missing",imagesMissing.prepend("Those images are missing:\n").append("."));
-                alertImages->show();
-            }
-
-            addDockWidget(Qt::LeftDockWidgetArea,projectDockWidget);
-            addDockWidget(Qt::BottomDockWidgetArea,debuggerDockWidget);
-            setCorner(Qt::TopLeftCorner,Qt::LeftDockWidgetArea);
-            setCorner(Qt::TopRightCorner,Qt::RightDockWidgetArea);
-            projectDockWidget->setVisible(true);
-            introWidget->setVisible(false);
-            centerArea.setVisible(true);
-            controlButtons.setVisible(true);
-            offset.setVisible(true);
-
-
-            manager->savedIn = filename.toLocal8Bit().constData();
-            //manager->savedIn = filename.toStdString();
-            //qDebug("load savedIn: %s",savedIn.c_str());
-
-            actionSave_file->setEnabled(false);
-            actionSave_file_as->setEnabled(true);
-
-            //***************************************************************************************************
-            // Este tratamento pode precisar de ajustes para cumprir o requisito do e-foto de ser CrossPlataform
-            int i=filename.lastIndexOf("/");
-
-            QString fileName = "<fileName>"+filename.right(filename.length()-i-1)+"</fileName>";
-            QString filePath = "<filePath>"+filename.left(i)+"</filePath>";
-
-            EDomElement node(manager->getXml("projectHeader"));
-
-            node.replaceChildByTagName("fileName",fileName.toLocal8Bit().constData());
-            node.replaceChildByTagName("filePath",filePath.toLocal8Bit().constData());
-
-            manager->editComponent("Header", node.getContent());
-            //***************************************************************************************************
-
-            QDir dir(filename.left(i));
-            dir.setCurrent(dir.absolutePath());
-
-
-            newTree();
+        case 0:
+            alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - The file does not exist;\n - A bug in the program.\n\nTry changing the file's name or path and try again.");
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            alert = new QMessageBox(QMessageBox::Warning,"Unable to load file","The e-foto software was unable to load the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
+            break;
+        default:
+            alert = new QMessageBox(QMessageBox::Warning,"Unable to open or load file","The e-foto software was unable to open or load the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file's name or path or changing the file or version of the software and try again.");
+            break;
         }
-        else
-        {
-            QMessageBox* alert = NULL;
-            switch (manager->informFileVersionError())
-            {
-            case 0:
-                alert = new QMessageBox(QMessageBox::Warning,"Unable to open file","The e-foto software was unable to open the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - The file does not exist;\n - A bug in the program.\n\nTry changing the file's name or path and try again.");
-                break;
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                alert = new QMessageBox(QMessageBox::Warning,"Unable to load file","The e-foto software was unable to load the selected file.\nThis may be due to:\n\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file or version of the software and try again.");
-                break;
-            default:
-                alert = new QMessageBox(QMessageBox::Warning,"Unable to open or load file","The e-foto software was unable to open or load the selected file.\nThis may be due to:\n\n - Unsupported characters in the file's name or path (maybe accented characters or whitespace);\n - Unsupported file version;\n - The file is not a valid .epp (e-foto Photogrammetric Project) file;\n - A bug in the program.\n\nTry changing the file's name or path or changing the file or version of the software and try again.");
-                break;
-            }
-            alert->show();
-        }
+        alert->show();
     }
+    
     updateLabelFileName();
 
     refreshMenu();
@@ -529,10 +534,11 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
             QString extension = filename.right(4);
             if (extension.toLower() != ".epp")
                 filename.append(".epp");
-            int i=filename.lastIndexOf("/");
 
-            QString fileName = filename.right(filename.length()-i-1);
-            QString filePath = filename.left(i);
+            std::filesystem::path filepath(filename.toStdString());
+
+            QString fileName = QString::fromStdString(filepath.stem().string());
+            QString filePath = QString::fromStdString(filepath.string());
 
             QString fileNameBackup = headerForm.lineEditFileName->text();
             QString filePathBackup = headerForm.lineEditFilePath->text();
@@ -844,7 +850,7 @@ void ProjectUserInterface_Qt::newTree()
     treeWidget->clear();
     treeItems.clear();
     //this->treeWidget->setHeaderHidden(false);
-    if (manager->savedIn == "")
+    if (manager->savedIn.empty())
     {
         //treeWidget->setHeaderLabel(tr("New Project"));
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
@@ -895,7 +901,7 @@ void ProjectUserInterface_Qt::newTree()
 
 void ProjectUserInterface_Qt::updateTree()
 {
-    if (manager->savedIn == "")
+    if (manager->savedIn.empty())
     {
         projectDockWidget->setWindowTitle(tr("Open Project: *Unsaved"));
     }
@@ -1760,8 +1766,22 @@ void ProjectUserInterface_Qt::deletePoint()
 {
 }
 
-void ProjectUserInterface_Qt::deleteImage()
-{
+void ProjectUserInterface_Qt::deleteImage() {
+  QMessageBox::StandardButton reply;
+  reply =
+      QMessageBox::question(this, tr("Delete Image"),
+                            tr("Are you sure you want to delete this image?"),
+                            QMessageBox::Yes | QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    manager->removeComponent("Image", currentItemId);
+
+    viewImages();
+
+    actionSave_file->setEnabled(true);
+
+
+    updateTree();
+  }
 }
 
 void ProjectUserInterface_Qt::toggleDebug()
@@ -1778,207 +1798,6 @@ void ProjectUserInterface_Qt::showAbout()
     about->show();
 }
 
-// CÃÂ³digos das classes extras.
-
-//#include <QStringList>
-
-/*TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
-{
- parentItem = parent;
- itemData = data;
-}
-
-TreeItem::~TreeItem()
-{
- qDeleteAll(childItems);
-}
-
-void TreeItem::appendChild(TreeItem *item)
-{
- childItems.append(item);
-}
-
-TreeItem *TreeItem::child(int row)
-{
- return childItems.value(row);
-}
-
-int TreeItem::childCount() const
-{
- return childItems.count();
-}
-
-int TreeItem::columnCount() const
-{
- return itemData.count();
-}
-
-QVariant TreeItem::data(int column) const
-{
- return itemData.value(column);
-}
-
-TreeItem *TreeItem::parent()
-{
- return parentItem;
-}
-
-int TreeItem::row() const
-{
- if (parentItem)
-  return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
-
- return 0;
-}
-
-TreeModel::TreeModel(const QString &data, QObject *parent)
- : QAbstractItemModel(parent)
-{
- QList<QVariant> rootData;
- rootData << "";
- rootItem = new TreeItem(rootData);
- setupModelData(data.split(QString("\n")), rootItem);
-}
-
-TreeModel::~TreeModel()
-{
- delete rootItem;
-}
-
-int TreeModel::columnCount(const QModelIndex &parent) const
-{
- if (parent.isValid())
-  return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
- else
-  return rootItem->columnCount();
-}
-
-QVariant TreeModel::data(const QModelIndex &index, int role) const
-{
- if (!index.isValid())
-  return QVariant();
-
- if (role != Qt::DisplayRole)
-  return QVariant();
-
- TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-
- return item->data(index.column());
-}
-
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
-{
- if (!index.isValid())
-  return 0;
-
- return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-}
-
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
-                  int role) const
-{
- if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-  return rootItem->data(section);
-
- return QVariant();
-}
-
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
-  const
-{
- if (!hasIndex(row, column, parent))
-  return QModelIndex();
-
- TreeItem *parentItem;
-
- if (!parent.isValid())
-  parentItem = rootItem;
- else
-  parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
- TreeItem *childItem = parentItem->child(row);
- if (childItem)
-  return createIndex(row, column, childItem);
- else
-  return QModelIndex();
-}
-
-QModelIndex TreeModel::parent(const QModelIndex &index) const
-{
- if (!index.isValid())
-  return QModelIndex();
-
- TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
- TreeItem *parentItem = childItem->parent();
-
- if (parentItem == rootItem)
-  return QModelIndex();
-
- return createIndex(parentItem->row(), 0, parentItem);
-}
-
-int TreeModel::rowCount(const QModelIndex &parent) const
-{
- TreeItem *parentItem;
- if (parent.column() > 0)
-  return 0;
-
- if (!parent.isValid())
-  parentItem = rootItem;
- else
-  parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
- return parentItem->childCount();
-}
-
-void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
-{
- QList<TreeItem*> parents;
- QList<int> indentations;
- parents << parent;
- indentations << 0;
-
- int number = 0;
-
- while (number < lines.count()) {
-  int position = 0;
-  while (position < lines[number].length()) {
-   if (lines[number].mid(position, 1) != " ")
-        break;
-   position++;
-  }
-
-  QString lineData = lines[number].mid(position).trimmed();
-
-  if (!lineData.isEmpty()) {
-   // Read the column data from the rest of the line.
-   QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
-   QList<QVariant> columnData;
-   for (int column = 0; column < columnStrings.count(); ++column)
-        columnData << columnStrings[column];
-
-   if (position > indentations.last()) {
-        // The last child of the current parent is now the new parent
-        // unless the current parent has no children.
-
-        if (parents.last()->childCount() > 0) {
-         parents << parents.last()->child(parents.last()->childCount()-1);
-         indentations << position;
-        }
-   } else {
-        while (position < indentations.last() && parents.count() > 0) {
-         parents.pop_back();
-         indentations.pop_back();
-        }
-   }
-
-   // Append a new item to the current parent's list of children.
-   parents.last()->appendChild(new TreeItem(columnData, parents.last()));
-  }
-
-  number++;
- }
-}*/
 
 void ProjectUserInterface_Qt::validatingSensor()
 {
@@ -2969,16 +2788,18 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 {
     std::stringstream imageXml;
     RasterResource image(fileName);
-    QFileInfo fi(QString::fromLocal8Bit(manager->savedIn.c_str()));
-    QDir absolutePath(fi.absolutePath());
-    int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
-    QString fileImagePath(".");
-    if (j>0)
-        fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
-    fileName=fileName.right(fileName.length()-fileName.lastIndexOf('/')-1);
-    QString sugestionID=fileName;
-    sugestionID.chop(4);//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
+    QFileInfo eppFilePath(QString::fromLocal8Bit(manager->savedIn.c_str()));
 
+    std::filesystem::path eppAbsoluteFilePath = eppFilePath.absolutePath().toStdString();
+    std::filesystem::path relativeFilePath = std::filesystem::relative(fileName.toStdString(), eppAbsoluteFilePath);
+   
+    QString fileImagePath(".");
+    if (relativeFilePath.has_parent_path()) {
+      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().string());
+    }
+
+    QString sugestionID = QString::fromStdString(relativeFilePath.stem().string());
+    
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
     //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
     imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
@@ -2997,25 +2818,27 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
 
 std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage, int widthImages, int heightImages, int dpi)
 {
-  std::stringstream imageXml;
-  QFileInfo fi(QString::fromLocal8Bit(manager->savedIn.c_str()));
-  QDir absolutePath(fi.absolutePath());
-  int j=absolutePath.relativeFilePath(fileName).lastIndexOf(('/'));
-  QString fileImagePath(".");
-  if (j>0)
-    fileImagePath=(absolutePath.relativeFilePath(fileName).left(j));
-  fileName=fileName.right(fileName.length()-fileName.lastIndexOf('/')-1);
-  QString sugestionID=fileName;//Retira a extensao do arquivo, considerando que a extensao e formada por 3 letras
-  sugestionID.chop(4);
+    std::stringstream imageXml;
+    QFileInfo eppFilePath(QString::fromLocal8Bit(manager->savedIn.c_str()));
+ 
+    std::filesystem::path eppAbsoluteFilePath =
+        eppFilePath.absolutePath().toStdString();
+    std::filesystem::path relativeFilePath = std::filesystem::relative(fileName.toStdString(), eppAbsoluteFilePath);
+    std::filesystem::path fname = relativeFilePath.filename();
+    QString fileImagePath(".");
+    if (relativeFilePath.has_parent_path()) {
+      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().string());
+    }
+
+    QString sugestionID = QString::fromStdString(relativeFilePath.stem().string());
 
     imageXml << "\t<image key=\""<< Conversion::intToString(keyImage) << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-    //imageXml << "\t\t<imageId>"<< sugestionID.toStdString()<<"</imageId>\n";
     imageXml << "\t\t<imageId>"<< sugestionID.toLocal8Bit().constData()<<"</imageId>\n";
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(widthImages)<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
-    //imageXml << "\t\t<fileName>"<< fileName.toStdString()<<"</fileName>\n";
-    imageXml << "\t\t<fileName>"<< fileName.toLocal8Bit().constData()<<"</fileName>\n";
-    //imageXml << "\t\t<filePath>"<< fileImagePath.toStdString()<<"</filePath>\n";
+    imageXml << "\t\t<fileName>"
+             << QString::fromStdString(fname.string()).toLocal8Bit().constData()
+             << "</fileName>\n";
     imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
     imageXml << "\t</image>\n";
