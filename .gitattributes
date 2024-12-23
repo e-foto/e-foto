@@ -10,7 +10,9 @@
 *.sh    text eol=lf
 *.bash  text eol=lf
 *.zsh   text eol=lf
-
+*.c   text eol=lf
+*.cpp   text eol=lf
+*.h   text eol=lf
 # Windows batch files—if you specifically want CRLF for them
 *.bat   text eol=crlf
 *.cmd   text eol=crlf
