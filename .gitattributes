@@ -1,0 +1,44 @@
+###############################################################################
+# Core Rule: Normalize all text files to LF in the repo
+###############################################################################
+* text=auto eol=lf
+
+###############################################################################
+# Scripts
+###############################################################################
+# Shell scripts should always have LF (required for *nix)
+*.sh    text eol=lf
+*.bash  text eol=lf
+*.zsh   text eol=lf
+
+# Windows batch files—if you specifically want CRLF for them
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+###############################################################################
+# Configuration and markup files
+###############################################################################
+# Common config formats—keep them as LF in the repo
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.xml       text eol=lf
+*.md        text eol=lf
+*.txt       text eol=lf
+*.properties text eol=lf
+
+###############################################################################
+# Binary files
+###############################################################################
+# By marking these as binary, Git won't try to do line-ending normalization
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz  binary
+*.mp4 binary
+*.mov binary
