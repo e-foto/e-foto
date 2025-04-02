@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <id>br.uerj.eng.efoto</id>
+  <metadata_license>MIT</metadata_license>
+  <name>e-foto</name>
+  <summary>Educational Digital Photogrammetry Workstation</summary>
+  <description>
+    <p>Digital photogrammetric workstation equipped with
+    photogrammetric functionalities for creating topographic
+    tridimensional using aerial photogrammetric images captured by
+    both analog cameras and digital sensors.</p>
+  </description>
+  <mimetypes>
+    <mimetype>application/vnd.e-foto</mimetype>
+  </mimetypes>
+</component>
