@@ -557,6 +557,9 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
             {
                 manager->savedIn = filename.toLocal8Bit().constData();
                 actionSave_file->setEnabled(false);
+                // When changing the perception of the current project directory, the GUI must be communicated to avoid errors
+                QDir dir(QString::fromStdString(manager->savedIn));
+                dir.setCurrent(dir.absolutePath());
             }
             else
             {
