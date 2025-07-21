@@ -181,7 +181,7 @@ public slots:
  * \brief Metodo que atualiza a tabela das imagens e garante que a mesma imagem nÃ£o possa ser selecionada nos dois displays
  * \param imageFilename : Texto contendo o nome do arquivo de imagem
  */
-    void updateImagesList(int index);
+	void updateImagesList(QString imageFilename);
 
 	/**
  * \brief Metodo que atualiza os valores da tabela de pontos

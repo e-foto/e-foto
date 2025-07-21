@@ -249,8 +249,8 @@ void PTUserInterface_Qt::init()
     rightImageTableWidget->verticalHeader()->hide();
     pointsTableWidget->verticalHeader()->hide();
 
-    connect(leftImageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateImagesList(int)));
-    connect(rightImageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateImagesList(int)));
+    connect(leftImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
+    connect(rightImageComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(updateImagesList(QString)));
 
     connect(leftImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
     connect(rightImageTableWidget,SIGNAL(itemClicked(QTableWidgetItem*)),this, SLOT( tableClicked(QTableWidgetItem*) ));
@@ -364,7 +364,7 @@ void PTUserInterface_Qt::viewReport()
     buttonsLayout->addWidget(exportTxtButton);
 
     QStringList oeHeaderLabels;
-    //omega, phi, kappa, X0, Y0, Z0;// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
+    //omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9, phi=03c6	kappa=03ba
     oeHeaderLabels<< "Image Id"<< QString::fromUtf8("ω")<<QString::fromUtf8("φ")<<QString::fromUtf8("κ")<<"X0"<<"Y0"<<"Z0"<<QString::fromUtf8("δω") << QString::fromUtf8("δφ") << QString::fromUtf8("δκ") << QString::fromUtf8("δX0") << QString::fromUtf8("δY0") << QString::fromUtf8("δZ0");
 
     QString iter="Iterations: ";
@@ -679,15 +679,9 @@ void PTUserInterface_Qt::showSelectionWindow()
 }
 
 // Atualiza a tabela das imagens e garante que a mesma imagem não apareça nas duas comboBoxes
-void PTUserInterface_Qt::updateImagesList(int index)
+void PTUserInterface_Qt::updateImagesList(QString imageFilename)
 {
-    QString imageFilename;
-    if(index>=listAllImages.size())
-        return;
-    if(sender()==leftImageComboBox)
-        imageFilename=leftImageComboBox->currentText();
-    if(sender()==rightImageComboBox)
-        imageFilename=rightImageComboBox->currentText();
+    int index=0;
     for(int i=0;i<listAllImages.size();i++)
         if(listAllImages.at(i)==imageFilename)
             index=i;

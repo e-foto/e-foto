@@ -1,1 +1,1 @@
-set(MY_GDAL_ROOT "D:/OSGeo4W")
+set(MY_GDAL_ROOT "C:/OSGeo4W")
