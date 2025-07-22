@@ -389,13 +389,13 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
 
 
         std::filesystem::path filepath(filename.toStdString());
-        std::filesystem::path parantPath = filepath.parent_path();
-        QDir dirImage(QString::fromStdString(parantPath.string()));
+        std::filesystem::path parentPath = filepath.parent_path();
+        QDir dirImage(QString::fromStdString(parentPath.generic_string()));
         QFileInfo imageFileInfo;
 
         QString imagesMissing="";
         int contMissings=0;
-        for (int i=0 ;i < (int)imagesEdom.size() ;i++)
+        for (size_t i=0 ;i < imagesEdom.size() ;i++)
         {
             QString imagesName(imagesEdom.at(i).elementByTagName("filePath").toString().append("/").c_str());
             dirImage.setCurrent(imagesName);
@@ -437,10 +437,10 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
   
         QString fileName =
             "<fileName>" +
-            QString::fromStdString(filepath.filename().string()) +
+            QString::fromStdString(filepath.filename().generic_string()) +
             "</fileName>";
         QString filePath = "<filePath>"+
-            QString::fromStdString(filepath.parent_path().string()) +
+            QString::fromStdString(filepath.parent_path().generic_string()) +
             "</filePath>";
 
         EDomElement node(manager->getXml("projectHeader"));
@@ -451,7 +451,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart)
         manager->editComponent("Header", node.getContent());
         //***************************************************************************************************
 
-        QDir dir(QString::fromStdString(filepath.parent_path().string()));
+        QDir dir(QString::fromStdString(filepath.parent_path().generic_string()));
         dir.setCurrent(dir.absolutePath());
 
 
@@ -537,8 +537,8 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
 
             std::filesystem::path filepath(filename.toStdString());
 
-            QString fileName = QString::fromStdString(filepath.stem().string());
-            QString filePath = QString::fromStdString(filepath.string());
+            QString fileName = QString::fromStdString(filepath.filename().generic_string());
+            QString filePath = QString::fromStdString(filepath.parent_path().generic_string());
 
             QString fileNameBackup = headerForm.lineEditFileName->text();
             QString filePathBackup = headerForm.lineEditFilePath->text();
@@ -551,6 +551,19 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
             headerForm.dateTimeEditModificationDate->setDateTime(QDateTime::currentDateTime());
 
             manager->editComponent("Header", headerForm.getvalues());
+
+            EDomElement imagesBackup(manager->getXml("images"));
+            std::deque<EDomElement> imagesList = imagesBackup.children();
+            std::filesystem::path curr_dir = filePathBackup.toStdString();
+            for (size_t i=0;i<imagesList.size();i++){
+                int key = Conversion::stringToInt(imagesList.at(i).attribute("key"));
+                std::filesystem::path rel_imagepath = imagesList.at(i).elementByTagName("filePath").toString();
+                std::filesystem::path abs_imagepath = std::filesystem::absolute(curr_dir / rel_imagepath);
+                std::filesystem::path adj_imagepath = std::filesystem::relative(abs_imagepath, filepath.parent_path());
+                imagesList.at(i).replaceChildByTagName("filePath","<filePath>"+adj_imagepath.generic_string()+"</filePath>");
+                std::string data = imagesList.at(i).getContent();
+                manager->editComponent("Image", key, data);
+            }
             //***************************************************************************************************
 
             if (manager->saveFile(filename.toLocal8Bit().constData()))
@@ -558,7 +571,7 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
                 manager->savedIn = filename.toLocal8Bit().constData();
                 actionSave_file->setEnabled(false);
                 // When changing the perception of the current project directory, the GUI must be communicated to avoid errors
-                QDir dir(QString::fromStdString(manager->savedIn));
+                QDir dir(filePath);
                 dir.setCurrent(dir.absolutePath());
             }
             else
@@ -568,6 +581,13 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject)
                 headerForm.dateTimeEditCreationDate->setDateTime(dateTimeCreatBackup);
                 headerForm.dateTimeEditModificationDate->setDateTime(dateTimeModifBackup);
                 manager->editComponent("Header", headerForm.getvalues());
+
+                std::deque<EDomElement> imagesBkp = imagesBackup.children();
+                for (size_t i=0;i<imagesBkp.size();i++){
+                  int key = Conversion::stringToInt(imagesList.at(i).attribute("key"));
+                  std::string data = imagesBkp.at(i).getContent();
+                  manager->editComponent("Image", key, data);
+                }
 
                 QMessageBox* alert = new QMessageBox(QMessageBox::Warning,"Unable to save file", "The e-foto software was unable to save the file.\nThis may be due to:\n\n - The disk does not have enought free space;\n - You do not have the needed permissions;\n - The file's name or path is invalid (maybe accented characters or whitespace);\n - A bug in the program.\n\nCheck your disk space and permissions and try again.");
                 alert->show();
@@ -2798,7 +2818,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
    
     QString fileImagePath(".");
     if (relativeFilePath.has_parent_path()) {
-      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().string());
+      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().generic_string());
     }
 
     QString sugestionID = QString::fromStdString(relativeFilePath.stem().string());
@@ -2830,7 +2850,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     std::filesystem::path fname = relativeFilePath.filename();
     QString fileImagePath(".");
     if (relativeFilePath.has_parent_path()) {
-      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().string());
+      fileImagePath = QString::fromStdString(relativeFilePath.parent_path().generic_string());
     }
 
     QString sugestionID = QString::fromStdString(relativeFilePath.stem().string());
@@ -2840,7 +2860,7 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
     imageXml << "\t\t<width uom=\"#px\">"<<Conversion::intToString(widthImages)<<"</width>\n";
     imageXml << "\t\t<height uom=\"#px\">"<<Conversion::intToString(heightImages)<<"</height>\n";
     imageXml << "\t\t<fileName>"
-             << QString::fromStdString(fname.string()).toLocal8Bit().constData()
+             << QString::fromStdString(fname.generic_string()).toLocal8Bit().constData()
              << "</fileName>\n";
     imageXml << "\t\t<filePath>"<< fileImagePath.toLocal8Bit().constData()<<"</filePath>\n";
     imageXml << "\t\t<resolution uom=\"#dpi\">"<< dpi << "</resolution>\n";
