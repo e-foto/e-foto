@@ -7,7 +7,9 @@ project(e-foto VERSION 1.0 LANGUAGES C CXX)
 ##set your configs here
 
 # Include the config file
-include(${CMAKE_SOURCE_DIR}/config.cmake)
+if(WIN32)
+    include(${CMAKE_SOURCE_DIR}/config.cmake)
+endif()
 
 ###############################################
 execute_process(
@@ -231,6 +233,7 @@ qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     qt/imageDisplay/GLDisplay.cpp qt/imageDisplay/GLDisplay.h
     qt/imageDisplay/GeometryResource.cpp qt/imageDisplay/GeometryResource.h
     qt/imageDisplay/ImageViewers.cpp qt/imageDisplay/ImageViewers.h
+    qt/imageDisplay/GDALRasterResource.cpp qt/imageDisplay/GDALRasterResource.h
     qt/imageDisplay/RasterResource.cpp qt/imageDisplay/RasterResource.h
     qt/imageDisplay/SingleDisplay.cpp qt/imageDisplay/SingleDisplay.h
     qt/imageDisplay/SingleScene.cpp qt/imageDisplay/SingleScene.h
@@ -523,9 +526,11 @@ install(TARGETS e-foto
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-qt_generate_deploy_app_script(
-    TARGET e-foto
-    OUTPUT_SCRIPT deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-)
-install(SCRIPT ${deploy_script})
+if(WIN32)
+    qt_generate_deploy_app_script(
+        TARGET e-foto
+        OUTPUT_SCRIPT deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT ${deploy_script})
+endif()
