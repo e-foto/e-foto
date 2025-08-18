@@ -111,7 +111,7 @@ if(UNIX)
     endif()
 
     list(APPEND PLATFORM_DEFINITIONS unix)
-
+    
 endif()
 
 # Configuration based on qmake2cmake app by qt6 
@@ -120,14 +120,55 @@ set(CMAKE_AUTOMOC "YES")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS qt/interface qt/imageDisplay)
 
-find_package(GDAL CONFIG REQUIRED)
+# Using GDAL CONFIG or gdal-config if available
+find_package(GDAL CONFIG QUIET)
+if(NOT GDAL_FOUND)
+    message(WARNING "GDALConfig.cmake not found, trying to use gdal-config")
+    find_program(GDAL_CONFIG gdal-config)
+    if(NOT GDAL_CONFIG)
+        message(FATAL_ERROR "Error: gdal-config not fount!")
+    endif()
+    execute_process(
+        COMMAND ${GDAL_CONFIG} --cflags
+        OUTPUT_VARIABLE GDAL_CFLAGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${GDAL_CONFIG} --libs
+        OUTPUT_VARIABLE GDAL_LIBS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${GDAL_CONFIG} --prefix
+        OUTPUT_VARIABLE GDAL_PREFIX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${GDAL_CONFIG} --cflags
+        OUTPUT_VARIABLE _gdal_cflags
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    separate_arguments(_gdal_cflags)
+    foreach(flag IN LISTS _gdal_cflags)
+        if(flag MATCHES "^-I(.+)")
+            list(APPEND GDAL_INCLUDE_DIRS "${CMAKE_MATCH_1}")
+        endif()
+    endforeach()
+    set(GDAL_LIBRARIES "${GDAL_LIBS}")
+    add_compile_options(${GDAL_CFLAGS})
+    set(GDAL_FOUND TRUE)
+endif()
 message(STATUS "GDAL_INCLUDE_DIRS: ${GDAL_INCLUDE_DIRS}")
 message(STATUS "GDAL_LIBRARIES: ${GDAL_LIBRARIES}")
+add_compile_definitions(USE_GDAL)
+
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui OpenGLWidgets OpenGL Widgets)
 add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x060300)
-add_compile_definitions(USE_GDAL)
-qt_standard_project_setup()
+
+if(WIN32)
+    qt_standard_project_setup()
+endif()
 
 qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     c/control/DEMManager.cpp c/control/DEMManager.h
@@ -233,7 +274,6 @@ qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     qt/imageDisplay/GLDisplay.cpp qt/imageDisplay/GLDisplay.h
     qt/imageDisplay/GeometryResource.cpp qt/imageDisplay/GeometryResource.h
     qt/imageDisplay/ImageViewers.cpp qt/imageDisplay/ImageViewers.h
-    qt/imageDisplay/GDALRasterResource.cpp qt/imageDisplay/GDALRasterResource.h
     qt/imageDisplay/RasterResource.cpp qt/imageDisplay/RasterResource.h
     qt/imageDisplay/SingleDisplay.cpp qt/imageDisplay/SingleDisplay.h
     qt/imageDisplay/SingleScene.cpp qt/imageDisplay/SingleScene.h
