@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*Copyright 2002-2023 e-foto team (UERJ)
+/*Copyright 2002-2025 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -355,9 +355,7 @@ bool ReportUserInterface_Qt::saveEPR() {
 
 #ifdef Q_OS_WIN64
   QSettings binSettings("uerj", "efoto");
-  QString binPath = QString::fromLocal8Bit(
-                        binSettings.value("binPath").toByteArray().constData())
-                        .replace("/", "\\");
+  QString binPath = binSettings.value("binPath").toString().replace("/", "\\");
 #endif
 
   if (salvar.exec()) {
@@ -385,7 +383,7 @@ bool ReportUserInterface_Qt::saveEPR() {
       xml = path + "/" + tmp;
     }
 
-    if (!manager->makeFile(xml.toLocal8Bit().constData(), idExt, treeItems)) {
+    if (!manager->makeFile(xml.toUtf8().data(), idExt, treeItems)) {
       QMessageBox::critical(this, tr("Error"), tr("Unable to write report!"));
       return false;
     }
@@ -396,7 +394,7 @@ bool ReportUserInterface_Qt::saveEPR() {
                                tr("Successfully saved report!"));
       return true;
     } else {
-      doneXslt = manager->makeXslt(idExt, path.toLocal8Bit().constData());
+      doneXslt = manager->makeXslt(idExt, path.toUtf8().data());
     }
 
     if (doneXslt) {
@@ -412,8 +410,7 @@ bool ReportUserInterface_Qt::saveEPR() {
       QString test_cmd = "cmd", main_cmd = binPath + "\\" + "xsltproc.exe",
               remove_cmd = "cmd";
       test_args << "/C" << main_cmd;
-      remove_args << "/C"
-                  << "del";
+      remove_args << "/C" << "del";
 #endif
       remove_args << "epr.xsl" << tmp;
 

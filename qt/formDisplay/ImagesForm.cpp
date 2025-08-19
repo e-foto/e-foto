@@ -1,4 +1,4 @@
-/*Copyright 2002-2014 e-foto team (UERJ)
+/*Copyright 2002-2025 e-foto team (UERJ)
   This file is part of e-foto.
 
     e-foto is free software: you can redistribute it and/or modify
@@ -16,173 +16,170 @@
 */
 
 #include "ImagesForm.h"
-#include "EDom.h"
+
 #include <QPicture>
+#include <filesystem>
 #include <sstream>
-#include <QFileInfo>
+
+#include "EDom.h"
 namespace br {
 namespace uerj {
 namespace eng {
 namespace efoto {
 
-ImagesForm :: ImagesForm(QWidget *parent) : AbstractForm(parent)
-{
-    setupUi(this);
-    connect(imagesTable,SIGNAL(cellClicked(int,int)),this,SLOT(emitSignal(int)));
-    imagesTable->setColumnHidden(0,true);
-    imagesTable->setColumnWidth(1,80);
-    imagesTable->setColumnWidth(2,30);
-    imagesTable->setColumnWidth(3,30);
-
+ImagesForm ::ImagesForm(QWidget *parent) : AbstractForm(parent) {
+  setupUi(this);
+  connect(imagesTable, SIGNAL(cellClicked(int, int)), this,
+          SLOT(emitSignal(int)));
+  imagesTable->setColumnHidden(0, true);
+  imagesTable->setColumnWidth(1, 80);
+  imagesTable->setColumnWidth(2, 30);
+  imagesTable->setColumnWidth(3, 30);
 }
 
-void ImagesForm::fillvalues(std::string values)
-{
-    EDomElement ede(values);
-    int rows=ede.children().size();
-    imagesTable->setRowCount(rows);
+void ImagesForm::fillvalues(std::string values) {
+  EDomElement ede(values);
+  int rows = ede.children().size();
+  imagesTable->setRowCount(rows);
 
-    std::deque<EDomElement> imaChildren = ede.children();
-    for (int i=0;i<rows;i++){
-        std::string tableParameter;
-        std::stringstream auxStream;
-
-        auxStream << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
-        auxStream << "/";
-        auxStream << imaChildren.at(i).elementByTagName("fileName").toString().c_str();
-
-        tableParameter = auxStream.str();
-
-        QFileInfo fileInfo(QString::fromStdString(tableParameter));
-        QString absolutePath = fileInfo.absoluteFilePath();
-
-        QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (imaChildren.at(i).attribute("key").c_str()) );
-        QTableWidgetItem *idItem = new QTableWidgetItem(imaChildren.at(i).elementByTagName("imageId").toString().c_str()) ;
-        QTableWidgetItem *fileItem = new QTableWidgetItem(absolutePath);
-        keyItem->setTextAlignment(Qt::AlignCenter);
-        idItem->setTextAlignment(Qt::AlignCenter);
-
-        imagesTable->setItem(i,0,keyItem);
-        imagesTable->setItem(i,1,idItem);
-        imagesTable->setItem(i,4,fileItem);
-    }
-    imaChildren.clear();
-}
-std::string ImagesForm::getvalues()
-{
-    std::string xmlString;
+  std::deque<EDomElement> imaChildren = ede.children();
+  for (int i = 0; i < rows; i++) {
+    std::string tableParameter;
     std::stringstream auxStream;
 
-    auxStream << "\nNot Available\n";
+    auxStream
+        << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
+    auxStream << "/";
+    auxStream
+        << imaChildren.at(i).elementByTagName("fileName").toString().c_str();
 
-    xmlString = auxStream.str();
-    return xmlString;
+    tableParameter = auxStream.str();
+
+    std::filesystem::path absolute_path =
+        std::filesystem::absolute(tableParameter);
+
+    QTableWidgetItem *keyItem = new QTableWidgetItem(
+        QString::fromUtf8(imaChildren.at(i).attribute("key").c_str()));
+    QTableWidgetItem *idItem = new QTableWidgetItem(
+        imaChildren.at(i).elementByTagName("imageId").toString().c_str());
+    QTableWidgetItem *fileItem =
+        new QTableWidgetItem(QString::fromStdString(absolute_path.generic_string()));
+    keyItem->setTextAlignment(Qt::AlignCenter);
+    idItem->setTextAlignment(Qt::AlignCenter);
+
+    imagesTable->setItem(i, 0, keyItem);
+    imagesTable->setItem(i, 1, idItem);
+    imagesTable->setItem(i, 4, fileItem);
+  }
+  imaChildren.clear();
+}
+std::string ImagesForm::getvalues() {
+  std::string xmlString;
+  std::stringstream auxStream;
+
+  auxStream << "\nNot Available\n";
+
+  xmlString = auxStream.str();
+  return xmlString;
 }
 
-void ImagesForm ::setReadOnly(bool state)
-{
-    imagesTable->setEnabled(state);
-    // ImagesForm is only to read in all times.
+void ImagesForm ::setReadOnly(bool state) {
+  imagesTable->setEnabled(state);
+  // ImagesForm is only to read in all times.
 }
 
-//emite o sinal da linha(row) correspondente a image key
-void ImagesForm :: emitSignal(int i)
-{
-    //int key=Conversion::stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
-    //emit clicked(key);
-    // Provisóriamente nós enviamos a posição da linha clicada e não a key efetivamente.
-    emit clicked(i);
+// emite o sinal da linha(row) correspondente a image key
+void ImagesForm ::emitSignal(int i) {
+  // int
+  // key=Conversion::stringToInt(imagesTable->item(i,0)->text().toStdString().c_str());
+  // emit clicked(key);
+  //  Provisóriamente nós enviamos a posição da linha clicada e não a key
+  //  efetivamente.
+  emit clicked(i);
 }
 
-bool ImagesForm::isForm(std::string formName)
-{
-    return !formName.compare("HeaderForm");
+bool ImagesForm::isForm(std::string formName) {
+  return !formName.compare("HeaderForm");
 }
 
-void ImagesForm::setIOsAvailable(std::string xmlIOs)
-{
-    EDomElement ede(xmlIOs);
+void ImagesForm::setIOsAvailable(std::string xmlIOs) {
+  EDomElement ede(xmlIOs);
 
-    for (int i=0;i<imagesTable->rowCount();i++)
-    {
-        int key = imagesTable->item(i,0)->text().toInt();
-        EDomElement IOXml = ede.elementByTagAtt("imageIO","image_key",Conversion::intToString(key));
-        QTableWidgetItem *IOItem = new QTableWidgetItem();
-        IOItem->setTextAlignment(Qt::AlignCenter);
+  for (int i = 0; i < imagesTable->rowCount(); i++) {
+    int key = imagesTable->item(i, 0)->text().toInt();
+    EDomElement IOXml = ede.elementByTagAtt("imageIO", "image_key",
+                                            Conversion::intToString(key));
+    QTableWidgetItem *IOItem = new QTableWidgetItem();
+    IOItem->setTextAlignment(Qt::AlignCenter);
 
-        QLabel *label=new QLabel();
-        label->setAlignment(Qt::AlignCenter);
-        //QLabel *unchecked= new QLabel();
+    QLabel *label = new QLabel();
+    label->setAlignment(Qt::AlignCenter);
+    // QLabel *unchecked= new QLabel();
 
-        //checked->setPixmap(QPixmap(":/image/checked.png"));
-        //unchecked->setPixmap(QPixmap(":/image/unchecked.png"));
-        if(IOXml.getContent() != "")
-        {
-            label->setPixmap(QPixmap(":/image/checked.png"));
+    // checked->setPixmap(QPixmap(":/image/checked.png"));
+    // unchecked->setPixmap(QPixmap(":/image/unchecked.png"));
+    if (IOXml.getContent() != "") {
+      label->setPixmap(QPixmap(":/image/checked.png"));
 
-
-            //IOItem->setIcon(QIcon(":/image/checked.png"));
-            /*
-            IOItem->setTextColor(QColor("green"));
-            IOItem->setText(QString::fromUtf8("✓"));
-            IOItem->setFont(QFont("Sans",20,QFont::Bold));
-            */
-        }
-        else
-        {
-            label->setPixmap(QPixmap(":/image/unchecked.png"));
-            //IOItem->setIcon(QIcon(":/image/unchecked.png"));
-            /*
-   IOItem->setTextColor(QColor("red"));
-   IOItem->setText("x");
-   IOItem->setFont(QFont("Sans",20));
-            */
-        }
-        imagesTable->setCellWidget(i,2,label);
-        //imagesTable->setItem(i,2,IOItem);
+      // IOItem->setIcon(QIcon(":/image/checked.png"));
+      /*
+      IOItem->setTextColor(QColor("green"));
+      IOItem->setText(QString::fromUtf8("✓"));
+      IOItem->setFont(QFont("Sans",20,QFont::Bold));
+      */
+    } else {
+      label->setPixmap(QPixmap(":/image/unchecked.png"));
+      // IOItem->setIcon(QIcon(":/image/unchecked.png"));
+      /*
+IOItem->setTextColor(QColor("red"));
+IOItem->setText("x");
+IOItem->setFont(QFont("Sans",20));
+      */
     }
+    imagesTable->setCellWidget(i, 2, label);
+    // imagesTable->setItem(i,2,IOItem);
+  }
 }
 
-void ImagesForm::setEOsAvailable(std::string xmlEOs)
-{
-    EDomElement ede(xmlEOs);
+void ImagesForm::setEOsAvailable(std::string xmlEOs) {
+  EDomElement ede(xmlEOs);
 
-    EDomElement ptri = ede.elementByTagName("phototriangulation");
-    EDomElement srs = ede.elementByTagName("spatialResections");
+  EDomElement ptri = ede.elementByTagName("phototriangulation");
+  EDomElement srs = ede.elementByTagName("spatialResections");
 
-    for (int i=0;i < imagesTable->rowCount();i++)
-    {
-        int key = imagesTable->item(i,0)->text().toInt();
-        EDomElement EOXml = ede.elementByTagAtt("imageEO","image_key",Conversion::intToString(key));
+  for (int i = 0; i < imagesTable->rowCount(); i++) {
+    int key = imagesTable->item(i, 0)->text().toInt();
+    EDomElement EOXml = ede.elementByTagAtt("imageEO", "image_key",
+                                            Conversion::intToString(key));
 
-        std::string type = EOXml.attribute("type");
-        bool converged = true;
-        if (type == "photoTriangulation")
-            converged = ptri.elementByTagName("converged").toBool();
-        else if (type == "spatialResection")
-            converged = srs.elementByTagAtt("imageSR","image_key",Conversion::intToString(key)).elementByTagName("converged").toBool();
+    std::string type = EOXml.attribute("type");
+    bool converged = true;
+    if (type == "photoTriangulation")
+      converged = ptri.elementByTagName("converged").toBool();
+    else if (type == "spatialResection")
+      converged = srs.elementByTagAtt("imageSR", "image_key",
+                                      Conversion::intToString(key))
+                      .elementByTagName("converged")
+                      .toBool();
 
-        QTableWidgetItem *EOItem = new QTableWidgetItem();
-        EOItem->setTextAlignment(Qt::AlignCenter);
-        QLabel *label=new QLabel();
-        label->setAlignment(Qt::AlignCenter);
+    QTableWidgetItem *EOItem = new QTableWidgetItem();
+    EOItem->setTextAlignment(Qt::AlignCenter);
+    QLabel *label = new QLabel();
+    label->setAlignment(Qt::AlignCenter);
 
-        if(EOXml.getContent() != "")
-        {
-            if (converged)
-                label->setPixmap(QPixmap(":/image/checked.png"));
-            else
-                label->setPixmap(QPixmap(":/image/exclamation.png"));
-        }
-        else
-        {
-            label->setPixmap(QPixmap(":/image/unchecked.png"));
-        }
-        imagesTable->setCellWidget(i,3,label);
+    if (EOXml.getContent() != "") {
+      if (converged)
+        label->setPixmap(QPixmap(":/image/checked.png"));
+      else
+        label->setPixmap(QPixmap(":/image/exclamation.png"));
+    } else {
+      label->setPixmap(QPixmap(":/image/unchecked.png"));
     }
+    imagesTable->setCellWidget(i, 3, label);
+  }
 }
 
-} // namespace efoto
-} // namespace eng
-} // namespace uerj
-} // namespace br
+}  // namespace efoto
+}  // namespace eng
+}  // namespace uerj
+}  // namespace br

@@ -1,395 +1,442 @@
+#include <cpl_conv.h>
+#include <gdal_priv.h>
+#include <gdalwarper.h>
+
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QTemporaryFile>
+#include <cmath>
+
 #include "RasterResource.h"
 
-#include <cmath>
-#include <QMessageBox>
-#include <QDebug>
-
 RasterResource::RasterResource(QString filepath, bool withSmoothIn,
-                               bool withSmoothOut):_useSmoothIn(withSmoothIn),
-                                                   _useSmoothOut(withSmoothOut),
-                                                   _dataset(nullptr),
-                                                   _nViewBands(0)
-{
-    // Tenta carregar a imagem e registra se o recurso é válido
-    _isValid = load(filepath);
+                               bool withSmoothOut, bool metadataOnly) {
+  GDALAllRegister();  // Registrar todos os drivers GDAL
+  _pyramid = nullptr;
+  _levels = 0;
+  _isValid = false;
+  _useSmoothIn = withSmoothIn;
+  _useSmoothOut = withSmoothOut;
+  if (!filepath
+           .isEmpty()) {  // && std::filesystem::exists(filepath.toStdString()))
+                          // {
+    load(filepath, metadataOnly);
+  }
 }
 
-RasterResource::~RasterResource()
-{
-    if (_dataset)
-        GDALClose(_dataset);
-    if (_nViewBands)
-        delete[] _viewBands;
+RasterResource::~RasterResource() {
+  if (!_isValid || !_pyramid) return;
+
+  for (int l = 0; l < _levels; l++) {
+    if (_pyramid[l]) {
+      GDALClose(_pyramid[l]);
+    }
+  }
+  free(_pyramid);
 }
 
-void RasterResource::emitLoadError()
-{
-    QMessageBox* msgBox = new QMessageBox();
-    msgBox->setText("Error: The image loading process.");
-    msgBox->exec();
-}
-
-void RasterResource::useSmoothIn(bool useSmooth)
-{
-    _useSmoothIn = useSmooth;
-}
-
-void RasterResource::transformImage(double H[9])
-{
-    /* Revisar
-    if (_isValid) {
-        QImage newImage(*_pyramid[0]);
-        QTransform h(H[0],H[3],H[6],H[1],H[4],H[7],H[2],H[5],H[8]);
-        //qDebug("\n%f %f %f\n%f %f %f\n%f %f %f",H[0],H[3],H[6],H[1],H[4],H[7],H[2],H[5],H[8]);
-        load(newImage.transformed(h));
-    }
-    */
-}
-bool RasterResource::load(QImage image)
-{
-    /*
-
-     Revisar
-    // Impede carga de imagem nula
-    if (image.isNull())
-    {
-        emitLoadError();
-        return false;
-    }
-
-    // Remove imagem pré-existente
-    if (_isValid)
-    {
-        for(int l = 0; l < _levels; l++)
-            delete(_pyramid[l]);
-        free(_pyramid);
-    }
-    _isValid = true;
-
-    // Calcular o numero de niveis da piramide
-    _imageDim = image.size();
-    _levels =  log(_imageDim.width() < _imageDim.height() ? _imageDim.width() : _imageDim.height() ) / log(2) -4;
-    if (_levels < 0) _levels = 0;
-
-    // Alocando espaço para a piramide
-    _pyramid = (QImage**) calloc(_levels, sizeof(QImage*));
-
-    // Atribui a imagem original ao primeiro nível
-    _pyramid[0] = new QImage(image.convertToFormat(QImage::Format_ARGB32));
-    if (_pyramid[0]->width() == 0 || _pyramid[0]->height() == 0)
-    {
-        _isValid = false;
-        delete(_pyramid[0]);
-        free(_pyramid);
-        emitLoadError();
-        return false;
-    }
-
-    // Construindo imagens
-    for(int l = 1; l < _levels; l++)
-    {
-        // Cada imagem do novo nível é igual ao nível anterior reduzida pela metade
-        int w = _pyramid[l-1]->width()/2;
-        int h = _pyramid[l-1]->height()/2;
-        _pyramid[l] = new QImage(_pyramid[l-1]->scaled(w,h,Qt::IgnoreAspectRatio, _useSmoothOut ? Qt::SmoothTransformation : Qt::FastTransformation));
-
-        if (_pyramid[l]->width() == 0 || _pyramid[l]->height() == 0)
-        {
-            _isValid = false;
-            for (int k = l; l >= 0; l--)
-                delete(_pyramid[k]);
-            free(_pyramid);
-            emitLoadError();
-            return false;
-        }
-    }
-    return _isValid;
-*/
-}
-
-bool RasterResource::load(QString filename)
-{
-    GDALDataset* newDataset;
-    // Raster resource só é válido se for dado um caminho para imagem não vazio
-    if (filename == ""){
-        return false;
-       };
-
-
-    // Localizar e instanciar todos os drivers da gdal
-    GDALAllRegister();
-
-    // Converter caminho para o gdal
-    QByteArray filepath = filename.toLocal8Bit();
-
-    // Abrir a imagem como um dataset gdal
-    newDataset = static_cast<GDALDataset *>( GDALOpen(filepath, GA_ReadOnly) );
-
-    // Testar se é válida
-    if (newDataset == nullptr)
-    {
-            // Fechar o gdal dataset
-            GDALClose(newDataset);
-            return false;
-    }
-
-    // Fechar dataset anterior se existir
-    if (_dataset)
-        GDALClose(_dataset);
-
-    // Atribuir novo dataset
-    _dataset = newDataset;
-
-    // Recuperar dimensões
-    _imageDim = QSize(_dataset->GetRasterXSize(),_dataset->GetRasterYSize());
-
-    // Recuperar numero de bandas e determinar tipo de imagem
-    // Esta bloco do código encontra-se em aperfeiçoamento em 2018-12-19.
-    _nBands = _dataset->GetRasterCount();
-    if (_nViewBands)
-        delete[] _viewBands;
-    _nViewBands = 0;
-    // A menos que tenhamos uma imagem de DEM (float), pan (16 bits por canal) ou indexada o tipo básico de retorno de getImageCut é:
-    _qtFormat = QImage::Format_RGBA8888;
-    if (_nBands == 1) {
-        GDALRasterBand* band = _dataset->GetRasterBand(1);
-        GDALColorTable* cTable = band->GetColorTable();
-        if (cTable == nullptr) {
-            ///qDebug() << "We have a grayscale image here!";
-            // Checar o tipo de pixel da imagem pode ser aprofundado neste caso,
-            // pois podemos ter um DEM ou pancromática 16 bits em mãos.
-            _nViewBands = 3;
-            _viewBands = new int[3]{1,1,1};
-        } else {
-            ///qDebug() << "We have a paletted band here!";
-            // cTable pode ser traduzido para um QVector<QRgb>, e podemos usar setColorTable na QImage ao entregar recortes.
-            // O número de cores em cTable pode ser consultado com GetColorEntryCount()
-            // Uma cor em cTable pode ser consultada com GetColorEntry() ou GetColorEntryAsRGB()
-            // Um GDALColorEntry tem atributos c1, c2, c3 e c4 para r, g, b e a.
-            // O tipo de uma QImage neste caso é QImage::Format_Indexed8
-            auto nColors = cTable->GetColorEntryCount();
-            _cTable.resize(nColors);
-            qDebug() << "Total de cores = " << nColors;
-            for (auto i = 0; i < nColors; i++) {
-                auto color = cTable->GetColorEntry(i);
-                _cTable[i] = qRgba(color->c1,color->c2,color->c3,color->c4);
-
-            }
-            _nViewBands = 1;
-            _viewBands = new int[1]{1};
-            _qtFormat = QImage::Format_Indexed8;
-        }
+void RasterResource::emitLoadError(const QString& filepath) {
+  QString message = "Error: The image loading process failed.";
+  if (!filepath.isEmpty()) {
+    if (!std::filesystem::exists(filepath.toStdString())) {
+      message += " File not found!";
     } else {
-        // Checar o tipo da imagem pode ser aprofundado neste caso, pois podemos ter uma orthoimagem em mãos.
-        // A nomeação de bandas por canal pode ser melhorada pelo uso de uma checagem sobre qual banda representa qual canal
-        _nViewBands = 3;
-        _viewBands = new int[3];
-        _viewBands[0] = 1; // red
-        _viewBands[1] = 2; // green
-        _viewBands[2] = 3; // blue
+      message += " Unable to read this file!";
     }
+    // TODO: Alterar essa implementação para garantir que use proj->getSavedIn()
+    QFileInfo fileInfo(filepath);
+    QString absolutePath = fileInfo.absoluteFilePath();
 
-    // Verificando a transformação afim associada ao Raster
-    //double transform[6];
-    //_dataset->GetGeoTransform(transform);
-    //qDebug() << "Xp = " << transform[0] << " + P*" << transform[1] << " + L*" << transform[2];
-    //qDebug() << "Yp = " << transform[3] << " + P*" << transform[4] << " + L*" << transform[5];
+    message += "\nFile: " + absolutePath;
+  }
+  QMessageBox::critical(nullptr, "Load Error", message);
+}
+void RasterResource::useSmoothIn(bool useSmooth) { _useSmoothIn = useSmooth; }
 
-    return _isValid = true;
+void RasterResource::transformImage(double H[9]) {
+  if (_isValid) {
+    // TODO: Revisar isso para que não dependa da transformação em QImage
+    QImage newImage(gdalDatasetToQImage(_pyramid[0]));
+    QTransform h(H[0], H[3], H[6], H[1], H[4], H[7], H[2], H[5], H[8]);
+    load(newImage.transformed(h));
+  }
 }
 
-bool RasterResource::save(QString filepath, QString format)
-{
-    /* Repensar os métodos de salvar imagens para contemplar imagens, ortoimagens e DSMs
-    if (_pyramid && _pyramid[0]->save(filepath,format.toLocal8Bit().constData()))
-        return true;
+bool RasterResource::load(QImage image) {
+  // Salvar QImage em buffer temporário e carregar com GDAL
+  QTemporaryFile tempFile;
+  if (!tempFile.open()) {
+    emitLoadError("");
     return false;
-    */
+  }
+  if (!image.save(&tempFile, "PNG")) {
+    emitLoadError("");
+    return false;
+  }
+  tempFile.close();
+  return load(tempFile.fileName());
 }
 
-bool RasterResource::isValid()
-{
-    return _isValid;
+bool RasterResource::load(QString filepath, bool metadataOnly) {
+  // Limpar dados existentes
+  if (_pyramid) {
+    for (int l = 0; l < _levels; l++) {
+      if (_pyramid[l]) {
+        GDALClose(_pyramid[l]);
+      }
+    }
+    free(_pyramid);
+    _pyramid = nullptr;
+  }
+
+  _isValid = false;
+
+  // Abrir dataset GDAL
+  GDALDataset* srcDataset =
+      (GDALDataset*)GDALOpen(filepath.toUtf8().constData(), GA_ReadOnly);
+  if (!srcDataset) {
+    emitLoadError(filepath);
+    return false;
+  }
+
+  // Obter dimensões
+  _imageDim = QSize(srcDataset->GetRasterXSize(), srcDataset->GetRasterYSize());
+  if (_imageDim.width() == 0 || _imageDim.height() == 0) {
+    GDALClose(srcDataset);
+    emitLoadError(filepath);
+    return false;
+  }
+
+  // Calcular número de níveis da pirâmide
+  _levels = log(_imageDim.width() < _imageDim.height() ? _imageDim.width()
+                                                       : _imageDim.height()) /
+                log(2) -
+            4;
+  if (_levels < 1) _levels = 1;
+
+  // Evita o tempo de carregamento da pirâmide em casos de carregamento
+  // exclusivo para leitura de metadados
+  if (metadataOnly) return true;
+
+  // Alocar array para pirâmide
+  _pyramid = (GDALDataset**)calloc(_levels, sizeof(GDALDataset*));
+  if (!_pyramid) {
+    GDALClose(srcDataset);
+    emitLoadError(filepath);
+    return false;
+  }
+
+  // Primeiro nível é o dataset original
+  _pyramid[0] = srcDataset;
+  _isValid = true;
+
+  // Construir níveis da pirâmide
+  for (int l = 1; l < _levels; l++) {
+    _pyramid[l] = createPyramidLevel(_pyramid[l - 1], l);
+    if (!_pyramid[l]) {
+      _isValid = false;
+      break;
+    }
+  }
+
+  if (!_isValid) {
+    for (int l = 0; l < _levels; l++) {
+      if (_pyramid[l]) {
+        GDALClose(_pyramid[l]);
+      }
+    }
+    free(_pyramid);
+    _pyramid = nullptr;
+    emitLoadError(filepath);
+    return false;
+  }
+
+  return true;
 }
 
-int RasterResource::width()
-{
-    return _imageDim.width();
+bool RasterResource::save(QString filepath, QString format) {
+  if (!_isValid || !_pyramid || !_pyramid[0]) return false;
+
+  // TODO: Repensar se não é mais seguro salvar a imagem usando o próprio GDAL
+  QImage image = gdalDatasetToQImage(_pyramid[0]);
+  return image.save(filepath, format.toUtf8().data());
 }
 
-int RasterResource::height()
-{
-    return _imageDim.height();
+bool RasterResource::isValid() { return _isValid; }
+
+int RasterResource::width() { return _imageDim.width(); }
+
+int RasterResource::height() { return _imageDim.height(); }
+
+QSize RasterResource::size() { return _imageDim; }
+
+int RasterResource::levels() { return _levels; }
+
+QPointF RasterResource::center() {
+  return QPointF(width() / 2.0, height() / 2.0);
 }
 
-QSize RasterResource::size()
-{
-    return _imageDim;
+QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut) {
+  QImage result;
+  if (!_isValid || !_pyramid || !_pyramid[0]) return result;
+
+  // Inicialização de variáveis para o recorte
+  QRect rectToCut = imageCut.toRect();
+  GDALDataset* dataset = _pyramid[0];
+  int l = 0;
+
+  // Calcular escala
+  double wscale = targetSize.width() / imageCut.width();
+  double hscale = targetSize.height() / imageCut.height();
+  double scale = (wscale > hscale) ? wscale : hscale;
+
+  if (scale > 1.0) {
+    // Caso de ampliação
+    rectToCut.setLeft(rectToCut.left() - 1);
+    rectToCut.setTop(rectToCut.top() - 1);
+    rectToCut.setWidth(rectToCut.width() + 2);
+    rectToCut.setHeight(rectToCut.height() + 2);
+
+    QSize newTargetSize = rectToCut.size() * scale;
+    QRect finalCut(
+        ((imageCut.topLeft() - QPointF(rectToCut.topLeft())) * scale).toPoint(),
+        targetSize);
+
+    // Converter recorte para QImage e redimensionar
+    QImage tempImage = gdalDatasetToQImage(dataset, rectToCut);
+    result = tempImage
+                 .scaled(newTargetSize, Qt::KeepAspectRatioByExpanding,
+                         _useSmoothIn ? Qt::SmoothTransformation
+                                      : Qt::FastTransformation)
+                 .copy(finalCut);
+  } else if (scale > 0.5) {
+    // Caso de redução moderada
+    result = gdalDatasetToQImage(dataset, rectToCut)
+                 .scaled(targetSize, Qt::KeepAspectRatioByExpanding,
+                         _useSmoothOut ? Qt::SmoothTransformation
+                                       : Qt::FastTransformation);
+  } else {
+    // Caso de redução significativa - usar pirâmide
+    while (scale <= 0.5 && l < _levels - 1) {
+      scale *= 2;
+      l++;
+      QPointF center(
+          QPointF(imageCut.center().x() / 2.0, imageCut.center().y() / 2.0));
+      imageCut.setSize(imageCut.size() / 2.0);
+      imageCut.moveCenter(center);
+    }
+
+    dataset = _pyramid[l];
+    rectToCut = imageCut.toRect();
+    result = gdalDatasetToQImage(dataset, rectToCut)
+                 .scaled(targetSize, Qt::KeepAspectRatioByExpanding,
+                         _useSmoothOut ? Qt::SmoothTransformation
+                                       : Qt::FastTransformation);
+  }
+
+  return result;
 }
 
-/* Repensar toda a questão de montagem e consulta da piramide de imagem
-int RasterResource::levels()
-{
-    return _levels;
+QColor RasterResource::getColor(QPoint at) {
+  if (!_isValid || !_pyramid || !_pyramid[0] || at.x() < 0 || at.y() < 0 ||
+      at.x() >= width() || at.y() >= height())
+    return QColor();
+
+  GDALDataset* dataset = _pyramid[0];
+  int bandCount = dataset->GetRasterCount();
+  uint8_t pixel[4] = {0, 0, 0, 255};  // R, G, B, A
+
+  if (bandCount >= 3) {
+    // RGB
+    dataset->GetRasterBand(1)->RasterIO(GF_Read, at.x(), at.y(), 1, 1,
+                                        &pixel[0], 1, 1, GDT_Byte, 0, 0);
+    dataset->GetRasterBand(2)->RasterIO(GF_Read, at.x(), at.y(), 1, 1,
+                                        &pixel[1], 1, 1, GDT_Byte, 0, 0);
+    dataset->GetRasterBand(3)->RasterIO(GF_Read, at.x(), at.y(), 1, 1,
+                                        &pixel[2], 1, 1, GDT_Byte, 0, 0);
+
+    if (bandCount >= 4) {
+      dataset->GetRasterBand(4)->RasterIO(GF_Read, at.x(), at.y(), 1, 1,
+                                          &pixel[3], 1, 1, GDT_Byte, 0, 0);
+    }
+  } else if (bandCount == 1) {
+    // Tons de cinza
+    dataset->GetRasterBand(1)->RasterIO(GF_Read, at.x(), at.y(), 1, 1,
+                                        &pixel[0], 1, 1, GDT_Byte, 0, 0);
+    pixel[1] = pixel[2] = pixel[0];  // Copiar para G e B
+  }
+
+  return QColor(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
-*/
 
-QPointF RasterResource::center()
-{
-    return QPointF(width()/2.0,height()/2.0);
+unsigned int RasterResource::getGrayColor(QPoint at, bool linear) {
+  QColor result = getColor(at);
+  if (linear)
+    return static_cast<unsigned int>(
+        0.299 * result.red() + 0.587 * result.green() + 0.114 * result.blue());
+  return static_cast<unsigned int>(
+      (result.red() + result.green() + result.blue()) / 3.0);
 }
 
-QImage RasterResource::getImageCut(QSize targetSize, QRectF imageCut)
-{
-    QImage result;
-    if (!_isValid)
-        return result;
+QImage RasterResource::gdalDatasetToQImage(GDALDataset* dataset,
+                                           const QRect& rect) const {
+  if (!dataset) return QImage();
 
-    // Inicialização de variáveis para o recorte na imagem do topo da pilha
-    QRect rectToCut = imageCut.toRect();
-    QSize newTargetSize = targetSize;
+  // Obter dimensões da imagem original
+  int imgWidth = dataset->GetRasterXSize();
+  int imgHeight = dataset->GetRasterYSize();
 
-    // Na prática, qualquer corte deveria possuir a mesma escala em width e height
-    // mas isso não ocorre para o recorte de Overview. Por isso recuperamos a escala assim:
-    double wscale = targetSize.width() / imageCut.width();
-    double hscale = targetSize.height() / imageCut.height();
-    double scale = (wscale > hscale) ? wscale : hscale;
+  // Determinar área efetiva para cópia (intersecção entre o rect solicitado e a
+  // imagem)
+  QRect validRect = rect.intersected(QRect(0, 0, imgWidth, imgHeight));
 
-    //qDebug() << "wscale: "<< wscale;
-    //qDebug() << "hscale: "<< hscale;
-    //qDebug() << "scale: "<< scale;
+  // Criar QImage do tamanho solicitado, inicializada com zeros (transparente)
+  QImage image(rect.width(), rect.height(), QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
 
-    // Argumentos de reamostragem para o recorte com a gdal
-    GDALRasterIOExtraArg extraArg;
-    INIT_RASTERIO_EXTRA_ARG(extraArg);
+  // Se não houver área válida para copiar, retornar a imagem vazia
+  if (validRect.isEmpty()) {
+    return image;
+  }
 
-    // Seleciona a imagem correta a recortar, faz o recorte e ajustes para perfeito encaixe do centro do recorte na imagem com a imagem resultante
-    if (scale > 1.0)
-    {
-        // Este caso precisa ser tratado com atenção.
-        // Precisamos manter o aspécto da imagem, o zoom correto e o ponto central do recorte corretamente alinhado
+  // Calcular deslocamento na imagem de destino
+  int dstX = validRect.x() - rect.x();
+  int dstY = validRect.y() - rect.y();
 
-        // Primeiro evitamos problemas com o espaço recortado aumentando ligeiramente a área de recorte
-        //Andando com a borda superior esquerda uma vez para esquerda e para cima
-        rectToCut.setLeft(rectToCut.left()-1);
-        rectToCut.setTop(rectToCut.top()-1);
-        //Andando com a borda inferior direita uma vez para baixo e para direita, é necessário compensar o paço anterior
-        rectToCut.setWidth(rectToCut.width()+2);
-        rectToCut.setHeight(rectToCut.height()+2);
+  // Verificar número de bandas
+  int bandCount = dataset->GetRasterCount();
 
-        // Criamos um newTargetSize para a nova escala com o aspécto do primeiro recorte
-        newTargetSize = rectToCut.size() * scale;
+  // Criar buffer para os dados da imagem
+  if (bandCount >= 3) {
+    // RGB ou RGBA - usar buffer ARGB
+    std::vector<uint8_t> buffer(validRect.width() * validRect.height() * 4, 0);
 
-        // Definimos o algoritmo de reamostragem
-        if (_useSmoothIn) {
-            extraArg.eResampleAlg = GRIORA_Lanczos;
-        } else {
-            extraArg.eResampleAlg = GRIORA_NearestNeighbour;
+    // Ler bandas R, G, B
+    CPLErr errR = dataset->GetRasterBand(1)->RasterIO(
+        GF_Read, validRect.x(), validRect.y(), validRect.width(),
+        validRect.height(), buffer.data() + 2, validRect.width(),
+        validRect.height(), GDT_Byte, 4, validRect.width() * 4);
+    CPLErr errG = dataset->GetRasterBand(2)->RasterIO(
+        GF_Read, validRect.x(), validRect.y(), validRect.width(),
+        validRect.height(), buffer.data() + 1, validRect.width(),
+        validRect.height(), GDT_Byte, 4, validRect.width() * 4);
+    CPLErr errB = dataset->GetRasterBand(3)->RasterIO(
+        GF_Read, validRect.x(), validRect.y(), validRect.width(),
+        validRect.height(), buffer.data(), validRect.width(),
+        validRect.height(), GDT_Byte, 4, validRect.width() * 4);
+
+    // Se tiver banda alpha
+    if (bandCount >= 4) {
+      CPLErr errA = dataset->GetRasterBand(4)->RasterIO(
+          GF_Read, validRect.x(), validRect.y(), validRect.width(),
+          validRect.height(), buffer.data() + 3, validRect.width(),
+          validRect.height(), GDT_Byte, 4, validRect.width() * 4);
+    } else {
+      // Preencher alpha com 255 (opaco) para os pixels válidos
+      for (int i = 3; i < validRect.width() * validRect.height() * 4; i += 4) {
+        buffer[i] = 255;
+      }
+    }
+
+    // Copiar dados válidos para a QImage na posição correta
+    for (int y = 0; y < validRect.height(); y++) {
+      const uint8_t* srcLine = buffer.data() + y * validRect.width() * 4;
+      uint8_t* dstLine = image.bits() + ((dstY + y) * rect.width() + dstX) * 4;
+      memcpy(dstLine, srcLine, validRect.width() * 4);
+    }
+  } else if (bandCount == 1) {
+    // Tons de cinza
+    std::vector<uint8_t> buffer(validRect.width() * validRect.height(), 0);
+    CPLErr err = dataset->GetRasterBand(1)->RasterIO(
+        GF_Read, validRect.x(), validRect.y(), validRect.width(),
+        validRect.height(), buffer.data(), validRect.width(),
+        validRect.height(), GDT_Byte, 0, 0);
+
+    // Converter para RGB e copiar para a posição correta
+    for (int y = 0; y < validRect.height(); y++) {
+      for (int x = 0; x < validRect.width(); x++) {
+        uint8_t gray = buffer[y * validRect.width() + x];
+        image.setPixel(dstX + x, dstY + y, qRgba(gray, gray, gray, 255));
+      }
+    }
+  }
+
+  return image;
+}
+
+GDALDataset* RasterResource::createPyramidLevel(GDALDataset* srcDataset,
+                                                int level) const {
+  if (!srcDataset) return nullptr;
+
+  int srcWidth = srcDataset->GetRasterXSize();
+  int srcHeight = srcDataset->GetRasterYSize();
+  int dstWidth = srcWidth / 2;
+  int dstHeight = srcHeight / 2;
+
+  if (dstWidth <= 0 || dstHeight <= 0) return nullptr;
+
+  // Criar dataset de destino
+  GDALDriver* driver = GetGDALDriverManager()->GetDriverByName("MEM");
+  GDALDataset* dstDataset = driver->Create(
+      "", dstWidth, dstHeight, srcDataset->GetRasterCount(), GDT_Byte, nullptr);
+
+  if (!dstDataset) return nullptr;
+
+  // Configurar transformação geográfica (se aplicável)
+  double geoTransform[6];
+  if (srcDataset->GetGeoTransform(geoTransform) == CE_None) {
+    geoTransform[1] *= 2.0;  // Ajustar escala X
+    geoTransform[5] *= 2.0;  // Ajustar escala Y
+    dstDataset->SetGeoTransform(geoTransform);
+  }
+
+  // Copiar metadados
+  dstDataset->SetMetadata(srcDataset->GetMetadata());
+
+  // Reduzir cada banda
+  for (int i = 1; i <= srcDataset->GetRasterCount(); i++) {
+    GDALRasterBand* srcBand = srcDataset->GetRasterBand(i);
+    GDALRasterBand* dstBand = dstDataset->GetRasterBand(i);
+
+    // Configurar banda de destino
+    dstBand->SetColorInterpretation(srcBand->GetColorInterpretation());
+
+    // Alocar buffer para dados da banda
+    std::vector<uint8_t> srcBuffer(srcWidth * srcHeight);
+    std::vector<uint8_t> dstBuffer(dstWidth * dstHeight);
+
+    // Ler dados da banda de origem
+    CPLErr err =
+        srcBand->RasterIO(GF_Read, 0, 0, srcWidth, srcHeight, srcBuffer.data(),
+                          srcWidth, srcHeight, GDT_Byte, 0, 0);
+
+    if (err != CE_None) continue;
+
+    // Reduzir imagem (média 2x2)
+    for (int y = 0; y < dstHeight; y++) {
+      for (int x = 0; x < dstWidth; x++) {
+        int srcX = x * 2;
+        int srcY = y * 2;
+
+        // Calcular média dos 4 pixels
+        int sum = 0;
+        int count = 0;
+
+        for (int dy = 0; dy < 2 && srcY + dy < srcHeight; dy++) {
+          for (int dx = 0; dx < 2 && srcX + dx < srcWidth; dx++) {
+            sum += srcBuffer[(srcY + dy) * srcWidth + (srcX + dx)];
+            count++;
+          }
         }
-    }
-    else
-    {
-        extraArg.eResampleAlg = GRIORA_Bilinear;
-    }
-    // Em bandas indexadas não há como usar outros algoritmos de resampling
-    if (_qtFormat == QImage::Format_Indexed8)
-        extraArg.eResampleAlg = GRIORA_NearestNeighbour;
 
-    // Getting source values to cut the image with gdal library
-    auto sl = rectToCut.left(); // source left
-    auto st = rectToCut.top(); // source top
-    auto sw = rectToCut.width(); // source width
-    auto sh = rectToCut.height(); // source height
-
-    // Overflow from image border on cut
-    auto rborder = sl + sw - _imageDim.width(); rborder = rborder > 0 ? rborder : 0;
-    auto bborder = st + sh - _imageDim.height(); bborder = bborder > 0 ? bborder : 0;
-    auto lborder = sl < 0 ? (-sl) : 0;
-    auto tborder = st < 0 ? (-st) : 0;
-
-    // source correction
-    sl += lborder;
-    st += tborder;
-    sw -= rborder + lborder;
-    sh -= bborder + tborder;
-
-    //qDebug() << "sh: "<< sh;
-    //qDebug() << "sw: "<< sw;
-    //qDebug() << "st: "<< st;
-    //qDebug() << "sl: "<< sl;
-
-    // target size of the widget to paint
-    auto tw = newTargetSize.width();  // target width
-    auto th = newTargetSize.height(); // target height
-
-    // target size update
-    tw -= scale*(lborder + rborder);
-    th -= scale*(tborder + bborder);
-
-    //qDebug() << "tw: "<< tw;
-    //qDebug() << "th: "<< th;
-
-    // Imagem colorida BIP (INTERLEAVE=PIXEL) => https://lists.osgeo.org/pipermail/gdal-dev/2011-July/029372.html
-    QImage* tmp = new QImage(QSize(tw,th), _qtFormat);
-    if (tmp->isNull())
-        return result;
-    tmp->fill(Qt::white);
-    _dataset->RasterIO( GF_Read, sl, st, sw, sh,
-                      tmp->bits(), tw, th, GDT_Byte,
-                      _nViewBands, _viewBands,
-                      tmp->depth()/8, tmp->bytesPerLine(), 1,
-                      &extraArg);
-
-    if (_qtFormat == QImage::Format_Indexed8) {
-        tmp->setColorTable(_cTable);
-        *tmp = tmp->convertToFormat(QImage::Format_RGBA8888);
+        dstBuffer[y * dstWidth + x] = count > 0 ? sum / count : 0;
+      }
     }
 
-    /* Questões conhecidas a serem revisadas */
-    /* Resolver imagem indexada 8 bits (estamos quase lá) */
-    /* Resolver MDS imagem float */
-    /* Resolver pan imagem 16 bits por canal */
-    /* Talvez seja necessário resolver entrelaçamentos do tipo BIL e BSQ */
+    // Escrever dados na banda de destino
+    dstBand->RasterIO(GF_Write, 0, 0, dstWidth, dstHeight, dstBuffer.data(),
+                      dstWidth, dstHeight, GDT_Byte, 0, 0);
+  }
 
-    // Gera cópia para retorno no tamanho da tela com bordas transparentes se necessário
-    QPoint topLeft(-scale*lborder,-scale*tborder);
-    QRect toTargetSize(topLeft,newTargetSize);
-    result = tmp->copy(toTargetSize);
-
-    // Nos casos de ampliação
-    if (scale > 1) {
-        // Ajustamos o recorte ao tamanho alvo para garantir a correta posição de centro do recorte (em sub pixels)
-        result = result.copy(QRect(((imageCut.topLeft() - QPointF(rectToCut.topLeft())) * scale).toPoint(), targetSize));
-    }
-
-    // Libera buffer e destroi imagem temporária
-    delete tmp;
-
-    return result;
-}
-
-QColor RasterResource::getColor(QPoint at)
-{
-    /* Revisar
-    if (_isValid && at.x() >= 0 && at.y() >= 0 && at.x() < width() -1 && at.y() < height() - 1)
-        return QColor(_pyramid[0]->pixel(at));
-    else
-        return QColor();
-    */
-}
-
-unsigned int RasterResource::getGrayColor(QPointF at, bool linear)
-{
-    /* Revisar
-    unsigned int result = 0;
-    if (_isValid && at.x() >= 0 && at.y() >= 0 && at.x() < width() -1 && at.y() < height() - 1)
-    {
-        if (linear)
-        {
-            // adicionar a parte linear aqui depois.
-        }
-        else result = qGray(_pyramid[0]->pixel((int)floor(at.x()),(int)floor(at.y())));
-    }
-    return result;
-    */
+  return dstDataset;
 }

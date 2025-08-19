@@ -1,4 +1,4 @@
-/*Copyright 2002-2023 e-foto team (UERJ)
+/*Copyright 2002-2025 e-foto team (UERJ)
   This file is part of e-foto.
 
         e-foto is free software: you can redistribute it and/or modify
@@ -20,10 +20,9 @@
 
 #include "ReportManager.h"
 
+#include <QtWidgets>
 #include <fstream>
 #include <sstream>
-
-#include <QtWidgets>
 
 #include "BundleAdjustment.h"
 #include "EFotoManager.h"
@@ -511,16 +510,13 @@ std::string ReportManager::eprAffineTransformation(
             for (unsigned int j = 0; j < fidMarks.size(); j++) {
               txt += "<fidMark>\n";
               QStringList gmlpos =
-                  QString::fromLocal8Bit(
-                      sensor->getAnaFidMarkAt(j).getGmlPos().c_str())
+                  QString::fromStdString(sensor->getAnaFidMarkAt(j).getGmlPos())
                       .split(" ");
               txt += "<fidMarkNo>" + Conversion::intToString(j + 1) +
                      "</fidMarkNo>\n";
-              txt += "<gmlX>" +
-                     std::string(gmlpos.at(0).toLocal8Bit().constData()) +
+              txt += "<gmlX>" + std::string(gmlpos.at(0).toUtf8().data()) +
                      "</gmlX>\n";
-              txt += "<gmlY>" +
-                     std::string(gmlpos.at(1).toLocal8Bit().constData()) +
+              txt += "<gmlY>" + std::string(gmlpos.at(1).toUtf8().data()) +
                      "</gmlY>\n";
               txt += "<lin>" +
                      Conversion::doubleToString(
