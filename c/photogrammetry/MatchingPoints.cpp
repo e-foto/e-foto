@@ -679,7 +679,7 @@ int MatchingPointsList::checkImagePairs(int left, int right, bool add)
     // If new, add it
     MPI.img1 = left;
     MPI.img2 = right;
-    MPI.Xf = 0.0; MPI.Xf = 0.0; MPI.Yi = 0.0; MPI.Yf = 0.0;
+    MPI.Xi = 0.0; MPI.Xf = 0.0; MPI.Yi = 0.0; MPI.Yf = 0.0;
     MPImagePairsList.push_back(MPI);
 
     return MPImagePairsList.size()-1;
