@@ -20,7 +20,6 @@
 #include <QAction>
 #include <QApplication>
 #include <QDebug>
-#include <QImage>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QString>

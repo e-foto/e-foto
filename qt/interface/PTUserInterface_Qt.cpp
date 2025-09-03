@@ -178,71 +178,6 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent,
 
 PTUserInterface_Qt::~PTUserInterface_Qt() {}
 
-/* Methods into disuse:
- *
-void PTUserInterface_Qt::makeTheSpell() // (GraphicWorkAround)
-{
-    SingleViewer* graphicResults = new SingleViewer(0);
-
-    // Passo 1: Para cada imagem do projeto com uma OE, carregue a imagem e
-converta em matrix gerando um deque de matrizes std::deque<Matrix*> imgs =
-getImageMatrixes();
-    //deque<Matrix> IOs = getImageIOs();
-    //deque<Matrix> EOs = getImageEOs();
-
-
-    // Passo 2: Repasse ao Manager o deque de imagens e um deque com as IOs e
-EOs atualizadas (somente Xa). Assinatura do método no manager: Matrix
-getFotoIndice(deque<Matrix*> imgs, deque<Matrix> IOs, deque<Matrix> EOs, int
-width, int height, Matrix& dim);
-    // Passo 3: Pegue a matrix resultante e carregue-a no visualizador.
-    //Matrix dim;
-    //graphicResults->loadImage(manager->getFotoIndice( imgs, IOs, EOs, 3000,
-1000, dim)); for (size_t i = 0; i < imgs.size(); i++) delete(imgs.at(i));
-
-    // Passo 4: Dê a métrica correta ao visualizador usando o resumo das
-dimensões da imagem de fotoindice
-    //graphicResults->setOrtoImageMode(dim.get(1,1) ,dim.get(2,1) ,dim.get(3,1)
-,dim.get(4,1));
-
-    graphicResults->show();
-}
-
-std::deque<Matrix*> PTUserInterface_Qt::getImageMatrixes() //
-(GraphicWorkAround).
-{
-    std::deque<Matrix*> result;
-
-    // Para cada imagem do projeto abra a imagem com um QImage e faça: Matrix*
-getImageMatrix(QImage img)
-    // Dai é só guardar cada ponteiro no deque e retornar.
-}
-
-Matrix* PTUserInterface_Qt::getImageMatrix(QImage img) // (GraphicWorkAround).
-// Aqui eu considero que isso vai apenas gerar imagens em tons de cinza para o
-fotoindice. Caso desejem fazer o fotoindice colorido, devido as restrições da
-classe matrix vamos ter de fazer um foto indice por canal e depois juntar os
-canais no final do processamento dos fotoindices.
-{
-    // Transforma a QImage em matrix num oposto direto ao que o Marcelo vem
-fazendo em suas classes. Matrix* mat = new Matrix(img.width(), img.height()); //
-Note que coluna vira linha e vice-versa. double pixel;
-
-    // Convert QImage to Matrix
-    for (int i = 0; i <= img.width(); i++)
-    {
-        for (int j = 0; j <= img.height(); j++)
-        {
-            // Isso está transpondo a imagem ao construir a matrix, ou seja,
-(x,y) vira (i,j). O valor em tons de cinza vai ser redimensionado para o espaço
-normalizado, entre 0 e 1. int c = qGray(img.pixel(i, j)); pixel =
-(double)c/255.0; mat->set(i, j, pixel);
-        }
-    }
-    return mat;
-}
-*/
-
 void PTUserInterface_Qt::init() {
   // qDebug("INIT");
   std::deque<std::string> images = ptManager->getStringImages();
@@ -527,8 +462,8 @@ void PTUserInterface_Qt::showReportXml() {
   QHBoxLayout *horizontalLayout = new QHBoxLayout();
   // qDebug("Vendo Report");
   QStringList oeHeaderLabels;
-  // omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois omega=03c9,
-  // phi=03c6	kappa=03ba
+  // omega, phi, kappa, X0, Y0, Z0;ÏÏÎº// ctrl+shift+u depois
+  // omega=03c9, phi=03c6	kappa=03ba
   oeHeaderLabels << "Image Id" << QString::fromUtf8("ω")
                  << QString::fromUtf8("φ") << QString::fromUtf8("κ") << "X0"
                  << "Y0" << "Z0";

@@ -16,13 +16,11 @@
 */
 #include "IOUserInterface_Qt.h"
 
-#include <qaction.h>
-#include <qapplication.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qvariant.h>
-
+#include <QAction>
+#include <QApplication>
+#include <QPixmap>
+#include <QString>
+#include <QVariant>
 #include <QActionGroup>
 #include <QPushButton>
 

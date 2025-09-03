@@ -303,8 +303,7 @@ QString ImageForm::loadImageFile() {
     int w = 0, h = 0;
     bool success = false;
     for (int i = 0; i < 100 && !success; i++) {
-      QImage img(fileImage);  // TODO: use RasterResource img(fileImage, false,
-                              // false, true); // true is load only metadata
+      RasterResource img(fileImage, false, false, true); // true is load only metadata
       w = img.width();
       h = img.height();
       if (w != 0 && h != 0) {

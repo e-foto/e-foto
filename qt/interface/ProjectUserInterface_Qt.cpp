@@ -432,6 +432,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart) {
     }
 
     if (!imagesMissing.empty()) {
+      // TODO: Review this message
       QString message = "Those images are missing:\n" +
                         QString::fromStdString(imagesMissing) + ".";
       QMessageBox *alertImages = new QMessageBox(
@@ -2389,7 +2390,7 @@ void ProjectUserInterface_Qt::importImagesBatch() {
       loading.setValue(i + 1);
     }
   } else {
-    QImage firstImage(importFilesName.at(0));
+    RasterResource firstImage(importFilesName.at(0),false,false,true); // true is load only metadata
     int imageWidth = firstImage.width();
     int imageHeight = firstImage.height();
 
@@ -2420,7 +2421,7 @@ void ProjectUserInterface_Qt::importImagesBatch() {
 std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
                                                  int dpi) {
   std::stringstream imageXml;
-  QImage image(fileName); //TODO: Use RasterResource image(fileName, false, false, true); // true is load only metadata
+  RasterResource image(fileName, false, false, true); // true is load only metadata
   std::filesystem::path project_path(manager->savedIn);
   std::filesystem::path relative_path = std::filesystem::relative(fileName.toStdString(), project_path);
 

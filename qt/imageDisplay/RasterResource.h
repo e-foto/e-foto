@@ -1,44 +1,54 @@
 #ifndef RASTERRESOURCE_H
 #define RASTERRESOURCE_H
 
-#include "CommonDef.h"
+#include <gdal_priv.h>
 
-#include <QString>
-#include <QImage>
 #include <QColor>
+#include <QImage>
+#include <QString>
 
-class RasterResource
-{
-protected:
-	QImage** _pyramid;
-	QSize _imageDim;
-	int _levels;
-	bool _isValid;
-	bool _useSmoothIn;
-	bool _useSmoothOut;
+#include "CommonDef.h"
+#include "Matrix.h"
 
-public:
-	RasterResource(QString filepath, bool withSmoothIn = false, bool withSmoothOut = true);
-	~RasterResource();
+#include <vector>
 
-        void emitLoadError(const QString& filepath = "");
-	bool load(QImage image);
-	bool load(QString filepath);
-	bool save(QString filepath, QString format);
+class RasterResource {
+ protected:
+  GDALDataset** _pyramid;
+  QSize _imageDim;
+  int _levels;
+  bool _isValid;
+  bool _useSmoothIn;
+  bool _useSmoothOut;
 
-	bool isValid();
-	int levels();
+  QImage gdalDatasetToQImage(GDALDataset* dataset,
+                             const QRect& rect = QRect()) const;
+  GDALDataset* createPyramidLevel(GDALDataset* srcDataset, int level) const;
 
-	int width();
-	int height();
-	QSize size();
-	QPointF center();
+ public:
+  RasterResource(QString filepath, bool withSmoothIn = false,
+                 bool withSmoothOut = true, bool metadataOnly = false);
+  ~RasterResource();
 
-	QImage getImageCut(QSize targetSize, QRectF imageCut);
-	QColor getColor(QPoint at);
-	unsigned int getGrayColor(QPointF at, bool linear = false);
-	void useSmoothIn(bool useSmooth);
-	void transformImage(double H[9]);
+  void emitLoadError(const QString& filepath = "");
+  bool load(QImage image);
+  bool load(std::vector<br::uerj::eng::efoto::Matrix> &image);
+  bool load(QString filepath, bool metadataOnly = false);
+  bool save(QString filepath, QString format);
+
+  bool isValid();
+  int levels();
+
+  int width();
+  int height();
+  QSize size();
+  QPointF center();
+
+  QImage getImageCut(QSize targetSize, QRectF imageCut);
+  QColor getColor(QPoint at);
+  unsigned int getGrayColor(QPoint at, bool linear = false);
+  void useSmoothIn(bool useSmooth);
+  void transformImage(double H[9]);
 };
 
-#endif // RASTERRESOURCE_H
+#endif  // RASTERRESOURCE_H
