@@ -16,12 +16,11 @@
 */
 #include "SPUserInterface_Qt.h"
 
-#include <qaction.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qvariant.h>
-
+#include <QAction>
+#include <QImage>
+#include <QPixmap>
+#include <QString>
+#include <QVariant>
 #include <QDebug>
 #include <QFileDialog>
 #include <QGuiApplication>
@@ -187,9 +186,9 @@ void SPUserInterface_Qt::closeEvent(QCloseEvent* e) {
 
   LoadingScreen::instance().show();
   qApp->processEvents();
-  // delete(myImageView);
+  viewer->getDisplay()->getLeftDisplay()->setStop(true);
+  viewer->getDisplay()->getRightDisplay()->setStop(true);
   manager->returnProject();
-  // viewer
   QWidget::closeEvent(e);
 }
 

@@ -42,6 +42,7 @@ SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
     _showDetailArea = false;
     _blockShowDetailArea = false;
     _onPainting = false;
+    _stopped = false;
     _over = NULL;
     _detail = NULL;
     setMinimumSize(150,150);
@@ -56,6 +57,7 @@ SingleDisplay::SingleDisplay(QWidget *parent, AbstractScene *currentScene):
 SingleDisplay::~SingleDisplay()
 {
 }
+
 void SingleDisplay::updateMousePosition()
 {
     _mouseLastPos = mapFromGlobal(QCursor::pos());
@@ -134,6 +136,13 @@ bool SingleDisplay::painting()
 {
     return _onPainting;
 }
+
+void SingleDisplay::setStop(bool status) {
+  _stopped = status;
+  if (_displayMode == IntermediatedScreen && _detail) _detail->setStop(status);
+  if (_displayMode == IntermediatedScreen && _over) _over->setStop(status);
+}
+
 
 bool SingleDisplay::showDetailedArea()
 {
@@ -288,6 +297,8 @@ void SingleDisplay::setActivatedTool(StereoTool *tool, bool active)
 
 void SingleDisplay::paintEvent(QPaintEvent *e)
 {
+    if (_stopped)
+      return;
     _onPainting = true;
     if (_displayMode == IntermediatedScreen)
     {
@@ -365,7 +376,7 @@ void SingleDisplay::paintEvent(QPaintEvent *e)
         painter.end();
     }
     if (!_currentScene || !_currentScene->isValid())
-        return;
+      return;
     for (int i = 0; i < _tool.size(); i++)
     {
         _tool.at(i)->paintEvent(*e);

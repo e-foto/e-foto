@@ -34,7 +34,7 @@ protected:
     bool _showDetailArea;
     bool _blockShowDetailArea;
     QPointF _mouseLastPos;
-    bool _onPainting;
+    bool _onPainting, _stopped;
 
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *);
@@ -62,6 +62,7 @@ public:
     QPointF getPosition(QPoint screenPosition);
     QPointF getMouseScreenPosition();
     bool painting();
+    void setStop(bool status);
 
     bool showDetailedArea();
     void setShowDetailedArea(bool status);
