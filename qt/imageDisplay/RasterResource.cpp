@@ -9,10 +9,6 @@
 
 #include "RasterResource.h"
 
-/* Avoid load images with QImage
- * Images are now loaded with GDAL and QImage is still used in the GUI features
- */
-
 RasterResource::RasterResource(QString filepath, bool withSmoothIn,
                                bool withSmoothOut, bool metadataOnly) {
   GDALAllRegister();  // Registrar todos os drivers GDAL

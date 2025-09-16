@@ -2601,7 +2601,7 @@ void ProjectUserInterface_Qt::loadLastProject() {
 }
 
 void ProjectUserInterface_Qt::updatePath() {
-  std::filesystem::path dir(".");
+  std::filesystem::path dir = std::filesystem::current_path();
   saveSettings("binPath", dir.string());
 }
 

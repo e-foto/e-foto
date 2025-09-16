@@ -340,7 +340,7 @@ bool ReportUserInterface_Qt::wait(QProcess& p, QString msg = tr("Error")) {
     QMessageBox::critical(this, msg, p.errorString());
     return false;
   }
-  QString status = p.readAllStandardError();
+  QString status = QString::fromLocal8Bit(p.readAllStandardError());
   if (!status.isEmpty()) {
     QMessageBox::critical(this, msg, status);
     return false;
