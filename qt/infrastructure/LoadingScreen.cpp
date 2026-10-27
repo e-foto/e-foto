@@ -24,7 +24,7 @@ LoadingScreen::LoadingScreen(QWidget *parent) :
 	ui->setupUi(this);
 	setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::CustomizeWindowHint);
 	//setWindowModality(Qt::ApplicationModal);
-	setWindowTitle("Loading...");
+	setWindowTitle(tr("Loading..."));
 	ui->progressBar->setMaximum(0);
 	ui->progressBar->setMinimum(0);
         QScreen *screen = QGuiApplication::primaryScreen();

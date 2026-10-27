@@ -19,6 +19,9 @@
 
 #include <QStackedWidget>
 
+class QAction;
+class QMenu;
+
 #include "CommonDef.h"
 #include "ControlButtons.h"
 #include "FlightForm.h"
@@ -78,6 +81,21 @@ class ProjectUserInterface_Qt : public QMainWindow,
   virtual bool confirmToClose();
   virtual void refreshMenu();
 
+ protected:
+  // Re-applies the translations to the form when a new translator is
+  // installed at runtime.
+  void changeEvent(QEvent* event) override;
+
+  // Keeps the project tree pointing at the item shown in a row of a form
+  // table (node 4 is "images", node 5 is "points"), without leaving the table.
+  void syncTreeToChild(int node, int row);
+
+ private:
+  void setupLanguageMenu();
+
+  QMenu* languageMenu = nullptr;
+  QAction* systemLanguageAction = nullptr;
+
  public:
   // Other Methods
   bool exec();
@@ -135,6 +153,9 @@ class ProjectUserInterface_Qt : public QMainWindow,
 
   virtual void selectImage(int);
   virtual void selectPoint(int);
+  // Opens the item of a row of the images / points form (double click / Enter).
+  virtual void openImage(int);
+  virtual void openPoint(int);
   virtual void enableForm();
   virtual void enableExecuteMenu(bool status);
   // Salvando cada view...

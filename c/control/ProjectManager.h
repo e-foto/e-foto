@@ -106,6 +106,25 @@ class ProjectManager {
    */
   bool saveFile(std::string filename);
   /**
+   * \brief Resolves and repairs the <filePath>/<fileName> pair of every image.
+   *
+   * Relative image paths are resolved against the directory of the project
+   * file (never against the working directory), so a project can be opened
+   * from any folder, and an absolute path is kept when the image lives on
+   * another drive than the project. Images that were moved together with the
+   * project are searched inside the project directory, and the stored path is
+   * rewritten so the next save keeps the project portable.
+   *
+   * \param missingImages Receives the file names of the images that could not
+   *        be found anywhere.
+   * \return The number of images whose stored path was updated.
+   */
+  int repairImagePaths(std::deque<std::string>& missingImages);
+  /**
+   * \brief Directory of the project file currently handled, in UTF-8.
+   */
+  std::string projectDirectory() const;
+  /**
    * \brief Método que retorna um inteiro informando que tipo de erro tem o
    * arquivo. \return  int Código de erro que tem o arquivo.
    */

@@ -7,6 +7,7 @@
 #include <QGuiApplication>
 #include <QPalette>
 #include <QStyleHints>
+#include "Language.h"
 #include "LoadingScreen.h"
 #include "EFotoManager.h"
 
@@ -27,6 +28,9 @@ int main(int argc, char **argv)
 {
   QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
   QApplication efoto(argc, argv);
+
+  // Install the interface translation (stored preference or system locale).
+  br::uerj::eng::efoto::Language::init();
 
   efoto.setStyle(QStyleFactory::create("Fusion"));
 
@@ -61,10 +65,13 @@ int main(int argc, char **argv)
   qApp->processEvents();
   br::uerj::eng::efoto::EFotoManager manager;
   manager.setInterfaceType("Qt");
-  if (argc == 2)
+  // Use Qt arguments instead of argv: on Windows argv is encoded with the local
+  // code page, so a project opened from the command line (or by drag and drop)
+  // whose path contains non ASCII characters would be unreadable.
+  const QStringList arguments = QCoreApplication::arguments();
+  if (arguments.size() == 2 && !arguments.at(1).isEmpty())
   {
-    ++argv;
-    manager.exec(*argv);
+    manager.exec(arguments.at(1).toUtf8().data());
   }
   else
   {

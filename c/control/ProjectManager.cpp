@@ -19,6 +19,7 @@ ProjectManager.cpp
 */
 #include "ProjectManager.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -28,6 +29,7 @@ ProjectManager.cpp
 #include "Flight.h"
 #include "Image.h"
 #include "InteriorOrientation.h"
+#include "PathUtils.h"
 #include "Project.h"
 #include "ProjectUserInterface_Qt.h"
 #include "SensorWithFiducialMarks.h"
@@ -93,16 +95,20 @@ bool ProjectManager::newProject(std::string filename) {
     xmlData += "<name></name>\n";
     xmlData += "<description></description>\n";
 
-    int i = filename.rfind('/');
+    // Split the path with the path layer: '/' is not the only separator on
+    // Windows, and both the folder and the file name may contain non ASCII or
+    // XML special characters.
+    PathUtils::setProjectFile(filename);
 
-    std::string filePath =
-        "<filePath>" + filename.substr(0, i) + "</filePath>\n";
-    std::string fileName =
-        "<fileName>" + filename.erase(0, i + 1) + "</fileName>\n";
+    const std::filesystem::path projectFile =
+        PathUtils::toPath(PathUtils::absolute(filename));
+    const std::string filePath = PathUtils::fromPath(projectFile.parent_path());
+    const std::string fileName = PathUtils::fromPath(projectFile.filename());
 
-    xmlData += fileName;
-    xmlData += filePath;
-
+    xmlData +=
+        "<fileName>" + PathUtils::xmlEscape(fileName) + "</fileName>\n";
+    xmlData +=
+        "<filePath>" + PathUtils::xmlEscape(filePath) + "</filePath>\n";
     xmlData += "<creation></creation>\n";
     xmlData += "<modification></modification>\n";
     xmlData += "<owner></owner>\n";
@@ -171,73 +177,165 @@ bool ProjectManager::saveProject()  //???
 }
 
 bool ProjectManager::loadFile(std::string filename) {
-  if (manager != NULL) {
-    std::stringstream myData;
-    std::ifstream myFile(filename);
-    if (updater != NULL) {
-      delete updater;
-      updater = NULL;
-    }
-    if (myFile.is_open()) {
-      std::string line;
-      while (!myFile.eof()) {
-        getline(myFile, line);
-        myData << line << std::endl;
-      }
-      myFile.close();
+  if (manager == NULL) return false;
 
-      std::string xmlData =
-          EDomElement(myData.str()).removeBlankLines(true).getContent();
-      updater = new XmlUpdater(xmlData);
-      if (updater->isUpdated()) {
-        xmlData = updater->getAllXml().getContent();
+  // Read through the path layer: std::ifstream would interpret the UTF-8
+  // bytes with the local code page and fail on any non ASCII folder name,
+  // and it cannot open paths longer than MAX_PATH.
+  std::string fileContents;
+  if (!PathUtils::readFile(filename, fileContents)) return false;
 
-        /* Paulo 6/3/12 : Se deu um update salva o arquivo automaticamente.*/
-        manager->xmlSetData(xmlData);
-        // saveFile(filename);
-      } else {
-        return false;
-      }
-      // Aqui deve entrar um codigo para validar o XML.
-      manager->xmlSetData(xmlData);
+  // Ignore a UTF-8 byte order mark, which some editors add on save.
+  if (fileContents.size() >= 3 &&
+      static_cast<unsigned char>(fileContents[0]) == 0xEF &&
+      static_cast<unsigned char>(fileContents[1]) == 0xBB &&
+      static_cast<unsigned char>(fileContents[2]) == 0xBF) {
+    fileContents.erase(0, 3);
+  }
 
-      if (treeModel != NULL) delete treeModel;
+  std::stringstream myData(fileContents);
 
-      treeModel =
-          new ETreeModel(EDomElement(xmlData)
-                             .elementByTagName("efotoPhotogrammetricProject")
-                             .getContent());
-      if (manager->getInterfaceType().compare("Qt") == 0) {
-        ProjectUserInterface_Qt* theInterface =
-            (ProjectUserInterface_Qt*)myInterface;
-        theInterface->saveSettings("lastProject", filename);
-      }
-      return true;
-    }
+  if (updater != NULL) {
+    delete updater;
+    updater = NULL;
+  }
+
+  std::string xmlData =
+      EDomElement(fileContents).removeBlankLines(true).getContent();
+  updater = new XmlUpdater(xmlData);
+  if (!updater->isUpdated()) {
     return false;
   }
 
-  return false;
+  xmlData = updater->getAllXml().getContent();
+
+  /* Paulo 6/3/12 : Se deu um update salva o arquivo automaticamente.*/
+  manager->xmlSetData(xmlData);
+  // saveFile(filename);
+
+  // Aqui deve entrar um codigo para validar o XML.
+
+  // From now on relative image paths are resolved against this project file.
+  PathUtils::setProjectFile(filename);
+
+  if (treeModel != NULL) delete treeModel;
+
+  treeModel = new ETreeModel(EDomElement(xmlData)
+                                 .elementByTagName("efotoPhotogrammetricProject")
+                                 .getContent());
+  if (manager->getInterfaceType().compare("Qt") == 0) {
+    ProjectUserInterface_Qt* theInterface =
+        (ProjectUserInterface_Qt*)myInterface;
+    theInterface->saveSettings("lastProject", PathUtils::absolute(filename));
+  }
+  return true;
 }
 
 bool ProjectManager::saveFile(std::string filename) {
-  if (manager != NULL) {
-    std::ofstream myFile(filename);
-    if (myFile.is_open()) {
-      EDomElement xml(manager->xmlGetData());
-      myFile << xml.removeBlankLines(true).indent('\t').getContent();
-      myFile.close();
-      if (manager->getInterfaceType().compare("Qt") == 0) {
-        ProjectUserInterface_Qt* theInterface =
-            (ProjectUserInterface_Qt*)myInterface;
-        theInterface->saveSettings("lastProject", filename);
-      }
-      return true;
-    } else
-      std::cout << "Unable to open file";
+  if (manager == NULL) return false;
+
+  EDomElement xml(manager->xmlGetData());
+  const std::string contents =
+      xml.removeBlankLines(true).indent('\t').getContent();
+
+  // std::ofstream would write to a path interpreted with the local code page.
+  if (!PathUtils::writeFile(filename, contents)) {
+    std::cout << "Unable to open file";
     return false;
   }
-  return false;
+
+  // Saving elsewhere ("Save as") moves the anchor used to resolve the
+  // relative image paths.
+  PathUtils::setProjectFile(filename);
+
+  if (manager->getInterfaceType().compare("Qt") == 0) {
+    ProjectUserInterface_Qt* theInterface =
+        (ProjectUserInterface_Qt*)myInterface;
+    theInterface->saveSettings("lastProject", PathUtils::absolute(filename));
+  }
+  return true;
+}
+
+std::string ProjectManager::projectDirectory() const {
+  return PathUtils::projectDirectory();
+}
+
+int ProjectManager::repairImagePaths(std::deque<std::string>& missingImages) {
+  missingImages.clear();
+  if (manager == NULL) return 0;
+
+  const std::string projectDir = PathUtils::projectDirectory();
+  EDomElement projectXml(manager->xmlGetData());
+  EDomElement imagesXml(projectXml.elementByTagName("images"));
+  std::deque<EDomElement> images = imagesXml.elementsByTagName("image");
+
+  int repaired = 0;
+  std::map<std::string, std::string> imageIndex;
+  bool imageIndexBuilt = false;
+
+  for (size_t i = 0; i < images.size(); i++) {
+    EDomElement image = images.at(i);
+    const std::string key = image.attribute("key");
+    const std::string storedPath = PathUtils::xmlUnescape(
+        PathUtils::trim(image.elementByTagName("filePath").toString()));
+    const std::string storedName = PathUtils::xmlUnescape(
+        PathUtils::trim(image.elementByTagName("fileName").toString()));
+
+    if (storedName.empty()) continue;
+
+    std::string resolved =
+        PathUtils::resolveImagePath(storedPath, storedName, projectDir);
+
+    if (!PathUtils::exists(resolved)) {
+      // The project folder was moved/copied: look for the image inside it,
+      // with a single directory walk shared by every missing image.
+      if (!imageIndexBuilt) {
+        imageIndex = PathUtils::indexFilesByName(projectDir);
+        imageIndexBuilt = true;
+      }
+      const auto found =
+          imageIndex.find(PathUtils::asciiLower(PathUtils::fileName(storedName)));
+      if (found != imageIndex.end()) resolved = found->second;
+    }
+
+    if (!PathUtils::exists(resolved)) {
+      missingImages.push_back(storedName);
+      continue;
+    }
+
+    // Store a portable relative path when possible, an absolute one when the
+    // image lives on another drive than the project.
+    std::string newPath = PathUtils::relativeOrAbsolute(
+        PathUtils::parentDirectory(resolved), projectDir);
+    if (newPath.empty()) newPath = ".";
+    const std::string newName = PathUtils::fileName(resolved);
+
+    const bool pathChanged =
+        PathUtils::normalizeSeparators(storedPath) !=
+        PathUtils::normalizeSeparators(newPath);
+    if (!pathChanged && storedName == newName) continue;
+
+    EDomElement fixedImage = image;
+    fixedImage.replaceChildByTagName(
+        "filePath",
+        "<filePath>" + PathUtils::xmlEscape(newPath) + "</filePath>");
+    fixedImage.replaceChildByTagName(
+        "fileName",
+        "<fileName>" + PathUtils::xmlEscape(newName) + "</fileName>");
+    projectXml.replaceChildByTagAtt("image", "key", key,
+                                    fixedImage.getContent());
+    repaired++;
+  }
+
+  if (repaired > 0) {
+    manager->xmlSetData(projectXml.getContent());
+    if (treeModel != NULL) delete treeModel;
+    treeModel = new ETreeModel(
+        projectXml.elementByTagName("efotoPhotogrammetricProject")
+            .getContent());
+    manager->setSavedState(false);
+  }
+  return repaired;
 }
 
 int ProjectManager::informFileVersionError() {
@@ -273,15 +371,39 @@ bool ProjectManager::removeComponent(std::string type, int id) {
     else if (type == "Image")
       newXml.replaceChildByTagAtt("image", "key", Conversion::intToString(id),
                                   "");
-    else if (type == "Point")
+    else if (type == "Point") {
       newXml.replaceChildByTagAtt("point", "key", Conversion::intToString(id),
                                   "");
-    else if (type == "IO")
+      // The phototriangulation and the spatial resections keep the keys of the
+      // points they used (<usedPoints><pointKey>..</pointKey>): a deleted point
+      // has to disappear from those lists too.
+      std::string data = newXml.getContent();
+      const std::string usedPoint =
+          "<pointKey>" + Conversion::intToString(id) + "</pointKey>";
+      for (std::string::size_type pos = data.find(usedPoint);
+           pos != std::string::npos; pos = data.find(usedPoint, pos))
+        data.erase(pos, usedPoint.length());
+      newXml.setContent(data);
+    } else if (type == "IO")
       newXml.replaceChildByTagAtt("imageIO", "image_key",
                                   Conversion::intToString(id), "");
     else if (type == "EO")
       newXml.replaceChildByTagAtt("imageEO", "image_key",
                                   Conversion::intToString(id), "");
+    if (type == "Image") {
+      // The interior/exterior orientations of an image are stored outside
+      // <image>: they have to go away with it, otherwise the project keeps
+      // records of an image that no longer exists. The same applies to the
+      // measurements of each point on that image.
+      newXml.replaceChildByTagAtt("imageIO", "image_key",
+                                  Conversion::intToString(id), "");
+      newXml.replaceChildByTagAtt("imageEO", "image_key",
+                                  Conversion::intToString(id), "");
+      newXml.replaceChildByTagAtt("imageSR", "image_key",
+                                  Conversion::intToString(id), "");
+      newXml.replaceChildByTagAtt("imageCoordinates", "image_key",
+                                  Conversion::intToString(id), "");
+    }
     manager->xmlSetData(newXml.getContent());
 
     if (treeModel != NULL) delete treeModel;
@@ -370,13 +492,15 @@ std::deque<int> ProjectManager::listImageKeys() {
 std::deque<std::string> ProjectManager::listImages() {
   std::deque<std::string> result;
   for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
-    result.push_back(treeModel->dataAt(4, i));
+    // The tree keeps the raw XML text, where '&' is stored as "&amp;".
+    result.push_back(PathUtils::xmlUnescape(treeModel->dataAt(4, i)));
   return result;
 }
 
 int ProjectManager::getImageId(std::string imageName) {
   for (unsigned int i = 0; i < treeModel->getChild(4).countChildren(); i++)
-    if (treeModel->dataAt(4, i) == imageName) return treeModel->idAt(4, i);
+    if (PathUtils::xmlUnescape(treeModel->dataAt(4, i)) == imageName)
+      return treeModel->idAt(4, i);
   return -1;
 }
 
@@ -572,10 +696,7 @@ bool ProjectManager::makeSPFile(std::string filename, int image1, int image2) {
 
     value += "End of data";
 
-    std::ofstream myFile(filename.c_str());
-    if (myFile.is_open()) {
-      myFile << value;
-      myFile.close();
+    if (PathUtils::writeFile(filename, value)) {
       return true;
     } else
       std::cout << "Unable to open file";

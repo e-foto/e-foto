@@ -93,171 +93,171 @@ void ReportUserInterface_Qt::newTree() {
 
   QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Select All");
+  item->setText(0, tr("Select All"));
   item->setExpanded(true);
   treeItems.push_back(item);
   QTreeWidgetItem* fatherTree = item;
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Header");
+  item->setText(0, tr("Header"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Terrain");
+  item->setText(0, tr("Terrain"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Sensors");
+  item->setText(0, tr("Sensors"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Flights");
+  item->setText(0, tr("Flights"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Images");
+  item->setText(0, tr("Images"));
   treeItems.push_back(item);
   QTreeWidgetItem* n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Metadata");
+  item->setText(0, tr("Metadata"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Orientation parameters");
+  item->setText(0, tr("Orientation parameters"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Points");
+  item->setText(0, tr("Points"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Coordinates in Object Space Frame");
+  item->setText(0, tr("Coordinates in Object Space Frame"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Coordinates in Image Space Frame");
+  item->setText(0, tr("Coordinates in Image Space Frame"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Affine Transformation");
+  item->setText(0, tr("Affine Transformation"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Initialization data");
+  item->setText(0, tr("Initialization data"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Quality data");
+  item->setText(0, tr("Quality data"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Spatial Resection");
+  item->setText(0, tr("Spatial Resection"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Initialization data");
+  item->setText(0, tr("Initialization data"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Quality data");
+  item->setText(0, tr("Quality data"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Values at each iteration");
+  item->setText(0, tr("Values at each iteration"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Photogrammetric Block");
+  item->setText(0, tr("Photogrammetric Block"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Initialization data");
+  item->setText(0, tr("Initialization data"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Values at each iteration");
+  item->setText(0, tr("Values at each iteration"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Interior Orientation");
+  item->setText(0, tr("Interior Orientation"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Xa");
+  item->setText(0, tr("Xa"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Matrix V");
+  item->setText(0, tr("Matrix V"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "SigmaXa");
+  item->setText(0, tr("SigmaXa"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Exterior Orientation");
+  item->setText(0, tr("Exterior Orientation"));
   treeItems.push_back(item);
   n1RootItem = item;
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "EO Type");
+  item->setText(0, tr("EO Type"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Number of Iterations for Convergence");
+  item->setText(0, tr("Number of Iterations for Convergence"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Xa");
+  item->setText(0, tr("Xa"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Matrix V");
+  item->setText(0, tr("Matrix V"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(n1RootItem);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "SigmaXa");
+  item->setText(0, tr("SigmaXa"));
   treeItems.push_back(item);
 
   item = new QTreeWidgetItem(fatherTree);
   item->setCheckState(0, Qt::Checked);
-  item->setText(0, "Stereo Pairs");
+  item->setText(0, tr("Stereo Pairs"));
 
   manager->checkTree(treeItems);
 

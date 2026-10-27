@@ -17,6 +17,7 @@
 #include "XMLProjectHeader.h"
 
 #include "EDom.h"
+#include "PathUtils.h"
 
 #include <sstream>
 
@@ -37,8 +38,8 @@ void XMLProjectHeader::xmlSetData(std::string xml)
 
 	setName(root.elementByTagName("name").toString());
 	setDescription(root.elementByTagName("description").toString());
-	setFilePath(root.elementByTagName("filePath").toString());
-	setFileName(root.elementByTagName("fileName").toString());
+	setFilePath(PathUtils::xmlUnescape(root.elementByTagName("filePath").toString()));
+	setFileName(PathUtils::xmlUnescape(root.elementByTagName("fileName").toString()));
 	setCreation(root.elementByTagName("creation").toString());
 	setModification(root.elementByTagName("modification").toString());
 	setOwner(root.elementByTagName("owner").toString());
@@ -52,8 +53,8 @@ std::string XMLProjectHeader::xmlGetData()
 	result << "<projectHeader>\n";
 	result << "<name>" << getName() << "</name>\n";
 	result << "<description>" << getDescription() << "</description>\n";
-	result << "<filePath>" << getFilePath() << "</filePath>\n";
-	result << "<fileName>" << getFileName() << "</fileName>\n";
+	result << "<filePath>" << PathUtils::xmlEscape(getFilePath()) << "</filePath>\n";
+	result << "<fileName>" << PathUtils::xmlEscape(getFileName()) << "</fileName>\n";
 	result << "<creation>" << getCreation() << "</creation>\n";
 	result << "<modification>" << getModification() << "</modification>\n";
 	result << "<owner>" << getOwner() << "</owner>\n";

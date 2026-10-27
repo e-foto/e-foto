@@ -983,7 +983,7 @@ int EFotoManager::getFreePointId() {
 void EFotoManager::execPTReport() {
   report_project.setXml(xmlData);
   //
-  QFileDialog salvar(0, "Save full PT report", ".", "*.txt");
+  QFileDialog salvar(0, QCoreApplication::translate("efoto-core", "Save full PT report"), ".", "*.txt");
   salvar.setAcceptMode(QFileDialog::AcceptSave);
   salvar.setDefaultSuffix("txt");
   if (salvar.exec()) {

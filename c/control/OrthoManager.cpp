@@ -20,6 +20,8 @@ OrthoManager.cpp
 
 #include "OrthoManager.h"
 
+#include <QCoreApplication>
+
 #include <sstream>
 
 #include "CommonDef.h"
@@ -31,6 +33,7 @@ OrthoManager.cpp
 #include "OrthoUserInterface.h"
 #include "OrthoUserInterface_Qt.h"
 #include "Orthorectification.h"
+#include "PathUtils.h"
 #include "Point.h"
 #include "ProjectiveRay.h"
 #include "Terrain.h"
@@ -94,7 +97,7 @@ bool OrthoManager::exec() {
 
   if (listAllImages.size() < 1) {
     OrthoUserInterface_Qt *oui = (OrthoUserInterface_Qt *)myInterface;
-    oui->showErrorMessage("There is no image to run this application");
+    oui->showErrorMessage(QCoreApplication::translate("efoto-core", "There is no image to run this application"));
     returnProject();
   }
 
@@ -106,8 +109,9 @@ void OrthoManager::addImagesToForm() {
 
   for (unsigned i = 1; i <= listAllImages.size(); i++)
     oui->comboBox->addItem(
-        "Image " +
-        QString::fromStdString(listAllImages.at(i - 1)->getImageId()));
+        QCoreApplication::translate("efoto-core", "Image %1")
+            .arg(QString::fromStdString(
+                listAllImages.at(i - 1)->getImageId())));
 }
 
 int OrthoManager::loadDemGrid(char *filename, int fileType) {
@@ -200,7 +204,7 @@ void OrthoManager::runAllOrthoTogether() {
     // Load image as matrix
     strimg = Conversion::intToString(curr_image + 1);
     oui->setCurrentWork("Loading image " + strimg);
-    filename = img->getFilepath() + "/" + img->getFilename();
+    filename = img->getAbsoluteFilePath();
     oui->loadImage(img_m, (char *)filename.c_str(), 1.0);
 
     //
@@ -322,7 +326,7 @@ void OrthoManager::runOrthoIndividual(int image) {
   // Load image as matrix
   //
   oui->setCurrentWork("Loading image " + strimg);
-  std::string filename = img->getFilepath() + "/" + img->getFilename();
+  std::string filename = img->getAbsoluteFilePath();
   Matrix img_matrix;
   oui->loadImage(img_matrix, (char *)filename.c_str(), 1.0);
 
@@ -537,7 +541,8 @@ void OrthoManager::setProgress(int progress) {
 void OrthoManager::addOrthoToXML(std::string filename) {
   std::stringstream add;
   add << "<eoiFilename>";
-  add << filename;
+  add << PathUtils::xmlEscape(PathUtils::relativeOrAbsolute(
+      filename, PathUtils::projectDirectory()));
   add << "</eoiFilename>";
 
   EDomElement newXml(manager->xmlGetData());

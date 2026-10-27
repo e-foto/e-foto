@@ -17,10 +17,10 @@
 #include "ImageForm.h"
 
 #include <QFileDialog>
-#include <filesystem>
 #include <sstream>
 
 #include "ImageViewers.h"
+#include "PathUtils.h"
 #include "ProjectUserInterface_Qt.h"
 #include "RasterResource.h"
 
@@ -82,25 +82,26 @@ void ImageForm::fillvalues(std::string values) {
   widthLine->setText(
       (QString::fromUtf8(
            ede.elementByTagAtt("width", "uom", "#px").toString().c_str()) +
-       " px"));
+       tr(" px")));
 
   heightLine->setText(
       (QString::fromUtf8(
            ede.elementByTagAtt("height", "uom", "#px").toString().c_str()) +
-       " px"));
+       tr(" px")));
 
-  fileNameLine->setText(
-      QString::fromUtf8(ede.elementByTagName("fileName").toString().c_str()));
+  const std::string storedName = PathUtils::xmlUnescape(
+      PathUtils::trim(ede.elementByTagName("fileName").toString()));
+  fileNameLine->setText(QString::fromStdString(storedName));
 
-  std::string auxString;
-  auxString = ede.elementByTagName("filePath").toString();
-
-  if (auxString == ".") {
-    auxString = "";
-  }
-
-  std::filesystem::path absolute_path = std::filesystem::absolute(auxString);
-  filePathLine->setText(QString::fromStdString(absolute_path.generic_string()));
+  // Show the folder where the image really is: <filePath> is relative to the
+  // project directory, and it may be an absolute path when the image lives on
+  // another drive or outside the project tree.
+  const std::string storedPath = PathUtils::xmlUnescape(
+      PathUtils::trim(ede.elementByTagName("filePath").toString()));
+  const std::string resolvedPath =
+      PathUtils::resolveImagePath(storedPath, storedName);
+  filePathLine->setText(
+      QString::fromStdString(PathUtils::parentDirectory(resolvedPath)));
 
   // flightIDSpin->setValue(
   // (QString::fromUtf8(ede.elementByTagName("flightId").toString().c_str())).toInt(&ok)
@@ -121,9 +122,9 @@ void ImageForm::fillvalues(std::string values) {
     eDoubleSpinBox_2->setValue(0);
     nDoubleSpinBox_2->setValue(0);
     hDoubleSpinBox_2->setValue(0);
-    eDoubleSpinBox_2->setSuffix(" m");
-    nDoubleSpinBox_2->setSuffix(" m");
-    hDoubleSpinBox_2->setSuffix(" m");
+    eDoubleSpinBox_2->setSuffix(tr(" m"));
+    nDoubleSpinBox_2->setSuffix(tr(" m"));
+    hDoubleSpinBox_2->setSuffix(tr(" m"));
     gnssSigmaController->fillValues("Not Available");
     activeGNSS = false;
   } else {
@@ -202,9 +203,16 @@ std::string ImageForm::getvalues() {
                    .toUtf8()
                    .data()
             << "</height>\n";
-  auxStream << "<fileName>" << fileNameLine->text().toUtf8().data()
+  // Store the path relative to the project directory whenever both share a
+  // root, and an absolute path otherwise (other drive, image far away).
+  std::string storedPath = PathUtils::relativeOrAbsolute(
+      filePathLine->text().toUtf8().data(), PathUtils::projectDirectory());
+  if (storedPath.empty()) storedPath = ".";
+
+  auxStream << "<fileName>"
+            << PathUtils::xmlEscape(fileNameLine->text().toUtf8().data())
             << "</fileName>\n";
-  auxStream << "<filePath>" << filePathLine->text().toUtf8().data()
+  auxStream << "<filePath>" << PathUtils::xmlEscape(storedPath)
             << "</filePath>\n";
   // auxStream << "<flightId>" << flightIDSpin->value() << "</flightId>\n";
   auxStream << "<resolution uom=\"#dpi\">" << resolutionSpin->value()
@@ -275,29 +283,23 @@ void ImageForm::setReadOnly(bool state) {
 }
 
 QString ImageForm::loadImageFile() {
-  QString fileImage = QFileDialog::getOpenFileName(this, "Open File", lastPath,
+  QString fileImage = QFileDialog::getOpenFileName(this, tr("Open File"), lastPath,
                                                    "*.tif *.png *.bmp *.jpg");
 
   if (!fileImage.isEmpty()) {
-    std::filesystem::path file_path(fileImage.toStdString());
-    std::filesystem::path project_path(proj->getSavedIn().toStdString());
-    std::filesystem::path parent_path = file_path.parent_path();
+    // Qt gives us the real file name here, independently of the local code
+    // page; keep it in UTF-8 from now on.
+    const std::string imagePath = fileImage.toUtf8().data();
+    const std::string fileName = PathUtils::fileName(imagePath);
+    const std::string imageId = PathUtils::stem(imagePath);
+    const std::string imageDirectory = PathUtils::parentDirectory(imagePath);
 
-    QString fileName = QString::fromStdString(file_path.filename().string());
-    QString sugestionID = QString::fromStdString(file_path.stem().string());
-    QString relativeFilePath;
-    if (project_path.empty()) {
-      relativeFilePath =
-          QString::fromStdString(parent_path.generic_string());
-    } else {
-      std::filesystem::path relative_path =
-          std::filesystem::relative(parent_path, project_path);
-      relativeFilePath = QString::fromStdString(relative_path.generic_string());
-    }
-
-    imageIDLine->setText(sugestionID);
-    fileNameLine->setText(fileName);
-    filePathLine->setText(relativeFilePath.isEmpty() ? "." : relativeFilePath);
+    imageIDLine->setText(QString::fromStdString(imageId));
+    fileNameLine->setText(QString::fromStdString(fileName));
+    // The form shows the absolute folder; getvalues() converts it back to a
+    // path relative to the project when the project is saved.
+    filePathLine->setText(QString::fromStdString(
+        PathUtils::absolute(imageDirectory, PathUtils::projectDirectory())));
     lastPath = filePathLine->text();
 
     int w = 0, h = 0;
@@ -314,13 +316,13 @@ QString ImageForm::loadImageFile() {
     // Handle image loading failure
     if (!success) {
       QMessageBox msgBox;
-      msgBox.setText("Error: The image loading process.");
+      msgBox.setText(tr("Error: The image loading process."));
       msgBox.exec();
     }
 
     // Update dimension lines
-    heightLine->setText(QString::number(h) + " px");
-    widthLine->setText(QString::number(w) + " px");
+    heightLine->setText(QString::number(h) + tr(" px"));
+    widthLine->setText(QString::number(w) + tr(" px"));
 
     return fileImage;
   }
@@ -335,25 +337,10 @@ void ImageForm::startSingleViewer() {
   sv->blockMark();
   sv->show();
 
-  QString path = filePathLine->text();
-  if (!path.isEmpty()) path = path + "/";
-
-  sv->loadImage(path + fileNameLine->text());
-
-  /*
-  SeparatedStereoViewer* v = new SeparatedStereoViewer(this);
-  v->show();
-  v->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
-  v->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
-
-  StereoViewer* s = new StereoViewer(this);
-  s->show();
-  s->loadLeftImage(filePathLine->text() + "/" + fileNameLine->text());
-  s->loadRightImage(filePathLine->text() + "/" + fileNameLine->text());
-  s->blockOpen();
-  s->blockSave();
-  //s->blockMark();
-  */
+  const std::string imagePath = PathUtils::join(
+      filePathLine->text().toUtf8().data(),
+      fileNameLine->text().toUtf8().data());
+  sv->loadImage(QString::fromStdString(imagePath));
 }
 
 void ImageForm::metadataVisibleChanged(QString newText) {
@@ -364,13 +351,11 @@ void ImageForm::metadataVisibleChanged(QString newText) {
 }
 
 std::string ImageForm::getFileImageName() {
-  std::filesystem::path file_path(fileImageName.toStdString());
-  return file_path.filename().string();
+  return PathUtils::fileName(fileImageName.toUtf8().data());
 }
 
 std::string ImageForm::getFileImagePath() {
-  std::filesystem::path file_path(fileImagePath.toStdString());
-  return file_path.generic_string();
+  return fileImagePath.toUtf8().data();
 }
 
 bool ImageForm::isForm(std::string formName) {
@@ -379,7 +364,7 @@ bool ImageForm::isForm(std::string formName) {
 
 void ImageForm::cleanForm() {
   imageIDLine->clear();
-  resolutionSpin->setSpecialValueText("N/A");
+  resolutionSpin->setSpecialValueText(tr("N/A"));
   flightIdComboBox->setCurrentIndex(0);
   // ground coordinates
   eDoubleSpinBox_2->clear();

@@ -25,7 +25,7 @@ FlightDirectionForm::FlightDirectionForm(QStringList comboBoxItens,QList<int> ne
 	connect(finishButton,SIGNAL(clicked()),this,SLOT(close()));
 
 	//connect(imagesFlightDirectionCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(updateItemCombo(int)));
-	setWindowTitle("Flight Direction");
+	setWindowTitle(tr("Flight Direction"));
 }
 
 FlightDirectionForm::FlightDirectionForm(QWidget *parent) : QWidget(parent)
@@ -40,7 +40,7 @@ FlightDirectionForm::FlightDirectionForm(QWidget *parent) : QWidget(parent)
 	connect(acceptAngleButton, SIGNAL(clicked()),this,SLOT(acceptValues()));
 	connect(finishButton,SIGNAL(clicked()),this,SLOT(close()));
 	//connect(imagesFlightDirectionCombo,SIGNAL((int)),this,SLOT(updateMarkedLabel(int)));
-	setWindowTitle("Flight Direction");
+	setWindowTitle(tr("Flight Direction"));
 }
 
 void FlightDirectionForm::acceptValues()

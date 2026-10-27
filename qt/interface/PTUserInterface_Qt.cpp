@@ -30,6 +30,7 @@
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
 #include "PTManager.h"
+#include "PathUtils.h"
 #include "SingleDisplay.h"
 #include "SingleTools.h"
 #include "WindowsSelectPage.h"
@@ -124,7 +125,7 @@ PTUserInterface_Qt::PTUserInterface_Qt(PTManager *manager, QWidget *parent,
   // tool->addAction(showFotoIndice);
   // connect(showFotoIndice, SIGNAL(triggered()), this, SLOT(makeTheSpell()));
 
-  setWindowTitle("E-foto - Phototriangulation");
+  setWindowTitle(tr("E-foto - Phototriangulation"));
 
   connect(actionView_Report, SIGNAL(triggered()), this, SLOT(viewReport()));
   connect(actionCalculateFotoTri, SIGNAL(triggered()), this,
@@ -576,7 +577,7 @@ void PTUserInterface_Qt::showSelectionWindow() {
     ids.chop(2);
     ids += ".";
     QMessageBox::warning(
-        selectionView, "Point taked out of evaluation",
+        selectionView, tr("Point taked out of evaluation"),
         QString("Points with less than 2 overlaps:\n%1").arg(ids));
   }
 
@@ -610,14 +611,14 @@ void PTUserInterface_Qt::showSelectionWindow() {
 
   buttonsLayout->addWidget(runButton);
   buttonsLayout->addWidget(cancelButton);
-  QLabel *iterationsLabel = new QLabel("Maximun iterations");
+  QLabel *iterationsLabel = new QLabel(tr("Maximun iterations"));
   QSpinBox *iterationsBox = new QSpinBox();
   iterationsBox->setValue(ptManager->getMaxIteration());
   iterationsBox->setRange(1, 99);
   iterationsBox->setAccelerated(true);
   iterationsBox->setAlignment(Qt::AlignCenter);
 
-  QLabel *metricConvergencyLabel = new QLabel("Metric Convergency");
+  QLabel *metricConvergencyLabel = new QLabel(tr("Metric Convergency"));
   QDoubleSpinBox *metricConvergencyBox = new QDoubleSpinBox();
   metricConvergencyBox->setDecimals(5);
   metricConvergencyBox->setRange(0.00001, 1.0);
@@ -626,7 +627,7 @@ void PTUserInterface_Qt::showSelectionWindow() {
   metricConvergencyBox->setAccelerated(true);
   metricConvergencyBox->setAlignment(Qt::AlignCenter);
 
-  QLabel *angularConvergencyLabel = new QLabel("Angular Convergency");
+  QLabel *angularConvergencyLabel = new QLabel(tr("Angular Convergency"));
   QDoubleSpinBox *angularConvergencyBox = new QDoubleSpinBox();
   angularConvergencyBox->setDecimals(5);
   angularConvergencyBox->setRange(0.00001, 1.0);
@@ -1282,24 +1283,14 @@ void PTUserInterface_Qt::exportCoordinates() {
       "margin-bottom:0px; margin-left:0px; margin-right:0px; "
       "-qt-block-indent:0; text-indent:0px;\">Choose system(s) to "
       "export</p></body></html>");
-  QLabel *lbl2 = new QLabel("File: ");
-  geodesicCheckBox = new QCheckBox("Geodesic", this);
-  topocentricCheckBox = new QCheckBox("Local Topocentric", this);
+  QLabel *lbl2 = new QLabel(tr("File: "));
+  geodesicCheckBox = new QCheckBox(tr("Geodesic"), this);
+  topocentricCheckBox = new QCheckBox(tr("Local Topocentric"), this);
   QLineEdit *fileLineEdit = new QLineEdit(this);
   QToolButton *fileChooseButton = new QToolButton(this);
   fileChooseButton->setText("...");
-  fileChooseButton->setToolTip(
-      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
-      "\"http://www.w3.org/TR/REC-html40/strict.dtd\"><html><head><meta "
-      "name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">p, li { "
-      "white-space: pre-wrap; }</style></head><body style=\" "
-      "font-family:'Ubuntu'; font-size:11pt; font-weight:400; "
-      "font-style:normal;\"><p align=\"center\" style=\" margin-top:0px; "
-      "margin-bottom:0px; margin-left:0px; margin-right:0px; "
-      "-qt-block-indent:0; text-indent:0px;\"><span style=\" "
-      "color:#000000;\">Choose file and path to txt "
-      "flie</span></p></body></html>");
-  QPushButton *exportButton = new QPushButton("Export");
+  fileChooseButton->setToolTip(tr("Choose file and path to txt file"));
+  QPushButton *exportButton = new QPushButton(tr("Export"));
 
   hl1->addWidget(geodesicCheckBox);
   hl1->addWidget(topocentricCheckBox);
@@ -1321,8 +1312,8 @@ void PTUserInterface_Qt::exportCoordinates() {
 // Created by Marcelo Teixiera Silveira
 void PTUserInterface_Qt::onReportButtonClicked() {
   if (!ptManager->hasEODone()) {
-    QMessageBox::warning(this, "Warning",
-                         "Please, calculate photo-triangulation first.");
+    QMessageBox::warning(this, tr("Warning"),
+                         tr("Please, calculate photo-triangulation first."));
     return;
   }
 
@@ -1599,9 +1590,9 @@ void PTUserInterface_Qt::addPoint() {
 void PTUserInterface_Qt::toggleInsertPointMode(bool insertionMode) {
   this->insertionMode = insertionMode;
   if (insertionMode)
-    insertPointInButton->setStatusTip("Insertion mode ON");
+    insertPointInButton->setStatusTip(tr("Insertion mode ON"));
   else
-    insertPointInButton->setStatusTip("Insertion mode OFF");
+    insertPointInButton->setStatusTip(tr("Insertion mode OFF"));
 }
 
 void PTUserInterface_Qt::replaceTo__(ETableWidget *imageTable) {
@@ -1670,7 +1661,7 @@ void PTUserInterface_Qt::undoMark() {
 // Created by Marcelo Teixiera Silveira
 int PTUserInterface_Qt::saveFtReport(char *filename) {
   // Open file to save
-  std::ofstream arq(filename);
+  PathUtils::OutputFileStream arq(filename);
   if (arq.fail()) {
     printf("Problems while saving ...\n");
     return 0;

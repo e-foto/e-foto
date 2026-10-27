@@ -16,6 +16,7 @@
 */
 
 #include "Orthorectification.h"
+#include "PathUtils.h"
 
 #include <iostream>
 #include <fstream>
@@ -139,9 +140,16 @@ void Orthorectification::loadOrtho(char * filename/*, int mode*/)
 
 void Orthorectification::saveOrthoEfoto(char * filename) const
 {
-    FILE *fp;
+    if (filename == nullptr) return;
 
-    fp = fopen(filename,"wb");
+    // fopen() is not encoding aware: the file would silently not be created
+    // for a path such as ".../orto/图像.ortho".
+    FILE *fp = PathUtils::openFile(filename, "wb");
+    if (fp == nullptr)
+    {
+        fprintf(stderr, "It was not possible to create the orthoimage: %s\n", filename);
+        return;
+    }
 
     // Write header
     double header[13];
@@ -177,7 +185,10 @@ void Orthorectification::saveOrthoEfoto(char * filename) const
         }
     }
 
-    fwrite(data, 1, dem_size_bytes, fp);
+    if (fwrite(data, 1, dem_size_bytes, fp) != dem_size_bytes)
+    {
+        fprintf(stderr, "Error while writing the orthoimage: %s\n", filename);
+    }
 
     fclose(fp);
 
@@ -188,7 +199,11 @@ void Orthorectification::loadOrthoEfoto(char * filename)
 {
     FILE *fp;
 
-    fp = fopen(filename,"rb");
+    fp = PathUtils::openFile(filename, "rb");
+    if (fp == nullptr)
+    {
+        throw std::runtime_error( "It was not possible to open the orthoimage" );
+    }
 
     // Read header
     double header[13];

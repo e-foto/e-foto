@@ -28,6 +28,7 @@
 #include "SpatialRessection.h"
 #include "SRUserInterface_Qt.h"
 #include "Flight.h"
+#include "PathUtils.h"
 
 #include <fstream>
 
@@ -415,7 +416,6 @@ bool SRManager::save(std::string path)
 {
     if (started)
     {
-        FILE* pFile;
         std::string output = "IO state data for Image " + Conversion::intToString(myImage->getId()) + "\n\n";
 
         output += mySensor->xmlGetData();
@@ -437,11 +437,9 @@ bool SRManager::save(std::string path)
         EDomElement e(output);
         output = e.indent('\t').getContent();
 
-        const char* buffer = output.c_str();
-        pFile = fopen (path.c_str(), "wb");
-        fwrite (buffer, 1, output.length(), pFile);
-        fclose (pFile);
-        return true;
+        // writeFile uses the wide API on Windows: fopen() would not create
+        // the file when the path contains non-ASCII characters.
+        return PathUtils::writeFile(path, output);
     }
     return false;
 }
@@ -450,27 +448,14 @@ bool SRManager::load(std::string path)
 {
     if (started)
     {
-        FILE* pFile;
-        long lSize;
-        char* buffer;
-        size_t result;
+        std::string contents;
+        if (!PathUtils::readFile(path, contents))
+        {
+            fprintf(stderr, "It was not possible to read the SR state file: %s\n", path.c_str());
+            return false;
+        }
 
-        pFile = fopen (path.c_str(), "rb");
-        if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
-
-        fseek (pFile , 0 , SEEK_END);
-        lSize = ftell (pFile);
-        rewind (pFile);
-
-        buffer = (char*) malloc (sizeof(char)*lSize);
-        if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
-
-        result = fread (buffer,1,lSize,pFile);
-        if (result != size_t(lSize)) {fputs ("Reading error",stderr); exit (3);}
-
-
-        std::string strxml(buffer);
-        EDomElement xml(strxml);
+        EDomElement xml(contents);
 
         mySensor->xmlSetData(xml.elementByTagName("Sensor").getContent());
         myFlight->xmlSetData(xml.elementByTagName("Flight").getContent());
@@ -484,24 +469,16 @@ bool SRManager::load(std::string path)
 
         }
 
-        fclose (pFile);
-        free (buffer);
+        return true;
     }
     return false;
 }
 
 std::string SRManager::getImageFile()
 {
-    if (myImage->getFilepath() == ".")
-        return myImage->getFilename();
-    else
-    {
-        std::string result = "";
-        result += myImage->getFilepath();
-        result += "/";
-        result += myImage->getFilename();
-        return result;
-    }
+    // Absolute path, resolved against the project directory: it must not
+    // depend on the working directory nor on the drive the image lives in.
+    return myImage->getAbsoluteFilePath();
 }
 
 void SRManager::acceptSR()

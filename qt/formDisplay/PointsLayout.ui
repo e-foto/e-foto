@@ -120,9 +120,12 @@ p, li { white-space: pre-wrap; }
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="exportToTxtButton">
+      <widget class="QLabel" name="hintLabel">
+       <property name="styleSheet">
+        <string notr="true">color: gray;</string>
+       </property>
        <property name="text">
-        <string>Export to Txt</string>
+        <string>Click a point to select it, double-click to open it.</string>
        </property>
       </widget>
      </item>
@@ -138,6 +141,13 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportToTxtButton">
+       <property name="text">
+        <string>Export to Txt</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="importButton">

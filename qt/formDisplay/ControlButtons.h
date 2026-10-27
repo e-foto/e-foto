@@ -37,6 +37,15 @@ public:
 
 	ControlButtons();
 
+	/**
+ * \brief Habilita/desabilita o botao de apagar
+ * \param state : verdadeiro para permitir apagar o item selecionado
+ *
+ * O botao nasce desabilitado. Somente as telas que realmente apagam alguma
+ * coisa (por exemplo a lista de imagens) devem habilita-lo.
+ */
+	void setDeleteEnabled(bool state);
+
 public slots:
 	virtual void toSimpleMode();
 	virtual void toSingleMode();

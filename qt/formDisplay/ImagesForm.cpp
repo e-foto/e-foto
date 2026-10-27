@@ -17,11 +17,13 @@
 
 #include "ImagesForm.h"
 
+#include <QAbstractItemView>
+#include <QItemSelectionModel>
 #include <QPicture>
-#include <filesystem>
 #include <sstream>
 
 #include "EDom.h"
+#include "PathUtils.h"
 namespace br {
 namespace uerj {
 namespace eng {
@@ -31,10 +33,17 @@ ImagesForm ::ImagesForm(QWidget *parent) : AbstractForm(parent) {
   setupUi(this);
   connect(imagesTable, SIGNAL(cellClicked(int, int)), this,
           SLOT(emitSignal(int)));
+  connect(imagesTable, SIGNAL(cellActivated(int, int)), this,
+          SLOT(emitActivated(int)));
   imagesTable->setColumnHidden(0, true);
   imagesTable->setColumnWidth(1, 80);
   imagesTable->setColumnWidth(2, 30);
   imagesTable->setColumnWidth(3, 30);
+  // A single click selects a whole row (so the row can be deleted from the
+  // project). Opening the image is a separate gesture handled by
+  // cellActivated (double click or Enter), see below.
+  imagesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+  imagesTable->setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 void ImagesForm::fillvalues(std::string values) {
@@ -44,26 +53,24 @@ void ImagesForm::fillvalues(std::string values) {
 
   std::deque<EDomElement> imaChildren = ede.children();
   for (int i = 0; i < rows; i++) {
-    std::string tableParameter;
-    std::stringstream auxStream;
+    EDomElement image = imaChildren.at(i);
 
-    auxStream
-        << imaChildren.at(i).elementByTagName("filePath").toString().c_str();
-    auxStream << "/";
-    auxStream
-        << imaChildren.at(i).elementByTagName("fileName").toString().c_str();
+    // Resolve <filePath>/<fileName> against the project directory and show the
+    // real location: it does not depend on the working directory, on the drive
+    // the image lives in or on the local code page.
+    const std::string filePath = PathUtils::xmlUnescape(
+        PathUtils::trim(image.elementByTagName("filePath").toString()));
+    const std::string fileName = PathUtils::xmlUnescape(
+        PathUtils::trim(image.elementByTagName("fileName").toString()));
+    const std::string imagePath =
+        PathUtils::resolveImagePath(filePath, fileName);
 
-    tableParameter = auxStream.str();
-
-    std::filesystem::path absolute_path =
-        std::filesystem::absolute(tableParameter);
-
-    QTableWidgetItem *keyItem = new QTableWidgetItem(
-        QString::fromUtf8(imaChildren.at(i).attribute("key").c_str()));
-    QTableWidgetItem *idItem = new QTableWidgetItem(
-        imaChildren.at(i).elementByTagName("imageId").toString().c_str());
+    QTableWidgetItem *keyItem =
+        new QTableWidgetItem(QString::fromStdString(image.attribute("key")));
+    QTableWidgetItem *idItem = new QTableWidgetItem(QString::fromStdString(
+        image.elementByTagName("imageId").toString()));
     QTableWidgetItem *fileItem =
-        new QTableWidgetItem(QString::fromStdString(absolute_path.generic_string()));
+        new QTableWidgetItem(QString::fromStdString(imagePath));
     keyItem->setTextAlignment(Qt::AlignCenter);
     idItem->setTextAlignment(Qt::AlignCenter);
 
@@ -96,6 +103,40 @@ void ImagesForm ::emitSignal(int i) {
   //  Provisóriamente nós enviamos a posição da linha clicada e não a key
   //  efetivamente.
   emit clicked(i);
+}
+
+void ImagesForm ::emitActivated(int i) { emit activated(i); }
+
+int ImagesForm::keyAtRow(int row) const {
+  if (row < 0 || row >= imagesTable->rowCount()) return -1;
+  const QTableWidgetItem *keyItem = imagesTable->item(row, 0);
+  if (keyItem == nullptr) return -1;
+  return keyItem->text().toInt();
+}
+
+int ImagesForm::rowOfKey(int key) const {
+  for (int row = 0; row < imagesTable->rowCount(); row++)
+    if (keyAtRow(row) == key) return row;
+  return -1;
+}
+
+int ImagesForm::selectedRow() const {
+  if (imagesTable->selectionModel() == nullptr) return -1;
+  const QModelIndexList rows = imagesTable->selectionModel()->selectedRows();
+  if (rows.isEmpty()) return -1;
+  return rows.first().row();
+}
+
+int ImagesForm::selectedKey() const { return keyAtRow(selectedRow()); }
+
+void ImagesForm::setSelectedRow(int row) {
+  if (row < 0 || row >= imagesTable->rowCount()) {
+    imagesTable->clearSelection();
+    imagesTable->setCurrentIndex(QModelIndex());
+    return;
+  }
+  imagesTable->selectRow(row);
+  imagesTable->setCurrentCell(row, 1);
 }
 
 bool ImagesForm::isForm(std::string formName) {

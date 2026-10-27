@@ -18,6 +18,7 @@
 #include "DemGrid.h"
 #include "DEMManager.h"
 #include "MatchingPointsGrid.h"
+#include "PathUtils.h"
 
 #include <sstream>
 #include <iomanip>
@@ -839,9 +840,16 @@ void DemGrid::loadDem(char * filename, int mode)
 
 void DemGrid::saveDemEfoto(char * filename)
 {
-    FILE *fp;
+    if (filename == nullptr) return;
 
-    fp = fopen(filename,"wb");
+    // fopen() reads the bytes as the local code page: a DSM written to a
+    // directory with a Chinese name would never reach the disk.
+    FILE *fp = PathUtils::openFile(filename, "wb");
+    if (fp == nullptr)
+    {
+        fprintf(stderr, "It was not possible to create the DSM file: %s\n", filename);
+        return;
+    }
 
     // Write header
     double header[8];
@@ -870,7 +878,10 @@ void DemGrid::saveDemEfoto(char * filename)
         }
     }
 
-    fwrite(data, 1, file_size*8, fp);
+    if (fwrite(data, 1, file_size*8, fp) != size_t(file_size)*8)
+    {
+        fprintf(stderr, "Error while writing the DSM file: %s\n", filename);
+    }
 
     fclose(fp);
 
@@ -879,8 +890,7 @@ void DemGrid::saveDemEfoto(char * filename)
 
 void DemGrid::loadDemEfoto(char * filename)
 {
-    std::ifstream fp;
-    fp.open(filename,std::ios::binary);
+    PathUtils::InputFileStream fp(filename, true);
     if (!fp)
         return;
 
@@ -921,7 +931,12 @@ void DemGrid::loadDemEfoto(char * filename)
 
 void DemGrid::saveDemAscii(char * filename)
 {
-    std::ofstream outfile(filename);
+    PathUtils::OutputFileStream outfile(filename);
+    if (!outfile.isOpen())
+    {
+        fprintf(stderr, "It was not possible to create the DSM file: %s\n", filename);
+        return;
+    }
 
     // Write header
     outfile << "-= EFOTO DSM GRID DATA =-\n\n";
@@ -948,7 +963,7 @@ void DemGrid::saveDemAscii(char * filename)
 }
 
 // For later conversion to stream
-double DemGrid::getAsciiParameter(std::ifstream *file, std::string tag)
+double DemGrid::getAsciiParameter(std::istream *file, std::string tag)
 {
     char line[256];
     std::string sline;
@@ -974,7 +989,7 @@ double DemGrid::getAsciiParameter(std::ifstream *file, std::string tag)
 
 void DemGrid::loadDemAscii(char * filename)
 {
-    std::ifstream arq(filename);
+    PathUtils::InputFileStream arq(filename);
     if (arq.fail())
     {
         throw "Error while opening file!\n";

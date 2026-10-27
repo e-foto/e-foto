@@ -34,6 +34,7 @@
 #include "ImageViewers.h"
 #include "OrthoManager.h"
 #include "Orthorectification.h"
+#include "PathUtils.h"
 #include "SingleDisplay.h"
 #include "SingleTools.h"
 
@@ -184,7 +185,7 @@ bool OrthoUserInterface_Qt::exec() {
 void OrthoUserInterface_Qt::onAbortClicked() {
   // Abort clicked
   manager->setFlagCancel();
-  workLabel->setText("Canceled");
+  workLabel->setText(tr("Canceled"));
   progressBar->setValue(0);
   enableOptions();
 }
@@ -215,7 +216,7 @@ void OrthoUserInterface_Qt::onLoadDemClicked() {
 
   // Report error
   if (!dem_load_flag) {
-    QMessageBox::critical(this, "Error", "Invalid DSM file format.");
+    QMessageBox::critical(this, tr("Error"), tr("Invalid DSM file format."));
     return;
   }
 }
@@ -253,7 +254,7 @@ void OrthoUserInterface_Qt::makeEfotoOrthoImage() {
   // Ortho clicked
 
   if (!dem_load_flag) {
-    QMessageBox::critical(this, "Error", "Please, load a DSM first.");
+    QMessageBox::critical(this, tr("Error"), tr("Please, load a DSM first."));
     return;
   }
 
@@ -290,7 +291,7 @@ void OrthoUserInterface_Qt::makeGeotiffOrthoImage() {
   // Ortho clicked
 
   if (!dem_load_flag) {
-    QMessageBox::critical(this, "Error", "Please, load a DSM first.");
+    QMessageBox::critical(this, tr("Error"), tr("Please, load a DSM first."));
     return;
   }
 
@@ -458,7 +459,7 @@ void OrthoUserInterface_Qt::showImage3D(Matrix *image, double xi, double dx,
 }
 
 void OrthoUserInterface_Qt::showErrorMessage(QString msg) {
-  QMessageBox::critical(this, "Error", msg);
+  QMessageBox::critical(this, tr("Error"), msg);
   doneButton->click();
 }
 
@@ -521,8 +522,8 @@ void OrthoQualityUserInterface_Qt::imageClicked(QPointF p) {
   int num_points = tableWidget->rowCount() - 2;
 
   if ((sel_row < 0) || (sel_row >= num_points)) {
-    QMessageBox::warning(this, "Warning",
-                         "There is no selected point to measure");
+    QMessageBox::warning(this, tr("Warning"),
+                         tr("There is no selected point to measure"));
     return;
   }
 
@@ -643,9 +644,14 @@ void OrthoQualityUserInterface_Qt::saveQuality() {
     int i = filename.lastIndexOf("/");
     lastDir = filename.left(i);
 
-    std::ofstream outfile(filename.toUtf8().data());
+    PathUtils::OutputFileStream outfile(filename.toStdString());
 
-    if (outfile.fail()) return;
+    if (!outfile.isOpen()) {
+      QMessageBox::critical(
+          this, tr("Save error"),
+          tr("It was not possible to create the file:\n%1").arg(filename));
+      return;
+    }
 
     outfile << std::setprecision(5);
 
@@ -770,7 +776,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename) {
   // X2 Y2 Z2
   // ...
 
-  std::ifstream arq(filename);
+  PathUtils::InputFileStream arq(filename);
 
   if (arq.fail()) return 0;
 
@@ -816,7 +822,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromTxt(char *filename) {
 int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename) {
   // Open ortho-imae quality file
 
-  std::ifstream arq(filename);
+  PathUtils::InputFileStream arq(filename);
 
   if (arq.fail()) return 0;
 
@@ -831,7 +837,7 @@ int OrthoQualityUserInterface_Qt::loadPointsFromQuality(char *filename) {
   tag = tag.substr(0, 9);
   if (tag.compare("Terrain X") != 0) {
     QMessageBox::critical(
-        this, "Error", "Error: this file is not a ortho-image quality file.");
+        this, tr("Error"), tr("Error: this file is not a ortho-image quality file."));
     return 0;
   }
 
@@ -890,10 +896,10 @@ void OrthoQualityUserInterface_Qt::addTableEnding(int tab_pos) {
 
   // Add average and standard deviation rows
   tableWidget->insertRow(tab_pos);
-  newItem = new QTableWidgetItem("Average");
+  newItem = new QTableWidgetItem(tr("Average"));
   tableWidget->setItem(tab_pos, 3, newItem);
   tableWidget->insertRow(tab_pos + 1);
-  newItem = new QTableWidgetItem("Std dev");
+  newItem = new QTableWidgetItem(tr("Std dev"));
   tableWidget->setItem(tab_pos + 1, 3, newItem);
 
   // Add empty values

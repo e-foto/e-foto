@@ -30,6 +30,7 @@
 * @version 1.0 - Marcelo Teixeira Silveira
 */
 
+#include <istream>
 #include <string>
 #include "MatchingPoints.h"
 #include "Matrix.h"
@@ -91,7 +92,7 @@ private:
     void saveDemEfoto(char *);
     void loadDemEfoto(char *);
     void saveDemAscii(char *);
-    double getAsciiParameter(std::ifstream *, std::string);
+    double getAsciiParameter(std::istream *, std::string);
     void loadDemAscii(char *);
     DEMManager* manager;
 

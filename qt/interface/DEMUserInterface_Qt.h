@@ -88,7 +88,7 @@ public:
     void loadImage(Matrix & I, char *filename, double sample=1.0);
     int saveImage(char *filename, Matrix *I);
     void addImagePair(char *);
-    void setStatus(char *);
+    void setStatus(const QString &);
     void setAutoExtInfo(int, int , double, double);
     void setManualExtInfo(int, double, double);
     void updateSeedsLabel(int nseeds);

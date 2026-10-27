@@ -20,6 +20,8 @@ SPManager.cpp
 **************************************************************************/
 
 #include "SPManager.h"
+
+#include <QCoreApplication>
 #include "EFotoManager.h"
 #include "SPUserInterface_Qt.h"
 #include "ProjectiveRay.h"
@@ -31,6 +33,7 @@ SPManager.cpp
 #include "Terrain.h"
 #include "Image.h"
 #include "Flight.h"
+#include "PathUtils.h"
 
 #include <sstream>
 
@@ -100,7 +103,7 @@ bool SPManager::exec()
             if (listAllImages.size() < 2)
             {
                 SPUserInterface_Qt *spui = (SPUserInterface_Qt *)myInterface;
-                spui->showErrorMessage("There are no enough images to run this application");
+                spui->showErrorMessage(QCoreApplication::translate("efoto-core", "There are no enough images to run this application"));
                 returnProject();
             }
 
@@ -110,7 +113,7 @@ bool SPManager::exec()
             if (!getPairs())
             {
                 SPUserInterface_Qt *spui = (SPUserInterface_Qt *)myInterface;
-                spui->showErrorMessage("Could not find any pair. Please, check your Exterior Orientation.");
+                spui->showErrorMessage(QCoreApplication::translate("efoto-core", "Could not find any pair. Please, check your Exterior Orientation."));
                 returnProject();
                 //return status;
             }
@@ -323,11 +326,7 @@ void SPManager::computeIntersection(double xl, double yl, double xr, double yr, 
 std::string SPManager::getFullImagePath(int imagekey)
 {
     Image* img = listAllImages.at(imagekey-1);
-    std::string result;
-    result.append(img->getFilepath());
-    result.append("/");
-    result.append(img->getFilename());
-    return result;
+    return img->getAbsoluteFilePath();
 }
 
 /*
@@ -697,7 +696,7 @@ void SPManager::addGeometryToXML(std::string filename)
 {
     std::stringstream add;
     add << "<featuresFilename>";
-    add << filename;
+    add << PathUtils::xmlEscape(PathUtils::relativeOrAbsolute(filename, PathUtils::projectDirectory()));
     add << "</featuresFilename>";
 
     EDomElement newXml(manager->xmlGetData());

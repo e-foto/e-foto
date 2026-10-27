@@ -18,8 +18,10 @@
 #include "EDom.h"
 
 #include "PointsForm.h"
+#include <QAbstractItemView>
 #include <QFileDialog>
 #include <QFile>
+#include <QItemSelectionModel>
 #include <QString>
 
 #include <sstream>
@@ -33,8 +35,14 @@ PointsForm :: PointsForm(QWidget *parent) : AbstractForm(parent)
 {
     setupUi(this);
     connect( pointsTable, SIGNAL( cellClicked(int,int)), this , SLOT( emitSignal(int) ) );
+    connect( pointsTable, SIGNAL( cellActivated(int,int)), this , SLOT( emitActivated(int) ) );
     pointsTable->setColumnHidden(0,true);
     pointsTable->setHorizontalHeaderLabels(QString("key;Point Id;Type;E;N;H").split(";"));
+    // A single click selects a whole row (so the row can be deleted from the
+    // project). Opening the point is a separate gesture, handled by
+    // cellActivated (double click or Enter), see below.
+    pointsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    pointsTable->setSelectionMode(QAbstractItemView::SingleSelection);
 
     //connect(importButton, SIGNAL(clicked()), this ,SLOT(importFromTxt()));
 }
@@ -55,18 +63,27 @@ void PointsForm::fillvalues(std::string values)
         QTableWidgetItem *keyItem = new QTableWidgetItem( QString::fromUtf8 (pntChildrens.at(i).attribute("key").c_str()) );
         QTableWidgetItem *gcpItem = new QTableWidgetItem(pntChildrens.at(i).elementByTagName("pointId").toString().c_str()) ;
         QTableWidgetItem *typeItem = new QTableWidgetItem(pntChildrens.at(i).attribute("type").c_str()) ;
+        // Key, id and type are shown even while the point has no coordinates
+        // yet: without the key the row could not be selected nor deleted.
+        pointsTable->setItem(i,0,keyItem);
+        pointsTable->setItem(i,1,gcpItem);
+        pointsTable->setItem(i,2,typeItem);
         values = pntChildrens.at(i).elementByTagName("gml:pos").toGmlPos();
         if(values.size() == 3)
         {
             QTableWidgetItem *EItem = new QTableWidgetItem(QString::number(values.at(0),'f',3));
             QTableWidgetItem *NItem = new QTableWidgetItem(QString::number(values.at(1),'f',3));
             QTableWidgetItem *HItem = new QTableWidgetItem(QString::number(values.at(2),'f',3));
-            pointsTable->setItem(i,0,keyItem);
-            pointsTable->setItem(i,1,gcpItem);
-            pointsTable->setItem(i,2,typeItem);
             pointsTable->setItem(i,3,EItem);
             pointsTable->setItem(i,4,NItem);
             pointsTable->setItem(i,5,HItem);
+        }
+        else
+        {
+            // The point has no coordinates yet: do not show the values a
+            // previous fill may have left in this row.
+            for (int column = 3; column < pointsTable->columnCount(); column++)
+                delete pointsTable->takeItem(i, column);
         }
     }
 
@@ -93,6 +110,51 @@ void PointsForm ::setReadOnly(bool state)
 void PointsForm :: emitSignal(int i)
 {
     emit clicked(i);
+}
+
+void PointsForm :: emitActivated(int i)
+{
+    emit activated(i);
+}
+
+int PointsForm::keyAtRow(int row) const
+{
+    if (row < 0 || row >= pointsTable->rowCount()) return -1;
+    const QTableWidgetItem *keyItem = pointsTable->item(row, 0);
+    if (keyItem == NULL) return -1;
+    return keyItem->text().toInt();
+}
+
+int PointsForm::rowOfKey(int key) const
+{
+    for (int row = 0; row < pointsTable->rowCount(); row++)
+        if (keyAtRow(row) == key) return row;
+    return -1;
+}
+
+int PointsForm::selectedRow() const
+{
+    if (pointsTable->selectionModel() == NULL) return -1;
+    const QModelIndexList rows = pointsTable->selectionModel()->selectedRows();
+    if (rows.isEmpty()) return -1;
+    return rows.first().row();
+}
+
+int PointsForm::selectedKey() const
+{
+    return keyAtRow(selectedRow());
+}
+
+void PointsForm::setSelectedRow(int row)
+{
+    if (row < 0 || row >= pointsTable->rowCount())
+    {
+        pointsTable->clearSelection();
+        pointsTable->setCurrentIndex(QModelIndex());
+        return;
+    }
+    pointsTable->selectRow(row);
+    pointsTable->setCurrentCell(row, 1);
 }
 
 bool PointsForm::isForm(std::string formName)

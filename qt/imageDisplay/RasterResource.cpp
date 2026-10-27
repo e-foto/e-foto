@@ -2,12 +2,17 @@
 #include <gdal_priv.h>
 #include <gdalwarper.h>
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTemporaryFile>
 #include <cmath>
 
 #include "RasterResource.h"
+
+#include "PathUtils.h"
+
+namespace PathUtils = br::uerj::eng::efoto::PathUtils;
 
 RasterResource::RasterResource(QString filepath, bool withSmoothIn,
                                bool withSmoothOut, bool metadataOnly) {
@@ -36,20 +41,23 @@ RasterResource::~RasterResource() {
 }
 
 void RasterResource::emitLoadError(const QString& filepath) {
-  QString message = "Error: The image loading process failed.";
+  const auto translate = [](const char* text) {
+    return QCoreApplication::translate("RasterResource", text);
+  };
+  QString message = translate("Error: The image loading process failed.");
   if (!filepath.isEmpty()) {
-    if (!std::filesystem::exists(filepath.toStdString())) {
-      message += " File not found!";
+    if (!PathUtils::exists(filepath.toUtf8().data())) {
+      message += " " + translate("File not found!");
     } else {
-      message += " Unable to read this file!";
+      message += " " + translate("Unable to read this file!");
     }
     // TODO: Alterar essa implementação para garantir que use proj->getSavedIn()
     QFileInfo fileInfo(filepath);
     QString absolutePath = fileInfo.absoluteFilePath();
 
-    message += "\nFile: " + absolutePath;
+    message += "\n" + translate("File: %1").arg(absolutePath);
   }
-  QMessageBox::critical(nullptr, "Load Error", message);
+  QMessageBox::critical(nullptr, translate("Load Error"), message);
 }
 void RasterResource::useSmoothIn(bool useSmooth) { _useSmoothIn = useSmooth; }
 
@@ -97,8 +105,10 @@ bool RasterResource::load(QString filepath, bool metadataOnly) {
   _isValid = false;
 
   // Abrir dataset GDAL
-  GDALDataset* srcDataset =
-      (GDALDataset*)GDALOpen(filepath.toUtf8().constData(), GA_ReadOnly);
+  // GDAL expects an UTF-8 path. forFileApi() adds the extended length prefix
+  // when the path exceeds MAX_PATH on Windows.
+  const std::string gdalPath = PathUtils::forFileApi(filepath.toUtf8().data());
+  GDALDataset* srcDataset = (GDALDataset*)GDALOpen(gdalPath.c_str(), GA_ReadOnly);
   if (!srcDataset) {
     emitLoadError(filepath);
     return false;

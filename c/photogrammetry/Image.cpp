@@ -22,6 +22,7 @@
 #include "Point.h"
 #include "SensorWithFiducialMarks.h"
 #include "Flight.h"
+#include "PathUtils.h"
 
 #include <sstream>
 
@@ -232,6 +233,15 @@ std::string Image::getFilename()
 std::string Image::getFilepath()
 {
 	return filepath;
+}
+
+/**
+ * Get the absolute path of the image file
+ * @return an absolute path resolved against the project directory
+ */
+std::string Image::getAbsoluteFilePath()
+{
+	return PathUtils::resolveImagePath(filepath, filename);
 }
 /**
   * Get the value of flightDirection
@@ -549,8 +559,8 @@ void Image::xmlSetData(std::string xml)
 	imageId = root.elementByTagName("imageId").toString();
 	width = root.elementByTagName("width").toInt();
 	height = root.elementByTagName("height").toInt();
-	filename = root.elementByTagName("fileName").toString();
-	filepath = root.elementByTagName("filePath").toString();
+	filename = PathUtils::xmlUnescape(PathUtils::trim(root.elementByTagName("fileName").toString()));
+	filepath = PathUtils::xmlUnescape(PathUtils::trim(root.elementByTagName("filePath").toString()));
 	resolution = root.elementByTagName("resolution").toInt();
 	resolutionUnit = root.elementByTagName("resolution").attribute("uom");
 	flightDirectionAvailable = root.elementByTagName("flightDirection").getContent() != "";
@@ -618,8 +628,8 @@ std::string Image::xmlGetData()
 	result << "<imageId>" << imageId << "</imageId>\n";
 	result << "<width uom=\"#px\">" << Conversion::intToString(width) << "</width>\n";
 	result << "<height uom=\"#px\">" << Conversion::intToString(height) << "</height>\n";
-	result << "<fileName>" << filename << "</fileName>\n";
-	result << "<filePath>" << filepath << "</filePath>\n";
+	result << "<fileName>" << PathUtils::xmlEscape(filename) << "</fileName>\n";
+	result << "<filePath>" << PathUtils::xmlEscape(filepath) << "</filePath>\n";
 	result << "<resolution uom=\"" << resolutionUnit << "\">" << Conversion::intToString(resolution) << "</resolution>\n";
 	result << "<flightDirection>" << Conversion::doubleToString(flightDirection) << "</flightDirection>\n";
 

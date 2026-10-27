@@ -46,6 +46,11 @@ ControlButtons::ControlButtons()
 	this->setLayout(mainLayout);
 }
 
+void ControlButtons::setDeleteEnabled(bool state)
+{
+	deleteButton->setEnabled(state);
+}
+
 void ControlButtons::toSimpleMode()
 {
 	newButton->setVisible(false);

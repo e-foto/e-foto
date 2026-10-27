@@ -17,6 +17,7 @@
 #include "MatchingPoints.h"
 
 #include "Matrix.h"
+#include "PathUtils.h"
 
 #include <iomanip>
 #include <iostream>
@@ -206,7 +207,7 @@ void MatchingPointsList::listMp(int pos)
 
 int MatchingPointsList::save(char *filename, int type)
 {
-    std::ofstream outfile(filename);
+    PathUtils::OutputFileStream outfile(filename);
 
     if (outfile.fail())
         return 0;
@@ -275,7 +276,7 @@ bool MatchingPointsList::checkFile(char *filename, int type)
     }
 
     // Check file
-    std::ifstream infile(filename);
+    PathUtils::InputFileStream infile(filename);
 
     infile.getline(line,256);
     infile.getline(line,256); // Take the second line
@@ -294,7 +295,7 @@ int MatchingPointsList::load(char *filename, int type, bool append, int left_id,
     if (!checkFile(filename,type))
         return -1;
 
-    std::ifstream infile(filename);
+    PathUtils::InputFileStream infile(filename);
 
     if (infile.fail())
         return 0;

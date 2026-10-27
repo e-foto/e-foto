@@ -113,6 +113,14 @@ public:
 	unsigned int getHeight();
 	std::string getFilename();
 	std::string getFilepath();
+	/**
+	 * \brief Absolute path of the image file, ready to be opened.
+	 *
+	 * Resolves the <filePath>/<fileName> pair stored in the project against
+	 * the project directory: it does not depend on the working directory and
+	 * it stays correct when the image is on another drive.
+	 */
+	std::string getAbsoluteFilePath();
 	std::string getImageId();
 	bool isGnssAvailable();
 	bool isInsAvailable();

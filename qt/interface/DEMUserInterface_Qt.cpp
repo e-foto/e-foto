@@ -28,6 +28,7 @@
 #include "Image.h"
 #include "ImageViewers.h"
 #include "LoadingScreen.h"
+#include "PathUtils.h"
 #include "SingleDisplay.h"
 
 namespace br {
@@ -128,7 +129,7 @@ DEMUserInterface_Qt::DEMUserInterface_Qt(DEMManager *manager, QWidget *parent,
   downReslabel->setText(
       QString::number(manager->calculateDemRes(doubleSpinBox0->value()), 'f',
                       2) +
-      " meters");
+      tr(" meters"));
 
   allow_close = true;
 
@@ -184,8 +185,8 @@ void DEMUserInterface_Qt::closeEvent(QCloseEvent *e) {
   }
 
   if (manager->isDemUnsaved()) {
-    if (QMessageBox::warning(this, "Unsaved work",
-                             "A DSM was generated and not saved. Continue?",
+    if (QMessageBox::warning(this, tr("Unsaved work"),
+                             tr("A DSM was generated and not saved. Continue?"),
                              QMessageBox::Ok,
                              QMessageBox::No) == QMessageBox::No) {
       e->ignore();
@@ -195,8 +196,8 @@ void DEMUserInterface_Qt::closeEvent(QCloseEvent *e) {
 
   if (manager->isGridUnsaved()) {
     if (QMessageBox::warning(
-            this, "Unsaved work",
-            "An interpolated DSM Grid was generated and not saved. Continue?",
+            this, tr("Unsaved work"),
+            tr("An interpolated DSM Grid was generated and not saved. Continue?"),
             QMessageBox::Ok, QMessageBox::No) == QMessageBox::No) {
       e->ignore();
       return;
@@ -237,7 +238,7 @@ void DEMUserInterface_Qt::onDownValueChanged(/*double value*/) {
   downReslabel->setText(
       QString::number(manager->calculateDemRes(doubleSpinBox0->value()), 'f',
                       2) +
-      " meters");
+      tr(" meters"));
 }
 
 void DEMUserInterface_Qt::setMathcingHistogram(int *hist) {
@@ -299,12 +300,12 @@ void DEMUserInterface_Qt::enableOptions() {
 }
 
 void DEMUserInterface_Qt::addImagePair(char *item) {
-  QString text = QString::fromLatin1(item);
+  QString text = QString::fromUtf8(item);
   comboBox5->addItem(text);
 }
 
-void DEMUserInterface_Qt::setStatus(char *txt) {
-  workLabel->setText(QString::fromLatin1(txt));
+void DEMUserInterface_Qt::setStatus(const QString &txt) {
+  workLabel->setText(txt);
 }
 
 void DEMUserInterface_Qt::setProgress(int progress) {
@@ -407,7 +408,7 @@ void DEMUserInterface_Qt::onDemGridSaveClicked() {
     lastDir = filename.left(i);
 
     // Save DEM
-    manager->saveDemGrid((char *)filename.toLocal8Bit().constData(),
+    manager->saveDemGrid((char *)filename.toUtf8().constData(),
                          comboBox9->currentIndex());
   }
 }
@@ -437,11 +438,11 @@ void DEMUserInterface_Qt::onDemLoadClicked() {
   lastDir = filename.left(i);
 
   // Load DEM
-  if (!manager->loadDem((char *)filename.toLocal8Bit().constData(),
+  if (!manager->loadDem((char *)filename.toUtf8().constData(),
                         comboBox8->currentIndex())) {
-    QMessageBox::critical(this, "Load error",
-                          "Error while loading file. Check if file format "
-                          "option matches the file.");
+    QMessageBox::critical(this, tr("Load error"),
+                          tr("Error while loading file. Check if file format "
+                          "option matches the file."));
     return;
   }
 
@@ -465,11 +466,11 @@ void DEMUserInterface_Qt::onDemGridLoadClicked() {
   lastDir = filename.left(i);
 
   // Load DEM Grid
-  if (!manager->loadDemGrid((char *)filename.toLocal8Bit().constData(),
+  if (!manager->loadDemGrid((char *)filename.toUtf8().constData(),
                             comboBox9->currentIndex())) {
-    QMessageBox::critical(this, "Load error",
-                          "Error while loading file. Check if file format "
-                          "option matches the file.");
+    QMessageBox::critical(this, tr("Load error"),
+                          tr("Error while loading file. Check if file format "
+                          "option matches the file."));
     return;
   }
 
@@ -580,8 +581,8 @@ int DEMUserInterface_Qt::checkBoundingBox() {
   Yf = YflineEdit->text().toDouble();
 
   if (Xi >= Xf || Yi >= Yf) {
-    QMessageBox::critical(this, "Error",
-                          "Error: grid bounding box has inconsistent values !");
+    QMessageBox::critical(this, tr("Error"),
+                          tr("Error: grid bounding box has inconsistent values !"));
     return 0;
   }
 
@@ -633,7 +634,7 @@ void DEMUserInterface_Qt::onLoadPtsButtonClicked() {
   lastDir = filename.left(i);
 
   textEdit->setText(QString::fromStdString(manager->getDemQuality(
-      (char *)filename.toLocal8Bit().constData(), comboBox->currentIndex())));
+      (char *)filename.toUtf8().constData(), comboBox->currentIndex())));
 }
 
 void DEMUserInterface_Qt::onSavePtsButtonClicked() {
@@ -655,10 +656,17 @@ void DEMUserInterface_Qt::onSavePtsButtonClicked() {
     int i = filename.lastIndexOf("/");
     lastDir = filename.left(i);
 
-    std::ofstream outfile(filename.toLocal8Bit().constData());
+    // The report is text: open it through PathUtils (the wide API on
+    // Windows) and keep its contents in UTF-8, never in the local code page.
+    PathUtils::OutputFileStream outfile(filename.toStdString());
+    if (!outfile.isOpen()) {
+      QMessageBox::critical(
+          this, tr("Save error"),
+          tr("It was not possible to create the file:\n%1").arg(filename));
+      return;
+    }
 
-    // outfile << textEdit->toPlainText().toStdString();
-    outfile << textEdit->toPlainText().toLocal8Bit().constData();
+    outfile << textEdit->toPlainText().toStdString();
 
     outfile.close();
   }
@@ -768,13 +776,13 @@ void DEMUserInterface_Qt::onStereoplotterClicked() {
   int i = filename.lastIndexOf("/");
   lastDir = filename.left(i);
 
-  if (manager->loadDemFeature((char *)filename.toLocal8Bit().constData()))
+  if (manager->loadDemFeature((char *)filename.toUtf8().constData()))
     enableAfterDEM(2);
 }
 
 void DEMUserInterface_Qt::showFatalErrorMessage(QString msg,
                                                 bool abort = true) {
-  QMessageBox::critical(this, "Error", msg);
+  QMessageBox::critical(this, tr("Error"), msg);
 
   if (abort) doneButton->click();
 }
@@ -861,14 +869,14 @@ void SeedEditorUserInterface_Qt::imageClicked(QPointF p) {
   checkSelectedSeeds();
 
   if (sel_seeds.size() < 1) {
-    QMessageBox::warning(this, "Warning",
-                         "There is no seed pair selected to edit");
+    QMessageBox::warning(this, tr("Warning"),
+                         tr("There is no seed pair selected to edit"));
     return;
   }
 
   if (sel_seeds.size() > 1) {
-    QMessageBox::warning(this, "Warning",
-                         "There is are multiple seed pairs selected to edit");
+    QMessageBox::warning(this, tr("Warning"),
+                         tr("There is are multiple seed pairs selected to edit"));
     return;
   }
 
@@ -977,8 +985,8 @@ void SeedEditorUserInterface_Qt::onRemoveButtonClicked() {
 
   // No items selected
   if (sel_seeds.size() < 1) {
-    QMessageBox::warning(this, "Warning",
-                         "There is no seed pair selected to erase");
+    QMessageBox::warning(this, tr("Warning"),
+                         tr("There is no seed pair selected to erase"));
     return;
   }
 
@@ -1055,7 +1063,7 @@ void SeedEditorUserInterface_Qt::onCheckBoxChanged(/*int state*/) {
 void SeedEditorUserInterface_Qt::closeOk() {
   // Check if there are no unmeasured points
   if (seeds.hasEmptyPairs()) {
-    QMessageBox::critical(this, "Error", "There are still unmeasured pairs");
+    QMessageBox::critical(this, tr("Error"), tr("There are still unmeasured pairs"));
     return;
   }
 
@@ -1076,17 +1084,15 @@ void SeedEditorUserInterface_Qt::addPairs() {
   int left_id, right_id;
   int no_imgs = listAllImages.size();
   std::string str_left, str_right;
-  std::stringstream txt;
-
   for (unsigned int i = 0; i < listPairs.size(); i++) {
     // Decode
     left_id = 1 + (listPairs.at(i) % no_imgs);
     right_id = 1 + (listPairs.at(i) / no_imgs);
     str_left = listAllImages.at(left_id - 1)->getImageId();
     str_right = listAllImages.at(right_id - 1)->getImageId();
-    txt.str("");  // Clear stream
-    txt << "Images " << str_left << " and " << str_right;
-    comboBox1->addItem(QString::fromLatin1((char *)txt.str().c_str()));
+    comboBox1->addItem(tr("Images %1 and %2")
+                           .arg(QString::fromStdString(str_left),
+                                QString::fromStdString(str_right)));
   }
 }
 
@@ -1104,10 +1110,10 @@ void SeedEditorUserInterface_Qt::saveSeeds() {
     lastDir = filename.left(i);
 
     // Save seeds
-    seeds.save((char *)filename.toLocal8Bit().constData(), 0);
+    seeds.save((char *)filename.toUtf8().constData(), 0);
     // Expanção do XML
     // manager->addSeedsToXML(filename.toStdString());
-    manager->addSeedsToXML(filename.toLocal8Bit().constData());
+    manager->addSeedsToXML(filename.toUtf8().constData());
   }
 }
 void SeedEditorUserInterface_Qt::loadSeeds() {
@@ -1122,7 +1128,7 @@ void SeedEditorUserInterface_Qt::loadSeeds() {
   lastDir = filename.left(i);
 
   // Load seeds
-  seeds.load((char *)filename.toLocal8Bit().constData(), 0);
+  seeds.load((char *)filename.toUtf8().constData(), 0);
 
   // Update data
   updateData(/*comboBox1->currentIndex()*/);
@@ -1288,10 +1294,8 @@ void SeedEditorUserInterface_Qt::updateData(/*int i*/) {
   //
   // Update Images
   //
-  std::string left_file = listAllImages.at(left_id - 1)->getFilepath() + '/' +
-                          listAllImages.at(left_id - 1)->getFilename();
-  std::string right_file = listAllImages.at(right_id - 1)->getFilepath() + '/' +
-                           listAllImages.at(right_id - 1)->getFilename();
+  std::string left_file = listAllImages.at(left_id - 1)->getAbsoluteFilePath();
+  std::string right_file = listAllImages.at(right_id - 1)->getAbsoluteFilePath();
 
   viewer->loadLeftImage(QString::fromStdString(left_file));
   viewer->loadRightImage(QString::fromStdString(right_file));

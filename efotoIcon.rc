@@ -1,1 +1,8 @@
+#include <winresrc.h>
+
 IDI_ICON1 ICON DISCARDABLE "efoto.ico"
+
+/* Application manifest: declares the process as longPathAware, so paths
+   longer than MAX_PATH (260 characters) are accepted by the Windows API.
+   See efoto.manifest. */
+1 RT_MANIFEST "efoto.manifest"

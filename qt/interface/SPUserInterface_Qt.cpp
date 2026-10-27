@@ -292,34 +292,34 @@ void SPUserInterface_Qt::updateClass(int feat_type) {
 
   // Point
   if (feat_type == 0) {
-    comboBox_4->addItem("Point");
+    comboBox_4->addItem(tr("Point"));
   }
 
   // Line
   if (feat_type == 1) {
-    comboBox_4->addItem("Paved street");
-    comboBox_4->addItem("Unpaved street");
-    comboBox_4->addItem("Trail");
-    comboBox_4->addItem("Railway");
-    comboBox_4->addItem("River");
-    comboBox_4->addItem("Bridge");
-    comboBox_4->addItem("Undefined");
+    comboBox_4->addItem(tr("Paved street"));
+    comboBox_4->addItem(tr("Unpaved street"));
+    comboBox_4->addItem(tr("Trail"));
+    comboBox_4->addItem(tr("Railway"));
+    comboBox_4->addItem(tr("River"));
+    comboBox_4->addItem(tr("Bridge"));
+    comboBox_4->addItem(tr("Undefined"));
   }
 
   // Polygon
   if (feat_type == 2) {
-    comboBox_4->addItem("House");
-    comboBox_4->addItem("Building");
-    comboBox_4->addItem("Industrial");
-    comboBox_4->addItem("Club");
-    comboBox_4->addItem("Station");
-    comboBox_4->addItem("Wasteland");
-    comboBox_4->addItem("Square");
-    comboBox_4->addItem("Park");
-    comboBox_4->addItem("Forest");
-    comboBox_4->addItem("Lagoon");
-    comboBox_4->addItem("Pool");
-    comboBox_4->addItem("Undefined");
+    comboBox_4->addItem(tr("House"));
+    comboBox_4->addItem(tr("Building"));
+    comboBox_4->addItem(tr("Industrial"));
+    comboBox_4->addItem(tr("Club"));
+    comboBox_4->addItem(tr("Station"));
+    comboBox_4->addItem(tr("Wasteland"));
+    comboBox_4->addItem(tr("Square"));
+    comboBox_4->addItem(tr("Park"));
+    comboBox_4->addItem(tr("Forest"));
+    comboBox_4->addItem(tr("Lagoon"));
+    comboBox_4->addItem(tr("Pool"));
+    comboBox_4->addItem(tr("Undefined"));
   }
 }
 
@@ -362,8 +362,8 @@ void SPUserInterface_Qt::onLoadButton() {
 
   if (manager->getNumFeatures() > 0) {
     QMessageBox msgBox(this);
-    msgBox.setWindowTitle("Open features");
-    msgBox.setText("Clear or append features?");
+    msgBox.setWindowTitle(tr("Open features"));
+    msgBox.setText(tr("Clear or append features?"));
     QAbstractButton* clearButton =
         msgBox.addButton("Clear", QMessageBox::YesRole);
     QAbstractButton* appendButton =
@@ -379,7 +379,7 @@ void SPUserInterface_Qt::onLoadButton() {
   bool sp_load_flag = manager->loadFeatures(filename.toUtf8().data(), append);
 
   if (!sp_load_flag) {
-    QMessageBox::critical(this, "Error", "Invalid features file format.");
+    QMessageBox::critical(this, tr("Error"), tr("Invalid features file format."));
     return;
   }
 
@@ -475,7 +475,7 @@ void SPUserInterface_Qt::onRemoveButton() {
 }
 
 void SPUserInterface_Qt::onRemoveAllButton() {
-  if (QMessageBox::warning(this, "Erase all?", "Erase all features?",
+  if (QMessageBox::warning(this, tr("Erase all?"), tr("Erase all features?"),
                            QMessageBox::Yes,
                            QMessageBox::No) == QMessageBox::No)
     return;
@@ -565,12 +565,12 @@ void SPUserInterface_Qt::refreshFeatureSelectedData() {
   comboBox_4->setCurrentIndex(fclass - 1 >= 0 ? fclass - 1
                                               : comboBox_4->count() - 1);
   noPointsLabel->setText(QString::number(no_points));
-  perimeterLabel->setText(QString::number(perimeter, 'f', 2) + " meters");
-  areaLabel->setText(QString::number(area, 'f', 2) + " square meters");
+  perimeterLabel->setText(QString::number(perimeter, 'f', 2) + tr(" meters"));
+  areaLabel->setText(QString::number(area, 'f', 2) + tr(" square meters"));
 }
 
 void SPUserInterface_Qt::addImagePair(char* item) {
-  QString text = QString::fromLatin1(item);
+  QString text = QString::fromUtf8(item);
   comboBox->addItem(text);
 }
 
@@ -710,7 +710,7 @@ void SPUserInterface_Qt::adjustFit(int width, int height) {
 }
 
 void SPUserInterface_Qt::showErrorMessage(QString msg) {
-  QMessageBox::critical(this, "Error", msg);
+  QMessageBox::critical(this, tr("Error"), msg);
   close();
 }
 
@@ -753,10 +753,10 @@ AddDialog::AddDialog(SPManager* spmanager, QWidget* parent) : QDialog(parent) {
   cancelButton = new QPushButton(tr("Cancel"));
   okButton = new QPushButton(tr("Ok"));
 
-  typeCombo->addItem("Point");
-  typeCombo->addItem("Line");
-  typeCombo->addItem("Polygon");
-  classCombo->addItem("Point");
+  typeCombo->addItem(tr("Point"));
+  typeCombo->addItem(tr("Line"));
+  typeCombo->addItem(tr("Polygon"));
+  classCombo->addItem(tr("Point"));
   typeCombo->setMinimumWidth(150);
   classCombo->setMinimumWidth(150);
   okButton->setDefault(true);
@@ -803,34 +803,34 @@ void AddDialog::updateClassCombo(int feat_type) {
 
   // Point
   if (feat_type == 0) {
-    classCombo->addItem("Point");
+    classCombo->addItem(tr("Point"));
   }
 
   // Line
   if (feat_type == 1) {
-    classCombo->addItem("Paved street");
-    classCombo->addItem("Unpaved street");
-    classCombo->addItem("Trail");
-    classCombo->addItem("Railway");
-    classCombo->addItem("River");
-    classCombo->addItem("Bridge");
-    classCombo->addItem("Undefined");
+    classCombo->addItem(tr("Paved street"));
+    classCombo->addItem(tr("Unpaved street"));
+    classCombo->addItem(tr("Trail"));
+    classCombo->addItem(tr("Railway"));
+    classCombo->addItem(tr("River"));
+    classCombo->addItem(tr("Bridge"));
+    classCombo->addItem(tr("Undefined"));
   }
 
   // Polygon
   if (feat_type == 2) {
-    classCombo->addItem("House");
-    classCombo->addItem("Building");
-    classCombo->addItem("Industrial");
-    classCombo->addItem("Club");
-    classCombo->addItem("Station");
-    classCombo->addItem("Wasteland");
-    classCombo->addItem("Square");
-    classCombo->addItem("Park");
-    classCombo->addItem("Forest");
-    classCombo->addItem("Lagoon");
-    classCombo->addItem("Pool");
-    classCombo->addItem("Undefined");
+    classCombo->addItem(tr("House"));
+    classCombo->addItem(tr("Building"));
+    classCombo->addItem(tr("Industrial"));
+    classCombo->addItem(tr("Club"));
+    classCombo->addItem(tr("Station"));
+    classCombo->addItem(tr("Wasteland"));
+    classCombo->addItem(tr("Square"));
+    classCombo->addItem(tr("Park"));
+    classCombo->addItem(tr("Forest"));
+    classCombo->addItem(tr("Lagoon"));
+    classCombo->addItem(tr("Pool"));
+    classCombo->addItem(tr("Undefined"));
   }
 }
 

@@ -21,6 +21,9 @@
 #include <QInputDialog>
 #include <QRegularExpression>
 #include <QScrollArea>
+#include <QActionGroup>
+#include <QEvent>
+#include <QMenu>
 #include <QSettings>
 #include <QShortcut>
 #include <filesystem>
@@ -31,7 +34,9 @@
 
 #include "AboutForm.h"
 #include "ETreeModel.h"
+#include "Language.h"
 #include "LoadingScreen.h"
+#include "PathUtils.h"
 #include "ProjectManager.h"
 #include "RasterResource.h"
 #include "revision_info.h"
@@ -41,11 +46,19 @@ namespace uerj {
 namespace eng {
 namespace efoto {
 
+namespace {
+// Fixed child order of ETreeModel: projectHeader, terrain, sensors, flights,
+// images, points.
+const int ImageTreeNode = 4;
+const int PointTreeNode = 5;
+}  // namespace
+
 ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager *manager,
                                                  QWidget *parent,
                                                  Qt::WindowFlags fl)
     : QMainWindow(parent, fl) {
   setupUi(this);
+  setupLanguageMenu();
 
   // Ler versão
   QString ver = BUILD_DATE;
@@ -107,8 +120,12 @@ ProjectUserInterface_Qt::ProjectUserInterface_Qt(ProjectManager *manager,
                 SLOT(processTreeClick(QModelIndex)));
   this->connect(&imagesForm, SIGNAL(clicked(int)), this,
                 SLOT(selectImage(int)));
+  this->connect(&imagesForm, SIGNAL(activated(int)), this,
+                SLOT(openImage(int)));
   this->connect(&pointsForm, SIGNAL(clicked(int)), this,
                 SLOT(selectPoint(int)));
+  this->connect(&pointsForm, SIGNAL(activated(int)), this,
+                SLOT(openPoint(int)));
   this->connect(imageForm.imageIDLine, SIGNAL(editingFinished()), this,
                 SLOT(validatingImage()));
   this->connect(imageForm.resolutionSpin, SIGNAL(editingFinished()), this,
@@ -387,7 +404,7 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart) {
   QString input_filename;
 
   if (filenameAtStart.empty()) {
-    input_filename = QFileDialog::getOpenFileName(this, "Open File", ".", "*.epp");
+    input_filename = QFileDialog::getOpenFileName(this, tr("Open File"), ".", "*.epp");
   } else {
     input_filename = QString::fromStdString(filenameAtStart);
   }
@@ -395,44 +412,25 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart) {
   if (input_filename.isEmpty()) return;
 
   if (manager->loadFile(input_filename.toUtf8().data())) {
-    EDomElement imagesXml(manager->getXml("images").c_str());
-    std::deque<EDomElement> imagesEdom = imagesXml.elementsByTagName("image");
+    // manager->loadFile() anchored the project directory: every relative
+    // <filePath> is now resolved against it, never against the working
+    // directory. Resolve and, when needed, repair the stored image paths.
+    std::deque<std::string> missingImages;
+    const int repairedImages = manager->repairImagePaths(missingImages);
 
-    std::filesystem::path file_path(input_filename.toStdString());
-    std::filesystem::path parent_path = file_path.parent_path();
-    std::filesystem::current_path(parent_path);
     std::string imagesMissing;
-    int contMissings = 0;
-
-    for (size_t i = 0; i < imagesEdom.size(); i++) {
-      // Construir o caminho relativo (filePath/fileName)
-      std::filesystem::path relative_path = imagesEdom.at(i).elementByTagName("filePath").toString();
-      relative_path /= imagesEdom.at(i).elementByTagName("fileName").toString();
-
-      // Obter o caminho absoluto combinando com parentPath
-      std::filesystem::path absolute_path = parent_path / relative_path;
-
-      // Verificar se o arquivo existe
-      if (!std::filesystem::exists(absolute_path)) {
-        std::string missing_filename = relative_path.filename().string();
-
-        // Formatar a saída (4 itens por linha)
-        if (contMissings % 4 == 3) {
-          imagesMissing += missing_filename + "  \n";
-        } else {
-          imagesMissing += missing_filename + " , ";
-        }
-        contMissings++;
+    for (size_t i = 0; i < missingImages.size(); i++) {
+      // Format the output (4 items per line)
+      if (i % 4 == 3 && i + 1 < missingImages.size()) {
+        imagesMissing += missingImages.at(i) + "  \n";
+      } else if (i + 1 == missingImages.size()) {
+        imagesMissing += missingImages.at(i);
+      } else {
+        imagesMissing += missingImages.at(i) + " , ";
       }
     }
 
-    // Remover a última vírgula e espaço extra, se houver
-    if (!imagesMissing.empty() && imagesMissing.size() >= 3) {
-      imagesMissing.erase(imagesMissing.end() - 3, imagesMissing.end());
-    }
-
     if (!imagesMissing.empty()) {
-      // TODO: Review this message
       QString message = "Those images are missing:\n" +
                         QString::fromStdString(imagesMissing) + ".";
       QMessageBox *alertImages = new QMessageBox(
@@ -442,37 +440,16 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart) {
       alertImages->show();
     }
 
-    /*
-    QDir dirImage(QString::fromStdString(parentPath.string()));
-    QFileInfo imageFileInfo;
-
-    QString imagesMissing = "";
-    int contMissings = 0;
-    for (size_t i = 0; i < imagesEdom.size(); i++) {
-      QString imagesName(imagesEdom.at(i)
-                             .elementByTagName("filePath")
-                             .toString()
-                             .append("/")
-                             .c_str());
-      dirImage.setCurrent(imagesName);
-      imagesName.append(
-          imagesEdom.at(i).elementByTagName("fileName").toString().c_str());
-      imageFileInfo.setFile(dirImage.absoluteFilePath(imagesName));
-      if (!imageFileInfo.exists()) {
-        imagesMissing.append(contMissings % 4 == 3
-                                 ? imageFileInfo.fileName().append("  \n")
-                                 : imageFileInfo.fileName().append(" , "));
-        contMissings++;
-      }
+    if (repairedImages > 0) {
+      // The stored relative paths were pointing to another folder (the project
+      // was moved or copied): let the user know it is worth saving again.
+      QMessageBox *alertRelocated = new QMessageBox(
+          QMessageBox::Information, "Image paths updated",
+          QString::number(repairedImages) +
+              " image path(s) were relocated and updated in memory.\n"
+              "Save the project to keep the new locations.");
+      alertRelocated->show();
     }
-    imagesMissing.chop(3);
-    if (imagesMissing.compare("") != 0) {
-      QMessageBox *alertImages = new QMessageBox(
-          QMessageBox::Warning, "Images missing",
-          imagesMissing.prepend("Those images are missing:\n").append("."));
-      alertImages->show();
-    }
-    */
 
     addDockWidget(Qt::LeftDockWidgetArea, projectDockWidget);
     addDockWidget(Qt::BottomDockWidgetArea, debuggerDockWidget);
@@ -484,18 +461,29 @@ void ProjectUserInterface_Qt::loadFile(std::string filenameAtStart) {
     controlButtons.setVisible(true);
     offset.setVisible(true);
 
-    manager->savedIn = input_filename.toStdString();
+    manager->savedIn = input_filename.toUtf8().data();
 
-    actionSave_file->setEnabled(false);
+    // Some features still assume the project folder as the working directory.
+    // This is not needed to resolve the images anymore, so a failure here is
+    // harmless and must not abort opening the project.
+    std::error_code cwdError;
+    std::filesystem::current_path(
+        PathUtils::toPath(PathUtils::projectDirectory()), cwdError);
+
+    actionSave_file->setEnabled(repairedImages > 0);
     actionSave_file_as->setEnabled(true);
 
-    QString filename =
+    const std::string projectFile =
+        PathUtils::absolute(input_filename.toUtf8().data());
+    const QString filename =
         "<fileName>" +
-        QString::fromStdString(file_path.filename().string()) +
+        QString::fromStdString(PathUtils::xmlEscape(
+            PathUtils::fileName(projectFile))) +
         "</fileName>";
-    QString filepath =
+    const QString filepath =
         "<filePath>" +
-        QString::fromStdString(parent_path.generic_string()) +
+        QString::fromStdString(PathUtils::xmlEscape(
+            PathUtils::parentDirectory(projectFile))) +
         "</filePath>";
 
     EDomElement node(manager->getXml("projectHeader"));
@@ -595,13 +583,13 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject) {
       QString extension = target_filename.right(4);
       if (extension.toLower() != ".epp") target_filename.append(".epp");
 
-      std::filesystem::path file_path(target_filename.toStdString());
-      std::filesystem::path parent_path = file_path.parent_path();
+      // Work in UTF-8 from here on: toStdString()/toLocal8Bit() would encode
+      // the path with the local code page and break non ASCII folders.
+      const std::string targetFile = target_filename.toUtf8().data();
+      const std::string targetDirectory = PathUtils::parentDirectory(targetFile);
 
-      QString filename =
-          QString::fromStdString(file_path.filename().string());
-      QString filepath =
-          QString::fromStdString(parent_path.generic_string());
+      const QString filename = QString::fromStdString(PathUtils::fileName(targetFile));
+      const QString filepath = QString::fromStdString(targetDirectory);
 
       QString fileNameBackup = headerForm.lineEditFileName->text();
       QString filePathBackup = headerForm.lineEditFilePath->text();
@@ -619,30 +607,40 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject) {
 
       manager->editComponent("Header", headerForm.getvalues());
 
+      // Move the image paths from the old project directory to the new one.
+      // An image that cannot be expressed relative to the new directory (other
+      // drive, for instance) is stored as an absolute path.
+      const std::string oldProjectDirectory = manager->projectDirectory();
       EDomElement imagesBackup(manager->getXml("images"));
       std::deque<EDomElement> imagesList = imagesBackup.children();
-      std::filesystem::path curr_dir(filePathBackup.toStdString());
       for (size_t i = 0; i < imagesList.size(); i++) {
-        int key = Conversion::stringToInt(imagesList.at(i).attribute("key"));
-        std::filesystem::path rel_imagepath =
-            imagesList.at(i).elementByTagName("filePath").toString();
-        std::filesystem::path abs_imagepath =
-            std::filesystem::absolute(curr_dir / rel_imagepath);
-        std::filesystem::path adj_imagepath =
-            std::filesystem::relative(abs_imagepath, parent_path);
-        imagesList.at(i).replaceChildByTagName(
-            "filePath",
-            "<filePath>" + adj_imagepath.generic_string() + "</filePath>");
-        std::string data = imagesList.at(i).getContent();
-        manager->editComponent("Image", key, data);
+        const int key = Conversion::stringToInt(imagesList.at(i).attribute("key"));
+        EDomElement image = imagesList.at(i);
+        const std::string storedName = PathUtils::xmlUnescape(PathUtils::trim(
+            image.elementByTagName("fileName").toString()));
+        const std::string storedPath = PathUtils::xmlUnescape(PathUtils::trim(
+            image.elementByTagName("filePath").toString()));
+        const std::string absoluteImage =
+            PathUtils::resolveImagePath(storedPath, storedName, oldProjectDirectory);
+        std::string adjustedPath = PathUtils::relativeOrAbsolute(
+            PathUtils::parentDirectory(absoluteImage), targetDirectory);
+        if (adjustedPath.empty()) adjustedPath = ".";
+        EDomElement adjustedImage = image;
+        adjustedImage.replaceChildByTagName(
+            "filePath", "<filePath>" + PathUtils::xmlEscape(adjustedPath) +
+                            "</filePath>");
+        manager->editComponent("Image", key, adjustedImage.getContent());
       }
 
-      if (manager->saveFile(target_filename.toStdString())) {
-        manager->savedIn = filename.toStdString();
+      if (manager->saveFile(targetFile)) {
+        // savedIn is the full project file path, not only its name.
+        manager->savedIn = targetFile;
         actionSave_file->setEnabled(false);
         // When changing the perception of the current project directory, the
         // GUI must be communicated to avoid errors
-        std::filesystem::current_path(parent_path);
+        std::error_code cwdError;
+        std::filesystem::current_path(PathUtils::toPath(targetDirectory),
+                                      cwdError);
       } else {
         headerForm.lineEditFilePath->setText(filePathBackup);
         headerForm.lineEditFileName->setText(fileNameBackup);
@@ -653,7 +651,7 @@ bool ProjectUserInterface_Qt::saveFileAs(bool onNewProject) {
 
         std::deque<EDomElement> imagesBkp = imagesBackup.children();
         for (size_t i = 0; i < imagesBkp.size(); i++) {
-          int key = Conversion::stringToInt(imagesList.at(i).attribute("key"));
+          int key = Conversion::stringToInt(imagesBkp.at(i).attribute("key"));
           std::string data = imagesBkp.at(i).getContent();
           manager->editComponent("Image", key, data);
         }
@@ -684,7 +682,7 @@ void ProjectUserInterface_Qt::executeIO() {
   {
     QMessageBox msgBox;
     msgBox.setText(
-        "Before proceeding, it is necessary to register the sensor data!");
+        tr("Before proceeding, it is necessary to register the sensor data!"));
     msgBox.exec();
     return;
   }
@@ -797,7 +795,7 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index) {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(
           this, tr(" Warning: leaving form in edit mode"),
-          "Do you want to keep all changes?",
+          tr("Do you want to keep all changes?"),
           QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
       if (reply == QMessageBox::Yes) {
         controlButtons.saveButton->click();
@@ -811,7 +809,7 @@ void ProjectUserInterface_Qt::processTreeClick(QModelIndex index) {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(
           this, tr(" Warning: leaving form in edit mode"),
-          "Registration data is not complete and will be lost. Continue?",
+          tr("Registration data is not complete and will be lost. Continue?"),
           QMessageBox::Yes | QMessageBox::Cancel);
       if (reply == QMessageBox::Yes) {
         controlButtons.cancelButton->click();
@@ -881,17 +879,66 @@ void ProjectUserInterface_Qt::exportSPFile() {
           manager->makeSPFile(filename.toUtf8().data(), image1, image2);
       if (result == false) {
         QMessageBox msgBox;
-        msgBox.setText("Error: invalid input parameters.");
+        msgBox.setText(tr("Error: invalid input parameters."));
         msgBox.exec();
       }
     }
   }
 }
 
-// Metodo que sera reescrito depois que trabalharmos esta interface grafica com
-// o QLinguist
-void ProjectUserInterface_Qt::languageChange() {
-  // retranslateUi(this);
+void ProjectUserInterface_Qt::languageChange() { retranslateUi(this); }
+
+void ProjectUserInterface_Qt::setupLanguageMenu() {
+  languageMenu = new QMenu(tr("Language"), this);
+  QActionGroup* group = new QActionGroup(this);
+  group->setExclusive(true);
+
+  QAction* systemAction = languageMenu->addAction(tr("System default"));
+  systemLanguageAction = systemAction;
+  QAction* englishAction = languageMenu->addAction(QStringLiteral("English"));
+  QAction* chineseAction = languageMenu->addAction(QStringLiteral("简体中文"));
+
+  systemAction->setData(QStringLiteral("system"));
+  englishAction->setData(QStringLiteral("en"));
+  chineseAction->setData(QStringLiteral("zh_CN"));
+
+  const QString current = Language::current();
+  for (QAction* action : {systemAction, englishAction, chineseAction}) {
+    action->setCheckable(true);
+    action->setChecked(action->data().toString() == current ||
+                       (current == "system" && action == systemAction));
+    group->addAction(action);
+  }
+
+  connect(group, &QActionGroup::triggered, this, [](QAction* action) {
+    Language::setCurrent(action->data().toString());
+  });
+
+  menubar->addMenu(languageMenu);
+}
+
+void ProjectUserInterface_Qt::changeEvent(QEvent* event) {
+  if (event->type() == QEvent::LanguageChange) {
+    retranslateUi(this);
+    if (languageMenu) languageMenu->setTitle(tr("Language"));
+    if (systemLanguageAction) systemLanguageAction->setText(tr("System default"));
+    headerForm.retranslateUi(&headerForm);
+    terrainForm.retranslateUi(&terrainForm);
+    sensorForm.retranslateUi(&sensorForm);
+    flightForm.retranslateUi(&flightForm);
+    imagesForm.retranslateUi(&imagesForm);
+    imageForm.retranslateUi(&imageForm);
+    pointsForm.retranslateUi(&pointsForm);
+    pointForm.retranslateUi(&pointForm);
+    refreshMenu();
+    if (!headerForm.lineEditName->text().isEmpty()) {
+      setWindowTitle(headerForm.lineEditName->text() +
+                     tr(" - efoto[Project Manager]"));
+    } else {
+      setWindowTitle(tr("efoto[Project Manager]"));
+    }
+  }
+  QMainWindow::changeEvent(event);
 }
 
 void ProjectUserInterface_Qt::newTree() {
@@ -971,7 +1018,7 @@ void ProjectUserInterface_Qt::updateTree() {
       else if (etm->dataAt(i) == "points")
         treeItems.at(i)->setText(0, tr("Points"));
       if (!(etm->dataAt(i) == "projectHeader" || etm->dataAt(i) == "terrain" ||
-            etm->dataAt(i) == "sensors" || etm->dataAt(i) == "flights"))
+            etm->dataAt(i) == "sensors" || etm->dataAt(i) == "flights")) {
         for (int j = 0; j < (int)etm->countGrandchildren(i); j++) {
           if (j < treeItems.at(i)->childCount()) {
             treeItems.at(i)->child(j)->setText(0,
@@ -981,6 +1028,12 @@ void ProjectUserInterface_Qt::updateTree() {
             leafItem->setText(0, tr(etm->dataAt(i, j).c_str()));
           }
         }
+        // The model is rebuilt on every change, so an item that was removed (a
+        // deleted image, for instance) only disappears from the tree here.
+        while (treeItems.at(i)->childCount() > (int)etm->countGrandchildren(i)) {
+          delete treeItems.at(i)->takeChild(treeItems.at(i)->childCount() - 1);
+        }
+      }
     } else {
       QTreeWidgetItem *rootItem = new QTreeWidgetItem(treeWidget);
       treeItems.push_back(rootItem);
@@ -1022,14 +1075,58 @@ bool ProjectUserInterface_Qt::exec() {
   return true;
 }
 
+void ProjectUserInterface_Qt::syncTreeToChild(int node, int row) {
+  if (node < 0 || row < 0 || treeItems.size() <= node) return;
+  QTreeWidgetItem *parentItem = treeItems.at(node);
+  if (parentItem == NULL || row >= parentItem->childCount()) return;
+  QTreeWidgetItem *childItem = parentItem->child(row);
+  if (treeWidget->currentItem() == childItem) return;
+  treeWidget->setCurrentItem(childItem);
+  currentIndex = treeWidget->currentIndex();
+}
+
 void ProjectUserInterface_Qt::selectImage(int pos) {
-  treeWidget->setCurrentItem(treeItems.at(4)->child(pos));
-  processTreeClick(treeWidget->currentIndex());
+  // A click on the images table only selects the image: the user may want to
+  // delete it (or just look at it) instead of opening its form. The form is
+  // opened by a double click, see openImage().
+  const int key = imagesForm.keyAtRow(pos);
+  if (key <= 0) {
+    controlButtons.setDeleteEnabled(false);
+    return;
+  }
+  currentItemId = key;
+  syncTreeToChild(ImageTreeNode, pos);
+  controlButtons.setDeleteEnabled(true);
+}
+
+void ProjectUserInterface_Qt::openImage(int pos) {
+  if (addNewState || editState) return;
+  const int key = imagesForm.keyAtRow(pos);
+  if (key <= 0) return;
+  currentItemId = key;
+  syncTreeToChild(ImageTreeNode, pos);
+  viewImage(key);
 }
 
 void ProjectUserInterface_Qt::selectPoint(int pos) {
-  treeWidget->setCurrentItem(treeItems.at(5)->child(pos));
-  processTreeClick(treeWidget->currentIndex());
+  // Same behaviour as the images table: a click selects, a double click opens.
+  const int key = pointsForm.keyAtRow(pos);
+  if (key <= 0) {
+    controlButtons.setDeleteEnabled(false);
+    return;
+  }
+  currentItemId = key;
+  syncTreeToChild(PointTreeNode, pos);
+  controlButtons.setDeleteEnabled(true);
+}
+
+void ProjectUserInterface_Qt::openPoint(int pos) {
+  if (addNewState || editState) return;
+  const int key = pointsForm.keyAtRow(pos);
+  if (key <= 0) return;
+  currentItemId = key;
+  syncTreeToChild(PointTreeNode, pos);
+  viewPoint(key);
 }
 
 void ProjectUserInterface_Qt::viewHeader() {
@@ -1157,6 +1254,10 @@ void ProjectUserInterface_Qt::viewFlight(int id) {
 }
 
 void ProjectUserInterface_Qt::viewImages() {
+  // Keep the selected image across refreshes (new image, delete, return from a
+  // module), so the user does not have to select it again.
+  const int selectedKey = imagesForm.selectedKey();
+
   controlButtons.disconnectAll();
   controlButtons.multiConnect();
   connect((&controlButtons)->newButton, SIGNAL(clicked()), this,
@@ -1165,6 +1266,14 @@ void ProjectUserInterface_Qt::viewImages() {
           SLOT(saveNewImage()));
   connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this,
           SLOT(cancelImages()));
+  // The generic modes hide every button when "Delete" is pressed; here it
+  // deletes the selected image instead, so the confirmation dialog does not
+  // make the toolbar disappear when the user answers "No".
+  disconnect((&controlButtons)->deleteButton, SIGNAL(clicked()),
+             (&controlButtons), SLOT(toInvisibleMode()));
+  connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this,
+          SLOT(deleteImage()));
+  controlButtons.setDeleteEnabled(false);
 
   EDomElement imgs(manager->getXml("images"));
 
@@ -1194,6 +1303,11 @@ void ProjectUserInterface_Qt::viewImages() {
                    imagesForm.imagesTable->rowHeight(0) +
                imagesForm.label->height() + imagesForm.importButton->height();
   imagesForm.setMinimumSize(imagesForm.imagesTable->width(), height);
+
+  const int selectedRow = imagesForm.rowOfKey(selectedKey);
+  imagesForm.setSelectedRow(selectedRow);
+  if (selectedRow >= 0) selectImage(selectedRow);
+
   debuggerTextEdit->clear();
   debuggerTextEdit->setText(
       QString::fromUtf8(imgs.indent('\t').getContent().c_str()));
@@ -1232,22 +1346,22 @@ void ProjectUserInterface_Qt::viewImage(int id) {
   if (node2.getContent() != "") {
     imageForm.groupBox->setVisible(true);
     imageForm.a0Label->setText(
-        "a0: " +
+        tr("a0: ") +
         QString::number(node2.elementByTagName("a0").toDouble(), 'f', 4));
     imageForm.a1Label->setText(
-        "a1: " +
+        tr("a1: ") +
         QString::number(node2.elementByTagName("a1").toDouble(), 'f', 4));
     imageForm.a2Label->setText(
-        "a2: " +
+        tr("a2: ") +
         QString::number(node2.elementByTagName("a2").toDouble(), 'f', 4));
     imageForm.b0Label->setText(
-        "b0: " +
+        tr("b0: ") +
         QString::number(node2.elementByTagName("b0").toDouble(), 'f', 4));
     imageForm.b1Label->setText(
-        "b1: " +
+        tr("b1: ") +
         QString::number(node2.elementByTagName("b1").toDouble(), 'f', 4));
     imageForm.b2Label->setText(
-        "b2: " +
+        tr("b2: ") +
         QString::number(node2.elementByTagName("b2").toDouble(), 'f', 4));
   } else {
     imageForm.groupBox->setVisible(false);
@@ -1259,25 +1373,25 @@ void ProjectUserInterface_Qt::viewImage(int id) {
     imageForm.groupBox_2->setVisible(true);
 
     if (node3.attribute("type") == "spatialResection")
-      imageForm.groupBox_2->setTitle("EO Parameters (Spatial Resection)");
+      imageForm.groupBox_2->setTitle(tr("EO Parameters (Spatial Resection)"));
     else if (node3.attribute("type") == "user")
       imageForm.groupBox_2->setTitle(
-          "EO Parameters (3D Direct Georeferencing)");
+          tr("EO Parameters (3D Direct Georeferencing)"));
     else
-      imageForm.groupBox_2->setTitle("EO Parameters (Phototriangulation)");
+      imageForm.groupBox_2->setTitle(tr("EO Parameters (Phototriangulation)"));
 
     imageForm.x0Label->setText(
-        "X0: " +
+        tr("X0: ") +
         QString::number(node3.elementByTagName("X0").toDouble(), 'f', 4) +
-        " m");
+        tr(" m"));
     imageForm.y0Label->setText(
-        "Y0: " +
+        tr("Y0: ") +
         QString::number(node3.elementByTagName("Y0").toDouble(), 'f', 4) +
-        " m");
+        tr(" m"));
     imageForm.z0Label->setText(
-        "Z0: " +
+        tr("Z0: ") +
         QString::number(node3.elementByTagName("Z0").toDouble(), 'f', 4) +
-        " m");
+        tr(" m"));
     imageForm.omegaLabel->setText(
         QString::fromUtf8(" ω: ") +
         QString::number(node3.elementByTagName("omega").toDouble() * 180 / M_PI,
@@ -1307,6 +1421,10 @@ void ProjectUserInterface_Qt::viewImage(int id) {
 }
 
 void ProjectUserInterface_Qt::viewPoints() {
+  // Keep the selected point across refreshes, so the user does not have to
+  // select it again after a new import or a deletion.
+  const int selectedKey = pointsForm.selectedKey();
+
   controlButtons.disconnectAll();
   controlButtons.multiConnect();
   connect((&controlButtons)->newButton, SIGNAL(clicked()), this,
@@ -1315,6 +1433,13 @@ void ProjectUserInterface_Qt::viewPoints() {
           SLOT(saveNewPoint()));
   connect((&controlButtons)->cancelButton, SIGNAL(clicked()), this,
           SLOT(cancelPoints()));
+  // As in the images list, "Delete" removes the selected point instead of
+  // hiding the whole button bar (see viewImages).
+  disconnect((&controlButtons)->deleteButton, SIGNAL(clicked()),
+             (&controlButtons), SLOT(toInvisibleMode()));
+  connect((&controlButtons)->deleteButton, SIGNAL(clicked()), this,
+          SLOT(deletePoint()));
+  controlButtons.setDeleteEnabled(false);
 
   EDomElement node(manager->getXml("points"));
 
@@ -1329,6 +1454,11 @@ void ProjectUserInterface_Qt::viewPoints() {
                    pointsForm.pointsTable->rowHeight(0) +
                pointsForm.importButton->height() + pointsForm.label->height();
   pointsForm.setMinimumSize(pointsForm.pointsTable->width(), height);
+
+  const int selectedRow = pointsForm.rowOfKey(selectedKey);
+  pointsForm.setSelectedRow(selectedRow);
+  if (selectedRow >= 0) selectPoint(selectedRow);
+
   debuggerTextEdit->clear();
   debuggerTextEdit->setText(
       QString::fromUtf8(node.indent('\t').getContent().c_str()));
@@ -1604,22 +1734,102 @@ void ProjectUserInterface_Qt::deleteFlight() {}
 
 void ProjectUserInterface_Qt::deleteSensor() {}
 
-void ProjectUserInterface_Qt::deletePoint() {}
+void ProjectUserInterface_Qt::deletePoint() {
+  const int deletedKey = currentItemId;
+  const int deletedRow = pointsForm.rowOfKey(deletedKey);
+  const std::string keyText = Conversion::intToString(deletedKey);
 
-void ProjectUserInterface_Qt::deleteImage() {
-  QMessageBox::StandardButton reply;
-  reply =
-      QMessageBox::question(this, tr("Delete Image"),
-                            tr("Are you sure you want to delete this image?"),
-                            QMessageBox::Yes | QMessageBox::No);
+  // A point carries its measurements on the images, and it may be part of the
+  // phototriangulation / spatial resections, so say what else goes away.
+  QString question = tr("Are you sure you want to delete this point?");
+  const std::string pointXml = manager->getXml("point", "key", keyText);
+  const bool hasMeasurements =
+      pointXml.find("<imageCoordinates") != std::string::npos;
+  const std::string usedPoint = "<pointKey>" + keyText + "</pointKey>";
+  const std::string ptXml = manager->getXml("phototriangulation");
+  const std::string srXml = manager->getXml("spatialResections");
+  const bool isUsed = ptXml.find(usedPoint) != std::string::npos ||
+                      srXml.find(usedPoint) != std::string::npos;
+  if (hasMeasurements || isUsed) {
+    question += "\n\n";
+    question += tr("Its measurements on the images will be deleted too.");
+  }
+  if (isUsed) {
+    question += " ";
+    question += tr("It will also be removed from the phototriangulation and "
+                   "from the spatial resections that used it.");
+  }
+
+  QMessageBox::StandardButton reply = QMessageBox::question(
+      this, tr("Delete Point"), question, QMessageBox::Yes | QMessageBox::No);
   if (reply == QMessageBox::Yes) {
-    manager->removeComponent("Image", currentItemId);
-
-    viewImages();
-
-    actionSave_file->setEnabled(true);
+    // Removes the point, its measurements and the references to it (see
+    // ProjectManager::removeComponent).
+    manager->removeComponent("Point", deletedKey);
 
     updateTree();
+    viewPoints();
+
+    // Keep the neighbour of the deleted point selected, so deleting a sequence
+    // of points does not need a new click for each one.
+    const int rows = pointsForm.pointsTable->rowCount();
+    if (rows > 0) {
+      int row = deletedRow < 0 ? 0 : deletedRow;
+      if (row > rows - 1) row = rows - 1;
+      pointsForm.setSelectedRow(row);
+      selectPoint(row);
+    } else {
+      controlButtons.setDeleteEnabled(false);
+    }
+
+    actionSave_file->setEnabled(true);
+  }
+}
+
+void ProjectUserInterface_Qt::deleteImage() {
+  const int deletedKey = currentItemId;
+  const int deletedRow = imagesForm.rowOfKey(deletedKey);
+
+  // Deleting an image also deletes its orientations and the measurements of the
+  // points on it, so say it when there are any.
+  QString question = tr("Are you sure you want to delete this image?");
+  const std::string keyText = Conversion::intToString(deletedKey);
+  const bool hasOrientations =
+      !manager->getXml("imageIO", "image_key", keyText).empty() ||
+      !manager->getXml("imageEO", "image_key", keyText).empty();
+  const bool hasMeasurements =
+      manager->getXml("points").find("image_key=\"" + keyText + "\"") !=
+      std::string::npos;
+  if (hasOrientations || hasMeasurements) {
+    question += "\n\n";
+    question += tr(
+        "Its interior/exterior orientation and the measurements of the points "
+        "on it will be deleted too.");
+  }
+
+  QMessageBox::StandardButton reply = QMessageBox::question(
+      this, tr("Delete Image"), question, QMessageBox::Yes | QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    // Removes the image and the orientations that belong to it (see
+    // ProjectManager::removeComponent).
+    manager->removeComponent("Image", deletedKey);
+
+    updateTree();
+    viewImages();
+
+    // Keep the neighbour of the deleted image selected, so deleting a
+    // sequence of images does not need a new click for each one.
+    const int rows = imagesForm.imagesTable->rowCount();
+    if (rows > 0) {
+      int row = deletedRow < 0 ? 0 : deletedRow;
+      if (row > rows - 1) row = rows - 1;
+      imagesForm.setSelectedRow(row);
+      selectImage(row);
+    } else {
+      controlButtons.setDeleteEnabled(false);
+    }
+
+    actionSave_file->setEnabled(true);
   }
 }
 
@@ -1690,7 +1900,7 @@ bool ProjectUserInterface_Qt::confirmToClose() {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(
           this, tr(" Warning: leaving form in edit mode"),
-          "Do you want to keep all changes?",
+          tr("Do you want to keep all changes?"),
           QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
       if (reply == QMessageBox::Yes) {
         controlButtons.saveButton->click();
@@ -1703,7 +1913,7 @@ bool ProjectUserInterface_Qt::confirmToClose() {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(
           this, tr(" Warning: leaving form in edit mode"),
-          "Registration data is not complete and will be lost. Continue?",
+          tr("Registration data is not complete and will be lost. Continue?"),
           QMessageBox::Yes | QMessageBox::Cancel);
       if (reply == QMessageBox::Yes) {
         controlButtons.cancelButton->click();
@@ -1740,8 +1950,7 @@ void ProjectUserInterface_Qt::refreshMenu() {
 }
 
 QString ProjectUserInterface_Qt::getSavedIn() {
-  std::filesystem::path filePath(manager->savedIn);
-  return QString::fromStdString(filePath.parent_path().generic_string());
+  return QString::fromStdString(PathUtils::projectDirectory());
 }
 
 /** This function import points from a *.txt file with a one point in each line
@@ -2364,9 +2573,9 @@ void ProjectUserInterface_Qt::importImagesBatch() {
   loading.setMinimumSize(300, 30);
 
   QMessageBox msgBox;
-  msgBox.setText("Loading images");
+  msgBox.setText(tr("Loading images"));
   msgBox.setInformativeText(
-      "All images has the same dimensions? (Yes to fast import)");
+      tr("All images has the same dimensions? (Yes to fast import)"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::Yes);
 
@@ -2422,29 +2631,31 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
                                                  int dpi) {
   std::stringstream imageXml;
   RasterResource image(fileName, false, false, true); // true is load only metadata
-  std::filesystem::path project_path(manager->savedIn);
-  std::filesystem::path relative_path = std::filesystem::relative(fileName.toStdString(), project_path);
 
-  QString targetFileName = QString::fromStdString(relative_path.filename().string());
+  const std::string imageFile = fileName.toUtf8().data();
+  const std::string imageDirectory = PathUtils::parentDirectory(imageFile);
+  const std::string projectDirectory = PathUtils::projectDirectory();
 
-  QString fileImagePath(".");
-  if (relative_path.has_parent_path()) {
-    fileImagePath =
-        QString::fromStdString(relative_path.parent_path().generic_string());
-  }
-
-  QString sugestionID =
-      QString::fromStdString(relative_path.stem().string());
+  // The project directory (not the project file) is the base of the relative
+  // image paths, and an absolute path is used when both are on different
+  // drives.
+  std::string fileImagePath =
+      PathUtils::relativeOrAbsolute(imageDirectory, projectDirectory);
+  if (fileImagePath.empty()) fileImagePath = ".";
+  const std::string targetFileName = PathUtils::fileName(imageFile);
+  const std::string sugestionID = PathUtils::stem(imageFile);
 
   imageXml << "\t<image key=\"" << Conversion::intToString(keyImage)
            << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-  imageXml << "\t\t<imageId>" << sugestionID.toUtf8().data() << "</imageId>\n";
+  imageXml << "\t\t<imageId>" << PathUtils::xmlEscape(sugestionID)
+           << "</imageId>\n";
   imageXml << "\t\t<width uom=\"#px\">"
            << Conversion::intToString(image.width()) << "</width>\n";
   imageXml << "\t\t<height uom=\"#px\">"
            << Conversion::intToString(image.height()) << "</height>\n";
-  imageXml << "\t\t<fileName>" << targetFileName.toUtf8().data() << "</fileName>\n";
-  imageXml << "\t\t<filePath>" << fileImagePath.toUtf8().data()
+  imageXml << "\t\t<fileName>" << PathUtils::xmlEscape(targetFileName)
+           << "</fileName>\n";
+  imageXml << "\t\t<filePath>" << PathUtils::xmlEscape(fileImagePath)
            << "</filePath>\n";
   imageXml << "\t\t<resolution uom=\"#dpi\">" << dpi << "</resolution>\n";
   imageXml << "\t</image>\n";
@@ -2456,33 +2667,28 @@ std::string ProjectUserInterface_Qt::addImageXml(QString fileName, int keyImage,
                                                  int widthImages,
                                                  int heightImages, int dpi) {
   std::stringstream imageXml;
-  std::filesystem::path file_path(fileName.toStdString());
-  std::filesystem::path project_path(manager->savedIn);
-  std::filesystem::path relative_path =
-      std::filesystem::relative(file_path, project_path);
 
-  QString targetFileName = QString::fromStdString(relative_path.filename().string());
+  const std::string imageFile = fileName.toUtf8().data();
+  const std::string imageDirectory = PathUtils::parentDirectory(imageFile);
+  const std::string projectDirectory = PathUtils::projectDirectory();
 
-  QString fileImagePath(".");
-  if (relative_path.has_parent_path()) {
-    fileImagePath =
-        QString::fromStdString(relative_path.parent_path().generic_string());
-  }
-
-  QString sugestionID =
-      QString::fromStdString(relative_path.stem().string());
+  std::string fileImagePath =
+      PathUtils::relativeOrAbsolute(imageDirectory, projectDirectory);
+  if (fileImagePath.empty()) fileImagePath = ".";
+  const std::string targetFileName = PathUtils::fileName(imageFile);
+  const std::string sugestionID = PathUtils::stem(imageFile);
 
   imageXml << "\t<image key=\"" << Conversion::intToString(keyImage)
            << "\" sensor_key=\"1\" flight_key=\"1\">\n";
-  imageXml << "\t\t<imageId>" << sugestionID.toUtf8().data() << "</imageId>\n";
+  imageXml << "\t\t<imageId>" << PathUtils::xmlEscape(sugestionID)
+           << "</imageId>\n";
   imageXml << "\t\t<width uom=\"#px\">" << Conversion::intToString(widthImages)
            << "</width>\n";
   imageXml << "\t\t<height uom=\"#px\">"
            << Conversion::intToString(heightImages) << "</height>\n";
-  imageXml << "\t\t<fileName>"
-           << targetFileName.toUtf8().data()
+  imageXml << "\t\t<fileName>" << PathUtils::xmlEscape(targetFileName)
            << "</fileName>\n";
-  imageXml << "\t\t<filePath>" << fileImagePath.toUtf8().data()
+  imageXml << "\t\t<filePath>" << PathUtils::xmlEscape(fileImagePath)
            << "</filePath>\n";
   imageXml << "\t\t<resolution uom=\"#dpi\">" << dpi << "</resolution>\n";
   imageXml << "\t</image>\n";
@@ -2595,14 +2801,12 @@ void ProjectUserInterface_Qt::updateLabelFileName() {
 
 void ProjectUserInterface_Qt::loadLastProject() {
   QSettings efotoSettings("uerj", "efoto");
-  QString filename = QString::fromStdString(
-      efotoSettings.value("lastProject").toString().toStdString());
+  const QString filename = efotoSettings.value("lastProject").toString();
   loadFile(filename.toUtf8().data());
 }
 
 void ProjectUserInterface_Qt::updatePath() {
-  std::filesystem::path dir = std::filesystem::current_path();
-  saveSettings("binPath", dir.string());
+  saveSettings("binPath", PathUtils::absolute("."));
 }
 
 void ProjectUserInterface_Qt::saveSettings(std::string setting,

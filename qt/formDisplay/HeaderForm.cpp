@@ -17,6 +17,7 @@
 #include "HeaderForm.h"
 
 #include "EDom.h"
+#include "PathUtils.h"
 #include <sstream>
 
 namespace br {
@@ -40,8 +41,10 @@ void HeaderForm::fillvalues(std::string values)
 	if (!ede.elementByTagName("filePath").toString().compare("."))
 		lineEditFilePath->setText("");
 	else
-		lineEditFilePath->setText(QString::fromUtf8(ede.elementByTagName("filePath").toString().c_str()));
-	lineEditFileName->setText(QString::fromUtf8(ede.elementByTagName("fileName").toString().c_str()));
+		lineEditFilePath->setText(QString::fromStdString(PathUtils::xmlUnescape(
+			PathUtils::trim(ede.elementByTagName("filePath").toString()))));
+	lineEditFileName->setText(QString::fromStdString(PathUtils::xmlUnescape(
+		PathUtils::trim(ede.elementByTagName("fileName").toString()))));
 	dateTimeEditCreationDate->setDateTime(QDateTime::fromString(QString::fromUtf8(ede.elementByTagName("creation").toString().c_str()),Qt::ISODate));
 	dateTimeEditModificationDate->setDateTime(QDateTime::fromString(QString::fromUtf8(ede.elementByTagName("modification").toString().c_str()),Qt::ISODate));
 	lineEditOwner->setText(QString::fromUtf8(ede.elementByTagName("owner").toString().c_str()));
@@ -59,8 +62,8 @@ std::string HeaderForm::getvalues()
 	if (lineEditFilePath->text().isEmpty())
 		auxStream << "<filePath>.</filePath>\n";
 	else
-		auxStream << "<filePath>" << lineEditFilePath->text().toUtf8().data() << "</filePath>\n";
-	auxStream << "<fileName>" << lineEditFileName->text().toUtf8().data() << "</fileName>\n";
+		auxStream << "<filePath>" << PathUtils::xmlEscape(lineEditFilePath->text().toUtf8().data()) << "</filePath>\n";
+	auxStream << "<fileName>" << PathUtils::xmlEscape(lineEditFileName->text().toUtf8().data()) << "</fileName>\n";
 	auxStream << "<creation>" << dateTimeEditCreationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</creation>\n";
 	auxStream << "<modification>" << dateTimeEditModificationDate->dateTime().toString(Qt::ISODate).toUtf8().data() << "</modification>\n";
 	auxStream << "<owner>" << lineEditOwner->text().toUtf8().data() << "</owner>\n";

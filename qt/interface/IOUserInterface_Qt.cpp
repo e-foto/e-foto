@@ -330,7 +330,7 @@ bool IOUserInterface_Qt::viewReport() {
   sigmaView->setLayout(sigmaLayout);
   myTab->addTab(sigmaView, QString::fromUtf8("V"));
 
-  QPushButton *acceptButton = new QPushButton("&Accept", this);
+  QPushButton *acceptButton = new QPushButton(tr("&Accept"), this);
   QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptIO()));
 
   myLayout->addWidget(myTab);
@@ -338,7 +338,7 @@ bool IOUserInterface_Qt::viewReport() {
 
   windowReport->setLayout(myLayout);
   windowReport->setWindowModality(Qt::ApplicationModal);
-  windowReport->setWindowTitle("Interior Orientation Report");
+  windowReport->setWindowTitle(tr("Interior Orientation Report"));
   windowReport->show();
 
   connect(myLaView, SIGNAL(focusReceived()), mySLaView, SLOT(clearSelection()));

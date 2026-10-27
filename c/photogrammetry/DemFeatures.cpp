@@ -26,6 +26,7 @@
 #include <sstream>
 
 #include "MatchingPoints.h"
+#include "PathUtils.h"
 
 namespace br {
 namespace uerj {
@@ -112,7 +113,7 @@ int DemFeatures::exportTxtFeatures(char *filename) {
   std::string name = std::string(filename);
   name.append(".txt");
 
-  std::ofstream arq(name);
+  PathUtils::OutputFileStream arq(name);
   if (arq.fail()) {
     printf("Problems while saving ...\n");
     return 0;
@@ -330,7 +331,7 @@ int DemFeatures::saveFeatSp165(char *filename) {
 
   std::string name = std::string(filename);
 
-  std::ofstream arq(name);
+  PathUtils::OutputFileStream arq(name);
   if (arq.fail()) {
     printf("Problems while saving ...\n");
     return 0;
@@ -1099,7 +1100,7 @@ int DemFeatures::loadFeatSp165(char *filename, bool append = false) {
   // Get pointer to the last feature
   int p_feat = features.size();
 
-  std::ifstream arq(filename);
+  PathUtils::InputFileStream arq(filename);
 
   if (arq.fail()) {
     printf("Error while opening file !\n");

@@ -454,7 +454,7 @@ bool SRUserInterface_Qt::viewReport() {
   upperLayout->addStretch();
   upperLayout->addWidget(conLabel);
 
-  QPushButton *acceptButton = new QPushButton("&Accept", this);
+  QPushButton *acceptButton = new QPushButton(tr("&Accept"), this);
   QObject::connect(acceptButton, SIGNAL(clicked()), this, SLOT(acceptSR()));
   acceptButton->setDisabled(myValues.at(7).compare("no") == 0);
 
@@ -464,7 +464,7 @@ bool SRUserInterface_Qt::viewReport() {
 
   windowReport->setLayout(myLayout);
   windowReport->setWindowModality(Qt::ApplicationModal);
-  windowReport->setWindowTitle("Exterior Orientation Report");
+  windowReport->setWindowTitle(tr("Exterior Orientation Report"));
   windowReport->show();
 
   return true;

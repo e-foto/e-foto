@@ -27,6 +27,7 @@
 #include "FrameSensor.h"
 #include "StereoPair.h"
 #include "PhotoTri.h"
+#include "PathUtils.h"
 
 #include <iomanip>
 #include <fstream>
@@ -48,7 +49,7 @@ PhotoTriReport::PhotoTriReport(EFotoManager* newManager)
 int PhotoTriReport::createReport(char *filename)
 {
 	// Open file to save
-	std::ofstream arq(filename);
+	PathUtils::OutputFileStream arq(filename);
 	if (arq.fail())
 	{
 		printf("Problems while saving ...\n");

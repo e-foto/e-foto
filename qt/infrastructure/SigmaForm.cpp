@@ -237,8 +237,8 @@ void SigmaFormController::toNotAvailable()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-			newLabel->setText("StDev");
-			newEdit->setSpecialValueText("Not Available");
+			newLabel->setText(tr("StDev"));
+			newEdit->setSpecialValueText(tr("Not Available"));
 			newEdit->setTextValue("Not Available");
 			newEdit->setEnabled(false);
 		}
@@ -251,9 +251,9 @@ void SigmaFormController::toNotAvailable()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
-			QLabel* newLabel = new QLabel("StDev");
+			QLabel* newLabel = new QLabel(tr("StDev"));
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
-			newEdit->setSpecialValueText("Not Available");
+			newEdit->setSpecialValueText(tr("Not Available"));
 			newEdit->setTextValue("Not Available");
 			newEdit->setRange(-10,10); // No futuro a classe SigmaForm terá um método para setar o Range admissível de todos os seus campos.
                         connect(newEdit, &QDoubleSpinBox::valueChanged, this, static_cast<void (SigmaFormController::*)(double)>(&SigmaFormController::changeValidate));
@@ -281,7 +281,7 @@ void SigmaFormController::toStDev()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-			newLabel->setText("StDev");
+			newLabel->setText(tr("StDev"));
 			newEdit->setSpecialValueText("");
 			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
@@ -295,7 +295,7 @@ void SigmaFormController::toStDev()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
-			QLabel* newLabel = new QLabel("StDev");
+			QLabel* newLabel = new QLabel(tr("StDev"));
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
 			newEdit->setSpecialValueText("");
 			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
@@ -322,7 +322,7 @@ void SigmaFormController::toMatrix()
 		{
 			QLabel* newLabel = labels.at(i);
 			ScienceSpinBox* newEdit = edits.at(i);
-			newLabel->setText("Var");
+			newLabel->setText(tr("Var"));
 			newEdit->setSpecialValueText("");
 			newEdit->setTextValue("0");
 			newEdit->setEnabled(true);
@@ -336,7 +336,7 @@ void SigmaFormController::toMatrix()
 		for (unsigned int i = 0; i < dimension; i++)
 		{
 			QHBoxLayout* subLayout = new QHBoxLayout;
-			QLabel* newLabel = new QLabel("Var");
+			QLabel* newLabel = new QLabel(tr("Var"));
 			ScienceSpinBox* newEdit = new ScienceSpinBox();
 			newEdit->setSpecialValueText("");
 			connect(newEdit,SIGNAL(valueChanged(QString)),this,SLOT(changeValidate(QString)));
@@ -470,7 +470,7 @@ void SigmaFormContent::setSigmaFormController(SigmaFormController *newController
 	layout()->addWidget(controller->getContent());
 }
 
-SigmaFormDialogButton::SigmaFormDialogButton(QWidget * parent) : QPushButton("Show whole matrix", parent)
+SigmaFormDialogButton::SigmaFormDialogButton(QWidget * parent) : QPushButton(tr("Show whole matrix"), parent)
 {
 }
 

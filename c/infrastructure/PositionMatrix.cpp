@@ -21,6 +21,8 @@
 #include <iomanip>
 #include <fstream>
 
+#include "PathUtils.h"
+
 namespace br {
 namespace uerj {
 namespace eng {
@@ -96,7 +98,7 @@ int PositionMatrix::load(char* filename)
 	unsigned int cols;
 	unsigned int rows;
 
-    std::ifstream arq(filename); // open the emf file
+    PathUtils::InputFileStream arq(filename); // open the emf file
 	if (!arq.fail())
 	{
 		arq.getline(str,255); // read file header
@@ -130,7 +132,7 @@ int PositionMatrix::load(char* filename)
 
 int PositionMatrix::save(char* filename)
 {
-    std::ofstream emfile(filename); // open the emf file
+    PathUtils::OutputFileStream emfile(filename); // open the emf file
 	if (!emfile.fail())
 	{
         emfile << "E-foto project double PositionMatrix Format" << std::endl; // write file header

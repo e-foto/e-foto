@@ -79,6 +79,38 @@ public:
  */
     void setEOsAvailable(std::string xmlEOs);
 
+	/**
+ * \brief Chave (key) da imagem exibida em uma linha da tabela
+ * \param row : linha da tabela
+ * \return int : chave da imagem, ou -1 quando a linha não existe
+ */
+	int keyAtRow(int row) const;
+
+	/**
+ * \brief Linha da tabela que exibe uma determinada imagem
+ * \param key : chave da imagem
+ * \return int : linha da tabela, ou -1 quando a imagem não está na tabela
+ */
+	int rowOfKey(int key) const;
+
+	/**
+ * \brief Linha selecionada na tabela
+ * \return int : linha selecionada, ou -1 quando nada está selecionado
+ */
+	int selectedRow() const;
+
+	/**
+ * \brief Chave da imagem selecionada na tabela
+ * \return int : chave da imagem selecionada, ou -1 quando nada está selecionado
+ */
+	int selectedKey() const;
+
+	/**
+ * \brief Seleciona (destaca) uma linha da tabela sem abrir a imagem
+ * \param row : linha a selecionar; valor negativo limpa a seleção
+ */
+	void setSelectedRow(int row);
+
 private slots:
 
 	/**
@@ -87,6 +119,12 @@ private slots:
  */
 	void emitSignal(int i);
 
+	/**
+ * \brief Metodo que envia um sinal quando a imagem é aberta (duplo clique ou Enter)
+ * \param i : Valor numérico da linha da tabela contendo as imagens
+ */
+	void emitActivated(int i);
+
 signals:
 
 	/**
@@ -94,6 +132,12 @@ signals:
  * \param index : Valor numérico da linha em que a tabela de imagens foi clicado
  */
 	void clicked(int index);
+
+	/**
+ * \brief Sinal emitido informando qual a imagem deve ser aberta no formulario
+ * \param index : Valor numérico da linha em que a tabela de imagens foi ativada
+ */
+	void activated(int index);
 
 };
 

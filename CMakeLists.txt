@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(e-foto VERSION 1.0 LANGUAGES C CXX)
 
+# std::filesystem is used (path handling), C++17 is required on every platform.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Config build with commit hash number and date of compilation
 
 ############# Your CONFIGS ####################
@@ -37,52 +42,7 @@ if(WIN32)
 
         file(MAKE_DIRECTORY "${GDAL_ROOT}/efoto")
 
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/apps/gdal/lib/cmake/gdal"
-                "${GDAL_ROOT}/efoto/apps/gdal/lib/cmake/gdal"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/apps"
-                "${GDAL_ROOT}/efoto/apps/gdal/apps"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/bin"
-                "${GDAL_ROOT}/efoto/apps/gdal/bin"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/etc"
-                "${GDAL_ROOT}/efoto/apps/gdal/etc"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/include"
-                "${GDAL_ROOT}/efoto/apps/gdal/include"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/lib"
-                "${GDAL_ROOT}/efoto/apps/gdal/lib"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/share"
-                "${GDAL_ROOT}/efoto/apps/gdal/share"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/usr"
-                "${GDAL_ROOT}/efoto/apps/gdal/usr"
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${GDAL_ROOT}/var"
-                "${GDAL_ROOT}/efoto/apps/gdal/var"
-        )
-        set(GDAL_DIR "${GDAL_ROOT}/efoto/apps/gdal/lib/cmake/gdal")
+        
     if(MSVC)
         message(STATUS "Compilador: MSVC (Microsoft Visual Studio)")
         add_compile_definitions(HAVE_STDATOMIC=0)
@@ -197,6 +157,7 @@ qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     c/infrastructure/ETreeModel.cpp c/infrastructure/ETreeModel.h
     c/infrastructure/GeoSystem.cpp c/infrastructure/GeoSystem.h
     c/infrastructure/Matrix.cpp c/infrastructure/Matrix.h
+    c/infrastructure/PathUtils.cpp c/infrastructure/PathUtils.h
     c/infrastructure/PositionMatrix.cpp c/infrastructure/PositionMatrix.h
     c/infrastructure/RectSupport.cpp c/infrastructure/RectSupport.h
     c/infrastructure/SparseMatrix.cpp c/infrastructure/SparseMatrix.h
@@ -288,6 +249,7 @@ qt_add_executable(e-foto WIN32 MACOSX_BUNDLE
     qt/infrastructure/ETableWidget.cpp qt/infrastructure/ETableWidget.h
     qt/infrastructure/EfotoDoubleSpinBox.cpp qt/infrastructure/EfotoDoubleSpinBox.h
     qt/infrastructure/FlightDirectionForm.cpp qt/infrastructure/FlightDirectionForm.h qt/infrastructure/FlightDirectionForm.ui
+    qt/infrastructure/Language.cpp qt/infrastructure/Language.h
     qt/infrastructure/LoadingScreen.cpp qt/infrastructure/LoadingScreen.h qt/infrastructure/LoadingScreen.ui
     qt/infrastructure/ScienceSpinBox.cpp qt/infrastructure/ScienceSpinBox.h
     qt/infrastructure/SigmaForm.cpp qt/infrastructure/SigmaForm.h
@@ -560,6 +522,77 @@ qt_add_resources(e-foto "shaders"
 )
 
 target_compile_definitions(e-foto PRIVATE ${PLATFORM_DEFINITIONS})
+
+if(WIN32)
+    # Icon and manifest (longPathAware), the same resource file used by qmake.
+    target_sources(e-foto PRIVATE efotoIcon.rc)
+    if(MSVC)
+        # The manifest is embedded by the resource file above; do not let the
+        # linker add a second one.
+        target_link_options(e-foto PRIVATE "/MANIFEST:NO")
+    endif()
+endif()
+
+# PathUtils regression test: it does not need Qt nor GDAL, so it can be built
+# and run on any machine with a C++17 compiler.
+option(EFOTO_BUILD_TESTS "Build the PathUtils unit tests" OFF)
+if(EFOTO_BUILD_TESTS)
+    enable_testing()
+    add_executable(pathutils_test tests/PathUtilsTest.cpp
+        c/infrastructure/PathUtils.cpp)
+    target_include_directories(pathutils_test PRIVATE c/infrastructure)
+    add_test(NAME pathutils COMMAND pathutils_test)
+
+    add_executable(project_path_test tests/ProjectPathTest.cpp
+        c/infrastructure/PathUtils.cpp c/infrastructure/EDom.cpp)
+    target_include_directories(project_path_test PRIVATE c/infrastructure)
+    add_test(NAME project_path COMMAND project_path_test)
+endif()
+
+# Translations ---------------------------------------------------------------
+# The .ts files are edited with Qt Linguist (or any text editor) and compiled
+# into .qm files that are loaded at runtime by qt/infrastructure/Language.cpp.
+# lupdate is not part of every Qt installation, so both tools are looked up by
+# name and the build simply skips the step when lrelease is missing.
+set(EFOTO_TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/translations/e-foto_zh_CN.ts")
+
+get_filename_component(_efoto_qt_bin_dir "${Qt6_DIR}/../../../bin" ABSOLUTE)
+find_program(EFOTO_LRELEASE_EXECUTABLE
+    NAMES lrelease lrelease-qt6 lrelease-qt5
+    HINTS "${_efoto_qt_bin_dir}")
+find_program(EFOTO_LUPDATE_EXECUTABLE
+    NAMES lupdate lupdate-qt6 lupdate-qt5
+    HINTS "${_efoto_qt_bin_dir}")
+
+if(EFOTO_LRELEASE_EXECUTABLE AND EXISTS "${EFOTO_TS_FILES}")
+    set(EFOTO_QM_DIR "${CMAKE_CURRENT_BINARY_DIR}/translations")
+    set(EFOTO_QM_FILE "${EFOTO_QM_DIR}/e-foto_zh_CN.qm")
+    add_custom_command(
+        OUTPUT "${EFOTO_QM_FILE}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EFOTO_QM_DIR}"
+        COMMAND "${EFOTO_LRELEASE_EXECUTABLE}" -silent "${EFOTO_TS_FILES}" -qm "${EFOTO_QM_FILE}"
+        DEPENDS "${EFOTO_TS_FILES}"
+        COMMENT "lrelease: e-foto_zh_CN.ts"
+        VERBATIM)
+    add_custom_target(e-foto_translations ALL DEPENDS "${EFOTO_QM_FILE}")
+    add_dependencies(e-foto e-foto_translations)
+    add_custom_command(TARGET e-foto POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:e-foto>/translations"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${EFOTO_QM_FILE}"
+                "$<TARGET_FILE_DIR:e-foto>/translations/e-foto_zh_CN.qm"
+        VERBATIM)
+    install(FILES "${EFOTO_QM_FILE}" DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
+endif()
+
+if(EFOTO_LUPDATE_EXECUTABLE)
+    add_custom_target(update-translations
+        COMMAND "${EFOTO_LUPDATE_EXECUTABLE}" -recursive -locations none
+                "${CMAKE_CURRENT_SOURCE_DIR}/c" "${CMAKE_CURRENT_SOURCE_DIR}/qt"
+                -ts "${EFOTO_TS_FILES}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMENT "lupdate: refreshing ${EFOTO_TS_FILES}"
+        VERBATIM)
+endif()
 
 install(TARGETS e-foto
     BUNDLE DESTINATION .

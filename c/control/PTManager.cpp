@@ -390,8 +390,7 @@ std::string PTManager::getFilePath(std::string fileName)
 	for (size_t i=0;i<numImages;i++)
 		if(listAllImages.at(i)->getFilename()==fileName)
 		{
-			std::string file = listAllImages.at(i)->getFilepath() + "/" +fileName;
-			return file;
+			return listAllImages.at(i)->getAbsoluteFilePath();
 		}
 	return "";
 }
@@ -402,8 +401,7 @@ std::string PTManager::getFilePath(int imageKey)
 	for (size_t i=0;i<numImages;i++)
 		if(listAllImages.at(i)->getId()==imageKey)
 		{
-			std::string file = listAllImages.at(i)->getFilepath() + "/" + listAllImages.at(i)->getFilename();
-			return file;
+			return listAllImages.at(i)->getAbsoluteFilePath();
 		}
 	return "";
 }

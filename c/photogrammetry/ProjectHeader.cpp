@@ -20,6 +20,8 @@
 
 #include "ProjectHeader.h"
 
+#include "PathUtils.h"
+
 #include <sstream>
 
 namespace br {
@@ -142,8 +144,8 @@ void ProjectHeader::xmlSetData(std::string xml)
 
     name = root.elementByTagName("name").toString();
     description = root.elementByTagName("description").toString();
-    filePath = root.elementByTagName("filePath").toString();
-    fileName = root.elementByTagName("fileName").toString();
+    filePath = PathUtils::xmlUnescape(root.elementByTagName("filePath").toString());
+    fileName = PathUtils::xmlUnescape(root.elementByTagName("fileName").toString());
     creation = root.elementByTagName("creation").toString();
     modification = root.elementByTagName("modification").toString();
     owner = root.elementByTagName("owner").toString();
@@ -157,8 +159,8 @@ std::string ProjectHeader::xmlGetData()
 	result << "<projectHeader>\n";
 	result << "<name>" << name << "</name>\n";
 	result << "<description>" << description << "</description>\n";
-	result << "<filePath>" << filePath << "</filePath>\n";
-	result << "<fileName>" << fileName << "</fileName>\n";
+	result << "<filePath>" << PathUtils::xmlEscape(filePath) << "</filePath>\n";
+	result << "<fileName>" << PathUtils::xmlEscape(fileName) << "</fileName>\n";
 	result << "<creation>" << creation << "</creation>\n";
 	result << "<modification>" << modification << "</modification>\n";
 	result << "<owner>" << owner << "</owner>\n";

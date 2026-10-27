@@ -67,6 +67,38 @@ public:
  */
     bool isForm(std::string formName);
 
+	/**
+ * \brief Chave (key) do ponto exibido em uma linha da tabela
+ * \param row : linha da tabela
+ * \return int : chave do ponto, ou -1 quando a linha não existe
+ */
+	int keyAtRow(int row) const;
+
+	/**
+ * \brief Linha da tabela que exibe um determinado ponto
+ * \param key : chave do ponto
+ * \return int : linha da tabela, ou -1 quando o ponto não está na tabela
+ */
+	int rowOfKey(int key) const;
+
+	/**
+ * \brief Linha selecionada na tabela
+ * \return int : linha selecionada, ou -1 quando nada está selecionado
+ */
+	int selectedRow() const;
+
+	/**
+ * \brief Chave do ponto selecionado na tabela
+ * \return int : chave do ponto selecionado, ou -1 quando nada está selecionado
+ */
+	int selectedKey() const;
+
+	/**
+ * \brief Seleciona (destaca) uma linha da tabela sem abrir o ponto
+ * \param row : linha a selecionar; valor negativo limpa a seleção
+ */
+	void setSelectedRow(int row);
+
 private slots:
 
 	/**
@@ -75,6 +107,12 @@ private slots:
  */
 	void emitSignal(int i);
 
+	/**
+ * \brief Metodo que envia um sinal quando o ponto é aberto (duplo clique ou Enter)
+ * \param i : Valor numérico da linha da tabela contendo os pontos
+ */
+	void emitActivated(int i);
+
 signals:
 
 	/**
@@ -82,6 +120,12 @@ signals:
  * \param index : Valor numérico da linha em que a tabela de pontos foi clicado
  */
 	void clicked(int pointKey);
+
+	/**
+ * \brief Sinal emitido informando qual o ponto deve ser aberto no formulario
+ * \param index : Valor numérico da linha em que a tabela de pontos foi ativada
+ */
+	void activated(int index);
 
 };
 
